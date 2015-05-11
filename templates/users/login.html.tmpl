@@ -1,0 +1,19 @@
+{{define "content"}}
+<div class="container">
+  <div class="row">
+    <div class="col-sm-6 col-md-4 col-md-offset-4">
+      <div class="account-wall well">
+        <h1 class="text-center">Blank</h1>
+
+        <form class="form-signup-login form-login" method="post" action="/login">
+          <input name="Email" type="text" class="form-control" placeholder="Email" required autofocus>
+          <input name="Password" type="password" class="form-control" placeholder="Password" required>
+          <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+
+          <a href="/signup" class="other-form text-center">Create an account</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{{end}}
