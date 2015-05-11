@@ -2,6 +2,7 @@ package dcron
 
 import (
 	"bitbucket.org/victorcoder/dcron/cron"
+	"crypto/md5"
 	"fmt"
 	"log"
 )
@@ -14,8 +15,24 @@ func NewScheduler() *Scheduler {
 }
 
 func (s *Scheduler) Load() {
-	if _, err := etcdClient.Set("/", "bar", 0); err != nil {
+	job := `{"name": "cron job", "schedule": "1 * * * * *", "command": "date"}`
+	jobId := fmt.Sprintf("%x", md5.Sum([]byte(job)))
+
+	if _, err := etcdClient.Set("/jobs/"+jobId+"/job", job, 0); err != nil {
 		log.Fatal(err)
+	}
+
+	if _, err := etcdClient.Set("/jobs/"+jobId+"/started_at", "1224553", 0); err != nil {
+		log.Fatal(err)
+	}
+
+	res, err := etcdClient.Get("/jobs/"+jobId, false, true)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, node := range res.Node.Nodes {
+		fmt.Println(node.Value)
 	}
 
 	c := cron.New()
