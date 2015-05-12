@@ -2,7 +2,7 @@ package dcron
 
 import (
 	"bitbucket.org/victorcoder/dcron/cron"
-	"crypto/md5"
+	"encoding/json"
 	"fmt"
 	"log"
 )
@@ -15,28 +15,55 @@ func NewScheduler() *Scheduler {
 }
 
 func (s *Scheduler) Load() {
-	job := `{"name": "cron job", "schedule": "1 * * * * *", "command": "date"}`
-	jobId := fmt.Sprintf("%x", md5.Sum([]byte(job)))
+	job := &Job{Name: "cron_job", Schedule: "@every 2s", Command: "date", Owner: "foo@bar.com"}
+	job2 := &Job{Name: "cron_job_2", Schedule: "@every 3s", Command: "echo", Owner: "foo@bar.com"}
 
-	if _, err := etcdClient.Set("/jobs/"+jobId+"/job", job, 0); err != nil {
+	jobs = append(jobs, *job, *job2)
+
+	if err := etcd.SetJob(job); err != nil {
 		log.Fatal(err)
 	}
 
-	if _, err := etcdClient.Set("/jobs/"+jobId+"/started_at", "1224553", 0); err != nil {
+	if err := etcd.SetJob(job2); err != nil {
 		log.Fatal(err)
 	}
 
-	res, err := etcdClient.Get("/jobs/"+jobId, false, true)
+	// if _, err := etcd.Client.Set("/dcron/jobs/"+job.Name+"/started_at", "1224553", 0); err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	res, err := etcd.Client.Get("/dcron/jobs", false, true)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	for _, node := range res.Node.Nodes {
-		fmt.Println(node.Value)
-	}
-
 	c := cron.New()
 
-	c.AddFunc("1 * * * * *", func() { fmt.Println("Every hour on the half hour") })
+	for _, node := range res.Node.Nodes {
+		for _, jobNode := range node.Nodes {
+			var newJob Job
+			fmt.Println(jobNode.Value)
+			err := json.Unmarshal([]byte(jobNode.Value), &newJob)
+			if err != nil {
+				log.Fatal(err)
+			}
+			fmt.Println(newJob)
+			c.AddJob(newJob.Schedule, newJob)
+		}
+	}
 	c.Start()
+}
+
+type Job struct {
+	Name      string `json:"name"`
+	Schedule  string `json:"schedule"`
+	Command   string `json:"command"`
+	Owner     string `json:"owner"`
+	RunAsUser string `json:"run_as_user"`
+}
+
+var jobs []Job
+
+func (j Job) Run() {
+	fmt.Println("Running: " + j.Command)
 }
