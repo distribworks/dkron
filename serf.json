@@ -1,0 +1,9 @@
+{
+  "tags": {
+    "role": "web",
+    "datacenter": "east"
+  },
+  "event_handlers": [
+    "dcron -run",
+  ]
+}
