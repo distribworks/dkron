@@ -1,0 +1,106 @@
+{
+	"ImportPath": "bitbucket.org/victorcoder/dcron",
+	"GoVersion": "go1.4",
+	"Deps": [
+		{
+			"ImportPath": "github.com/BurntSushi/toml",
+			"Rev": "2ceedfee35ad3848e49308ab0c9a4f640cfb5fb2"
+		},
+		{
+			"ImportPath": "github.com/Sirupsen/logrus",
+			"Comment": "v0.7.3-8-g52919f1",
+			"Rev": "52919f182f9c314f8a38c5afe96506f73d02b4b2"
+		},
+		{
+			"ImportPath": "github.com/armon/consul-api",
+			"Rev": "dcfedd50ed5334f96adee43fc88518a4f095e15c"
+		},
+		{
+			"ImportPath": "github.com/carbocation/interpose",
+			"Rev": "50c09d12f8624ab10532f931cb630d0bf5f7c2c7"
+		},
+		{
+			"ImportPath": "github.com/coreos/go-etcd/etcd",
+			"Comment": "v2.0.0-7-g73a8ef7",
+			"Rev": "73a8ef737e8ea002281a28b4cb92a1de121ad4c6"
+		},
+		{
+			"ImportPath": "github.com/gorilla/context",
+			"Rev": "215affda49addc4c8ef7e2534915df2c8c35c6cd"
+		},
+		{
+			"ImportPath": "github.com/gorilla/mux",
+			"Rev": "8096f47503459bcc74d1f4c487b7e6e42e5746b5"
+		},
+		{
+			"ImportPath": "github.com/kr/pretty",
+			"Comment": "go.weekly.2011-12-22-20-g088c856",
+			"Rev": "088c856450c08c03eb32f7a6c221e6eefaa10e6f"
+		},
+		{
+			"ImportPath": "github.com/kr/text",
+			"Rev": "6807e777504f54ad073ecef66747de158294b639"
+		},
+		{
+			"ImportPath": "github.com/magiconair/properties",
+			"Comment": "v1.5.2",
+			"Rev": "d5929c67198951106f49f7ea425198d0f1a08f7f"
+		},
+		{
+			"ImportPath": "github.com/mitchellh/mapstructure",
+			"Rev": "740c764bc6149d3f1806231418adb9f52c11bcbf"
+		},
+		{
+			"ImportPath": "github.com/spf13/cast",
+			"Rev": "99f1223ff64ed0c6a1dd9c850474f5fecba6e0a4"
+		},
+		{
+			"ImportPath": "github.com/spf13/jwalterweatherman",
+			"Rev": "e3682f3b5526cf86abc2d415aa312cd5531e3d0a"
+		},
+		{
+			"ImportPath": "github.com/spf13/pflag",
+			"Rev": "463bdc838f2b35e9307e91d480878bda5fff7232"
+		},
+		{
+			"ImportPath": "github.com/spf13/viper",
+			"Rev": "2e47d9ed4a4ee0cad6e154285e1e0509749b4b3c"
+		},
+		{
+			"ImportPath": "github.com/tylerb/graceful",
+			"Comment": "v1-9-g49b853e",
+			"Rev": "49b853e77ab58c31be0d3ee87db62909b90ac93e"
+		},
+		{
+			"ImportPath": "github.com/xordataexchange/crypt/backend",
+			"Comment": "v0.0.2-15-g93de656",
+			"Rev": "93de65664ef094aa5acff4f5201ac17580370af7"
+		},
+		{
+			"ImportPath": "github.com/xordataexchange/crypt/config",
+			"Comment": "v0.0.2-15-g93de656",
+			"Rev": "93de65664ef094aa5acff4f5201ac17580370af7"
+		},
+		{
+			"ImportPath": "github.com/xordataexchange/crypt/encoding/secconf",
+			"Comment": "v0.0.2-15-g93de656",
+			"Rev": "93de65664ef094aa5acff4f5201ac17580370af7"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/cast5",
+			"Rev": "24ffb5feb3312a39054178a4b0a4554fc2201248"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/openpgp",
+			"Rev": "24ffb5feb3312a39054178a4b0a4554fc2201248"
+		},
+		{
+			"ImportPath": "golang.org/x/net/netutil",
+			"Rev": "1dfe7915deaf3f80b962c163b918868d8a6d8974"
+		},
+		{
+			"ImportPath": "gopkg.in/yaml.v2",
+			"Rev": "49c95bdc21843256fb6c4e0d370a05f24a0bf213"
+		}
+	]
+}
