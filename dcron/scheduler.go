@@ -4,7 +4,6 @@ import (
 	"bitbucket.org/victorcoder/dcron/cron"
 	"encoding/json"
 	"fmt"
-	"log"
 )
 
 type Scheduler struct {

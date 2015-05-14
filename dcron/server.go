@@ -2,7 +2,6 @@ package dcron
 
 import (
 	"encoding/json"
-	"github.com/Sirupsen/logrus"
 	"github.com/carbocation/interpose"
 	"github.com/gorilla/mux"
 	"github.com/tylerb/graceful"
@@ -24,7 +23,7 @@ func ServerInit() {
 		Server:  &http.Server{Addr: ":8080", Handler: middle},
 	}
 
-	logrus.Infoln("Running HTTP server on 8080")
+	log.Infoln("Running HTTP server on 8080")
 
 	certFile := config.GetString("certFile")
 	keyFile := config.GetString("keyFile")
@@ -33,6 +32,7 @@ func ServerInit() {
 	} else {
 		srv.ListenAndServe()
 	}
+	log.Debug("Exiting")
 }
 
 func Index(w http.ResponseWriter, r *http.Request) {
