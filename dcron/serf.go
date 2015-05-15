@@ -3,6 +3,7 @@ package dcron
 import (
 	"fmt"
 	"github.com/hashicorp/serf/client"
+	serfs "github.com/hashicorp/serf/serf"
 	"os"
 	"os/exec"
 	"time"
@@ -32,9 +33,9 @@ func InitSerfAgent() {
 	go spawnProc("./bin/serf agent -config-file=config/serf.json")
 	serf = initSerfClient()
 	defer serf.Close()
-	e := make(chan map[string]interface{}, 10)
+	ch := make(chan map[string]interface{}, 1)
 
-	sh, err := serf.Stream("*", e)
+	sh, err := serf.Stream("*", ch)
 	if err != nil {
 		log.Error(err)
 	}
@@ -42,8 +43,19 @@ func InitSerfAgent() {
 
 	for {
 		select {
-		case <-e:
-			log.Debugf("Receiving event: %v", e)
+		case event := <-ch:
+			for key, val := range event {
+				switch ev := val.(type) {
+				case serfs.MemberEvent:
+					log.Debug(ev)
+				default:
+					log.Debugf("Receiving event: %s => %v of type %T", key, val, val)
+				}
+			}
+			if event["Event"] == "query" {
+				log.Debug(string(event["Payload"].([]byte)))
+				serf.Respond(uint64(event["ID"].(int64)), []byte("Peetttee"))
+			}
 		}
 	}
 }
@@ -62,6 +74,14 @@ func initSerfClient() *client.RPCClient {
 		return nil
 	}
 	return serfClient
+}
+
+type Event struct {
+	Event   string
+	ID      int
+	LTime   uint64
+	Name    string
+	Payload []byte
 }
 
 // func eventRouter() {
