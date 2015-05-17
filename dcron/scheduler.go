@@ -54,11 +54,13 @@ func (s *Scheduler) Load() {
 }
 
 type Job struct {
-	Name      string `json:"name"`
-	Schedule  string `json:"schedule"`
-	Command   string `json:"command"`
-	Owner     string `json:"owner"`
-	RunAsUser string `json:"run_as_user"`
+	Name           string `json:"name"`
+	Schedule       string `json:"schedule"`
+	Command        string `json:"command"`
+	Owner          string `json:"owner"`
+	RunAsUser      string `json:"run_as_user"`
+	SuccessfulRuns int    `json:"successful_runs"`
+	FailedRuns     int    `json:"failed_runs"`
 }
 
 var jobs []Job

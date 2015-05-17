@@ -30,6 +30,7 @@ func (a *AgentCommand) Run(args []string) int {
 	if err := cmdFlags.Parse(args); err != nil {
 		return 1
 	}
+	InitSerfAgent()
 	return 0
 }
 

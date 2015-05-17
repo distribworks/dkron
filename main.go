@@ -32,8 +32,4 @@ func main() {
 	}
 
 	os.Exit(exitStatus)
-	s := dcron.NewScheduler()
-	s.Load()
-	dcron.InitSerfAgent()
-	dcron.ServerInit()
 }

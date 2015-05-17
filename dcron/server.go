@@ -38,6 +38,9 @@ func (s *ServerCommand) Run(args []string) int {
 	if err := cmdFlags.Parse(args); err != nil {
 		return 1
 	}
+
+	go serverInit()
+	InitSerfAgent()
 	return 0
 }
 
@@ -45,7 +48,7 @@ func (s *ServerCommand) Synopsis() string {
 	return "Run dcron server"
 }
 
-func ServerInit() {
+func serverInit() {
 	loadConfig()
 
 	router := mux.NewRouter().StrictSlash(true)
