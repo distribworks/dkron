@@ -17,13 +17,16 @@ func (s *Scheduler) Load() {
 	job := &Job{Name: "cron_job", Schedule: "@every 2s", Command: "date", Owner: "foo@bar.com"}
 	job2 := &Job{Name: "cron_job_2", Schedule: "@every 3s", Command: "echo", Owner: "foo@bar.com"}
 
-	jobs = append(jobs, *job, *job2)
-
 	if err := etcd.SetJob(job); err != nil {
 		log.Fatal(err)
 	}
 
 	if err := etcd.SetJob(job2); err != nil {
+		log.Fatal(err)
+	}
+
+	jobs, err := etcd.GetJobs()
+	if err != nil {
 		log.Fatal(err)
 	}
 
@@ -62,8 +65,6 @@ type Job struct {
 	SuccessfulRuns int    `json:"successful_runs"`
 	FailedRuns     int    `json:"failed_runs"`
 }
-
-var jobs []Job
 
 func (j Job) Run() {
 	fmt.Println("Running: " + j.Command)

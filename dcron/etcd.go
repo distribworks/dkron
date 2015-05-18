@@ -25,3 +25,21 @@ func (e *etcdClient) SetJob(job *Job) error {
 
 	return nil
 }
+
+func (e *etcdClient) GetJobs() ([]*Job, error) {
+	res, err := e.Client.Get(keyspace+"/jobs/", true, false)
+	if err != nil {
+		return nil, err
+	}
+
+	var jobs []*Job
+	for _, node := range res.Node.Nodes {
+		var job Job
+		err := json.Unmarshal([]byte(node.Value), &job)
+		if err != nil {
+			return nil, err
+		}
+		jobs = append(jobs, &job)
+	}
+	return jobs, nil
+}
