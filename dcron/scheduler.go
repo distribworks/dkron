@@ -4,6 +4,7 @@ import (
 	"bitbucket.org/victorcoder/dcron/cron"
 	"encoding/json"
 	"fmt"
+	"time"
 )
 
 type Scheduler struct {
@@ -57,15 +58,27 @@ func (s *Scheduler) Load() {
 }
 
 type Job struct {
-	Name           string `json:"name"`
-	Schedule       string `json:"schedule"`
-	Command        string `json:"command"`
-	Owner          string `json:"owner"`
-	RunAsUser      string `json:"run_as_user"`
-	SuccessfulRuns int    `json:"successful_runs"`
-	FailedRuns     int    `json:"failed_runs"`
+	Name         string    `json:"name"`
+	Schedule     string    `json:"schedule"`
+	Command      string    `json:"command"`
+	Owner        string    `json:"owner"`
+	RunAsUser    string    `json:"run_as_user"`
+	SuccessCount int       `json:"success_count"`
+	ErrorCount   int       `json:"error_count"`
+	LastSuccess  time.Time `json:"last_success"`
+	LastError    time.Time `json:"last_error"`
+	Tags
+
+	Executions []*Execution `json:ommit`
 }
 
 func (j Job) Run() {
 	fmt.Println("Running: " + j.Command)
+}
+
+type Execution struct {
+	StartedAt  time.Time `json:"started_at"`
+	FinishedAt time.Time `json:"finished_at"`
+	ExitStatus int       `json:"exit_status"`
+	Job        *Job      `json:ommit`
 }

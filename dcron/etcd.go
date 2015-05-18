@@ -43,3 +43,21 @@ func (e *etcdClient) GetJobs() ([]*Job, error) {
 	}
 	return jobs, nil
 }
+
+func (e *etcdClient) GetExecutions() ([]*Execution, error) {
+	res, err := e.Client.Get(keyspace+"/executions/", true, false)
+	if err != nil {
+		return nil, err
+	}
+
+	var executions []*Execution
+	for _, node := range res.Node.Nodes {
+		var execution Execution
+		err := json.Unmarshal([]byte(node.Value), &execution)
+		if err != nil {
+			return nil, err
+		}
+		executions = append(executions, &execution)
+	}
+	return executions, nil
+}
