@@ -19,7 +19,8 @@ func NewClient(machines []string) *etcdClient {
 
 func (e *etcdClient) SetJob(job *Job) error {
 	jobJson, _ := json.Marshal(job)
-	if _, err := e.Client.Set(keyspace+"/jobs/"+job.Name+"/job", string(jobJson), 0); err != nil {
+	log.Debugf("Setting etcd key %s: %s", job.Name, string(jobJson))
+	if _, err := e.Client.Set(keyspace+"/jobs/"+job.Name, string(jobJson), 0); err != nil {
 		return err
 	}
 
@@ -34,14 +35,31 @@ func (e *etcdClient) GetJobs() ([]*Job, error) {
 
 	var jobs []*Job
 	for _, node := range res.Node.Nodes {
+
+		log.Debug(*node)
 		var job Job
 		err := json.Unmarshal([]byte(node.Value), &job)
 		if err != nil {
 			return nil, err
 		}
 		jobs = append(jobs, &job)
+		log.Debug(job)
 	}
 	return jobs, nil
+}
+
+func (e *etcdClient) GetJob(name string) (*Job, error) {
+	res, err := e.Client.Get(keyspace+"/jobs/"+name, false, false)
+	if err != nil {
+		return nil, err
+	}
+
+	var job Job
+	if err = json.Unmarshal([]byte(res.Node.Value), &job); err != nil {
+		return nil, err
+	}
+	log.Debugf("Retrieved job from datastore: %v", job)
+	return &job, nil
 }
 
 func (e *etcdClient) GetExecutions() ([]*Execution, error) {

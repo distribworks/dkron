@@ -2,12 +2,14 @@ package dcron
 
 import (
 	"bitbucket.org/victorcoder/dcron/cron"
-	"encoding/json"
 	"fmt"
 	"time"
 )
 
+var sched = NewScheduler()
+
 type Scheduler struct {
+	Cron *cron.Cron
 }
 
 func NewScheduler() *Scheduler {
@@ -15,59 +17,49 @@ func NewScheduler() *Scheduler {
 }
 
 func (s *Scheduler) Load() {
-	job := &Job{Name: "cron_job", Schedule: "@every 2s", Command: "date", Owner: "foo@bar.com"}
-	job2 := &Job{Name: "cron_job_2", Schedule: "@every 3s", Command: "echo", Owner: "foo@bar.com"}
-
-	if err := etcd.SetJob(job); err != nil {
-		log.Fatal(err)
-	}
-
-	if err := etcd.SetJob(job2); err != nil {
-		log.Fatal(err)
-	}
-
 	jobs, err := etcd.GetJobs()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// if _, err := etcd.Client.Set("/dcron/jobs/"+job.Name+"/started_at", "1224553", 0); err != nil {
-	// 	log.Fatal(err)
-	// }
+	s.Cron = cron.New()
 
-	res, err := etcd.Client.Get("/dcron/jobs", false, true)
-	if err != nil {
-		log.Fatal(err)
+	for _, job := range jobs {
+		log.Debugf("Adding job to the scheduler: %v", job)
+		// s.AddJob(job)
+		s.Cron.AddJob(job.Schedule, job)
 	}
+	s.Cron.Start()
 
-	c := cron.New()
-
-	for _, node := range res.Node.Nodes {
-		for _, jobNode := range node.Nodes {
-			var newJob Job
-			fmt.Println(jobNode.Value)
-			err := json.Unmarshal([]byte(jobNode.Value), &newJob)
-			if err != nil {
-				log.Fatal(err)
-			}
-			fmt.Println(newJob)
-			c.AddJob(newJob.Schedule, newJob)
-		}
+	for _, e := range s.Cron.Entries() {
+		log.Debugf("Cronjob with job: %v", e.Job)
 	}
-	c.Start()
+}
+
+func (s *Scheduler) Reload() {
+	s.Cron.Stop()
+	s.Load()
+}
+
+func (s *Scheduler) AddJob(job *Job) {
+	s.Cron.Stop()
+	s.Cron = cron.New()
+	s.Cron.AddJob(job.Schedule, job)
 }
 
 type Job struct {
-	Name         string    `json:"name"`
-	Schedule     string    `json:"schedule"`
-	Command      string    `json:"command"`
-	Owner        string    `json:"owner"`
-	RunAsUser    string    `json:"run_as_user"`
-	SuccessCount int       `json:"success_count"`
-	ErrorCount   int       `json:"error_count"`
-	LastSuccess  time.Time `json:"last_success"`
-	LastError    time.Time `json:"last_error"`
-	Tags
+	Name         string            `json:"name"`
+	Schedule     string            `json:"schedule"`
+	Command      string            `json:"command"`
+	Owner        string            `json:"owner"`
+	OwnerEmail   string            `json:"owner_email"`
+	RunAsUser    string            `json:"run_as_user"`
+	SuccessCount int               `json:"success_count"`
+	ErrorCount   int               `json:"error_count"`
+	LastSuccess  time.Time         `json:"last_success"`
+	LastError    time.Time         `json:"last_error"`
+	Disabled     bool              `json:"disabled"`
+	Tags         map[string]string `json:"tags"`
 
 	Executions []*Execution `json:ommit`
 }

@@ -40,7 +40,9 @@ func (s *ServerCommand) Run(args []string) int {
 		return 1
 	}
 
+	// TODO: We have here three init methods, decide what's best
 	go serverInit()
+	sched.Load()
 	InitSerfAgent()
 	return 0
 }
@@ -56,6 +58,7 @@ func serverInit() {
 	r.HandleFunc("/", IndexHandler)
 	s := r.PathPrefix("/jobs").Subrouter()
 	s.HandleFunc("/", JobCreateHandler).Methods("POST")
+	s.HandleFunc("/", JobsHandler).Methods("GET")
 
 	middle := interpose.New()
 	middle.UseHandler(r)
@@ -80,8 +83,27 @@ func serverInit() {
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
+
+	res := `{
+  "status": 200,
+  "name": ` + config.GetString("node_name") + `
+}
+`
+	if _, err := fmt.Fprintln(w, res); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func JobsHandler(w http.ResponseWriter, r *http.Request) {
+	jobs, err := etcd.GetJobs()
+	if err != nil {
+		log.Error(err)
+	}
+	log.Debug(jobs)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(jobs); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 }
 
@@ -89,33 +111,48 @@ func JobCreateHandler(w http.ResponseWriter, r *http.Request) {
 	var job Job
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 	if err := r.Body.Close(); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 	if err := json.Unmarshal(body, &job); err != nil {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(422) // unprocessable entity
 		if err := json.NewEncoder(w).Encode(err); err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
+		return
 	}
-	err = etcd.SetJob(&job)
-	if err != nil {
-		panic(err)
+
+	// Save the new job to etcd
+	if err = etcd.SetJob(&job); err != nil {
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(422) // unprocessable entity
+		if err := json.NewEncoder(w).Encode(err); err != nil {
+			log.Fatal(err)
+		}
+		return
 	}
+
+	// Schedule the new job
+	sched.Reload()
+
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)
 	if _, err := fmt.Fprintf(w, `{"result": "ok"}`); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 }
 
-func FailuresHandler(w http.ResponseWriter, r *http.Request) {
+func ExecutionsHandler(w http.ResponseWriter, r *http.Request) {
+	executions, err := etcd.GetExecutions()
+	if err != nil {
+		log.Error(err)
+	}
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(failures); err != nil {
+	if err := json.NewEncoder(w).Encode(executions); err != nil {
 		panic(err)
 	}
 }
