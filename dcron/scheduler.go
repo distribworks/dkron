@@ -25,26 +25,15 @@ func (s *Scheduler) Load() {
 	s.Cron = cron.New()
 
 	for _, job := range jobs {
-		log.Debugf("Adding job to the scheduler: %v", job)
-		// s.AddJob(job)
+		log.Debugf("Adding job to cron: %v", job)
 		s.Cron.AddJob(job.Schedule, job)
 	}
 	s.Cron.Start()
-
-	for _, e := range s.Cron.Entries() {
-		log.Debugf("Cronjob with job: %v", e.Job)
-	}
 }
 
 func (s *Scheduler) Reload() {
 	s.Cron.Stop()
 	s.Load()
-}
-
-func (s *Scheduler) AddJob(job *Job) {
-	s.Cron.Stop()
-	s.Cron = cron.New()
-	s.Cron.AddJob(job.Schedule, job)
 }
 
 type Job struct {
