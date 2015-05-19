@@ -40,8 +40,7 @@ func (s *ServerCommand) Run(args []string) int {
 		return 1
 	}
 
-	// TODO: We have here three init methods, decide what's best
-	go serverInit()
+	go s.ServeHTTP()
 	sched.Load()
 	InitSerfAgent()
 	return 0
@@ -51,14 +50,12 @@ func (s *ServerCommand) Synopsis() string {
 	return "Run dcron server"
 }
 
-func serverInit() {
-	loadConfig()
-
+func (s *ServerCommand) ServeHTTP() {
 	r := mux.NewRouter().StrictSlash(true)
 	r.HandleFunc("/", IndexHandler)
-	s := r.PathPrefix("/jobs").Subrouter()
-	s.HandleFunc("/", JobCreateHandler).Methods("POST")
-	s.HandleFunc("/", JobsHandler).Methods("GET")
+	sub := r.PathPrefix("/jobs").Subrouter()
+	sub.HandleFunc("/", JobCreateHandler).Methods("POST")
+	sub.HandleFunc("/", JobsHandler).Methods("GET")
 
 	middle := interpose.New()
 	middle.UseHandler(r)
