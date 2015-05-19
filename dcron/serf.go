@@ -84,11 +84,3 @@ type Event struct {
 	Name    string
 	Payload []byte
 }
-
-// func eventRouter() {
-// 	e := make(chan<- map[string]interface{}, 1)
-//
-// 	sh, err := serf.Stream("*", e)
-//
-//
-// }
