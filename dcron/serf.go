@@ -30,7 +30,7 @@ func spawnProc(proc string) error {
 }
 
 func InitSerfAgent() {
-	go spawnProc("./bin/serf agent -config-file=config/serf.json")
+	go spawnProc("./bin/serf agent")
 	serf = initSerfClient()
 	defer serf.Close()
 	ch := make(chan map[string]interface{}, 1)
@@ -61,12 +61,13 @@ func InitSerfAgent() {
 }
 
 func initSerfClient() *client.RPCClient {
-	serfClient, err := client.NewRPCClient("127.0.0.1:7373")
+	serfConfig := &client.Config{Addr: config.GetString("rpc_addr")}
+	serfClient, err := client.ClientFromConfig(serfConfig)
 	// wait for serf
 	for i := 0; err != nil && i < 5; i = i + 1 {
 		log.Debug(err)
 		time.Sleep(1 * time.Second)
-		serfClient, err = client.NewRPCClient("127.0.0.1:7373")
+		serfClient, err = client.ClientFromConfig(serfConfig)
 		log.Debugf("Connect to serf agent retry: %d", i)
 	}
 	if err != nil {
