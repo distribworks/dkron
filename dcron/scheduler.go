@@ -50,7 +50,7 @@ type Job struct {
 	Disabled     bool              `json:"disabled"`
 	Tags         map[string]string `json:"tags"`
 
-	Executions []*Execution `json:ommit`
+	Executions []*Execution `json:"-"`
 }
 
 func (j Job) Run() {
@@ -61,5 +61,5 @@ type Execution struct {
 	StartedAt  time.Time `json:"started_at"`
 	FinishedAt time.Time `json:"finished_at"`
 	ExitStatus int       `json:"exit_status"`
-	Job        *Job      `json:ommit`
+	Job        *Job      `json:"-"`
 }
