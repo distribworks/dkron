@@ -74,19 +74,23 @@ func (s *ServerCommand) ServeHTTP() {
 	} else {
 		srv.ListenAndServe()
 	}
-	log.Debug("Exiting")
+	log.Debug("Exiting HTTP server")
 }
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 
-	res := `{
-  "status": 200,
-  "name": ` + config.GetString("node_name") + `
-}
-`
-	if _, err := fmt.Fprintln(w, res); err != nil {
+	stats, err := serf.Stats()
+	if err != nil {
+		if err := json.NewEncoder(w).Encode(err); err != nil {
+			log.Fatal(err)
+		}
+		return
+	}
+
+	statsJson, _ := json.MarshalIndent(stats, "", "\t")
+	if _, err := fmt.Fprintf(w, string(statsJson)); err != nil {
 		log.Fatal(err)
 	}
 }
