@@ -9,6 +9,10 @@ var config *viper.Viper
 
 func init() {
 	config = viper.New()
+
+	config.SetDefault("rpc_addr", "127.0.0.1:7373")
+	config.SetDefault("discover", "dcron")
+
 	config.SetConfigName("dcron")    // name of config file (without extension)
 	config.AddConfigPath("./config") // call multiple times to add many search paths
 	err := config.ReadInConfig()     // Find and read the config file

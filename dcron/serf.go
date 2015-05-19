@@ -6,6 +6,7 @@ import (
 	serfs "github.com/hashicorp/serf/serf"
 	"os"
 	"os/exec"
+	"strings"
 	"time"
 )
 
@@ -30,7 +31,12 @@ func spawnProc(proc string) error {
 }
 
 func InitSerfAgent() {
-	go spawnProc("./bin/serf agent")
+	discover := ""
+	if config.GetString("discover") != "" {
+		discover = " -discover=" + config.GetString("discover")
+	}
+	serfArgs := []string{discover, "-rpc-addr=" + config.GetString("rpc_addr"), "-config-file=config/dcron.json"}
+	go spawnProc("./bin/serf agent" + strings.Join(serfArgs, " "))
 	serf = initSerfClient()
 	defer serf.Close()
 	ch := make(chan map[string]interface{}, 1)
