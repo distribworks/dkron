@@ -7,13 +7,40 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"syscall"
 	"time"
 )
 
-var serf *client.RPCClient
+type serfManager struct {
+	*client.RPCClient
+	Agent *exec.Cmd
+}
+
+var serf *serfManager
+
+func (sm *serfManager) Terminate() {
+	sm.Agent.Process.Signal(syscall.SIGKILL)
+}
+
+func NewSerfClient(agent *exec.Cmd) *serfManager {
+	serfConfig := &client.Config{Addr: config.GetString("rpc_addr")}
+	sc, err := client.ClientFromConfig(serfConfig)
+	// wait for serf
+	for i := 0; err != nil && i < 5; i = i + 1 {
+		log.Debug(err)
+		time.Sleep(1 * time.Second)
+		sc, err = client.ClientFromConfig(serfConfig)
+		log.Debugf("Connect to serf agent retry: %d", i)
+	}
+	if err != nil {
+		log.Error("Error connecting to serf instance", err)
+		return nil
+	}
+	return &serfManager{sc, agent}
+}
 
 // spawn command that specified as proc.
-func spawnProc(proc string) error {
+func spawnProc(proc string) (*exec.Cmd, error) {
 	cs := []string{"/bin/bash", "-c", proc}
 	cmd := exec.Command(cs[0], cs[1:]...)
 	cmd.Stdin = nil
@@ -25,20 +52,22 @@ func spawnProc(proc string) error {
 	err := cmd.Start()
 	if err != nil {
 		fmt.Fprintf(log.Writer(), "Failed to start %s: %s\n", proc, err)
-		return err
+		return nil, err
 	}
-	return cmd.Wait()
+	return cmd, nil
 }
 
-func InitSerfAgent() {
+func initSerf() {
 	discover := ""
 	if config.GetString("discover") != "" {
 		discover = " -discover=" + config.GetString("discover")
 	}
 	serfArgs := []string{discover, "-rpc-addr=" + config.GetString("rpc_addr"), "-config-file=config/dcron.json"}
-	go spawnProc("./bin/serf agent" + strings.Join(serfArgs, " "))
-	serf = initSerfClient()
+	agent, err := spawnProc("./bin/serf agent" + strings.Join(serfArgs, " "))
+
+	serf = NewSerfClient(agent)
 	defer serf.Close()
+
 	ch := make(chan map[string]interface{}, 1)
 
 	sh, err := serf.Stream("*", ch)
@@ -64,23 +93,6 @@ func InitSerfAgent() {
 			}
 		}
 	}
-}
-
-func initSerfClient() *client.RPCClient {
-	serfConfig := &client.Config{Addr: config.GetString("rpc_addr")}
-	serfClient, err := client.ClientFromConfig(serfConfig)
-	// wait for serf
-	for i := 0; err != nil && i < 5; i = i + 1 {
-		log.Debug(err)
-		time.Sleep(1 * time.Second)
-		serfClient, err = client.ClientFromConfig(serfConfig)
-		log.Debugf("Connect to serf agent retry: %d", i)
-	}
-	if err != nil {
-		log.Error("Error connecting to serf instance", err)
-		return nil
-	}
-	return serfClient
 }
 
 type Event struct {

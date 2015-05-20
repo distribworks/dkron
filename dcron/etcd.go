@@ -79,3 +79,14 @@ func (e *etcdClient) GetExecutions() ([]*Execution, error) {
 	}
 	return executions, nil
 }
+
+func (e *etcdClient) GetLeader() string {
+	res, err := e.Client.Get(keyspace+"/leader", false, false)
+	if err != nil {
+		log.Debug(err)
+		return ""
+	}
+
+	log.Debugf("Retrieved leader from datastore: %v", res.Node.Value)
+	return res.Node.Value
+}

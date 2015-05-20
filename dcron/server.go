@@ -12,6 +12,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -40,9 +41,31 @@ func (s *ServerCommand) Run(args []string) int {
 		return 1
 	}
 
-	go s.ServeHTTP()
+	var wg sync.WaitGroup
+	wg.Add(2)
+
+	s.ElectLeader()
+
+	go func() {
+		defer func() {
+			serf.Terminate()
+		}()
+		s.ServeHTTP()
+		wg.Done()
+	}()
+
 	sched.Load()
-	InitSerfAgent()
+
+	go func() {
+		defer func() {
+			serf.Terminate()
+		}()
+		initSerf()
+		wg.Done()
+	}()
+
+	wg.Wait()
+
 	return 0
 }
 
@@ -156,4 +179,18 @@ func ExecutionsHandler(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(executions); err != nil {
 		panic(err)
 	}
+}
+
+// Get leader key and store it globally
+// If it exists check agains the member list if the member is still there
+// If it is, do nothing
+// If not exists try to CompareAndSwap with the current node_name setting the self node_name
+// If successful load the scheduler
+// On failure do nothing and listen for member-leave events
+func (s *ServerCommand) ElectLeader() {
+	leader := etcd.GetLeader()
+	if leader != "" {
+
+	}
+	log.Debug(leader)
 }
