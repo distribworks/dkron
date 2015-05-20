@@ -22,7 +22,7 @@ func (sm *serfManager) Terminate() {
 	sm.Agent.Process.Signal(syscall.SIGKILL)
 }
 
-func NewSerfClient(agent *exec.Cmd) *serfManager {
+func NewSerfManager(agent *exec.Cmd) *serfManager {
 	serfConfig := &client.Config{Addr: config.GetString("rpc_addr")}
 	sc, err := client.ClientFromConfig(serfConfig)
 	// wait for serf
@@ -65,7 +65,7 @@ func initSerf() {
 	serfArgs := []string{discover, "-rpc-addr=" + config.GetString("rpc_addr"), "-config-file=config/dcron.json"}
 	agent, err := spawnProc("./bin/serf agent" + strings.Join(serfArgs, " "))
 
-	serf = NewSerfClient(agent)
+	serf = NewSerfManager(agent)
 	defer serf.Close()
 
 	ch := make(chan map[string]interface{}, 1)
