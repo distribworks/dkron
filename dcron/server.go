@@ -44,8 +44,6 @@ func (s *ServerCommand) Run(args []string) int {
 	var wg sync.WaitGroup
 	wg.Add(2)
 
-	s.ElectLeader()
-
 	go func() {
 		defer func() {
 			serf.Terminate()
@@ -60,7 +58,9 @@ func (s *ServerCommand) Run(args []string) int {
 		defer func() {
 			serf.Terminate()
 		}()
-		initSerf()
+		// initSerf()
+		s.ElectLeader()
+		log.Debug("meeeeeeeeeeeeeeeeee")
 		wg.Done()
 	}()
 
@@ -188,9 +188,18 @@ func ExecutionsHandler(w http.ResponseWriter, r *http.Request) {
 // If successful load the scheduler
 // On failure do nothing and listen for member-leave events
 func (s *ServerCommand) ElectLeader() {
+	stats, err := serf.Stats()
+	if err != nil {
+		log.Error(err)
+	}
+
+	nodeName := stats["agent"]["name"]
 	leader := etcd.GetLeader()
 	if leader != "" {
-
+		res, err := etcd.Client.CompareAndSwap(keyspace+"/leader", nodeName, 0, leader, 0)
+		if err != nil {
+			log.Error(err)
+		}
+		log.Debugln(leader, res)
 	}
-	log.Debug(leader)
 }

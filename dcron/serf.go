@@ -19,6 +19,7 @@ type serfManager struct {
 var serf *serfManager
 
 func (sm *serfManager) Terminate() {
+	serf.Close()
 	sm.Agent.Process.Signal(syscall.SIGKILL)
 }
 
@@ -57,42 +58,46 @@ func spawnProc(proc string) (*exec.Cmd, error) {
 	return cmd, nil
 }
 
-func initSerf() {
+func init() {
 	discover := ""
 	if config.GetString("discover") != "" {
 		discover = " -discover=" + config.GetString("discover")
 	}
 	serfArgs := []string{discover, "-rpc-addr=" + config.GetString("rpc_addr"), "-config-file=config/dcron.json"}
 	agent, err := spawnProc("./bin/serf agent" + strings.Join(serfArgs, " "))
-
-	serf = NewSerfManager(agent)
-	defer serf.Close()
-
-	ch := make(chan map[string]interface{}, 1)
-
-	sh, err := serf.Stream("*", ch)
 	if err != nil {
 		log.Error(err)
 	}
-	defer serf.Stop(sh)
 
-	for {
-		select {
-		case event := <-ch:
-			for key, val := range event {
-				switch ev := val.(type) {
-				case serfs.MemberEvent:
-					log.Debug(ev)
-				default:
-					log.Debugf("Receiving event: %s => %v of type %T", key, val, val)
+	serf = NewSerfManager(agent)
+
+	go func() {
+		ch := make(chan map[string]interface{}, 1)
+
+		sh, err := serf.Stream("*", ch)
+		if err != nil {
+			log.Error(err)
+		}
+		defer serf.Stop(sh)
+
+		for {
+			select {
+			case event := <-ch:
+				for key, val := range event {
+					switch ev := val.(type) {
+					case serfs.MemberEvent:
+						log.Debug(ev)
+					default:
+						log.Debugf("Receiving event: %s => %v of type %T", key, val, val)
+					}
+				}
+				if event["Event"] == "query" {
+					log.Debug(string(event["Payload"].([]byte)))
+					serf.Respond(uint64(event["ID"].(int64)), []byte("Peetttee"))
 				}
 			}
-			if event["Event"] == "query" {
-				log.Debug(string(event["Payload"].([]byte)))
-				serf.Respond(uint64(event["ID"].(int64)), []byte("Peetttee"))
-			}
 		}
-	}
+	}()
 }
 
 type Event struct {
