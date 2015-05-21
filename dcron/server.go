@@ -28,10 +28,8 @@ type ServerCommand struct {
 func (s *ServerCommand) Help() string {
 	helpText := `
 Usage: dcron server [options]
-	Provides debugging information for operators
+	Run dcron server
 Options:
-  -format                  If provided, output is returned in the specified
-                           format. Valid formats are 'json', and 'text' (default)
 `
 	return strings.TrimSpace(helpText)
 }

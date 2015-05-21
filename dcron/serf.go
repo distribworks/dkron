@@ -27,7 +27,7 @@ func (sm *serfManager) Start() {
 	node := "-node=" + config.GetString("node")
 
 	serfArgs := []string{discover, node, rpc_addr, bind, "-config-file=config/dcron.json"}
-	agent, err := spawnProc("./bin/serf agent" + strings.Join(serfArgs, " "))
+	agent, err := spawnProc("./bin/serf agent " + strings.Join(serfArgs, " "))
 	if err != nil {
 		log.Error(err)
 	}
