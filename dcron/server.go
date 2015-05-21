@@ -4,21 +4,25 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/carbocation/interpose"
-	"github.com/gorilla/mux"
-	"github.com/mitchellh/cli"
-	"github.com/tylerb/graceful"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/Sirupsen/logrus"
+	"github.com/carbocation/interpose"
+	"github.com/gorilla/mux"
+	serfs "github.com/hashicorp/serf/serf"
+	"github.com/mitchellh/cli"
+	"github.com/tylerb/graceful"
 )
 
 // ServerCommand run dcron server
 type ServerCommand struct {
-	Ui cli.Ui
+	Ui     cli.Ui
+	Leader string
 }
 
 func (s *ServerCommand) Help() string {
@@ -42,7 +46,7 @@ func (s *ServerCommand) Run(args []string) int {
 	}
 
 	var wg sync.WaitGroup
-	wg.Add(2)
+	wg.Add(1)
 
 	go func() {
 		defer func() {
@@ -52,17 +56,14 @@ func (s *ServerCommand) Run(args []string) int {
 		wg.Done()
 	}()
 
-	sched.Load()
-
-	go func() {
-		defer func() {
-			serf.Terminate()
-		}()
-		// initSerf()
-		s.ElectLeader()
-		log.Debug("meeeeeeeeeeeeeeeeee")
-		wg.Done()
+	serf.Start()
+	defer func() {
+		serf.Terminate()
 	}()
+	if s.ElectLeader() {
+		sched.Start()
+	}
+	s.ListenEvents()
 
 	wg.Wait()
 
@@ -85,7 +86,7 @@ func (s *ServerCommand) ServeHTTP() {
 
 	srv := &graceful.Server{
 		Timeout: 1 * time.Second,
-		Server:  &http.Server{Addr: ":8080", Handler: middle},
+		Server:  &http.Server{Addr: ":8081", Handler: middle},
 	}
 
 	log.Infoln("Running HTTP server on 8080")
@@ -160,7 +161,7 @@ func JobCreateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Schedule the new job
-	sched.Reload()
+	sched.Restart()
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)
@@ -181,25 +182,94 @@ func ExecutionsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Get leader key and store it globally
-// If it exists check agains the member list if the member is still there
-// If it is, do nothing
-// If not exists try to CompareAndSwap with the current node_name setting the self node_name
-// If successful load the scheduler
-// On failure do nothing and listen for member-leave events
-func (s *ServerCommand) ElectLeader() {
+// dcron leader init routine
+func (s *ServerCommand) ElectLeader() bool {
 	stats, err := serf.Stats()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	memberName := stats["agent"]["name"]
+	leader := etcd.GetLeader()
+
+	if leader != "" {
+		if leader != memberName && !s.isMember(leader) {
+			log.Debug("Trying to set itself as leader")
+			res, err := etcd.Client.CompareAndSwap(keyspace+"/leader", memberName, 0, leader, 0)
+			if err != nil {
+				log.Error(err)
+				return false
+			}
+			log.WithFields(logrus.Fields{
+				"old_leader": res.PrevNode.Value,
+				"new_leader": res.Node.Value,
+			}).Debug("Leader Swap")
+		} else {
+			log.Printf("This node is already the leader")
+		}
+	} else {
+		log.Debug("Trying to set itself as leader")
+		res, err := etcd.Client.Create(keyspace+"/leader", memberName, 0)
+		if err != nil {
+			log.Error(res, err)
+			return false
+		}
+		s.Leader = memberName
+		log.Printf("Successfully set %s as dcron leader", memberName)
+	}
+
+	return true
+}
+
+func (s *ServerCommand) isMember(memberName string) bool {
+	members, err := serf.Members()
+	if err != nil {
+		log.Fatal("Error listing cluster members")
+	}
+
+	for _, member := range members {
+		if member.Name == memberName {
+			return true
+		}
+	}
+	return false
+}
+
+// dcron leader init routine
+func (s *ServerCommand) ListenEvents() {
+	ch := make(chan map[string]interface{}, 1)
+
+	sh, err := serf.Stream("*", ch)
 	if err != nil {
 		log.Error(err)
 	}
+	defer serf.Stop(sh)
 
-	nodeName := stats["agent"]["name"]
-	leader := etcd.GetLeader()
-	if leader != "" {
-		res, err := etcd.Client.CompareAndSwap(keyspace+"/leader", nodeName, 0, leader, 0)
-		if err != nil {
-			log.Error(err)
+	for {
+		select {
+		case event := <-ch:
+			for key, val := range event {
+				switch ev := val.(type) {
+				case serfs.MemberEvent:
+					if ev.Type == serfs.EventMemberLeave {
+						for _, member := range ev.Members {
+							if member.Name == s.Leader {
+								s.ElectLeader()
+							}
+						}
+					}
+
+					log.Debug(ev)
+				default:
+					log.Debugf("Receiving event: %s => %v of type %T", key, val, val)
+				}
+			}
+			if event["Event"] == "query" {
+				if event["Payload"] != nil {
+					log.Debug(string(event["Payload"].([]byte)))
+					serf.Respond(uint64(event["ID"].(int64)), []byte("Peetttee"))
+				}
+			}
 		}
-		log.Debugln(leader, res)
 	}
 }
