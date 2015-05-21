@@ -7,14 +7,23 @@ import (
 	"github.com/spf13/viper"
 )
 
-var config *viper.Viper
+var config = &Config{}
+
+type Config struct {
+	*viper.Viper
+
+	RPCAddr  string
+	Node     string
+	Bind     string
+	HTTPAddr string
+}
 
 func init() {
 	hostname, err := os.Hostname()
 	if err != nil {
 		panic(err)
 	}
-	config = viper.New()
+	config.Viper = viper.New()
 
 	config.SetDefault("rpc_addr", "127.0.0.1:7373")
 	config.SetDefault("discover", "dcron")

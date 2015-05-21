@@ -22,11 +22,13 @@ func (sm *serfManager) Start() {
 	if config.GetString("discover") != "" {
 		discover = " -discover=" + config.GetString("discover")
 	}
-	bind := "-bind= " + config.GetString("bind")
+	bind := "-bind=" + config.GetString("bind")
 	rpc_addr := "-rpc-addr=" + config.GetString("rpc_addr")
 	node := "-node=" + config.GetString("node")
 
 	serfArgs := []string{discover, node, rpc_addr, bind, "-config-file=config/dcron.json"}
+
+	log.Debug("./bin/serf agent " + strings.Join(serfArgs, " "))
 	agent, err := spawnProc("./bin/serf agent " + strings.Join(serfArgs, " "))
 	if err != nil {
 		log.Error(err)

@@ -35,10 +35,12 @@ Options:
 }
 
 func (s *ServerCommand) Run(args []string) int {
-	var format string
 	cmdFlags := flag.NewFlagSet("server", flag.ContinueOnError)
 	cmdFlags.Usage = func() { s.Ui.Output(s.Help()) }
-	cmdFlags.StringVar(&format, "format", "text", "output format")
+	cmdFlags.StringVar(&config.Node, "node", "text", "node name")
+	cmdFlags.StringVar(&config.Bind, "bind", "text", "bind address")
+	cmdFlags.StringVar(&config.RPCAddr, "rpc-addr", "text", "RPC address")
+	cmdFlags.StringVar(&config.HTTPAddr, "http-addr", "text", "HTTP address")
 	if err := cmdFlags.Parse(args); err != nil {
 		return 1
 	}
