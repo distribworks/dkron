@@ -1,9 +1,10 @@
 package dcron
 
 import (
-	"bitbucket.org/victorcoder/dcron/cron"
 	"fmt"
 	"time"
+
+	"bitbucket.org/victorcoder/dcron/cron"
 )
 
 var sched = NewScheduler()
@@ -16,7 +17,7 @@ func NewScheduler() *Scheduler {
 	return &Scheduler{}
 }
 
-func (s *Scheduler) Load() {
+func (s *Scheduler) Start() {
 	jobs, err := etcd.GetJobs()
 	if err != nil {
 		log.Fatal(err)
@@ -31,9 +32,9 @@ func (s *Scheduler) Load() {
 	s.Cron.Start()
 }
 
-func (s *Scheduler) Reload() {
+func (s *Scheduler) Restart() {
 	s.Cron.Stop()
-	s.Load()
+	s.Start()
 }
 
 type Job struct {
