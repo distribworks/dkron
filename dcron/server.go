@@ -83,9 +83,9 @@ func (s *ServerCommand) readConfig(args []string) *Config {
 func (s *ServerCommand) Run(args []string) int {
 	var wg sync.WaitGroup
 
-	s.etcd = NewEtcdClient(s.config.EtcdMachines)
 	s.config = s.readConfig(args)
 	s.serf = NewSerfManager(s.config)
+	s.etcd = NewEtcdClient(s.config.EtcdMachines)
 
 	wg.Add(1)
 	go func() {
