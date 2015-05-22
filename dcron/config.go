@@ -7,11 +7,12 @@ import (
 )
 
 type Config struct {
-	RPCAddr  string `mapstructure:"rpc_addr"`
-	NodeName string `mapstructure:"node_name"`
-	BindAddr string `mapstructure:"bind_addr"`
-	HTTPAddr string `mapstructure:"http_addr"`
-	Discover string `mapstructure:"discover"`
+	RPCAddr      string
+	NodeName     string
+	BindAddr     string
+	HTTPAddr     string
+	Discover     string
+	EtcdMachines []string
 }
 
 func init() {

@@ -27,6 +27,7 @@ type ServerCommand struct {
 	Leader string
 	config *Config
 	serf   *serfManager
+	etcd   *etcdClient
 }
 
 func (s *ServerCommand) Help() string {
@@ -56,27 +57,33 @@ func (s *ServerCommand) readConfig(args []string) *Config {
 	viper.SetDefault("rpc_addr", cmdFlags.Lookup("rpc-addr").Value)
 	cmdFlags.String("http-addr", ":8080", "HTTP address")
 	viper.SetDefault("http_addr", cmdFlags.Lookup("http-addr").Value)
+	cmdFlags.String("discover", "dcron", "mDNS discovery name")
+	viper.SetDefault("discover", cmdFlags.Lookup("discover").Value)
+	cmdFlags.String("etcd-machines", "127.0.0.1:2379", "etcd machines addresses")
+	viper.SetDefault("etcd_machines", cmdFlags.Lookup("etcd-machines").Value)
+
 	// cmdFlags.Var((*AppendSliceValue)(&configFiles), "config-file",
 	// 	"json file to read config from")
 	// cmdFlags.Var((*AppendSliceValue)(&configFiles), "config-dir",
 	// 	"directory of json files to read")
-	cmdFlags.String("discover", "dcron", "mDNS discovery name")
-	viper.SetDefault("discover", cmdFlags.Lookup("discover").Value)
+
 	if err := cmdFlags.Parse(args); err != nil {
 		log.Fatal(err)
 	}
 
 	return &Config{
-		NodeName: viper.GetString("node_name"),
-		BindAddr: viper.GetString("bind_addr"),
-		RPCAddr:  viper.GetString("rpc_addr"),
-		HTTPAddr: viper.GetString("http_addr"),
+		NodeName:     viper.GetString("node_name"),
+		BindAddr:     viper.GetString("bind_addr"),
+		RPCAddr:      viper.GetString("rpc_addr"),
+		HTTPAddr:     viper.GetString("http_addr"),
+		EtcdMachines: viper.GetStringSlice("etcd_machines"),
 	}
 }
 
 func (s *ServerCommand) Run(args []string) int {
 	var wg sync.WaitGroup
 
+	s.etcd = NewEtcdClient(s.config.EtcdMachines)
 	s.config = s.readConfig(args)
 	s.serf = NewSerfManager(s.config)
 
@@ -94,7 +101,11 @@ func (s *ServerCommand) Run(args []string) int {
 		s.serf.Terminate()
 	}()
 	if s.ElectLeader() {
-		sched.Start()
+		jobs, err := s.etcd.GetJobs()
+		if err != nil {
+			log.Fatal(err)
+		}
+		sched.Start(jobs)
 	}
 	s.ListenEvents()
 
@@ -111,8 +122,8 @@ func (s *ServerCommand) ServeHTTP() {
 	r := mux.NewRouter().StrictSlash(true)
 	r.HandleFunc("/", s.IndexHandler)
 	sub := r.PathPrefix("/jobs").Subrouter()
-	sub.HandleFunc("/", JobCreateHandler).Methods("POST")
-	sub.HandleFunc("/", JobsHandler).Methods("GET")
+	sub.HandleFunc("/", s.JobCreateHandler).Methods("POST")
+	sub.HandleFunc("/", s.JobsHandler).Methods("GET")
 
 	middle := interpose.New()
 	middle.UseHandler(r)
@@ -152,8 +163,8 @@ func (s *ServerCommand) IndexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func JobsHandler(w http.ResponseWriter, r *http.Request) {
-	jobs, err := etcd.GetJobs()
+func (s *ServerCommand) JobsHandler(w http.ResponseWriter, r *http.Request) {
+	jobs, err := s.etcd.GetJobs()
 	if err != nil {
 		log.Error(err)
 	}
@@ -165,7 +176,7 @@ func JobsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func JobCreateHandler(w http.ResponseWriter, r *http.Request) {
+func (s *ServerCommand) JobCreateHandler(w http.ResponseWriter, r *http.Request) {
 	var job Job
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
@@ -184,7 +195,7 @@ func JobCreateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Save the new job to etcd
-	if err = etcd.SetJob(&job); err != nil {
+	if err = s.etcd.SetJob(&job); err != nil {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(422) // unprocessable entity
 		if err := json.NewEncoder(w).Encode(err); err != nil {
@@ -194,7 +205,11 @@ func JobCreateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Schedule the new job
-	sched.Restart()
+	jobs, err := s.etcd.GetJobs()
+	if err != nil {
+		log.Fatal(err)
+	}
+	sched.Restart(jobs)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)
@@ -203,8 +218,8 @@ func JobCreateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func ExecutionsHandler(w http.ResponseWriter, r *http.Request) {
-	executions, err := etcd.GetExecutions()
+func (s *ServerCommand) ExecutionsHandler(w http.ResponseWriter, r *http.Request) {
+	executions, err := s.etcd.GetExecutions()
 	if err != nil {
 		log.Error(err)
 	}
@@ -223,12 +238,12 @@ func (s *ServerCommand) ElectLeader() bool {
 	}
 
 	memberName := stats["agent"]["name"]
-	leader := etcd.GetLeader()
+	leader := s.etcd.GetLeader()
 
 	if leader != "" {
 		if leader != memberName && !s.isMember(leader) {
 			log.Debug("Trying to set itself as leader")
-			res, err := etcd.Client.CompareAndSwap(keyspace+"/leader", memberName, 0, leader, 0)
+			res, err := s.etcd.Client.CompareAndSwap(keyspace+"/leader", memberName, 0, leader, 0)
 			if err != nil {
 				log.Error(err)
 				return false
@@ -242,7 +257,7 @@ func (s *ServerCommand) ElectLeader() bool {
 		}
 	} else {
 		log.Debug("Trying to set itself as leader")
-		res, err := etcd.Client.Create(keyspace+"/leader", memberName, 0)
+		res, err := s.etcd.Client.Create(keyspace+"/leader", memberName, 0)
 		if err != nil {
 			log.Error(res, err)
 			return false
