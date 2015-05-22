@@ -17,12 +17,7 @@ func NewScheduler() *Scheduler {
 	return &Scheduler{}
 }
 
-func (s *Scheduler) Start() {
-	jobs, err := etcd.GetJobs()
-	if err != nil {
-		log.Fatal(err)
-	}
-
+func (s *Scheduler) Start(jobs []*Job) {
 	s.Cron = cron.New()
 
 	for _, job := range jobs {
@@ -32,9 +27,9 @@ func (s *Scheduler) Start() {
 	s.Cron.Start()
 }
 
-func (s *Scheduler) Restart() {
+func (s *Scheduler) Restart(jobs []*Job) {
 	s.Cron.Stop()
-	s.Start()
+	s.Start(jobs)
 }
 
 type Job struct {

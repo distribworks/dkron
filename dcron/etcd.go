@@ -5,15 +5,13 @@ import (
 	etcdc "github.com/coreos/go-etcd/etcd"
 )
 
-var machines = []string{"http://127.0.0.1:2379"}
-var etcd = NewClient(machines)
-var keyspace = "/dcron"
+const keyspace = "/dcron"
 
 type etcdClient struct {
 	Client *etcdc.Client
 }
 
-func NewClient(machines []string) *etcdClient {
+func NewEtcdClient(machines []string) *etcdClient {
 	return &etcdClient{Client: etcdc.NewClient(machines)}
 }
 
