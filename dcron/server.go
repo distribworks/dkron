@@ -47,26 +47,30 @@ func (s *ServerCommand) readConfig(args []string) *Config {
 
 	cmdFlags := flag.NewFlagSet("server", flag.ContinueOnError)
 	cmdFlags.Usage = func() { s.Ui.Output(s.Help()) }
-	viper.SetDefault("node_name", *cmdFlags.String("node", hostname, "node name"))
-	viper.SetDefault("bind_addr", *cmdFlags.String("bind", "0.0.0.0:7946", "address to bind listeners to"))
-	viper.SetDefault("rpc_addr", *cmdFlags.String("rpc-addr", "127.0.0.1:7373", "RPC address"))
-	viper.SetDefault("http_addr", *cmdFlags.String("http-addr", ":8080", "HTTP address"))
+	cmdFlags.String("node", hostname, "node name")
+	viper.SetDefault("node_name", cmdFlags.Lookup("node").Value)
+	cmdFlags.String("bind", "0.0.0.0:7946", "address to bind listeners to")
+	viper.SetDefault("bind_addr", cmdFlags.Lookup("bind").Value)
+	cmdFlags.String("rpc-addr", "127.0.0.1:7373", "RPC address")
+	viper.SetDefault("rpc_addr", cmdFlags.Lookup("rpc-addr").Value)
+	cmdFlags.String("http-addr", ":8080", "HTTP address")
+	viper.SetDefault("http_addr", cmdFlags.Lookup("http-addr").Value)
 	// cmdFlags.Var((*AppendSliceValue)(&configFiles), "config-file",
 	// 	"json file to read config from")
 	// cmdFlags.Var((*AppendSliceValue)(&configFiles), "config-dir",
 	// 	"directory of json files to read")
-	viper.SetDefault("discover", *cmdFlags.String("discover", "dcron", "mDNS discovery name"))
+	cmdFlags.String("discover", "dcron", "mDNS discovery name")
+	viper.SetDefault("discover", cmdFlags.Lookup("discover").Value)
 	if err := cmdFlags.Parse(args); err != nil {
 		log.Fatal(err)
 	}
 
-	var config *Config
-	err = viper.Marshal(&config)
-	if err != nil {
-		log.Fatalf("unable to decode into struct, %v", err)
+	return &Config{
+		NodeName: viper.GetString("node_name"),
+		BindAddr: viper.GetString("bind_addr"),
+		RPCAddr:  viper.GetString("rpc_addr"),
+		HTTPAddr: viper.GetString("http_addr"),
 	}
-
-	return config
 }
 
 func (s *ServerCommand) Run(args []string) int {
