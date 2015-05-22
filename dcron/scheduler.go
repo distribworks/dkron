@@ -55,12 +55,12 @@ type Job struct {
 }
 
 func (j Job) Run() {
-	defer func() {
-		if err := recover(); err != nil {
-			fmt.Println("Error in job execution", err)
-			serf.Terminate()
-		}
-	}()
+	// defer func() {
+	// 	if err := recover(); err != nil {
+	// 		fmt.Println("Error in job execution", err)
+	// 		serf.Terminate()
+	// 	}
+	// }()
 	fmt.Println("Running: " + j.Command)
 }
 

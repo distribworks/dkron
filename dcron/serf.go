@@ -11,20 +11,25 @@ import (
 
 type serfManager struct {
 	*client.RPCClient
-	Agent *exec.Cmd
+	Agent  *exec.Cmd
+	config *Config
 }
 
-var serf = &serfManager{}
+// var serf = &serfManager{}
+
+func NewSerfManager(conf *Config) *serfManager {
+	return &serfManager{config: conf}
+}
 
 // It start the local serf agent waits until it's started to connect the RPC client.
 func (sm *serfManager) Start() {
 	discover := ""
-	if config.GetString("discover") != "" {
-		discover = " -discover=" + config.GetString("discover")
+	if sm.config.Discover != "" {
+		discover = " -discover=" + sm.config.Discover
 	}
-	bind := "-bind=" + config.GetString("bind")
-	rpc_addr := "-rpc-addr=" + config.GetString("rpc_addr")
-	node := "-node=" + config.GetString("node")
+	bind := "-bind=" + sm.config.BindAddr
+	rpc_addr := "-rpc-addr=" + sm.config.RPCAddr
+	node := "-node=" + sm.config.NodeName
 
 	serfArgs := []string{discover, node, rpc_addr, bind, "-config-file=config/dcron.json"}
 
@@ -36,7 +41,7 @@ func (sm *serfManager) Start() {
 
 	sm.Agent = agent
 
-	serfConfig := &client.Config{Addr: config.GetString("rpc_addr")}
+	serfConfig := &client.Config{Addr: sm.config.RPCAddr}
 	sc, err := client.ClientFromConfig(serfConfig)
 	// wait for serf
 	for i := 0; err != nil && i < 5; i = i + 1 {

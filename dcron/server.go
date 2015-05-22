@@ -7,6 +7,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"strings"
 	"sync"
 	"time"
@@ -16,6 +17,7 @@ import (
 	"github.com/gorilla/mux"
 	serfs "github.com/hashicorp/serf/serf"
 	"github.com/mitchellh/cli"
+	"github.com/spf13/viper"
 	"github.com/tylerb/graceful"
 )
 
@@ -23,6 +25,7 @@ import (
 type ServerCommand struct {
 	Ui     cli.Ui
 	Leader string
+	serf   *serfManager
 }
 
 func (s *ServerCommand) Help() string {
@@ -34,31 +37,58 @@ Options:
 	return strings.TrimSpace(helpText)
 }
 
-func (s *ServerCommand) Run(args []string) int {
-	cmdFlags := flag.NewFlagSet("server", flag.ContinueOnError)
-	cmdFlags.Usage = func() { s.Ui.Output(s.Help()) }
-	cmdFlags.StringVar(&config.Node, "node", "text", "node name")
-	cmdFlags.StringVar(&config.Bind, "bind", "text", "bind address")
-	cmdFlags.StringVar(&config.RPCAddr, "rpc-addr", "text", "RPC address")
-	cmdFlags.StringVar(&config.HTTPAddr, "http-addr", "text", "HTTP address")
-	if err := cmdFlags.Parse(args); err != nil {
-		return 1
+// readConfig is responsible for setup of our configuration using
+// the command line and any file configs
+func (s *ServerCommand) readConfig(args []string) *Config {
+	hostname, err := os.Hostname()
+	if err != nil {
+		log.Panic(err)
 	}
 
-	var wg sync.WaitGroup
-	wg.Add(1)
+	cmdFlags := flag.NewFlagSet("server", flag.ContinueOnError)
+	cmdFlags.Usage = func() { s.Ui.Output(s.Help()) }
+	viper.SetDefault("node_name", *cmdFlags.String("node", hostname, "node name"))
+	viper.SetDefault("bind_addr", *cmdFlags.String("bind", "0.0.0.0:7946", "address to bind listeners to"))
+	viper.SetDefault("rpc_addr", *cmdFlags.String("rpc-addr", "127.0.0.1:7373", "RPC address"))
+	viper.SetDefault("http_addr", *cmdFlags.String("http-addr", ":8080", "HTTP address"))
+	// cmdFlags.Var((*AppendSliceValue)(&configFiles), "config-file",
+	// 	"json file to read config from")
+	// cmdFlags.Var((*AppendSliceValue)(&configFiles), "config-dir",
+	// 	"directory of json files to read")
+	viper.SetDefault("discover", *cmdFlags.String("discover", "dcron", "mDNS discovery name"))
+	if err := cmdFlags.Parse(args); err != nil {
+		log.Fatal(err)
+	}
 
+	var config *Config
+	err = viper.Marshal(&config)
+	if err != nil {
+		log.Fatalf("unable to decode into struct, %v", err)
+	}
+
+	log.Debug(config)
+	log.Fatal("exit")
+	return config
+}
+
+func (s *ServerCommand) Run(args []string) int {
+	var wg sync.WaitGroup
+
+	config := s.readConfig(args)
+	s.serf = NewSerfManager(config)
+
+	wg.Add(1)
 	go func() {
 		defer func() {
-			serf.Terminate()
+			s.serf.Terminate()
 		}()
 		s.ServeHTTP()
 		wg.Done()
 	}()
 
-	serf.Start()
+	s.serf.Start()
 	defer func() {
-		serf.Terminate()
+		s.serf.Terminate()
 	}()
 	if s.ElectLeader() {
 		sched.Start()
@@ -76,7 +106,7 @@ func (s *ServerCommand) Synopsis() string {
 
 func (s *ServerCommand) ServeHTTP() {
 	r := mux.NewRouter().StrictSlash(true)
-	r.HandleFunc("/", IndexHandler)
+	r.HandleFunc("/", s.IndexHandler)
 	sub := r.PathPrefix("/jobs").Subrouter()
 	sub.HandleFunc("/", JobCreateHandler).Methods("POST")
 	sub.HandleFunc("/", JobsHandler).Methods("GET")
@@ -91,8 +121,8 @@ func (s *ServerCommand) ServeHTTP() {
 
 	log.Infoln("Running HTTP server on 8080")
 
-	certFile := config.GetString("certFile")
-	keyFile := config.GetString("keyFile")
+	certFile := "" //config.GetString("certFile")
+	keyFile := ""  //config.GetString("keyFile")
 	if certFile != "" && keyFile != "" {
 		srv.ListenAndServeTLS(certFile, keyFile)
 	} else {
@@ -101,11 +131,11 @@ func (s *ServerCommand) ServeHTTP() {
 	log.Debug("Exiting HTTP server")
 }
 
-func IndexHandler(w http.ResponseWriter, r *http.Request) {
+func (s *ServerCommand) IndexHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 
-	stats, err := serf.Stats()
+	stats, err := s.serf.Stats()
 	if err != nil {
 		if err := json.NewEncoder(w).Encode(err); err != nil {
 			log.Fatal(err)
@@ -184,7 +214,7 @@ func ExecutionsHandler(w http.ResponseWriter, r *http.Request) {
 
 // dcron leader init routine
 func (s *ServerCommand) ElectLeader() bool {
-	stats, err := serf.Stats()
+	stats, err := s.serf.Stats()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -222,7 +252,7 @@ func (s *ServerCommand) ElectLeader() bool {
 }
 
 func (s *ServerCommand) isMember(memberName string) bool {
-	members, err := serf.Members()
+	members, err := s.serf.Members()
 	if err != nil {
 		log.Fatal("Error listing cluster members")
 	}
@@ -239,11 +269,11 @@ func (s *ServerCommand) isMember(memberName string) bool {
 func (s *ServerCommand) ListenEvents() {
 	ch := make(chan map[string]interface{}, 1)
 
-	sh, err := serf.Stream("*", ch)
+	sh, err := s.serf.Stream("*", ch)
 	if err != nil {
 		log.Error(err)
 	}
-	defer serf.Stop(sh)
+	defer s.serf.Stop(sh)
 
 	for {
 		select {
@@ -267,7 +297,7 @@ func (s *ServerCommand) ListenEvents() {
 			if event["Event"] == "query" {
 				if event["Payload"] != nil {
 					log.Debug(string(event["Payload"].([]byte)))
-					serf.Respond(uint64(event["ID"].(int64)), []byte("Peetttee"))
+					s.serf.Respond(uint64(event["ID"].(int64)), []byte("Peetttee"))
 				}
 			}
 		}
