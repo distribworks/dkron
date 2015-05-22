@@ -66,8 +66,6 @@ func (s *ServerCommand) readConfig(args []string) *Config {
 		log.Fatalf("unable to decode into struct, %v", err)
 	}
 
-	log.Debug(config)
-	log.Fatal("exit")
 	return config
 }
 
