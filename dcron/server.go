@@ -25,6 +25,7 @@ import (
 type ServerCommand struct {
 	Ui     cli.Ui
 	Leader string
+	config *Config
 	serf   *serfManager
 }
 
@@ -76,8 +77,8 @@ func (s *ServerCommand) readConfig(args []string) *Config {
 func (s *ServerCommand) Run(args []string) int {
 	var wg sync.WaitGroup
 
-	config := s.readConfig(args)
-	s.serf = NewSerfManager(config)
+	s.config = s.readConfig(args)
+	s.serf = NewSerfManager(s.config)
 
 	wg.Add(1)
 	go func() {
@@ -118,7 +119,7 @@ func (s *ServerCommand) ServeHTTP() {
 
 	srv := &graceful.Server{
 		Timeout: 1 * time.Second,
-		Server:  &http.Server{Addr: ":8081", Handler: middle},
+		Server:  &http.Server{Addr: s.config.HTTPAddr, Handler: middle},
 	}
 
 	log.Infoln("Running HTTP server on 8080")
