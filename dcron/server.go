@@ -104,18 +104,12 @@ func (s *ServerCommand) Synopsis() string {
 
 // dcron leader init routine
 func (s *ServerCommand) ElectLeader() bool {
-	stats, err := s.serf.Stats()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	memberName := stats["agent"]["name"]
 	leader := s.etcd.GetLeader()
 
 	if leader != "" {
-		if leader != memberName && !s.isMember(leader) {
+		if leader != s.config.NodeName && s.isMember(leader) == false {
 			log.Debug("Trying to set itself as leader")
-			res, err := s.etcd.Client.CompareAndSwap(keyspace+"/leader", memberName, 0, leader, 0)
+			res, err := s.etcd.Client.CompareAndSwap(keyspace+"/leader", s.config.NodeName, 0, leader, 0)
 			if err != nil {
 				log.Error(err)
 				return false
@@ -129,13 +123,13 @@ func (s *ServerCommand) ElectLeader() bool {
 		}
 	} else {
 		log.Debug("Trying to set itself as leader")
-		res, err := s.etcd.Client.Create(keyspace+"/leader", memberName, 0)
+		res, err := s.etcd.Client.Create(keyspace+"/leader", s.config.NodeName, 0)
 		if err != nil {
 			log.Error(res, err)
 			return false
 		}
-		s.Leader = memberName
-		log.Printf("Successfully set %s as dcron leader", memberName)
+		s.Leader = s.config.NodeName
+		log.Printf("Successfully set %s as dcron leader", s.Leader)
 	}
 
 	return true
