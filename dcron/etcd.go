@@ -81,7 +81,12 @@ func (e *etcdClient) GetExecutions() ([]*Execution, error) {
 func (e *etcdClient) GetLeader() string {
 	res, err := e.Client.Get(keyspace+"/leader", false, false)
 	if err != nil {
-		log.Debug(err)
+		if eerr, ok := err.(*etcdc.EtcdError); ok {
+			if eerr.ErrorCode == 501 {
+				log.Panic(err)
+			}
+		}
+		log.Error(err.Error())
 		return ""
 	}
 
