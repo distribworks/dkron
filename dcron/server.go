@@ -66,6 +66,7 @@ func (s *ServerCommand) readConfig(args []string) *Config {
 		BindAddr:     viper.GetString("bind_addr"),
 		RPCAddr:      viper.GetString("rpc_addr"),
 		HTTPAddr:     viper.GetString("http_addr"),
+		Discover:     viper.GetString("discover"),
 		EtcdMachines: viper.GetStringSlice("etcd_machines"),
 	}
 }
@@ -107,17 +108,22 @@ func (s *ServerCommand) ElectLeader() bool {
 	leader := s.etcd.GetLeader()
 
 	if leader != "" {
-		if leader != s.config.NodeName && s.isMember(leader) == false {
-			log.Debug("Trying to set itself as leader")
-			res, err := s.etcd.Client.CompareAndSwap(keyspace+"/leader", s.config.NodeName, 0, leader, 0)
-			if err != nil {
-				log.Error(err)
+		if leader != s.config.NodeName {
+			if !s.isMember(leader) {
+				log.Debug("Trying to set itself as leader")
+				res, err := s.etcd.Client.CompareAndSwap(keyspace+"/leader", s.config.NodeName, 0, leader, 0)
+				if err != nil {
+					log.Error(err)
+					return false
+				}
+				log.WithFields(logrus.Fields{
+					"old_leader": res.PrevNode.Value,
+					"new_leader": res.Node.Value,
+				}).Debug("Leader Swap")
+			} else {
+				log.Printf("The current leader [%s] is active", leader)
 				return false
 			}
-			log.WithFields(logrus.Fields{
-				"old_leader": res.PrevNode.Value,
-				"new_leader": res.Node.Value,
-			}).Debug("Leader Swap")
 		} else {
 			log.Printf("This node is already the leader")
 		}
@@ -129,7 +135,7 @@ func (s *ServerCommand) ElectLeader() bool {
 			return false
 		}
 		s.Leader = s.config.NodeName
-		log.Printf("Successfully set %s as dcron leader", s.Leader)
+		log.Printf("Successfully set [%s] as dcron leader", s.Leader)
 	}
 
 	return true
@@ -151,7 +157,7 @@ func (s *ServerCommand) isMember(memberName string) bool {
 
 // dcron leader init routine
 func (s *ServerCommand) ListenEvents() {
-	ch := make(chan map[string]interface{}, 1)
+	ch := make(chan map[string]interface{}, 100)
 
 	sh, err := s.serf.Stream("*", ch)
 	if err != nil {
