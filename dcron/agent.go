@@ -56,7 +56,7 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	viper.SetDefault("etcd_machines", cmdFlags.Lookup("etcd-machines").Value)
 	cmdFlags.String("profile", "lan", "timing profile to use (lan, wan, local)")
 	viper.SetDefault("profile", cmdFlags.Lookup("profile").Value)
-	cmdFlags.Bool("server", true, "start dcron server")
+	cmdFlags.Bool("server", false, "start dcron server")
 	viper.SetDefault("server", cmdFlags.Lookup("server").Value)
 
 	var startJoin AppendSliceValue
@@ -78,6 +78,7 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 		StartJoin:    startJoin,
 	}
 
+	// log.Fatal(config.EtcdMachines)
 	return config
 }
 
@@ -247,10 +248,8 @@ func (a *AgentCommand) Run(args []string) int {
 	}
 	a.join(a.config.StartJoin, true)
 
-	a.etcd = NewEtcdClient(a.config.EtcdMachines)
-
-	log.Debug(a.config.Server)
 	if a.config.Server {
+		a.etcd = NewEtcdClient(a.config.EtcdMachines)
 		go func() {
 			a.ServeHTTP()
 		}()
@@ -262,8 +261,8 @@ func (a *AgentCommand) Run(args []string) int {
 			}
 			sched.Start(jobs)
 		}
-		a.serverEventLoop()
 	}
+	a.eventLoop()
 
 	return 0
 }
@@ -320,15 +319,14 @@ func (a *AgentCommand) isActiveMember(memberName string) bool {
 }
 
 // eventLoop listens to events from Serf and fans out to event handlers
-func (a *AgentCommand) serverEventLoop() {
+func (a *AgentCommand) eventLoop() {
 	serfShutdownCh := a.serf.ShutdownCh()
 	log.Info("agent: Listen for events")
 	for {
 		select {
 		case e := <-a.eventCh:
 			log.Infof("agent: Received event: %s", e.String())
-			switch e.EventType() {
-			case serf.EventMemberFailed:
+			if e.EventType() == serf.EventMemberFailed && a.config.Server {
 				failed := e.(serf.MemberEvent)
 				for _, member := range failed.Members {
 					if member.Name == a.etcd.GetLeader() && member.Status != serf.StatusAlive {
@@ -338,10 +336,16 @@ func (a *AgentCommand) serverEventLoop() {
 						}
 					}
 				}
-			case serf.EventQuery:
+			}
+
+			if e.EventType() == serf.EventQuery && a.config.Server {
 				query := e.(serf.UserEvent)
-				if query.Name == "scheduler:reload" {
+				if query.Name == "scheduler:reload" && a.config.Server {
 					a.schedulerRestart()
+				}
+
+				if query.Name == "run:job" {
+					log.Info("Running job", query.Payload)
 				}
 			}
 
