@@ -58,7 +58,7 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	viper.SetDefault("etcd_machines", cmdFlags.Lookup("etcd-machines").Value)
 	cmdFlags.String("profile", "lan", "timing profile to use (lan, wan, local)")
 	viper.SetDefault("profile", cmdFlags.Lookup("profile").Value)
-	cmdFlags.Bool("server", false, "start dcron server")
+	cmdFlags.Bool("server", true, "start dcron server")
 	viper.SetDefault("server", cmdFlags.Lookup("server").Value)
 
 	// cmdFlags.Var((*AppendSliceValue)(&configFiles), "config-file",
@@ -77,7 +77,7 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 		HTTPAddr:     viper.GetString("http_addr"),
 		Discover:     viper.GetString("discover"),
 		EtcdMachines: viper.GetStringSlice("etcd_machines"),
-		Server:       viper.GetBool("server"),
+		Server:       true,
 		Profile:      viper.GetString("profile"),
 	}
 
@@ -237,6 +237,7 @@ func (a *AgentCommand) setupSerf(config *Config) *serf.Serf {
 	// Create serf first
 	serf, err := serf.Create(serfConfig)
 	if err != nil {
+		a.Ui.Error(err.Error())
 		return nil
 	}
 
@@ -245,9 +246,12 @@ func (a *AgentCommand) setupSerf(config *Config) *serf.Serf {
 
 func (a *AgentCommand) Run(args []string) int {
 	a.config = a.readConfig(args)
-	a.serf = a.setupSerf(a.config)
+	if a.serf = a.setupSerf(a.config); a.serf == nil {
+		log.Fatal("Can not setup serf")
+	}
 	a.etcd = NewEtcdClient(a.config.EtcdMachines)
 
+	log.Debug(a.config.Server)
 	if a.config.Server {
 		go func() {
 			a.ServeHTTP()
@@ -260,7 +264,7 @@ func (a *AgentCommand) Run(args []string) int {
 			}
 			sched.Start(jobs)
 		}
-		a.eventLoop()
+		a.serverEventLoop()
 	}
 
 	return 0
@@ -318,7 +322,7 @@ func (a *AgentCommand) isActiveMember(memberName string) bool {
 }
 
 // eventLoop listens to events from Serf and fans out to event handlers
-func (a *AgentCommand) eventLoop() {
+func (a *AgentCommand) serverEventLoop() {
 	serfShutdownCh := a.serf.ShutdownCh()
 	for {
 		select {
