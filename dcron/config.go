@@ -10,12 +10,10 @@ import (
 )
 
 type Config struct {
-	RPCAddr               string
 	NodeName              string
 	BindAddr              string
 	HTTPAddr              string
 	Discover              string
-	JoinAddrs             []string
 	EtcdMachines          []string
 	Profile               string
 	Interface             string

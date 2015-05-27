@@ -48,8 +48,6 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	viper.SetDefault("node_name", cmdFlags.Lookup("node").Value)
 	cmdFlags.String("bind", "0.0.0.0:7946", "address to bind listeners to")
 	viper.SetDefault("bind_addr", cmdFlags.Lookup("bind").Value)
-	cmdFlags.String("rpc-addr", "127.0.0.1:7373", "RPC address")
-	viper.SetDefault("rpc_addr", cmdFlags.Lookup("rpc-addr").Value)
 	cmdFlags.String("http-addr", ":8080", "HTTP address")
 	viper.SetDefault("http_addr", cmdFlags.Lookup("http-addr").Value)
 	cmdFlags.String("discover", "dcron", "mDNS discovery name")
@@ -72,7 +70,6 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	config := &Config{
 		NodeName:     viper.GetString("node_name"),
 		BindAddr:     viper.GetString("bind_addr"),
-		RPCAddr:      viper.GetString("rpc_addr"),
 		HTTPAddr:     viper.GetString("http_addr"),
 		Discover:     viper.GetString("discover"),
 		EtcdMachines: viper.GetStringSlice("etcd_machines"),
