@@ -4,11 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/carbocation/interpose"
 	"github.com/gorilla/mux"
-	"github.com/tylerb/graceful"
+	// "github.com/tylerb/graceful"
 	"io"
 	"io/ioutil"
 )
@@ -23,10 +22,12 @@ func (s *ServerCommand) ServeHTTP() {
 	middle := interpose.New()
 	middle.UseHandler(r)
 
-	srv := &graceful.Server{
-		Timeout: 1 * time.Second,
-		Server:  &http.Server{Addr: s.config.HTTPAddr, Handler: middle},
-	}
+	// srv := &graceful.Server{
+	// 	Timeout: 1 * time.Second,
+	// 	Server:  &http.Server{Addr: s.config.HTTPAddr, Handler: middle},
+	// }
+
+	srv := &http.Server{Addr: s.config.HTTPAddr, Handler: middle}
 
 	log.Infoln("Running HTTP server on 8080")
 
@@ -99,12 +100,7 @@ func (s *ServerCommand) JobCreateHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	// Schedule the new job
-	jobs, err := s.etcd.GetJobs()
-	if err != nil {
-		log.Fatal(err)
-	}
-	sched.Restart(jobs)
+	s.serf.SchedulerReloadQuery(s.etcd.GetLeader())
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)

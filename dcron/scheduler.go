@@ -14,12 +14,12 @@ type Scheduler struct {
 }
 
 func NewScheduler() *Scheduler {
-	return &Scheduler{}
+	c := cron.New()
+	c.Start()
+	return &Scheduler{Cron: c}
 }
 
 func (s *Scheduler) Start(jobs []*Job) {
-	s.Cron = cron.New()
-
 	for _, job := range jobs {
 		log.Debugf("Adding job to cron: %v", job)
 		s.Cron.AddJob(job.Schedule, job)
@@ -29,6 +29,7 @@ func (s *Scheduler) Start(jobs []*Job) {
 
 func (s *Scheduler) Restart(jobs []*Job) {
 	s.Cron.Stop()
+	s.Cron = cron.New()
 	s.Start(jobs)
 }
 

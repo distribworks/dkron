@@ -13,6 +13,7 @@ type Config struct {
 	HTTPAddr     string
 	Discover     string
 	EtcdMachines []string
+	Profile      string
 }
 
 func init() {
