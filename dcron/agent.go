@@ -226,8 +226,8 @@ func (a *AgentCommand) setupSerf(config *Config) *serf.Serf {
 	serfConfig.RejoinAfterLeave = config.RejoinAfterLeave
 
 	// Create a channel to listen for events from Serf
-	eventCh := make(chan serf.Event, 64)
-	serfConfig.EventCh = eventCh
+	a.eventCh = make(chan serf.Event, 64)
+	serfConfig.EventCh = a.eventCh
 
 	// Start Serf
 	a.Ui.Output("Starting Serf agent...")
@@ -325,10 +325,11 @@ func (a *AgentCommand) isActiveMember(memberName string) bool {
 // eventLoop listens to events from Serf and fans out to event handlers
 func (a *AgentCommand) serverEventLoop() {
 	serfShutdownCh := a.serf.ShutdownCh()
+	log.Info("agent: Listen for events")
 	for {
 		select {
 		case e := <-a.eventCh:
-			log.Info("agent: Received event: %s", e.String())
+			log.Infof("agent: Received event: %s", e.String())
 			switch e.EventType() {
 			case serf.EventMemberFailed:
 				failed := e.(serf.MemberEvent)
