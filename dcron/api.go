@@ -14,10 +14,10 @@ import (
 
 func (a *AgentCommand) ServeHTTP() {
 	r := mux.NewRouter().StrictSlash(true)
-	r.HandleFunc("/", s.IndexHandler)
+	r.HandleFunc("/", a.IndexHandler)
 	sub := r.PathPrefix("/jobs").Subrouter()
-	sub.HandleFunc("/", s.JobCreateHandler).Methods("POST")
-	sub.HandleFunc("/", s.JobsHandler).Methods("GET")
+	sub.HandleFunc("/", a.JobCreateHandler).Methods("POST")
+	sub.HandleFunc("/", a.JobsHandler).Methods("GET")
 
 	middle := interpose.New()
 	middle.UseHandler(r)
@@ -27,7 +27,7 @@ func (a *AgentCommand) ServeHTTP() {
 	// 	Server:  &http.Server{Addr: s.config.HTTPAddr, Handler: middle},
 	// }
 
-	srv := &http.Server{Addr: s.config.HTTPAddr, Handler: middle}
+	srv := &http.Server{Addr: a.config.HTTPAddr, Handler: middle}
 
 	log.Infoln("Running HTTP server on 8080")
 
@@ -45,12 +45,13 @@ func (a *AgentCommand) IndexHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 
-	stats, err := s.serf.Stats()
-	if err != nil {
-		if err := json.NewEncoder(w).Encode(err); err != nil {
-			log.Fatal(err)
-		}
-		return
+	local := a.serf.LocalMember()
+	stats := map[string]map[string]string{
+		"agent": map[string]string{
+			"name": local.Name,
+		},
+		"serf": a.serf.Stats(),
+		"tags": local.Tags,
 	}
 
 	statsJson, _ := json.MarshalIndent(stats, "", "\t")
@@ -60,7 +61,7 @@ func (a *AgentCommand) IndexHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *AgentCommand) JobsHandler(w http.ResponseWriter, r *http.Request) {
-	jobs, err := s.etcd.GetJobs()
+	jobs, err := a.etcd.GetJobs()
 	if err != nil {
 		log.Error(err)
 	}
@@ -91,7 +92,7 @@ func (a *AgentCommand) JobCreateHandler(w http.ResponseWriter, r *http.Request) 
 	}
 
 	// Save the new job to etcd
-	if err = s.etcd.SetJob(&job); err != nil {
+	if err = a.etcd.SetJob(&job); err != nil {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(422) // unprocessable entity
 		if err := json.NewEncoder(w).Encode(err); err != nil {
@@ -100,7 +101,7 @@ func (a *AgentCommand) JobCreateHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	s.serf.SchedulerReloadQuery(s.etcd.GetLeader())
+	a.schedulerReloadQuery(a.etcd.GetLeader())
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)
@@ -110,7 +111,7 @@ func (a *AgentCommand) JobCreateHandler(w http.ResponseWriter, r *http.Request) 
 }
 
 func (a *AgentCommand) ExecutionsHandler(w http.ResponseWriter, r *http.Request) {
-	executions, err := s.etcd.GetExecutions()
+	executions, err := a.etcd.GetExecutions()
 	if err != nil {
 		log.Error(err)
 	}
