@@ -356,3 +356,24 @@ func (a *AgentCommand) schedulerRestart() {
 	}
 	sched.Restart(jobs)
 }
+
+func (a *AgentCommand) schedulerReloadQuery(leader string) {
+
+	params := &serf.QueryParam{
+		FilterNodes: []string{leader},
+		RequestAck:  true,
+	}
+
+	qr, err := a.serf.Query("scheduler:reload", []byte(""), params)
+	if err != nil {
+		log.Fatal("Error sending the scheduler reload query", err)
+	}
+
+	ackCh := qr.AckCh()
+	respCh := qr.ResponseCh()
+	ack := <-ackCh
+	log.Info("Received ack from the leader", ack)
+	resp := <-respCh
+	log.Infof("Response received: %s", resp)
+
+}
