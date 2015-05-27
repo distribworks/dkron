@@ -56,7 +56,7 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	viper.SetDefault("discover", cmdFlags.Lookup("discover").Value)
 	cmdFlags.String("etcd-machines", "127.0.0.1:2379", "etcd machines addresses")
 	viper.SetDefault("etcd_machines", cmdFlags.Lookup("etcd-machines").Value)
-	cmdFlags.String("profile", "", "timing profile to use (lan, wan, local)")
+	cmdFlags.String("profile", "lan", "timing profile to use (lan, wan, local)")
 	viper.SetDefault("profile", cmdFlags.Lookup("profile").Value)
 	cmdFlags.Bool("server", false, "start dcron server")
 	viper.SetDefault("server", cmdFlags.Lookup("server").Value)
@@ -78,6 +78,7 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 		Discover:     viper.GetString("discover"),
 		EtcdMachines: viper.GetStringSlice("etcd_machines"),
 		Server:       viper.GetBool("server"),
+		Profile:      viper.GetString("profile"),
 	}
 
 	return config
@@ -358,7 +359,6 @@ func (a *AgentCommand) schedulerRestart() {
 }
 
 func (a *AgentCommand) schedulerReloadQuery(leader string) {
-
 	params := &serf.QueryParam{
 		FilterNodes: []string{leader},
 		RequestAck:  true,
@@ -371,6 +371,7 @@ func (a *AgentCommand) schedulerReloadQuery(leader string) {
 
 	ackCh := qr.AckCh()
 	respCh := qr.ResponseCh()
+
 	ack := <-ackCh
 	log.Info("Received ack from the leader", ack)
 	resp := <-respCh
