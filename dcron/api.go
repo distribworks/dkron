@@ -12,7 +12,7 @@ import (
 	"io/ioutil"
 )
 
-func (s *ServerCommand) ServeHTTP() {
+func (a *AgentCommand) ServeHTTP() {
 	r := mux.NewRouter().StrictSlash(true)
 	r.HandleFunc("/", s.IndexHandler)
 	sub := r.PathPrefix("/jobs").Subrouter()
@@ -41,7 +41,7 @@ func (s *ServerCommand) ServeHTTP() {
 	log.Debug("Exiting HTTP server")
 }
 
-func (s *ServerCommand) IndexHandler(w http.ResponseWriter, r *http.Request) {
+func (a *AgentCommand) IndexHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 
@@ -59,7 +59,7 @@ func (s *ServerCommand) IndexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (s *ServerCommand) JobsHandler(w http.ResponseWriter, r *http.Request) {
+func (a *AgentCommand) JobsHandler(w http.ResponseWriter, r *http.Request) {
 	jobs, err := s.etcd.GetJobs()
 	if err != nil {
 		log.Error(err)
@@ -72,7 +72,7 @@ func (s *ServerCommand) JobsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (s *ServerCommand) JobCreateHandler(w http.ResponseWriter, r *http.Request) {
+func (a *AgentCommand) JobCreateHandler(w http.ResponseWriter, r *http.Request) {
 	var job Job
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
@@ -109,7 +109,7 @@ func (s *ServerCommand) JobCreateHandler(w http.ResponseWriter, r *http.Request)
 	}
 }
 
-func (s *ServerCommand) ExecutionsHandler(w http.ResponseWriter, r *http.Request) {
+func (a *AgentCommand) ExecutionsHandler(w http.ResponseWriter, r *http.Request) {
 	executions, err := s.etcd.GetExecutions()
 	if err != nil {
 		log.Error(err)

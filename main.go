@@ -14,11 +14,6 @@ func main() {
 
 	ui := &cli.BasicUi{Writer: os.Stdout}
 	c.Commands = map[string]cli.CommandFactory{
-		"server": func() (cli.Command, error) {
-			return &dcron.ServerCommand{
-				Ui: ui,
-			}, nil
-		},
 		"agent": func() (cli.Command, error) {
 			return &dcron.AgentCommand{
 				Ui: ui,
