@@ -15,13 +15,13 @@ type Config struct {
 	BindAddr              string
 	HTTPAddr              string
 	Discover              string
+	JoinAddrs             []string
 	EtcdMachines          []string
 	Profile               string
 	Interface             string
 	AdvertiseAddr         string
 	Tags                  map[string]string
 	SnapshotPath          string
-	Protocol              uint8
 	ReconnectInterval     time.Duration
 	ReconnectTimeout      time.Duration
 	TombstoneTimeout      time.Duration
@@ -30,6 +30,7 @@ type Config struct {
 	RejoinAfterLeave      bool
 	Server                bool
 	EncryptKey            string
+	StartJoin             AppendSliceValue
 }
 
 // This is the default port that we use for Serf communication

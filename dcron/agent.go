@@ -61,10 +61,9 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	cmdFlags.Bool("server", true, "start dcron server")
 	viper.SetDefault("server", cmdFlags.Lookup("server").Value)
 
-	// cmdFlags.Var((*AppendSliceValue)(&configFiles), "config-file",
-	// 	"json file to read config from")
-	// cmdFlags.Var((*AppendSliceValue)(&configFiles), "config-dir",
-	// 	"directory of json files to read")
+	var startJoin AppendSliceValue
+	cmdFlags.Var(&startJoin, "join", "address of agent to join on startup")
+	viper.SetDefault("join", cmdFlags.Lookup("join").Value)
 
 	if err := cmdFlags.Parse(args); err != nil {
 		log.Fatal(err)
@@ -79,6 +78,7 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 		EtcdMachines: viper.GetStringSlice("etcd_machines"),
 		Server:       true,
 		Profile:      viper.GetString("profile"),
+		StartJoin:    startJoin,
 	}
 
 	return config
@@ -206,7 +206,6 @@ func (a *AgentCommand) setupSerf(config *Config) *serf.Serf {
 	serfConfig.NodeName = config.NodeName
 	serfConfig.Tags = config.Tags
 	serfConfig.SnapshotPath = config.SnapshotPath
-	serfConfig.ProtocolVersion = uint8(config.Protocol)
 	serfConfig.CoalescePeriod = 3 * time.Second
 	serfConfig.QuiescentPeriod = time.Second
 	serfConfig.UserCoalescePeriod = 3 * time.Second
@@ -249,6 +248,8 @@ func (a *AgentCommand) Run(args []string) int {
 	if a.serf = a.setupSerf(a.config); a.serf == nil {
 		log.Fatal("Can not setup serf")
 	}
+	a.join(a.config.StartJoin, true)
+
 	a.etcd = NewEtcdClient(a.config.EtcdMachines)
 
 	log.Debug(a.config.Server)
@@ -327,7 +328,7 @@ func (a *AgentCommand) serverEventLoop() {
 	for {
 		select {
 		case e := <-a.eventCh:
-			log.Printf("[INFO] agent: Received event: %s", e.String())
+			log.Info("agent: Received event: %s", e.String())
 			switch e.EventType() {
 			case serf.EventMemberFailed:
 				failed := e.(serf.MemberEvent)
@@ -347,7 +348,7 @@ func (a *AgentCommand) serverEventLoop() {
 			}
 
 		case <-serfShutdownCh:
-			log.Printf("[WARN] agent: Serf shutdown detected, quitting")
+			log.Warn("agent: Serf shutdown detected, quitting")
 			return
 		}
 	}
@@ -381,4 +382,18 @@ func (a *AgentCommand) schedulerReloadQuery(leader string) {
 	resp := <-respCh
 	log.Infof("Response received: %s", resp)
 
+}
+
+// Join asks the Serf instance to join. See the Serf.Join function.
+func (a *AgentCommand) join(addrs []string, replay bool) (n int, err error) {
+	log.Info("agent: joining: %v replay: %v", addrs, replay)
+	ignoreOld := !replay
+	n, err = a.serf.Join(addrs, ignoreOld)
+	if n > 0 {
+		log.Info("agent: joined: %d nodes", n)
+	}
+	if err != nil {
+		log.Warn("agent: error joining: %v", err)
+	}
+	return
 }
