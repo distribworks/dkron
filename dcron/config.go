@@ -1,6 +1,7 @@
 package dcron
 
 import (
+	"encoding/base64"
 	"fmt"
 	"net"
 	"time"
@@ -28,7 +29,11 @@ type Config struct {
 	KeyringFile           string
 	RejoinAfterLeave      bool
 	Server                bool
+	EncryptKey            string
 }
+
+// This is the default port that we use for Serf communication
+const DefaultBindPort int = 7946
 
 func init() {
 	viper.SetConfigName("dcron")    // name of config file (without extension)
