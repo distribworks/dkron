@@ -19,10 +19,11 @@ import (
 // AgentCommand run dcron server
 type AgentCommand struct {
 	Ui      cli.Ui
-	config  *Config
 	serf    *serf.Serf
+	config  *Config
 	etcd    *etcdClient
 	eventCh chan serf.Event
+	sched   *Scheduler
 }
 
 func (a *AgentCommand) Help() string {
@@ -249,6 +250,8 @@ func (a *AgentCommand) Run(args []string) int {
 
 	if a.config.Server {
 		a.etcd = NewEtcdClient(a.config.EtcdMachines)
+		a.sched = NewScheduler(a)
+
 		go func() {
 			a.ServeHTTP()
 		}()
@@ -258,7 +261,7 @@ func (a *AgentCommand) Run(args []string) int {
 			if err != nil {
 				log.Fatal(err)
 			}
-			sched.Start(jobs)
+			a.sched.Start(jobs)
 		}
 	}
 	a.eventLoop()
@@ -361,7 +364,7 @@ func (a *AgentCommand) schedulerRestart() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	sched.Restart(jobs)
+	a.sched.Restart(jobs)
 }
 
 func (a *AgentCommand) schedulerReloadQuery(leader string) {
@@ -382,7 +385,6 @@ func (a *AgentCommand) schedulerReloadQuery(leader string) {
 	log.Info("Received ack from the leader", ack)
 	resp := <-respCh
 	log.Infof("Response received: %s", resp)
-
 }
 
 // Join asks the Serf instance to join. See the Serf.Join function.
@@ -397,4 +399,7 @@ func (a *AgentCommand) join(addrs []string, replay bool) (n int, err error) {
 		log.Warn("agent: error joining: %v", err)
 	}
 	return
+}
+
+func (a *AgentCommand) RunQuery(job *Job) {
 }

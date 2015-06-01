@@ -7,29 +7,28 @@ import (
 	"bitbucket.org/victorcoder/dcron/cron"
 )
 
-var sched = NewScheduler()
-
 type Scheduler struct {
-	Cron *cron.Cron
+	cron  *cron.Cron
+	agent *AgentCommand
 }
 
-func NewScheduler() *Scheduler {
+func NewScheduler(agent *AgentCommand) *Scheduler {
 	c := cron.New()
 	c.Start()
-	return &Scheduler{Cron: c}
+	return &Scheduler{cron: c, agent: agent}
 }
 
 func (s *Scheduler) Start(jobs []*Job) {
 	for _, job := range jobs {
 		log.Debugf("Adding job to cron: %v", job)
-		s.Cron.AddJob(job.Schedule, job)
+		s.cron.AddJob(job.Schedule, job)
 	}
-	s.Cron.Start()
+	s.cron.Start()
 }
 
 func (s *Scheduler) Restart(jobs []*Job) {
-	s.Cron.Stop()
-	s.Cron = cron.New()
+	s.cron.Stop()
+	s.cron = cron.New()
 	s.Start(jobs)
 }
 
