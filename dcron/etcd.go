@@ -9,10 +9,11 @@ const keyspace = "/dcron"
 
 type etcdClient struct {
 	Client *etcdc.Client
+	agent  *AgentCommand
 }
 
-func NewEtcdClient(machines []string) *etcdClient {
-	return &etcdClient{Client: etcdc.NewClient(machines)}
+func NewEtcdClient(machines []string, a *AgentCommand) *etcdClient {
+	return &etcdClient{Client: etcdc.NewClient(machines), agent: a}
 }
 
 func (e *etcdClient) SetJob(job *Job) error {
@@ -33,13 +34,13 @@ func (e *etcdClient) GetJobs() ([]*Job, error) {
 
 	var jobs []*Job
 	for _, node := range res.Node.Nodes {
-
 		log.Debug(*node)
 		var job Job
 		err := json.Unmarshal([]byte(node.Value), &job)
 		if err != nil {
 			return nil, err
 		}
+		job.Agent = e.agent
 		jobs = append(jobs, &job)
 		log.Debug(job)
 	}
@@ -57,6 +58,7 @@ func (e *etcdClient) GetJob(name string) (*Job, error) {
 		return nil, err
 	}
 	log.Debugf("Retrieved job from datastore: %v", job)
+	job.Agent = e.agent
 	return &job, nil
 }
 

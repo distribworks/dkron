@@ -1,11 +1,13 @@
 package dcron
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"net"
 	"os"
 	"runtime"
+	"strconv"
 	"strings"
 	"time"
 
@@ -249,8 +251,8 @@ func (a *AgentCommand) Run(args []string) int {
 	a.join(a.config.StartJoin, true)
 
 	if a.config.Server {
-		a.etcd = NewEtcdClient(a.config.EtcdMachines)
-		a.sched = NewScheduler(a)
+		a.etcd = NewEtcdClient(a.config.EtcdMachines, a)
+		a.sched = NewScheduler()
 
 		go func() {
 			a.ServeHTTP()
@@ -340,7 +342,7 @@ func (a *AgentCommand) eventLoop() {
 				}
 			}
 
-			if e.EventType() == serf.EventQuery && a.config.Server {
+			if e.EventType() == serf.EventQuery {
 				query := e.(serf.UserEvent)
 				if query.Name == "scheduler:reload" && a.config.Server {
 					a.schedulerRestart()
@@ -402,4 +404,60 @@ func (a *AgentCommand) join(addrs []string, replay bool) (n int, err error) {
 }
 
 func (a *AgentCommand) RunQuery(job *Job) {
+	filterNodes, err := a.processFilteredNodes(job)
+	if err != nil {
+		log.Fatalf("Error processing filtered nodes for job %s, %s", job.Name, err.Error())
+	}
+	log.Debug("Filtered nodes to run: ", filterNodes)
+
+	params := &serf.QueryParam{
+		FilterNodes: filterNodes,
+		FilterTags:  job.Tags,
+		RequestAck:  true,
+	}
+
+	jobJson, _ := json.Marshal(job)
+	log.Debugf("Sending run:job query for job %s", job.Name)
+	_, err = a.serf.Query("run:job", jobJson, params)
+	if err != nil {
+		log.Fatal("Error sending the run:job query", err)
+	}
+
+	// ackCh := qr.AckCh()
+	// respCh := qr.ResponseCh()
+	//
+	// ack := <-ackCh
+	// log.Info("Received ack from the leader", ack)
+	// resp := <-respCh
+	// log.Infof("Response received: %s", resp)
+}
+
+func (a *AgentCommand) processFilteredNodes(job *Job) ([]string, error) {
+	var nodes []string
+	for jtk, jtv := range job.Tags {
+		var tc []string
+		if tc = strings.Split(jtv, ":"); len(tc) == 2 {
+			tv := tc[0]
+
+			// Set original tag to clean tag
+			job.Tags[jtk] = tv
+
+			count, err := strconv.Atoi(tc[1])
+			if err != nil {
+				return nil, err
+			}
+
+			for _, member := range a.serf.Members() {
+				for mtk, mtv := range member.Tags {
+					if mtk == jtk && mtv == jtv {
+						if len(nodes) < count {
+							nodes = append(nodes, member.Name)
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return nodes, nil
 }

@@ -1,21 +1,19 @@
 package dcron
 
 import (
-	"fmt"
 	"time"
 
 	"bitbucket.org/victorcoder/dcron/cron"
 )
 
 type Scheduler struct {
-	cron  *cron.Cron
-	agent *AgentCommand
+	cron *cron.Cron
 }
 
-func NewScheduler(agent *AgentCommand) *Scheduler {
+func NewScheduler() *Scheduler {
 	c := cron.New()
 	c.Start()
-	return &Scheduler{cron: c, agent: agent}
+	return &Scheduler{cron: c}
 }
 
 func (s *Scheduler) Start(jobs []*Job) {
@@ -46,17 +44,13 @@ type Job struct {
 	Disabled     bool              `json:"disabled"`
 	Tags         map[string]string `json:"tags"`
 
-	Executions []*Execution `json:"-"`
+	Executions []*Execution  `json:"-"`
+	Agent      *AgentCommand `json:"-"`
 }
 
 func (j Job) Run() {
-	// defer func() {
-	// 	if err := recover(); err != nil {
-	// 		fmt.Println("Error in job execution", err)
-	// 		serf.Terminate()
-	// 	}
-	// }()
-	fmt.Println("Running: " + j.Command)
+	log.Debug("Running: " + j.Name)
+	// j.Agent.RunQuery(&j)
 }
 
 type Execution struct {
