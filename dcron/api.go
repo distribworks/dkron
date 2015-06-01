@@ -18,6 +18,8 @@ func (a *AgentCommand) ServeHTTP() {
 	sub := r.PathPrefix("/jobs").Subrouter()
 	sub.HandleFunc("/", a.JobCreateHandler).Methods("POST")
 	sub.HandleFunc("/", a.JobsHandler).Methods("GET")
+	sub.HandleFunc("/{job}", a.JobDeleteHandler).Methods("DELETE")
+	r.HandleFunc("/members", a.MembersHandler)
 
 	middle := interpose.New()
 	middle.UseHandler(r)
@@ -119,5 +121,34 @@ func (a *AgentCommand) ExecutionsHandler(w http.ResponseWriter, r *http.Request)
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(executions); err != nil {
 		panic(err)
+	}
+}
+
+func (a *AgentCommand) MembersHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+
+	if err := json.NewEncoder(w).Encode(a.serf.Members()); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func (a *AgentCommand) JobDeleteHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	job := vars["job"]
+	// Save the new job to etcd
+	if _, err := a.etcd.Client.Delete(job, false); err != nil {
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusNotFound)
+		if err := json.NewEncoder(w).Encode(err); err != nil {
+			log.Fatal(err)
+		}
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if _, err := fmt.Fprintf(w, `{"result": "ok"}`); err != nil {
+		log.Fatal(err)
 	}
 }
