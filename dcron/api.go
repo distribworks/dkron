@@ -16,7 +16,7 @@ func (a *AgentCommand) ServeHTTP() {
 	r := mux.NewRouter().StrictSlash(true)
 	r.HandleFunc("/", a.IndexHandler)
 	sub := r.PathPrefix("/jobs").Subrouter()
-	sub.HandleFunc("/", a.JobCreateHandler).Methods("POST")
+	sub.HandleFunc("/", a.JobCreateOrUpdateHandler).Methods("POST", "PUT")
 	sub.HandleFunc("/", a.JobsHandler).Methods("GET")
 	sub.HandleFunc("/{job}", a.JobDeleteHandler).Methods("DELETE")
 	r.HandleFunc("/members", a.MembersHandler)
@@ -75,7 +75,7 @@ func (a *AgentCommand) JobsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (a *AgentCommand) JobCreateHandler(w http.ResponseWriter, r *http.Request) {
+func (a *AgentCommand) JobCreateOrUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	var job Job
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
@@ -84,6 +84,7 @@ func (a *AgentCommand) JobCreateHandler(w http.ResponseWriter, r *http.Request) 
 	if err := r.Body.Close(); err != nil {
 		log.Fatal(err)
 	}
+
 	if err := json.Unmarshal(body, &job); err != nil {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(422) // unprocessable entity
