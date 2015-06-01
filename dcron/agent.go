@@ -78,6 +78,7 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 		Server:       viper.GetBool("server"),
 		Profile:      viper.GetString("profile"),
 		StartJoin:    *startJoin,
+		Tags:         viper.GetStringMapString("tags"),
 	}
 
 	// log.Fatal(config.EtcdMachines)
@@ -343,13 +344,14 @@ func (a *AgentCommand) eventLoop() {
 			}
 
 			if e.EventType() == serf.EventQuery {
-				query := e.(serf.UserEvent)
+				query := e.(*serf.Query)
+
 				if query.Name == "scheduler:reload" && a.config.Server {
 					a.schedulerRestart()
 				}
 
 				if query.Name == "run:job" {
-					log.Info("Running job", query.Payload)
+					log.Infof("Running job: %s", query.Payload)
 				}
 			}
 
