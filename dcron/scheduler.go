@@ -50,7 +50,7 @@ type Job struct {
 
 func (j Job) Run() {
 	log.Debug("Running: " + j.Name)
-	// j.Agent.RunQuery(&j)
+	j.Agent.RunQuery(&j)
 }
 
 type Execution struct {
