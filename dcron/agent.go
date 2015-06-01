@@ -56,12 +56,11 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	viper.SetDefault("etcd_machines", cmdFlags.Lookup("etcd-machines").Value)
 	cmdFlags.String("profile", "lan", "timing profile to use (lan, wan, local)")
 	viper.SetDefault("profile", cmdFlags.Lookup("profile").Value)
-	cmdFlags.Bool("server", false, "start dcron server")
-	viper.SetDefault("server", cmdFlags.Lookup("server").Value)
+	viper.SetDefault("server", cmdFlags.Bool("server", false, "start dcron server"))
 
-	var startJoin AppendSliceValue
-	cmdFlags.Var(&startJoin, "join", "address of agent to join on startup")
-	viper.SetDefault("join", cmdFlags.Lookup("join").Value)
+	startJoin := &AppendSliceValue{}
+	cmdFlags.Var(startJoin, "join", "address of agent to join on startup")
+	// viper.SetDefault("join", startJoin)
 
 	if err := cmdFlags.Parse(args); err != nil {
 		log.Fatal(err)
@@ -73,9 +72,9 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 		HTTPAddr:     viper.GetString("http_addr"),
 		Discover:     viper.GetString("discover"),
 		EtcdMachines: viper.GetStringSlice("etcd_machines"),
-		Server:       true,
+		Server:       viper.GetBool("server"),
 		Profile:      viper.GetString("profile"),
-		StartJoin:    startJoin,
+		StartJoin:    *startJoin,
 	}
 
 	// log.Fatal(config.EtcdMachines)
