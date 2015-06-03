@@ -385,10 +385,24 @@ func (a *AgentCommand) schedulerReloadQuery(leader string) {
 	ackCh := qr.AckCh()
 	respCh := qr.ResponseCh()
 
-	ack := <-ackCh
-	log.Info("Received ack from the leader", ack)
-	resp := <-respCh
-	log.Infof("Response received: %s", resp)
+	for !qr.Finished() {
+		select {
+		case ack, ok := <-ackCh:
+			if ok {
+				log.WithFields(logrus.Fields{
+					"from": ack,
+				}).Debug("Received ack")
+			}
+		case resp, ok := <-respCh:
+			if ok {
+				log.WithFields(logrus.Fields{
+					"from":    resp.From,
+					"payload": string(resp.Payload),
+				}).Debug("Received response")
+			}
+		}
+	}
+	log.Debugf("Done receiving acks and responses from scheduler reload query")
 }
 
 // Join asks the Serf instance to join. See the Serf.Join function.
@@ -411,6 +425,7 @@ func (a *AgentCommand) RunQuery(job *Job) {
 		log.Fatalf("Error processing filtered nodes for job %s, %s", job.Name, err.Error())
 	}
 	log.Debug("Filtered nodes to run: ", filterNodes)
+	log.Debug("Filtered tags to run: ", job.Tags)
 
 	params := &serf.QueryParam{
 		FilterNodes: filterNodes,
@@ -420,18 +435,32 @@ func (a *AgentCommand) RunQuery(job *Job) {
 
 	jobJson, _ := json.Marshal(job)
 	log.Debugf("Sending run:job query for job %s", job.Name)
-	_, err = a.serf.Query("run:job", jobJson, params)
+	qr, err := a.serf.Query("run:job", jobJson, params)
 	if err != nil {
 		log.Fatal("Error sending the run:job query", err)
 	}
 
-	// ackCh := qr.AckCh()
-	// respCh := qr.ResponseCh()
-	//
-	// ack := <-ackCh
-	// log.Info("Received ack from the leader", ack)
-	// resp := <-respCh
-	// log.Infof("Response received: %s", resp)
+	ackCh := qr.AckCh()
+	respCh := qr.ResponseCh()
+
+	for !qr.Finished() {
+		select {
+		case ack, ok := <-ackCh:
+			if ok {
+				log.WithFields(logrus.Fields{
+					"from": ack,
+				}).Debug("Received ack")
+			}
+		case resp, ok := <-respCh:
+			if ok {
+				log.WithFields(logrus.Fields{
+					"from":    resp.From,
+					"payload": string(resp.Payload),
+				}).Debug("Received response")
+			}
+		}
+	}
+	log.Debugf("Done receiving acks and responses from run query")
 }
 
 func (a *AgentCommand) processFilteredNodes(job *Job) ([]string, error) {
