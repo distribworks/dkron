@@ -1,0 +1,8 @@
+{
+	"ArtifactsDest": "../site/downloads",
+	"Tasks": [
+		"xc"
+	],
+	"BuildConstraints": "linux windows mac",
+	"ConfigVersion": "0.9"
+}
