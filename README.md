@@ -16,10 +16,6 @@ Dcron runs on Linux, OSX and Windows. It can be used to run scheduled commands o
 
 You can use Dcron to run the most important part of your company, scheduled jobs.
 
-## Rationale
-
-Cron jobs are configuration, thus it's configuration is made in /etc/cron.d directory, this makes etcd a great choice to store cron jobs configuration.
-
 ## Quick start
 
 First, download a pre-built Dcron binary for your operating system or [compile Dcron yourself](#developing-dcron).
