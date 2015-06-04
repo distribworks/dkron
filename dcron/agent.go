@@ -1,6 +1,7 @@
 package dcron
 
 import (
+	"crypto/sha1"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -69,16 +70,25 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 		log.Fatal(err)
 	}
 
+	tags := viper.GetStringMapString("tags")
+	server := viper.GetBool("server")
+	nodeName := viper.GetString("node_name")
+
+	if server {
+		data := []byte(nodeName + fmt.Sprintf("%s", time.Now()))
+		tags["key"] = fmt.Sprintf("%x", sha1.Sum(data))
+	}
+
 	config := &Config{
-		NodeName:     viper.GetString("node_name"),
+		NodeName:     nodeName,
 		BindAddr:     viper.GetString("bind_addr"),
 		HTTPAddr:     viper.GetString("http_addr"),
 		Discover:     viper.GetString("discover"),
 		EtcdMachines: viper.GetStringSlice("etcd_machines"),
-		Server:       viper.GetBool("server"),
+		Server:       server,
 		Profile:      viper.GetString("profile"),
 		StartJoin:    *startJoin,
-		Tags:         viper.GetStringMapString("tags"),
+		Tags:         tags,
 	}
 
 	// log.Fatal(config.EtcdMachines)
@@ -276,29 +286,26 @@ func (a *AgentCommand) Synopsis() string {
 	return "Run dcron server"
 }
 
-// dcron leader init routine
+// dcron leader election routine
 func (a *AgentCommand) ElectLeader() bool {
 	leader := a.etcd.GetLeader()
 
 	if leader != "" {
-		if leader != a.config.NodeName {
-			if !a.isActiveMember(leader) {
-				log.Debug("Trying to set itself as leader")
-				res, err := a.etcd.Client.CompareAndSwap(keyspace+"/leader", a.config.NodeName, 0, leader, 0)
-				if err != nil {
-					log.Error(err)
-				}
-				log.WithFields(logrus.Fields{
-					"old_leader": res.PrevNode.Value,
-					"new_leader": res.Node.Value,
-				}).Debug("Leader Swap")
-				return true
-			} else {
-				log.Printf("The current leader [%s] is active", leader)
+		if !a.isLeader(leader) {
+			log.Debug("Trying to set itself as leader")
+			res, err := a.etcd.Client.CompareAndSwap(keyspace+"/leader", a.config.Tags["key"], 0, leader, 0)
+			if err != nil {
+				log.Errorln("Error trying to set itself as leader", err)
+				return false
 			}
-		} else {
-			log.Printf("This node is already the leader")
+
+			log.WithFields(logrus.Fields{
+				"old_leader": res.PrevNode.Value,
+				"new_leader": res.Node.Value,
+			}).Debug("Leader Swap")
 			return true
+		} else {
+			log.Printf("The current leader [%s] is active", leader)
 		}
 	} else {
 		log.Debug("Trying to set itself as leader")
@@ -313,10 +320,10 @@ func (a *AgentCommand) ElectLeader() bool {
 	return false
 }
 
-func (a *AgentCommand) isActiveMember(memberName string) bool {
+func (a *AgentCommand) isLeader(leader string) bool {
 	members := a.serf.Members()
 	for _, member := range members {
-		if member.Name == memberName && member.Status == serf.StatusAlive {
+		if member.Tags["key"] == leader && member.Status == serf.StatusAlive {
 			return true
 		}
 	}
@@ -334,7 +341,7 @@ func (a *AgentCommand) eventLoop() {
 			if e.EventType() == serf.EventMemberFailed && a.config.Server {
 				failed := e.(serf.MemberEvent)
 				for _, member := range failed.Members {
-					if member.Name == a.etcd.GetLeader() && member.Status != serf.StatusAlive {
+					if member.Tags["key"] == a.etcd.GetLeader() && member.Status != serf.StatusAlive {
 						if a.ElectLeader() {
 							log.Debug("Restarting scheduler")
 							a.schedulerRestart()
@@ -352,6 +359,7 @@ func (a *AgentCommand) eventLoop() {
 
 				if query.Name == "run:job" {
 					log.Infof("Running job: %s", query.Payload)
+					invokeJob(query.Payload, e)
 				}
 			}
 
@@ -411,10 +419,10 @@ func (a *AgentCommand) join(addrs []string, replay bool) (n int, err error) {
 	ignoreOld := !replay
 	n, err = a.serf.Join(addrs, ignoreOld)
 	if n > 0 {
-		log.Info("agent: joined: %d nodes", n)
+		log.Infof("agent: joined: %d nodes", n)
 	}
 	if err != nil {
-		log.Warn("agent: error joining: %v", err)
+		log.Warnf("agent: error joining: %v", err)
 	}
 	return
 }
