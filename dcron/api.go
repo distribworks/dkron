@@ -15,11 +15,13 @@ import (
 func (a *AgentCommand) ServeHTTP() {
 	r := mux.NewRouter().StrictSlash(true)
 	r.HandleFunc("/", a.IndexHandler)
+	r.HandleFunc("/members", a.MembersHandler)
+	r.HandleFunc("/leader", a.LeaderHandler)
+
 	sub := r.PathPrefix("/jobs").Subrouter()
 	sub.HandleFunc("/", a.JobCreateOrUpdateHandler).Methods("POST", "PUT")
 	sub.HandleFunc("/", a.JobsHandler).Methods("GET")
 	sub.HandleFunc("/{job}", a.JobDeleteHandler).Methods("DELETE")
-	r.HandleFunc("/members", a.MembersHandler)
 
 	middle := interpose.New()
 	middle.UseHandler(r)
@@ -152,4 +154,23 @@ func (a *AgentCommand) JobDeleteHandler(w http.ResponseWriter, r *http.Request) 
 	if _, err := fmt.Fprintf(w, `{"result": "ok"}`); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func (a *AgentCommand) LeaderHandler(w http.ResponseWriter, r *http.Request) {
+	leader := a.etcd.GetLeader()
+	for _, member := range a.serf.Members() {
+		if key, ok := member.Tags["key"]; ok {
+			if key == leader {
+				w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+				w.WriteHeader(http.StatusOK)
+				if err := json.NewEncoder(w).Encode(member); err != nil {
+					log.Fatal(err)
+				}
+				return
+			}
+		}
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusNotFound)
 }
