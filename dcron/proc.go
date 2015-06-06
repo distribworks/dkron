@@ -7,6 +7,7 @@ import (
 	"runtime"
 	"time"
 
+	"github.com/Sirupsen/logrus"
 	"github.com/armon/circbuf"
 	"github.com/hashicorp/serf/serf"
 )
@@ -39,7 +40,7 @@ func spawnProc(proc string) (*exec.Cmd, error) {
 }
 
 // invokeJob will execute the given job. Depending on the event.
-func invokeJob(jobPayload []byte, event serf.Event) error {
+func (a *AgentCommand) invokeJob(jobPayload []byte) error {
 	output, _ := circbuf.NewBuffer(maxBufSize)
 	var job Job
 
@@ -73,19 +74,55 @@ func invokeJob(jobPayload []byte, event serf.Event) error {
 		log.Warnf("agent: Script '%s' generated %d bytes of output, truncated to %d", job.Command, output.TotalWritten(), output.Size())
 	}
 
+	var success bool
 	err := cmd.Wait()
 	slowTimer.Stop()
 	log.Debugf("agent: Command output: %s", output)
 	if err != nil {
-		return err
+		log.Error(err)
+		success = false
+	} else {
+		success = true
 	}
 
-	// If this is a query and we have output, respond
-	if query, ok := event.(*serf.Query); ok && output.TotalWritten() > 0 {
-		if err := query.Respond(output.Bytes()); err != nil {
-			log.Warnf("agent: Failed to respond to query '%s': %s", event.String(), err)
+	execution := &Execution{
+		JobName:    job.Name,
+		FinishedAt: time.Now(),
+		Success:    success,
+	}
+	executionJson, _ := json.Marshal(execution)
+
+	params := &serf.QueryParam{
+		FilterTags: map[string]string{"server": "true"},
+		RequestAck: true,
+	}
+
+	qr, err := a.serf.Query(QueryExecutionDone, executionJson, params)
+	if err != nil {
+		log.Fatal("Error sending the %s query", QueryExecutionDone, err)
+	}
+
+	ackCh := qr.AckCh()
+	respCh := qr.ResponseCh()
+
+	for !qr.Finished() {
+		select {
+		case ack, ok := <-ackCh:
+			if ok {
+				log.WithFields(logrus.Fields{
+					"from": ack,
+				}).Debug("Received ack")
+			}
+		case resp, ok := <-respCh:
+			if ok {
+				log.WithFields(logrus.Fields{
+					"from":    resp.From,
+					"payload": string(resp.Payload),
+				}).Debug("Received response")
+			}
 		}
 	}
+	log.Debugf("Done receiving acks and responses from run query")
 
 	return nil
 }

@@ -54,8 +54,10 @@ func (j Job) Run() {
 }
 
 type Execution struct {
+	JobName    string    `json:"job_name"`
 	StartedAt  time.Time `json:"started_at"`
 	FinishedAt time.Time `json:"finished_at"`
-	ExitStatus int       `json:"exit_status"`
+	Success    bool      `json:"success"`
+	Output     []byte    `json:"output"`
 	Job        *Job      `json:"-"`
 }

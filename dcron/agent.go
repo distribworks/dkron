@@ -19,6 +19,12 @@ import (
 	"github.com/spf13/viper"
 )
 
+const (
+	QuerySchedulerRestart = "scheduler:restart"
+	QueryRunJob           = "run:job"
+	QueryExecutionDone    = "execution:done"
+)
+
 // AgentCommand run dcron server
 type AgentCommand struct {
 	Ui      cli.Ui
@@ -77,6 +83,7 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	if server {
 		data := []byte(nodeName + fmt.Sprintf("%s", time.Now()))
 		tags["key"] = fmt.Sprintf("%x", sha1.Sum(data))
+		tags["server"] = "true"
 	}
 
 	config := &Config{
@@ -353,13 +360,19 @@ func (a *AgentCommand) eventLoop() {
 			if e.EventType() == serf.EventQuery {
 				query := e.(*serf.Query)
 
-				if query.Name == "scheduler:reload" && a.config.Server {
+				if query.Name == QuerySchedulerRestart && a.config.Server {
 					a.schedulerRestart()
 				}
 
-				if query.Name == "run:job" {
+				if query.Name == QueryRunJob {
 					log.Infof("Running job: %s", query.Payload)
-					invokeJob(query.Payload, e)
+					go func() {
+						a.invokeJob(query.Payload)
+					}()
+				}
+
+				if query.Name == QueryExecutionDone {
+
 				}
 			}
 
@@ -442,10 +455,10 @@ func (a *AgentCommand) RunQuery(job *Job) {
 	}
 
 	jobJson, _ := json.Marshal(job)
-	log.Debugf("Sending run:job query for job %s", job.Name)
-	qr, err := a.serf.Query("run:job", jobJson, params)
+	log.Debugf("Sending %s query for job %s", QueryRunJob, job.Name)
+	qr, err := a.serf.Query(QueryRunJob, jobJson, params)
 	if err != nil {
-		log.Fatal("Error sending the run:job query", err)
+		log.Fatalf("Error sending the %s query", QueryRunJob, err)
 	}
 
 	ackCh := qr.AckCh()

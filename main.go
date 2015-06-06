@@ -7,8 +7,12 @@ import (
 	"os"
 )
 
+const (
+	VERSION = "0.0.2"
+)
+
 func main() {
-	c := cli.NewCLI("dcron", "0.0.1")
+	c := cli.NewCLI("dcron", VERSION)
 	c.Args = os.Args[1:]
 	c.HelpFunc = cli.BasicHelpFunc("dcron")
 
