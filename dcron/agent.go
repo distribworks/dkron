@@ -62,7 +62,7 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	cmdFlags.Usage = func() { a.Ui.Output(a.Help()) }
 	cmdFlags.String("node", hostname, "node name")
 	viper.SetDefault("node_name", cmdFlags.Lookup("node").Value)
-	cmdFlags.String("bind", "0.0.0.0:7946", "address to bind listeners to")
+	cmdFlags.String("bind", "0.0.0.0:8946", "address to bind listeners to")
 	viper.SetDefault("bind_addr", cmdFlags.Lookup("bind").Value)
 	cmdFlags.String("http-addr", ":8080", "HTTP address")
 	viper.SetDefault("http_addr", cmdFlags.Lookup("http-addr").Value)
