@@ -7,9 +7,11 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"os/signal"
 	"runtime"
 	"strconv"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/Sirupsen/logrus"
@@ -23,16 +25,20 @@ const (
 	QuerySchedulerRestart = "scheduler:restart"
 	QueryRunJob           = "run:job"
 	QueryExecutionDone    = "execution:done"
+
+	// gracefulTimeout controls how long we wait before forcefully terminating
+	gracefulTimeout = 3 * time.Second
 )
 
 // AgentCommand run dcron server
 type AgentCommand struct {
-	Ui      cli.Ui
-	serf    *serf.Serf
-	config  *Config
-	etcd    *etcdClient
-	eventCh chan serf.Event
-	sched   *Scheduler
+	Ui         cli.Ui
+	ShutdownCh <-chan struct{}
+	serf       *serf.Serf
+	config     *Config
+	etcd       *etcdClient
+	eventCh    chan serf.Event
+	sched      *Scheduler
 }
 
 func (a *AgentCommand) Help() string {
@@ -255,6 +261,7 @@ func (a *AgentCommand) setupSerf(config *Config) *serf.Serf {
 	serf, err := serf.Create(serfConfig)
 	if err != nil {
 		a.Ui.Error(err.Error())
+		log.Error(err)
 		return nil
 	}
 
@@ -284,9 +291,57 @@ func (a *AgentCommand) Run(args []string) int {
 			a.sched.Start(jobs)
 		}
 	}
-	a.eventLoop()
+	go a.eventLoop()
 
-	return 0
+	return a.handleSignals()
+}
+
+// handleSignals blocks until we get an exit-causing signal
+func (a *AgentCommand) handleSignals() int {
+	signalCh := make(chan os.Signal, 4)
+	signal.Notify(signalCh, os.Interrupt, syscall.SIGTERM, syscall.SIGHUP)
+
+	// Wait for a signal
+	var sig os.Signal
+	select {
+	case s := <-signalCh:
+		sig = s
+	case <-a.ShutdownCh:
+		sig = os.Interrupt
+	}
+	a.Ui.Output(fmt.Sprintf("Caught signal: %v", sig))
+
+	// Check if we should do a graceful leave
+	graceful := false
+	if sig == syscall.SIGTERM || sig == os.Interrupt {
+		graceful = true
+	}
+
+	// Bail fast if not doing a graceful leave
+	if !graceful {
+		return 1
+	}
+
+	// Attempt a graceful leave
+	gracefulCh := make(chan struct{})
+	a.Ui.Output("Gracefully shutting down agent...")
+	go func() {
+		if err := a.serf.Leave(); err != nil {
+			a.Ui.Error(fmt.Sprintf("Error: %s", err))
+			return
+		}
+		close(gracefulCh)
+	}()
+
+	// Wait for leave or another signal
+	select {
+	case <-signalCh:
+		return 1
+	case <-time.After(gracefulTimeout):
+		return 1
+	case <-gracefulCh:
+		return 0
+	}
 }
 
 func (a *AgentCommand) Synopsis() string {
