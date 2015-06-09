@@ -41,7 +41,7 @@ func init() {
 	viper.AddConfigPath("./config")     // call multiple times to add many search paths
 	err := viper.ReadInConfig()         // Find and read the config file
 	if err != nil {                     // Handle errors reading the config file
-		log.Errorf("No valid config found: %s \n Applying default values.", err)
+		log.Infof("No valid config found: %s \n Applying default values.", err)
 	}
 
 	viper.SetEnvPrefix("dcr") // will be uppercased automatically
