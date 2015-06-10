@@ -3,7 +3,7 @@ package dcron
 import (
 	"time"
 
-	"bitbucket.org/victorcoder/dcron/cron"
+	"github.com/victorcoder/dcron/cron"
 )
 
 type Scheduler struct {
