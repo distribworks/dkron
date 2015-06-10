@@ -1,8 +1,8 @@
 package main
 
 import (
-	"bitbucket.org/victorcoder/dcron/dcron"
 	"github.com/mitchellh/cli"
+	"github.com/victorcoder/dcron/dcron"
 	"log"
 	"os"
 )
