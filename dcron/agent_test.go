@@ -67,8 +67,9 @@ func TestAgentCommandElectLeader(t *testing.T) {
 	}
 
 	args := []string{
-		"-bind", "127.0.0.1:8950",
-		"-join", "127.0.0.1:8947",
+		"-bind", "127.0.0.1:8947",
+		"-join", "127.0.0.1:8948",
+		"-node", "test1",
 	}
 
 	resultCh := make(chan int)
@@ -86,15 +87,18 @@ func TestAgentCommandElectLeader(t *testing.T) {
 		ShutdownCh: shutdownCh2,
 	}
 
-	args = []string{
-		"-bind", "127.0.0.1:8950",
-		"-join", "127.0.0.1:8946",
+	args2 := []string{
+		"-bind", "127.0.0.1:8948",
+		"-join", "127.0.0.1:8947",
+		"-node", "test2",
 	}
 
 	resultCh2 := make(chan int)
 	go func() {
-		resultCh2 <- a2.Run(args)
+		resultCh2 <- a2.Run(args2)
 	}()
+
+	time.Sleep(5 * time.Second)
 
 	// Send a shutdown request
 	shutdownCh <- struct{}{}
