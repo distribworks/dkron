@@ -84,7 +84,7 @@ func (e *etcdClient) GetLeader() string {
 	res, err := e.Client.Get(keyspace+"/leader", false, false)
 	if err != nil {
 		if eerr, ok := err.(*etcdc.EtcdError); ok {
-			if eerr.ErrorCode == 501 {
+			if eerr.ErrorCode == etcdc.ErrCodeEtcdNotReachable {
 				log.Panic(err)
 			}
 		}

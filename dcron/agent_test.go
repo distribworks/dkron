@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	etcdc "github.com/coreos/go-etcd/etcd"
 	"github.com/mitchellh/cli"
 )
 
@@ -66,10 +67,21 @@ func TestAgentCommandElectLeader(t *testing.T) {
 		ShutdownCh: shutdownCh,
 	}
 
+	etcd := etcdc.NewClient([]string{})
+	_, err := etcd.DeleteDir("dcron")
+	if err != nil {
+		if eerr, ok := err.(*etcdc.EtcdError); ok {
+			if eerr.ErrorCode == etcdc.ErrCodeEtcdNotReachable {
+				t.Fatal("etcd server needed to run tests")
+			}
+		}
+	}
+
 	args := []string{
 		"-bind", "127.0.0.1:8947",
 		"-join", "127.0.0.1:8948",
 		"-node", "test1",
+		"-server",
 	}
 
 	resultCh := make(chan int)
@@ -91,6 +103,7 @@ func TestAgentCommandElectLeader(t *testing.T) {
 		"-bind", "127.0.0.1:8948",
 		"-join", "127.0.0.1:8947",
 		"-node", "test2",
+		"-server",
 	}
 
 	resultCh2 := make(chan int)
@@ -99,6 +112,9 @@ func TestAgentCommandElectLeader(t *testing.T) {
 	}()
 
 	time.Sleep(5 * time.Second)
+
+	leader := a.etcd.GetLeader()
+	t.Log(leader)
 
 	// Send a shutdown request
 	shutdownCh <- struct{}{}
