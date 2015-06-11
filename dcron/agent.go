@@ -73,14 +73,21 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	cmdFlags.String("profile", "lan", "timing profile to use (lan, wan, local)")
 	viper.SetDefault("profile", cmdFlags.Lookup("profile").Value)
 	viper.SetDefault("server", cmdFlags.Bool("server", false, "start dcron server"))
-
 	startJoin := &AppendSliceValue{}
 	cmdFlags.Var(startJoin, "join", "address of agent to join on startup")
-	// viper.SetDefault("join", startJoin)
+	var tag []string
+	cmdFlags.Var((*AppendSliceValue)(&tag), "tag", "tag pair, specified as key=value")
 
 	if err := cmdFlags.Parse(args); err != nil {
 		log.Fatal(err)
 	}
+
+	ut, err := UnmarshalTags(tag)
+	if err != nil {
+		log.Fatal(err)
+	}
+	viper.SetDefault("tags", ut)
+	viper.SetDefault("join", startJoin)
 
 	tags := viper.GetStringMapString("tags")
 	server := viper.GetBool("server")
@@ -255,7 +262,10 @@ func (a *AgentCommand) setupSerf(config *Config) *serf.Serf {
 
 	// Start Serf
 	a.Ui.Output("Starting Serf agent...")
-	log.Printf("[INFO] agent: Serf agent starting")
+	log.Info("agent: Serf agent starting")
+
+	serfConfig.LogOutput = log.Writer()
+	serfConfig.MemberlistConfig.LogOutput = log.Writer()
 
 	// Create serf first
 	serf, err := serf.Create(serfConfig)
@@ -266,6 +276,20 @@ func (a *AgentCommand) setupSerf(config *Config) *serf.Serf {
 	}
 
 	return serf
+}
+
+// UnmarshalTags is a utility function which takes a slice of strings in
+// key=value format and returns them as a tag mapping.
+func UnmarshalTags(tags []string) (map[string]string, error) {
+	result := make(map[string]string)
+	for _, tag := range tags {
+		parts := strings.SplitN(tag, "=", 2)
+		if len(parts) != 2 || len(parts[0]) == 0 {
+			return nil, fmt.Errorf("Invalid tag: '%s'", tag)
+		}
+		result[parts[0]] = parts[1]
+	}
+	return result, nil
 }
 
 func (a *AgentCommand) Run(args []string) int {
@@ -325,6 +349,7 @@ func (a *AgentCommand) handleSignals() int {
 	// Attempt a graceful leave
 	gracefulCh := make(chan struct{})
 	a.Ui.Output("Gracefully shutting down agent...")
+	log.Debug("Gracefully shutting down agent...")
 	go func() {
 		if err := a.serf.Leave(); err != nil {
 			a.Ui.Error(fmt.Sprintf("Error: %s", err))
@@ -400,7 +425,7 @@ func (a *AgentCommand) eventLoop() {
 		select {
 		case e := <-a.eventCh:
 			log.Infof("agent: Received event: %s", e.String())
-			if e.EventType() == serf.EventMemberFailed && a.config.Server {
+			if (e.EventType() == serf.EventMemberFailed || e.EventType() == serf.EventMemberLeave) && a.config.Server {
 				failed := e.(serf.MemberEvent)
 				for _, member := range failed.Members {
 					if member.Tags["key"] == a.etcd.GetLeader() && member.Status != serf.StatusAlive {
