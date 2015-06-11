@@ -29,6 +29,11 @@ func (e *etcdClient) SetJob(job *Job) error {
 func (e *etcdClient) GetJobs() ([]*Job, error) {
 	res, err := e.Client.Get(keyspace+"/jobs/", true, false)
 	if err != nil {
+		eerr := err.(*etcdc.EtcdError)
+		if eerr.ErrorCode == 100 {
+			log.Info("No jobs found")
+			return nil, nil
+		}
 		return nil, err
 	}
 
