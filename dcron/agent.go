@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"net"
 	"os"
 	"os/signal"
@@ -264,8 +265,8 @@ func (a *AgentCommand) setupSerf(config *Config) *serf.Serf {
 	a.Ui.Output("Starting Serf agent...")
 	log.Info("agent: Serf agent starting")
 
-	serfConfig.LogOutput = log.Writer()
-	serfConfig.MemberlistConfig.LogOutput = log.Writer()
+	serfConfig.LogOutput = ioutil.Discard
+	serfConfig.MemberlistConfig.LogOutput = ioutil.Discard
 
 	// Create serf first
 	serf, err := serf.Create(serfConfig)
@@ -449,6 +450,7 @@ func (a *AgentCommand) eventLoop() {
 					go func() {
 						a.invokeJob(query.Payload)
 					}()
+					query.Respond([]byte("Executing job"))
 				}
 
 				if query.Name == QueryExecutionDone {
@@ -482,6 +484,7 @@ func (a *AgentCommand) schedulerReloadQuery(leader string) {
 	if err != nil {
 		log.Fatal("Error sending the scheduler reload query", err)
 	}
+	defer qr.Close()
 
 	ackCh := qr.AckCh()
 	respCh := qr.ResponseCh()
@@ -540,6 +543,7 @@ func (a *AgentCommand) RunQuery(job *Job) {
 	if err != nil {
 		log.Fatalf("Error sending the %s query", QueryRunJob, err)
 	}
+	defer qr.Close()
 
 	ackCh := qr.AckCh()
 	respCh := qr.ResponseCh()
