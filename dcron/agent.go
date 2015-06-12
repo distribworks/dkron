@@ -581,7 +581,7 @@ func (a *AgentCommand) processFilteredNodes(job *Job) ([]string, error) {
 
 			for _, member := range a.serf.Members() {
 				for mtk, mtv := range member.Tags {
-					if mtk == jtk && mtv == jtv {
+					if mtk == jtk && mtv == tv {
 						if len(nodes) < count {
 							nodes = append(nodes, member.Name)
 						}
