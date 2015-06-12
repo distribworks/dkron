@@ -146,7 +146,7 @@ func TestAgentCommandElectLeader(t *testing.T) {
 }
 
 func Test_processFilteredNodes(t *testing.T) {
-	log.Level = logrus.DebugLevel
+	log.Level = logrus.FatalLevel
 
 	shutdownCh := make(chan struct{})
 	defer close(shutdownCh)
@@ -206,19 +206,16 @@ func Test_processFilteredNodes(t *testing.T) {
 	job := &Job{
 		Name: "test_job_1",
 		Tags: map[string]string{
-			"role": "test:1",
+			"role": "test:2",
 		},
 	}
 
 	time.Sleep(100 * time.Millisecond)
 	nodes, err := a.processFilteredNodes(job)
 
-	t.Log(a.serf.Members())
-	t.Log(nodes)
-
-	// if nodes[0] != "test1" || nodes[1] != "test2" {
-	// 	t.Fatal("Not expected returned nodes")
-	// }
+	if nodes[0] != "test1" || nodes[1] != "test2" {
+		t.Fatal("Not expected returned nodes")
+	}
 
 	// Send a shutdown request
 	shutdownCh <- struct{}{}
