@@ -16,6 +16,12 @@ Dcron runs on Linux, OSX and Windows. It can be used to run scheduled commands o
 
 You can use Dcron to run the most important part of your company, scheduled jobs.
 
+## Status
+
+Currently Dcron is under heavy development and should be considered alpha stage.
+
+Said that, I encourage you to try it, it's very easy to use, see how it works for you and report any bugs [creating an issue](https://github.com/victorcoder/dcron/issues) in the github project.
+
 ## Quick start
 
 First, download a pre-built Dcron binary for your operating system or [compile Dcron yourself](#developing-dcron).
