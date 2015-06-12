@@ -221,3 +221,23 @@ func Test_processFilteredNodes(t *testing.T) {
 	shutdownCh <- struct{}{}
 	shutdownCh2 <- struct{}{}
 }
+
+func Test_UnmarshalTags(t *testing.T) {
+	tagPairs := []string{
+		"tag1=val1",
+		"tag2=val2",
+	}
+
+	tags, err := UnmarshalTags(tagPairs)
+
+	if err != nil {
+		t.Fatalf("err: %s", err)
+	}
+
+	if v, ok := tags["tag1"]; !ok || v != "val1" {
+		t.Fatalf("bad: %v", tags)
+	}
+	if v, ok := tags["tag2"]; !ok || v != "val2" {
+		t.Fatalf("bad: %v", tags)
+	}
+}
