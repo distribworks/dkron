@@ -425,7 +425,9 @@ func (a *AgentCommand) eventLoop() {
 	for {
 		select {
 		case e := <-a.eventCh:
-			log.Infof("agent: Received event: %s", e.String())
+			log.WithFields(logrus.Fields{
+				"event": e.String(),
+			}).Info("Received event")
 			if (e.EventType() == serf.EventMemberFailed || e.EventType() == serf.EventMemberLeave) && a.config.Server {
 				failed := e.(serf.MemberEvent)
 				for _, member := range failed.Members {
@@ -446,15 +448,31 @@ func (a *AgentCommand) eventLoop() {
 				}
 
 				if query.Name == QueryRunJob {
-					log.Infof("Running job: %s", query.Payload)
+					log.WithFields(logrus.Fields{
+						"query":   query.Name,
+						"payload": string(query.Payload),
+						"at":      query.LTime,
+					}).Info("Running job")
+
+					var job Job
+					if err := json.Unmarshal(query.Payload, &job); err != nil {
+						log.WithFields(logrus.Fields{
+							"query": QueryRunJob,
+						}).Fatalf("Error unmarshaling job payload", QueryRunJob)
+					}
+
 					go func() {
-						a.invokeJob(query.Payload)
+						a.invokeJob(&job)
 					}()
-					query.Respond([]byte("Executing job"))
+					query.Respond([]byte(fmt.Sprintf("Executing job %s at %d", job.Name, query.LTime)))
 				}
 
 				if query.Name == QueryExecutionDone {
-
+					log.WithFields(logrus.Fields{
+						"query":   query.Name,
+						"payload": string(query.Payload),
+						"at":      query.LTime,
+					}).Info("Received execution done")
 				}
 			}
 
@@ -538,7 +556,10 @@ func (a *AgentCommand) RunQuery(job *Job) {
 	}
 
 	jobJson, _ := json.Marshal(job)
-	log.Debugf("Sending %s query for job %s", QueryRunJob, job.Name)
+	log.WithFields(logrus.Fields{
+		"query":    QueryRunJob,
+		"job_name": job.Name,
+	}).Debug("Sending query")
 	qr, err := a.serf.Query(QueryRunJob, jobJson, params)
 	if err != nil {
 		log.Fatalf("Error sending the %s query", QueryRunJob, err)
@@ -553,14 +574,16 @@ func (a *AgentCommand) RunQuery(job *Job) {
 		case ack, ok := <-ackCh:
 			if ok {
 				log.WithFields(logrus.Fields{
-					"from": ack,
+					"query": QueryRunJob,
+					"from":  ack,
 				}).Debug("Received ack")
 			}
 		case resp, ok := <-respCh:
 			if ok {
 				log.WithFields(logrus.Fields{
-					"from":    resp.From,
-					"payload": string(resp.Payload),
+					"query":    QueryRunJob,
+					"from":     resp.From,
+					"response": string(resp.Payload),
 				}).Debug("Received response")
 			}
 		}

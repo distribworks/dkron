@@ -40,11 +40,8 @@ func spawnProc(proc string) (*exec.Cmd, error) {
 }
 
 // invokeJob will execute the given job. Depending on the event.
-func (a *AgentCommand) invokeJob(jobPayload []byte) error {
+func (a *AgentCommand) invokeJob(job *Job) error {
 	output, _ := circbuf.NewBuffer(maxBufSize)
-	var job Job
-
-	json.Unmarshal(jobPayload, &job)
 
 	// Determine the shell invocation based on OS
 	var shell, flag string
@@ -62,7 +59,7 @@ func (a *AgentCommand) invokeJob(jobPayload []byte) error {
 
 	// Start a timer to warn about slow handlers
 	slowTimer := time.AfterFunc(2*time.Hour, func() {
-		log.Warnf("agent: Script '%s' slow, execution exceeding %v", job.Command, 2*time.Hour)
+		log.Warnf("Script '%s' slow, execution exceeding %v", job.Command, 2*time.Hour)
 	})
 
 	if err := cmd.Start(); err != nil {
@@ -71,13 +68,13 @@ func (a *AgentCommand) invokeJob(jobPayload []byte) error {
 
 	// Warn if buffer is overritten
 	if output.TotalWritten() > output.Size() {
-		log.Warnf("agent: Script '%s' generated %d bytes of output, truncated to %d", job.Command, output.TotalWritten(), output.Size())
+		log.Warnf("Script '%s' generated %d bytes of output, truncated to %d", job.Command, output.TotalWritten(), output.Size())
 	}
 
 	var success bool
 	err := cmd.Wait()
 	slowTimer.Stop()
-	log.Debugf("agent: Command output: %s", output)
+	log.Debugf("Command output: %s", output)
 	if err != nil {
 		log.Error(err)
 		success = false
@@ -101,6 +98,7 @@ func (a *AgentCommand) invokeJob(jobPayload []byte) error {
 	if err != nil {
 		log.Fatal("Error sending the %s query", QueryExecutionDone, err)
 	}
+	defer qr.Close()
 
 	ackCh := qr.AckCh()
 	respCh := qr.ResponseCh()
@@ -110,19 +108,21 @@ func (a *AgentCommand) invokeJob(jobPayload []byte) error {
 		case ack, ok := <-ackCh:
 			if ok {
 				log.WithFields(logrus.Fields{
-					"from": ack,
+					"query": QueryExecutionDone,
+					"from":  ack,
 				}).Debug("Received ack")
 			}
 		case resp, ok := <-respCh:
 			if ok {
 				log.WithFields(logrus.Fields{
+					"query":   QueryExecutionDone,
 					"from":    resp.From,
 					"payload": string(resp.Payload),
 				}).Debug("Received response")
 			}
 		}
 	}
-	log.Debugf("Done receiving acks and responses from run query")
+	log.Debugf("Done receiving acks and responses from %s query", QueryExecutionDone)
 
 	return nil
 }
