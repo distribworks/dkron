@@ -3,6 +3,7 @@ package dcron
 import (
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"net/http"
 
 	"github.com/carbocation/interpose"
@@ -15,6 +16,7 @@ import (
 func (a *AgentCommand) ServeHTTP() {
 	r := mux.NewRouter().StrictSlash(true)
 	r.HandleFunc("/", a.IndexHandler)
+	r.HandleFunc("/dashboard", GetHome)
 	r.HandleFunc("/members", a.MembersHandler)
 	r.HandleFunc("/leader", a.LeaderHandler)
 
@@ -26,10 +28,8 @@ func (a *AgentCommand) ServeHTTP() {
 	middle := interpose.New()
 	middle.UseHandler(r)
 
-	// srv := &graceful.Server{
-	// 	Timeout: 1 * time.Second,
-	// 	Server:  &http.Server{Addr: s.config.HTTPAddr, Handler: middle},
-	// }
+	// Path of static files must be last!
+	r.PathPrefix("/").Handler(http.FileServer(http.Dir("static")))
 
 	srv := &http.Server{Addr: a.config.HTTPAddr, Handler: middle}
 
@@ -173,4 +173,21 @@ func (a *AgentCommand) LeaderHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusNotFound)
+}
+
+func GetHome(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html")
+
+	tmpl, err := template.ParseFiles("templates/dashboard.html.tmpl", "templates/home.html.tmpl")
+	if err != nil {
+		return
+	}
+
+	data := struct {
+		Pepe string
+	}{
+		"foo",
+	}
+
+	tmpl.Execute(w, data)
 }
