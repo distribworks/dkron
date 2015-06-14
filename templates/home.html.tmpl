@@ -1,10 +1,20 @@
 {{define "content"}}
 <div class="container">
   <div class="row">
-    <div class="jumbotron">
-      <h1>Hello, World!</h1>
-      <p>Welcome to your new Go web project.</p>
-    </div>
   </div>
+
+      <table class="table table-striped">
+	<tr>
+	  <th>Job</th>
+	  <th>Last</th>
+	</tr>
+        {{ range $job := .Jobs }}
+        <tr>
+	  <td>{{ $job.Name }}</td>
+	  <td>{{ $job.LastSuccess }}</td>
+	  <td>{{ if isSuccess }}Success{{ end }}</td>
+	</tr>
+	{{ end }}
+      </table>
 </div>
 {{end}}

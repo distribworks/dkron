@@ -16,9 +16,11 @@ import (
 func (a *AgentCommand) ServeHTTP() {
 	r := mux.NewRouter().StrictSlash(true)
 	r.HandleFunc("/", a.IndexHandler)
-	r.HandleFunc("/dashboard", GetHome)
 	r.HandleFunc("/members", a.MembersHandler)
 	r.HandleFunc("/leader", a.LeaderHandler)
+
+	subui := r.PathPrefix("/ui").Subrouter()
+	subui.HandleFunc("/dashboard", a.DashboardHandler)
 
 	sub := r.PathPrefix("/jobs").Subrouter()
 	sub.HandleFunc("/", a.JobCreateOrUpdateHandler).Methods("POST", "PUT")
@@ -175,19 +177,31 @@ func (a *AgentCommand) LeaderHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotFound)
 }
 
-func GetHome(w http.ResponseWriter, r *http.Request) {
+func (a *AgentCommand) DashboardHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
+
+	jobs, _ := a.etcd.GetJobs()
 
 	tmpl, err := template.ParseFiles("templates/dashboard.html.tmpl", "templates/home.html.tmpl")
 	if err != nil {
 		return
 	}
 
+	funcs := template.FuncMap{
+		"isSuccess": func() bool {
+			return true //job.LastSuccess.After(job.LastError)
+		},
+	}
+	tmpl.Funcs(funcs)
+
 	data := struct {
-		Pepe string
+		Jobs []*Job
 	}{
-		"foo",
+		Jobs: jobs,
 	}
 
-	tmpl.Execute(w, data)
+	err = tmpl.Execute(w, data)
+	if err != nil {
+		log.Error(err)
+	}
 }
