@@ -27,6 +27,9 @@ func (a *AgentCommand) ServeHTTP() {
 	sub.HandleFunc("/", a.JobsHandler).Methods("GET")
 	sub.HandleFunc("/{job}", a.JobDeleteHandler).Methods("DELETE")
 
+	subex := r.PathPrefix("/executions").Subrouter()
+	subex.HandleFunc("/{job}", a.ExecutionsHandler).Methods("GET")
+
 	middle := interpose.New()
 	middle.UseHandler(r)
 
@@ -118,7 +121,10 @@ func (a *AgentCommand) JobCreateOrUpdateHandler(w http.ResponseWriter, r *http.R
 }
 
 func (a *AgentCommand) ExecutionsHandler(w http.ResponseWriter, r *http.Request) {
-	executions, err := a.etcd.GetExecutions()
+	vars := mux.Vars(r)
+	job := vars["job"]
+
+	executions, err := a.etcd.GetExecutions(job)
 	if err != nil {
 		log.Error(err)
 	}
@@ -141,7 +147,7 @@ func (a *AgentCommand) MembersHandler(w http.ResponseWriter, r *http.Request) {
 func (a *AgentCommand) JobDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	job := vars["job"]
-	// Save the new job to etcd
+
 	if _, err := a.etcd.Client.Delete(job, false); err != nil {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusNotFound)
