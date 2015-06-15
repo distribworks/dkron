@@ -40,7 +40,7 @@ func spawnProc(proc string) (*exec.Cmd, error) {
 }
 
 // invokeJob will execute the given job. Depending on the event.
-func (a *AgentCommand) invokeJob(job *Job) error {
+func (a *AgentCommand) invokeJob(job *Job, execution *Execution) error {
 	output, _ := circbuf.NewBuffer(maxBufSize)
 
 	// Determine the shell invocation based on OS
@@ -82,11 +82,9 @@ func (a *AgentCommand) invokeJob(job *Job) error {
 		success = true
 	}
 
-	execution := &Execution{
-		JobName:    job.Name,
-		FinishedAt: time.Now(),
-		Success:    success,
-	}
+	execution.FinishedAt = time.Now()
+	execution.Success = success
+
 	executionJson, _ := json.Marshal(execution)
 
 	params := &serf.QueryParam{

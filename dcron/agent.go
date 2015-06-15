@@ -461,10 +461,18 @@ func (a *AgentCommand) eventLoop() {
 						}).Fatalf("Error unmarshaling job payload", QueryRunJob)
 					}
 
+					ex := Execution{
+						JobName:   job.Name,
+						StartedAt: time.Now(),
+						Success:   false,
+					}
+
 					go func() {
-						a.invokeJob(&job)
+						a.invokeJob(&job, &ex)
 					}()
-					query.Respond([]byte(fmt.Sprintf("Executing job %s at %d", job.Name, query.LTime)))
+
+					exJson, _ := json.Marshal(ex)
+					query.Respond(exJson)
 				}
 
 				if query.Name == QueryExecutionDone {
@@ -473,6 +481,16 @@ func (a *AgentCommand) eventLoop() {
 						"payload": string(query.Payload),
 						"at":      query.LTime,
 					}).Info("Received execution done")
+
+					var ex Execution
+					if err := json.Unmarshal(query.Payload, &ex); err != nil {
+						log.Fatal(err)
+					}
+
+					// Save the new execution to etcd
+					if err := a.etcd.SetExecution(&ex); err != nil {
+						log.Fatal(err)
+					}
 				}
 			}
 

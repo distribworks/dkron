@@ -2,6 +2,8 @@ package dcron
 
 import (
 	"encoding/json"
+	"fmt"
+
 	etcdc "github.com/coreos/go-etcd/etcd"
 )
 
@@ -67,8 +69,8 @@ func (e *etcdClient) GetJob(name string) (*Job, error) {
 	return &job, nil
 }
 
-func (e *etcdClient) GetExecutions() ([]*Execution, error) {
-	res, err := e.Client.Get(keyspace+"/executions/", true, false)
+func (e *etcdClient) GetExecutions(jobName string) ([]*Execution, error) {
+	res, err := e.Client.Get(fmt.Sprintf("%s/executions/%s", keyspace, jobName), true, false)
 	if err != nil {
 		return nil, err
 	}
@@ -83,6 +85,19 @@ func (e *etcdClient) GetExecutions() ([]*Execution, error) {
 		executions = append(executions, &execution)
 	}
 	return executions, nil
+}
+
+func (e *etcdClient) SetExecution(execution *Execution) error {
+	eJson, _ := json.Marshal(execution)
+	ts := fmt.Sprint(execution.StartedAt.UnixNano())
+
+	log.Debugf("Setting etcd key %s: %s", execution.JobName, string(eJson))
+	if _, err := e.Client.Set(fmt.Sprintf(
+		"%s/executions/%s/%s", keyspace, execution.JobName, ts), string(eJson), 0); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (e *etcdClient) GetLeader() string {
