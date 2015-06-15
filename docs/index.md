@@ -4,7 +4,21 @@ Welcome to the Dcron documentation! This is the reference guide on how to use Dr
 
 ## What is Dcron
 
-Dcron is a system service that runs scheduled tasks at given intervales or times, just like the cron unix service. It differs from it in the sense that it's distributed in several machines in a cluster and if one of that machines (the leader) fails, any other one can take this responsability and keep executing the sheduled tasks without human intervention.
+Dcron is a system service that runs scheduled tasks at given intervals or times, just like the cron unix service. It differs from it in the sense that it's distributed in several machines in a cluster and if one of that machines (the leader) fails, any other one can take this responsability and keep executing the sheduled tasks without human intervention.
+
+Dcron is a distributed cron service, easy to setup and fault tolerant with focus in:
+
+- Easy: Easy to use with a great UI
+- Reliable: Completly fault tolerant
+- High scalable: Able to handle high volumes of scheduled jobs and thousands of nodes
+
+Dcron is written in Go and leverage the power of etcd and serf for providing fault tolerance and, reliability and scalability while keeping simple and easily instalable.
+
+Dcron is inspired by the google whitepaper [Reliable Cron across the Planet](https://queue.acm.org/detail.cfm?id=2745840)
+
+Dcron runs on Linux, OSX and Windows. It can be used to run scheduled commands on a server cluster using any combination of servers for each job. It has no single points of failure due to the use of the Gossip protocol and the fault tolerant distributed database etcd.
+
+You can use Dcron to ensure that one of the most critical part of your business, scheduled jobs is always up and running.
 
 ## Dcron design
 
