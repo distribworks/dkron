@@ -11,8 +11,7 @@
         {{ range $job := .Jobs }}
         <tr>
 	  <td>{{ $job.Name }}</td>
-	  <td>{{ $job.LastSuccess }}</td>
-	  <td>{{ if isSuccess }}Success{{ end }}</td>
+	  <td class="error">{{if isSuccess $job}}Success{{else}}Failed{{end}}</td>
 	</tr>
 	{{ end }}
       </table>

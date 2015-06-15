@@ -182,17 +182,14 @@ func (a *AgentCommand) DashboardHandler(w http.ResponseWriter, r *http.Request) 
 
 	jobs, _ := a.etcd.GetJobs()
 
-	tmpl, err := template.ParseFiles("templates/dashboard.html.tmpl", "templates/home.html.tmpl")
-	if err != nil {
-		return
-	}
-
 	funcs := template.FuncMap{
-		"isSuccess": func() bool {
-			return true //job.LastSuccess.After(job.LastError)
+		"isSuccess": func(job *Job) bool {
+			return job.LastSuccess.After(job.LastError)
 		},
 	}
-	tmpl.Funcs(funcs)
+
+	tmpl := template.Must(template.New("dashboard.html.tmpl").Funcs(funcs).ParseFiles(
+		"templates/dashboard.html.tmpl", "templates/home.html.tmpl"))
 
 	data := struct {
 		Jobs []*Job
@@ -200,8 +197,7 @@ func (a *AgentCommand) DashboardHandler(w http.ResponseWriter, r *http.Request) 
 		Jobs: jobs,
 	}
 
-	err = tmpl.Execute(w, data)
-	if err != nil {
+	if err := tmpl.Execute(w, data); err != nil {
 		log.Error(err)
 	}
 }
