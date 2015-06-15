@@ -19,8 +19,9 @@ func (a *AgentCommand) ServeHTTP() {
 	r.HandleFunc("/members", a.MembersHandler)
 	r.HandleFunc("/leader", a.LeaderHandler)
 
-	subui := r.PathPrefix("/ui").Subrouter()
-	subui.HandleFunc("/dashboard", a.DashboardHandler)
+	subui := r.PathPrefix("/dashboard").Subrouter()
+	subui.HandleFunc("/jobs", a.DashboardJobsHandler).Methods("GET")
+	subui.HandleFunc("/jobs/{job}/executions", a.DashboardExecutionsHandler).Methods("GET")
 
 	sub := r.PathPrefix("/jobs").Subrouter()
 	sub.HandleFunc("/", a.JobCreateOrUpdateHandler).Methods("POST", "PUT")
@@ -183,7 +184,7 @@ func (a *AgentCommand) LeaderHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotFound)
 }
 
-func (a *AgentCommand) DashboardHandler(w http.ResponseWriter, r *http.Request) {
+func (a *AgentCommand) DashboardJobsHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 
 	jobs, _ := a.etcd.GetJobs()
@@ -195,12 +196,36 @@ func (a *AgentCommand) DashboardHandler(w http.ResponseWriter, r *http.Request) 
 	}
 
 	tmpl := template.Must(template.New("dashboard.html.tmpl").Funcs(funcs).ParseFiles(
-		"templates/dashboard.html.tmpl", "templates/home.html.tmpl"))
+		"templates/dashboard.html.tmpl", "templates/jobs.html.tmpl"))
 
 	data := struct {
 		Jobs []*Job
 	}{
 		Jobs: jobs,
+	}
+
+	if err := tmpl.Execute(w, data); err != nil {
+		log.Error(err)
+	}
+}
+
+func (a *AgentCommand) DashboardExecutionsHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html")
+
+	vars := mux.Vars(r)
+	job := vars["job"]
+
+	execs, _ := a.etcd.GetExecutions(job)
+
+	tmpl := template.Must(template.New("dashboard.html.tmpl").ParseFiles(
+		"templates/dashboard.html.tmpl", "templates/executions.html.tmpl"))
+
+	data := struct {
+		Executions []*Execution
+		JobName    string
+	}{
+		Executions: execs,
+		JobName:    job,
 	}
 
 	if err := tmpl.Execute(w, data); err != nil {
