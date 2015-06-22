@@ -2,7 +2,8 @@ package dcron
 
 import (
 	"testing"
-	"time"
+
+	"github.com/Sirupsen/logrus"
 )
 
 func testJobs() []*Job {
@@ -16,32 +17,35 @@ func testJobs() []*Job {
 	return jobs
 }
 
-func TestScheduleReshedule(t *testing.T) {
+func TestSchedule(t *testing.T) {
+	log.Level = logrus.FatalLevel
+
 	sched := NewScheduler()
+
+	if sched.Started == true {
+		t.Fatal("The scheduler should be stopped.")
+	}
 
 	testJob1 := &Job{
 		Name: "cron_job", Schedule: "@every 2s", Command: "echo 'test1'", Owner: "John Dough", OwnerEmail: "foo@bar.com",
 	}
 	sched.Start([]*Job{testJob1})
 
-	for _, entry := range sched.Cron.Entries() {
-		log.Debug(*entry)
+	if sched.Started != true {
+		t.Fatal("The scheduler should be started.")
 	}
-
-	log.Debug(len(sched.Cron.Entries()))
-
-	sched.Cron.Stop()
-	time.Sleep(10 * time.Second)
 
 	testJob2 := &Job{
 		Name: "cron_job", Schedule: "@every 5s", Command: "echo 'test2'", Owner: "John Dough", OwnerEmail: "foo@bar.com",
 	}
 	sched.Restart([]*Job{testJob2})
 
-	for _, entry := range sched.Cron.Entries() {
-		log.Debug(*entry)
+	if sched.Started != true {
+		t.Fatal("The scheduler should be started.")
 	}
 
-	log.Debug(len(sched.Cron.Entries()))
-	time.Sleep(10 * time.Second)
+	if len(sched.Cron.Entries()) > 1 {
+		t.Fatal("The scheduler has more jobs than expected.")
+	}
+
 }
