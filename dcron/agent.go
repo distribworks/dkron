@@ -461,6 +461,7 @@ func (a *AgentCommand) eventLoop() {
 						JobName:   job.Name,
 						StartedAt: time.Now(),
 						Success:   false,
+						NodeName:  a.config.NodeName,
 					}
 
 					go func() {

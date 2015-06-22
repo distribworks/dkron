@@ -69,4 +69,5 @@ type Execution struct {
 	Success    bool      `json:"success"`
 	Output     []byte    `json:"output"`
 	Job        *Job      `json:"-"`
+	NodeName   string
 }
