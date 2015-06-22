@@ -6,3 +6,6 @@ repo_url: https://github.com/victorcoder/dcron
 site_author: Victor Castell
 copyright: Victor Castell, www.victorcastell.com
 google_analytics: ['', 'dcron.io']
+# pages:
+#   - Home: 'index.md'
+#   - Intro: 'intro.md'

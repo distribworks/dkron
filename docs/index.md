@@ -1,25 +1,25 @@
-# Dcron - Distributed, fault tolerant job scheduling system
+# Dcron
 
-Welcome to the Dcron documentation! This is the reference guide on how to use Drcon. If you want a getting started guide refer to the [getting started guide](getting-started/) of the Dcron documentation.
+## Characteristics
 
-## What is Dcron
+### Easy integration
 
-Dcron is a system service that runs scheduled tasks at given intervals or times, just like the cron unix service. It differs from it in the sense that it's distributed in several machines in a cluster and if one of that machines (the leader) fails, any other one can take this responsability and keep executing the sheduled tasks without human intervention.
+Dcron is easy to setup and use. Choose your OS package and it's ready to run out-of-the-box. The [administration panel]() and it's simple JSON API makes a breeze to integrate with you current workflow or deploy system.
 
-Dcron is a distributed cron service, easy to setup and fault tolerant with focus in:
+### Always available
 
-- Easy: Easy to use with a great UI
-- Reliable: Completly fault tolerant
-- High scalable: Able to handle high volumes of scheduled jobs and thousands of nodes
+Using the power of the Raft implementation in etcd, you can rely on Dcron to be always available. Wherever you need to generate your employee monthly payroll or send those daily emails that keeps your users informed and your site busy, Dcron could help you to sleep at night.
 
-Dcron is written in Go and leverage the power of etcd and serf for providing fault tolerance and, reliability and scalability while keeping simple and easily instalable.
+### Flexible targets
 
-Dcron is inspired by the google whitepaper [Reliable Cron across the Planet](https://queue.acm.org/detail.cfm?id=2745840)
+Simple but powerful tag based target node selection for jobs. Tag node count allows to run jobs in an arbitrary number nodes in the same group or groups for any given task.
 
-Dcron runs on Linux, OSX and Windows. It can be used to run scheduled commands on a server cluster using any combination of servers for each job. It has no single points of failure due to the use of the Gossip protocol and the fault tolerant distributed database etcd.
+## Example use cases:
 
-You can use Dcron to ensure that one of the most critical part of your business, scheduled jobs is always up and running.
-
-## Dcron design
-
-Dcron is designed to do one task well, executing commands in given intervals, following the unix philosophy of doing one thing and doing it well, like the classic and battle tested cron unix service, with the given addition of being designed for the cloud era, removing single points of failure and clusters of any size are needed to execute scheduled tasks in a decentralized fashion.
+* Eail delivery: Newsletters, marketing campaigns, recommendations, etc.
+* Payroll generation
+* Bookkeeping
+* Data consolidation for BI
+* Recurring invoicing
+* Data transfer
+* ...
