@@ -309,11 +309,7 @@ func (a *AgentCommand) Run(args []string) int {
 		}()
 
 		if a.ElectLeader() {
-			jobs, err := a.etcd.GetJobs()
-			if err != nil {
-				log.Fatal(err)
-			}
-			a.sched.Start(jobs)
+			a.schedule()
 		}
 	}
 	go a.eventLoop()
@@ -434,7 +430,7 @@ func (a *AgentCommand) eventLoop() {
 					if member.Tags["key"] == a.etcd.GetLeader() && member.Status != serf.StatusAlive {
 						if a.ElectLeader() {
 							log.Debug("Restarting scheduler")
-							a.schedulerRestart()
+							a.schedule()
 						}
 					}
 				}
@@ -444,7 +440,7 @@ func (a *AgentCommand) eventLoop() {
 				query := e.(*serf.Query)
 
 				if query.Name == QuerySchedulerRestart && a.config.Server {
-					a.schedulerRestart()
+					a.schedule()
 				}
 
 				if query.Name == QueryRunJob {
@@ -501,13 +497,17 @@ func (a *AgentCommand) eventLoop() {
 	}
 }
 
-func (a *AgentCommand) schedulerRestart() {
-	// Restart scheduler
+// Start or restart scheduler
+func (a *AgentCommand) schedule() {
 	jobs, err := a.etcd.GetJobs()
 	if err != nil {
 		log.Fatal(err)
 	}
-	a.sched.Restart(jobs)
+	if a.sched.Started {
+		a.sched.Restart(jobs)
+	} else {
+		a.sched.Start(jobs)
+	}
 }
 
 func (a *AgentCommand) schedulerReloadQuery(leader string) {

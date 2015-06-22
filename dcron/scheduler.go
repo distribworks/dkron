@@ -8,13 +8,13 @@ import (
 )
 
 type Scheduler struct {
-	Cron *cron.Cron
+	Cron    *cron.Cron
+	Started bool
 }
 
 func NewScheduler() *Scheduler {
 	c := cron.New()
-	c.Start()
-	return &Scheduler{Cron: c}
+	return &Scheduler{Cron: c, Started: false}
 }
 
 func (s *Scheduler) Start(jobs []*Job) {
@@ -23,13 +23,11 @@ func (s *Scheduler) Start(jobs []*Job) {
 		s.Cron.AddJob(job.Schedule, job)
 	}
 	s.Cron.Start()
+	s.Started = true
 }
 
 func (s *Scheduler) Restart(jobs []*Job) {
 	s.Cron.Stop()
-	s.Cron.Stop()
-	// entries := s.Cron.Entries()
-	// entries = entries[:0]
 	s.Cron = cron.New()
 	s.Start(jobs)
 }
@@ -47,9 +45,7 @@ type Job struct {
 	LastError    time.Time         `json:"last_error"`
 	Disabled     bool              `json:"disabled"`
 	Tags         map[string]string `json:"tags"`
-
-	Executions []*Execution  `json:"-"`
-	Agent      *AgentCommand `json:"-"`
+	Agent        *AgentCommand     `json:"-"`
 
 	running sync.Mutex
 }
