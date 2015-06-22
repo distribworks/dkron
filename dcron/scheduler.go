@@ -1,32 +1,36 @@
 package dcron
 
 import (
+	"sync"
 	"time"
 
 	"github.com/victorcoder/dcron/cron"
 )
 
 type Scheduler struct {
-	cron *cron.Cron
+	Cron *cron.Cron
 }
 
 func NewScheduler() *Scheduler {
 	c := cron.New()
 	c.Start()
-	return &Scheduler{cron: c}
+	return &Scheduler{Cron: c}
 }
 
 func (s *Scheduler) Start(jobs []*Job) {
 	for _, job := range jobs {
 		log.Debugf("Adding job to cron: %v", job)
-		s.cron.AddJob(job.Schedule, job)
+		s.Cron.AddJob(job.Schedule, job)
 	}
-	s.cron.Start()
+	s.Cron.Start()
 }
 
 func (s *Scheduler) Restart(jobs []*Job) {
-	s.cron.Stop()
-	s.cron = cron.New()
+	s.Cron.Stop()
+	s.Cron.Stop()
+	// entries := s.Cron.Entries()
+	// entries = entries[:0]
+	s.Cron = cron.New()
 	s.Start(jobs)
 }
 
@@ -46,11 +50,20 @@ type Job struct {
 
 	Executions []*Execution  `json:"-"`
 	Agent      *AgentCommand `json:"-"`
+
+	running sync.Mutex
 }
 
 func (j Job) Run() {
-	log.Debug("Running: " + j.Name)
-	j.Agent.RunQuery(&j)
+	j.running.Lock()
+	defer j.running.Unlock()
+
+	log.Debugf("Running: %s %s", j.Name, j.Schedule)
+
+	// Maybe we are testing
+	if j.Agent != nil {
+		j.Agent.RunQuery(&j)
+	}
 }
 
 type Execution struct {
