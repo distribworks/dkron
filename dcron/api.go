@@ -217,8 +217,11 @@ func (a *AgentCommand) DashboardExecutionsHandler(w http.ResponseWriter, r *http
 
 	execs, _ := a.etcd.GetExecutions(job)
 
-	tmpl := template.Must(template.New("dashboard.html.tmpl").ParseFiles(
-		"templates/dashboard.html.tmpl", "templates/executions.html.tmpl"))
+	tmpl := template.Must(template.New("dashboard.html.tmpl").Funcs(template.FuncMap{
+		"html": func(value []byte) template.HTML {
+			return template.HTML(value)
+		},
+	}).ParseFiles("templates/dashboard.html.tmpl", "templates/executions.html.tmpl"))
 
 	data := struct {
 		Executions []*Execution
