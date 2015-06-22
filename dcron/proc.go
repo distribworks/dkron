@@ -84,6 +84,7 @@ func (a *AgentCommand) invokeJob(job *Job, execution *Execution) error {
 
 	execution.FinishedAt = time.Now()
 	execution.Success = success
+	execution.Output = output.Bytes()
 
 	executionJson, _ := json.Marshal(execution)
 
