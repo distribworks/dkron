@@ -488,6 +488,23 @@ func (a *AgentCommand) eventLoop() {
 					if err := a.etcd.SetExecution(&ex); err != nil {
 						log.Fatal(err)
 					}
+
+					// Save job status
+					job, err := a.etcd.GetJob(ex.JobName)
+					if err != nil {
+						log.Fatal(err)
+					}
+					if ex.Success {
+						job.LastSuccess = ex.FinishedAt
+						job.SuccessCount = job.SuccessCount + 1
+					} else {
+						job.LastError = ex.FinishedAt
+						job.ErrorCount = job.ErrorCount + 1
+					}
+
+					if err := a.etcd.SetJob(job); err != nil {
+						log.Fatal(err)
+					}
 				}
 			}
 
