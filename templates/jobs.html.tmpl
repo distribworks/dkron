@@ -6,12 +6,16 @@
       <table class="table table-striped">
 	<tr>
 	  <th>Job</th>
+	  <th>Success count</th>
+	  <th>Error count</th>
 	  <th>Last</th>
 	</tr>
         {{ range $job := .Jobs }}
         <tr>
 	  <td><a href="/dashboard/jobs/{{$job.Name}}/executions">{{ $job.Name }}</a></td>
-	  <td class="error">{{if isSuccess $job}}Success{{else}}Failed{{end}}</td>
+	  <td>{{ $job.SuccessCount }}</td>
+	  <td>{{ $job.ErrorCount }}</td>
+	  <td>{{if isSuccess $job}}Success{{else}}Failed{{end}}</td>
 	</tr>
 	{{ end }}
       </table>
