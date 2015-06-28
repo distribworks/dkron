@@ -39,7 +39,7 @@ func (a *AgentCommand) ServeHTTP() {
 
 	srv := &http.Server{Addr: a.config.HTTPAddr, Handler: middle}
 
-	log.Infoln("Running HTTP server on 8080")
+	log.Infof("Running HTTP server on %s", a.config.HTTPAddr)
 
 	certFile := "" //config.GetString("certFile")
 	keyFile := ""  //config.GetString("keyFile")
