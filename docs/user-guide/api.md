@@ -20,31 +20,27 @@ It returns info about the agent queried.
 
 ## Get Jobs
 
-Endpoint: /jobs
-Method: GET
-Example: curl -L -X GET dcron-node:8080/jobs
-A job listing returns a JSON list containing all of the jobs. Each job is a JSON hash. Interesting fields in the hashes are:
-
-invocationCount: the number of times the job completed
-executor: auto-determined by Chronos, but will usually be "" for non-async jobs
-parents: for dependent jobs, a list of all other jobs that must run before this job will do so
-If there is a parents field there will be no schedule field and vice-versa.
+- Endpoint: /jobs
+- Method: GET
+- Example: curl -L -X GET dcron-node:8080/jobs
 
 ## Deleting a Job
+
 Get a job name from the job listing above. Then:
 
-Endpoint: /jobs/jobName
-Method: DELETE
-Example: curl -L -X DELETE dcron-node:8080/job/aggregate_stats
-Response: HTTP 204
+- Endpoint: /jobs/jobName
+- Method: DELETE
+- Example: curl -L -X DELETE dcron-node:8080/job/aggregate_stats
+- Response: HTTP 204
 
 ## Manually Starting a Job
+
 You can manually start a job by issuing an HTTP request.
 
-Endpoint: /jobs/job_name
-Method: PUT
-Query string parameters: arguments - optional string with a list of command line arguments that is appended to job's command
-Example: curl -L -X PUT dcron-node:8080/jobs/aggregate_stats
-Example: curl -L -X PUT dcron-node:8080/jobs/aggregate_stats?arguments=-debug
-Response: HTTP 204
+- Endpoint: /jobs/job_name
+- Method: PUT
+- Query string parameters: arguments - optional string with a list of command line arguments that is appended to job's command
+- Example: curl -L -X PUT dcron-node:8080/jobs/aggregate_stats
+- Example: curl -L -X PUT dcron-node:8080/jobs/aggregate_stats?arguments=-debug
+- Response: HTTP 204
 
