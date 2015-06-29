@@ -1,3 +1,5 @@
+# License
+
 Copyright (c) Victor Castell
 
 Dcron is an Open Source project licensed under the terms of
