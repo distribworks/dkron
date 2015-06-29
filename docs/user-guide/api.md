@@ -31,7 +31,6 @@ Get a job name from the job listing above. Then:
 - Endpoint: /jobs/jobName
 - Method: DELETE
 - Example: curl -L -X DELETE dcron-node:8080/job/aggregate_stats
-- Response: HTTP 204
 
 ## Manually Starting a Job
 
@@ -42,5 +41,9 @@ You can manually start a job by issuing an HTTP request.
 - Query string parameters: arguments - optional string with a list of command line arguments that is appended to job's command
 - Example: curl -L -X PUT dcron-node:8080/jobs/aggregate_stats
 - Example: curl -L -X PUT dcron-node:8080/jobs/aggregate_stats?arguments=-debug
-- Response: HTTP 204
 
+## Get job executions
+
+- Endpoint: /executions/job
+- Method: GET
+- Example: curl -L -X GET dcron-node:8080/executions/aggregate_stats
