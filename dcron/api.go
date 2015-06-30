@@ -3,33 +3,19 @@ package dcron
 import (
 	"encoding/json"
 	"fmt"
-	"html/template"
 	"net/http"
 
 	"github.com/carbocation/interpose"
 	"github.com/gorilla/mux"
-	// "github.com/tylerb/graceful"
 	"io"
 	"io/ioutil"
 )
 
 func (a *AgentCommand) ServeHTTP() {
 	r := mux.NewRouter().StrictSlash(true)
-	r.HandleFunc("/", a.IndexHandler)
-	r.HandleFunc("/members", a.MembersHandler)
-	r.HandleFunc("/leader", a.LeaderHandler)
 
-	subui := r.PathPrefix("/dashboard").Subrouter()
-	subui.HandleFunc("/jobs", a.DashboardJobsHandler).Methods("GET")
-	subui.HandleFunc("/jobs/{job}/executions", a.DashboardExecutionsHandler).Methods("GET")
-
-	sub := r.PathPrefix("/jobs").Subrouter()
-	sub.HandleFunc("/", a.JobCreateOrUpdateHandler).Methods("POST", "PUT")
-	sub.HandleFunc("/", a.JobsHandler).Methods("GET")
-	sub.HandleFunc("/{job}", a.JobDeleteHandler).Methods("DELETE")
-
-	subex := r.PathPrefix("/executions").Subrouter()
-	subex.HandleFunc("/{job}", a.ExecutionsHandler).Methods("GET")
+	a.apiRoutes(r)
+	a.dashboardRoutes(r)
 
 	middle := interpose.New()
 	middle.UseHandler(r)
@@ -51,7 +37,22 @@ func (a *AgentCommand) ServeHTTP() {
 	log.Debug("Exiting HTTP server")
 }
 
-func (a *AgentCommand) IndexHandler(w http.ResponseWriter, r *http.Request) {
+func (a *AgentCommand) apiRoutes(r *mux.Router) {
+	r.HandleFunc("/", a.indexHandler)
+	r.HandleFunc("/members", a.membersHandler)
+	r.HandleFunc("/leader", a.leaderHandler)
+
+	sub := r.PathPrefix("/jobs").Subrouter()
+	sub.HandleFunc("/", a.jobCreateOrUpdateHandler).Methods("POST", "PUT")
+	sub.HandleFunc("/", a.jobsHandler).Methods("GET")
+	sub.HandleFunc("/{job}", a.jobDeleteHandler).Methods("DELETE")
+	sub.HandleFunc("/{job}", a.jobRunHandler).Methods("PUT")
+
+	subex := r.PathPrefix("/executions").Subrouter()
+	subex.HandleFunc("/{job}", a.executionsHandler).Methods("GET")
+}
+
+func (a *AgentCommand) indexHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 
@@ -70,7 +71,7 @@ func (a *AgentCommand) IndexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (a *AgentCommand) JobsHandler(w http.ResponseWriter, r *http.Request) {
+func (a *AgentCommand) jobsHandler(w http.ResponseWriter, r *http.Request) {
 	jobs, err := a.etcd.GetJobs()
 	if err != nil {
 		log.Error(err)
@@ -83,7 +84,7 @@ func (a *AgentCommand) JobsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (a *AgentCommand) JobCreateOrUpdateHandler(w http.ResponseWriter, r *http.Request) {
+func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	var job Job
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
@@ -121,7 +122,7 @@ func (a *AgentCommand) JobCreateOrUpdateHandler(w http.ResponseWriter, r *http.R
 	}
 }
 
-func (a *AgentCommand) ExecutionsHandler(w http.ResponseWriter, r *http.Request) {
+func (a *AgentCommand) executionsHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	job := vars["job"]
 
@@ -136,7 +137,7 @@ func (a *AgentCommand) ExecutionsHandler(w http.ResponseWriter, r *http.Request)
 	}
 }
 
-func (a *AgentCommand) MembersHandler(w http.ResponseWriter, r *http.Request) {
+func (a *AgentCommand) membersHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 
@@ -145,7 +146,7 @@ func (a *AgentCommand) MembersHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (a *AgentCommand) JobDeleteHandler(w http.ResponseWriter, r *http.Request) {
+func (a *AgentCommand) jobDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	job := vars["job"]
 
@@ -165,7 +166,7 @@ func (a *AgentCommand) JobDeleteHandler(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
-func (a *AgentCommand) LeaderHandler(w http.ResponseWriter, r *http.Request) {
+func (a *AgentCommand) leaderHandler(w http.ResponseWriter, r *http.Request) {
 	leader := a.etcd.GetLeader()
 	for _, member := range a.serf.Members() {
 		if key, ok := member.Tags["key"]; ok {
@@ -182,56 +183,4 @@ func (a *AgentCommand) LeaderHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusNotFound)
-}
-
-func (a *AgentCommand) DashboardJobsHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html")
-
-	jobs, _ := a.etcd.GetJobs()
-
-	funcs := template.FuncMap{
-		"isSuccess": func(job *Job) bool {
-			return job.LastSuccess.After(job.LastError)
-		},
-	}
-
-	tmpl := template.Must(template.New("dashboard.html.tmpl").Funcs(funcs).ParseFiles(
-		"templates/dashboard.html.tmpl", "templates/jobs.html.tmpl"))
-
-	data := struct {
-		Jobs []*Job
-	}{
-		Jobs: jobs,
-	}
-
-	if err := tmpl.Execute(w, data); err != nil {
-		log.Error(err)
-	}
-}
-
-func (a *AgentCommand) DashboardExecutionsHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html")
-
-	vars := mux.Vars(r)
-	job := vars["job"]
-
-	execs, _ := a.etcd.GetExecutions(job)
-
-	tmpl := template.Must(template.New("dashboard.html.tmpl").Funcs(template.FuncMap{
-		"html": func(value []byte) template.HTML {
-			return template.HTML(value)
-		},
-	}).ParseFiles("templates/dashboard.html.tmpl", "templates/executions.html.tmpl"))
-
-	data := struct {
-		Executions []*Execution
-		JobName    string
-	}{
-		Executions: execs,
-		JobName:    job,
-	}
-
-	if err := tmpl.Execute(w, data); err != nil {
-		log.Error(err)
-	}
 }
