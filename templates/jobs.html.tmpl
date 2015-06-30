@@ -9,6 +9,7 @@
 	  <th>Success count</th>
 	  <th>Error count</th>
 	  <th>Last</th>
+	  <th>Actions</th>
 	</tr>
         {{ range $job := .Jobs }}
         <tr>
@@ -16,6 +17,7 @@
 	  <td>{{ $job.SuccessCount }}</td>
 	  <td>{{ $job.ErrorCount }}</td>
 	  <td>{{if isSuccess $job}}Success{{else}}Failed{{end}}</td>
+	  <td><form method="post" action="/jobs/{{ $job.Name }}"><input name="run" value="Run" type="submit"/></form></td>
 	</tr>
 	{{ end }}
       </table>

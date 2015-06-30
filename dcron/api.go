@@ -46,7 +46,7 @@ func (a *AgentCommand) apiRoutes(r *mux.Router) {
 	sub.HandleFunc("/", a.jobCreateOrUpdateHandler).Methods("POST", "PUT")
 	sub.HandleFunc("/", a.jobsHandler).Methods("GET")
 	sub.HandleFunc("/{job}", a.jobDeleteHandler).Methods("DELETE")
-	sub.HandleFunc("/{job}", a.jobRunHandler).Methods("PUT")
+	sub.HandleFunc("/{job}", a.jobRunHandler).Methods("POST", "PUT")
 
 	subex := r.PathPrefix("/executions").Subrouter()
 	subex.HandleFunc("/{job}", a.executionsHandler).Methods("GET")
@@ -183,4 +183,27 @@ func (a *AgentCommand) leaderHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusNotFound)
+}
+
+func (a *AgentCommand) jobRunHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	job := vars["job"]
+
+	j, err := a.etcd.GetJob(job)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusNotFound)
+		if err := json.NewEncoder(w).Encode(err); err != nil {
+			log.Fatal(err)
+		}
+		return
+	}
+
+	a.RunQuery(j)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if _, err := fmt.Fprintf(w, `{"result": "ok"}`); err != nil {
+		log.Fatal(err)
+	}
 }
