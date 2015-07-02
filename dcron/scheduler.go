@@ -54,10 +54,9 @@ func (j Job) Run() {
 	j.running.Lock()
 	defer j.running.Unlock()
 
-	log.Debugf("Running: %s %s", j.Name, j.Schedule)
-
 	// Maybe we are testing
-	if j.Agent != nil {
+	if j.Agent != nil && j.Disabled == false {
+		log.Debugf("Running: %s %s", j.Name, j.Schedule)
 		j.Agent.RunQuery(&j)
 	}
 }
