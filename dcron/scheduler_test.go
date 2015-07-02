@@ -47,5 +47,4 @@ func TestSchedule(t *testing.T) {
 	if len(sched.Cron.Entries()) > 1 {
 		t.Fatal("The scheduler has more jobs than expected.")
 	}
-
 }

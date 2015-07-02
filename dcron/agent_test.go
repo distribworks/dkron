@@ -244,3 +244,6 @@ func Test_UnmarshalTags(t *testing.T) {
 
 func Test_SuccessCount(t *testing.T) {
 }
+
+func Test_schedulerRestart(t *testing.T) {
+}
