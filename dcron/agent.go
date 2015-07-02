@@ -535,13 +535,13 @@ func (a *AgentCommand) schedule() {
 	}
 }
 
-func (a *AgentCommand) schedulerReloadQuery(leader string) {
+func (a *AgentCommand) schedulerRestartQuery(leader string) {
 	params := &serf.QueryParam{
 		FilterTags: map[string]string{"key": leader},
 		RequestAck: true,
 	}
 
-	qr, err := a.serf.Query("scheduler:reload", []byte(""), params)
+	qr, err := a.serf.Query(QuerySchedulerRestart, []byte(""), params)
 	if err != nil {
 		log.Fatal("Error sending the scheduler reload query", err)
 	}

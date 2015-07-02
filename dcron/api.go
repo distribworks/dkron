@@ -113,7 +113,7 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	a.schedulerReloadQuery(a.etcd.GetLeader())
+	a.schedulerRestartQuery(a.etcd.GetLeader())
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)

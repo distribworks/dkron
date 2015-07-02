@@ -241,3 +241,6 @@ func Test_UnmarshalTags(t *testing.T) {
 		t.Fatalf("bad: %v", tags)
 	}
 }
+
+func Test_SuccessCount(t *testing.T) {
+}
