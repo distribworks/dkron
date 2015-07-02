@@ -370,14 +370,14 @@ func (a *AgentCommand) Synopsis() string {
 	return "Run dcron server"
 }
 
-// dcron leader election routine
+// Dcron leader election routine
 func (a *AgentCommand) ElectLeader() bool {
-	leader := a.etcd.GetLeader()
+	leaderKey := a.etcd.GetLeader()
 
-	if leader != "" {
-		if !a.isLeader(leader) {
+	if leaderKey != "" {
+		if !a.serverAlive(leaderKey) {
 			log.Debug("Trying to set itself as leader")
-			res, err := a.etcd.Client.CompareAndSwap(keyspace+"/leader", a.config.Tags["key"], 0, leader, 0)
+			res, err := a.etcd.Client.CompareAndSwap(keyspace+"/leader", a.config.Tags["key"], 0, leaderKey, 0)
 			if err != nil {
 				log.Errorln("Error trying to set itself as leader", err)
 				return false
@@ -389,7 +389,7 @@ func (a *AgentCommand) ElectLeader() bool {
 			}).Debug("Leader Swap")
 			return true
 		} else {
-			log.Printf("The current leader [%s] is active", leader)
+			log.Printf("The current leader [%s] is active", leaderKey)
 		}
 	} else {
 		log.Debug("Trying to set itself as leader")
@@ -404,17 +404,23 @@ func (a *AgentCommand) ElectLeader() bool {
 	return false
 }
 
-func (a *AgentCommand) isLeader(leader string) bool {
+// Checks if the dcron server member identified by key, is alive.
+func (a *AgentCommand) serverAlive(key string) bool {
 	members := a.serf.Members()
 	for _, member := range members {
-		if member.Tags["key"] == leader && member.Status == serf.StatusAlive {
+		if member.Tags["key"] == key && member.Status == serf.StatusAlive {
 			return true
 		}
 	}
 	return false
 }
 
-// eventLoop listens to events from Serf and fans out to event handlers
+// Utility method to check if the node calling the method is the leader.
+func (a *AgentCommand) isLeader() bool {
+	return a.config.Tags["key"] == a.etcd.GetLeader()
+}
+
+// Listens to events from Serf and handle the event.
 func (a *AgentCommand) eventLoop() {
 	serfShutdownCh := a.serf.ShutdownCh()
 	log.Info("agent: Listen for events")
@@ -424,12 +430,12 @@ func (a *AgentCommand) eventLoop() {
 			log.WithFields(logrus.Fields{
 				"event": e.String(),
 			}).Info("Received event")
+
 			if (e.EventType() == serf.EventMemberFailed || e.EventType() == serf.EventMemberLeave) && a.config.Server {
 				failed := e.(serf.MemberEvent)
 				for _, member := range failed.Members {
 					if member.Tags["key"] == a.etcd.GetLeader() && member.Status != serf.StatusAlive {
 						if a.ElectLeader() {
-							log.Debug("Restarting scheduler")
 							a.schedule()
 						}
 					}
@@ -472,7 +478,7 @@ func (a *AgentCommand) eventLoop() {
 					query.Respond(exJson)
 				}
 
-				if query.Name == QueryExecutionDone {
+				if query.Name == QueryExecutionDone && a.isLeader() {
 					log.WithFields(logrus.Fields{
 						"query":   query.Name,
 						"payload": string(query.Payload),
@@ -517,6 +523,7 @@ func (a *AgentCommand) eventLoop() {
 
 // Start or restart scheduler
 func (a *AgentCommand) schedule() {
+	log.Debug("Restarting scheduler")
 	jobs, err := a.etcd.GetJobs()
 	if err != nil {
 		log.Fatal(err)
@@ -530,8 +537,8 @@ func (a *AgentCommand) schedule() {
 
 func (a *AgentCommand) schedulerReloadQuery(leader string) {
 	params := &serf.QueryParam{
-		FilterNodes: []string{leader},
-		RequestAck:  true,
+		FilterTags: map[string]string{"key": leader},
+		RequestAck: true,
 	}
 
 	qr, err := a.serf.Query("scheduler:reload", []byte(""), params)
