@@ -1,0 +1,58 @@
+<!doctype>
+<link type="text/css" rel="stylesheet" href="../src/css/graph.css">
+<link type="text/css" rel="stylesheet" href="../src/css/legend.css">
+<link type="text/css" rel="stylesheet" href="css/extensions.css">
+
+<script src="../vendor/d3.v3.js"></script>
+<script src="../rickshaw.min.js"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.15/jquery-ui.min.js"></script>
+
+<div id="chart"></div>
+<div id="legend"></div>
+
+<script>
+
+var palette = new Rickshaw.Color.Palette( { scheme: 'httpStatus' } );
+
+var wrapper = new Rickshaw.Graph.Ajax( {
+	element: document.getElementById("chart"),
+	dataURL: 'data/status.json',
+	width: 960,
+	height: 500,
+	renderer: 'bar',
+	onData: function(d) { return transformData(d) },
+	onComplete: function(w) {
+		var legend = new Rickshaw.Graph.Legend( { 
+			element: document.querySelector('#legend'), 
+			graph: w.graph
+		} );
+	}
+} );
+
+function transformData(d) {
+	var data = [];
+	var statusCounts = {};
+
+	Rickshaw.keys(d).sort().forEach( function(t) {
+		Rickshaw.keys(d[t]).forEach( function(status) {
+			statusCounts[status] = statusCounts[status] || [];
+			statusCounts[status].push( { x: parseFloat(t), y: d[t][status] } );
+		} );
+	} );
+
+	Rickshaw.keys(statusCounts).sort().forEach( function(status) {
+		data.push( {
+			name: status,
+			data: statusCounts[status],
+			color: palette.color(status)
+		} );
+	} );
+
+	Rickshaw.Series.zeroFill(data);
+	return data;
+}
+
+</script>
+

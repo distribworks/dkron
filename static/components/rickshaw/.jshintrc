@@ -1,0 +1,11 @@
+{
+  "funcscope": true,
+  "lastsemic": true,
+  "loopfunc": true,
+  "eqnull": true,
+  "expr": true,
+  "undef": true,
+  "browser": true,
+  "node": true,
+  "predef": ["Rickshaw", "d3", "jQuery", "console", "io"]
+}

@@ -9,8 +9,22 @@ import (
 
 func (a *AgentCommand) dashboardRoutes(r *mux.Router) {
 	subui := r.PathPrefix("/dashboard").Subrouter()
+	subui.HandleFunc("/", a.dashboardIndexHandler).Methods("GET")
 	subui.HandleFunc("/jobs", a.dashboardJobsHandler).Methods("GET")
 	subui.HandleFunc("/jobs/{job}/executions", a.dashboardExecutionsHandler).Methods("GET")
+}
+
+func (a *AgentCommand) dashboardIndexHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html")
+
+	tmpl := template.Must(template.New("dashboard.html.tmpl").ParseFiles(
+		"templates/dashboard.html.tmpl", "templates/index.html.tmpl"))
+
+	data := struct{}{}
+
+	if err := tmpl.Execute(w, data); err != nil {
+		log.Error(err)
+	}
 }
 
 func (a *AgentCommand) dashboardJobsHandler(w http.ResponseWriter, r *http.Request) {

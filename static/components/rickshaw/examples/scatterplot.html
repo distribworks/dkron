@@ -1,0 +1,46 @@
+<!doctype html>
+<link type="text/css" rel="stylesheet" href="../rickshaw.css">
+
+<script src="../vendor/d3.v3.js"></script>
+
+<script src="../rickshaw.js"></script>
+
+<div id="chart"></div>
+
+<script>
+
+// set up our data series with 50 random data points
+
+var seriesData = [ [], [], [] ];
+var random = new Rickshaw.Fixtures.RandomData(150);
+
+for (var i = 0; i < 500; i++) {
+	random.addData(seriesData);
+}
+
+// instantiate our graph!
+
+var graph = new Rickshaw.Graph( {
+	element: document.getElementById("chart"),
+	width: 960,
+	height: 500,
+	renderer: 'scatterplot',
+	series: [
+		{
+			color: "#ff9030",
+			data: seriesData[0],
+		}, {
+			color: "#ff4040",
+			data: seriesData[1],
+		}
+	]
+} );
+
+graph.renderer.dotSize = 6;
+
+new Rickshaw.Graph.HoverDetail({ graph: graph });
+
+graph.render();
+
+</script>
+
