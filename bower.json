@@ -1,0 +1,15 @@
+{
+  "name": "dcron-dashboard",
+  "description": "Dcron dashboard",
+  "version": "0.0.0",
+  "homepage": "https://dcron.io",
+  "license": "LGPL3",
+  "private": true,
+  "directory": "static/components",
+  "dependencies": {
+    "angular": "~1.4.0",
+    "angular-mocks": "~1.4.0",
+    "angular-route": "~1.4.0",
+    "angular-resource": "~1.4.0"
+  }
+}

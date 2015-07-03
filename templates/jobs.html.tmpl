@@ -1,5 +1,5 @@
 {{define "content"}}
-<div class="container">
+<div class="container" ng-controller="JobListCtrl">
   <div class="row">
   </div>
 
@@ -17,7 +17,7 @@
 	  <td>{{ $job.SuccessCount }}</td>
 	  <td>{{ $job.ErrorCount }}</td>
 	  <td>{{if isSuccess $job}}Success{{else}}Failed{{end}}</td>
-	  <td><form method="post" action="/jobs/{{ $job.Name }}"><input name="run" value="Run" type="submit"/></form></td>
+	  <td><button ng-click="click('{{ $job.Name }}')">Click me</button><form method="post" action="/jobs/{{ $job.Name }}"><input name="run" value="Run" type="submit"/></form></td>
 	</tr>
 	{{ end }}
       </table>
