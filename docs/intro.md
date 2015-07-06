@@ -2,6 +2,9 @@
 
 Welcome to the Dcron documentation! This is the reference guide on how to use Drcon. If you want a getting started guide refer to the [getting started guide](getting-started/) of the Dcron documentation.
 
+<div class="alert alert-warning" role="alert">Warning: Under active development. Used at X in production</div>
+<div class="alert alert-info" role="alert">Note: Version in this documentation, 0.1</div>
+
 ## What is Dcron
 
 Dcron is a system service that runs scheduled tasks at given intervals or times, just like the cron unix service. It differs from it in the sense that it's distributed in several machines in a cluster and if one of that machines (the leader) fails, any other one can take this responsability and keep executing the sheduled tasks without human intervention.
