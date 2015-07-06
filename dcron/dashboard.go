@@ -1,9 +1,12 @@
 package dcron
 
 import (
+	"encoding/json"
 	"html/template"
 	"net/http"
+	"time"
 
+	etcdc "github.com/coreos/go-etcd/etcd"
 	"github.com/gorilla/mux"
 )
 
@@ -20,7 +23,30 @@ func (a *AgentCommand) dashboardIndexHandler(w http.ResponseWriter, r *http.Requ
 	tmpl := template.Must(template.New("dashboard.html.tmpl").ParseFiles(
 		"templates/dashboard.html.tmpl", "templates/index.html.tmpl"))
 
-	data := struct{}{}
+	rr := etcdc.NewRawRequest("GET", "../version", nil, nil)
+	res, err := a.etcd.Client.SendRequest(rr)
+	if err != nil {
+		log.Error(err)
+	}
+	version := res.Body
+
+	var ss *EtcdServerStats
+	rr = etcdc.NewRawRequest("GET", "stats/self", nil, nil)
+	res, err = a.etcd.Client.SendRequest(rr)
+	if err != nil {
+		log.Error(err)
+	}
+	json.Unmarshal(res.Body, &ss)
+
+	data := struct {
+		Version   string
+		Stats     *EtcdServerStats
+		StartTime string
+	}{
+		Version:   string(version),
+		Stats:     ss,
+		StartTime: ss.LeaderInfo.StartTime.Format(time.UnixDate),
+	}
 
 	if err := tmpl.Execute(w, data); err != nil {
 		log.Error(err)

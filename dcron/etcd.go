@@ -3,6 +3,8 @@ package dcron
 import (
 	"encoding/json"
 	"fmt"
+	stdlog "log"
+	"time"
 
 	etcdc "github.com/coreos/go-etcd/etcd"
 )
@@ -12,6 +14,33 @@ const keyspace = "/dcron"
 type etcdClient struct {
 	Client *etcdc.Client
 	agent  *AgentCommand
+}
+
+// ServerStats encapsulates various statistics about an EtcdServer and its
+// communication with other members of the cluster
+type EtcdServerStats struct {
+	Name string `json:"name"`
+	// TODO(jonboulle): use ID instead of name?
+	ID        string    `json:"id"`
+	StartTime time.Time `json:"startTime"`
+
+	LeaderInfo struct {
+		Name      string    `json:"leader"`
+		Uptime    string    `json:"uptime"`
+		StartTime time.Time `json:"startTime"`
+	} `json:"leaderInfo"`
+
+	RecvAppendRequestCnt uint64  `json:"recvAppendRequestCnt,"`
+	RecvingPkgRate       float64 `json:"recvPkgRate,omitempty"`
+	RecvingBandwidthRate float64 `json:"recvBandwidthRate,omitempty"`
+
+	SendAppendRequestCnt uint64  `json:"sendAppendRequestCnt"`
+	SendingPkgRate       float64 `json:"sendPkgRate,omitempty"`
+	SendingBandwidthRate float64 `json:"sendBandwidthRate,omitempty"`
+}
+
+func init() {
+	etcdc.SetLogger(stdlog.New(log.Writer(), "go-etcd", stdlog.LstdFlags))
 }
 
 func NewEtcdClient(machines []string, a *AgentCommand) *etcdClient {

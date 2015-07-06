@@ -6,6 +6,51 @@
     rickshaw-features="features"
     rickshaw-series="series">
 </rickshaw>
+
+  <div class="col-md-3">
+    <div class="panel panel-info">
+      <div class="panel-heading">
+        <h3 class="panel-title">Version</h3>
+      </div>
+      <div class="panel-body">
+        {{.Version}}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="panel panel-info">
+      <div class="panel-heading">
+        <h3 class="panel-title">Leader</h3>
+      </div>
+      <div class="panel-body">
+        {{.Stats.LeaderInfo.Name}}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="panel panel-info">
+      <div class="panel-heading">
+        <h3 class="panel-title">Start time</h3>
+      </div>
+      <div class="panel-body">
+        {{.StartTime}}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="panel panel-info">
+      <div class="panel-heading">
+        <h3 class="panel-title">Uptime</h3>
+      </div>
+      <div class="panel-body">
+        {{.Stats.LeaderInfo.Uptime}}
+      </div>
+    </div>
+  </div>
+
   </div>
 </div>
 {{end}}
