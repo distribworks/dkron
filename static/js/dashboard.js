@@ -13,13 +13,14 @@ dcron.controller('JobListCtrl', function ($scope, $http) {
   };
 });
 
-dcron.controller('IndexCtrl', function ($scope, $http, $interval) {
+dcron.controller('IndexCtrl', function ($scope, $http, $interval, $element) {
   $scope.options = {
-    renderer: 'line'
+    renderer: 'line',
+    interpolation: 'linear'
   };
 
   $scope.series = [{
-      name: 'Series 1',
+      name: 'Success count',
       color: 'steelblue',
       data: [{x: 0, y: 0}]
   }];
@@ -35,16 +36,50 @@ dcron.controller('IndexCtrl', function ($scope, $http, $interval) {
       legend: {
         toggle: false,
         highlight: true
+      },
+      yAxis: {
+        tickFormat: 'formatKMBT'
+      },
+      xAxis: {
+        tickFormat: 'formatKMBT',
+        timeUnit: 'hour'
       }
   };
-  $interval(function() {
-    data = $scope.series[0].data;
-    data.push({x: data[data.length - 1].x + 10, y: 60 * Math.random()});
 
-    $scope.series = [{
-      name: 'Series 1',
-      color: 'steelblue',
-      data: data
-    }];
-  }, 1000);
+  $interval(function() {
+    var response = $http.get('/jobs/');
+    response.success(function(data, status, headers, config) {
+      $scope.updateGraph(data);
+    });
+
+    response.error(function(data, status, headers, config) {
+      alert("Error getting data");
+    });
+  }, 2000);
+
+  $scope.success_count = 0;
+
+  $scope.updateGraph = function(data) {
+    var gdata = $scope.series[0].data;
+    var name = $scope.series[0].name;
+    var color = $scope.series[0].color;
+    var success_count = 0;
+    var diff = 0;
+
+    for(i=0; i < data.length; i++) {
+      success_count = success_count + data[i].success_count;
+    }
+    if($scope.success_count != 0) {
+      diff = success_count - $scope.success_count;
+    }
+    $scope.success_count = success_count;
+
+    gdata.push({x: gdata[gdata.length - 1].x + 1, y: diff})
+
+    $scope.series[0] = {
+      name: name,
+      color: color,
+      data: gdata
+    };
+  }
 });
