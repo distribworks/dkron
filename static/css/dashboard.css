@@ -1,3 +1,9 @@
 .modal-dialog {
     z-index: 1100;
 }
+
+.navbar-brand {
+  background-image: url("/img/DCRON_white.png");
+  background-repeat: no-repeat;
+  padding-right: 90px;
+}
