@@ -10,7 +10,7 @@
 	],
 	"BuildConstraints": "linux,amd64 windows,amd64 darwin,amd64",
 	"Resources": {
-            "Include": "INSTALL*,README*,LICENSE*,config/*"
+            "Include": "INSTALL*,README*,LICENSE*,config/*,static/*,templates/*"
 	},
 	"ConfigVersion": "0.9",
 	"PackageVersion": "0.0.2",
