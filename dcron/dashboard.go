@@ -21,7 +21,7 @@ func (a *AgentCommand) dashboardIndexHandler(w http.ResponseWriter, r *http.Requ
 	w.Header().Set("Content-Type", "text/html")
 
 	tmpl := template.Must(template.New("dashboard.html.tmpl").ParseFiles(
-		"templates/dashboard.html.tmpl", "templates/index.html.tmpl"))
+		"templates/dashboard.html.tmpl", "templates/index.html.tmpl", "templates/status.html.tmpl"))
 
 	rr := etcdc.NewRawRequest("GET", "../version", nil, nil)
 	res, err := a.etcd.Client.SendRequest(rr)
