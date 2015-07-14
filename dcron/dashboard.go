@@ -65,7 +65,7 @@ func (a *AgentCommand) dashboardJobsHandler(w http.ResponseWriter, r *http.Reque
 	}
 
 	tmpl := template.Must(template.New("dashboard.html.tmpl").Funcs(funcs).ParseFiles(
-		"templates/dashboard.html.tmpl", "templates/jobs.html.tmpl"))
+		"templates/dashboard.html.tmpl", "templates/jobs.html.tmpl", "templates/status.html.tmpl"))
 
 	data := struct {
 		Jobs []*Job

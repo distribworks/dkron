@@ -7,3 +7,11 @@
   background-repeat: no-repeat;
   padding-right: 90px;
 }
+
+.status-panel p {
+  color: #red;
+}
+
+.status-panel ul, .status-panel p {
+  margin-bottom: 0;
+}

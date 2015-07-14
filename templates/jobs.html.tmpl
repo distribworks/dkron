@@ -1,25 +1,25 @@
 {{define "content"}}
 <div class="container" ng-controller="JobListCtrl">
+  {{template "status" .}}
   <div class="row">
+    <table class="table table-striped">
+      <tr>
+        <th>Job</th>
+        <th>Success count</th>
+        <th>Error count</th>
+        <th>Last</th>
+        <th>Actions</th>
+      </tr>
+      {{ range $job := .Jobs }}
+      <tr>
+        <td><a href="/dashboard/jobs/{{$job.Name}}/executions">{{ $job.Name }}</a></td>
+        <td>{{ $job.SuccessCount }}</td>
+        <td>{{ $job.ErrorCount }}</td>
+        <td>{{if isSuccess $job}}Success{{else}}Failed{{end}}</td>
+        <td><button ng-click="click('{{ $job.Name }}')">Run</button></td>
+      </tr>
+      {{ end }}
+    </table>
   </div>
-
-      <table class="table table-striped">
-	<tr>
-	  <th>Job</th>
-	  <th>Success count</th>
-	  <th>Error count</th>
-	  <th>Last</th>
-	  <th>Actions</th>
-	</tr>
-        {{ range $job := .Jobs }}
-        <tr>
-	  <td><a href="/dashboard/jobs/{{$job.Name}}/executions">{{ $job.Name }}</a></td>
-	  <td>{{ $job.SuccessCount }}</td>
-	  <td>{{ $job.ErrorCount }}</td>
-	  <td>{{if isSuccess $job}}Success{{else}}Failed{{end}}</td>
-	  <td><button ng-click="click('{{ $job.Name }}')">Run</button></td>
-	</tr>
-	{{ end }}
-      </table>
 </div>
 {{end}}

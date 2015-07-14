@@ -1,15 +1,36 @@
 {{define "status"}}
 <div class="row">
-  <div class="panel panel-default">
-    <div class="panel-body">
-      Basic panel
-    </div>
+  <div class="alert alert-dismissible alert-warning">
+    <button type="button" class="close" data-dismiss="alert">x</button>
+    <p>Warning! Dcron is currentyl in Alpha status and it's not guaranteed to work as expected. More info in <a href="http://dcron.io" class="alert-link">dcron.io</a></p>
   </div>
 </div>
 <div class="row">
-  <div class="alert alert-warning">
-    <h4>Warning!</h4>
-    <p>Dcron is currentyl in Alpha status and it's not guaranteed to work as expected. More info in <a href="http://dcron.io" class="alert-link">dcron.io</a></p>
+  <div class="panel panel-default">
+    <div class="panel-body status-panel">
+      <ul class="list-inline">
+        <li class="text-center">
+          <span ng-bind="success_count"></span>
+          <p>Processed
+        </li>
+        <li class="text-center">
+          <span ng-bind="error_count"></span>
+          <p>Failed
+        </li>
+        <li class="text-center">
+          <span ng-bind="jobs.length"></span>
+          <p>Total
+        </li>
+        <li class="text-center">
+          <span ng-bind="failed_jobs"></span>
+          <p>Successful
+        </li>
+        <li class="text-center">
+          <span ng-bind="successful_jobs"></span>
+          <p>Failed
+        </li>
+      </ul>
+    </div>
   </div>
 </div>
 {{end}}
