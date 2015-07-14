@@ -4,11 +4,11 @@ dcron.controller('JobListCtrl', function ($scope, $http) {
   $scope.click = function(jobName) {
     var response = $http.put('/jobs/' + jobName);
     response.success(function(data, status, headers, config) {
-      alert("Success running job " + jobName);
+      $('#message').html('<div class="alert alert-success fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Success running jo ' + jobName + '</div>');
     });
 
     response.error(function(data, status, headers, config) {
-      alert("Error running job " + jobName);
+      $('#message').html('<div class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Error running jo ' + jobName + '</div>');
     });
   };
 });
