@@ -1,6 +1,6 @@
 var dcron = angular.module('dcron', ['angular-rickshaw']);
 
-dcron.controller('JobListCtrl', function ($scope, $http) {
+dcron.controller('JobListCtrl', function ($scope, $http, $interval) {
   $scope.click = function(jobName) {
     var response = $http.put('/jobs/' + jobName);
     response.success(function(data, status, headers, config) {
@@ -11,6 +11,46 @@ dcron.controller('JobListCtrl', function ($scope, $http) {
       $('#message').html('<div class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Error running jo ' + jobName + '</div>');
     });
   };
+
+  $interval(function() {
+    var response = $http.get('/jobs/');
+    response.success(function(data, status, headers, config) {
+      $scope.updateStatus(data);
+    });
+
+    response.error(function(data, status, headers, config) {
+      alert("Error getting data");
+    });
+  }, 2000);
+
+  $scope.success_count = 0;
+  $scope.error_count = 0;
+  $scope.failed_jobs = 0;
+  $scope.successful_jobs = 0;
+  $scope.jobs = [];
+
+  $scope.updateStatus = function(data) {
+    var success_count = 0;
+    var error_count = 0;
+    $scope.jobs = data;
+    $scope.failed_jobs = 0;
+    $scope.successful_jobs = 0;
+
+    for(i=0; i < data.length; i++) {
+      success_count = success_count + data[i].success_count;
+      error_count = error_count + data[i].error_count;
+
+      if (new Date(Date.parse(data[i].last_success)) > new Date(Date.parse(data[i].last_error))) {
+        $scope.successful_jobs = $scope.successful_jobs + 1;
+      } else {
+        $scope.failed_jobs = $scope.failed_jobs + 1;
+      }
+    }
+
+    $scope.success_count = success_count;
+    $scope.error_count = error_count;
+  }
+
 });
 
 dcron.controller('IndexCtrl', function ($scope, $http, $interval, $element) {
