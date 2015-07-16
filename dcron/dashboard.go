@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"html/template"
 	"net/http"
-	"time"
 
 	etcdc "github.com/coreos/go-etcd/etcd"
 	"github.com/gorilla/mux"
@@ -45,7 +44,7 @@ func (a *AgentCommand) dashboardIndexHandler(w http.ResponseWriter, r *http.Requ
 	}{
 		Version:   string(version),
 		Stats:     ss,
-		StartTime: ss.LeaderInfo.StartTime.Format(time.UnixDate),
+		StartTime: ss.LeaderInfo.StartTime.Format("2/Jan/2006 15:05:05"),
 	}
 
 	if err := tmpl.Execute(w, data); err != nil {
