@@ -19,7 +19,7 @@ dcron.controller('JobListCtrl', function ($scope, $http, $interval) {
     });
 
     response.error(function(data, status, headers, config) {
-      alert("Error getting data");
+      $('#message').html('<div class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Error getting data</div>');
     });
   }, 2000);
 
@@ -97,7 +97,8 @@ dcron.controller('IndexCtrl', function ($scope, $http, $interval, $element) {
     });
 
     response.error(function(data, status, headers, config) {
-      alert("Error getting data");
+      $('#message').html('<div class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Error getting data</div>');
+
     });
   }, 2000);
 
