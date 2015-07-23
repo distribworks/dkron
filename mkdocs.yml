@@ -1,6 +1,7 @@
 ---
 site_name: Dcron - Distributed cron
 theme: yeti
+theme_dir: 'dcron_theme'
 extra_css: ["css/custom.css"]
 site_url: dcron.io
 repo_url: https://github.com/victorcoder/dcron
