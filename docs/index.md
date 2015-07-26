@@ -1,5 +1,3 @@
-# Dcron
-
 ## Characteristics
 
 <div id="easy-integration" class="row vertical-align">

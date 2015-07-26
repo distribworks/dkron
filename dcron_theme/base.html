@@ -41,6 +41,21 @@
     <body>
         {% include "nav.html" %}
 
+        {% if current_page.abs_url == '/' %}
+        <div id="jumbotron-mask">
+          <div id="jumbotron">
+            <div class="container">
+              <div class="col-lg-6 col-md-6">
+                <h2 class="rls-l">Job scheduling easy, distributed and highly-available</h2>
+              </div>
+              <div class="jumbo-logo-wrap col-lg-offset-1 col-lg-5 col-md-6 hidden-xs hidden-sm">
+                <div class="jumbo-logo"></div>
+              </div>
+            </div>
+            <div class="jumbotron-dots"></div>
+          </div>
+        </div>
+        {% endif %}
         <div class="container">
             {% if current_page.abs_url != '/' %}
             <div class="col-md-3 toc">{% include "toc.html" %}</div>
