@@ -17,8 +17,6 @@
 .navbar-header .brand {
   padding: 13px 15px;
   line-height: 0;
-  width: 179px;
-  height: 59px;
   margin-left: 0;
 }
 
@@ -27,6 +25,18 @@
   display: block;
   width: 179px;
   height: 59px;
+}
+
+
+.navbar-header .main-links li,
+.navbar-header .main-links li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 35px;
+    width: 4px;
+    height: 23px;
+    padding-right: 15px;
 }
 
 #jumbotron-mask {
@@ -59,4 +69,12 @@
 
 #jumbotron .container .jumbo-logo-wrap {
   margin-top: 135px;
+}
+
+.page-home {
+  background: #F9FAFA;
+}
+
+.page-home .jumbotron.intro {
+  color: #6B93BA;
 }

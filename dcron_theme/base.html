@@ -38,7 +38,7 @@
         {% endif %}
     </head>
 
-    <body>
+    <body class="{% if current_page.abs_url == '/' %}page-home{% endif %}">
         {% include "nav.html" %}
 
         {% if current_page.abs_url == '/' %}
@@ -46,7 +46,7 @@
           <div id="jumbotron">
             <div class="container">
               <div class="col-lg-6 col-md-6">
-                <h2 class="rls-l">Job scheduling easy, distributed and highly-available</h2>
+                <h2 class="rls-l">Job scheduling made easy, distributed and highly-available</h2>
               </div>
               <div class="jumbo-logo-wrap col-lg-offset-1 col-lg-5 col-md-6 hidden-xs hidden-sm">
                 <div class="jumbo-logo"></div>
@@ -70,7 +70,7 @@
             {% if copyright %}
                 <center>{{ copyright }}</center>
             {% endif %}
-            <center>Desing by <a href="http://www.collagestudio.es/">Collage</a>.</center>
+            <center>Web desing by <a href="http://www.collagestudio.es/">Collage Studio</a>.</center>
         </footer>
 
         <script src="{{ base_url }}/js/jquery-1.10.2.min.js"></script>
