@@ -14,6 +14,21 @@
   border-bottom: 1px solid white;
 }
 
+.navbar-header .brand {
+  padding: 13px 15px;
+  line-height: 0;
+  width: 179px;
+  height: 59px;
+  margin-left: 0;
+}
+
+.navbar-header .brand .logo {
+  background: transparent url("/img/dcron-logo-white.png") 0 0 no-repeat;
+  display: block;
+  width: 179px;
+  height: 59px;
+}
+
 #jumbotron-mask {
   color: #FFF;
   height: 542px;
