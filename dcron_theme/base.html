@@ -44,8 +44,10 @@
         <div class="container">
             {% if current_page.abs_url != '/' %}
             <div class="col-md-3 toc">{% include "toc.html" %}</div>
-            {% endif %}
             <div class="col-md-9" role="main">{% include "content.html" %}</div>
+            {% else %}
+            <div class="col-md-12" role="main">{% include "content.html" %}</div>
+            {% endif %}
         </div>
 
         <footer class="col-md-12">
