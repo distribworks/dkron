@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         <meta name="author" content="Victor Castell">
-        <link rel="canonical" href="dcron.io/user-guide/getting-started/">
+        <link rel="canonical" href="http://dcron.io/user-guide/getting-started/">
         <link rel="shortcut icon" href="../../img/favicon.ico">
 
 	<title>Getting started - Dcron - Distributed cron</title>
@@ -15,6 +15,7 @@
         <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
         <link rel="stylesheet" href="../../css/highlight.css">
         <link href="../../css/base.css" rel="stylesheet">
+        <link href="../../css/custom.css" rel="stylesheet">
 
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
@@ -28,15 +29,13 @@
             (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
             m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
             })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-            ga('create', '', 'dcron.io');
+            ga('create', 'UA-571371-14', 'dcron.io');
             ga('send', 'pageview');
         </script>
         
     </head>
 
-    <body>
-
+    <body class="">
         <div class="navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="container">
 
@@ -51,13 +50,15 @@
             </button>
 
             <!-- Main title -->
-            <a class="navbar-brand" href="../..">Dcron - Distributed cron</a>
+            <div class="brand">
+                <a class="logo" href="../.."></a>
+            </div>
         </div>
 
         <!-- Expanded navigation -->
         <div class="navbar-collapse collapse">
             <!-- Main navigation -->
-            <ul class="nav navbar-nav">
+            <ul class="main-links nav navbar-nav">
             
             
                 <li >
@@ -113,7 +114,6 @@
 
             <!-- Search, Navigation and Repo links -->
             <ul class="nav navbar-nav navbar-right">
-                
                 <li >
                     <a rel="next" href="../dcron-internals/">
                         <i class="fa fa-arrow-left"></i> Previous
@@ -139,8 +139,10 @@
     </div>
 </div>
 
+        
         <div class="container">
-            <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+            
+            <div class="col-md-3 toc"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
         <li class="main active"><a href="#getting-started">Getting started</a></li>
@@ -188,9 +190,16 @@
 <p>To start a Dcron server instance just run:</p>
 <pre><code>dcron agent --server
 </code></pre></div>
+            
         </div>
 
-        
+        <footer class="col-md-12">
+            <hr>
+            
+                <center>© Victor Castell victor@victorcastell.com</center>
+            
+            <center>Web desing by <a href="http://www.collagestudio.es/">Collage Studio</a>.</center>
+        </footer>
 
         <script src="../../js/jquery-1.10.2.min.js"></script>
         <script src="../../js/bootstrap-3.0.3.min.js"></script>

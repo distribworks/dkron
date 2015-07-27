@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         <meta name="author" content="Victor Castell">
-        <link rel="canonical" href="dcron.io/">
+        <link rel="canonical" href="http://dcron.io/">
         <link rel="shortcut icon" href="./img/favicon.ico">
 
 	<title>Dcron - Distributed cron</title>
@@ -15,6 +15,7 @@
         <link href="./css/font-awesome-4.0.3.css" rel="stylesheet">
         <link rel="stylesheet" href="./css/highlight.css">
         <link href="./css/base.css" rel="stylesheet">
+        <link href="./css/custom.css" rel="stylesheet">
 
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
@@ -28,15 +29,13 @@
             (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
             m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
             })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-            ga('create', '', 'dcron.io');
+            ga('create', 'UA-571371-14', 'dcron.io');
             ga('send', 'pageview');
         </script>
         
     </head>
 
-    <body>
-
+    <body class="page-home">
         <div class="navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="container">
 
@@ -51,13 +50,15 @@
             </button>
 
             <!-- Main title -->
-            <a class="navbar-brand" href=".">Dcron - Distributed cron</a>
+            <div class="brand">
+                <a class="logo" href="."></a>
+            </div>
         </div>
 
         <!-- Expanded navigation -->
         <div class="navbar-collapse collapse">
             <!-- Main navigation -->
-            <ul class="nav navbar-nav">
+            <ul class="main-links nav navbar-nav">
             
             
                 <li class="active">
@@ -113,7 +114,6 @@
 
             <!-- Search, Navigation and Repo links -->
             <ul class="nav navbar-nav navbar-right">
-                
                 <li class="disabled">
                     <a rel="next" >
                         <i class="fa fa-arrow-left"></i> Previous
@@ -139,29 +139,54 @@
     </div>
 </div>
 
+        
+        <div id="jumbotron-mask">
+          <div id="jumbotron">
+            <div class="container">
+              <div class="col-lg-6 col-md-6">
+                <h2 class="rls-l">Job scheduling made easy, distributed and highly-available</h2>
+              </div>
+              <div class="jumbo-logo-wrap col-lg-offset-1 col-lg-5 col-md-6 hidden-xs hidden-sm">
+                <div class="jumbo-logo"></div>
+              </div>
+            </div>
+            <div class="jumbotron-dots"></div>
+          </div>
+        </div>
+        
         <div class="container">
-            <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
-    <ul class="nav bs-sidenav">
-    
-        <li class="main active"><a href="#dcron">Dcron</a></li>
-        
-            <li><a href="#characteristics">Characteristics</a></li>
-        
-            <li><a href="#example-use-cases">Example use cases:</a></li>
-        
-    
-    </ul>
-</div></div>
-            <div class="col-md-9" role="main">
+            
+            <div class="col-md-12" role="main">
 
-<h1 id="dcron">Dcron</h1>
+<div class="jumbotron intro">
+Dcron is a system service that runs scheduled tasks at given intervals or times, just like the cron unix service. It differs from it in the sense that it's distributed in several machines in a cluster and if one of that machines (the leader) fails, any other one can take this responsability and keep executing the sheduled tasks without human intervention.
+</div>
+
 <h2 id="characteristics">Characteristics</h2>
-<h3 id="easy-integration">Easy integration</h3>
-<p>Dcron is easy to setup and use. Choose your OS package and it's ready to run out-of-the-box. The <a href="">administration panel</a> and it's simple JSON API makes a breeze to integrate with you current workflow or deploy system.</p>
-<h3 id="always-available">Always available</h3>
-<p>Using the power of the Raft implementation in etcd, you can rely on Dcron to be always available. Wherever you need to generate your employee monthly payroll or send those daily emails that keeps your users informed and your site busy, Dcron could help you to sleep at night.</p>
-<h3 id="flexible-targets">Flexible targets</h3>
-<p>Simple but powerful tag based target node selection for jobs. Tag node count allows to run jobs in an arbitrary number nodes in the same group or groups for any given task.</p>
+<div id="easy-integration" class="row vertical-align">
+  <img src="img/integration.png" class="col-md-3"/>
+  <div class="col-md-10">
+    <h3>Easy integration</h3>
+    Dcron is easy to setup and use. Choose your OS package and it's ready to run out-of-the-box. The [administration panel]() and it's simple JSON API makes a breeze to integrate with you current workflow or deploy system.
+  </div>
+</div>
+
+<div id="always-available" class="row vertical-align">
+  <div class="col-md-10">
+    <h3>Always available</h3>
+    Using the power of the Raft implementation in etcd, you can rely on Dcron to be always available. Wherever you need to generate your employee monthly payroll or send those daily emails that keeps your users informed and your site busy, Dcron could help you to sleep at night.
+  </div>
+  <img src="img/available.png" class="col-md-3"/>
+</div>
+
+<div id="flexible-targets" class="row vertical-align">
+  <img src="img/targets.png" class="col-md-3"/>
+  <div class="col-md-10">
+    <h3>Flexible targets</h3>
+    Simple but powerful tag based target node selection for jobs. Tag node count allows to run jobs in an arbitrary number nodes in the same group or groups for any given task.
+  </div>
+</div>
+
 <h2 id="example-use-cases">Example use cases:</h2>
 <ul>
 <li>Eail delivery: Newsletters, marketing campaigns, recommendations, etc.</li>
@@ -172,9 +197,16 @@
 <li>Data transfer</li>
 <li>...</li>
 </ul></div>
+            
         </div>
 
-        
+        <footer class="col-md-12">
+            <hr>
+            
+                <center>© Victor Castell victor@victorcastell.com</center>
+            
+            <center>Web desing by <a href="http://www.collagestudio.es/">Collage Studio</a>.</center>
+        </footer>
 
         <script src="./js/jquery-1.10.2.min.js"></script>
         <script src="./js/bootstrap-3.0.3.min.js"></script>
