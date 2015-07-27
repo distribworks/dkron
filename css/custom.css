@@ -21,7 +21,7 @@
 }
 
 .navbar-header .brand .logo {
-  background: transparent url("img/dcron-logo-white.png") 0 0 no-repeat;
+  background: transparent url("../img/dcron-logo-white.png") 0 0 no-repeat;
   display: block;
   width: 179px;
   height: 59px;
@@ -62,7 +62,7 @@
 #jumbotron .container .jumbo-logo {
   width: 318px;
   height: 316px;
-  background: transparent url("img/dcron-jumbo-logo-white.png") 60px 50px no-repeat;
+  background: transparent url("../img/dcron-jumbo-logo-white.png") 60px 50px no-repeat;
   /* background-size: 318px 316px; */
   z-index: 20;
 }
