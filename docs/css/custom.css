@@ -20,7 +20,7 @@ h3 {
   .navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus {
     border-bottom: 1px solid white;
     background-color: transparent; }
-  .navbar-default .navbar-nav.main-links a:hover, .navbar-default .navbar-nav.main-links a:focus {
+  .navbar-default .navbar-nav.main-links a:hover, .navbar-default .navbar-nav.main-links a:focus, .navbar-default .navbar-nav.navbar-right a:hover, .navbar-default .navbar-nav.navbar-right a:focus {
     background-color: transparent; }
 
 .navbar-header .brand {
