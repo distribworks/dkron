@@ -11,6 +11,14 @@
 
   .navbar-nav>.active>a, .navbar-nav>.active>a:hover, .navbar-nav>.active>a:focus {
     border-bottom: 1px solid white;
+    background-color: transparent;
+  }
+
+  .navbar-nav.main-links {
+    a:hover, a:focus {
+      // border-bottom: 1px solid white;
+      background-color: transparent;
+    }
   }
 }
 
@@ -48,7 +56,7 @@
 
 #jumbotron-mask {
   color: #FFF;
-  height: 542px;
+  height: 450px;
   margin-top: -93px;
 
   background: #72A6B2; /* for non-css3 browsers */
@@ -87,5 +95,34 @@
 
   .jumbotron.intro {
     color: #6B93BA;
+  }
+}
+
+body>div.container {
+  margin-top: 17px;
+}
+
+.toc {
+  .bs-sidebar {
+    top: 100px;
+  }
+}
+
+
+#use-cases-mask {
+  color: #FFF;
+  height: 400px;
+  background: #72A6B2; /* for non-css3 browsers */
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#cccccc', endColorstr='#000000'); /* for IE */
+  background: -webkit-gradient(linear, left top, right top, from(#72A6B2), to(#1F779F)); /* for webkit browsers */
+  background: -moz-linear-gradient(top,  #ccc,  #000); /* for firefox 3.6+ */
+}
+
+footer {
+  color: #999999;
+  font-size: 0.8em;
+
+  .footer-logo {
+    margin-bottom: 25px;
   }
 }

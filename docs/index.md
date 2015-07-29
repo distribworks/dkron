@@ -1,5 +1,5 @@
 <div class="jumbotron intro">
-Dcron is a system service that runs scheduled tasks at given intervals or times, just like the cron unix service. It differs from it in the sense that it's distributed in several machines in a cluster and if one of that machines (the leader) fails, any other one can take this responsability and keep executing the sheduled tasks without human intervention.
+  Dcron is a system service that runs scheduled tasks at given intervals or times, just like the cron unix service. It differs from it in the sense that it's distributed in several machines in a cluster and if one of that machines (the leader) fails, any other one can take this responsability and keep executing the sheduled tasks without human intervention.
 </div>
 
 ## Characteristics
@@ -8,7 +8,7 @@ Dcron is a system service that runs scheduled tasks at given intervals or times,
   <img src="img/integration.png" class="col-md-3"/>
   <div class="col-md-10">
     <h3>Easy integration</h3>
-    Dcron is easy to setup and use. Choose your OS package and it's ready to run out-of-the-box. The [administration panel]() and it's simple JSON API makes a breeze to integrate with you current workflow or deploy system.
+    Dcron is easy to setup and use. Choose your OS package and it's ready to run out-of-the-box. The administration panel and it's simple JSON API makes a breeze to integrate with you current workflow or deploy system.
   </div>
 </div>
 
@@ -27,12 +27,3 @@ Dcron is a system service that runs scheduled tasks at given intervals or times,
     Simple but powerful tag based target node selection for jobs. Tag node count allows to run jobs in an arbitrary number nodes in the same group or groups for any given task.
   </div>
 </div>
-## Example use cases:
-
-* Eail delivery: Newsletters, marketing campaigns, recommendations, etc.
-* Payroll generation
-* Bookkeeping
-* Data consolidation for BI
-* Recurring invoicing
-* Data transfer
-* ...
