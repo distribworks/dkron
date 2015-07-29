@@ -25,8 +25,12 @@ h3 {
   .navbar-nav.main-links, .navbar-nav.navbar-right {
     a:hover, a:focus {
       // border-bottom: 1px solid white;
-      background-color: transparent;
+      background-color: #72A6B2;
     }
+  }
+
+  .dropdown-menu {
+    background-color: #4091BC;
   }
 }
 
@@ -46,7 +50,7 @@ h3 {
 }
 
 
-.navbar-nav{
+.navbar-nav {
   li + li::before {
       content: "";
       position: absolute;
@@ -59,6 +63,12 @@ h3 {
 
   li > a {
       line-height: 62px;
+  }
+
+  .dropdown-menu {
+    li > a {
+      line-height: normal;
+    }
   }
 }
 

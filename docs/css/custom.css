@@ -21,7 +21,9 @@ h3 {
     border-bottom: 1px solid white;
     background-color: transparent; }
   .navbar-default .navbar-nav.main-links a:hover, .navbar-default .navbar-nav.main-links a:focus, .navbar-default .navbar-nav.navbar-right a:hover, .navbar-default .navbar-nav.navbar-right a:focus {
-    background-color: transparent; }
+    background-color: #72A6B2; }
+  .navbar-default .dropdown-menu {
+    background-color: #4091BC; }
 
 .navbar-header .brand {
   padding: 13px 15px;
@@ -43,6 +45,8 @@ h3 {
   padding-right: 15px; }
 .navbar-nav li > a {
   line-height: 62px; }
+.navbar-nav .dropdown-menu li > a {
+  line-height: normal; }
 
 #jumbotron-mask {
   height: 450px;
