@@ -1,8 +1,8 @@
 <div class="jumbotron intro">
-  Dcron is a system service that runs scheduled tasks at given intervals or times, just like the cron unix service. It differs from it in the sense that it's distributed in several machines in a cluster and if one of that machines (the leader) fails, any other one can take this responsability and keep executing the sheduled tasks without human intervention.
+  Dcron is a system service that runs scheduled tasks at given intervals or times, just like the cron unix service but it's distributed in several machines in a cluster and if one machine (the leader) fails, any other one can take it's responsability, and keep executing the sheduled tasks without human intervention. Dcron is Open Source and freely available.
 </div>
 
-## Characteristics
+<center><h2>Characteristics</h2></center>
 
 <div id="easy-integration" class="row vertical-align">
   <img src="img/integration.png" class="col-md-3"/>

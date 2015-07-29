@@ -1,3 +1,11 @@
+h1, h2 {
+  color: #999999;
+}
+
+h3 {
+  color: #6B93BA;
+}
+
 .vertical-align {
   display: flex;
   align-items: center;
@@ -55,7 +63,9 @@
 }
 
 #jumbotron-mask {
-  color: #FFF;
+  h2 {
+    color: #FFF;
+  }
   height: 450px;
   margin-top: -93px;
 
@@ -108,7 +118,6 @@ body>div.container {
   }
 }
 
-
 #use-cases-mask {
   color: #FFF;
   height: 400px;
@@ -119,10 +128,18 @@ body>div.container {
 }
 
 footer {
+  >h2 {
+    color: #FFF;
+  }
+
   color: #999999;
   font-size: 0.8em;
 
   .footer-logo {
     margin-bottom: 25px;
   }
+}
+
+#easy-integration, #flexible-targets, #always-available {
+  margin: 40px 0;
 }

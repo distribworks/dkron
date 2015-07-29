@@ -1,3 +1,9 @@
+h1, h2 {
+  color: #999999; }
+
+h3 {
+  color: #6B93BA; }
+
 .vertical-align {
   display: flex;
   align-items: center; }
@@ -39,7 +45,6 @@
   line-height: 62px; }
 
 #jumbotron-mask {
-  color: #FFF;
   height: 450px;
   margin-top: -93px;
   background: #72A6B2;
@@ -50,6 +55,8 @@
   /* for webkit browsers */
   background: -moz-linear-gradient(top, #ccc, #000);
   /* for firefox 3.6+ */ }
+  #jumbotron-mask h2 {
+    color: #FFF; }
 
 #jumbotron .container h2 {
   margin-top: 175px;
@@ -92,7 +99,12 @@ body > div.container {
 footer {
   color: #999999;
   font-size: 0.8em; }
+  footer > h2 {
+    color: #FFF; }
   footer .footer-logo {
     margin-bottom: 25px; }
+
+#easy-integration, #flexible-targets, #always-available {
+  margin: 40px 0; }
 
 /*# sourceMappingURL=custom.css.map */
