@@ -1,0 +1,50 @@
+.page-home {
+  blockquote {
+    text-align:center;
+    border:none;
+    font-family: $font-headlines;
+    color:lighten($color-base,15);
+    margin:1.5em auto;
+
+    p {
+      font-size:1em;
+      line-height:1.5em;
+    }
+  }
+}
+
+.with-toc {
+  section[role="main"] {
+    margin-top:3em;
+  }
+
+  .toc {
+    display:none;
+  }
+}
+
+@media (min-width:$viewport-medium) {
+  .page-home {
+    blockquote {
+      background:#fff;
+      margin:4em 0;
+      p {
+        font-size:1.5em;
+      }
+    }
+  }
+
+  .with-toc {
+    section[role="main"] {
+      margin-top:7em;
+    }
+
+    div.main-content {
+        overflow:hidden;
+    }
+
+    .toc {
+      display:block;
+    }
+  }
+}

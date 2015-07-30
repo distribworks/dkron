@@ -1,0 +1,28 @@
+@mixin gradient-dcron {
+  background: rgb(144,166,178); /* Old browsers */
+  background: -moz-linear-gradient(left,  rgb(144,166,178) 0%, rgb(28,117,158) 65%, rgb(108,164,178) 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgb(144,166,178)), color-stop(65%,rgb(28,117,158)), color-stop(100%,rgb(108,164,178))); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(left,  rgb(144,166,178) 0%,rgb(28,117,158) 65%,rgb(108,164,178) 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(left,  rgb(144,166,178) 0%,rgb(28,117,158) 65%,rgb(108,164,178) 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(left,  rgb(144,166,178) 0%,rgb(28,117,158) 65%,rgb(108,164,178) 100%); /* IE10+ */
+  background: linear-gradient(to right,  rgb(144,166,178) 0%,rgb(28,117,158) 65%,rgb(108,164,178) 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#90a6b2', endColorstr='#6ca4b2',GradientType=1 ); /* IE6-9 */
+}
+
+@mixin button($color,$background) {
+  display:inline-block;
+  color:$color;
+  border-radius:6px;
+  border:1px solid $color;
+  background:$background;
+  padding:.7em 1.2em;
+
+  transition:all .2s;
+
+  &:hover {
+    text-decoration:none;
+    color:$color;
+    opacity:.7;
+  }
+
+}

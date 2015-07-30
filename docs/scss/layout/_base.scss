@@ -1,0 +1,21 @@
+html {
+  font-size:100%; // please
+}
+
+body {
+  font-family:"Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size:1.2em;
+}
+
+section[role="main"] {
+  @include clearfix;
+  background:#F9FAFA;
+  padding:2em 0;
+}
+
+
+@media (min-width:$viewport-large) {
+  aside {
+    @include span(3 of 12);
+  }
+}
