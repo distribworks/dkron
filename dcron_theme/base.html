@@ -15,7 +15,6 @@
         <link href="{{ base_url }}/css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="{{ base_url }}/css/font-awesome-4.0.3.css" rel="stylesheet">
         <link rel="stylesheet" href="{{ base_url }}/css/highlight.css">
-        <link href="{{ base_url }}/css/base.css" rel="stylesheet">
         {%- for path in extra_css %}
         <link href="{{ path }}" rel="stylesheet">
         {%- endfor %}
@@ -38,32 +37,50 @@
         {% endif %}
     </head>
 
-    <body class="{% if current_page.abs_url == '/' %}page-home{% endif %}">
+    <body class="{% if current_page.abs_url == '/' %}page-home{% endif %} {% if current_page.abs_url != '/' %}with-toc{% endif %}">
+
         {% include "nav.html" %}
 
         {% if current_page.abs_url == '/' %}
+
         <div id="jumbotron-mask">
           <div id="jumbotron">
             <div class="container">
-              <div class="col-lg-6 col-md-6">
-                <h2 class="rls-l">Job scheduling made easy, distributed and highly-available</h2>
+              <div class="text-wrapper">
+                <h2>Job scheduling made easy, distributed and highly-available</h2>
+                <a href="#" class="button">Community</a> <a href="#" class="button button-light">Download</a>
               </div>
-              <div class="jumbo-logo-wrap col-lg-offset-1 col-lg-5 col-md-6 hidden-xs hidden-sm">
-                <div class="jumbo-logo"></div>
-              </div>
+                <div class="dcron-logo"><img src="../img/dcron-jumbo-logo-white.png"></div>
             </div>
-            <div class="jumbotron-dots"></div>
           </div>
         </div>
+
+        <blockquote>
+          <div class="container">
+            <p>Dcron is a system service that runs scheduled tasks at given intervals or times, just like the cron unix service distributed in several machines in a cluster. If a machine fails (the leader), the next one will take the responsability to keep running the scheduled tasks. Without human intervention. Dcron is Open Source and freely available.</p>
+          </div>
+        </blockquote>
+
         {% endif %}
-        <div class="container">
+        <section role="main">
+            
             {% if current_page.abs_url != '/' %}
-            <div class="col-md-3 toc">{% include "toc.html" %}</div>
-            <div class="col-md-9" role="main">{% include "content.html" %}</div>
+
+              <div class="container">
+                <aside class="toc">{% include "toc.html" %}</aside>
+                <div class="main-content">{% include "content.html" %}</div>
+              </div>
+
             {% else %}
-            <div class="col-md-12" role="main">{% include "content.html" %}</div>
+
+              <div class="container">
+                <div class="main-content">
+                  {% include "content.html" %}
+                </div>
+              </div>
+
             {% endif %}
-        </div>
+        </section>
 
         {% if current_page.abs_url == '/' %}
         <div id="use-cases-mask">
