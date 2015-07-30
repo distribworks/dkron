@@ -2,12 +2,12 @@
 site_name: Dcron - Distributed cron
 theme: yeti
 theme_dir: 'dcron_theme'
-extra_css: ["css/custom.css"]
+extra_css: ["css/app.css"]
 site_url: http://dcron.io
 repo_url: https://github.com/victorcoder/dcron
 site_author: Victor Castell
 copyright: © Victor Castell victor@victorcastell.com
-google_analytics: ['UA-571371-14', 'dcron.io']
+google_analytics: ['', 'dcron.io']
 # pages:
 #   - Home: 'index.md'
 #   - Intro: 'intro.md'
