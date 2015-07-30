@@ -1,2 +1,4 @@
 *.etcd
 site/
+docs/scss/Gemfile.lock
+docs/scss/.sass-cache
