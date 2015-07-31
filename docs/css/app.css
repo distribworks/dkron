@@ -323,6 +323,10 @@ h1, h2, h3 {
     margin-right: 0;
   }
   .navbar-default .navbar-header .brand .logo {
+    width: 100px;
+    height: 50px;
+  }
+  .navbar-default.nav-top .navbar-header .brand .logo {
     width: 200px;
     height: 100px;
   }
@@ -409,7 +413,7 @@ h1, h2, h3 {
   opacity: .7;
 }
 
-aside .affix {
+aside.toc .affix {
   position: relative;
 }
 

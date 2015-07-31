@@ -87,11 +87,23 @@
     .navbar-header {
       .brand {
         .logo {
-          width: 200px;
-          height: 100px;
+          width: 100px;
+          height: 50px;
         }
       }
     }
+
+    &.nav-top {
+      .navbar-header {
+        .brand {
+          .logo {
+            width: 200px;
+            height: 100px;
+          }
+        }
+      }
+    }
+
   }
 
 
