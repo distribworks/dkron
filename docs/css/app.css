@@ -310,21 +310,18 @@ h1, h2, h3 {
 }
 
 @media (min-width: 768px) {
-  .navbar-default {
-    padding-top: 2em;
-  }
   .navbar-default .container > .navbar-header {
-    margin-right: 3em;
+    margin-right: 4em;
   }
   .navbar-default .container > .navbar-collapse {
-    margin-top: 3.5em;
+    margin-top: 2.2em;
   }
   .navbar-default .navbar-nav.navbar-right:last-child {
     margin-right: 0;
   }
   .navbar-default .navbar-header .brand .logo {
-    width: 200px;
-    height: 100px;
+    width: 120px;
+    height: 60px;
   }
 
   .navbar-nav.main-links > li {
@@ -370,7 +367,7 @@ h1, h2, h3 {
   }
 
   .with-toc section[role="main"] {
-    margin-top: 7em;
+    margin-top: 4.6em;
   }
   .with-toc div.main-content {
     overflow: hidden;
@@ -409,7 +406,7 @@ h1, h2, h3 {
   opacity: .7;
 }
 
-aside .affix {
+aside.toc .affix {
   position: relative;
 }
 

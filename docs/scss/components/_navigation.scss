@@ -70,14 +70,14 @@
 
   .navbar-default {
 
-    padding-top:2em;
+    // padding-top:2em;
 
     .container > .navbar-header {
-      margin-right:3em;
+      margin-right:4em;
     }
 
     .container > .navbar-collapse {
-        margin-top:3.5em;
+        margin-top:2.2em;
     }
 
     .navbar-nav.navbar-right:last-child {
@@ -87,8 +87,8 @@
     .navbar-header {
       .brand {
         .logo {
-          width: 200px;
-          height: 100px;
+          width: 120px;
+          height: 60px;
         }
       }
     }
