@@ -1,0 +1,514 @@
+/* base components */
+/*! normalize.css v3.0.0 | MIT License | git.io/normalize */
+/*! normalize.css v3.0.0 | HTML5 Display Definitions | MIT License | git.io/normalize */
+@import url(http://fonts.googleapis.com/css?family=Montserrat:400,700);
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+nav,
+section,
+summary {
+  display: block;
+}
+
+audio,
+canvas,
+progress,
+video {
+  display: inline-block;
+  vertical-align: baseline;
+}
+
+audio:not([controls]) {
+  display: none;
+  height: 0;
+}
+
+[hidden],
+template {
+  display: none;
+}
+
+/*! normalize.css v3.0.0 | Base | MIT License | git.io/normalize */
+html {
+  font-family: sans-serif;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+}
+
+/*! normalize.css v3.0.0 | Links | MIT License | git.io/normalize */
+a {
+  background: transparent;
+}
+
+a:active,
+a:hover {
+  outline: 0;
+}
+
+/*! normalize.css v3.0.0 | Typography | MIT License | git.io/normalize */
+abbr[title] {
+  border-bottom: 1px dotted;
+}
+
+b,
+strong {
+  font-weight: bold;
+}
+
+dfn {
+  font-style: italic;
+}
+
+h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+
+mark {
+  background: #ff0;
+  color: #000;
+}
+
+small {
+  font-size: 80%;
+}
+
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sup {
+  top: -0.5em;
+}
+
+sub {
+  bottom: -0.25em;
+}
+
+/*! normalize.css v3.0.0 | Embedded Content | MIT License | git.io/normalize */
+img {
+  border: 0;
+}
+
+svg:not(:root) {
+  overflow: hidden;
+}
+
+/*! normalize.css v3.0.0 | Figures | MIT License | git.io/normalize */
+figure {
+  margin: 1em 40px;
+}
+
+hr {
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  height: 0;
+}
+
+pre {
+  overflow: auto;
+}
+
+code,
+kbd,
+pre,
+samp {
+  font-family: monospace, monospace;
+  font-size: 1em;
+}
+
+/*! normalize.css v3.0.0 | Forms | MIT License | git.io/normalize */
+button,
+input,
+optgroup,
+select,
+textarea {
+  color: inherit;
+  font: inherit;
+  margin: 0;
+}
+
+button {
+  overflow: visible;
+}
+
+button,
+select {
+  text-transform: none;
+}
+
+button,
+html input[type="button"],
+input[type="reset"],
+input[type="submit"] {
+  -webkit-appearance: button;
+  cursor: pointer;
+}
+
+button[disabled],
+html input[disabled] {
+  cursor: default;
+}
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+input {
+  line-height: normal;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  box-sizing: border-box;
+  padding: 0;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  height: auto;
+}
+
+input[type="search"] {
+  -webkit-appearance: textfield;
+  -moz-box-sizing: content-box;
+  -webkit-box-sizing: content-box;
+  box-sizing: content-box;
+}
+
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+fieldset {
+  border: 1px solid #c0c0c0;
+  margin: 0 2px;
+  padding: 0.35em 0.625em 0.75em;
+}
+
+legend {
+  border: 0;
+  padding: 0;
+}
+
+textarea {
+  overflow: auto;
+}
+
+optgroup {
+  font-weight: bold;
+}
+
+/*! normalize.css v3.0.0 | Tables | MIT License | git.io/normalize */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+td,
+th {
+  padding: 0;
+}
+
+/** Font vars **/
+/* Boostrap shitty breakpoints */
+h1, h2, h3 {
+  font-family: "Montserrat", "Open-Sans", Sans-serif;
+}
+
+.main-content h2 {
+  text-align: center;
+  color: #9B999E;
+}
+
+.navbar-default {
+  background: #90a6b2;
+  /* Old browsers */
+  background: -moz-linear-gradient(left, #90a6b2 0%, #1c759e 65%, #6ca4b2 100%);
+  /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%, #90a6b2), color-stop(65%, #1c759e), color-stop(100%, #6ca4b2));
+  /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(left, #90a6b2 0%, #1c759e 65%, #6ca4b2 100%);
+  /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(left, #90a6b2 0%, #1c759e 65%, #6ca4b2 100%);
+  /* Opera 11.10+ */
+  background: -ms-linear-gradient(left, #90a6b2 0%, #1c759e 65%, #6ca4b2 100%);
+  /* IE10+ */
+  background: linear-gradient(to right, #90a6b2 0%, #1c759e 65%, #6ca4b2 100%);
+  /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#90a6b2', endColorstr='#6ca4b2',GradientType=1 );
+  /* IE6-9 */
+}
+.navbar-default .navbar-header .brand {
+  padding: 1em;
+  line-height: 0;
+  margin-left: 0;
+}
+.navbar-default .navbar-header .brand .logo {
+  background: transparent url("../img/dcron-logo-white.png") 0 0 no-repeat;
+  background-size: 100%;
+  display: block;
+  width: 100px;
+  height: 50px;
+  overflow: hidden;
+  text-indent: -999em;
+  transition: all .2s;
+}
+.navbar-default .navbar-collapse {
+  border: 0;
+}
+.navbar-default .navbar-nav > li {
+  padding: 1em;
+}
+.navbar-default .navbar-nav > li a {
+  padding: 0;
+  line-height: 1em;
+  font-family: "Montserrat", "Open-Sans", Sans-serif;
+  font-size: .9em;
+  text-transform: uppercase;
+}
+.navbar-default .navbar-nav > li a:hover {
+  background: none;
+}
+.navbar-default .navbar-nav a {
+  background: none !important;
+}
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:hover,
+.navbar-default .navbar-nav > .active > a:focus {
+  background: none;
+  position: relative;
+}
+.navbar-default .navbar-nav > .active > a:before,
+.navbar-default .navbar-nav > .active > a:hover:before,
+.navbar-default .navbar-nav > .active > a:focus:before {
+  content: "";
+  display: block;
+  height: 2px;
+  background: #fff;
+  width: 50%;
+  position: absolute;
+  bottom: -.7em;
+}
+
+@media (min-width: 768px) {
+  .navbar-default {
+    padding-top: 2em;
+  }
+  .navbar-default .container > .navbar-header {
+    margin-right: 3em;
+  }
+  .navbar-default .container > .navbar-collapse {
+    margin-top: 3.5em;
+  }
+  .navbar-default .navbar-nav.navbar-right:last-child {
+    margin-right: 0;
+  }
+  .navbar-default .navbar-header .brand .logo {
+    width: 200px;
+    height: 100px;
+  }
+
+  .navbar-nav.main-links > li {
+    border-left: 1px solid #fff;
+    padding: 0;
+    padding-left: 1em;
+    margin: .5em;
+  }
+  .navbar-nav.main-links > li:first-child {
+    border: none;
+  }
+
+  .navbar-nav.navbar-right > li {
+    padding: .5em;
+  }
+}
+.page-home blockquote {
+  text-align: center;
+  border: none;
+  font-family: "Montserrat", "Open-Sans", Sans-serif;
+  color: #a3c5cd;
+  margin: 1.5em auto;
+}
+.page-home blockquote p {
+  font-size: 1em;
+  line-height: 1.5em;
+}
+
+.with-toc section[role="main"] {
+  margin-top: 3em;
+}
+.with-toc .toc {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .page-home blockquote {
+    background: #fff;
+    margin: 4em 0;
+  }
+  .page-home blockquote p {
+    font-size: 1.5em;
+  }
+
+  .with-toc section[role="main"] {
+    margin-top: 7em;
+  }
+  .with-toc div.main-content {
+    overflow: hidden;
+  }
+  .with-toc .toc {
+    display: block;
+  }
+}
+.button {
+  display: inline-block;
+  color: #fff;
+  border-radius: 6px;
+  border: 1px solid #fff;
+  background: "transparent";
+  padding: .7em 1.2em;
+  transition: all .2s;
+}
+.button:hover {
+  text-decoration: none;
+  color: #fff;
+  opacity: .7;
+}
+
+.button-light {
+  display: inline-block;
+  color: #72A6B2;
+  border-radius: 6px;
+  border: 1px solid #72A6B2;
+  background: #fff;
+  padding: .7em 1.2em;
+  transition: all .2s;
+}
+.button-light:hover {
+  text-decoration: none;
+  color: #72A6B2;
+  opacity: .7;
+}
+
+aside.toc .affix {
+  position: relative;
+}
+
+#jumbotron-mask {
+  background: #72A6B2;
+  background: #90a6b2;
+  /* Old browsers */
+  background: -moz-linear-gradient(left, #90a6b2 0%, #1c759e 65%, #6ca4b2 100%);
+  /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%, #90a6b2), color-stop(65%, #1c759e), color-stop(100%, #6ca4b2));
+  /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(left, #90a6b2 0%, #1c759e 65%, #6ca4b2 100%);
+  /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(left, #90a6b2 0%, #1c759e 65%, #6ca4b2 100%);
+  /* Opera 11.10+ */
+  background: -ms-linear-gradient(left, #90a6b2 0%, #1c759e 65%, #6ca4b2 100%);
+  /* IE10+ */
+  background: linear-gradient(to right, #90a6b2 0%, #1c759e 65%, #6ca4b2 100%);
+  /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#90a6b2', endColorstr='#6ca4b2',GradientType=1 );
+  /* IE6-9 */
+}
+#jumbotron-mask h2 {
+  color: #FFF;
+}
+#jumbotron-mask #jumbotron .container {
+  padding-top: 4em;
+  padding-bottom: 2em;
+  transition: all .2s;
+}
+#jumbotron-mask #jumbotron .container .text-wrapper {
+  text-align: center;
+}
+#jumbotron-mask #jumbotron .container .text-wrapper a {
+  margin: 2em .5em 0 .5em;
+  font-size: .7em;
+  text-transform: uppercase;
+  font-family: "Montserrat", "Open-Sans", Sans-serif;
+}
+#jumbotron-mask #jumbotron .container h2 {
+  text-align: center;
+}
+#jumbotron-mask #jumbotron .container .dcron-logo {
+  display: none;
+}
+
+@media (min-width: 992px) {
+  #jumbotron-mask #jumbotron .container {
+    padding-top: 10em;
+    padding-bottom: 5em;
+  }
+  #jumbotron-mask #jumbotron .container .text-wrapper {
+    width: 49.15254%;
+    float: left;
+    margin-right: 1.69492%;
+    margin-left: 8.47458%;
+    text-align: left;
+  }
+  #jumbotron-mask #jumbotron .container .text-wrapper h2 {
+    text-align: left;
+    line-height: 1.2em;
+    font-size: 2em;
+  }
+  #jumbotron-mask #jumbotron .container .dcron-logo {
+    margin-top: 1.7em;
+    display: block;
+    height: 200px;
+    width: 13.7931%;
+    float: left;
+    margin-right: 3.44828%;
+    margin-left: 8.47458%;
+  }
+  #jumbotron-mask #jumbotron .container .dcron-logo img {
+    width: auto;
+    height: 200px;
+  }
+}
+html {
+  font-size: 100%;
+}
+
+body {
+  font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 1.2em;
+}
+
+section[role="main"] {
+  overflow: hidden;
+  *zoom: 1;
+  background: #F9FAFA;
+  padding: 2em 0;
+}
+
+@media (min-width: 992px) {
+  aside {
+    width: 23.72881%;
+    float: left;
+    margin-right: 1.69492%;
+  }
+}
+
+/*# sourceMappingURL=app.css.map */

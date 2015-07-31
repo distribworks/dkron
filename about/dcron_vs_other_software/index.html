@@ -14,8 +14,7 @@
         <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
         <link rel="stylesheet" href="../../css/highlight.css">
-        <link href="../../css/base.css" rel="stylesheet">
-        <link href="../../css/custom.css" rel="stylesheet">
+        <link href="../../css/app.css" rel="stylesheet">
 
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
@@ -29,120 +28,130 @@
             (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
             m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
             })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-            ga('create', 'UA-571371-14', 'dcron.io');
+            ga('create', '', 'dcron.io');
             ga('send', 'pageview');
         </script>
         
     </head>
 
-    <body class="">
-        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
-    <div class="container">
+    <body class=" with-toc">
 
-        <!-- Collapsed navigation -->
-        <div class="navbar-header">
-            <!-- Expander button -->
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
+            <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
 
-            <!-- Main title -->
-            <div class="brand">
-                <a class="logo" href="../.."></a>
+            <!-- Collapsed navigation -->
+            <div class="navbar-header">
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+
+                <!-- Main title -->
+                <div class="brand">
+                    <a class="logo" href="../..">Dcron</a>
+                </div>
+            </div>
+
+            <!-- Expanded navigation -->
+            <div class="navbar-collapse collapse">
+                <!-- Main navigation -->
+                <ul class="main-links nav navbar-nav">
+                
+                
+                    <li >
+                        <a href="../..">Home</a>
+                    </li>
+                
+                
+                
+                    <li >
+                        <a href="../../intro/">Intro</a>
+                    </li>
+                
+                
+                
+                    <li class="dropdown active">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            <li class="active">
+                                <a href="./">Dcron vs other software</a>
+                            </li>
+                        
+                            <li >
+                                <a href="../license/">License</a>
+                            </li>
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">User guide <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            <li >
+                                <a href="../../user-guide/api/">Api</a>
+                            </li>
+                        
+                            <li >
+                                <a href="../../user-guide/dcron-internals/">Dcron internals</a>
+                            </li>
+                        
+                            <li >
+                                <a href="../../user-guide/getting-started/">Getting started</a>
+                            </li>
+                        
+                        </ul>
+                    </li>
+                
+                
+                </ul>
+
+                <!-- Search, Navigation and Repo links -->
+                <ul class="nav navbar-nav navbar-right">
+
+                    
+
+                    <li >
+                        <a rel="next" href="../../intro/">
+                            <i class="fa fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="prev" href="../license/">
+                            Next <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </li>
+
+                    
+
+                    
+                    <li>
+                        <a href="https://github.com/victorcoder/dcron">
+                            
+                                <i class="fa fa-github"></i>
+                            
+                            GitHub
+                        </a>
+                    </li>
+                    
+                </ul>
             </div>
         </div>
-
-        <!-- Expanded navigation -->
-        <div class="navbar-collapse collapse">
-            <!-- Main navigation -->
-            <ul class="main-links nav navbar-nav">
-            
-            
-                <li >
-                    <a href="../..">Home</a>
-                </li>
-            
-            
-            
-                <li >
-                    <a href="../../intro/">Intro</a>
-                </li>
-            
-            
-            
-                <li class="dropdown active">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                    
-                        <li class="active">
-                            <a href="./">Dcron vs other software</a>
-                        </li>
-                    
-                        <li >
-                            <a href="../license/">License</a>
-                        </li>
-                    
-                    </ul>
-                </li>
-            
-            
-            
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">User guide <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                    
-                        <li >
-                            <a href="../../user-guide/api/">Api</a>
-                        </li>
-                    
-                        <li >
-                            <a href="../../user-guide/dcron-internals/">Dcron internals</a>
-                        </li>
-                    
-                        <li >
-                            <a href="../../user-guide/getting-started/">Getting started</a>
-                        </li>
-                    
-                    </ul>
-                </li>
-            
-            
-            </ul>
-
-            <!-- Search, Navigation and Repo links -->
-            <ul class="nav navbar-nav navbar-right">
-                <li >
-                    <a rel="next" href="../../intro/">
-                        <i class="fa fa-arrow-left"></i> Previous
-                    </a>
-                </li>
-                <li >
-                    <a rel="prev" href="../license/">
-                        Next <i class="fa fa-arrow-right"></i>
-                    </a>
-                </li>
-                
-                <li>
-                    <a href="https://github.com/victorcoder/dcron">
-                        
-                            <i class="fa fa-github"></i>
-                        
-                        GitHub
-                    </a>
-                </li>
-                
-            </ul>
-        </div>
     </div>
-</div>
 
         
-        <div class="container">
+        <section role="main">
             
-            <div class="col-md-3 toc"><div class="bs-sidebar hidden-print affix well" role="complementary">
+            
+
+              <div class="container">
+                <aside class="toc"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
         <li class="main active"><a href="#dcron-vs-other-software">Dcron vs. Other Software</a></li>
@@ -153,8 +162,8 @@
         
     
     </ul>
-</div></div>
-            <div class="col-md-9" role="main">
+</div></aside>
+                <div class="main-content">
 
 <h1 id="dcron-vs-other-software">Dcron vs. Other Software</h1>
 <h2 id="dcron-vs-chronos">Dcron vs. Chronos</h2>
@@ -171,8 +180,10 @@
 <p>It's written in Java and it's not trivial to setup right.</p>
 <p>It uses a central database to store job execution results and configuration data, that makes it vulnerable to failures and you need to care yourself of providing it an HA environement or database to run and that's not an easy task to do with the Rundeck's supported databases.</p>
 <p>Dcron lacks some of it's features but it's lightweight and fault-tolerant out-of-the-box.</p></div>
+              </div>
+
             
-        </div>
+        </section>
 
         
 
