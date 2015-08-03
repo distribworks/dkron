@@ -278,11 +278,23 @@ h1, h2, h3 {
 .navbar-default .navbar-nav > li {
   padding: 1em;
 }
+.navbar-default .navbar-nav > li li {
+  padding: 0;
+}
+.navbar-default .navbar-nav > li.open .dropdown-menu {
+  padding: .5em 0;
+  margin: 1em 0;
+  border-top: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+}
+.navbar-default .navbar-nav > li.open .dropdown-menu > li > a {
+  padding: 0;
+}
 .navbar-default .navbar-nav > li a {
   padding: 0;
   line-height: 1em;
   font-family: "Montserrat", "Open-Sans", Sans-serif;
-  font-size: .9em;
+  font-size: 0.9em !important;
   text-transform: uppercase;
 }
 .navbar-default .navbar-nav > li a:hover {
@@ -297,19 +309,8 @@ h1, h2, h3 {
   background: none;
   position: relative;
 }
-.navbar-default .navbar-nav > .active > a:before,
-.navbar-default .navbar-nav > .active > a:hover:before,
-.navbar-default .navbar-nav > .active > a:focus:before {
-  content: "";
-  display: block;
-  height: 2px;
-  background: #fff;
-  width: 50%;
-  position: absolute;
-  bottom: -.7em;
-}
 
-@media (min-width: 768px) {
+@media (min-width: 767px) {
   .navbar-default .container > .navbar-header {
     margin-right: 4em;
   }
@@ -323,6 +324,17 @@ h1, h2, h3 {
     width: 100px;
     height: 50px;
   }
+  .navbar-default .navbar-header .navbar-nav > .active > a:before,
+  .navbar-default .navbar-header .navbar-nav > .active > a:hover:before,
+  .navbar-default .navbar-header .navbar-nav > .active > a:focus:before {
+    content: "";
+    display: block;
+    height: 2px;
+    background: #fff;
+    width: 50%;
+    position: absolute;
+    bottom: -.7em;
+  }
 
   .navbar-nav.main-links > li {
     border-left: 1px solid #fff;
@@ -332,6 +344,16 @@ h1, h2, h3 {
   }
   .navbar-nav.main-links > li:first-child {
     border: none;
+  }
+  .navbar-nav.main-links > li.open .dropdown-menu {
+    border: none;
+    background-color: #347FA0;
+  }
+  .navbar-nav.main-links > li.open .dropdown-menu > li {
+    display: block;
+  }
+  .navbar-nav.main-links > li.open .dropdown-menu > li > a {
+    padding: .5em;
   }
 
   .navbar-nav.navbar-right > li {
@@ -357,7 +379,7 @@ h1, h2, h3 {
   display: none;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 767px) {
   .page-home blockquote {
     background: #fff;
     margin: 4em 0;
