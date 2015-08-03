@@ -14,7 +14,7 @@
     <img src="img/available.png" />
     <div class="col-md-9">
       <h3>Always available</h3>
-      <p>Using the power of the Raft implementation in etcd, you can rely on Dcron to be always available. Wherever you need to generate your employee monthly payroll or send those daily emails that keeps your users informed and your site busy, Dcron could help you to sleep at night.</p>
+      <p>Using the power of the Raft implementation in etcd, Dcron is designed to be always available. If one node fails another one will replace it, all without human intervention.</p>
     </div>
   </div>
 
