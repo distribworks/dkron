@@ -1,16 +1,28 @@
+
 aside.toc {
+
+  .affix {
+    //position:static;
+  }
+
   .well {
     padding:0;
 
     li {
-      text-align: center;
+      //text-align: center;
     }
 
   }
 }
 
-@media (min-width:$viewport-medium) {
+/*
+@media (min-width:$viewport-xlarge) {
   aside.toc {
+
+    .affix {
+      position:fixed;
+    }
+
     .well {
       li {
         text-align:right;
@@ -18,3 +30,4 @@ aside.toc {
     }
   }
 }
+*/

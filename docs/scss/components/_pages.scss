@@ -1,3 +1,7 @@
+  body {
+    padding-top:65px;
+  }
+
 .page-home {
   blockquote {
     text-align:center;
@@ -10,39 +14,19 @@
       font-size:1em;
       line-height:1.5em;
     }
-  }
-}
 
-.with-toc {
-  section[role="main"] {
-  }
-
-}
-
-@media (min-width:$viewport-medium) {
-
-  body {
-    padding-top:75px;
-  }
-
-  .page-home {
-    blockquote {
-      background:#fff;
-      margin:4em 0;
-      p {
-        font-size:1.5em;
+    .main-content {
+      h2 {
+        text-align: center;
+        color:$color-light;
       }
     }
+
   }
 
   .with-toc {
-    section[role="main"] {
-      background:#fff;
-    }
 
-    div.main-content {
-      @include span(9 of 12);
-      @include last;
+    .main-content {
 
       h1 {
         margin-top:.2em;
@@ -66,12 +50,36 @@
       pre {
         margin:2em 0;
       }
+    }
+  }
+}
 
+
+@media (min-width:$viewport-large) {
+
+  body {
+    padding-top:75px;
+  }
+
+  .page-home {
+    blockquote {
+      background:#fff;
+      margin:4em 0;
+      p {
+        font-size:1.5em;
+      }
+    }
+  }
+
+  .with-toc {
+    section[role="main"] {
+      background:#fff;
     }
 
+    /*
     aside.toc {
       .affix {
-        width:250px;
+        width:200px;
         font-size:1em;
 
         li {
@@ -87,6 +95,25 @@
         }
       }
     }
+    */
   
   }
+}
+
+@media (min-width:$viewport-large) {
+    .with-toc {
+
+    div.main-content {
+      //@include span(9 of 12);
+      //@include push(3 of 12);
+      //@include last;
+    }
+      /*
+      aside.toc {
+        .affix {
+          width:250px;
+        }
+      }
+      */
+    }
 }

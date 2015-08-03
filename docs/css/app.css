@@ -234,11 +234,6 @@ h1, h2, h3 {
   font-family: "Montserrat", "Open-Sans", Sans-serif;
 }
 
-.main-content h2 {
-  text-align: center;
-  color: #9B999E;
-}
-
 .navbar-default {
   background: #90a6b2;
   /* Old browsers */
@@ -310,7 +305,7 @@ h1, h2, h3 {
   position: relative;
 }
 
-@media (min-width: 767px) {
+@media (min-width: 768px) {
   .navbar-default .container > .navbar-header {
     margin-right: 4em;
   }
@@ -360,6 +355,10 @@ h1, h2, h3 {
     padding: .5em;
   }
 }
+body {
+  padding-top: 65px;
+}
+
 .page-home blockquote {
   text-align: center;
   border: none;
@@ -371,8 +370,31 @@ h1, h2, h3 {
   font-size: 1em;
   line-height: 1.5em;
 }
+.page-home blockquote .main-content h2 {
+  text-align: center;
+  color: #9B999E;
+}
+.page-home .with-toc .main-content h1 {
+  margin-top: .2em;
+}
+.page-home .with-toc .main-content h2 {
+  text-align: left;
+  margin-top: 2em;
+  margin-bottom: 1em;
+  font-size: 1.6em;
+  color: #4d4d4d;
+}
+.page-home .with-toc .main-content h3 {
+  font-size: 1.4em;
+  margin-bottom: .8em;
+  color: #4d4d4d;
+  margin-top: 1.5em;
+}
+.page-home .with-toc .main-content pre {
+  margin: 2em 0;
+}
 
-@media (min-width: 767px) {
+@media (min-width: 992px) {
   body {
     padding-top: 75px;
   }
@@ -385,44 +407,41 @@ h1, h2, h3 {
     font-size: 1.5em;
   }
 
+  .with-toc {
+    /*
+    aside.toc {
+      .affix {
+        width:200px;
+        font-size:1em;
+
+        li {
+          a {
+            padding:.5em;
+          }
+
+          &.active {
+            a {
+              color:#000;
+            }
+          }
+        }
+      }
+    }
+    */
+  }
   .with-toc section[role="main"] {
     background: #fff;
   }
-  .with-toc div.main-content {
-    width: 74.57627%;
-    float: left;
-    margin-right: 1.69492%;
-    float: right;
-    margin-right: 0;
-  }
-  .with-toc div.main-content h1 {
-    margin-top: .2em;
-  }
-  .with-toc div.main-content h2 {
-    text-align: left;
-    margin-top: 2em;
-    margin-bottom: 1em;
-    font-size: 1.6em;
-    color: #4d4d4d;
-  }
-  .with-toc div.main-content h3 {
-    font-size: 1.4em;
-    margin-bottom: .8em;
-    color: #4d4d4d;
-    margin-top: 1.5em;
-  }
-  .with-toc div.main-content pre {
-    margin: 2em 0;
-  }
-  .with-toc aside.toc .affix {
-    width: 250px;
-    font-size: 1em;
-  }
-  .with-toc aside.toc .affix li a {
-    padding: .5em;
-  }
-  .with-toc aside.toc .affix li.active a {
-    color: #000;
+}
+@media (min-width: 992px) {
+  .with-toc {
+    /*
+    aside.toc {
+      .affix {
+        width:250px;
+      }
+    }
+    */
   }
 }
 .button {
@@ -458,15 +477,23 @@ h1, h2, h3 {
 aside.toc .well {
   padding: 0;
 }
-aside.toc .well li {
-  text-align: center;
-}
 
-@media (min-width: 767px) {
-  aside.toc .well li {
-    text-align: right;
+/*
+@media (min-width:$viewport-xlarge) {
+  aside.toc {
+
+    .affix {
+      position:fixed;
+    }
+
+    .well {
+      li {
+        text-align:right;
+      }
+    }
   }
 }
+*/
 #jumbotron-mask {
   background: #72A6B2;
   background: #90a6b2;
@@ -512,7 +539,6 @@ aside.toc .well li {
 
 @media (min-width: 992px) {
   #jumbotron-mask #jumbotron .container {
-    padding-top: 10em;
     padding-bottom: 5em;
   }
   #jumbotron-mask #jumbotron .container .text-wrapper {
@@ -565,17 +591,9 @@ h5[id]:before,
 h6[id]:before {
   content: "";
   display: block;
-  margin-top: -115px;
-  height: 115px;
+  margin-top: -100px;
+  height: 100px;
   pointer-events: none;
-}
-
-@media (min-width: 992px) {
-  aside {
-    width: 23.72881%;
-    float: left;
-    margin-right: 1.69492%;
-  }
 }
 
 /*# sourceMappingURL=app.css.map */
