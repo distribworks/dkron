@@ -5,9 +5,9 @@
 		"go-vet",
 		"xc",
 		"archive-zip",
-		"archive-tar-gz",
-		"downloads-page"
+		"archive-tar-gz"
 	],
+	"TaskSettings": {
 	"BuildConstraints": "linux,amd64 windows,amd64 darwin,amd64",
 	"Resources": {
             "Include": "INSTALL*,README*,LICENSE*,config/*,static/*,templates/*"
