@@ -2,8 +2,8 @@
 
 Welcome to the Dcron documentation! This is the reference guide on how to use Drcon. If you want a getting started guide refer to the [getting started guide](user-guide/getting-started) of the Dcron documentation.
 
-<div class="alert alert-warning" role="alert">Warning: Under active development. Used at X in production</div>
-<div class="alert alert-info" role="alert">Note: Version in this documentation, 0.1</div>
+<div class="alert alert-warning" role="alert">Warning: Dcron is Under heavy development, it's considered alpha state, expect dragons.</div>
+<div class="alert alert-info" role="alert">Note: Version in this documentation, 0.0.2</div>
 
 ## What is Dcron
 
