@@ -61,7 +61,7 @@
 
                     <li>
                         <a href="https://github.com/victorcoder/dcron/releases">
-                          <i class="fa"></i>
+                          <i class="fa fa-cloud-download fa-lg"></i>
                           Download
                         </a>
                     </li>
@@ -69,11 +69,7 @@
                     {% if repo_url %}
                     <li>
                         <a href="{{ repo_url }}">
-                            {% if repo_name == 'GitHub' %}
-                                <i class="fa fa-github"></i>
-                            {% elif repo_name == 'Bitbucket' %}
-                                <i class="fa fa-bitbucket"></i>
-                            {% endif %}
+                            <i class="fa fa-github fa-lg"></i>
                             {{ repo_name }}
                         </a>
                     </li>
