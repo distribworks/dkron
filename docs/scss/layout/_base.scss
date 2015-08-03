@@ -14,6 +14,19 @@ section[role="main"] {
 }
 
 
+h1[id]:before, 
+h2[id]:before, 
+h3[id]:before, 
+h4[id]:before, 
+h5[id]:before, 
+h6[id]:before {
+  content: "";
+  display: block;
+  margin-top: -115px;
+  height: 115px;
+  pointer-events: none;
+}
+
 @media (min-width:$viewport-large) {
   aside {
     @include span(3 of 12);

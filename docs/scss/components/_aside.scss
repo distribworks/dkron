@@ -1,5 +1,20 @@
 aside.toc {
-  .affix {
-    position:relative;
+  .well {
+    padding:0;
+
+    li {
+      text-align: center;
+    }
+
+  }
+}
+
+@media (min-width:$viewport-medium) {
+  aside.toc {
+    .well {
+      li {
+        text-align:right;
+      }
+    }
   }
 }

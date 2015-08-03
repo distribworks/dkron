@@ -15,15 +15,16 @@
 
 .with-toc {
   section[role="main"] {
-    margin-top:3em;
   }
 
-  .toc {
-    display:none;
-  }
 }
 
 @media (min-width:$viewport-medium) {
+
+  body {
+    padding-top:75px;
+  }
+
   .page-home {
     blockquote {
       background:#fff;
@@ -36,15 +37,56 @@
 
   .with-toc {
     section[role="main"] {
-      margin-top:4.6em;
+      background:#fff;
     }
 
     div.main-content {
-        overflow:hidden;
+      @include span(9 of 12);
+      @include last;
+
+      h1 {
+        margin-top:.2em;
+      }
+
+      h2 {
+        text-align: left;
+        margin-top:2em;
+        margin-bottom:1em;
+        font-size:1.6em;
+        color:lighten(#000, 30%);
+      }
+
+      h3 {
+        font-size:1.4em;
+        margin-bottom:.8em;
+        color:lighten(#000,30%);
+        margin-top:1.5em;
+      }
+
+      pre {
+        margin:2em 0;
+      }
+
     }
 
-    .toc {
-      display:block;
+    aside.toc {
+      .affix {
+        width:250px;
+        font-size:1em;
+
+        li {
+          a {
+            padding:.5em;
+          }
+
+          &.active {
+            a {
+              color:#000;
+            }
+          }
+        }
+      }
     }
+  
   }
 }

@@ -372,14 +372,11 @@ h1, h2, h3 {
   line-height: 1.5em;
 }
 
-.with-toc section[role="main"] {
-  margin-top: 3em;
-}
-.with-toc .toc {
-  display: none;
-}
-
 @media (min-width: 767px) {
+  body {
+    padding-top: 75px;
+  }
+
   .page-home blockquote {
     background: #fff;
     margin: 4em 0;
@@ -389,13 +386,43 @@ h1, h2, h3 {
   }
 
   .with-toc section[role="main"] {
-    margin-top: 4.6em;
+    background: #fff;
   }
   .with-toc div.main-content {
-    overflow: hidden;
+    width: 74.57627%;
+    float: left;
+    margin-right: 1.69492%;
+    float: right;
+    margin-right: 0;
   }
-  .with-toc .toc {
-    display: block;
+  .with-toc div.main-content h1 {
+    margin-top: .2em;
+  }
+  .with-toc div.main-content h2 {
+    text-align: left;
+    margin-top: 2em;
+    margin-bottom: 1em;
+    font-size: 1.6em;
+    color: #4d4d4d;
+  }
+  .with-toc div.main-content h3 {
+    font-size: 1.4em;
+    margin-bottom: .8em;
+    color: #4d4d4d;
+    margin-top: 1.5em;
+  }
+  .with-toc div.main-content pre {
+    margin: 2em 0;
+  }
+  .with-toc aside.toc .affix {
+    width: 250px;
+    font-size: 1em;
+  }
+  .with-toc aside.toc .affix li a {
+    padding: .5em;
+  }
+  .with-toc aside.toc .affix li.active a {
+    color: #000;
   }
 }
 .button {
@@ -428,10 +455,18 @@ h1, h2, h3 {
   opacity: .7;
 }
 
-aside.toc .affix {
-  position: relative;
+aside.toc .well {
+  padding: 0;
+}
+aside.toc .well li {
+  text-align: center;
 }
 
+@media (min-width: 767px) {
+  aside.toc .well li {
+    text-align: right;
+  }
+}
 #jumbotron-mask {
   background: #72A6B2;
   background: #90a6b2;
@@ -520,6 +555,19 @@ section[role="main"] {
   *zoom: 1;
   background: #F9FAFA;
   padding: 2em 0;
+}
+
+h1[id]:before,
+h2[id]:before,
+h3[id]:before,
+h4[id]:before,
+h5[id]:before,
+h6[id]:before {
+  content: "";
+  display: block;
+  margin-top: -115px;
+  height: 115px;
+  pointer-events: none;
 }
 
 @media (min-width: 992px) {
