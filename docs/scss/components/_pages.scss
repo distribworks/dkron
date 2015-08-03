@@ -1,4 +1,5 @@
 .page-home {
+
   blockquote {
     text-align:center;
     border:none;
@@ -20,8 +21,55 @@
 
   }
 
+  footer {
+    hr {
+      margin-top:0;
+      background:none;
+      border:none;
+    }
+  }
+
+  .main-content {
+    text-align:center;
+    padding:3em 0;
+
+    h2 {
+      text-align: center;
+      padding:1em 0;
+      color:lighten(#000,60%);
+      position:relative;
+
+      &:before {
+        position:absolute;
+        border:3px solid $color-base-light;
+        width:10%;
+        left:50%;
+        margin-left:-5%;
+        content:"";
+        display:block;
+        bottom:0;
+      }
+    }
+
+    img {
+      margin:1em 0;
+    }
+
+    h3 {
+      color:$color-base-light;
+    }
+
+    p {
+      color:lighten(#000,60%);
+      font-size:.9em;
+    }
+
+    .vertical-align {
+      margin-bottom:4em;
+    }
+  }
+
   #use-cases-mask {
-    margin-top:2em;
     @include gradient-dcron;
     padding:3em 0;
     color:#fff;
@@ -66,6 +114,7 @@
 @media (min-width:$viewport-medium) {
 
   .page-home {
+
     #use-cases-mask {
 
       .case-container {
@@ -76,6 +125,29 @@
 
         &:nth-child(4){
           clear:left;
+        }
+      }
+    }
+
+    .main-content {
+      text-align:left;
+    }
+
+    .vertical-align {
+
+      @include clearfix;
+
+      &:nth-child(even) {
+        img {
+          float:left;
+          margin-right:2em;
+        }
+      }
+
+      &:nth-child(odd) {
+        img {
+          float:right;
+          margin-left:2em;
         }
       }
     }
@@ -91,6 +163,10 @@
       p {
         font-size:1.5em;
       }
+    }
+
+    .home-wrapper {
+      background:lighten(#000,97%);
     }
 
     #use-cases-mask {

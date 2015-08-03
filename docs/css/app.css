@@ -276,7 +276,6 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 footer[role="contentinfo"] {
-  margin-top: 2em;
   font-size: .6em;
   font-weight: bold;
   text-transform: uppercase;
@@ -307,8 +306,45 @@ footer[role="contentinfo"] p {
   text-align: center;
   color: #9B999E;
 }
+.page-home footer hr {
+  margin-top: 0;
+  background: none;
+  border: none;
+}
+.page-home .main-content {
+  text-align: center;
+  padding: 3em 0;
+}
+.page-home .main-content h2 {
+  text-align: center;
+  padding: 1em 0;
+  color: #999999;
+  position: relative;
+}
+.page-home .main-content h2:before {
+  position: absolute;
+  border: 3px solid #6B93BA;
+  width: 10%;
+  left: 50%;
+  margin-left: -5%;
+  content: "";
+  display: block;
+  bottom: 0;
+}
+.page-home .main-content img {
+  margin: 1em 0;
+}
+.page-home .main-content h3 {
+  color: #6B93BA;
+}
+.page-home .main-content p {
+  color: #999999;
+  font-size: .9em;
+}
+.page-home .main-content .vertical-align {
+  margin-bottom: 4em;
+}
 .page-home #use-cases-mask {
-  margin-top: 2em;
   background: #90a6b2;
   /* Old browsers */
   background: -moz-linear-gradient(left, #90a6b2 0%, #1c759e 65%, #6ca4b2 100%);
@@ -364,6 +400,21 @@ footer[role="contentinfo"] p {
   .page-home #use-cases-mask .case:nth-child(4) {
     clear: left;
   }
+  .page-home .main-content {
+    text-align: left;
+  }
+  .page-home .vertical-align {
+    overflow: hidden;
+    *zoom: 1;
+  }
+  .page-home .vertical-align:nth-child(even) img {
+    float: left;
+    margin-right: 2em;
+  }
+  .page-home .vertical-align:nth-child(odd) img {
+    float: right;
+    margin-left: 2em;
+  }
 }
 @media (min-width: 1200px) {
   .page-home blockquote {
@@ -372,6 +423,9 @@ footer[role="contentinfo"] p {
   }
   .page-home blockquote p {
     font-size: 1.5em;
+  }
+  .page-home .home-wrapper {
+    background: #f7f7f7;
   }
   .page-home #use-cases-mask .case-container {
     width: 1000px;
