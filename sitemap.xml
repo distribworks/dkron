@@ -4,7 +4,7 @@
     
     <url>
      <loc>http://dcron.io/</loc>
-     <lastmod>2015-08-03</lastmod>
+     <lastmod>2015-08-04</lastmod>
      <changefreq>daily</changefreq>
     </url>
     
@@ -12,7 +12,7 @@
     
     <url>
      <loc>http://dcron.io/intro/</loc>
-     <lastmod>2015-08-03</lastmod>
+     <lastmod>2015-08-04</lastmod>
      <changefreq>daily</changefreq>
     </url>
     
@@ -21,13 +21,13 @@
         
     <url>
      <loc>http://dcron.io/about/dcron_vs_other_software/</loc>
-     <lastmod>2015-08-03</lastmod>
+     <lastmod>2015-08-04</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>http://dcron.io/about/license/</loc>
-     <lastmod>2015-08-03</lastmod>
+     <lastmod>2015-08-04</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
@@ -37,19 +37,19 @@
         
     <url>
      <loc>http://dcron.io/user-guide/api/</loc>
-     <lastmod>2015-08-03</lastmod>
+     <lastmod>2015-08-04</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>http://dcron.io/user-guide/dcron-internals/</loc>
-     <lastmod>2015-08-03</lastmod>
+     <lastmod>2015-08-04</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>http://dcron.io/user-guide/getting-started/</loc>
-     <lastmod>2015-08-03</lastmod>
+     <lastmod>2015-08-04</lastmod>
      <changefreq>daily</changefreq>
     </url>
         

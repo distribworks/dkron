@@ -28,7 +28,7 @@
             (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
             m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
             })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-            ga('create', '', 'dcron.io');
+            ga('create', 'UA-571371-14', 'dcron.io');
             ga('send', 'pageview');
         </script>
         
@@ -130,12 +130,17 @@
 
                     
 
+                    <li>
+                        <a href="https://github.com/victorcoder/dcron/releases">
+                          <i class="fa fa-cloud-download fa-lg"></i>
+                          Download
+                        </a>
+                    </li>
+
                     
                     <li>
                         <a href="https://github.com/victorcoder/dcron">
-                            
-                                <i class="fa fa-github"></i>
-                            
+                            <i class="fa fa-github fa-lg"></i>
                             GitHub
                         </a>
                     </li>
@@ -146,7 +151,6 @@
     </div>
 
         
-            
             
 
               <div class="container">
@@ -165,10 +169,10 @@
                 <div class="col-md-9" role="main">
 
 <h1 id="dcron-distributed-fault-tolerant-job-scheduling-system">Dcron - Distributed, fault tolerant job scheduling system</h1>
-<p>Welcome to the Dcron documentation! This is the reference guide on how to use Drcon. If you want a getting started guide refer to the <a href="../getting-started/">getting started guide</a> of the Dcron documentation.</p>
-<div class="alert alert-warning" role="alert">Warning: Under active development. Used at X in production</div>
+<p>Welcome to the Dcron documentation! This is the reference guide on how to use Drcon. If you want a getting started guide refer to the <a href="../user-guide/getting-started">getting started guide</a> of the Dcron documentation.</p>
+<div class="alert alert-warning" role="alert">Warning: Dcron is Under heavy development, it's considered alpha state, expect dragons.</div>
 
-<div class="alert alert-info" role="alert">Note: Version in this documentation, 0.1</div>
+<div class="alert alert-info" role="alert">Note: Version in this documentation, 0.0.2</div>
 
 <h2 id="what-is-dcron">What is Dcron</h2>
 <p>Dcron is a system service that runs scheduled tasks at given intervals or times, just like the cron unix service. It differs from it in the sense that it's distributed in several machines in a cluster and if one of that machines (the leader) fails, any other one can take this responsability and keep executing the sheduled tasks without human intervention.</p>
