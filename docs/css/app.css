@@ -275,6 +275,23 @@ h1, h2, h3, h4, h5, h6 {
   opacity: .7;
 }
 
+footer[role="contentinfo"] {
+  margin-top: 2em;
+  font-size: .6em;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #e6e6e6;
+  padding-bottom: 2em;
+}
+footer[role="contentinfo"] .footer-logo {
+  margin: 2em auto;
+  text-align: center;
+}
+footer[role="contentinfo"] p {
+  margin: 0;
+  text-align: center;
+}
+
 #jumbotron-mask {
   margin-top: -20px;
   background: #72A6B2;

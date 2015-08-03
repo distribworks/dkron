@@ -95,15 +95,15 @@
         </div>
         {% endif %}
 
-        <footer class="col-md-12">
+        <footer class="col-md-12" role="contentinfo">
             <hr>
             <div class="footer-logo">
-              <center><img src="/img/dcron-logo-blue.png"/></center>
+              <img src="/img/dcron-logo-blue.png"/>
             </div>
-            {% if copyright %}
-                <center>{{ copyright }}</center>
+            {% if copyright %} 
+                <p>{{ copyright }}</p>
             {% endif %}
-            <center>Web desing by <a href="http://www.collagestudio.es/">Collage Studio</a>.</center>
+            <p>Web design by <a href="http://www.collagestudio.es/">Collage Studio</a>.</p>
         </footer>
 
         <script src="{{ base_url }}/js/jquery-1.10.2.min.js"></script>
