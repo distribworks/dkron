@@ -1,0 +1,7 @@
+.button {
+  @include button(#fff,'transparent'); 
+}
+
+.button-light {
+ @include button($color-base,#fff);
+}

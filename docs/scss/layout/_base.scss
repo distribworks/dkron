@@ -1,0 +1,28 @@
+html {
+  font-size:100%; // please
+}
+
+body {
+  font-family:"Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size:1.2em;
+  padding-top:90px;
+}
+
+section[role="main"] {
+  background:#F9FAFA;
+  padding:2em 0;
+}
+
+
+h1[id]:before, 
+h2[id]:before, 
+h3[id]:before, 
+h4[id]:before, 
+h5[id]:before, 
+h6[id]:before {
+  content: "";
+  display: block;
+  margin-top: -115px;
+  height: 115px;
+  pointer-events: none;
+}
