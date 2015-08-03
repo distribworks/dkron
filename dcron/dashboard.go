@@ -27,7 +27,11 @@ func (a *AgentCommand) dashboardIndexHandler(w http.ResponseWriter, r *http.Requ
 	if err != nil {
 		log.Error(err)
 	}
-	version := res.Body
+	var version struct {
+		Etcdserver  string `json:etcdserver`
+		Etcdcluster string `json:etcdcluster`
+	}
+	json.Unmarshal(res.Body, &version)
 
 	var ss *EtcdServerStats
 	rr = etcdc.NewRawRequest("GET", "stats/self", nil, nil)
@@ -42,7 +46,7 @@ func (a *AgentCommand) dashboardIndexHandler(w http.ResponseWriter, r *http.Requ
 		Stats     *EtcdServerStats
 		StartTime string
 	}{
-		Version:   string(version),
+		Version:   version.Etcdserver,
 		Stats:     ss,
 		StartTime: ss.LeaderInfo.StartTime.Format("2/Jan/2006 15:05:05"),
 	}
