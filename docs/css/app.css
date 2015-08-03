@@ -292,6 +292,31 @@ footer[role="contentinfo"] p {
   text-align: center;
 }
 
+.page-home blockquote {
+  text-align: center;
+  border: none;
+  font-family: "Montserrat", "Open-Sans", Sans-serif;
+  color: #a3c5cd;
+  margin: 1.5em auto;
+}
+.page-home blockquote p {
+  font-size: 1em;
+  line-height: 1.5em;
+}
+.page-home blockquote .main-content h2 {
+  text-align: center;
+  color: #9B999E;
+}
+
+@media (min-width: 992px) {
+  .page-home blockquote {
+    background: #fff;
+    margin: 4em 0;
+  }
+  .page-home blockquote p {
+    font-size: 1.5em;
+  }
+}
 #jumbotron-mask {
   margin-top: -20px;
   background: #72A6B2;
