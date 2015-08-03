@@ -62,27 +62,26 @@
         </blockquote>
 
         {% endif %}
-        <section role="main">
             
             {% if current_page.abs_url != '/' %}
 
               <div class="container">
-                <aside class="toc col-md-3">{% include "toc.html" %}</aside>
-                <div class="main-content col-md-9">{% include "content.html" %}</div>
+                <div class="col-md-3">{% include "toc.html" %}</div>
+                <div class="col-md-9" role="main">{% include "content.html" %}</div>
               </div>
 
             {% else %}
 
               <div class="container">
-                <div class="main-content">
+                <div class="class-md-12 main-content">
                   {% include "content.html" %}
                 </div>
               </div>
 
             {% endif %}
-        </section>
 
         {% if current_page.abs_url == '/' %}
+
         <div id="use-cases-mask">
           <div class="use-cases container text-center">
             <h2>Example use cases:</h2>

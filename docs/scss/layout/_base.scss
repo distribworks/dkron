@@ -5,10 +5,10 @@ html {
 body {
   font-family:"Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
   font-size:1.2em;
+  padding-top:90px;
 }
 
 section[role="main"] {
-  @include clearfix;
   background:#F9FAFA;
   padding:2em 0;
 }
@@ -22,7 +22,7 @@ h5[id]:before,
 h6[id]:before {
   content: "";
   display: block;
-  margin-top: -100px;
-  height: 100px;
+  margin-top: -115px;
+  height: 115px;
   pointer-events: none;
 }

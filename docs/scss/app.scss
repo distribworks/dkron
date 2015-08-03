@@ -1,21 +1,16 @@
 /* base components */
 
-@import "compass";
-@import "normalize";
 @import "susy";
-@import "font-awesome-sprockets";
 
 @import "variables";
 @import "mixins";
 
-@import "components/typography";
-@import "components/navigation";
-@import "components/pages";
-@import "components/actions";
-@import "components/aside";
-
-@import "modules/jumbotron";
-
 @import "layout/base";
 
+@import "components/typography";
+@import "components/aside";
+@import "components/navigation";
+@import "components/actions";
 
+
+@import "modules/jumbotron";
