@@ -310,14 +310,11 @@ h1, h2, h3 {
 }
 
 @media (min-width: 768px) {
-  .navbar-default {
-    padding-top: 2em;
-  }
   .navbar-default .container > .navbar-header {
     margin-right: 4em;
   }
   .navbar-default .container > .navbar-collapse {
-    margin-top: 2.2em;
+    margin-top: 1.8em;
   }
   .navbar-default .navbar-nav.navbar-right:last-child {
     margin-right: 0;
@@ -325,10 +322,6 @@ h1, h2, h3 {
   .navbar-default .navbar-header .brand .logo {
     width: 100px;
     height: 50px;
-  }
-  .navbar-default.nav-top .navbar-header .brand .logo {
-    width: 200px;
-    height: 100px;
   }
 
   .navbar-nav.main-links > li {
