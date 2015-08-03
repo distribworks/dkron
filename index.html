@@ -36,7 +36,7 @@
 
     <body class="page-home ">
 
-            <div class="navbar navbar-default navbar-fixed-top nav-top" role="navigation">
+            <div class="navbar navbar-default navbar-fixed-top" role="navigation">
         <div class="container">
 
             <!-- Collapsed navigation -->
@@ -153,12 +153,12 @@
         </blockquote>
 
         
-        <section role="main">
             
             
 
+            <div class="home-wrapper">
               <div class="container">
-                <div class="main-content">
+                <div class="class-md-12 main-content">
                   
 
 <div class="container">
@@ -166,59 +166,81 @@
 <h2>Characteristics</h2>
 
   <div id="easy-integration" class="row vertical-align">
-    <img src="img/integration.png" class="col-md-3"/>
-    <div class="col-md-10">
+    <img src="img/integration.png" />
+    <div class="col-md-9">
       <h3>Easy integration</h3>
-      Dcron is easy to setup and use. Choose your OS package and it's ready to run out-of-the-box. The administration panel and it's simple JSON API makes a breeze to integrate with you current workflow or deploy system.
+      <p>Dcron is easy to setup and use. Choose your OS package and it's ready to run out-of-the-box. The administration panel and it's simple JSON API makes a breeze to integrate with you current workflow or deploy system.</p>
     </div>
   </div>
 
   <div id="always-available" class="row vertical-align">
-    <div class="col-md-10">
+    <img src="img/available.png" />
+    <div class="col-md-9">
       <h3>Always available</h3>
-      Using the power of the Raft implementation in etcd, you can rely on Dcron to be always available. Wherever you need to generate your employee monthly payroll or send those daily emails that keeps your users informed and your site busy, Dcron could help you to sleep at night.
+      <p>Using the power of the Raft implementation in etcd, you can rely on Dcron to be always available. Wherever you need to generate your employee monthly payroll or send those daily emails that keeps your users informed and your site busy, Dcron could help you to sleep at night.</p>
     </div>
-    <img src="img/available.png" class="col-md-3"/>
   </div>
 
   <div id="flexible-targets" class="row vertical-align">
-    <img src="img/targets.png" class="col-md-3"/>
-    <div class="col-md-10">
+    <img src="img/targets.png" />
+    <div class="col-md-9">
       <h3>Flexible targets</h3>
-      Simple but powerful tag based target node selection for jobs. Tag node count allows to run jobs in an arbitrary number nodes in the same group or groups for any given task.
+      <p>Simple but powerful tag based target node selection for jobs. Tag node count allows to run jobs in an arbitrary number nodes in the same group or groups for any given task.</p>
     </div>
   </div>
 
 </div>
                 </div>
               </div>
+          </div>
 
             
-        </section>
 
         
+
         <div id="use-cases-mask">
-          <div class="use-cases container text-center">
-            <h2>Example use cases:</h2>
-            <img src="img/email-delivery.png"/>
-            <img src="img/payroll-generation.png"/>
-            <img src="img/book-keeping.png"/>
-            <img src="img/data-consolidation.png"/>
-            <img src="img/recurring-invoicing.png"/>
-            <img src="img/data-transfer.png"/>
+          <div class="use-cases container">
+            <h2>Example use cases</h2>
+
+            <div class="case-container">
+                <div class="case">
+                    <img src="img/email-delivery.png"/>
+                    <span>Email delivery</span>
+                </div>
+                <div class="case">
+                    <img src="img/payroll-generation.png"/>
+                    <span>Payroll generation</span>
+                </div>
+                <div class="case">
+                    <img src="img/book-keeping.png"/>
+                    <span>Bookkeeping</span>
+                </div>
+                <div class="case">
+                    <img src="img/data-consolidation.png"/>
+                    <span>Data consolidation for BI</span>
+                </div>
+                <div class="case">
+                    <img src="img/recurring-invoicing.png"/>
+                    <span>Recurring invoicing</span>
+                </div>
+                <div class="case">
+                    <img src="img/data-transfer.png"/>
+                    <span>Data transfer</span>
+                </div>
+            </div>
           </div>
         </div>
         
 
-        <footer class="col-md-12">
+        <footer class="col-md-12" role="contentinfo">
             <hr>
             <div class="footer-logo">
-              <center><img src="/img/dcron-logo-blue.png"/></center>
+              <img src="/img/dcron-logo-blue.png"/>
             </div>
+             
+                <p>© 2015 Victor Castell - victor@victorcastell.com</p>
             
-                <center>© Victor Castell victor@victorcastell.com</center>
-            
-            <center>Web desing by <a href="http://www.collagestudio.es/">Collage Studio</a>.</center>
+            <p>Web design by <a href="http://www.collagestudio.es/">Collage Studio</a>.</p>
         </footer>
 
         <script src="./js/jquery-1.10.2.min.js"></script>

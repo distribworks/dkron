@@ -5,17 +5,24 @@ html {
 body {
   font-family:"Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
   font-size:1.2em;
+  padding-top:90px;
 }
 
 section[role="main"] {
-  @include clearfix;
   background:#F9FAFA;
   padding:2em 0;
 }
 
 
-@media (min-width:$viewport-large) {
-  aside {
-    @include span(3 of 12);
-  }
+h1[id]:before, 
+h2[id]:before, 
+h3[id]:before, 
+h4[id]:before, 
+h5[id]:before, 
+h6[id]:before {
+  content: "";
+  display: block;
+  margin-top: -115px;
+  height: 115px;
+  pointer-events: none;
 }

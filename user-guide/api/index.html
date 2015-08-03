@@ -36,7 +36,7 @@
 
     <body class=" with-toc">
 
-            <div class="navbar navbar-default navbar-fixed-top nav-top" role="navigation">
+            <div class="navbar navbar-default navbar-fixed-top" role="navigation">
         <div class="container">
 
             <!-- Collapsed navigation -->
@@ -146,12 +146,11 @@
     </div>
 
         
-        <section role="main">
             
             
 
               <div class="container">
-                <aside class="toc"><div class="bs-sidebar hidden-print affix well" role="complementary">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
         <li class="main active"><a href="#rest-api">REST API</a></li>
@@ -170,8 +169,8 @@
         
     
     </ul>
-</div></aside>
-                <div class="main-content">
+</div></div>
+                <div class="col-md-9" role="main">
 
 <h1 id="rest-api">REST API</h1>
 <p>You can communicate with Dcron using a RESTful JSON API over HTTP. Dcron nodes usually listen on port 8080 for API requests. All examples in this section assume that you've found a running leader at dcron-node:8080.</p>
@@ -217,19 +216,18 @@
               </div>
 
             
-        </section>
 
         
 
-        <footer class="col-md-12">
+        <footer class="col-md-12" role="contentinfo">
             <hr>
             <div class="footer-logo">
-              <center><img src="/img/dcron-logo-blue.png"/></center>
+              <img src="/img/dcron-logo-blue.png"/>
             </div>
+             
+                <p>© 2015 Victor Castell - victor@victorcastell.com</p>
             
-                <center>© Victor Castell victor@victorcastell.com</center>
-            
-            <center>Web desing by <a href="http://www.collagestudio.es/">Collage Studio</a>.</center>
+            <p>Web design by <a href="http://www.collagestudio.es/">Collage Studio</a>.</p>
         </footer>
 
         <script src="../../js/jquery-1.10.2.min.js"></script>

@@ -3,6 +3,8 @@
   // want a gradient also in the navbar
   @include gradient-dcron;
 
+  margin-bottom:20px;
+
   .navbar-header {
     .brand {
       padding: 1em;
@@ -30,11 +32,29 @@
 
     padding:1em;
 
+    li {
+      padding:0;
+    }
+
+    &.open {
+      .dropdown-menu {
+
+        padding:.5em 0;
+        margin:1em 0;
+        border-top:1px solid #fff;
+        border-bottom:1px solid #fff;
+
+        & > li > a {
+          padding:0;
+        }
+      }
+    }
+
     a {
       padding:0;
       line-height: 1em;
       font-family:$font-headlines;
-      font-size:.9em;
+      font-size:.9em!important;
       text-transform:uppercase;
 
       &:hover {
@@ -52,32 +72,18 @@
   .navbar-nav > .active > a:focus {
     background:none;
     position:relative;
-
-    &:before {
-      content:"";
-      display:block;
-      height:2px;
-      background:#fff;
-      width:50%;
-      position:absolute;
-      bottom:-.7em;
-    }
-
   }
 }
 
 @media (min-width:$viewport-medium) {
 
   .navbar-default {
-
-    padding-top:2em;
-
     .container > .navbar-header {
       margin-right:4em;
     }
 
     .container > .navbar-collapse {
-        margin-top:2.2em;
+        margin-top:1.8em;
     }
 
     .navbar-nav.navbar-right:last-child {
@@ -91,23 +97,26 @@
           height: 50px;
         }
       }
-    }
 
-    &.nav-top {
-      .navbar-header {
-        .brand {
-          .logo {
-            width: 200px;
-            height: 100px;
-          }
+      .navbar-nav > .active > a,
+      .navbar-nav > .active > a:hover,
+      .navbar-nav > .active > a:focus {
+        &:before {
+          content:"";
+          display:block;
+          height:2px;
+          background:#fff;
+          width:50%;
+          position:absolute;
+          bottom:-.7em;
         }
       }
-    }
 
+    }
   }
 
 
- .navbar-nav.main-links > li {
+  .navbar-nav.main-links > li {
 
     border-left:1px solid #fff;
     padding:0;
@@ -118,12 +127,27 @@
       border:none;
     }
 
+    &.open .dropdown-menu {
+
+
+      border:none;
+      background-color:$color-base-dark;
+
+      & > li {
+
+        display:block;
+
+        & > a {
+          padding:.5em;
+        }
+      }
+    }
+
   } 
 
   .navbar-nav.navbar-right > li {
     padding:.5em;
   }
-
 
 }
 
