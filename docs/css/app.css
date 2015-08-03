@@ -307,14 +307,77 @@ footer[role="contentinfo"] p {
   text-align: center;
   color: #9B999E;
 }
+.page-home #use-cases-mask {
+  margin-top: 2em;
+  background: #90a6b2;
+  /* Old browsers */
+  background: -moz-linear-gradient(left, #90a6b2 0%, #1c759e 65%, #6ca4b2 100%);
+  /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%, #90a6b2), color-stop(65%, #1c759e), color-stop(100%, #6ca4b2));
+  /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(left, #90a6b2 0%, #1c759e 65%, #6ca4b2 100%);
+  /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(left, #90a6b2 0%, #1c759e 65%, #6ca4b2 100%);
+  /* Opera 11.10+ */
+  background: -ms-linear-gradient(left, #90a6b2 0%, #1c759e 65%, #6ca4b2 100%);
+  /* IE10+ */
+  background: linear-gradient(to right, #90a6b2 0%, #1c759e 65%, #6ca4b2 100%);
+  /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#90a6b2', endColorstr='#6ca4b2',GradientType=1 );
+  /* IE6-9 */
+  padding: 3em 0;
+  color: #fff;
+  text-align: center;
+}
+.page-home #use-cases-mask h2 {
+  color: #fff;
+  margin: 0 0 1em 0;
+}
+.page-home #use-cases-mask span {
+  display: block;
+  margin-top: 1.5em;
+  font-size: .9em;
+}
+.page-home #use-cases-mask .container {
+  text-align: center;
+}
+.page-home #use-cases-mask .case-container {
+  overflow: hidden;
+  *zoom: 1;
+  display: inline-block;
+  margin: 0 auto;
+  text-align: center;
+  width: 320px;
+}
+.page-home #use-cases-mask .case {
+  margin-bottom: 1em;
+  float: left;
+  display: block;
+  margin: 1em;
+  width: 120px;
+}
 
-@media (min-width: 992px) {
+@media (min-width: 768px) {
+  .page-home #use-cases-mask .case-container {
+    width: 480px;
+  }
+  .page-home #use-cases-mask .case:nth-child(4) {
+    clear: left;
+  }
+}
+@media (min-width: 1200px) {
   .page-home blockquote {
     background: #fff;
     margin: 4em 0;
   }
   .page-home blockquote p {
     font-size: 1.5em;
+  }
+  .page-home #use-cases-mask .case-container {
+    width: 1000px;
+  }
+  .page-home #use-cases-mask .case:nth-child(4) {
+    clear: none;
   }
 }
 #jumbotron-mask {

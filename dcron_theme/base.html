@@ -83,14 +83,35 @@
         {% if current_page.abs_url == '/' %}
 
         <div id="use-cases-mask">
-          <div class="use-cases container text-center">
-            <h2>Example use cases:</h2>
-            <img src="img/email-delivery.png"/>
-            <img src="img/payroll-generation.png"/>
-            <img src="img/book-keeping.png"/>
-            <img src="img/data-consolidation.png"/>
-            <img src="img/recurring-invoicing.png"/>
-            <img src="img/data-transfer.png"/>
+          <div class="use-cases container">
+            <h2>Example use cases</h2>
+
+            <div class="case-container">
+                <div class="case">
+                    <img src="img/email-delivery.png"/>
+                    <span>Email delivery</span>
+                </div>
+                <div class="case">
+                    <img src="img/payroll-generation.png"/>
+                    <span>Payroll generation</span>
+                </div>
+                <div class="case">
+                    <img src="img/book-keeping.png"/>
+                    <span>Bookkeeping</span>
+                </div>
+                <div class="case">
+                    <img src="img/data-consolidation.png"/>
+                    <span>Data consolidation for BI</span>
+                </div>
+                <div class="case">
+                    <img src="img/recurring-invoicing.png"/>
+                    <span>Recurring invoicing</span>
+                </div>
+                <div class="case">
+                    <img src="img/data-transfer.png"/>
+                    <span>Data transfer</span>
+                </div>
+            </div>
           </div>
         </div>
         {% endif %}
