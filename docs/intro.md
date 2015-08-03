@@ -1,6 +1,6 @@
 # Dcron - Distributed, fault tolerant job scheduling system
 
-Welcome to the Dcron documentation! This is the reference guide on how to use Drcon. If you want a getting started guide refer to the [getting started guide](getting-started/) of the Dcron documentation.
+Welcome to the Dcron documentation! This is the reference guide on how to use Drcon. If you want a getting started guide refer to the [getting started guide](user-guide/getting-started) of the Dcron documentation.
 
 <div class="alert alert-warning" role="alert">Warning: Under active development. Used at X in production</div>
 <div class="alert alert-info" role="alert">Note: Version in this documentation, 0.1</div>
