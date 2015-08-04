@@ -15,7 +15,6 @@ pages:
   - User Guide:
     - 'user-guide/getting-started.md'
     - 'user-guide/api.md'
-    - 'user-guide/dcron-internals.md'
   - About:
     - 'about/license.md'
     - 'about/dcron_vs_other_software.md'

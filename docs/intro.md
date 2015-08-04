@@ -7,12 +7,14 @@ Welcome to the Dcron documentation! This is the reference guide on how to use Dr
 
 ## What is Dcron
 
-Dcron is a system service that runs scheduled tasks at given intervals or times, just like the cron unix service. It differs from it in the sense that it's distributed in several machines in a cluster and if one of that machines (the leader) fails, any other one can take this responsability and keep executing the sheduled tasks without human intervention.
+Dcron it's distributed system to run scheduled jobs agains a server or a group of servers of any size. One of the machines is the leader and the others will be followrs. If the leader fails or becomes unreachable, any other one will take over and reschedule all jobs to keep the system healthy.
 
-Dcron is a distributed cron service, easy to setup and fault tolerant with focus in:
+In case the old leader becomes alive again, it'll become a follower.
+
+Dcron is a distributed cron drop-in replacement, easy to setup and fault tolerant with focus in:
 
 - Easy: Easy to use with a great UI
-- Reliable: Completly fault tolerant
+- Reliable: Completely fault tolerant
 - High scalable: Able to handle high volumes of scheduled jobs and thousands of nodes
 
 Dcron is written in Go and leverage the power of [etcd](https://coreos.com/etcd/) and [Serf](https://www.serfdom.io/) for providing fault tolerance and, reliability and scalability while keeping simple and easily instalable.
@@ -25,4 +27,4 @@ Dcron uses the efficient and lightweight [gossip protocol](https://www.serfdom.i
 
 ## Dcron design
 
-Dcron is designed to do one task well, executing commands in given intervals, following the unix philosophy of doing one thing and doing it well, like the classic and battle tested cron unix service, with the given addition of being designed for the cloud era, removing single points of failure and clusters of any size are needed to execute scheduled tasks in a decentralized fashion.
+Dcron is designed to solve one problem well, executing commands in given intervals. Following the unix philosophy of doing one thing and doing it well (like the battle tested cron) but with the given addition of being designed for the cloud era, removing single points of failure in environments where scheduled jobs are need to be run in multiple servers.
