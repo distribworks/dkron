@@ -14,7 +14,7 @@
     <img src="img/available.png" />
     <div class="col-md-9">
       <h3>Always available</h3>
-      <p>Using the power of the Raft implementation in etcd, Dcron is designed to be always available. If one node fails another one will replace it, all without human intervention.</p>
+      <p>Using the power of the Raft implementation in etcd, Dcron is designed to be always available. If the leader node fails, a follower will replace it, all without human intervention.</p>
     </div>
   </div>
 
@@ -22,7 +22,7 @@
     <img src="img/targets.png" />
     <div class="col-md-9">
       <h3>Flexible targets</h3>
-      <p>Simple but powerful tag based target node selection for jobs. Tag node count allows to run jobs in an arbitrary number nodes in the same group or groups for any given task.</p>
+      <p>Simple but powerful tag based target node selection for jobs. Tag node count allows to run jobs in an arbitrary number nodes in the same group or groups.</p>
     </div>
   </div>
 

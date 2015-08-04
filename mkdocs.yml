@@ -9,6 +9,13 @@ repo_url: https://github.com/victorcoder/dcron
 site_author: Victor Castell
 copyright: © 2015 Victor Castell - victor@victorcastell.com
 google_analytics: ['UA-571371-14', 'dcron.io']
-# pages:
-#   - Home: 'index.md'
-#   - Intro: 'intro.md'
+pages:
+  - Home: 'index.md'
+  - Intro: 'intro.md'
+  - User Guide:
+    - 'user-guide/getting-started.md'
+    - 'user-guide/api.md'
+    - 'user-guide/dcron-internals.md'
+  - About:
+    - 'about/license.md'
+    - 'about/dcron_vs_other_software.md'
