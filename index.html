@@ -74,15 +74,15 @@
                 
                 
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                         
                             <li >
-                                <a href="about/dcron_vs_other_software/">Dcron vs other software</a>
+                                <a href="user-guide/getting-started/">Getting started</a>
                             </li>
                         
                             <li >
-                                <a href="about/license/">License</a>
+                                <a href="user-guide/api/">Api</a>
                             </li>
                         
                         </ul>
@@ -91,19 +91,15 @@
                 
                 
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">User guide <b class="caret"></b></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                         
                             <li >
-                                <a href="user-guide/api/">Api</a>
+                                <a href="about/license/">License</a>
                             </li>
                         
                             <li >
-                                <a href="user-guide/dcron-internals/">Dcron internals</a>
-                            </li>
-                        
-                            <li >
-                                <a href="user-guide/getting-started/">Getting started</a>
+                                <a href="about/dcron_vs_other_software/">Dcron vs other software</a>
                             </li>
                         
                         </ul>
@@ -153,7 +149,7 @@
 
         <blockquote>
           <div class="container">
-            <p>Dcron is a system service that runs scheduled tasks at given intervals or times, just like the cron unix service distributed in several machines in a cluster. If a machine fails (the leader), another will take over, and keep running the scheduled tasks without human intervention. Dcron is Open Source and freely available.</p>
+            <p>Dcron is a system service that runs scheduled jobs at given intervals or times, just like the cron unix service but distributed in several machines in a cluster. If a machine fails (the leader), a follower will take over and keep running the scheduled tasks without human intervention. Dcron is Open Source and freely available.</p>
           </div>
         </blockquote>
 
@@ -181,7 +177,7 @@
     <img src="img/available.png" />
     <div class="col-md-9">
       <h3>Always available</h3>
-      <p>Using the power of the Raft implementation in etcd, Dcron is designed to be always available. If one node fails another one will replace it, all without human intervention.</p>
+      <p>Using the power of the Raft implementation in etcd, Dcron is designed to be always available. If the leader node fails, a follower will replace it, all without human intervention.</p>
     </div>
   </div>
 
@@ -189,7 +185,7 @@
     <img src="img/targets.png" />
     <div class="col-md-9">
       <h3>Flexible targets</h3>
-      <p>Simple but powerful tag based target node selection for jobs. Tag node count allows to run jobs in an arbitrary number nodes in the same group or groups for any given task.</p>
+      <p>Simple but powerful tag based target node selection for jobs. Tag node count allows to run jobs in an arbitrary number nodes in the same group or groups.</p>
     </div>
   </div>
 

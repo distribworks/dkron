@@ -73,16 +73,16 @@
                 
                 
                 
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
+                    <li class="dropdown active">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                         
                             <li >
-                                <a href="../../about/dcron_vs_other_software/">Dcron vs other software</a>
+                                <a href="../getting-started/">Getting started</a>
                             </li>
                         
-                            <li >
-                                <a href="../../about/license/">License</a>
+                            <li class="active">
+                                <a href="./">Api</a>
                             </li>
                         
                         </ul>
@@ -90,20 +90,16 @@
                 
                 
                 
-                    <li class="dropdown active">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">User guide <b class="caret"></b></a>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                         
-                            <li class="active">
-                                <a href="./">Api</a>
+                            <li >
+                                <a href="../../about/license/">License</a>
                             </li>
                         
                             <li >
-                                <a href="../dcron-internals/">Dcron internals</a>
-                            </li>
-                        
-                            <li >
-                                <a href="../getting-started/">Getting started</a>
+                                <a href="../../about/dcron_vs_other_software/">Dcron vs other software</a>
                             </li>
                         
                         </ul>
@@ -118,12 +114,12 @@
                     
 
                     <li >
-                        <a rel="next" href="../../about/license/">
+                        <a rel="next" href="../getting-started/">
                             <i class="fa fa-arrow-left"></i> Previous
                         </a>
                     </li>
                     <li >
-                        <a rel="prev" href="../dcron-internals/">
+                        <a rel="prev" href="../../about/license/">
                             Next <i class="fa fa-arrow-right"></i>
                         </a>
                     </li>
@@ -184,38 +180,38 @@
 <p>When you have multiple Dcron nodes in server mode running, only one of them will be elected as the leader. In Dcron you can talk to any node running in server mode all of them could handle your request but only the leader will actually run the scheduler.</p>
 <h2 id="index">Index</h2>
 <ul>
-<li>Endpoint: /</li>
-<li>Method: GET</li>
-<li>Example: curl -XGET dcron-node:8080</li>
+<li>Endpoint: <code>/</code></li>
+<li>Method: <code>GET</code></li>
+<li>Example: <code>curl -XGET dcron-node:8080</code></li>
 </ul>
 <p>It returns info about the agent queried.</p>
 <h2 id="get-jobs">Get Jobs</h2>
 <ul>
-<li>Endpoint: /jobs</li>
-<li>Method: GET</li>
-<li>Example: curl -L -X GET dcron-node:8080/jobs</li>
+<li>Endpoint: <code>/jobs</code></li>
+<li>Method: <code>GET</code></li>
+<li>Example: <code>curl -L -X GET dcron-node:8080/jobs</code></li>
 </ul>
 <h2 id="deleting-a-job">Deleting a Job</h2>
 <p>Get a job name from the job listing above. Then:</p>
 <ul>
-<li>Endpoint: /jobs/jobName</li>
-<li>Method: DELETE</li>
-<li>Example: curl -L -X DELETE dcron-node:8080/job/aggregate_stats</li>
+<li>Endpoint: <code>/jobs/jobName</code></li>
+<li>Method: <code>DELETE</code></li>
+<li>Example: `curl -L -X DELETE dcron-node:8080/job/aggregate_stats``</li>
 </ul>
 <h2 id="manually-starting-a-job">Manually Starting a Job</h2>
 <p>You can manually start a job by issuing an HTTP request.</p>
 <ul>
-<li>Endpoint: /jobs/job_name</li>
-<li>Method: PUT</li>
+<li>Endpoint: <code>/jobs/job_name</code></li>
+<li>Method: <code>PUT</code></li>
 <li>Query string parameters: arguments - optional string with a list of command line arguments that is appended to job's command</li>
-<li>Example: curl -L -X PUT dcron-node:8080/jobs/aggregate_stats</li>
-<li>Example: curl -L -X PUT dcron-node:8080/jobs/aggregate_stats?arguments=-debug</li>
+<li>Example: <code>curl -L -X PUT dcron-node:8080/jobs/aggregate_stats</code></li>
+<li>Example: <code>curl -L -X PUT dcron-node:8080/jobs/aggregate_stats?arguments=-debug</code></li>
 </ul>
 <h2 id="get-job-executions">Get job executions</h2>
 <ul>
-<li>Endpoint: /executions/job</li>
-<li>Method: GET</li>
-<li>Example: curl -L -X GET dcron-node:8080/executions/aggregate_stats</li>
+<li>Endpoint: <code>/executions/job</code></li>
+<li>Method: <code>GET</code></li>
+<li>Example: <code>curl -L -X GET dcron-node:8080/executions/aggregate_stats</code></li>
 </ul></div>
               </div>
 

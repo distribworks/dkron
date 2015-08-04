@@ -74,15 +74,15 @@
                 
                 
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                         
                             <li >
-                                <a href="../about/dcron_vs_other_software/">Dcron vs other software</a>
+                                <a href="../user-guide/getting-started/">Getting started</a>
                             </li>
                         
                             <li >
-                                <a href="../about/license/">License</a>
+                                <a href="../user-guide/api/">Api</a>
                             </li>
                         
                         </ul>
@@ -91,19 +91,15 @@
                 
                 
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">User guide <b class="caret"></b></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                         
                             <li >
-                                <a href="../user-guide/api/">Api</a>
+                                <a href="../about/license/">License</a>
                             </li>
                         
                             <li >
-                                <a href="../user-guide/dcron-internals/">Dcron internals</a>
-                            </li>
-                        
-                            <li >
-                                <a href="../user-guide/getting-started/">Getting started</a>
+                                <a href="../about/dcron_vs_other_software/">Dcron vs other software</a>
                             </li>
                         
                         </ul>
@@ -123,7 +119,7 @@
                         </a>
                     </li>
                     <li >
-                        <a rel="prev" href="../about/dcron_vs_other_software/">
+                        <a rel="prev" href="../user-guide/getting-started/">
                             Next <i class="fa fa-arrow-right"></i>
                         </a>
                     </li>
@@ -175,11 +171,12 @@
 <div class="alert alert-info" role="alert">Note: Version in this documentation, 0.0.2</div>
 
 <h2 id="what-is-dcron">What is Dcron</h2>
-<p>Dcron is a system service that runs scheduled tasks at given intervals or times, just like the cron unix service. It differs from it in the sense that it's distributed in several machines in a cluster and if one of that machines (the leader) fails, any other one can take this responsability and keep executing the sheduled tasks without human intervention.</p>
-<p>Dcron is a distributed cron service, easy to setup and fault tolerant with focus in:</p>
+<p>Dcron it's distributed system to run scheduled jobs agains a server or a group of servers of any size. One of the machines is the leader and the others will be followrs. If the leader fails or becomes unreachable, any other one will take over and reschedule all jobs to keep the system healthy.</p>
+<p>In case the old leader becomes alive again, it'll become a follower.</p>
+<p>Dcron is a distributed cron drop-in replacement, easy to setup and fault tolerant with focus in:</p>
 <ul>
 <li>Easy: Easy to use with a great UI</li>
-<li>Reliable: Completly fault tolerant</li>
+<li>Reliable: Completely fault tolerant</li>
 <li>High scalable: Able to handle high volumes of scheduled jobs and thousands of nodes</li>
 </ul>
 <p>Dcron is written in Go and leverage the power of <a href="https://coreos.com/etcd/">etcd</a> and <a href="https://www.serfdom.io/">Serf</a> for providing fault tolerance and, reliability and scalability while keeping simple and easily instalable.</p>
@@ -187,7 +184,7 @@
 <p>Dcron runs on Linux, OSX and Windows. It can be used to run scheduled commands on a server cluster using any combination of servers for each job. It has no single points of failure due to the use of the fault tolerant distributed database etcd and can work large scale thanks to the efficient and lightweight gossip protocol.</p>
 <p>Dcron uses the efficient and lightweight <a href="https://www.serfdom.io/docs/internals/gossip.html">gossip protocol</a> underneath to communicate with nodes. Failure notification and task handling are run efficiently across an entire cluster of any size.</p>
 <h2 id="dcron-design">Dcron design</h2>
-<p>Dcron is designed to do one task well, executing commands in given intervals, following the unix philosophy of doing one thing and doing it well, like the classic and battle tested cron unix service, with the given addition of being designed for the cloud era, removing single points of failure and clusters of any size are needed to execute scheduled tasks in a decentralized fashion.</p></div>
+<p>Dcron is designed to solve one problem well, executing commands in given intervals. Following the unix philosophy of doing one thing and doing it well (like the battle tested cron) but with the given addition of being designed for the cloud era, removing single points of failure in environments where scheduled jobs are need to be run in multiple servers.</p></div>
               </div>
 
             

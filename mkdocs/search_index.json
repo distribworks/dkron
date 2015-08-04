@@ -2,12 +2,12 @@
     "docs": [
         {
             "location": "/", 
-            "text": "Characteristics\n\n\n  \n\n    \n\n    \n\n      \nEasy integration\n\n      \nDcron is easy to setup and use. Choose your OS package and it's ready to run out-of-the-box. The administration panel and it's simple JSON API makes a breeze to integrate with you current workflow or deploy system.\n\n    \n\n  \n\n\n  \n\n    \n\n    \n\n      \nAlways available\n\n      \nUsing the power of the Raft implementation in etcd, Dcron is designed to be always available. If one node fails another one will replace it, all without human intervention.\n\n    \n\n  \n\n\n  \n\n    \n\n    \n\n      \nFlexible targets\n\n      \nSimple but powerful tag based target node selection for jobs. Tag node count allows to run jobs in an arbitrary number nodes in the same group or groups for any given task.", 
+            "text": "Characteristics\n\n\n  \n\n    \n\n    \n\n      \nEasy integration\n\n      \nDcron is easy to setup and use. Choose your OS package and it's ready to run out-of-the-box. The administration panel and it's simple JSON API makes a breeze to integrate with you current workflow or deploy system.\n\n    \n\n  \n\n\n  \n\n    \n\n    \n\n      \nAlways available\n\n      \nUsing the power of the Raft implementation in etcd, Dcron is designed to be always available. If the leader node fails, a follower will replace it, all without human intervention.\n\n    \n\n  \n\n\n  \n\n    \n\n    \n\n      \nFlexible targets\n\n      \nSimple but powerful tag based target node selection for jobs. Tag node count allows to run jobs in an arbitrary number nodes in the same group or groups.", 
             "title": "Home"
         }, 
         {
             "location": "/intro/", 
-            "text": "Dcron - Distributed, fault tolerant job scheduling system\n\n\nWelcome to the Dcron documentation! This is the reference guide on how to use Drcon. If you want a getting started guide refer to the \ngetting started guide\n of the Dcron documentation.\n\n\nWarning: Dcron is Under heavy development, it's considered alpha state, expect dragons.\n\n\n\nNote: Version in this documentation, 0.0.2\n\n\n\nWhat is Dcron\n\n\nDcron is a system service that runs scheduled tasks at given intervals or times, just like the cron unix service. It differs from it in the sense that it's distributed in several machines in a cluster and if one of that machines (the leader) fails, any other one can take this responsability and keep executing the sheduled tasks without human intervention.\n\n\nDcron is a distributed cron service, easy to setup and fault tolerant with focus in:\n\n\n\n\nEasy: Easy to use with a great UI\n\n\nReliable: Completly fault tolerant\n\n\nHigh scalable: Able to handle high volumes of scheduled jobs and thousands of nodes\n\n\n\n\nDcron is written in Go and leverage the power of \netcd\n and \nSerf\n for providing fault tolerance and, reliability and scalability while keeping simple and easily instalable.\n\n\nDcron is inspired by the google whitepaper \nReliable Cron across the Planet\n\n\nDcron runs on Linux, OSX and Windows. It can be used to run scheduled commands on a server cluster using any combination of servers for each job. It has no single points of failure due to the use of the fault tolerant distributed database etcd and can work large scale thanks to the efficient and lightweight gossip protocol.\n\n\nDcron uses the efficient and lightweight \ngossip protocol\n underneath to communicate with nodes. Failure notification and task handling are run efficiently across an entire cluster of any size.\n\n\nDcron design\n\n\nDcron is designed to do one task well, executing commands in given intervals, following the unix philosophy of doing one thing and doing it well, like the classic and battle tested cron unix service, with the given addition of being designed for the cloud era, removing single points of failure and clusters of any size are needed to execute scheduled tasks in a decentralized fashion.", 
+            "text": "Dcron - Distributed, fault tolerant job scheduling system\n\n\nWelcome to the Dcron documentation! This is the reference guide on how to use Drcon. If you want a getting started guide refer to the \ngetting started guide\n of the Dcron documentation.\n\n\nWarning: Dcron is Under heavy development, it's considered alpha state, expect dragons.\n\n\n\nNote: Version in this documentation, 0.0.2\n\n\n\nWhat is Dcron\n\n\nDcron it's distributed system to run scheduled jobs agains a server or a group of servers of any size. One of the machines is the leader and the others will be followrs. If the leader fails or becomes unreachable, any other one will take over and reschedule all jobs to keep the system healthy.\n\n\nIn case the old leader becomes alive again, it'll become a follower.\n\n\nDcron is a distributed cron drop-in replacement, easy to setup and fault tolerant with focus in:\n\n\n\n\nEasy: Easy to use with a great UI\n\n\nReliable: Completely fault tolerant\n\n\nHigh scalable: Able to handle high volumes of scheduled jobs and thousands of nodes\n\n\n\n\nDcron is written in Go and leverage the power of \netcd\n and \nSerf\n for providing fault tolerance and, reliability and scalability while keeping simple and easily instalable.\n\n\nDcron is inspired by the google whitepaper \nReliable Cron across the Planet\n\n\nDcron runs on Linux, OSX and Windows. It can be used to run scheduled commands on a server cluster using any combination of servers for each job. It has no single points of failure due to the use of the fault tolerant distributed database etcd and can work large scale thanks to the efficient and lightweight gossip protocol.\n\n\nDcron uses the efficient and lightweight \ngossip protocol\n underneath to communicate with nodes. Failure notification and task handling are run efficiently across an entire cluster of any size.\n\n\nDcron design\n\n\nDcron is designed to solve one problem well, executing commands in given intervals. Following the unix philosophy of doing one thing and doing it well (like the battle tested cron) but with the given addition of being designed for the cloud era, removing single points of failure in environments where scheduled jobs are need to be run in multiple servers.", 
             "title": "Intro"
         }, 
         {
@@ -17,93 +17,13 @@
         }, 
         {
             "location": "/intro/#what-is-dcron", 
-            "text": "Dcron is a system service that runs scheduled tasks at given intervals or times, just like the cron unix service. It differs from it in the sense that it's distributed in several machines in a cluster and if one of that machines (the leader) fails, any other one can take this responsability and keep executing the sheduled tasks without human intervention.  Dcron is a distributed cron service, easy to setup and fault tolerant with focus in:   Easy: Easy to use with a great UI  Reliable: Completly fault tolerant  High scalable: Able to handle high volumes of scheduled jobs and thousands of nodes   Dcron is written in Go and leverage the power of  etcd  and  Serf  for providing fault tolerance and, reliability and scalability while keeping simple and easily instalable.  Dcron is inspired by the google whitepaper  Reliable Cron across the Planet  Dcron runs on Linux, OSX and Windows. It can be used to run scheduled commands on a server cluster using any combination of servers for each job. It has no single points of failure due to the use of the fault tolerant distributed database etcd and can work large scale thanks to the efficient and lightweight gossip protocol.  Dcron uses the efficient and lightweight  gossip protocol  underneath to communicate with nodes. Failure notification and task handling are run efficiently across an entire cluster of any size.", 
+            "text": "Dcron it's distributed system to run scheduled jobs agains a server or a group of servers of any size. One of the machines is the leader and the others will be followrs. If the leader fails or becomes unreachable, any other one will take over and reschedule all jobs to keep the system healthy.  In case the old leader becomes alive again, it'll become a follower.  Dcron is a distributed cron drop-in replacement, easy to setup and fault tolerant with focus in:   Easy: Easy to use with a great UI  Reliable: Completely fault tolerant  High scalable: Able to handle high volumes of scheduled jobs and thousands of nodes   Dcron is written in Go and leverage the power of  etcd  and  Serf  for providing fault tolerance and, reliability and scalability while keeping simple and easily instalable.  Dcron is inspired by the google whitepaper  Reliable Cron across the Planet  Dcron runs on Linux, OSX and Windows. It can be used to run scheduled commands on a server cluster using any combination of servers for each job. It has no single points of failure due to the use of the fault tolerant distributed database etcd and can work large scale thanks to the efficient and lightweight gossip protocol.  Dcron uses the efficient and lightweight  gossip protocol  underneath to communicate with nodes. Failure notification and task handling are run efficiently across an entire cluster of any size.", 
             "title": "What is Dcron"
         }, 
         {
             "location": "/intro/#dcron-design", 
-            "text": "Dcron is designed to do one task well, executing commands in given intervals, following the unix philosophy of doing one thing and doing it well, like the classic and battle tested cron unix service, with the given addition of being designed for the cloud era, removing single points of failure and clusters of any size are needed to execute scheduled tasks in a decentralized fashion.", 
+            "text": "Dcron is designed to solve one problem well, executing commands in given intervals. Following the unix philosophy of doing one thing and doing it well (like the battle tested cron) but with the given addition of being designed for the cloud era, removing single points of failure in environments where scheduled jobs are need to be run in multiple servers.", 
             "title": "Dcron design"
-        }, 
-        {
-            "location": "/about/dcron_vs_other_software/", 
-            "text": "Dcron vs. Other Software\n\n\nDcron vs. Chronos\n\n\nAirbnb's Chronos is a job scheduler that is similar to dcron, it's distributed and fault tolerant thanks to the use of Zookeeper and Apache Mesos.\n\n\nIt has a lot of nice features, like task dependencies, etc.\n\n\nIf you don't have/want to run a Mesos cluster and deal with the not easy configuration and maintenance of Zookeeper and you want something lighter, Dcron could help you.\n\n\nDcron vs. Rundeck\n\n\nRundeck is a popular and mature platform to automate operations and schedule jobs.\n\n\nIt has cool features:\n\n\n\n\nAgentless\n\n\nPermissions and auditing\n\n\n\n\nIt's written in Java and it's not trivial to setup right.\n\n\nIt uses a central database to store job execution results and configuration data, that makes it vulnerable to failures and you need to care yourself of providing it an HA environement or database to run and that's not an easy task to do with the Rundeck's supported databases.\n\n\nDcron lacks some of it's features but it's lightweight and fault-tolerant out-of-the-box.", 
-            "title": "Dcron vs other software"
-        }, 
-        {
-            "location": "/about/dcron_vs_other_software/#dcron-vs-other-software", 
-            "text": "", 
-            "title": "Dcron vs. Other Software"
-        }, 
-        {
-            "location": "/about/dcron_vs_other_software/#dcron-vs-chronos", 
-            "text": "Airbnb's Chronos is a job scheduler that is similar to dcron, it's distributed and fault tolerant thanks to the use of Zookeeper and Apache Mesos.  It has a lot of nice features, like task dependencies, etc.  If you don't have/want to run a Mesos cluster and deal with the not easy configuration and maintenance of Zookeeper and you want something lighter, Dcron could help you.", 
-            "title": "Dcron vs. Chronos"
-        }, 
-        {
-            "location": "/about/dcron_vs_other_software/#dcron-vs-rundeck", 
-            "text": "Rundeck is a popular and mature platform to automate operations and schedule jobs.  It has cool features:   Agentless  Permissions and auditing   It's written in Java and it's not trivial to setup right.  It uses a central database to store job execution results and configuration data, that makes it vulnerable to failures and you need to care yourself of providing it an HA environement or database to run and that's not an easy task to do with the Rundeck's supported databases.  Dcron lacks some of it's features but it's lightweight and fault-tolerant out-of-the-box.", 
-            "title": "Dcron vs. Rundeck"
-        }, 
-        {
-            "location": "/about/license/", 
-            "text": "License\n\n\nCopyright (c) Victor Castell\n\n\nDcron is an Open Source project licensed under the terms of\nthe LGPLv3 license.  Please see \nhttp://www.gnu.org/licenses/lgpl-3.0.html\n\nfor license text.", 
-            "title": "License"
-        }, 
-        {
-            "location": "/about/license/#license", 
-            "text": "Copyright (c) Victor Castell  Dcron is an Open Source project licensed under the terms of\nthe LGPLv3 license.  Please see  http://www.gnu.org/licenses/lgpl-3.0.html \nfor license text.", 
-            "title": "License"
-        }, 
-        {
-            "location": "/user-guide/api/", 
-            "text": "REST API\n\n\nYou can communicate with Dcron using a RESTful JSON API over HTTP. Dcron nodes usually listen on port 8080 for API requests. All examples in this section assume that you've found a running leader at dcron-node:8080.\n\n\nDcron implements a RESTful JSON API over HTTP to communicate with software clients. Dcron listens in port 8080 by default. All examples in this section assume that you're using the default port.\n\n\nLeaders\n\n\nLeaders\n\n\nWhen you have multiple Dcron nodes in server mode running, only one of them will be elected as the leader. In Dcron you can talk to any node running in server mode all of them could handle your request but only the leader will actually run the scheduler.\n\n\nIndex\n\n\n\n\nEndpoint: /\n\n\nMethod: GET\n\n\nExample: curl -XGET dcron-node:8080\n\n\n\n\nIt returns info about the agent queried.\n\n\nGet Jobs\n\n\n\n\nEndpoint: /jobs\n\n\nMethod: GET\n\n\nExample: curl -L -X GET dcron-node:8080/jobs\n\n\n\n\nDeleting a Job\n\n\nGet a job name from the job listing above. Then:\n\n\n\n\nEndpoint: /jobs/jobName\n\n\nMethod: DELETE\n\n\nExample: curl -L -X DELETE dcron-node:8080/job/aggregate_stats\n\n\n\n\nManually Starting a Job\n\n\nYou can manually start a job by issuing an HTTP request.\n\n\n\n\nEndpoint: /jobs/job_name\n\n\nMethod: PUT\n\n\nQuery string parameters: arguments - optional string with a list of command line arguments that is appended to job's command\n\n\nExample: curl -L -X PUT dcron-node:8080/jobs/aggregate_stats\n\n\nExample: curl -L -X PUT dcron-node:8080/jobs/aggregate_stats?arguments=-debug\n\n\n\n\nGet job executions\n\n\n\n\nEndpoint: /executions/job\n\n\nMethod: GET\n\n\nExample: curl -L -X GET dcron-node:8080/executions/aggregate_stats", 
-            "title": "Api"
-        }, 
-        {
-            "location": "/user-guide/api/#rest-api", 
-            "text": "You can communicate with Dcron using a RESTful JSON API over HTTP. Dcron nodes usually listen on port 8080 for API requests. All examples in this section assume that you've found a running leader at dcron-node:8080.  Dcron implements a RESTful JSON API over HTTP to communicate with software clients. Dcron listens in port 8080 by default. All examples in this section assume that you're using the default port.  Leaders", 
-            "title": "REST API"
-        }, 
-        {
-            "location": "/user-guide/api/#leaders", 
-            "text": "When you have multiple Dcron nodes in server mode running, only one of them will be elected as the leader. In Dcron you can talk to any node running in server mode all of them could handle your request but only the leader will actually run the scheduler.", 
-            "title": "Leaders"
-        }, 
-        {
-            "location": "/user-guide/api/#index", 
-            "text": "Endpoint: /  Method: GET  Example: curl -XGET dcron-node:8080   It returns info about the agent queried.", 
-            "title": "Index"
-        }, 
-        {
-            "location": "/user-guide/api/#get-jobs", 
-            "text": "Endpoint: /jobs  Method: GET  Example: curl -L -X GET dcron-node:8080/jobs", 
-            "title": "Get Jobs"
-        }, 
-        {
-            "location": "/user-guide/api/#deleting-a-job", 
-            "text": "Get a job name from the job listing above. Then:   Endpoint: /jobs/jobName  Method: DELETE  Example: curl -L -X DELETE dcron-node:8080/job/aggregate_stats", 
-            "title": "Deleting a Job"
-        }, 
-        {
-            "location": "/user-guide/api/#manually-starting-a-job", 
-            "text": "You can manually start a job by issuing an HTTP request.   Endpoint: /jobs/job_name  Method: PUT  Query string parameters: arguments - optional string with a list of command line arguments that is appended to job's command  Example: curl -L -X PUT dcron-node:8080/jobs/aggregate_stats  Example: curl -L -X PUT dcron-node:8080/jobs/aggregate_stats?arguments=-debug", 
-            "title": "Manually Starting a Job"
-        }, 
-        {
-            "location": "/user-guide/api/#get-job-executions", 
-            "text": "Endpoint: /executions/job  Method: GET  Example: curl -L -X GET dcron-node:8080/executions/aggregate_stats", 
-            "title": "Get job executions"
-        }, 
-        {
-            "location": "/user-guide/dcron-internals/", 
-            "text": "Dcron internals\n\n\nThis documentation is not needed to use dcron, it's intended to show how dcron is designed to work.\n\n\nDcron uses the gossip protocol ofered by serf to broadcast command execution messages to a cluster of machines.", 
-            "title": "Dcron internals"
-        }, 
-        {
-            "location": "/user-guide/dcron-internals/#dcron-internals", 
-            "text": "This documentation is not needed to use dcron, it's intended to show how dcron is designed to work.  Dcron uses the gossip protocol ofered by serf to broadcast command execution messages to a cluster of machines.", 
-            "title": "Dcron internals"
         }, 
         {
             "location": "/user-guide/getting-started/", 
@@ -134,6 +54,76 @@
             "location": "/user-guide/getting-started/#usage", 
             "text": "Dcron relies on etcd for data storage, the etcd executable is included in the package and can be used to run an etcd node along with dcron servers.  By default Dcron will start the etcd server when running in server mode and try to form a cluster.  If you want to use an existing etcd cluster of your own, you can specify it by setting the  no-etcd  flag in the config file or as a command line flag.  To start a Dcron server instance just run:  dcron agent --server", 
             "title": "Usage"
+        }, 
+        {
+            "location": "/user-guide/api/", 
+            "text": "REST API\n\n\nYou can communicate with Dcron using a RESTful JSON API over HTTP. Dcron nodes usually listen on port 8080 for API requests. All examples in this section assume that you've found a running leader at dcron-node:8080.\n\n\nDcron implements a RESTful JSON API over HTTP to communicate with software clients. Dcron listens in port 8080 by default. All examples in this section assume that you're using the default port.\n\n\nLeaders\n\n\nLeaders\n\n\nWhen you have multiple Dcron nodes in server mode running, only one of them will be elected as the leader. In Dcron you can talk to any node running in server mode all of them could handle your request but only the leader will actually run the scheduler.\n\n\nIndex\n\n\n\n\nEndpoint: \n/\n\n\nMethod: \nGET\n\n\nExample: \ncurl -XGET dcron-node:8080\n\n\n\n\nIt returns info about the agent queried.\n\n\nGet Jobs\n\n\n\n\nEndpoint: \n/jobs\n\n\nMethod: \nGET\n\n\nExample: \ncurl -L -X GET dcron-node:8080/jobs\n\n\n\n\nDeleting a Job\n\n\nGet a job name from the job listing above. Then:\n\n\n\n\nEndpoint: \n/jobs/jobName\n\n\nMethod: \nDELETE\n\n\nExample: `curl -L -X DELETE dcron-node:8080/job/aggregate_stats``\n\n\n\n\nManually Starting a Job\n\n\nYou can manually start a job by issuing an HTTP request.\n\n\n\n\nEndpoint: \n/jobs/job_name\n\n\nMethod: \nPUT\n\n\nQuery string parameters: arguments - optional string with a list of command line arguments that is appended to job's command\n\n\nExample: \ncurl -L -X PUT dcron-node:8080/jobs/aggregate_stats\n\n\nExample: \ncurl -L -X PUT dcron-node:8080/jobs/aggregate_stats?arguments=-debug\n\n\n\n\nGet job executions\n\n\n\n\nEndpoint: \n/executions/job\n\n\nMethod: \nGET\n\n\nExample: \ncurl -L -X GET dcron-node:8080/executions/aggregate_stats", 
+            "title": "Api"
+        }, 
+        {
+            "location": "/user-guide/api/#rest-api", 
+            "text": "You can communicate with Dcron using a RESTful JSON API over HTTP. Dcron nodes usually listen on port 8080 for API requests. All examples in this section assume that you've found a running leader at dcron-node:8080.  Dcron implements a RESTful JSON API over HTTP to communicate with software clients. Dcron listens in port 8080 by default. All examples in this section assume that you're using the default port.  Leaders", 
+            "title": "REST API"
+        }, 
+        {
+            "location": "/user-guide/api/#leaders", 
+            "text": "When you have multiple Dcron nodes in server mode running, only one of them will be elected as the leader. In Dcron you can talk to any node running in server mode all of them could handle your request but only the leader will actually run the scheduler.", 
+            "title": "Leaders"
+        }, 
+        {
+            "location": "/user-guide/api/#index", 
+            "text": "Endpoint:  /  Method:  GET  Example:  curl -XGET dcron-node:8080   It returns info about the agent queried.", 
+            "title": "Index"
+        }, 
+        {
+            "location": "/user-guide/api/#get-jobs", 
+            "text": "Endpoint:  /jobs  Method:  GET  Example:  curl -L -X GET dcron-node:8080/jobs", 
+            "title": "Get Jobs"
+        }, 
+        {
+            "location": "/user-guide/api/#deleting-a-job", 
+            "text": "Get a job name from the job listing above. Then:   Endpoint:  /jobs/jobName  Method:  DELETE  Example: `curl -L -X DELETE dcron-node:8080/job/aggregate_stats``", 
+            "title": "Deleting a Job"
+        }, 
+        {
+            "location": "/user-guide/api/#manually-starting-a-job", 
+            "text": "You can manually start a job by issuing an HTTP request.   Endpoint:  /jobs/job_name  Method:  PUT  Query string parameters: arguments - optional string with a list of command line arguments that is appended to job's command  Example:  curl -L -X PUT dcron-node:8080/jobs/aggregate_stats  Example:  curl -L -X PUT dcron-node:8080/jobs/aggregate_stats?arguments=-debug", 
+            "title": "Manually Starting a Job"
+        }, 
+        {
+            "location": "/user-guide/api/#get-job-executions", 
+            "text": "Endpoint:  /executions/job  Method:  GET  Example:  curl -L -X GET dcron-node:8080/executions/aggregate_stats", 
+            "title": "Get job executions"
+        }, 
+        {
+            "location": "/about/license/", 
+            "text": "License\n\n\nCopyright (c) Victor Castell\n\n\nDcron is an Open Source project licensed under the terms of\nthe LGPLv3 license.  Please see \nhttp://www.gnu.org/licenses/lgpl-3.0.html\n\nfor license text.", 
+            "title": "License"
+        }, 
+        {
+            "location": "/about/license/#license", 
+            "text": "Copyright (c) Victor Castell  Dcron is an Open Source project licensed under the terms of\nthe LGPLv3 license.  Please see  http://www.gnu.org/licenses/lgpl-3.0.html \nfor license text.", 
+            "title": "License"
+        }, 
+        {
+            "location": "/about/dcron_vs_other_software/", 
+            "text": "Dcron vs. Other Software\n\n\nDcron vs. Chronos\n\n\nAirbnb's Chronos is a job scheduler that is similar to dcron, it's distributed and fault tolerant thanks to the use of Zookeeper and Apache Mesos.\n\n\nIt has a lot of nice features, like task dependencies, etc.\n\n\nIf you don't have/want to run a Mesos cluster and deal with the not easy configuration and maintenance of Zookeeper and you want something lighter, Dcron could help you.\n\n\nDcron vs. Rundeck\n\n\nRundeck is a popular and mature platform to automate operations and schedule jobs.\n\n\nIt has cool features:\n\n\n\n\nAgentless\n\n\nPermissions and auditing\n\n\n\n\nIt's written in Java and it's not trivial to setup right.\n\n\nIt uses a central database to store job execution results and configuration data, that makes it vulnerable to failures and you need to care yourself of providing it an HA environement or database to run and that's not an easy task to do with the Rundeck's supported databases.\n\n\nDcron lacks some of it's features but it's lightweight and fault-tolerant out-of-the-box.", 
+            "title": "Dcron vs other software"
+        }, 
+        {
+            "location": "/about/dcron_vs_other_software/#dcron-vs-other-software", 
+            "text": "", 
+            "title": "Dcron vs. Other Software"
+        }, 
+        {
+            "location": "/about/dcron_vs_other_software/#dcron-vs-chronos", 
+            "text": "Airbnb's Chronos is a job scheduler that is similar to dcron, it's distributed and fault tolerant thanks to the use of Zookeeper and Apache Mesos.  It has a lot of nice features, like task dependencies, etc.  If you don't have/want to run a Mesos cluster and deal with the not easy configuration and maintenance of Zookeeper and you want something lighter, Dcron could help you.", 
+            "title": "Dcron vs. Chronos"
+        }, 
+        {
+            "location": "/about/dcron_vs_other_software/#dcron-vs-rundeck", 
+            "text": "Rundeck is a popular and mature platform to automate operations and schedule jobs.  It has cool features:   Agentless  Permissions and auditing   It's written in Java and it's not trivial to setup right.  It uses a central database to store job execution results and configuration data, that makes it vulnerable to failures and you need to care yourself of providing it an HA environement or database to run and that's not an easy task to do with the Rundeck's supported databases.  Dcron lacks some of it's features but it's lightweight and fault-tolerant out-of-the-box.", 
+            "title": "Dcron vs. Rundeck"
         }
     ]
 }
