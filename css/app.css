@@ -8,7 +8,6 @@ html {
 
 body {
   font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
-  font-size: 1.2em;
   padding-top: 90px;
 }
 
@@ -291,6 +290,9 @@ footer[role="contentinfo"] p {
   text-align: center;
 }
 
+.page-home {
+  font-size: 1.2em;
+}
 .page-home blockquote {
   text-align: center;
   border: none;

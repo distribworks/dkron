@@ -6,10 +6,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         <meta name="author" content="Victor Castell">
-        <link rel="canonical" href="http://dcron.io/about/dcron_vs_other_software/">
+        <link rel="canonical" href="http://dcron.io/docs/api/">
         <link rel="shortcut icon" href="../../img/favicon.ico">
 
-	<title>Dcron vs other software - Dcron - Distributed cron</title>
+	<title>Api - Dcron - Distributed cron</title>
 
         <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
@@ -73,20 +73,20 @@
                 
                 
                 
-                    <li class="dropdown">
+                    <li class="dropdown active">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Docs <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                         
                             <li >
-                                <a href="../../docs/getting-started/">Getting started</a>
+                                <a href="../getting-started/">Getting started</a>
                             </li>
                         
                             <li >
-                                <a href="../../docs/configuration/">Configuration</a>
+                                <a href="../configuration/">Configuration</a>
                             </li>
                         
-                            <li >
-                                <a href="../../docs/api/">Api</a>
+                            <li class="active">
+                                <a href="./">Api</a>
                             </li>
                         
                         </ul>
@@ -94,16 +94,16 @@
                 
                 
                 
-                    <li class="dropdown active">
+                    <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                         
-                            <li class="active">
-                                <a href="./">Dcron vs other software</a>
+                            <li >
+                                <a href="../../about/dcron_vs_other_software/">Dcron vs other software</a>
                             </li>
                         
                             <li >
-                                <a href="../license/">License</a>
+                                <a href="../../about/license/">License</a>
                             </li>
                         
                         </ul>
@@ -118,12 +118,12 @@
                     
 
                     <li >
-                        <a rel="next" href="../../docs/api/">
+                        <a rel="next" href="../configuration/">
                             <i class="fa fa-arrow-left"></i> Previous
                         </a>
                     </li>
                     <li >
-                        <a rel="prev" href="../license/">
+                        <a rel="prev" href="../../about/dcron_vs_other_software/">
                             Next <i class="fa fa-arrow-right"></i>
                         </a>
                     </li>
@@ -157,32 +157,85 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
-        <li class="main active"><a href="#dcron-vs-other-software">Dcron vs. Other Software</a></li>
+        <li class="main active"><a href="#rest-api">REST API</a></li>
         
-            <li><a href="#dcron-vs-chronos">Dcron vs. Chronos</a></li>
+            <li><a href="#leaders">Leaders</a></li>
         
-            <li><a href="#dcron-vs-rundeck">Dcron vs. Rundeck</a></li>
+            <li><a href="#index">Index</a></li>
+        
+            <li><a href="#members">Members</a></li>
+        
+            <li><a href="#leader">Leader</a></li>
+        
+            <li><a href="#get-jobs">Get Jobs</a></li>
+        
+            <li><a href="#deleting-a-job">Deleting a Job</a></li>
+        
+            <li><a href="#manually-starting-a-job">Manually Starting a Job</a></li>
+        
+            <li><a href="#get-job-executions">Get job executions</a></li>
         
     
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="dcron-vs-other-software">Dcron vs. Other Software</h1>
-<h2 id="dcron-vs-chronos">Dcron vs. Chronos</h2>
-<p>Airbnb's Chronos is a job scheduler that is similar to dcron, it's distributed and fault tolerant thanks to the use of Zookeeper and Apache Mesos.</p>
-<p>It has a lot of nice features, like task dependencies, etc.</p>
-<p>If you don't have/want to run a Mesos cluster and deal with the not easy configuration and maintenance of Zookeeper and you want something lighter, Dcron could help you.</p>
-<h2 id="dcron-vs-rundeck">Dcron vs. Rundeck</h2>
-<p>Rundeck is a popular and mature platform to automate operations and schedule jobs.</p>
-<p>It has cool features:</p>
+<h1 id="rest-api">REST API</h1>
+<p>You can communicate with Dcron using a RESTful JSON API over HTTP. Dcron nodes usually listen on port 8080 for API requests. All examples in this section assume that you've found a running leader at dcron-node:8080.</p>
+<p>Dcron implements a RESTful JSON API over HTTP to communicate with software clients. Dcron listens in port 8080 by default. All examples in this section assume that you're using the default port.</p>
+<p><a href="#leaders">Leaders</a></p>
+<h2 id="leaders">Leaders</h2>
+<p>When you have multiple Dcron nodes in server mode running, only one of them will be elected as the leader. In Dcron you can talk to any node running in server mode all of them could handle your request but only the leader will actually run the scheduler.</p>
+<h2 id="index">Index</h2>
 <ul>
-<li>Agentless</li>
-<li>Permissions and auditing</li>
+<li>Endpoint: <code>/</code></li>
+<li>Method: <code>GET</code></li>
+<li>Example: <code>curl -XGET dcron-node:8080</code></li>
 </ul>
-<p>It's written in Java and it's not trivial to setup right.</p>
-<p>It uses a central database to store job execution results and configuration data, that makes it vulnerable to failures and you need to care yourself of providing it an HA environement or database to run and that's not an easy task to do with the Rundeck's supported databases.</p>
-<p>Dcron lacks some of it's features but it's lightweight and fault-tolerant out-of-the-box.</p></div>
+<p>Returns info about the agent queried.</p>
+<h2 id="members">Members</h2>
+<ul>
+<li>Endpoint: <code>/members</code></li>
+<li>Method: <code>GET</code></li>
+<li>Example: <code>curl -XGET dcron-node:8080/members</code></li>
+</ul>
+<p>Returns the cluster member list.</p>
+<h2 id="leader">Leader</h2>
+<ul>
+<li>Endpoint: <code>/leader</code></li>
+<li>Method: <code>GET</code></li>
+<li>Example: <code>curl -XGET dcron-node:8080/leader</code></li>
+</ul>
+<p>Returns details about the current leader.</p>
+<h2 id="get-jobs">Get Jobs</h2>
+<ul>
+<li>Endpoint: <code>/jobs</code></li>
+<li>Method: <code>GET</code></li>
+<li>Example: <code>curl -L -X GET dcron-node:8080/jobs</code></li>
+</ul>
+<h2 id="deleting-a-job">Deleting a Job</h2>
+<p>Get a job name from the job listing above. Then:</p>
+<ul>
+<li>Endpoint: <code>/jobs/jobName</code></li>
+<li>Method: <code>DELETE</code></li>
+<li>Example: `curl -L -X DELETE dcron-node:8080/job/aggregate_stats``</li>
+</ul>
+<p>Delete a job definition.</p>
+<h2 id="manually-starting-a-job">Manually Starting a Job</h2>
+<p>You can manually start a job by issuing an HTTP request.</p>
+<ul>
+<li>Endpoint: <code>/jobs/job_name</code></li>
+<li>Method: <code>POST</code> or <code>PUT</code></li>
+<li>Example: <code>curl -L -X POST dcron-node:8080/jobs/aggregate_stats</code></li>
+</ul>
+<p>Will run <code>aggregate_stats</code> job.</p>
+<h2 id="get-job-executions">Get job executions</h2>
+<ul>
+<li>Endpoint: <code>/executions/job</code></li>
+<li>Method: <code>GET</code></li>
+<li>Example: <code>curl -L -X GET dcron-node:8080/executions/aggregate_stats</code></li>
+</ul>
+<p>Get a list with the job executions.</p></div>
               </div>
 
             
