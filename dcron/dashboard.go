@@ -95,11 +95,15 @@ func (a *AgentCommand) dashboardExecutionsHandler(w http.ResponseWriter, r *http
 		},
 	}).ParseFiles("templates/dashboard.html.tmpl", "templates/executions.html.tmpl"))
 
+	if len(execs) > 100 {
+		execs = execs[len(execs)-100 : len(execs)]
+	}
+
 	data := struct {
 		Executions []*Execution
 		JobName    string
 	}{
-		Executions: execs[len(execs)-100 : len(execs)],
+		Executions: execs,
 		JobName:    job,
 	}
 
