@@ -16,7 +16,23 @@ When you have multiple Dcron nodes in server mode running, only one of them will
 - Method: `GET`
 - Example: `curl -XGET dcron-node:8080`
 
-It returns info about the agent queried.
+Returns info about the agent queried.
+
+## Members
+
+- Endpoint: `/members`
+- Method: `GET`
+- Example: `curl -XGET dcron-node:8080/members`
+
+Returns the cluster member list.
+
+## Leader
+
+- Endpoint: `/leader`
+- Method: `GET`
+- Example: `curl -XGET dcron-node:8080/leader`
+
+Returns details about the current leader.
 
 ## Get Jobs
 
@@ -32,18 +48,22 @@ Get a job name from the job listing above. Then:
 - Method: `DELETE`
 - Example: `curl -L -X DELETE dcron-node:8080/job/aggregate_stats``
 
+Delete a job definition.
+
 ## Manually Starting a Job
 
 You can manually start a job by issuing an HTTP request.
 
 - Endpoint: `/jobs/job_name`
-- Method: `PUT`
-- Query string parameters: arguments - optional string with a list of command line arguments that is appended to job's command
-- Example: `curl -L -X PUT dcron-node:8080/jobs/aggregate_stats`
-- Example: `curl -L -X PUT dcron-node:8080/jobs/aggregate_stats?arguments=-debug`
+- Method: `POST` or `PUT`
+- Example: `curl -L -X POST dcron-node:8080/jobs/aggregate_stats`
+
+Will run `aggregate_stats` job.
 
 ## Get job executions
 
 - Endpoint: `/executions/job`
 - Method: `GET`
 - Example: `curl -L -X GET dcron-node:8080/executions/aggregate_stats`
+
+Get a list with the job executions.

@@ -53,5 +53,5 @@ If you want to use an existing etcd cluster of your own, you can specify it by s
 To start a Dcron server instance just run:
 
 ```
-dcron agent --server
+dcron agent -server
 ```
