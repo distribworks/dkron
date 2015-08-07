@@ -485,15 +485,7 @@ func (a *AgentCommand) eventLoop() {
 						"at":      query.LTime,
 					}).Info("Received execution done")
 
-					var ex Execution
-					if err := json.Unmarshal(query.Payload, &ex); err != nil {
-						log.Fatal(err)
-					}
-
-					// Save the new execution to etcd
-					if err := a.etcd.SetExecution(&ex); err != nil {
-						log.Fatal(err)
-					}
+					ex := a.setExecution(query.Payload)
 
 					// Save job status
 					job, err := a.etcd.GetJob(ex.JobName)
@@ -511,6 +503,7 @@ func (a *AgentCommand) eventLoop() {
 					if err := a.etcd.SetJob(job); err != nil {
 						log.Fatal(err)
 					}
+					query.Respond([]byte("saved"))
 				}
 			}
 
@@ -628,6 +621,9 @@ func (a *AgentCommand) RunQuery(job *Job) {
 					"from":     resp.From,
 					"response": string(resp.Payload),
 				}).Debug("Received response")
+
+				// Save execution to etcd
+				a.setExecution(resp.Payload)
 			}
 		}
 	}
@@ -662,4 +658,18 @@ func (a *AgentCommand) processFilteredNodes(job *Job) ([]string, error) {
 	}
 
 	return nodes, nil
+}
+
+func (a *AgentCommand) setExecution(payload []byte) *Execution {
+	var ex Execution
+	if err := json.Unmarshal(payload, &ex); err != nil {
+		log.Fatal(err)
+	}
+
+	// Save the new execution to etcd
+	if _, err := a.etcd.SetExecution(&ex); err != nil {
+		log.Fatal(err)
+	}
+
+	return &ex
 }
