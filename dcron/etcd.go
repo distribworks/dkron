@@ -116,17 +116,18 @@ func (e *etcdClient) GetExecutions(jobName string) ([]*Execution, error) {
 	return executions, nil
 }
 
-func (e *etcdClient) SetExecution(execution *Execution) error {
+// Save a new execution and returns the key of the new saved item or an error.
+func (e *etcdClient) SetExecution(execution *Execution) (string, error) {
 	eJson, _ := json.Marshal(execution)
-	ts := fmt.Sprint(execution.StartedAt.UnixNano())
+	key := fmt.Sprintf("%d-%s", execution.StartedAt.UnixNano(), execution.NodeName)
 
 	log.Debugf("Setting etcd key %s: %s", execution.JobName, string(eJson))
-	if _, err := e.Client.Set(fmt.Sprintf(
-		"%s/executions/%s/%s", keyspace, execution.JobName, ts), string(eJson), 0); err != nil {
-		return err
+	res, err := e.Client.Set(fmt.Sprintf("%s/executions/%s/%s", keyspace, execution.JobName, key), string(eJson), 0)
+	if err != nil {
+		return "", err
 	}
 
-	return nil
+	return res.Node.Key, nil
 }
 
 func (e *etcdClient) GetLeader() string {
