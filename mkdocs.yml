@@ -12,9 +12,10 @@ google_analytics: ['UA-571371-14', 'dcron.io']
 pages:
   - Home: 'index.md'
   - Intro: 'intro.md'
-  - User Guide:
-    - 'user-guide/getting-started.md'
-    - 'user-guide/api.md'
+  - Docs:
+    - 'docs/getting-started.md'
+    - 'docs/configuration.md'
+    - 'docs/api.md'
   - About:
-    - 'about/license.md'
     - 'about/dcron_vs_other_software.md'
+    - 'about/license.md'
