@@ -99,7 +99,7 @@ func (a *AgentCommand) dashboardExecutionsHandler(w http.ResponseWriter, r *http
 		Executions []*Execution
 		JobName    string
 	}{
-		Executions: execs,
+		Executions: execs[len(execs)-100 : len(execs)],
 		JobName:    job,
 	}
 
