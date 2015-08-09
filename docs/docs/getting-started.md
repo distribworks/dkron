@@ -1,6 +1,6 @@
 #Getting started
 
-Welcome to the intro guide to Dcron! This will explain how to setup serf, how easy is to use it, what problems could it help you to solve, etc.
+Welcome to the intro guide to Dcron! This will explain how to setup dcron, how easy is to use it, what problems could it help you to solve, etc.
 
 ## Introduction
 
