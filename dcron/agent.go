@@ -69,7 +69,7 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	viper.SetDefault("http_addr", cmdFlags.Lookup("http-addr").Value)
 	cmdFlags.String("discover", "dcron", "mDNS discovery name")
 	viper.SetDefault("discover", cmdFlags.Lookup("discover").Value)
-	cmdFlags.String("etcd-machines", "127.0.0.1:2379", "etcd machines addresses")
+	cmdFlags.String("etcd-machines", "http://127.0.0.1:2379", "etcd machines addresses")
 	viper.SetDefault("etcd_machines", cmdFlags.Lookup("etcd-machines").Value)
 	cmdFlags.String("profile", "lan", "timing profile to use (lan, wan, local)")
 	viper.SetDefault("profile", cmdFlags.Lookup("profile").Value)
