@@ -5,15 +5,24 @@
 		"go-vet",
 		"xc",
 		"archive-zip",
-		"archive-tar-gz"
+		"archive-tar-gz",
+		"publish-github"
 	],
-	"TaskSettings": {
 	"BuildConstraints": "linux,amd64 windows,amd64 darwin,amd64",
-	"Resources": {
-            "Include": "INSTALL*,README*,LICENSE*,config/*,static/*,templates/*"
+	"ResourcesInclude": "INSTALL*,README*,LICENSE*,config/*,static/*,templates/*",
+	"PackageVersion": "0.0.3",
+	"TaskSettings": {
+		"publish-github": {
+			"apikey": "",
+			"body": "Built by goxc",
+			"include": "*.zip,*.tar.gz,*.deb",
+			"outputFormat": "by-file-extension",
+			"owner": "victorcoder",
+			"prerelease": true,
+			"repository": "dcron"
+		}
 	},
 	"ConfigVersion": "0.9",
-	"PackageVersion": "0.0.2",
 	"Env": [
 		"GOPATH=Godeps{{.PLS}}{{.Env.GOPATH}}"
 	]
