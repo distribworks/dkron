@@ -17,6 +17,11 @@ func ToTime(i interface{}) time.Time {
 	return v
 }
 
+func ToDuration(i interface{}) time.Duration {
+	v, _ := ToDurationE(i)
+	return v
+}
+
 func ToFloat64(i interface{}) float64 {
 	v, _ := ToFloat64E(i)
 	return v
@@ -37,6 +42,16 @@ func ToStringMapString(i interface{}) map[string]string {
 	return v
 }
 
+func ToStringMapStringSlice(i interface{}) map[string][]string {
+	v, _ := ToStringMapStringSliceE(i)
+	return v
+}
+
+func ToStringMapBool(i interface{}) map[string]bool {
+	v, _ := ToStringMapBoolE(i)
+	return v
+}
+
 func ToStringMap(i interface{}) map[string]interface{} {
 	v, _ := ToStringMapE(i)
 	return v
@@ -49,5 +64,10 @@ func ToSlice(i interface{}) []interface{} {
 
 func ToStringSlice(i interface{}) []string {
 	v, _ := ToStringSliceE(i)
+	return v
+}
+
+func ToIntSlice(i interface{}) []int {
+	v, _ := ToIntSliceE(i)
 	return v
 }

@@ -73,7 +73,7 @@
 		},
 		{
 			"ImportPath": "github.com/spf13/cast",
-			"Rev": "99f1223ff64ed0c6a1dd9c850474f5fecba6e0a4"
+			"Rev": "ee815aaf958c707ad07547cd62150d973710f747"
 		},
 		{
 			"ImportPath": "github.com/spf13/jwalterweatherman",
