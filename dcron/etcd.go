@@ -135,7 +135,7 @@ func (e *etcdClient) GetLeader() string {
 	if err != nil {
 		if eerr, ok := err.(*etcdc.EtcdError); ok {
 			if eerr.ErrorCode == etcdc.ErrCodeEtcdNotReachable {
-				log.Panic(err)
+				log.Fatal("etcd not reachable, be sure etcd is running.\nYou can download etc from https://github.com/coreos/etcd/releases")
 			}
 		}
 		log.Error(err.Error())
