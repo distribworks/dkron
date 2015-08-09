@@ -85,7 +85,7 @@
 		},
 		{
 			"ImportPath": "github.com/spf13/viper",
-			"Rev": "2e47d9ed4a4ee0cad6e154285e1e0509749b4b3c"
+			"Rev": "2abb1bebfde865b0bb6bb7ada5be63ec78527fa6"
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/ssh/terminal",

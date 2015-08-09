@@ -27,6 +27,8 @@ hobbies:
 clothing:
   jacket: leather
   trousers: denim
+  pants:
+    size: large
 age: 35
 eyes : brown
 beard: true
@@ -164,7 +166,7 @@ func TestMarshalling(t *testing.T) {
 	assert.False(t, InConfig("state"))
 	assert.Equal(t, "steve", Get("name"))
 	assert.Equal(t, []interface{}{"skateboarding", "snowboarding", "go"}, Get("hobbies"))
-	assert.Equal(t, map[interface{}]interface{}{"jacket": "leather", "trousers": "denim"}, Get("clothing"))
+	assert.Equal(t, map[interface{}]interface{}{"jacket": "leather", "trousers": "denim", "pants": map[interface{}]interface{}{"size": "large"}}, Get("clothing"))
 	assert.Equal(t, 35, Get("age"))
 }
 
@@ -304,7 +306,7 @@ func TestAllKeys(t *testing.T) {
 
 	ks := sort.StringSlice{"title", "newkey", "owner", "name", "beard", "ppu", "batters", "hobbies", "clothing", "age", "hacker", "id", "type", "eyes", "p_id", "p_ppu", "p_batters.batter.type", "p_type", "p_name"}
 	dob, _ := time.Parse(time.RFC3339, "1979-05-27T07:32:00Z")
-	all := map[string]interface{}{"owner": map[string]interface{}{"organization": "MongoDB", "bio": "MongoDB Chief Developer Advocate & Hacker at Large", "dob": dob}, "title": "TOML Example", "ppu": 0.55, "eyes": "brown", "clothing": map[interface{}]interface{}{"trousers": "denim", "jacket": "leather"}, "id": "0001", "batters": map[string]interface{}{"batter": []interface{}{map[string]interface{}{"type": "Regular"}, map[string]interface{}{"type": "Chocolate"}, map[string]interface{}{"type": "Blueberry"}, map[string]interface{}{"type": "Devil's Food"}}}, "hacker": true, "beard": true, "hobbies": []interface{}{"skateboarding", "snowboarding", "go"}, "age": 35, "type": "donut", "newkey": "remote", "name": "Cake", "p_id": "0001", "p_ppu": "0.55", "p_name": "Cake", "p_batters.batter.type": "Regular", "p_type": "donut"}
+	all := map[string]interface{}{"owner": map[string]interface{}{"organization": "MongoDB", "Bio": "MongoDB Chief Developer Advocate & Hacker at Large", "dob": dob}, "title": "TOML Example", "ppu": 0.55, "eyes": "brown", "clothing": map[interface{}]interface{}{"trousers": "denim", "jacket": "leather", "pants": map[interface{}]interface{}{"size": "large"}}, "id": "0001", "batters": map[string]interface{}{"batter": []interface{}{map[string]interface{}{"type": "Regular"}, map[string]interface{}{"type": "Chocolate"}, map[string]interface{}{"type": "Blueberry"}, map[string]interface{}{"type": "Devil's Food"}}}, "hacker": true, "beard": true, "hobbies": []interface{}{"skateboarding", "snowboarding", "go"}, "age": 35, "type": "donut", "newkey": "remote", "name": "Cake", "p_id": "0001", "p_ppu": "0.55", "p_name": "Cake", "p_batters.batter.type": "Regular", "p_type": "donut"}
 
 	var allkeys sort.StringSlice
 	allkeys = AllKeys()
@@ -512,10 +514,10 @@ func TestFindsNestedKeys(t *testing.T) {
 		"age":  35,
 		"owner": map[string]interface{}{
 			"organization": "MongoDB",
-			"bio":          "MongoDB Chief Developer Advocate & Hacker at Large",
+			"Bio":          "MongoDB Chief Developer Advocate & Hacker at Large",
 			"dob":          dob,
 		},
-		"owner.bio": "MongoDB Chief Developer Advocate & Hacker at Large",
+		"owner.Bio": "MongoDB Chief Developer Advocate & Hacker at Large",
 		"type":      "donut",
 		"id":        "0001",
 		"name":      "Cake",
@@ -524,11 +526,15 @@ func TestFindsNestedKeys(t *testing.T) {
 		"clothing": map[interface{}]interface{}{
 			"jacket":   "leather",
 			"trousers": "denim",
+			"pants": map[interface{}]interface{}{
+				"size": "large",
+			},
 		},
-		"clothing.jacket":   "leather",
-		"clothing.trousers": "denim",
-		"owner.dob":         dob,
-		"beard":             true,
+		"clothing.jacket":     "leather",
+		"clothing.pants.size": "large",
+		"clothing.trousers":   "denim",
+		"owner.dob":           dob,
+		"beard":               true,
 	}
 
 	for key, expectedValue := range expected {
@@ -536,4 +542,18 @@ func TestFindsNestedKeys(t *testing.T) {
 		assert.Equal(t, expectedValue, v.Get(key))
 	}
 
+}
+
+func TestReadBufConfig(t *testing.T) {
+	v := New()
+	v.SetConfigType("yaml")
+	v.ReadConfig(bytes.NewBuffer(yamlExample))
+	t.Log(v.AllKeys())
+
+	assert.True(t, v.InConfig("name"))
+	assert.False(t, v.InConfig("state"))
+	assert.Equal(t, "steve", v.Get("name"))
+	assert.Equal(t, []interface{}{"skateboarding", "snowboarding", "go"}, v.Get("hobbies"))
+	assert.Equal(t, map[interface{}]interface{}{"jacket": "leather", "trousers": "denim", "pants": map[interface{}]interface{}{"size": "large"}}, v.Get("clothing"))
+	assert.Equal(t, 35, v.Get("age"))
 }

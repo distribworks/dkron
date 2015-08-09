@@ -17,7 +17,6 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"reflect"
 	"runtime"
 	"strings"
 	"unicode"
@@ -35,10 +34,6 @@ func insensitiviseMap(m map[string]interface{}) {
 		if key != lower {
 			delete(m, key)
 			m[lower] = val
-		}
-
-		if val != nil && reflect.TypeOf(val).Kind() == reflect.Map {
-			insensitiviseMap(cast.ToStringMap(val))
 		}
 	}
 }
@@ -128,7 +123,7 @@ func marshallConfigReader(in io.Reader, c map[string]interface{}, configType str
 	buf := new(bytes.Buffer)
 	buf.ReadFrom(in)
 
-	switch configType {
+	switch strings.ToLower(configType) {
 	case "yaml", "yml":
 		if err := yaml.Unmarshal(buf.Bytes(), &c); err != nil {
 			jww.ERROR.Fatalf("Error parsing config: %s", err)
