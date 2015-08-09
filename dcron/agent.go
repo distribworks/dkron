@@ -44,8 +44,8 @@ type AgentCommand struct {
 
 func (a *AgentCommand) Help() string {
 	helpText := `
-Usage: dcron server [options]
-	Run dcron server
+Usage: dcron agent [options]
+	Run dcron (option -server to run as server)
 Options:
 `
 	return strings.TrimSpace(helpText)
@@ -367,7 +367,7 @@ func (a *AgentCommand) handleSignals() int {
 }
 
 func (a *AgentCommand) Synopsis() string {
-	return "Run dcron server"
+	return "Run dcron"
 }
 
 // Dcron leader election routine
