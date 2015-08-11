@@ -42,13 +42,15 @@ func (a *AgentCommand) dashboardIndexHandler(w http.ResponseWriter, r *http.Requ
 	json.Unmarshal(res.Body, &ss)
 
 	data := struct {
-		Version   string
-		Stats     *EtcdServerStats
-		StartTime string
+		AgentCommand *AgentCommand
+		Version      string
+		Stats        *EtcdServerStats
+		StartTime    string
 	}{
-		Version:   version.Etcdserver,
-		Stats:     ss,
-		StartTime: ss.LeaderInfo.StartTime.Format("2/Jan/2006 15:05:05"),
+		AgentCommand: a,
+		Version:      version.Etcdserver,
+		Stats:        ss,
+		StartTime:    ss.LeaderInfo.StartTime.Format("2/Jan/2006 15:05:05"),
 	}
 
 	if err := tmpl.Execute(w, data); err != nil {
@@ -71,9 +73,11 @@ func (a *AgentCommand) dashboardJobsHandler(w http.ResponseWriter, r *http.Reque
 		"templates/dashboard.html.tmpl", "templates/jobs.html.tmpl", "templates/status.html.tmpl"))
 
 	data := struct {
-		Jobs []*Job
+		AgentCommand *AgentCommand
+		Jobs         []*Job
 	}{
-		Jobs: jobs,
+		AgentCommand: a,
+		Jobs:         jobs,
 	}
 
 	if err := tmpl.Execute(w, data); err != nil {
@@ -100,11 +104,13 @@ func (a *AgentCommand) dashboardExecutionsHandler(w http.ResponseWriter, r *http
 	}
 
 	data := struct {
-		Executions []*Execution
-		JobName    string
+		AgentCommand *AgentCommand
+		Executions   []*Execution
+		JobName      string
 	}{
-		Executions: execs,
-		JobName:    job,
+		AgentCommand: a,
+		Executions:   execs,
+		JobName:      job,
 	}
 
 	if err := tmpl.Execute(w, data); err != nil {
