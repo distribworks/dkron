@@ -401,6 +401,10 @@ footer[role="contentinfo"] p {
   width: 120px;
 }
 
+.content {
+  padding-bottom: 60px;
+}
+
 @media (min-width: 768px) {
   .page-home #use-cases-mask .case-container {
     width: 480px;
