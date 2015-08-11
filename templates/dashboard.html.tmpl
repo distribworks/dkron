@@ -70,5 +70,16 @@
       </div>
     </div>
     {{template "content" .}}
+    <div class="navbar navbar-fixed-bottom navbar-inverse">
+      <div class="navbar-inner">
+        <div class="container text-center">
+            <ul class="nav">
+              <li>
+                <p class="navbar-text">Dcron v{{ .AgentCommand.Version }}</p>
+              </li>
+            </ul>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

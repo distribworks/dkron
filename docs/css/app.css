@@ -291,6 +291,10 @@ footer[role="contentinfo"] p {
   text-align: center;
 }
 
+.navbar-fixed-bottom {
+  background-color: #333;
+}
+
 .page-home {
   font-size: 1.2em;
 }
