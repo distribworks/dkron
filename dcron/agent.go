@@ -34,6 +34,7 @@ const (
 // AgentCommand run dcron server
 type AgentCommand struct {
 	Ui         cli.Ui
+	Version    string
 	ShutdownCh <-chan struct{}
 	serf       *serf.Serf
 	config     *Config
@@ -460,7 +461,7 @@ func (a *AgentCommand) eventLoop() {
 					if err := json.Unmarshal(query.Payload, &job); err != nil {
 						log.WithFields(logrus.Fields{
 							"query": QueryRunJob,
-						}).Fatalf("Error unmarshaling job payload", QueryRunJob)
+						}).Fatal("Error unmarshaling job payload")
 					}
 
 					ex := Execution{
