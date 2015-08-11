@@ -20,7 +20,8 @@ func main() {
 	c.Commands = map[string]cli.CommandFactory{
 		"agent": func() (cli.Command, error) {
 			return &dcron.AgentCommand{
-				Ui: ui,
+				Ui:      ui,
+				Version: VERSION,
 			}, nil
 		},
 	}
