@@ -50,14 +50,14 @@ type Job struct {
 	running sync.Mutex
 }
 
-func (j Job) Run() {
+func (j *Job) Run() {
 	j.running.Lock()
 	defer j.running.Unlock()
 
 	// Maybe we are testing
 	if j.Agent != nil && j.Disabled == false {
 		log.Debugf("Running: %s %s", j.Name, j.Schedule)
-		j.Agent.RunQuery(&j)
+		j.Agent.RunQuery(j)
 	}
 }
 
