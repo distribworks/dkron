@@ -28,8 +28,8 @@ func (a *AgentCommand) dashboardIndexHandler(w http.ResponseWriter, r *http.Requ
 		log.Error(err)
 	}
 	var version struct {
-		Etcdserver  string `json:etcdserver`
-		Etcdcluster string `json:etcdcluster`
+		Etcdserver  string `json:"etcdserver"`
+		Etcdcluster string `json:"etcdcluster"`
 	}
 	json.Unmarshal(res.Body, &version)
 
