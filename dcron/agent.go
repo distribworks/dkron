@@ -599,7 +599,10 @@ func (a *AgentCommand) RunQuery(job *Job) {
 	}).Debug("Sending query")
 	qr, err := a.serf.Query(QueryRunJob, jobJson, params)
 	if err != nil {
-		log.Fatalf("Error sending the %s query", QueryRunJob, err)
+		log.WithFields(logrus.Fields{
+			"query": QueryRunJob,
+			"error": err,
+		}).Debug("Sending query error")
 	}
 	defer qr.Close()
 
