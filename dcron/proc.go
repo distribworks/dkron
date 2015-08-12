@@ -95,7 +95,10 @@ func (a *AgentCommand) invokeJob(job *Job, execution *Execution) error {
 
 	qr, err := a.serf.Query(QueryExecutionDone, executionJson, params)
 	if err != nil {
-		log.Fatal("Error sending the %s query", QueryExecutionDone, err)
+		log.WithFields(logrus.Fields{
+			"query": QueryExecutionDone,
+			"error": err,
+		}).Debug("Error sending query")
 	}
 	defer qr.Close()
 
