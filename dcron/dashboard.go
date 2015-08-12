@@ -41,16 +41,19 @@ func (a *AgentCommand) dashboardIndexHandler(w http.ResponseWriter, r *http.Requ
 	}
 	json.Unmarshal(res.Body, &ss)
 
+	l, _ := a.leaderMember()
 	data := struct {
-		AgentCommand *AgentCommand
-		Version      string
-		Stats        *EtcdServerStats
-		StartTime    string
+		Version     string
+		LeaderName  string
+		EtcdVersion string
+		Stats       *EtcdServerStats
+		StartTime   string
 	}{
-		AgentCommand: a,
-		Version:      version.Etcdserver,
-		Stats:        ss,
-		StartTime:    ss.LeaderInfo.StartTime.Format("2/Jan/2006 15:05:05"),
+		Version:     a.Version,
+		LeaderName:  l.Name,
+		EtcdVersion: version.Etcdserver,
+		Stats:       ss,
+		StartTime:   ss.LeaderInfo.StartTime.Format("2/Jan/2006 15:05:05"),
 	}
 
 	if err := tmpl.Execute(w, data); err != nil {
@@ -72,12 +75,15 @@ func (a *AgentCommand) dashboardJobsHandler(w http.ResponseWriter, r *http.Reque
 	tmpl := template.Must(template.New("dashboard.html.tmpl").Funcs(funcs).ParseFiles(
 		"templates/dashboard.html.tmpl", "templates/jobs.html.tmpl", "templates/status.html.tmpl"))
 
+	l, _ := a.leaderMember()
 	data := struct {
-		AgentCommand *AgentCommand
-		Jobs         []*Job
+		Version    string
+		LeaderName string
+		Jobs       []*Job
 	}{
-		AgentCommand: a,
-		Jobs:         jobs,
+		Version:    a.Version,
+		LeaderName: l.Name,
+		Jobs:       jobs,
 	}
 
 	if err := tmpl.Execute(w, data); err != nil {
@@ -103,14 +109,17 @@ func (a *AgentCommand) dashboardExecutionsHandler(w http.ResponseWriter, r *http
 		execs = execs[len(execs)-100 : len(execs)]
 	}
 
+	l, _ := a.leaderMember()
 	data := struct {
-		AgentCommand *AgentCommand
-		Executions   []*Execution
-		JobName      string
+		Version    string
+		LeaderName string
+		Executions []*Execution
+		JobName    string
 	}{
-		AgentCommand: a,
-		Executions:   execs,
-		JobName:      job,
+		Version:    a.Version,
+		LeaderName: l.Name,
+		Executions: execs,
+		JobName:    job,
 	}
 
 	if err := tmpl.Execute(w, data); err != nil {

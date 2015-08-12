@@ -3,6 +3,7 @@ package dcron
 import (
 	"crypto/sha1"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -419,6 +420,19 @@ func (a *AgentCommand) serverAlive(key string) bool {
 // Utility method to check if the node calling the method is the leader.
 func (a *AgentCommand) isLeader() bool {
 	return a.config.Tags["key"] == a.etcd.GetLeader()
+}
+
+// Utility method to get leader nodename
+func (a *AgentCommand) leaderMember() (*serf.Member, error) {
+	leader := a.etcd.GetLeader()
+	for _, member := range a.serf.Members() {
+		if key, ok := member.Tags["key"]; ok {
+			if key == leader {
+				return &member, nil
+			}
+		}
+	}
+	return nil, errors.New("No member leader found in member list")
 }
 
 // Listens to events from Serf and handle the event.

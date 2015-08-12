@@ -168,22 +168,21 @@ func (a *AgentCommand) jobDeleteHandler(w http.ResponseWriter, r *http.Request) 
 }
 
 func (a *AgentCommand) leaderHandler(w http.ResponseWriter, r *http.Request) {
-	leader := a.etcd.GetLeader()
-	for _, member := range a.serf.Members() {
-		if key, ok := member.Tags["key"]; ok {
-			if key == leader {
-				w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-				w.WriteHeader(http.StatusOK)
-				if err := json.NewEncoder(w).Encode(member); err != nil {
-					log.Fatal(err)
-				}
-				return
-			}
+	member, err := a.leaderMember()
+	if err == nil {
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusOK)
+		if err := json.NewEncoder(w).Encode(member); err != nil {
+			log.Fatal(err)
 		}
+		return
 	}
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusNotFound)
+	if err := json.NewEncoder(w).Encode(err); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func (a *AgentCommand) jobRunHandler(w http.ResponseWriter, r *http.Request) {
