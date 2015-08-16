@@ -27,7 +27,3 @@
   </div>
 
 </div>
-
-<center class="hidden-xs">
-![](/img/screenshot1.png)
-</center>

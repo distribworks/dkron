@@ -25,6 +25,10 @@ Dcron runs on Linux, OSX and Windows. It can be used to run scheduled commands o
 
 Dcron uses the efficient and lightweight [gossip protocol](https://www.serfdom.io/docs/internals/gossip.html) underneath to communicate with nodes. Failure notification and task handling are run efficiently across an entire cluster of any size.
 
+<center class="hidden-xs">
+![](/img/screenshot1.png)
+</center>
+
 ## Dcron design
 
 Dcron is designed to solve one problem well, executing commands in given intervals. Following the unix philosophy of doing one thing and doing it well (like the battle-tested cron) but with the given addition of being designed for the cloud era, removing single points of failure in environments where scheduled jobs are needed to be run in multiple servers.
