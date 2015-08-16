@@ -24,9 +24,11 @@ Said that, I encourage you to try it, it's very easy to use, see how it works fo
 
 ## Quick start
 
-First, download a pre-built Dcron binary for your operating system or [compile Dcron yourself](#developing-dcron).
+Clone the repository.
 
-Setup goreman
+*NOTE*: The included etcd binary is compiled for OSX, if you're in another platform, download the apporpriate etcd binary for your platform.
+
+Setup goreman:
 
 `go get github.com/mattn/goreman`
 
@@ -36,9 +38,9 @@ Next, run the included Procfile
 
 This will start etcd and some Dcron instances that will form a cluster.
 
-Now you can view the web panel at: http://localhost:8080
+Now you can view the web panel at: http://localhost:8081
 
-To add jobs to the system read the API docs.
+To add jobs to the system read the API docs or take a look to the `job.json` file.
 
 ## Documentation
 
