@@ -45,19 +45,3 @@ To add jobs to the system read the API docs.
 Full, comprehensive documentation is viewable on the Dcron website:
 
 http://www.dcron.io
-
-## Developing Dcron
-
-If you wish to work on Dcron itself, you'll first need Go installed (version 1.2+ is required). Make sure you have Go properly installed, including setting up your GOPATH.
-
-Next, clone this repository into $GOPATH/src/github.com/hashicorp/dcron and then just type `go build *.go`. In a few moments, you'll have a working serf executable:
-
-$ go build *.go
-...
-$ bin/dcron
-...
-note: make will also place a copy of the binary in the first part of your $GOPATH
-
-You can run tests by typing make test.
-
-If you make any changes to the code, run make format in order to automatically format the code according to Go standards.
