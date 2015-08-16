@@ -169,13 +169,13 @@
                 <div class="col-md-9" role="main">
 
 <h1 id="dcron-distributed-fault-tolerant-job-scheduling-system">Dcron - Distributed, fault tolerant job scheduling system</h1>
-<p>Welcome to the Dcron documentation! This is the reference guide on how to use Drcon. If you want a getting started guide refer to the <a href="../user-guide/getting-started">getting started guide</a> of the Dcron documentation.</p>
+<p>Welcome to the Dcron documentation! This is the reference guide on how to use Dcron. If you want a getting started guide refer to the <a href="../user-guide/getting-started">getting started guide</a>.</p>
 <div class="alert alert-warning" role="alert">Warning: Dcron is Under heavy development, it's considered alpha state, expect dragons.</div>
 
 <div class="alert alert-info" role="alert">Note: Version in this documentation, 0.0.2</div>
 
 <h2 id="what-is-dcron">What is Dcron</h2>
-<p>Dcron it's distributed system to run scheduled jobs agains a server or a group of servers of any size. One of the machines is the leader and the others will be followrs. If the leader fails or becomes unreachable, any other one will take over and reschedule all jobs to keep the system healthy.</p>
+<p>Dcron it's distributed system to run scheduled jobs against a server or a group of servers of any size. One of the machines is the leader and the others will be followers. If the leader fails or becomes unreachable, any other one will take over and reschedule all jobs to keep the system healthy.</p>
 <p>In case the old leader becomes alive again, it'll become a follower.</p>
 <p>Dcron is a distributed cron drop-in replacement, easy to setup and fault tolerant with focus in:</p>
 <ul>
@@ -183,12 +183,15 @@
 <li>Reliable: Completely fault tolerant</li>
 <li>High scalable: Able to handle high volumes of scheduled jobs and thousands of nodes</li>
 </ul>
-<p>Dcron is written in Go and leverage the power of <a href="https://coreos.com/etcd/">etcd</a> and <a href="https://www.serfdom.io/">Serf</a> for providing fault tolerance and, reliability and scalability while keeping simple and easily instalable.</p>
+<p>Dcron is written in Go and leverage the power of <a href="https://coreos.com/etcd/">etcd</a> and <a href="https://www.serfdom.io/">Serf</a> for providing fault tolerance and, reliability and scalability while keeping simple and easily installable.</p>
 <p>Dcron is inspired by the google whitepaper <a href="https://queue.acm.org/detail.cfm?id=2745840">Reliable Cron across the Planet</a></p>
 <p>Dcron runs on Linux, OSX and Windows. It can be used to run scheduled commands on a server cluster using any combination of servers for each job. It has no single points of failure due to the use of the fault tolerant distributed database etcd and can work large scale thanks to the efficient and lightweight gossip protocol.</p>
 <p>Dcron uses the efficient and lightweight <a href="https://www.serfdom.io/docs/internals/gossip.html">gossip protocol</a> underneath to communicate with nodes. Failure notification and task handling are run efficiently across an entire cluster of any size.</p>
+<p><center class="hidden-xs">
+<img alt="" src="../img/screenshot1.png" />
+</center></p>
 <h2 id="dcron-design">Dcron design</h2>
-<p>Dcron is designed to solve one problem well, executing commands in given intervals. Following the unix philosophy of doing one thing and doing it well (like the battle tested cron) but with the given addition of being designed for the cloud era, removing single points of failure in environments where scheduled jobs are need to be run in multiple servers.</p></div>
+<p>Dcron is designed to solve one problem well, executing commands in given intervals. Following the unix philosophy of doing one thing and doing it well (like the battle-tested cron) but with the given addition of being designed for the cloud era, removing single points of failure in environments where scheduled jobs are needed to be run in multiple servers.</p></div>
               </div>
 
             
