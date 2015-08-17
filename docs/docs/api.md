@@ -44,7 +44,7 @@ Returns details about the current leader.
 
 - Endpoint: `/jobs/`
 - Method: `POST` or `PUT`
-- Example: `curl -X POST dcron-node:8080/jobs/` -d @jobs.json
+- Example: `curl -X POST dcron-node:8080/jobs/ -d @jobs.json`
 
 Sample job:
 
