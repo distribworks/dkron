@@ -169,6 +169,8 @@
         
             <li><a href="#get-jobs">Get Jobs</a></li>
         
+            <li><a href="#create-or-update-a-job">Create or update a Job</a></li>
+        
             <li><a href="#deleting-a-job">Deleting a Job</a></li>
         
             <li><a href="#manually-starting-a-job">Manually Starting a Job</a></li>
@@ -213,12 +215,28 @@
 <li>Method: <code>GET</code></li>
 <li>Example: <code>curl -L -X GET dcron-node:8080/jobs</code></li>
 </ul>
+<h2 id="create-or-update-a-job">Create or update a Job</h2>
+<ul>
+<li>Endpoint: <code>/jobs</code></li>
+<li>Method: <code>POST</code> or <code>PUT</code></li>
+<li>Example: <code>curl -X POST dcron-node:8080/jobs/</code> -d @jobs.json</li>
+</ul>
+<p>Sample job:</p>
+<pre><code>{
+   &quot;name&quot;:&quot;cron_job&quot;,
+   &quot;schedule&quot;:&quot;@every 2s&quot;,
+   &quot;command&quot;:&quot;date&quot;,
+   &quot;owner&quot;:&quot;foo&quot;,
+   &quot;owner_email&quot;:&quot;foo@bar.com&quot;
+}
+</code></pre>
+
 <h2 id="deleting-a-job">Deleting a Job</h2>
 <p>Get a job name from the job listing above. Then:</p>
 <ul>
 <li>Endpoint: <code>/jobs/jobName</code></li>
 <li>Method: <code>DELETE</code></li>
-<li>Example: `curl -L -X DELETE dcron-node:8080/job/aggregate_stats``</li>
+<li>Example: <code>curl -L -X DELETE dcron-node:8080/job/aggregate_stats</code></li>
 </ul>
 <p>Delete a job definition.</p>
 <h2 id="manually-starting-a-job">Manually Starting a Job</h2>
