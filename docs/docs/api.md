@@ -42,6 +42,8 @@ Returns details about the current leader.
 
 ## Create or update a Job
 
+Creates a new job or updates an exsiting job based on it's `name`. The `schedule` can be any valid cron expression or an interval using the `@every Xs` format.
+
 - Endpoint: `/jobs/`
 - Method: `POST` or `PUT`
 - Example: `curl -X POST dcron-node:8080/jobs/ -d @jobs.json`
