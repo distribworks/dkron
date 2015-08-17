@@ -64,7 +64,7 @@ Get a job name from the job listing above. Then:
 
 - Endpoint: `/jobs/jobName`
 - Method: `DELETE`
-- Example: `curl -L -X DELETE dcron-node:8080/job/aggregate_stats``
+- Example: `curl -L -X DELETE dcron-node:8080/job/aggregate_stats`
 
 Delete a job definition.
 
