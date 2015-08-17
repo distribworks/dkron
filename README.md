@@ -1,6 +1,6 @@
 # Dcron - Distributed, fault tolerant job scheduling system
 
-Website: http://www.dcron.io
+Website: http://dcron.io/
 
 Dcron is a distributed cron service, easy to setup and fault tolerant with focus in:
 
