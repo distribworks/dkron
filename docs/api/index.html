@@ -216,6 +216,7 @@
 <li>Example: <code>curl -L -X GET dcron-node:8080/jobs</code></li>
 </ul>
 <h2 id="create-or-update-a-job">Create or update a Job</h2>
+<p>Creates a new job or updates an exsiting job based on it's <code>name</code>. The <code>schedule</code> can be any valid cron expression or an interval using the <code>@every Xs</code> format.</p>
 <ul>
 <li>Endpoint: <code>/jobs/</code></li>
 <li>Method: <code>POST</code> or <code>PUT</code></li>
