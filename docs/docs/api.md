@@ -40,6 +40,24 @@ Returns details about the current leader.
 - Method: `GET`
 - Example: `curl -L -X GET dcron-node:8080/jobs`
 
+## Create or update a Job
+
+- Endpoint: `/jobs`
+- Method: `POST` or `PUT`
+- Example: `curl -X POST dcron-node:8080/jobs/` -d @jobs.json
+
+Sample job:
+
+```
+{
+   "name":"cron_job",
+   "schedule":"@every 2s",
+   "command":"date",
+   "owner":"foo",
+   "owner_email":"foo@bar.com"
+}
+```
+
 ## Deleting a Job
 
 Get a job name from the job listing above. Then:
