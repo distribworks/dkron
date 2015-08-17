@@ -44,6 +44,4 @@ To add jobs to the system read the API docs or take a look to the `job.json` fil
 
 ## Documentation
 
-Full, comprehensive documentation is viewable on the Dcron website:
-
-http://www.dcron.io
+Full, comprehensive documentation is viewable on the Dcron website: http://dcron.io
