@@ -1,4 +1,4 @@
-package dcron
+package dkron
 
 import (
 	"encoding/json"
@@ -9,7 +9,7 @@ import (
 	etcdc "github.com/coreos/go-etcd/etcd"
 )
 
-const keyspace = "/dcron"
+const keyspace = "/dkron"
 
 type etcdClient struct {
 	Client *etcdc.Client

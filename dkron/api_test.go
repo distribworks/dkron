@@ -1,4 +1,4 @@
-package dcron
+package dkron
 
 import (
 	"bytes"

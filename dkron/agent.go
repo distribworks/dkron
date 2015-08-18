@@ -1,4 +1,4 @@
-package dcron
+package dkron
 
 import (
 	"crypto/sha1"
@@ -32,7 +32,7 @@ const (
 	gracefulTimeout = 3 * time.Second
 )
 
-// AgentCommand run dcron server
+// AgentCommand run dkron server
 type AgentCommand struct {
 	Ui         cli.Ui
 	Version    string
@@ -46,8 +46,8 @@ type AgentCommand struct {
 
 func (a *AgentCommand) Help() string {
 	helpText := `
-Usage: dcron agent [options]
-	Run dcron (option -server to run as server)
+Usage: dkron agent [options]
+	Run dkron (option -server to run as server)
 Options:
 `
 	return strings.TrimSpace(helpText)
@@ -69,13 +69,13 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	viper.SetDefault("bind_addr", cmdFlags.Lookup("bind").Value)
 	cmdFlags.String("http-addr", ":8080", "HTTP address")
 	viper.SetDefault("http_addr", cmdFlags.Lookup("http-addr").Value)
-	cmdFlags.String("discover", "dcron", "mDNS discovery name")
+	cmdFlags.String("discover", "dkron", "mDNS discovery name")
 	viper.SetDefault("discover", cmdFlags.Lookup("discover").Value)
 	cmdFlags.String("etcd-machines", "http://127.0.0.1:2379", "etcd machines addresses")
 	viper.SetDefault("etcd_machines", cmdFlags.Lookup("etcd-machines").Value)
 	cmdFlags.String("profile", "lan", "timing profile to use (lan, wan, local)")
 	viper.SetDefault("profile", cmdFlags.Lookup("profile").Value)
-	viper.SetDefault("server", cmdFlags.Bool("server", false, "start dcron server"))
+	viper.SetDefault("server", cmdFlags.Bool("server", false, "start dkron server"))
 	startJoin := &AppendSliceValue{}
 	cmdFlags.Var(startJoin, "join", "address of agent to join on startup")
 	var tag []string
@@ -369,10 +369,10 @@ func (a *AgentCommand) handleSignals() int {
 }
 
 func (a *AgentCommand) Synopsis() string {
-	return "Run dcron"
+	return "Run dkron"
 }
 
-// Dcron leader election routine
+// dkron leader election routine
 func (a *AgentCommand) ElectLeader() bool {
 	leaderKey := a.etcd.GetLeader()
 
@@ -399,14 +399,14 @@ func (a *AgentCommand) ElectLeader() bool {
 		if err != nil {
 			log.Error(res, err)
 		}
-		log.Printf("Successfully set [%s] as dcron leader", a.config.NodeName)
+		log.Printf("Successfully set [%s] as dkron leader", a.config.NodeName)
 		return true
 	}
 
 	return false
 }
 
-// Checks if the dcron server member identified by key, is alive.
+// Checks if the dkron server member identified by key, is alive.
 func (a *AgentCommand) serverAlive(key string) bool {
 	members := a.serf.Members()
 	for _, member := range members {
