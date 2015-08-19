@@ -32,7 +32,7 @@ const (
 	gracefulTimeout = 3 * time.Second
 )
 
-// AgentCommand run dkron server
+// AgentCommand run server
 type AgentCommand struct {
 	Ui         cli.Ui
 	Version    string
@@ -372,7 +372,7 @@ func (a *AgentCommand) Synopsis() string {
 	return "Run dkron"
 }
 
-// dkron leader election routine
+// Leader election routine
 func (a *AgentCommand) ElectLeader() bool {
 	leaderKey := a.etcd.GetLeader()
 
@@ -399,14 +399,14 @@ func (a *AgentCommand) ElectLeader() bool {
 		if err != nil {
 			log.Error(res, err)
 		}
-		log.Printf("Successfully set [%s] as dkron leader", a.config.NodeName)
+		log.Printf("Successfully set [%s] as leader", a.config.NodeName)
 		return true
 	}
 
 	return false
 }
 
-// Checks if the dkron server member identified by key, is alive.
+// Checks if the server member identified by key, is alive.
 func (a *AgentCommand) serverAlive(key string) bool {
 	members := a.serf.Members()
 	for _, member := range members {
