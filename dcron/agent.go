@@ -580,7 +580,7 @@ func (a *AgentCommand) schedulerRestartQuery(leader string) {
 
 // Join asks the Serf instance to join. See the Serf.Join function.
 func (a *AgentCommand) join(addrs []string, replay bool) (n int, err error) {
-	log.Info("agent: joining: %v replay: %v", addrs, replay)
+	log.Infof("agent: joining: %v replay: %v", addrs, replay)
 	ignoreOld := !replay
 	n, err = a.serf.Join(addrs, ignoreOld)
 	if n > 0 {
