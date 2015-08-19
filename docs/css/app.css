@@ -152,7 +152,7 @@ h1, h2, h3, h4, h5, h6 {
   background-size: 100%;
   display: block;
   width: 100px;
-  height: 50px;
+  height: 51px;
   overflow: hidden;
   text-indent: -999em;
   transition: all .2s;
@@ -207,7 +207,7 @@ h1, h2, h3, h4, h5, h6 {
   }
   .navbar-default .navbar-header .brand .logo {
     width: 100px;
-    height: 50px;
+    height: 51px;
   }
   .navbar-default .navbar-header .navbar-nav > .active > a:before,
   .navbar-default .navbar-header .navbar-nav > .active > a:hover:before,
