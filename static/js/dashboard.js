@@ -1,6 +1,6 @@
 var dkron = angular.module('dkron', ['angular-rickshaw']);
 
-dcron.controller('JobListCtrl', function ($scope, $http, $interval) {
+dkron.controller('JobListCtrl', function ($scope, $http, $interval) {
   $scope.click = function(jobName) {
     var response = $http.put('/jobs/' + jobName);
     response.success(function(data, status, headers, config) {
@@ -53,7 +53,7 @@ dcron.controller('JobListCtrl', function ($scope, $http, $interval) {
 
 });
 
-dcron.controller('IndexCtrl', function ($scope, $http, $interval, $element) {
+dkron.controller('IndexCtrl', function ($scope, $http, $interval, $element) {
   $scope.options = {
     renderer: 'line',
     interpolation: 'linear'
