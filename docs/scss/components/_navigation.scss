@@ -1,7 +1,7 @@
 .navbar-default {
 
   // want a gradient also in the navbar
-  @include gradient-dcron;
+  @include gradient-dkron;
 
   margin-bottom:20px;
 
@@ -12,7 +12,7 @@
       margin-left: 0;
 
       .logo {
-        background: transparent url("../img/dcron-logo-white.png") 0 0 no-repeat;
+        background: transparent url("../img/dkron-logo-white.png") 0 0 no-repeat;
         background-size:100%;
         display: block;
         width: 100px;
