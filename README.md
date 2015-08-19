@@ -45,3 +45,7 @@ To add jobs to the system read the API docs or take a look to the `job.json` fil
 ## Documentation
 
 Full, comprehensive documentation is viewable on the Dkron website: http://dkron.io
+
+## Get in touch
+
+Twitter: [@dkronio](https://twitter.com/dkronio) or [@victorcoder](https://twitter.com/victorcoder)
