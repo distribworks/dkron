@@ -1,6 +1,6 @@
 # Configuration
 
-Settings for dkron can be specified in three ways: Using a `config/dkron.json` config file, using env variables starting with `dkron_` or using command line arguments.
+Settings for dkron can be specified in three ways: Using a `config/dkron.json` config file, using env variables starting with `DKRON_` or using command line arguments.
 
 ## Command line options
 
