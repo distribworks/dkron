@@ -1,4 +1,4 @@
-var dcron = angular.module('dcron', ['angular-rickshaw']);
+var dkron = angular.module('dkron', ['angular-rickshaw']);
 
 dcron.controller('JobListCtrl', function ($scope, $http, $interval) {
   $scope.click = function(jobName) {

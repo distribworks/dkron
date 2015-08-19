@@ -2,7 +2,7 @@
 
 ## Dkron vs. Chronos
 
-Airbnb's Chronos is a job scheduler that is similar to dcron, it's distributed and fault tolerant thanks to the use of Zookeeper and Apache Mesos.
+Airbnb's Chronos is a job scheduler that is similar to dkron, it's distributed and fault tolerant thanks to the use of Zookeeper and Apache Mesos.
 
 It has a lot of nice features, like task dependencies, etc.
 

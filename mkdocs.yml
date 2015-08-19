@@ -1,5 +1,5 @@
 ---
-site_name: Dkron - Distributed cron
+site_name: Dkron - Distributed, fault tolerant job scheduling system
 theme: yeti
 theme_dir: 'dkron_theme'
 extra_css: ["css/app.css"]
@@ -8,7 +8,7 @@ site_url: http://dkron.io
 repo_url: https://github.com/victorcoder/dkron
 site_author: Victor Castell
 copyright: © 2015 Victor Castell - victor@victorcastell.com
-google_analytics: ['UA-571371-14', 'dcron.io']
+google_analytics: ['UA-571371-14', 'dkron.io']
 pages:
   - Home: 'index.md'
   - Intro: 'intro.md'

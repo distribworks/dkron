@@ -2,4 +2,4 @@
 
 set -e
 
-godep go build -o bin/dcron
+godep go build -o bin/dkron
