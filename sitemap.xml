@@ -3,16 +3,16 @@
 
     
     <url>
-     <loc>http://dcron.io/</loc>
-     <lastmod>2015-08-18</lastmod>
+     <loc>http://dkron.io/</loc>
+     <lastmod>2015-08-20</lastmod>
      <changefreq>daily</changefreq>
     </url>
     
 
     
     <url>
-     <loc>http://dcron.io/intro/</loc>
-     <lastmod>2015-08-18</lastmod>
+     <loc>http://dkron.io/intro/</loc>
+     <lastmod>2015-08-20</lastmod>
      <changefreq>daily</changefreq>
     </url>
     
@@ -20,20 +20,20 @@
     
         
     <url>
-     <loc>http://dcron.io/docs/getting-started/</loc>
-     <lastmod>2015-08-18</lastmod>
+     <loc>http://dkron.io/docs/getting-started/</loc>
+     <lastmod>2015-08-20</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
-     <loc>http://dcron.io/docs/configuration/</loc>
-     <lastmod>2015-08-18</lastmod>
+     <loc>http://dkron.io/docs/configuration/</loc>
+     <lastmod>2015-08-20</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
-     <loc>http://dcron.io/docs/api/</loc>
-     <lastmod>2015-08-18</lastmod>
+     <loc>http://dkron.io/docs/api/</loc>
+     <lastmod>2015-08-20</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
@@ -42,14 +42,14 @@
     
         
     <url>
-     <loc>http://dcron.io/about/dcron_vs_other_software/</loc>
-     <lastmod>2015-08-18</lastmod>
+     <loc>http://dkron.io/about/dkron_vs_other_software/</loc>
+     <lastmod>2015-08-20</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
-     <loc>http://dcron.io/about/license/</loc>
-     <lastmod>2015-08-18</lastmod>
+     <loc>http://dkron.io/about/license/</loc>
+     <lastmod>2015-08-20</lastmod>
      <changefreq>daily</changefreq>
     </url>
         

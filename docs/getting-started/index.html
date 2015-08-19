@@ -6,10 +6,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         <meta name="author" content="Victor Castell">
-        <link rel="canonical" href="http://dcron.io/docs/getting-started/">
+        <link rel="canonical" href="http://dkron.io/docs/getting-started/">
         <link rel="shortcut icon" href="../../img/favicon.ico">
 
-	<title>Getting started - Dcron - Distributed cron</title>
+	<title>Getting started - Dkron - Distributed, fault tolerant job scheduling system</title>
 
         <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
@@ -28,7 +28,7 @@
             (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
             m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
             })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-            ga('create', 'UA-571371-14', 'dcron.io');
+            ga('create', 'UA-571371-14', 'dkron.io');
             ga('send', 'pageview');
         </script>
         
@@ -51,7 +51,7 @@
 
                 <!-- Main title -->
                 <div class="brand">
-                    <a class="logo" href="../..">Dcron</a>
+                    <a class="logo" href="../..">Dkron</a>
                 </div>
             </div>
 
@@ -99,7 +99,7 @@
                         <ul class="dropdown-menu">
                         
                             <li >
-                                <a href="../../about/dcron_vs_other_software/">Dcron vs other software</a>
+                                <a href="../../about/dkron_vs_other_software/">Dkron vs other software</a>
                             </li>
                         
                             <li >
@@ -131,14 +131,14 @@
                     
 
                     <li>
-                        <a href="https://twitter.com/dcronio">
+                        <a href="https://twitter.com/dkronio">
                           <i class="fa fa-twitter fa-lg"></i>
                           Follow
                         </a>
                     </li>
 
                     <li>
-                        <a href="https://github.com/victorcoder/dcron/releases">
+                        <a href="https://github.com/victorcoder/dkron/releases">
                           <i class="fa fa-cloud-download fa-lg"></i>
                           Download
                         </a>
@@ -146,7 +146,7 @@
 
                     
                     <li>
-                        <a href="https://github.com/victorcoder/dcron">
+                        <a href="https://github.com/victorcoder/dkron">
                             <i class="fa fa-github fa-lg"></i>
                             GitHub
                         </a>
@@ -180,34 +180,34 @@
                 <div class="col-md-9" role="main">
 
 <h1 id="getting-started">Getting started</h1>
-<p>Welcome to the intro guide to Dcron! This will explain how to setup dcron, how easy is to use it, what problems could it help you to solve, etc.</p>
+<p>Welcome to the intro guide to dkron! This will explain how to setup dkron, how easy is to use it, what problems could it help you to solve, etc.</p>
 <h2 id="introduction">Introduction</h2>
-<p>Dcron nodes can work in two modes, agents or servers.</p>
+<p>dkron nodes can work in two modes, agents or servers.</p>
 <p>Servers are agents too. You can use servers to run jobs.</p>
 <p>The main distinction is that servers order job executions and can be used to schedule jobs.</p>
-<p>Dcron servers have a leader, the leader is responsible of executing jobs in the cluster.</p>
-<p>Any dcron agent or server acts as a cluster member and it's available to run scheduled tasks.</p>
+<p>dkron servers have a leader, the leader is responsible of executing jobs in the cluster.</p>
+<p>Any dkron agent or server acts as a cluster member and it's available to run scheduled tasks.</p>
 <p>You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run. For example you can specify to run a job at 5:00am in all servers with role=web tag or you can specify to run a job in just one server of having the role=web tag:</p>
 <pre><code>role=web:1
 </code></pre>
 
-<p>Dcron will try to run the job in the amount of nodes indicated by that count having that tag.</p>
+<p>dkron will try to run the job in the amount of nodes indicated by that count having that tag.</p>
 <p>This gives an unprecedented level of flexibility in runnig jobs across a cluster of any size and with any combination of machines you need.</p>
 <p>All the execution responses will be gathered by the scheduler and stored in the database.</p>
 <h2 id="installation">Installation</h2>
 <p>Simply download the packaged archive for your platform from the downloads page, extract the package to a shared location in your drive, like <code>/opt/local</code> and run it from there.</p>
 <h3 id="ubuntu">Ubuntu</h3>
-<p>Sample upstart scripts for Dcron are included in the <code>extras</code> folder</p>
+<p>Sample upstart scripts for dkron are included in the <code>extras</code> folder</p>
 <h3 id="debian">Debian</h3>
 <p>Sample init scripts are included in the <code>extras</code> folder</p>
 <h2 id="configuration">Configuration</h2>
 <p>See the <a href="../configuration">configuration section</a>.</p>
 <h2 id="usage">Usage</h2>
-<p>Dcron relies on etcd for data storage, the etcd executable is included in the package and can be used to run an etcd node along with dcron servers.</p>
-<p>By default Dcron will start the etcd server when running in server mode and try to form a cluster.</p>
+<p>dkron relies on etcd for data storage, the etcd executable is included in the package and can be used to run an etcd node along with dkron servers.</p>
+<p>By default dkron will start the etcd server when running in server mode and try to form a cluster.</p>
 <p>If you want to use an existing etcd cluster of your own, you can specify it by setting the <code>no-etcd</code> flag in the config file or as a command line flag.</p>
-<p>To start a Dcron server instance just run:</p>
-<pre><code>dcron agent -server
+<p>To start a dkron server instance just run:</p>
+<pre><code>dkron agent -server
 </code></pre></div>
               </div>
 
@@ -218,7 +218,7 @@
         <footer class="col-md-12" role="contentinfo">
             <hr>
             <div class="footer-logo">
-              <img src="/img/dcron-logo-blue.png"/>
+              <img src="/img/dkron-logo-blue.png"/>
             </div>
              
                 <p>© 2015 Victor Castell - victor@victorcastell.com</p>

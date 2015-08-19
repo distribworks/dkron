@@ -27,14 +27,14 @@
         text-align: center;
       }
 
-      .dcron-logo {
+      .dkron-logo {
         display:none;
       }
     }
   }
 
   background: $color-base;
-  @include gradient-dcron;
+  @include gradient-dkron;
 }
 
 
@@ -58,7 +58,7 @@
           }
         }
 
-        .dcron-logo {
+        .dkron-logo {
           margin-top:1.7em;
           display:block;
           height:200px;
