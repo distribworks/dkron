@@ -80,6 +80,8 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	cmdFlags.Var(startJoin, "join", "address of agent to join on startup")
 	var tag []string
 	cmdFlags.Var((*AppendSliceValue)(&tag), "tag", "tag pair, specified as key=value")
+	cmdFlags.String("keyspace", "dkron", "etcd key namespace to use")
+	viper.SetDefault("keyspace", cmdFlags.Lookup("keyspace").Value)
 
 	if err := cmdFlags.Parse(args); err != nil {
 		log.Fatal(err)
@@ -112,6 +114,7 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 		Profile:      viper.GetString("profile"),
 		StartJoin:    *startJoin,
 		Tags:         tags,
+		Keyspace:     viper.GetString("keyspace"),
 	}
 
 	// log.Fatal(config.EtcdMachines)
@@ -303,7 +306,7 @@ func (a *AgentCommand) Run(args []string) int {
 	a.join(a.config.StartJoin, true)
 
 	if a.config.Server {
-		a.etcd = NewEtcdClient(a.config.EtcdMachines, a)
+		a.etcd = NewEtcdClient(a.config.EtcdMachines, a, a.config.Keyspace)
 		a.sched = NewScheduler()
 
 		go func() {
@@ -379,7 +382,7 @@ func (a *AgentCommand) ElectLeader() bool {
 	if leaderKey != "" {
 		if !a.serverAlive(leaderKey) {
 			log.Debug("Trying to set itself as leader")
-			res, err := a.etcd.Client.CompareAndSwap(keyspace+"/leader", a.config.Tags["key"], 0, leaderKey, 0)
+			res, err := a.etcd.Client.CompareAndSwap(a.config.Keyspace+"/leader", a.config.Tags["key"], 0, leaderKey, 0)
 			if err != nil {
 				log.Errorln("Error trying to set itself as leader", err)
 				return false
@@ -395,7 +398,7 @@ func (a *AgentCommand) ElectLeader() bool {
 		}
 	} else {
 		log.Debug("Trying to set itself as leader")
-		res, err := a.etcd.Client.Create(keyspace+"/leader", a.config.NodeName, 0)
+		res, err := a.etcd.Client.Create(a.config.Keyspace+"/leader", a.config.NodeName, 0)
 		if err != nil {
 			log.Error(res, err)
 		}

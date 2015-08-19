@@ -29,6 +29,7 @@ type Config struct {
 	Server                bool
 	EncryptKey            string
 	StartJoin             AppendSliceValue
+	Keyspace              string
 }
 
 // This is the default port that we use for Serf communication
