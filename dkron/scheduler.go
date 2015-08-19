@@ -1,10 +1,10 @@
-package dcron
+package dkron
 
 import (
 	"sync"
 	"time"
 
-	"github.com/victorcoder/dcron/cron"
+	"github.com/victorcoder/dkron/cron"
 )
 
 type Scheduler struct {

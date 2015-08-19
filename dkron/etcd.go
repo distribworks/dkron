@@ -1,4 +1,4 @@
-package dcron
+package dkron
 
 import (
 	"encoding/json"
@@ -9,11 +9,10 @@ import (
 	etcdc "github.com/coreos/go-etcd/etcd"
 )
 
-const keyspace = "/dcron"
-
 type etcdClient struct {
-	Client *etcdc.Client
-	agent  *AgentCommand
+	Client   *etcdc.Client
+	agent    *AgentCommand
+	keyspace string
 }
 
 // ServerStats encapsulates various statistics about an EtcdServer and its
@@ -43,14 +42,14 @@ func init() {
 	etcdc.SetLogger(stdlog.New(log.Writer(), "go-etcd", stdlog.LstdFlags))
 }
 
-func NewEtcdClient(machines []string, a *AgentCommand) *etcdClient {
-	return &etcdClient{Client: etcdc.NewClient(machines), agent: a}
+func NewEtcdClient(machines []string, a *AgentCommand, keyspace string) *etcdClient {
+	return &etcdClient{Client: etcdc.NewClient(machines), agent: a, keyspace: keyspace}
 }
 
 func (e *etcdClient) SetJob(job *Job) error {
 	jobJson, _ := json.Marshal(job)
 	log.Debugf("Setting etcd key %s: %s", job.Name, string(jobJson))
-	if _, err := e.Client.Set(keyspace+"/jobs/"+job.Name, string(jobJson), 0); err != nil {
+	if _, err := e.Client.Set(e.keyspace+"/jobs/"+job.Name, string(jobJson), 0); err != nil {
 		return err
 	}
 
@@ -58,7 +57,7 @@ func (e *etcdClient) SetJob(job *Job) error {
 }
 
 func (e *etcdClient) GetJobs() ([]*Job, error) {
-	res, err := e.Client.Get(keyspace+"/jobs/", true, false)
+	res, err := e.Client.Get(e.keyspace+"/jobs/", true, false)
 	if err != nil {
 		eerr := err.(*etcdc.EtcdError)
 		if eerr.ErrorCode == 100 {
@@ -84,7 +83,7 @@ func (e *etcdClient) GetJobs() ([]*Job, error) {
 }
 
 func (e *etcdClient) GetJob(name string) (*Job, error) {
-	res, err := e.Client.Get(keyspace+"/jobs/"+name, false, false)
+	res, err := e.Client.Get(e.keyspace+"/jobs/"+name, false, false)
 	if err != nil {
 		return nil, err
 	}
@@ -99,7 +98,7 @@ func (e *etcdClient) GetJob(name string) (*Job, error) {
 }
 
 func (e *etcdClient) GetExecutions(jobName string) ([]*Execution, error) {
-	res, err := e.Client.Get(fmt.Sprintf("%s/executions/%s", keyspace, jobName), true, false)
+	res, err := e.Client.Get(fmt.Sprintf("%s/executions/%s", e.keyspace, jobName), true, false)
 	if err != nil {
 		return nil, err
 	}
@@ -122,7 +121,7 @@ func (e *etcdClient) SetExecution(execution *Execution) (string, error) {
 	key := fmt.Sprintf("%d-%s", execution.StartedAt.UnixNano(), execution.NodeName)
 
 	log.Debugf("Setting etcd key %s: %s", execution.JobName, string(eJson))
-	res, err := e.Client.Set(fmt.Sprintf("%s/executions/%s/%s", keyspace, execution.JobName, key), string(eJson), 0)
+	res, err := e.Client.Set(fmt.Sprintf("%s/executions/%s/%s", e.keyspace, execution.JobName, key), string(eJson), 0)
 	if err != nil {
 		return "", err
 	}
@@ -131,7 +130,7 @@ func (e *etcdClient) SetExecution(execution *Execution) (string, error) {
 }
 
 func (e *etcdClient) GetLeader() string {
-	res, err := e.Client.Get(keyspace+"/leader", false, false)
+	res, err := e.Client.Get(e.keyspace+"/leader", false, false)
 	if err != nil {
 		if eerr, ok := err.(*etcdc.EtcdError); ok {
 			if eerr.ErrorCode == etcdc.ErrCodeEtcdNotReachable {

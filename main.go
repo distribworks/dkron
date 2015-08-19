@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/mitchellh/cli"
-	"github.com/victorcoder/dcron/dcron"
+	"github.com/victorcoder/dkron/dkron"
 	"log"
 	"os"
 )
@@ -12,14 +12,14 @@ const (
 )
 
 func main() {
-	c := cli.NewCLI("dcron", VERSION)
+	c := cli.NewCLI("dkron", VERSION)
 	c.Args = os.Args[1:]
-	c.HelpFunc = cli.BasicHelpFunc("dcron")
+	c.HelpFunc = cli.BasicHelpFunc("dkron")
 
 	ui := &cli.BasicUi{Writer: os.Stdout}
 	c.Commands = map[string]cli.CommandFactory{
 		"agent": func() (cli.Command, error) {
-			return &dcron.AgentCommand{
+			return &dkron.AgentCommand{
 				Ui:      ui,
 				Version: VERSION,
 			}, nil

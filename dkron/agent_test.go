@@ -1,4 +1,4 @@
-package dcron
+package dkron
 
 import (
 	"testing"
@@ -69,7 +69,7 @@ func TestAgentCommandElectLeader(t *testing.T) {
 	}
 
 	etcd := etcdc.NewClient([]string{})
-	_, err := etcd.DeleteDir("dcron")
+	_, err := etcd.DeleteDir("dkron")
 	if err != nil {
 		if eerr, ok := err.(*etcdc.EtcdError); ok {
 			if eerr.ErrorCode == etcdc.ErrCodeEtcdNotReachable {
@@ -128,7 +128,7 @@ func TestAgentCommandElectLeader(t *testing.T) {
 	stop := make(chan bool)
 	time.Sleep(2 * time.Second)
 
-	go etcd.Watch("/dcron/leader", 0, false, receiver, stop)
+	go etcd.Watch("/dkron/leader", 0, false, receiver, stop)
 
 	// Verify it runs "forever"
 	select {
@@ -158,7 +158,7 @@ func Test_processFilteredNodes(t *testing.T) {
 	}
 
 	etcd := etcdc.NewClient([]string{})
-	_, err := etcd.DeleteDir("dcron")
+	_, err := etcd.DeleteDir("dkron")
 	if err != nil {
 		if eerr, ok := err.(*etcdc.EtcdError); ok {
 			if eerr.ErrorCode == etcdc.ErrCodeEtcdNotReachable {

@@ -148,11 +148,11 @@ h1, h2, h3, h4, h5, h6 {
   margin-left: 0;
 }
 .navbar-default .navbar-header .brand .logo {
-  background: transparent url("../img/dcron-logo-white.png") 0 0 no-repeat;
+  background: transparent url("../img/dkron-logo-white.png") 0 0 no-repeat;
   background-size: 100%;
   display: block;
   width: 100px;
-  height: 50px;
+  height: 51px;
   overflow: hidden;
   text-indent: -999em;
   transition: all .2s;
@@ -207,7 +207,7 @@ h1, h2, h3, h4, h5, h6 {
   }
   .navbar-default .navbar-header .brand .logo {
     width: 100px;
-    height: 50px;
+    height: 51px;
   }
   .navbar-default .navbar-header .navbar-nav > .active > a:before,
   .navbar-default .navbar-header .navbar-nav > .active > a:hover:before,
@@ -487,7 +487,7 @@ footer[role="contentinfo"] p {
 #jumbotron-mask #jumbotron .container h2 {
   text-align: center;
 }
-#jumbotron-mask #jumbotron .container .dcron-logo {
+#jumbotron-mask #jumbotron .container .dkron-logo {
   display: none;
 }
 
@@ -507,7 +507,7 @@ footer[role="contentinfo"] p {
     line-height: 1.2em;
     font-size: 2em;
   }
-  #jumbotron-mask #jumbotron .container .dcron-logo {
+  #jumbotron-mask #jumbotron .container .dkron-logo {
     margin-top: 1.7em;
     display: block;
     height: 200px;
@@ -516,7 +516,7 @@ footer[role="contentinfo"] p {
     margin-right: 3.44828%;
     margin-left: 8.47458%;
   }
-  #jumbotron-mask #jumbotron .container .dcron-logo img {
+  #jumbotron-mask #jumbotron .container .dkron-logo img {
     width: auto;
     height: 200px;
   }

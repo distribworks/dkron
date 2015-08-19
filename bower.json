@@ -1,8 +1,8 @@
 {
-  "name": "dcron-dashboard",
-  "description": "Dcron dashboard",
+  "name": "dkron-dashboard",
+  "description": "Dkron dashboard",
   "version": "0.0.0",
-  "homepage": "https://dcron.io",
+  "homepage": "https://dkron.io",
   "license": "LGPL3",
   "private": true,
   "directory": "static/components",

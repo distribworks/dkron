@@ -1,4 +1,4 @@
-package dcron
+package dkron
 
 import (
 	"encoding/base64"
@@ -29,15 +29,16 @@ type Config struct {
 	Server                bool
 	EncryptKey            string
 	StartJoin             AppendSliceValue
+	Keyspace              string
 }
 
 // This is the default port that we use for Serf communication
 const DefaultBindPort int = 7946
 
 func init() {
-	viper.SetConfigName("dcron")        // name of config file (without extension)
-	viper.AddConfigPath("/etc/dcron")   // call multiple times to add many search paths
-	viper.AddConfigPath("$HOME/.dcron") // call multiple times to add many search paths
+	viper.SetConfigName("dkron")        // name of config file (without extension)
+	viper.AddConfigPath("/etc/dkron")   // call multiple times to add many search paths
+	viper.AddConfigPath("$HOME/.dkron") // call multiple times to add many search paths
 	viper.AddConfigPath("./config")     // call multiple times to add many search paths
 	err := viper.ReadInConfig()         // Find and read the config file
 	if err != nil {                     // Handle errors reading the config file

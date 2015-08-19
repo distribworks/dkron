@@ -1,4 +1,4 @@
-package dcron
+package dkron
 
 import (
 	"crypto/sha1"
@@ -32,7 +32,7 @@ const (
 	gracefulTimeout = 3 * time.Second
 )
 
-// AgentCommand run dcron server
+// AgentCommand run server
 type AgentCommand struct {
 	Ui         cli.Ui
 	Version    string
@@ -46,8 +46,8 @@ type AgentCommand struct {
 
 func (a *AgentCommand) Help() string {
 	helpText := `
-Usage: dcron agent [options]
-	Run dcron (option -server to run as server)
+Usage: dkron agent [options]
+	Run dkron (option -server to run as server)
 Options:
 `
 	return strings.TrimSpace(helpText)
@@ -69,17 +69,19 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	viper.SetDefault("bind_addr", cmdFlags.Lookup("bind").Value)
 	cmdFlags.String("http-addr", ":8080", "HTTP address")
 	viper.SetDefault("http_addr", cmdFlags.Lookup("http-addr").Value)
-	cmdFlags.String("discover", "dcron", "mDNS discovery name")
+	cmdFlags.String("discover", "dkron", "mDNS discovery name")
 	viper.SetDefault("discover", cmdFlags.Lookup("discover").Value)
 	cmdFlags.String("etcd-machines", "http://127.0.0.1:2379", "etcd machines addresses")
 	viper.SetDefault("etcd_machines", cmdFlags.Lookup("etcd-machines").Value)
 	cmdFlags.String("profile", "lan", "timing profile to use (lan, wan, local)")
 	viper.SetDefault("profile", cmdFlags.Lookup("profile").Value)
-	viper.SetDefault("server", cmdFlags.Bool("server", false, "start dcron server"))
+	viper.SetDefault("server", cmdFlags.Bool("server", false, "start dkron server"))
 	startJoin := &AppendSliceValue{}
 	cmdFlags.Var(startJoin, "join", "address of agent to join on startup")
 	var tag []string
 	cmdFlags.Var((*AppendSliceValue)(&tag), "tag", "tag pair, specified as key=value")
+	cmdFlags.String("keyspace", "dkron", "etcd key namespace to use")
+	viper.SetDefault("keyspace", cmdFlags.Lookup("keyspace").Value)
 
 	if err := cmdFlags.Parse(args); err != nil {
 		log.Fatal(err)
@@ -112,6 +114,7 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 		Profile:      viper.GetString("profile"),
 		StartJoin:    *startJoin,
 		Tags:         tags,
+		Keyspace:     viper.GetString("keyspace"),
 	}
 
 	// log.Fatal(config.EtcdMachines)
@@ -303,7 +306,7 @@ func (a *AgentCommand) Run(args []string) int {
 	a.join(a.config.StartJoin, true)
 
 	if a.config.Server {
-		a.etcd = NewEtcdClient(a.config.EtcdMachines, a)
+		a.etcd = NewEtcdClient(a.config.EtcdMachines, a, a.config.Keyspace)
 		a.sched = NewScheduler()
 
 		go func() {
@@ -369,17 +372,17 @@ func (a *AgentCommand) handleSignals() int {
 }
 
 func (a *AgentCommand) Synopsis() string {
-	return "Run dcron"
+	return "Run dkron"
 }
 
-// Dcron leader election routine
+// Leader election routine
 func (a *AgentCommand) ElectLeader() bool {
 	leaderKey := a.etcd.GetLeader()
 
 	if leaderKey != "" {
 		if !a.serverAlive(leaderKey) {
 			log.Debug("Trying to set itself as leader")
-			res, err := a.etcd.Client.CompareAndSwap(keyspace+"/leader", a.config.Tags["key"], 0, leaderKey, 0)
+			res, err := a.etcd.Client.CompareAndSwap(a.config.Keyspace+"/leader", a.config.Tags["key"], 0, leaderKey, 0)
 			if err != nil {
 				log.Errorln("Error trying to set itself as leader", err)
 				return false
@@ -395,18 +398,18 @@ func (a *AgentCommand) ElectLeader() bool {
 		}
 	} else {
 		log.Debug("Trying to set itself as leader")
-		res, err := a.etcd.Client.Create(keyspace+"/leader", a.config.NodeName, 0)
+		res, err := a.etcd.Client.Create(a.config.Keyspace+"/leader", a.config.NodeName, 0)
 		if err != nil {
 			log.Error(res, err)
 		}
-		log.Printf("Successfully set [%s] as dcron leader", a.config.NodeName)
+		log.Printf("Successfully set [%s] as leader", a.config.NodeName)
 		return true
 	}
 
 	return false
 }
 
-// Checks if the dcron server member identified by key, is alive.
+// Checks if the server member identified by key, is alive.
 func (a *AgentCommand) serverAlive(key string) bool {
 	members := a.serf.Members()
 	for _, member := range members {
