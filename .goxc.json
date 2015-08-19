@@ -19,7 +19,7 @@
 			"outputFormat": "by-file-extension",
 			"owner": "victorcoder",
 			"prerelease": true,
-			"repository": "dcron"
+			"repository": "dkron"
 		}
 	},
 	"ConfigVersion": "0.9",
