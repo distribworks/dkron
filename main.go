@@ -1,10 +1,11 @@
 package main
 
 import (
-	"github.com/mitchellh/cli"
-	"github.com/victorcoder/dkron/dkron"
 	"log"
 	"os"
+
+	"github.com/mitchellh/cli"
+	"github.com/victorcoder/dkron/dkron"
 )
 
 const (
