@@ -48,5 +48,5 @@ Full, comprehensive documentation is viewable on the Dkron website: http://dkron
 
 ## Get in touch
 
-Twitter: [@dkronio](https://twitter.com/dkronio) or [@victorcoder](https://twitter.com/victorcoder)
-Email: victor at victorcastell.com
+- Twitter: [@dkronio](https://twitter.com/dkronio) or [@victorcoder](https://twitter.com/victorcoder)
+- Email: victor at victorcastell.com
