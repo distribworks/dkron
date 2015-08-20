@@ -147,12 +147,12 @@
         }, 
         {
             "location": "/about/license/", 
-            "text": "License\n\n\nCopyright (c) Victor Castell\n\n\nDcron is an Open Source project licensed under the terms of\nthe LGPLv3 license.  Please see \nhttp://www.gnu.org/licenses/lgpl-3.0.html\n\nfor license text.", 
+            "text": "License\n\n\nCopyright (c) Victor Castell\n\n\nDkron is an Open Source project licensed under the terms of\nthe LGPLv3 license.  Please see \nhttp://www.gnu.org/licenses/lgpl-3.0.html\n\nfor license text.", 
             "title": "License"
         }, 
         {
             "location": "/about/license/#license", 
-            "text": "Copyright (c) Victor Castell  Dcron is an Open Source project licensed under the terms of\nthe LGPLv3 license.  Please see  http://www.gnu.org/licenses/lgpl-3.0.html \nfor license text.", 
+            "text": "Copyright (c) Victor Castell  Dkron is an Open Source project licensed under the terms of\nthe LGPLv3 license.  Please see  http://www.gnu.org/licenses/lgpl-3.0.html \nfor license text.", 
             "title": "License"
         }
     ]
