@@ -33,7 +33,7 @@ type Config struct {
 }
 
 // This is the default port that we use for Serf communication
-const DefaultBindPort int = 7946
+const DefaultBindPort int = 8946
 
 func init() {
 	viper.SetConfigName("dkron")        // name of config file (without extension)
