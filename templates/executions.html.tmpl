@@ -6,24 +6,24 @@
   </div>
 
   <table class="table table-striped">
-	<tr>
-	  <th>Job</th>
-	  <th>Started At</th>
-	  <th>Finished At</th>
-	  <th>Node</th>
-	  <th>Output</th>
-	  <th>Success</th>
-	</tr>
-        {{ range $ex := .Executions }}
-        <tr>
-	  <td>{{ $ex.JobName }}</td>
-	  <td>{{ $ex.StartedAt }}</td>
-	  <td>{{ $ex.FinishedAt }}</td>
-	  <td>{{ $ex.NodeName }}</td>
-	  <td>{{ html $ex.Output }}</td>
-	  <td>{{ $ex.Success }}</td>
-	</tr>
-	{{ end }}
-      </table>
+    <tr>
+      <th>Job</th>
+      <th>Started At</th>
+      <th>Finished At</th>
+      <th>Node</th>
+      <th>Output</th>
+      <th>Success</th>
+    </tr>
+    {{ range $ex := .Executions }}
+    <tr>
+      <td>{{ $ex.JobName }}</td>
+      <td>{{ $ex.StartedAt }}</td>
+      <td>{{ $ex.FinishedAt }}</td>
+      <td>{{ $ex.NodeName }}</td>
+      <td>{{ html $ex.Output }}</td>
+      <td>{{ $ex.Success }}</td>
+    </tr>
+    {{ end }}
+  </table>
 </div>
 {{end}}

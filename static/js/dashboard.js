@@ -90,7 +90,7 @@ dkron.controller('IndexCtrl', function ($scope, $http, $interval, $element) {
       }
   };
 
-  $interval(function() {
+  updateView = function() {
     var response = $http.get('/jobs/');
     response.success(function(data, status, headers, config) {
       $scope.updateGraph(data);
@@ -98,9 +98,17 @@ dkron.controller('IndexCtrl', function ($scope, $http, $interval, $element) {
 
     response.error(function(data, status, headers, config) {
       $('#message').html('<div class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Error getting data</div>');
-
     });
-  }, 2000);
+
+    var mq = $http.get('/members/');
+    mq.success(function(data, status, headers, config) {
+      $scope.members = data;
+    });
+
+    mq.error(function(data, status, headers, config) {
+      $('#message').html('<div class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Error getting data</div>');
+    });
+  }
 
   $scope.success_count = 0;
   $scope.error_count = 0;
@@ -161,4 +169,10 @@ dkron.controller('IndexCtrl', function ($scope, $http, $interval, $element) {
       data: gdata
     };
   }
+
+  $interval(function() {
+    updateView();
+  }, 2000);
+
+  updateView();
 });

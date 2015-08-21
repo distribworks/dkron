@@ -9,6 +9,21 @@ import (
 	"github.com/gorilla/mux"
 )
 
+type commonDashboardData struct {
+	Version    string
+	LeaderName string
+	MemberName string
+}
+
+func newCommonDashboardData(a *AgentCommand, nodeName string) *commonDashboardData {
+	l, _ := a.leaderMember()
+	return &commonDashboardData{
+		Version:    a.Version,
+		LeaderName: l.Name,
+		MemberName: nodeName,
+	}
+}
+
 func (a *AgentCommand) dashboardRoutes(r *mux.Router) {
 	subui := r.PathPrefix("/dashboard").Subrouter()
 	subui.HandleFunc("/", a.dashboardIndexHandler).Methods("GET")
@@ -41,16 +56,13 @@ func (a *AgentCommand) dashboardIndexHandler(w http.ResponseWriter, r *http.Requ
 	}
 	json.Unmarshal(res.Body, &ss)
 
-	l, _ := a.leaderMember()
 	data := struct {
-		Version     string
-		LeaderName  string
+		Common      *commonDashboardData
 		EtcdVersion string
 		Stats       *EtcdServerStats
 		StartTime   string
 	}{
-		Version:     a.Version,
-		LeaderName:  l.Name,
+		Common:      newCommonDashboardData(a, a.config.NodeName),
 		EtcdVersion: version.Etcdserver,
 		Stats:       ss,
 		StartTime:   ss.LeaderInfo.StartTime.Format("2/Jan/2006 15:05:05"),

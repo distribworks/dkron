@@ -13,6 +13,30 @@
   </div>
 
   <div class="row">
+    <h2>Members</h2>
+    <table class="table table-striped">
+      <tr>
+        <th>Name</th>
+        <th>Address</th>
+        <th>Port</th>
+        <th>Status</th>
+        <th>Tags</th>
+      </tr>
+      <tr ng-repeat="member in members">
+        <td ng-bind="member.Name"></td>
+        <td ng-bind="member.Addr"></td>
+        <td ng-bind="member.Port"></td>
+        <td ng-bind="member.Status"></td>
+        <td>
+          <div ng-repeat="(key, value) in member.Tags">
+            <span ng-bind="key + ': '"></span><span ng-bind="value"></span>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="row">
     <h2>etcd</h2>
 
     <div class="col-md-3">

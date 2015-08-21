@@ -75,10 +75,13 @@
         <div class="container text-center">
             <ul class="nav">
               <li>
-                <p class="navbar-text">Dkron v{{ .Version }}</p>
+                <p class="navbar-text">Dkron v{{ .Common.Version }}</p>
               </li>
               <li>
-                <p class="navbar-text">Leader: {{ .LeaderName }}</p>
+                <p class="navbar-text">Member: {{ .Common.MemberName }}</p>
+              </li>
+              <li>
+                <p class="navbar-text">Leader: {{ .Common.LeaderName }}</p>
               </li>
             </ul>
         </div>
