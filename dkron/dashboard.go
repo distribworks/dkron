@@ -87,15 +87,12 @@ func (a *AgentCommand) dashboardJobsHandler(w http.ResponseWriter, r *http.Reque
 	tmpl := template.Must(template.New("dashboard.html.tmpl").Funcs(funcs).ParseFiles(
 		"templates/dashboard.html.tmpl", "templates/jobs.html.tmpl", "templates/status.html.tmpl"))
 
-	l, _ := a.leaderMember()
 	data := struct {
-		Version    string
-		LeaderName string
-		Jobs       []*Job
+		Common *commonDashboardData
+		Jobs   []*Job
 	}{
-		Version:    a.Version,
-		LeaderName: l.Name,
-		Jobs:       jobs,
+		Common: newCommonDashboardData(a, a.config.NodeName),
+		Jobs:   jobs,
 	}
 
 	if err := tmpl.Execute(w, data); err != nil {
@@ -121,15 +118,12 @@ func (a *AgentCommand) dashboardExecutionsHandler(w http.ResponseWriter, r *http
 		execs = execs[len(execs)-100 : len(execs)]
 	}
 
-	l, _ := a.leaderMember()
 	data := struct {
-		Version    string
-		LeaderName string
+		Common     *commonDashboardData
 		Executions []*Execution
 		JobName    string
 	}{
-		Version:    a.Version,
-		LeaderName: l.Name,
+		Common:     newCommonDashboardData(a, a.config.NodeName),
 		Executions: execs,
 		JobName:    job,
 	}
