@@ -12,7 +12,7 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval) {
     });
   };
 
-  $interval(function() {
+  var updateView = function() {
     var response = $http.get('/jobs/');
     response.success(function(data, status, headers, config) {
       $scope.updateStatus(data);
@@ -21,7 +21,7 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval) {
     response.error(function(data, status, headers, config) {
       $('#message').html('<div class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Error getting data</div>');
     });
-  }, 2000);
+  }
 
   $scope.success_count = 0;
   $scope.error_count = 0;
@@ -50,6 +50,12 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval) {
     $scope.success_count = success_count;
     $scope.error_count = error_count;
   }
+
+  $interval(function() {
+    updateView();
+  }, 2000);
+
+  updateView();
 
 });
 
