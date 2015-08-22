@@ -9,6 +9,21 @@ import (
 	"github.com/gorilla/mux"
 )
 
+type commonDashboardData struct {
+	Version    string
+	LeaderName string
+	MemberName string
+}
+
+func newCommonDashboardData(a *AgentCommand, nodeName string) *commonDashboardData {
+	l, _ := a.leaderMember()
+	return &commonDashboardData{
+		Version:    a.Version,
+		LeaderName: l.Name,
+		MemberName: nodeName,
+	}
+}
+
 func (a *AgentCommand) dashboardRoutes(r *mux.Router) {
 	subui := r.PathPrefix("/dashboard").Subrouter()
 	subui.HandleFunc("/", a.dashboardIndexHandler).Methods("GET")
@@ -41,16 +56,13 @@ func (a *AgentCommand) dashboardIndexHandler(w http.ResponseWriter, r *http.Requ
 	}
 	json.Unmarshal(res.Body, &ss)
 
-	l, _ := a.leaderMember()
 	data := struct {
-		Version     string
-		LeaderName  string
+		Common      *commonDashboardData
 		EtcdVersion string
 		Stats       *EtcdServerStats
 		StartTime   string
 	}{
-		Version:     a.Version,
-		LeaderName:  l.Name,
+		Common:      newCommonDashboardData(a, a.config.NodeName),
 		EtcdVersion: version.Etcdserver,
 		Stats:       ss,
 		StartTime:   ss.LeaderInfo.StartTime.Format("2/Jan/2006 15:05:05"),
@@ -75,15 +87,12 @@ func (a *AgentCommand) dashboardJobsHandler(w http.ResponseWriter, r *http.Reque
 	tmpl := template.Must(template.New("dashboard.html.tmpl").Funcs(funcs).ParseFiles(
 		"templates/dashboard.html.tmpl", "templates/jobs.html.tmpl", "templates/status.html.tmpl"))
 
-	l, _ := a.leaderMember()
 	data := struct {
-		Version    string
-		LeaderName string
-		Jobs       []*Job
+		Common *commonDashboardData
+		Jobs   []*Job
 	}{
-		Version:    a.Version,
-		LeaderName: l.Name,
-		Jobs:       jobs,
+		Common: newCommonDashboardData(a, a.config.NodeName),
+		Jobs:   jobs,
 	}
 
 	if err := tmpl.Execute(w, data); err != nil {
@@ -109,15 +118,12 @@ func (a *AgentCommand) dashboardExecutionsHandler(w http.ResponseWriter, r *http
 		execs = execs[len(execs)-100 : len(execs)]
 	}
 
-	l, _ := a.leaderMember()
 	data := struct {
-		Version    string
-		LeaderName string
+		Common     *commonDashboardData
 		Executions []*Execution
 		JobName    string
 	}{
-		Version:    a.Version,
-		LeaderName: l.Name,
+		Common:     newCommonDashboardData(a, a.config.NodeName),
 		Executions: execs,
 		JobName:    job,
 	}
