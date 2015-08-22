@@ -1,3 +1,4 @@
+// Command that implements the main executable.
 package main
 
 import (
