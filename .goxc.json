@@ -24,6 +24,6 @@
 	},
 	"ConfigVersion": "0.9",
 	"Env": [
-		"GOPATH=Godeps{{.PLS}}{{.Env.GOPATH}}"
+		"GOPATH={{.Env.PWD}}{{.PS}}Godeps{{.PS}}_workspace{{.PLS}}{{.Env.GOPATH}}"
 	]
 }
