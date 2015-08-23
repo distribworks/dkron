@@ -11,24 +11,24 @@
     <div class="panel-body status-panel">
       <ul class="list-inline">
         <li class="text-center col-md-2">
-          <span ng-bind="jobs.length"></span>
-          <p>Total Jobs
+          <strong ng-bind="jobs.length" style="bold"></strong>
+          <p><small>Total Jobs</small>
         </li>
         <li class="text-center col-md-2">
-          <span ng-bind="successful_jobs"></span>
-          <p>Successful Jobs
+          <strong ng-bind="successful_jobs"></strong>
+          <p><small>Successful Jobs</small>
         </li>
         <li class="text-center col-md-2">
-          <span ng-bind="failed_jobs"></span>
-          <p>Failed Jobs
+          <strong ng-bind="failed_jobs"></strong>
+          <p><small>Failed Jobs</small>
         </li>
         <li class="text-center col-md-2">
-          <span ng-bind="success_count"></span>
-          <p>Successful Executions
+          <strong ng-bind="success_count"></strong>
+          <p><small>Successful Executions</small>
         </li>
         <li class="text-center col-md-2">
-          <span ng-bind="error_count"></span>
-          <p>Failed Executions
+          <strong ng-bind="error_count"></strong>
+          <p><small>Failed Executions</small>
         </li>
       </ul>
     </div>
