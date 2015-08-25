@@ -48,7 +48,26 @@ func (a *AgentCommand) Help() string {
 	helpText := `
 Usage: dkron agent [options]
 	Run dkron (option -server to run as server)
+
 Options:
+
+  -bind=0.0.0.0:8946       Address to bind network listeners to.
+  -http-addr=0.0.0.0:8080  Address to bind the UI web server to.
+  -discover=cluster        A cluster name used to discovery peers. On
+                           networks that support multicast, this can be used to have
+                           peers join each other without an explicit join.
+  -etcd-machines           etcd servers addresses to connect to. This flag can be
+                           specified multiple times.
+  -join=addr               An initial agent to join with. This flag can be
+                           specified multiple times.
+  -node=hostname           Name of this node. Must be unique in the cluster
+  -profile=[lan|wan|local] Profile is used to control the timing profiles used.
+                           The default if not provided is lan.
+  -server=false            This node is running in server mode.
+  -tag key=value           Tag can be specified multiple times to attach multiple
+                           key/value tag pairs to the given node.
+  -keyspace=dkron          The etcd keyspace to use. A prefix under all data is stored
+                           for this instance.
 `
 	return strings.TrimSpace(helpText)
 }
