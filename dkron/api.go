@@ -38,17 +38,18 @@ func (a *AgentCommand) ServeHTTP() {
 }
 
 func (a *AgentCommand) apiRoutes(r *mux.Router) {
-	r.HandleFunc("/", a.indexHandler)
-	r.HandleFunc("/members", a.membersHandler)
-	r.HandleFunc("/leader", a.leaderHandler)
+	subver := r.PathPrefix("/v1").Subrouter()
+	subver.HandleFunc("/", a.indexHandler)
+	subver.HandleFunc("/members", a.membersHandler)
+	subver.HandleFunc("/leader", a.leaderHandler)
 
-	sub := r.PathPrefix("/jobs").Subrouter()
+	sub := subver.PathPrefix("/jobs").Subrouter()
 	sub.HandleFunc("/", a.jobCreateOrUpdateHandler).Methods("POST", "PUT")
 	sub.HandleFunc("/", a.jobsHandler).Methods("GET")
 	sub.HandleFunc("/{job}", a.jobDeleteHandler).Methods("DELETE")
 	sub.HandleFunc("/{job}", a.jobRunHandler).Methods("POST", "PUT")
 
-	subex := r.PathPrefix("/executions").Subrouter()
+	subex := subver.PathPrefix("/executions").Subrouter()
 	subex.HandleFunc("/{job}", a.executionsHandler).Methods("GET")
 }
 

@@ -13,7 +13,7 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval) {
   };
 
   var updateView = function() {
-    var response = $http.get('/jobs/');
+    var response = $http.get('/v1/jobs/');
     response.success(function(data, status, headers, config) {
       $scope.updateStatus(data);
     });
@@ -97,7 +97,7 @@ dkron.controller('IndexCtrl', function ($scope, $http, $interval, $element) {
   };
 
   updateView = function() {
-    var response = $http.get('/jobs/');
+    var response = $http.get('/v1/jobs/');
     response.success(function(data, status, headers, config) {
       $scope.updateGraph(data);
     });
@@ -106,7 +106,7 @@ dkron.controller('IndexCtrl', function ($scope, $http, $interval, $element) {
       $('#message').html('<div class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Error getting data</div>');
     });
 
-    var mq = $http.get('/members/');
+    var mq = $http.get('/v1/members/');
     mq.success(function(data, status, headers, config) {
       $scope.members = data;
     });
