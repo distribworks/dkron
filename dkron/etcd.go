@@ -39,7 +39,7 @@ type EtcdServerStats struct {
 }
 
 func init() {
-	etcdc.SetLogger(stdlog.New(log.Writer(), "go-etcd", stdlog.LstdFlags))
+	etcdc.SetLogger(stdlog.New(log.Writer(), "go-etcd ", stdlog.LstdFlags))
 }
 
 func NewEtcdClient(machines []string, a *AgentCommand, keyspace string) *etcdClient {
