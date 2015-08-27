@@ -12,7 +12,7 @@ import (
 )
 
 func TestApiJobReschedule(t *testing.T) {
-	log.Level = logrus.DebugLevel
+	log.Level = logrus.FatalLevel
 
 	shutdownCh := make(chan struct{})
 	defer close(shutdownCh)
@@ -25,6 +25,8 @@ func TestApiJobReschedule(t *testing.T) {
 
 	args := []string{
 		"-bind", "127.0.0.1:8970",
+		"-node", "test",
+		"-server",
 	}
 
 	resultCh := make(chan int)
@@ -35,14 +37,16 @@ func TestApiJobReschedule(t *testing.T) {
 	time.Sleep(10 * time.Millisecond)
 
 	var jsonStr = []byte(`{"name": "test_job", "schedule": "@every 2s", "command": "date", "owner": "mec", "owner_email": "foo@bar.com"}`)
-	resp, err := http.Post("http://localhost:8970/jobs/", "encoding/json", bytes.NewBuffer(jsonStr))
+	resp, err := http.Post("http://localhost:8080/jobs/", "encoding/json", bytes.NewBuffer(jsonStr))
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 
-	t.Log(body)
+	if string(body) != `{"result": "ok"}` {
+		t.Fatalf("error saving job: %", string(body))
+	}
 
 	// Send a shutdown request
 	shutdownCh <- struct{}{}
