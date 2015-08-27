@@ -144,3 +144,11 @@ func (e *etcdClient) GetLeader() string {
 	log.Debugf("Retrieved leader from datastore: %v", res.Node.Value)
 	return res.Node.Value
 }
+
+func (e *etcdClient) DeleteJob(name string) error {
+	if _, err := e.Client.Delete(e.keyspace+"/jobs/"+name, false); err != nil {
+		return err
+	}
+
+	return nil
+}
