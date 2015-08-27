@@ -11,11 +11,11 @@ import (
 	"github.com/mitchellh/cli"
 )
 
-func TestApiJobReschedule(t *testing.T) {
-	log.Level = logrus.FatalLevel
+func setupApiTest(t *testing.T) (chan<- struct{}, <-chan int) {
+	log.Level = logrus.DebugLevel
 
 	shutdownCh := make(chan struct{})
-	defer close(shutdownCh)
+	// defer close(shutdownCh)
 
 	ui := new(cli.MockUi)
 	a := &AgentCommand{
@@ -25,6 +25,7 @@ func TestApiJobReschedule(t *testing.T) {
 
 	args := []string{
 		"-bind", "127.0.0.1:8970",
+		"-http-addr", "127.0.0.1:8090",
 		"-node", "test",
 		"-server",
 	}
@@ -36,8 +37,14 @@ func TestApiJobReschedule(t *testing.T) {
 
 	time.Sleep(10 * time.Millisecond)
 
-	var jsonStr = []byte(`{"name": "test_job", "schedule": "@every 2s", "command": "date", "owner": "mec", "owner_email": "foo@bar.com"}`)
-	resp, err := http.Post("http://localhost:8080/jobs/", "encoding/json", bytes.NewBuffer(jsonStr))
+	return shutdownCh, resultCh
+}
+
+func TestApiJobReschedule(t *testing.T) {
+	shutdownCh, _ := setupApiTest(t)
+
+	var jsonStr = []byte(`{"name": "test_job", "schedule": "@every 2s", "command": "date", "owner": "mec", "owner_email": "foo@bar.com", "disabled": true}`)
+	resp, err := http.Post("http://localhost:8090/jobs/", "encoding/json", bytes.NewBuffer(jsonStr))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -50,13 +57,4 @@ func TestApiJobReschedule(t *testing.T) {
 
 	// Send a shutdown request
 	shutdownCh <- struct{}{}
-
-	select {
-	case code := <-resultCh:
-		if code != 0 {
-			t.Fatalf("bad code: %d", code)
-		}
-	case <-time.After(50 * time.Millisecond):
-		t.Fatalf("timeout")
-	}
 }
