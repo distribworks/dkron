@@ -152,7 +152,7 @@ func (a *AgentCommand) jobDeleteHandler(w http.ResponseWriter, r *http.Request) 
 	vars := mux.Vars(r)
 	job := vars["job"]
 
-	if _, err := a.etcd.Client.Delete(job, false); err != nil {
+	if err := a.etcd.DeleteJob(job); err != nil {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusNotFound)
 		if err := json.NewEncoder(w).Encode(err); err != nil {
