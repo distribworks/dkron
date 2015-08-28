@@ -39,7 +39,7 @@ type EtcdServerStats struct {
 }
 
 func init() {
-	etcdc.SetLogger(stdlog.New(log.Writer(), "go-etcd", stdlog.LstdFlags))
+	etcdc.SetLogger(stdlog.New(log.Writer(), "go-etcd ", stdlog.LstdFlags))
 }
 
 func NewEtcdClient(machines []string, a *AgentCommand, keyspace string) *etcdClient {
@@ -143,4 +143,12 @@ func (e *etcdClient) GetLeader() string {
 
 	log.Debugf("Retrieved leader from datastore: %v", res.Node.Value)
 	return res.Node.Value
+}
+
+func (e *etcdClient) DeleteJob(name string) error {
+	if _, err := e.Client.Delete(e.keyspace+"/jobs/"+name, false); err != nil {
+		return err
+	}
+
+	return nil
 }
