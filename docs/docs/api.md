@@ -12,41 +12,41 @@ When you have multiple dkron nodes in server mode running, only one of them will
 
 ## Index
 
-- Endpoint: `/`
+- Endpoint: `/v1`
 - Method: `GET`
-- Example: `curl -XGET dkron-node:8080`
+- Example: `curl -XGET dkron-node:8080/v1`
 
 Returns info about the agent queried.
 
 ## Members
 
-- Endpoint: `/members`
+- Endpoint: `/v1/members`
 - Method: `GET`
-- Example: `curl -XGET dkron-node:8080/members`
+- Example: `curl -XGET dkron-node:8080/v1/members`
 
 Returns the cluster member list.
 
 ## Leader
 
-- Endpoint: `/leader`
+- Endpoint: `/v1/leader`
 - Method: `GET`
-- Example: `curl -XGET dkron-node:8080/leader`
+- Example: `curl -XGET dkron-node:8080/v1/leader`
 
 Returns details about the current leader.
 
 ## Get Jobs
 
-- Endpoint: `/jobs`
+- Endpoint: `/v1/jobs`
 - Method: `GET`
-- Example: `curl -L -X GET dkron-node:8080/jobs`
+- Example: `curl -L -X GET dkron-node:8080/v1/jobs`
 
 ## Create or update a Job
 
 Creates a new job or updates an exsiting job based on it's `name`. The `schedule` can be any valid cron expression or an interval using the `@every Xs` format.
 
-- Endpoint: `/jobs/`
+- Endpoint: `/v1/jobs/`
 - Method: `POST` or `PUT`
-- Example: `curl -X POST dkron-node:8080/jobs/ -d @jobs.json`
+- Example: `curl -X POST dkron-node:8080/v1/jobs/ -d @jobs.json`
 
 Sample job:
 
@@ -64,9 +64,9 @@ Sample job:
 
 Get a job name from the job listing above. Then:
 
-- Endpoint: `/jobs/jobName`
+- Endpoint: `/v1/jobs/jobName`
 - Method: `DELETE`
-- Example: `curl -L -X DELETE dkron-node:8080/job/aggregate_stats`
+- Example: `curl -L -X DELETE dkron-node:8080/v1/job/aggregate_stats`
 
 Delete a job definition.
 
@@ -74,16 +74,16 @@ Delete a job definition.
 
 You can manually start a job by issuing an HTTP request.
 
-- Endpoint: `/jobs/job_name`
+- Endpoint: `/v1/jobs/job_name`
 - Method: `POST` or `PUT`
-- Example: `curl -L -X POST dkron-node:8080/jobs/aggregate_stats`
+- Example: `curl -L -X POST dkron-node:8080/v1/jobs/aggregate_stats`
 
 Will run `aggregate_stats` job.
 
 ## Get job executions
 
-- Endpoint: `/executions/job`
+- Endpoint: `/v1/executions/job`
 - Method: `GET`
-- Example: `curl -L -X GET dkron-node:8080/executions/aggregate_stats`
+- Example: `curl -L -X GET dkron-node:8080/v1/executions/aggregate_stats`
 
 Get a list with the job executions.

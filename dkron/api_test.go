@@ -12,7 +12,7 @@ import (
 )
 
 func setupAPITest(t *testing.T) (chan<- struct{}, <-chan int) {
-	log.Level = logrus.DebugLevel
+	log.Level = logrus.FatalLevel
 
 	shutdownCh := make(chan struct{})
 	// defer close(shutdownCh)
@@ -44,7 +44,7 @@ func TestAPIJobReschedule(t *testing.T) {
 	shutdownCh, _ := setupAPITest(t)
 
 	var jsonStr = []byte(`{"name": "test_job", "schedule": "@every 2s", "command": "date", "owner": "mec", "owner_email": "foo@bar.com", "disabled": true}`)
-	resp, err := http.Post("http://localhost:8090/jobs/", "encoding/json", bytes.NewBuffer(jsonStr))
+	resp, err := http.Post("http://localhost:8090/v1/jobs/", "encoding/json", bytes.NewBuffer(jsonStr))
 	if err != nil {
 		t.Fatal(err)
 	}
