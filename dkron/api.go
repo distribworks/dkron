@@ -74,9 +74,9 @@ func (a *AgentCommand) indexHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *AgentCommand) jobsHandler(w http.ResponseWriter, r *http.Request) {
-	jobs, err := a.etcd.GetJobs()
+	jobs, err := a.store.GetJobs()
 	if err != nil {
-		log.Error(err)
+		log.Fatal(err)
 	}
 	log.Debug(jobs)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
