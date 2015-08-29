@@ -8,6 +8,12 @@ import (
 func TestEtcdClient(t *testing.T) {
 	etcd := NewEtcdClient([]string{}, nil, "dkron-test")
 
+	// Cleanup everything
+	_, err := etcd.Client.Delete("dkron-test", true)
+	if err != nil {
+		t.Fatalf("error cleaning up: %s", err)
+	}
+
 	testJob := &Job{
 		Name:     "test",
 		Schedule: "@every 2s",
@@ -54,7 +60,7 @@ func TestEtcdClient(t *testing.T) {
 	}
 
 	if execs[0].StartedAt != testExecution.StartedAt {
-		t.Fatalf("excution not expected start time: %s", execs[0].StartedAt)
+		t.Fatalf("error on retrieved excution expected: %s got: %s", testExecution.StartedAt, execs[0].StartedAt)
 	}
 
 	if len(execs) != 1 {
