@@ -1,11 +1,11 @@
 package dkron
 
 import (
-	"encoding/json"
+	// "encoding/json"
 	"html/template"
 	"net/http"
 
-	etcdc "github.com/coreos/go-etcd/etcd"
+	// etcdc "github.com/coreos/go-etcd/etcd"
 	"github.com/gorilla/mux"
 )
 
@@ -37,35 +37,35 @@ func (a *AgentCommand) dashboardIndexHandler(w http.ResponseWriter, r *http.Requ
 	tmpl := template.Must(template.New("dashboard.html.tmpl").ParseFiles(
 		"templates/dashboard.html.tmpl", "templates/index.html.tmpl", "templates/status.html.tmpl"))
 
-	rr := etcdc.NewRawRequest("GET", "../version", nil, nil)
-	res, err := a.etcd.Client.SendRequest(rr)
-	if err != nil {
-		log.Error(err)
-	}
-	var version struct {
-		Etcdserver  string `json:"etcdserver"`
-		Etcdcluster string `json:"etcdcluster"`
-	}
-	json.Unmarshal(res.Body, &version)
+	// rr := etcdc.NewRawRequest("GET", "../version", nil, nil)
+	// res, err := a.etcd.Client.SendRequest(rr)
+	// if err != nil {
+	// 	log.Error(err)
+	// }
+	// var version struct {
+	// 	Etcdserver  string `json:"etcdserver"`
+	// 	Etcdcluster string `json:"etcdcluster"`
+	// }
+	// json.Unmarshal(res.Body, &version)
 
-	var ss *EtcdServerStats
-	rr = etcdc.NewRawRequest("GET", "stats/self", nil, nil)
-	res, err = a.etcd.Client.SendRequest(rr)
-	if err != nil {
-		log.Error(err)
-	}
-	json.Unmarshal(res.Body, &ss)
+	// var ss *EtcdServerStats
+	// rr = etcdc.NewRawRequest("GET", "stats/self", nil, nil)
+	// res, err = a.etcd.Client.SendRequest(rr)
+	// if err != nil {
+	// log.Error(err)
+	// }
+	// json.Unmarshal(res.Body, &ss)
 
 	data := struct {
 		Common      *commonDashboardData
 		EtcdVersion string
-		Stats       *EtcdServerStats
-		StartTime   string
+		// Stats       *EtcdServerStats
+		StartTime string
 	}{
-		Common:      newCommonDashboardData(a, a.config.NodeName),
-		EtcdVersion: version.Etcdserver,
-		Stats:       ss,
-		StartTime:   ss.LeaderInfo.StartTime.Format("2/Jan/2006 15:05:05"),
+		Common: newCommonDashboardData(a, a.config.NodeName),
+		// EtcdVersion: version.Etcdserver,
+		// Stats:       ss,
+		// StartTime:   ss.LeaderInfo.StartTime.Format("2/Jan/2006 15:05:05"),
 	}
 
 	if err := tmpl.Execute(w, data); err != nil {
@@ -76,7 +76,7 @@ func (a *AgentCommand) dashboardIndexHandler(w http.ResponseWriter, r *http.Requ
 func (a *AgentCommand) dashboardJobsHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 
-	jobs, _ := a.etcd.GetJobs()
+	jobs, _ := a.store.GetJobs()
 
 	funcs := template.FuncMap{
 		"isSuccess": func(job *Job) bool {
@@ -106,7 +106,7 @@ func (a *AgentCommand) dashboardExecutionsHandler(w http.ResponseWriter, r *http
 	vars := mux.Vars(r)
 	job := vars["job"]
 
-	execs, _ := a.etcd.GetExecutions(job)
+	execs, _ := a.store.GetExecutions(job)
 
 	tmpl := template.Must(template.New("dashboard.html.tmpl").Funcs(template.FuncMap{
 		"html": func(value []byte) template.HTML {

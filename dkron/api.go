@@ -106,7 +106,7 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.R
 	}
 
 	// Save the new job to etcd
-	if err = a.etcd.SetJob(&job); err != nil {
+	if err = a.store.SetJob(&job); err != nil {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(422) // unprocessable entity
 		if err := json.NewEncoder(w).Encode(err); err != nil {
@@ -115,7 +115,7 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	a.schedulerRestartQuery(a.etcd.GetLeader())
+	a.schedulerRestartQuery(string(a.store.GetLeader()))
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)
@@ -128,7 +128,7 @@ func (a *AgentCommand) executionsHandler(w http.ResponseWriter, r *http.Request)
 	vars := mux.Vars(r)
 	job := vars["job"]
 
-	executions, err := a.etcd.GetExecutions(job)
+	executions, err := a.store.GetExecutions(job)
 	if err != nil {
 		log.Error(err)
 	}
@@ -152,7 +152,7 @@ func (a *AgentCommand) jobDeleteHandler(w http.ResponseWriter, r *http.Request) 
 	vars := mux.Vars(r)
 	job := vars["job"]
 
-	if err := a.etcd.DeleteJob(job); err != nil {
+	if err := a.store.DeleteJob(job); err != nil {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusNotFound)
 		if err := json.NewEncoder(w).Encode(err); err != nil {
@@ -190,7 +190,7 @@ func (a *AgentCommand) jobRunHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	job := vars["job"]
 
-	j, err := a.etcd.GetJob(job)
+	j, err := a.store.GetJob(job)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusNotFound)

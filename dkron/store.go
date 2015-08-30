@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/Sirupsen/logrus"
 	"github.com/docker/libkv"
 	"github.com/docker/libkv/store"
 )
@@ -121,4 +122,28 @@ func (s *Store) GetLeader() []byte {
 
 	log.Debugf("Retrieved leader from datastore: %v", res.Value)
 	return res.Value
+}
+
+func (s *Store) TryLeaderSwap(newKey string, oldKey string) (bool, error) {
+	old := &store.KVPair{
+		Key:   s.keyspace + "/leader",
+		Value: []byte(oldKey),
+	}
+	success, _, err := s.Client.AtomicPut(s.keyspace+"/leader", []byte(newKey), old, nil)
+
+	log.WithFields(logrus.Fields{
+		"old_leader": oldKey,
+		"new_leader": newKey,
+	}).Debug("Leader Swap")
+
+	return success, err
+}
+
+func (s *Store) SetLeader(leader string) error {
+	err := s.Client.Put(s.keyspace+"/leader", []byte(leader), nil)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

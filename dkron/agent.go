@@ -39,7 +39,6 @@ type AgentCommand struct {
 	ShutdownCh <-chan struct{}
 	serf       *serf.Serf
 	config     *Config
-	etcd       *etcdClient
 	store      *Store
 	eventCh    chan serf.Event
 	sched      *Scheduler
@@ -326,7 +325,6 @@ func (a *AgentCommand) Run(args []string) int {
 	a.join(a.config.StartJoin, true)
 
 	if a.config.Server {
-		a.etcd = NewEtcdClient(a.config.EtcdMachines, a, a.config.Keyspace)
 		a.store = NewStore(a.config.EtcdMachines, a, a.config.Keyspace)
 		a.sched = NewScheduler()
 
@@ -398,32 +396,28 @@ func (a *AgentCommand) Synopsis() string {
 
 // Leader election routine
 func (a *AgentCommand) ElectLeader() bool {
-	leaderKey := a.etcd.GetLeader()
+	leaderKey := a.store.GetLeader()
 
-	if leaderKey != "" {
-		if !a.serverAlive(leaderKey) {
+	if leaderKey != nil {
+		if !a.serverAlive(string(leaderKey)) {
 			log.Debug("Trying to set itself as leader")
-			res, err := a.etcd.Client.CompareAndSwap(a.config.Keyspace+"/leader", a.config.Tags["key"], 0, leaderKey, 0)
-			if err != nil {
+			// res, err := a.etcd.Client.CompareAndSwap(a.config.Keyspace+"/leader", a.config.Tags["key"], 0, leaderKey, 0)
+			success, err := a.store.TryLeaderSwap(a.config.Tags["key"], string(leaderKey))
+			if err != nil || success == false {
 				log.Errorln("Error trying to set itself as leader", err)
 				return false
 			}
-
-			log.WithFields(logrus.Fields{
-				"old_leader": res.PrevNode.Value,
-				"new_leader": res.Node.Value,
-			}).Debug("Leader Swap")
 			return true
 		} else {
 			log.Printf("The current leader [%s] is active", leaderKey)
 		}
 	} else {
 		log.Debug("Trying to set itself as leader")
-		res, err := a.etcd.Client.Create(a.config.Keyspace+"/leader", a.config.NodeName, 0)
+		err := a.store.SetLeader(a.config.Tags["key"])
 		if err != nil {
-			log.Error(res, err)
+			log.Error(err)
 		}
-		log.Printf("Successfully set [%s] as leader", a.config.NodeName)
+		log.Printf("Successfully set [%s] as leader", a.config.Tags["key"])
 		return true
 	}
 
@@ -443,12 +437,12 @@ func (a *AgentCommand) serverAlive(key string) bool {
 
 // Utility method to check if the node calling the method is the leader.
 func (a *AgentCommand) isLeader() bool {
-	return a.config.Tags["key"] == a.etcd.GetLeader()
+	return a.config.Tags["key"] == string(a.store.GetLeader())
 }
 
 // Utility method to get leader nodename
 func (a *AgentCommand) leaderMember() (*serf.Member, error) {
-	leader := a.etcd.GetLeader()
+	leader := string(a.store.GetLeader())
 	for _, member := range a.serf.Members() {
 		if key, ok := member.Tags["key"]; ok {
 			if key == leader {
@@ -473,7 +467,7 @@ func (a *AgentCommand) eventLoop() {
 			if (e.EventType() == serf.EventMemberFailed || e.EventType() == serf.EventMemberLeave) && a.config.Server {
 				failed := e.(serf.MemberEvent)
 				for _, member := range failed.Members {
-					if member.Tags["key"] == a.etcd.GetLeader() && member.Status != serf.StatusAlive {
+					if member.Tags["key"] == string(a.store.GetLeader()) && member.Status != serf.StatusAlive {
 						if a.ElectLeader() {
 							a.schedule()
 						}
@@ -527,7 +521,7 @@ func (a *AgentCommand) eventLoop() {
 					ex := a.setExecution(query.Payload)
 
 					// Save job status
-					job, err := a.etcd.GetJob(ex.JobName)
+					job, err := a.store.GetJob(ex.JobName)
 					if err != nil {
 						log.Fatal(err)
 					}
@@ -539,7 +533,7 @@ func (a *AgentCommand) eventLoop() {
 						job.ErrorCount = job.ErrorCount + 1
 					}
 
-					if err := a.etcd.SetJob(job); err != nil {
+					if err := a.store.SetJob(job); err != nil {
 						log.Fatal(err)
 					}
 					query.Respond([]byte("saved"))
@@ -556,7 +550,7 @@ func (a *AgentCommand) eventLoop() {
 // Start or restart scheduler
 func (a *AgentCommand) schedule() {
 	log.Debug("Restarting scheduler")
-	jobs, err := a.etcd.GetJobs()
+	jobs, err := a.store.GetJobs()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -709,7 +703,7 @@ func (a *AgentCommand) setExecution(payload []byte) *Execution {
 	}
 
 	// Save the new execution to etcd
-	if _, err := a.etcd.SetExecution(&ex); err != nil {
+	if _, err := a.store.SetExecution(&ex); err != nil {
 		log.Fatal(err)
 	}
 
