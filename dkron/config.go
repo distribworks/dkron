@@ -14,7 +14,8 @@ type Config struct {
 	BindAddr              string
 	HTTPAddr              string
 	Discover              string
-	EtcdMachines          []string
+	Backend               string
+	BackendMachines       []string
 	Profile               string
 	Interface             string
 	AdvertiseAddr         string

@@ -51,23 +51,25 @@ Usage: dkron agent [options]
 
 Options:
 
-  -bind=0.0.0.0:8946       Address to bind network listeners to.
-  -http-addr=0.0.0.0:8080  Address to bind the UI web server to.
-  -discover=cluster        A cluster name used to discovery peers. On
-                           networks that support multicast, this can be used to have
-                           peers join each other without an explicit join.
-  -etcd-machines           etcd servers addresses to connect to. This flag can be
-                           specified multiple times.
-  -join=addr               An initial agent to join with. This flag can be
-                           specified multiple times.
-  -node=hostname           Name of this node. Must be unique in the cluster
-  -profile=[lan|wan|local] Profile is used to control the timing profiles used.
-                           The default if not provided is lan.
-  -server=false            This node is running in server mode.
-  -tag key=value           Tag can be specified multiple times to attach multiple
-                           key/value tag pairs to the given node.
-  -keyspace=dkron          The etcd keyspace to use. A prefix under all data is stored
-                           for this instance.
+  -bind=0.0.0.0:8946             Address to bind network listeners to.
+  -http-addr=0.0.0.0:8080        Address to bind the UI web server to.
+  -discover=cluster              A cluster name used to discovery peers. On
+                                 networks that support multicast, this can be used to have
+                                 peers join each other without an explicit join.
+  -join=addr                     An initial agent to join with. This flag can be
+                                 specified multiple times.
+  -node=hostname                 Name of this node. Must be unique in the cluster
+  -profile=[lan|wan|local]       Profile is used to control the timing profiles used.
+                                 The default if not provided is lan.
+  -server=false                  This node is running in server mode.
+  -tag key=value                 Tag can be specified multiple times to attach multiple
+                                 key/value tag pairs to the given node.
+  -keyspace=dkron                The etcd keyspace to use. A prefix under all data is stored
+                                 for this instance.
+  -store=[etcd|consul|zk]        Backend storage to use, etcd, consul or zookeeper. The default
+                                 is etcd.
+  -store-machines=127.0.0.1:2379 Backend storage servers addresses to connect to. This flag can be
+                                 specified multiple times.
 `
 	return strings.TrimSpace(helpText)
 }
@@ -90,8 +92,10 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	viper.SetDefault("http_addr", cmdFlags.Lookup("http-addr").Value)
 	cmdFlags.String("discover", "dkron", "mDNS discovery name")
 	viper.SetDefault("discover", cmdFlags.Lookup("discover").Value)
-	cmdFlags.String("etcd-machines", "127.0.0.1:2379", "etcd machines addresses")
-	viper.SetDefault("etcd_machines", cmdFlags.Lookup("etcd-machines").Value)
+	cmdFlags.String("backend", "etcd", "store backend")
+	viper.SetDefault("backend", cmdFlags.Lookup("backend").Value)
+	cmdFlags.String("backend-machines", "127.0.0.1:2379", "store backend machines addresses")
+	viper.SetDefault("backend_machines", cmdFlags.Lookup("backend-machines").Value)
 	cmdFlags.String("profile", "lan", "timing profile to use (lan, wan, local)")
 	viper.SetDefault("profile", cmdFlags.Lookup("profile").Value)
 	viper.SetDefault("server", cmdFlags.Bool("server", false, "start dkron server"))
@@ -124,16 +128,17 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	}
 
 	config := &Config{
-		NodeName:     nodeName,
-		BindAddr:     viper.GetString("bind_addr"),
-		HTTPAddr:     viper.GetString("http_addr"),
-		Discover:     viper.GetString("discover"),
-		EtcdMachines: viper.GetStringSlice("etcd_machines"),
-		Server:       server,
-		Profile:      viper.GetString("profile"),
-		StartJoin:    *startJoin,
-		Tags:         tags,
-		Keyspace:     viper.GetString("keyspace"),
+		NodeName:        nodeName,
+		BindAddr:        viper.GetString("bind_addr"),
+		HTTPAddr:        viper.GetString("http_addr"),
+		Discover:        viper.GetString("discover"),
+		Backend:         viper.GetString("backend"),
+		BackendMachines: viper.GetStringSlice("backend_machines"),
+		Server:          server,
+		Profile:         viper.GetString("profile"),
+		StartJoin:       *startJoin,
+		Tags:            tags,
+		Keyspace:        viper.GetString("keyspace"),
 	}
 
 	// log.Fatal(config.EtcdMachines)
@@ -325,7 +330,7 @@ func (a *AgentCommand) Run(args []string) int {
 	a.join(a.config.StartJoin, true)
 
 	if a.config.Server {
-		a.store = NewStore(a.config.EtcdMachines, a, a.config.Keyspace)
+		a.store = NewStore(a.config.Backend, a.config.BackendMachines, a, a.config.Keyspace)
 		a.sched = NewScheduler()
 
 		go func() {

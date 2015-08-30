@@ -20,8 +20,11 @@ type Store struct {
 	keyspace string
 }
 
-func NewStore(machines []string, a *AgentCommand, keyspace string) *Store {
-	store, _ := libkv.NewStore("etcd", machines, nil)
+func NewStore(backend string, machines []string, a *AgentCommand, keyspace string) *Store {
+	store, err := libkv.NewStore(store.Backend(backend), machines, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
 	return &Store{Client: store, agent: a, keyspace: keyspace}
 }
 
