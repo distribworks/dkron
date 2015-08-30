@@ -396,20 +396,19 @@ func (a *AgentCommand) Synopsis() string {
 
 // Leader election routine
 func (a *AgentCommand) ElectLeader() bool {
-	leaderKey := a.store.GetLeader()
+	leader := a.store.GetLeader()
 
-	if leaderKey != nil {
-		if !a.serverAlive(string(leaderKey)) {
+	if leader != nil {
+		if !a.serverAlive(string(leader.Key)) {
 			log.Debug("Trying to set itself as leader")
-			// res, err := a.etcd.Client.CompareAndSwap(a.config.Keyspace+"/leader", a.config.Tags["key"], 0, leaderKey, 0)
-			success, err := a.store.TryLeaderSwap(a.config.Tags["key"], string(leaderKey))
+			success, err := a.store.TryLeaderSwap(a.config.Tags["key"], leader)
 			if err != nil || success == false {
 				log.Errorln("Error trying to set itself as leader", err)
 				return false
 			}
 			return true
 		} else {
-			log.Printf("The current leader [%s] is active", leaderKey)
+			log.Printf("The current leader [%s] is active", leader.Key)
 		}
 	} else {
 		log.Debug("Trying to set itself as leader")
@@ -437,12 +436,12 @@ func (a *AgentCommand) serverAlive(key string) bool {
 
 // Utility method to check if the node calling the method is the leader.
 func (a *AgentCommand) isLeader() bool {
-	return a.config.Tags["key"] == string(a.store.GetLeader())
+	return a.config.Tags["key"] == string(a.store.GetLeader().Key)
 }
 
 // Utility method to get leader nodename
 func (a *AgentCommand) leaderMember() (*serf.Member, error) {
-	leader := string(a.store.GetLeader())
+	leader := string(a.store.GetLeader().Key)
 	for _, member := range a.serf.Members() {
 		if key, ok := member.Tags["key"]; ok {
 			if key == leader {
@@ -467,7 +466,7 @@ func (a *AgentCommand) eventLoop() {
 			if (e.EventType() == serf.EventMemberFailed || e.EventType() == serf.EventMemberLeave) && a.config.Server {
 				failed := e.(serf.MemberEvent)
 				for _, member := range failed.Members {
-					if member.Tags["key"] == string(a.store.GetLeader()) && member.Status != serf.StatusAlive {
+					if member.Tags["key"] == string(a.store.GetLeader().Key) && member.Status != serf.StatusAlive {
 						if a.ElectLeader() {
 							a.schedule()
 						}
@@ -561,9 +560,9 @@ func (a *AgentCommand) schedule() {
 	}
 }
 
-func (a *AgentCommand) schedulerRestartQuery(leader string) {
+func (a *AgentCommand) schedulerRestartQuery(leader *Leader) {
 	params := &serf.QueryParam{
-		FilterTags: map[string]string{"key": leader},
+		FilterTags: map[string]string{"key": string(leader.Key)},
 		RequestAck: true,
 	}
 

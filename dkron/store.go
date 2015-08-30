@@ -9,6 +9,11 @@ import (
 	"github.com/docker/libkv/store"
 )
 
+type Leader struct {
+	Key       []byte
+	LastIndex uint64
+}
+
 type Store struct {
 	Client   store.Store
 	agent    *AgentCommand
@@ -113,7 +118,7 @@ func (s *Store) SetExecution(execution *Execution) (string, error) {
 	return key, nil
 }
 
-func (s *Store) GetLeader() []byte {
+func (s *Store) GetLeader() *Leader {
 	res, err := s.Client.Get(s.keyspace + "/leader")
 	if err != nil {
 		log.Fatal(err)
@@ -121,18 +126,17 @@ func (s *Store) GetLeader() []byte {
 	}
 
 	log.Debugf("Retrieved leader from datastore: %v", res.Value)
-	return res.Value
+	return &Leader{Key: res.Value, LastIndex: res.LastIndex}
 }
 
-func (s *Store) TryLeaderSwap(newKey string, oldKey string) (bool, error) {
-	old := &store.KVPair{
-		Key:   s.keyspace + "/leader",
-		Value: []byte(oldKey),
+func (s *Store) TryLeaderSwap(newKey string, old *Leader) (bool, error) {
+	oldKV := &store.KVPair{
+		LastIndex: old.LastIndex,
 	}
-	success, _, err := s.Client.AtomicPut(s.keyspace+"/leader", []byte(newKey), old, nil)
+	success, _, err := s.Client.AtomicPut(s.keyspace+"/leader", []byte(newKey), oldKV, nil)
 
 	log.WithFields(logrus.Fields{
-		"old_leader": oldKey,
+		"old_leader": old.Key,
 		"new_leader": newKey,
 	}).Debug("Leader Swap")
 

@@ -115,7 +115,7 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	a.schedulerRestartQuery(string(a.store.GetLeader()))
+	a.schedulerRestartQuery(a.store.GetLeader())
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)
