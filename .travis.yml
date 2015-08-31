@@ -18,7 +18,7 @@ before_script:
   - scripts/travis_etcd.sh 2.1.1
 
 script:
-  - ./etcd/etcd --listen-client-urls 'http://0.0.0.0:4001' --advertise-client-urls 'http://127.0.0.1:4001' >/dev/null 2>&1 &
+  - ./etcd/etcd >/dev/null 2>&1 &
   - script/validate-gofmt
   - go vet ./...
   # - fgt golint ./...
