@@ -137,7 +137,7 @@ func TestAgentCommandElectLeader(t *testing.T) {
 			t.Logf("Leader changed: %s", res.Node.Value)
 		}
 		stop <- true
-	case <-time.After(10 * time.Second):
+	case <-time.After(20 * time.Second):
 		t.Fatal("No leader swap occurred")
 		stop <- true
 	}
