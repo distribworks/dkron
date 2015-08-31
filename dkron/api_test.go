@@ -52,7 +52,7 @@ func TestAPIJobReschedule(t *testing.T) {
 	body, _ := ioutil.ReadAll(resp.Body)
 
 	if string(body) != `{"result": "ok"}` {
-		t.Fatalf("error saving job: %", string(body))
+		t.Fatalf("error saving job: %s", string(body))
 	}
 
 	// Send a shutdown request
