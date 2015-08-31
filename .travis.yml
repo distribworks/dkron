@@ -19,7 +19,7 @@ before_script:
 
 script:
   - ./etcd/etcd >/dev/null 2>&1 &
-  - script/validate-gofmt
+  - scripts/validate-gofmt
   - go vet ./...
   # - fgt golint ./...
   - go test -v ./dkron
