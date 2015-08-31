@@ -37,52 +37,7 @@
   </div>
 
   <div class="row">
-    <h2>etcd</h2>
-
-    <div class="col-md-3">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">Version</h3>
-        </div>
-        <div class="panel-body">
-          {{.EtcdVersion}}
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-3">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">Leader</h3>
-        </div>
-        <div class="panel-body">
-          {{.Stats.LeaderInfo.Name}}
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-3">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">Start time</h3>
-        </div>
-        <div class="panel-body">
-          {{.StartTime}}
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-3">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">Uptime</h3>
-        </div>
-        <div class="panel-body">
-          {{.Stats.LeaderInfo.Uptime}}
-        </div>
-      </div>
-    </div>
+    <h2>Backend: {{ .Common.Backend }}</h2>
   </div>
-
 </div>
 {{end}}

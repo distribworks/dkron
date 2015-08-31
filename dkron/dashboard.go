@@ -13,6 +13,7 @@ type commonDashboardData struct {
 	Version    string
 	LeaderName string
 	MemberName string
+	Backend    string
 }
 
 func newCommonDashboardData(a *AgentCommand, nodeName string) *commonDashboardData {
@@ -21,6 +22,7 @@ func newCommonDashboardData(a *AgentCommand, nodeName string) *commonDashboardDa
 		Version:    a.Version,
 		LeaderName: l.Name,
 		MemberName: nodeName,
+		Backend:    a.config.Backend,
 	}
 }
 
