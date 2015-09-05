@@ -1,0 +1,309 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://dkron.io",
+  "type": [
+    "object"
+  ],
+  "definitions": {
+    "job": {
+      "description": "A Job represents a scheduled task to execute.",
+      "$schema": "http://json-schema.org/draft-04/hyper-schema",
+      "strictProperties": true,
+      "title": "Dkron API - Job",
+      "type": [
+        "object"
+      ],
+      "definitions": {
+        "name": {
+          "description": "job name",
+          "example": "cron_job",
+          "readOnly": false,
+          "type": [
+            "string"
+          ]
+        },
+        "schedule": {
+          "description": "cron expression for the job",
+          "example": "0 30 * * * *",
+          "readOnly": false,
+          "type": [
+            "string"
+          ]
+        },
+        "command": {
+          "description": "command to run. Must be a shell command to execute",
+          "example": "/usr/bin/date",
+          "readOnly": false,
+          "type": [
+            "string"
+          ]
+        },
+        "owner": {
+          "description": "owner of the job",
+          "example": "John Doe",
+          "readOnly": false,
+          "type": [
+            "string"
+          ]
+        },
+        "owner_email": {
+          "description": "email of the owner",
+          "example": "john@doe.com",
+          "format": "email",
+          "readOnly": false,
+          "type": [
+            "string"
+          ]
+        },
+        "run_as_user": {
+          "description": "the user to use to run the job",
+          "example": "johndoe",
+          "format": "hostname",
+          "readOnly": false,
+          "type": [
+            "string"
+          ]
+        },
+        "success_count": {
+          "description": "number of successful executions",
+          "example": 20,
+          "readOnly": true,
+          "type": [
+            "integer"
+          ]
+        },
+        "error_count": {
+          "description": "number of failed executions",
+          "example": 5,
+          "readOnly": true,
+          "type": [
+            "integer"
+          ]
+        },
+        "last_success": {
+          "description": "last time this job executed successfully",
+          "example": "2012-01-01T12:00:00Z",
+          "format": "date-time",
+          "readOnly": true,
+          "type": [
+            "string"
+          ]
+        },
+        "last_error": {
+          "description": "last time this job failed",
+          "example": "2012-01-01T12:00:00Z",
+          "format": "date-time",
+          "readOnly": true,
+          "type": [
+            "string"
+          ]
+        },
+        "disabled": {
+          "description": "disabled state of the job",
+          "example": false,
+          "readOnly": false,
+          "type": [
+            "boolean"
+          ]
+        },
+        "tags": {
+          "description": "tags of the target server to run this job",
+          "example": {
+           "role": "web",
+           "role": "db:1"]
+          },
+          "readOnly": false,
+          "type": [
+            "object"
+          ]
+        }
+      },
+      "links": [
+        {
+          "description": "Create or updates a new job.",
+          "href": "/v1/jobs",
+          "method": "POST",
+          "rel": "create",
+          "title": "Create or update"
+        },
+        {
+          "description": "List jobs.",
+          "href": "/v1/apps",
+          "method": "GET",
+          "rel": "instances",
+          "title": "List"
+        },
+        {
+          "description": "Run job.",
+          "href": "/v1/jobs/job_name",
+          "method": "POST",
+          "rel": "instances",
+          "title": "Run"
+        }
+      ]
+    },
+    "member": {
+      "description": "A member represents a cluster member node.",
+      "$schema": "http://json-schema.org/draft-04/hyper-schema",
+      "strictProperties": true,
+      "title": "Dkron API - Member",
+      "type": [
+        "object"
+      ],
+      "definitions": {
+        "Name": {
+          "type": "string",
+          "description": "An explanation about the puropose of this instance described by this schema.",
+          "example": "node1",
+          "readOnly": true
+        },
+        "Addr": {
+          "type": "string",
+          "description": "An explanation about the puropose of this instance described by this schema.",
+          "example": "node1",
+          "readOnly": true
+        },
+        "Port": {
+          "type": "integer",
+          "description": "An explanation about the puropose of this instance described by this schema.",
+          "example": "node1",
+          "readOnly": true
+        },
+        "Tags": {
+          "type": "object",
+          "description": "An explanation about the puropose of this instance described by this schema.",
+          "example": "node1",
+          "readOnly": true
+        },
+        "Status": {
+          "type": "integer",
+          "description": "An explanation about the puropose of this instance described by this schema.",
+          "example": "node1",
+          "readOnly": true
+        },
+        "ProtocolMin": {
+          "type": "integer",
+          "description": "An explanation about the puropose of this instance described by this schema.",
+          "example": "node1",
+          "readOnly": true
+        },
+        "ProtocolMax": {
+          "type": "integer",
+          "description": "An explanation about the puropose of this instance described by this schema.",
+          "example": "node1",
+          "readOnly": true
+        },
+        "ProtocolCur": {
+          "type": "integer",
+          "description": "An explanation about the puropose of this instance described by this schema.",
+          "example": "node1",
+          "readOnly": true
+        },
+        "DelegateMin": {
+          "type": "integer",
+          "description": "An explanation about the puropose of this instance described by this schema.",
+          "example": "node1",
+          "readOnly": true
+        },
+        "DelegateMax": {
+          "type": "integer",
+          "description": "An explanation about the puropose of this instance described by this schema.",
+          "example": "node1",
+          "readOnly": true
+        },
+        "DelegateCur": {
+          "type": "integer",
+          "description": "An explanation about the puropose of this instance described by this schema.",
+          "example": "node1",
+          "readOnly": true
+        }
+      },
+      "links": [
+        {
+          "description": "List members.",
+          "href": "/v1/members",
+          "method": "GET",
+          "rel": "instances",
+          "title": "List"
+        },
+        {
+          "description": "Show leader member.",
+          "href": "/v1/leader",
+          "method": "GET",
+          "rel": "instances",
+          "title": "Show"
+        }
+      ]
+    },
+    "execution": {
+      "description": "An execution represents a timed job run.",
+      "$schema": "http://json-schema.org/draft-04/hyper-schema",
+      "strictProperties": true,
+      "title": "Dkron API - Execution",
+      "type": [
+        "object"
+      ],
+      "definitions": {
+        "job_name": {
+          "description": "job name",
+          "example": "cron_job",
+          "readOnly": false,
+          "type": [
+            "string"
+          ]
+        },
+        "started_at": {
+          "description": "start time of the execution",
+          "example": "2012-01-01T12:00:00Z",
+          "format": "date-time",
+          "readOnly": true,
+          "type": [
+            "string"
+          ]
+        },
+        "finished_at": {
+          "description": "when the execution finished running",
+          "example": "2012-01-01T12:00:00Z",
+          "format": "date-time",
+          "readOnly": true,
+          "type": [
+            "string"
+          ]
+        },
+        "success": {
+          "description": "the execution run successfuly",
+          "example": true,
+          "readOnly": true,
+          "type": [
+            "boolean"
+          ]
+        },
+        "output": {
+          "description": "partial output of the command execution",
+          "example": "Sat Sep  5 23:27:10 CEST 2015",
+          "readOnly": true,
+          "type": [
+            "string"
+          ]
+        },
+        "node_name": {
+          "description": "name of the node that executed the command",
+          "example": "dkron-node1",
+          "readOnly": true,
+          "type": [
+            "string"
+          ]
+        }
+      },
+      "links": [
+        {
+          "description": "List executions.",
+          "href": "/v1/executions/",
+          "method": "GET",
+          "rel": "instances",
+          "title": "List"
+        }
+      ]
+    }
+  }
+}
