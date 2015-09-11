@@ -1,6 +1,5 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "id": "http://dkron.io",
   "type": [
     "object"
   ],
@@ -109,8 +108,7 @@
         "tags": {
           "description": "tags of the target server to run this job",
           "example": {
-           "role": "web",
-           "role": "db:1"]
+           "role": "web"
           },
           "readOnly": false,
           "type": [
@@ -140,7 +138,45 @@
           "rel": "instances",
           "title": "Run"
         }
-      ]
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/definitions/job/definitions/name"
+        },
+        "schedule": {
+          "$ref": "#/definitions/job/definitions/schedule"
+        },
+        "command": {
+          "$ref": "#/definitions/job/definitions/command"
+        },
+        "owner": {
+          "$ref": "#/definitions/job/definitions/owner"
+        },
+        "owner_email": {
+          "$ref": "#/definitions/job/definitions/owner_email"
+        },
+        "run_as_user": {
+          "$ref": "#/definitions/job/definitions/run_as_user"
+        },
+        "success_count": {
+          "$ref": "#/definitions/job/definitions/success_count"
+        },
+        "error_count": {
+          "$ref": "#/definitions/job/definitions/error_count"
+        },
+        "last_success": {
+          "$ref": "#/definitions/job/definitions/last_success"
+        },
+        "last_error": {
+          "$ref": "#/definitions/job/definitions/last_error"
+        },
+        "disabled": {
+          "$ref": "#/definitions/job/definitions/disabled"
+        },
+        "tags": {
+          "$ref": "#/definitions/job/definitions/tags"
+        }
+      }
     },
     "member": {
       "description": "A member represents a cluster member node.",
@@ -152,7 +188,7 @@
       ],
       "definitions": {
         "Name": {
-          "type": "string",
+          "type": "boolean",
           "description": "An explanation about the puropose of this instance described by this schema.",
           "example": "node1",
           "readOnly": true
@@ -233,7 +269,42 @@
           "rel": "instances",
           "title": "Show"
         }
-      ]
+      ],
+      "properties": {
+        "Name": {
+          "$ref": "#/definitions/member/definitions/Name"
+        },
+        "Addr": {
+          "$ref": "#/definitions/member/definitions/Addr"
+        },
+        "Port": {
+          "$ref": "#/definitions/member/definitions/Port"
+        },
+        "Tags": {
+          "$ref": "#/definitions/member/definitions/Tags"
+        },
+        "Status": {
+          "$ref": "#/definitions/member/definitions/Status"
+        },
+        "ProtocolMin": {
+          "$ref": "#/definitions/member/definitions/ProtocolMin"
+        },
+        "ProtocolMax": {
+          "$ref": "#/definitions/member/definitions/ProtocolMax"
+        },
+        "ProtocolCur": {
+          "$ref": "#/definitions/member/definitions/ProtocolCur"
+        },
+        "DelegateMin": {
+          "$ref": "#/definitions/member/definitions/DelegateMin"
+        },
+        "DelegateMax": {
+          "$ref": "#/definitions/member/definitions/DelegateMax"
+        },
+        "DelegateCur": {
+          "$ref": "#/definitions/member/definitions/DelegateCur"
+        }
+      }
     },
     "execution": {
       "description": "An execution represents a timed job run.",
@@ -303,7 +374,45 @@
           "rel": "instances",
           "title": "List"
         }
-      ]
+      ],
+      "properties": {
+        "job_name": {
+          "$ref": "#/definitions/execution/definitions/job_name"
+        },
+        "started_at": {
+          "$ref": "#/definitions/execution/definitions/started_at"
+        },
+        "finished_at": {
+          "$ref": "#/definitions/execution/definitions/finished_at"
+        },
+        "success": {
+          "$ref": "#/definitions/execution/definitions/success"
+        },
+        "output": {
+          "$ref": "#/definitions/execution/definitions/output"
+        },
+        "node_name": {
+          "$ref": "#/definitions/execution/definitions/node_name"
+        }
+      }
     }
-  }
+  },
+  "properties": {
+    "member": {
+      "$ref": "#/definitions/member"
+    }
+  },
+  "description": "The Dkron API.",
+  "id": "http://dkron.io/schema#",
+  "links": [
+    {
+      "href": "/schema",
+      "method": "GET",
+      "rel": "self",
+      "targetSchema": {
+        "additionalProperties": true
+      }
+    }
+  ],
+  "title": "Dkron API"
 }
