@@ -450,17 +450,48 @@
 }
 </code></pre>
 
+<h3 id="job-show">Job Show</h3>
+<p>Show job.</p>
+<pre><code>GET /v1/jobs/{job_name}
+</code></pre>
+
+<h4 id="curl-example_2">Curl Example</h4>
+<pre><code class="bash">$ curl -n dkron-node:8080/v1/jobs/$JOB_NAME
+</code></pre>
+
+<h4 id="response-example_2">Response Example</h4>
+<pre><code>HTTP/1.1 200 OK
+</code></pre>
+
+<pre><code class="json">{
+  &quot;name&quot;: &quot;cron_job&quot;,
+  &quot;schedule&quot;: &quot;0 30 * * * *&quot;,
+  &quot;command&quot;: &quot;/usr/bin/date&quot;,
+  &quot;owner&quot;: &quot;John Doe&quot;,
+  &quot;owner_email&quot;: &quot;john@doe.com&quot;,
+  &quot;run_as_user&quot;: &quot;johndoe&quot;,
+  &quot;success_count&quot;: 20,
+  &quot;error_count&quot;: 5,
+  &quot;last_success&quot;: &quot;0001-01-01T00:00:00Z&quot;,
+  &quot;last_error&quot;: &quot;0001-01-01T100:00:00Z&quot;,
+  &quot;disabled&quot;: false,
+  &quot;tags&quot;: {
+    &quot;role&quot;: &quot;web&quot;
+  }
+}
+</code></pre>
+
 <h3 id="job-delete">Job Delete</h3>
 <p>Delete job.</p>
 <pre><code>DELETE /v1/jobs/{job_name}
 </code></pre>
 
-<h4 id="curl-example_2">Curl Example</h4>
+<h4 id="curl-example_3">Curl Example</h4>
 <pre><code class="bash">$ curl -n -X DELETE dkron-node:8080/v1/jobs/$JOB_NAME \
   -H &quot;Content-Type: application/json&quot; \
 </code></pre>
 
-<h4 id="response-example_2">Response Example</h4>
+<h4 id="response-example_3">Response Example</h4>
 <pre><code>HTTP/1.1 200 OK
 </code></pre>
 
@@ -487,11 +518,11 @@
 <pre><code>GET /v1/jobs
 </code></pre>
 
-<h4 id="curl-example_3">Curl Example</h4>
+<h4 id="curl-example_4">Curl Example</h4>
 <pre><code class="bash">$ curl -n dkron-node:8080/v1/jobs
 </code></pre>
 
-<h4 id="response-example_3">Response Example</h4>
+<h4 id="response-example_4">Response Example</h4>
 <pre><code>HTTP/1.1 200 OK
 </code></pre>
 
@@ -520,12 +551,12 @@
 <pre><code>POST /v1/jobs/{job_name}
 </code></pre>
 
-<h4 id="curl-example_4">Curl Example</h4>
+<h4 id="curl-example_5">Curl Example</h4>
 <pre><code class="bash">$ curl -n -X POST dkron-node:8080/v1/jobs/$JOB_NAME \
   -H &quot;Content-Type: application/json&quot; \
 </code></pre>
 
-<h4 id="response-example_4">Response Example</h4>
+<h4 id="response-example_5">Response Example</h4>
 <pre><code>HTTP/1.1 200 OK
 </code></pre>
 
@@ -633,11 +664,11 @@
 <pre><code>GET /v1/members
 </code></pre>
 
-<h4 id="curl-example_5">Curl Example</h4>
+<h4 id="curl-example_6">Curl Example</h4>
 <pre><code class="bash">$ curl -n dkron-node:8080/v1/members
 </code></pre>
 
-<h4 id="response-example_5">Response Example</h4>
+<h4 id="response-example_6">Response Example</h4>
 <pre><code>HTTP/1.1 200 OK
 </code></pre>
 
@@ -666,11 +697,11 @@
 <pre><code>GET /v1/leader
 </code></pre>
 
-<h4 id="curl-example_6">Curl Example</h4>
+<h4 id="curl-example_7">Curl Example</h4>
 <pre><code class="bash">$ curl -n dkron-node:8080/v1/leader
 </code></pre>
 
-<h4 id="response-example_6">Response Example</h4>
+<h4 id="response-example_7">Response Example</h4>
 <pre><code>HTTP/1.1 200 OK
 </code></pre>
 
@@ -748,11 +779,11 @@
 <pre><code>GET /v1/executions/{execution_job_name}
 </code></pre>
 
-<h4 id="curl-example_7">Curl Example</h4>
+<h4 id="curl-example_8">Curl Example</h4>
 <pre><code class="bash">$ curl -n dkron-node:8080/v1/executions/$EXECUTION_JOB_NAME
 </code></pre>
 
-<h4 id="response-example_7">Response Example</h4>
+<h4 id="response-example_8">Response Example</h4>
 <pre><code>HTTP/1.1 200 OK
 </code></pre>
 
