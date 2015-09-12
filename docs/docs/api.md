@@ -152,6 +152,47 @@ HTTP/1.1 201 Created
 }
 ```
 
+### Job Show
+
+Show job.
+
+```
+GET /v1/jobs/{job_name}
+```
+
+
+#### Curl Example
+
+```bash
+$ curl -n dkron-node:8080/v1/jobs/$JOB_NAME
+```
+
+
+#### Response Example
+
+```
+HTTP/1.1 200 OK
+```
+
+```json
+{
+  "name": "cron_job",
+  "schedule": "0 30 * * * *",
+  "command": "/usr/bin/date",
+  "owner": "John Doe",
+  "owner_email": "john@doe.com",
+  "run_as_user": "johndoe",
+  "success_count": 20,
+  "error_count": 5,
+  "last_success": "0001-01-01T00:00:00Z",
+  "last_error": "0001-01-01T100:00:00Z",
+  "disabled": false,
+  "tags": {
+    "role": "web"
+  }
+}
+```
+
 ### Job Delete
 
 Delete job.
