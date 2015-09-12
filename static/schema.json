@@ -1,0 +1,528 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": [
+    "object"
+  ],
+  "definitions": {
+    "status": {
+      "description": "Status represents details about the node.",
+      "$schema": "http://json-schema.org/draft-04/hyper-schema",
+      "strictProperties": true,
+      "title": "Dkron API - Status",
+      "type": [
+        "object"
+      ],
+      "definitions": {
+        "agent": {
+          "type": "object",
+          "description": "Node basic details",
+          "example": {
+            "name": "dkron2",
+            "version": "0.0.4"
+          },
+          "readOnly": true
+        },
+        "serf": {
+          "type": "object",
+          "description": "Serf status",
+          "example": {
+            "encrypted": "false",
+            "...": "..."
+          },
+          "readOnly": true
+        },
+        "tags": {
+          "type": "object",
+          "description": "Tags asociated with this node",
+          "example": {
+            "role":"web",
+            "server":"true"
+          },
+          "readOnly": true
+        }
+      },
+      "links": [
+        {
+          "description": "Status.",
+          "href": "/v1/",
+          "method": "GET",
+          "rel": "self",
+          "title": ""
+        }
+      ],
+      "properties": {
+        "agent": {
+          "$ref": "#/definitions/status/definitions/agent"
+        },
+        "serf": {
+          "$ref": "#/definitions/status/definitions/serf"
+        },
+        "tags": {
+          "$ref": "#/definitions/status/definitions/tags"
+        }
+      }
+    },
+    "job": {
+      "description": "A Job represents a scheduled task to execute.",
+      "$schema": "http://json-schema.org/draft-04/hyper-schema",
+      "strictProperties": true,
+      "title": "Dkron API - Job",
+      "type": [
+        "object"
+      ],
+      "definitions": {
+        "name": {
+          "description": "job name",
+          "example": "cron_job",
+          "readOnly": false,
+          "type": [
+            "string"
+          ]
+        },
+        "schedule": {
+          "description": "cron expression for the job",
+          "example": "0 30 * * * *",
+          "readOnly": false,
+          "type": [
+            "string"
+          ]
+        },
+        "command": {
+          "description": "command to run. Must be a shell command to execute",
+          "example": "/usr/bin/date",
+          "readOnly": false,
+          "type": [
+            "string"
+          ]
+        },
+        "owner": {
+          "description": "owner of the job",
+          "example": "John Doe",
+          "readOnly": false,
+          "type": [
+            "string"
+          ]
+        },
+        "owner_email": {
+          "description": "email of the owner",
+          "example": "john@doe.com",
+          "format": "email",
+          "readOnly": false,
+          "type": [
+            "string"
+          ]
+        },
+        "run_as_user": {
+          "description": "the user to use to run the job",
+          "example": "johndoe",
+          "format": "hostname",
+          "readOnly": false,
+          "type": [
+            "string"
+          ]
+        },
+        "success_count": {
+          "description": "number of successful executions",
+          "example": 20,
+          "readOnly": true,
+          "type": [
+            "integer"
+          ]
+        },
+        "error_count": {
+          "description": "number of failed executions",
+          "example": 5,
+          "readOnly": true,
+          "type": [
+            "integer"
+          ]
+        },
+        "last_success": {
+          "description": "last time this job executed successfully",
+          "example": "0001-01-01T00:00:00Z",
+          "format": "date-time",
+          "readOnly": true,
+          "type": [
+            "string"
+          ]
+        },
+        "last_error": {
+          "description": "last time this job failed",
+          "example": "0001-01-01T100:00:00Z",
+          "format": "date-time",
+          "readOnly": true,
+          "type": [
+            "string"
+          ]
+        },
+        "disabled": {
+          "description": "disabled state of the job",
+          "example": false,
+          "readOnly": false,
+          "type": [
+            "boolean"
+          ]
+        },
+        "tags": {
+          "description": "tags of the target server to run this job",
+          "example": {
+           "role": "web"
+          },
+          "readOnly": false,
+          "type": [
+            "object"
+          ]
+        }
+      },
+      "links": [
+        {
+          "description": "Create or updates a new job.",
+          "href": "/v1/jobs",
+          "method": "POST",
+          "rel": "create",
+          "title": "Create or update",
+          "schema": {
+            "properties": {
+              "name": {
+                "$ref": "#/definitions/job/definitions/name"
+              },
+              "schedule": {
+                "$ref": "#/definitions/job/definitions/schedule"
+              },
+              "command": {
+                "$ref": "#/definitions/job/definitions/command"
+              },
+              "owner": {
+                "$ref": "#/definitions/job/definitions/owner"
+              },
+              "owner_email": {
+                "$ref": "#/definitions/job/definitions/owner_email"
+              },
+              "run_as_user": {
+                "$ref": "#/definitions/job/definitions/run_as_user"
+              },
+              "disabled": {
+                "$ref": "#/definitions/job/definitions/disabled"
+              },
+              "tags": {
+                "$ref": "#/definitions/job/definitions/tags"
+              }
+            },
+            "required": [
+              "name",
+              "schedule",
+              "command"
+            ],
+            "type": [
+              "object"
+            ]
+          }
+        },
+        {
+          "description": "Delete job.",
+          "href": "/v1/jobs/{(%23%2Fdefinitions%2Fjob%2Fdefinitions%2Fname)}",
+          "method": "DELETE",
+          "rel": "delete",
+          "title": "Delete"
+        },
+        {
+          "description": "List jobs.",
+          "href": "/v1/jobs",
+          "method": "GET",
+          "rel": "instances",
+          "title": "List"
+        },
+        {
+          "description": "Run job.",
+          "href": "/v1/jobs/{(%23%2Fdefinitions%2Fjob%2Fdefinitions%2Fname)}",
+          "method": "POST",
+          "rel": "run",
+          "title": "Run"
+        }
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/definitions/job/definitions/name"
+        },
+        "schedule": {
+          "$ref": "#/definitions/job/definitions/schedule"
+        },
+        "command": {
+          "$ref": "#/definitions/job/definitions/command"
+        },
+        "owner": {
+          "$ref": "#/definitions/job/definitions/owner"
+        },
+        "owner_email": {
+          "$ref": "#/definitions/job/definitions/owner_email"
+        },
+        "run_as_user": {
+          "$ref": "#/definitions/job/definitions/run_as_user"
+        },
+        "success_count": {
+          "$ref": "#/definitions/job/definitions/success_count"
+        },
+        "error_count": {
+          "$ref": "#/definitions/job/definitions/error_count"
+        },
+        "last_success": {
+          "$ref": "#/definitions/job/definitions/last_success"
+        },
+        "last_error": {
+          "$ref": "#/definitions/job/definitions/last_error"
+        },
+        "disabled": {
+          "$ref": "#/definitions/job/definitions/disabled"
+        },
+        "tags": {
+          "$ref": "#/definitions/job/definitions/tags"
+        }
+      }
+    },
+    "member": {
+      "description": "A member represents a cluster member node.",
+      "$schema": "http://json-schema.org/draft-04/hyper-schema",
+      "strictProperties": true,
+      "title": "Dkron API - Member",
+      "type": [
+        "object"
+      ],
+      "definitions": {
+        "Name": {
+          "type": "boolean",
+          "description": "Node name",
+          "example": "dkron1",
+          "readOnly": true
+        },
+        "Addr": {
+          "type": "string",
+          "description": "IP Address",
+          "example": "10.0.0.1",
+          "readOnly": true
+        },
+        "Port": {
+          "type": "integer",
+          "description": "Port number",
+          "example": 5001,
+          "readOnly": true
+        },
+        "Tags": {
+          "type": "object",
+          "description": "Tags asociated with this node",
+          "example": {"role":"web","server":"true"},
+          "readOnly": true
+        },
+        "Status": {
+          "type": "integer",
+          "description": "The serf status of the node see: https://godoc.org/github.com/hashicorp/serf/serf#MemberStatus",
+          "example": 1,
+          "readOnly": true
+        },
+        "ProtocolMin": {
+          "type": "integer",
+          "description": "Serf protocol minimum version this node can understand or speak",
+          "example": 1,
+          "readOnly": true
+        },
+        "ProtocolMax": {
+          "type": "integer",
+          "description": "Serf protocol minimum version this node can understand or speak",
+          "example": 2,
+          "readOnly": true
+        },
+        "ProtocolCur": {
+          "type": "integer",
+          "description": "Serf protocol current version this node can understand or speak",
+          "example": 2,
+          "readOnly": true
+        },
+        "DelegateMin": {
+          "type": "integer",
+          "description": "Serf delegate protocol minimum version this node can understand or speak",
+          "example": 2, 
+          "readOnly": true
+        },
+        "DelegateMax": {
+          "type": "integer",
+          "description": "Serf delegate protocol minimum version this node can understand or speak",
+          "example": 4,
+          "readOnly": true
+        },
+        "DelegateCur": {
+          "type": "integer",
+          "description": "Serf delegate protocol minimum version this node can understand or speak",
+          "example": 4,
+          "readOnly": true
+        }
+      },
+      "links": [
+        {
+          "description": "List members.",
+          "href": "/v1/members",
+          "method": "GET",
+          "rel": "instances",
+          "title": "List"
+        },
+        {
+          "description": "Show leader member.",
+          "href": "/v1/leader",
+          "method": "GET",
+          "rel": "show",
+          "title": "Leader"
+        }
+      ],
+      "properties": {
+        "Name": {
+          "$ref": "#/definitions/member/definitions/Name"
+        },
+        "Addr": {
+          "$ref": "#/definitions/member/definitions/Addr"
+        },
+        "Port": {
+          "$ref": "#/definitions/member/definitions/Port"
+        },
+        "Tags": {
+          "$ref": "#/definitions/member/definitions/Tags"
+        },
+        "Status": {
+          "$ref": "#/definitions/member/definitions/Status"
+        },
+        "ProtocolMin": {
+          "$ref": "#/definitions/member/definitions/ProtocolMin"
+        },
+        "ProtocolMax": {
+          "$ref": "#/definitions/member/definitions/ProtocolMax"
+        },
+        "ProtocolCur": {
+          "$ref": "#/definitions/member/definitions/ProtocolCur"
+        },
+        "DelegateMin": {
+          "$ref": "#/definitions/member/definitions/DelegateMin"
+        },
+        "DelegateMax": {
+          "$ref": "#/definitions/member/definitions/DelegateMax"
+        },
+        "DelegateCur": {
+          "$ref": "#/definitions/member/definitions/DelegateCur"
+        }
+      }
+    },
+    "execution": {
+      "description": "An execution represents a timed job run.",
+      "$schema": "http://json-schema.org/draft-04/hyper-schema",
+      "strictProperties": true,
+      "title": "Dkron API - Execution",
+      "type": [
+        "object"
+      ],
+      "definitions": {
+        "job_name": {
+          "description": "job name",
+          "example": "cron_job",
+          "readOnly": false,
+          "type": [
+            "string"
+          ]
+        },
+        "started_at": {
+          "description": "start time of the execution",
+          "example": "2012-01-01T12:00:00Z",
+          "format": "date-time",
+          "readOnly": true,
+          "type": [
+            "string"
+          ]
+        },
+        "finished_at": {
+          "description": "when the execution finished running",
+          "example": "2012-01-01T12:00:00Z",
+          "format": "date-time",
+          "readOnly": true,
+          "type": [
+            "string"
+          ]
+        },
+        "success": {
+          "description": "the execution run successfuly",
+          "example": true,
+          "readOnly": true,
+          "type": [
+            "boolean"
+          ]
+        },
+        "output": {
+          "description": "partial output of the command execution",
+          "example": "Sat Sep  5 23:27:10 CEST 2015",
+          "readOnly": true,
+          "type": [
+            "string"
+          ]
+        },
+        "node_name": {
+          "description": "name of the node that executed the command",
+          "example": "dkron-node1",
+          "readOnly": true,
+          "type": [
+            "string"
+          ]
+        }
+      },
+      "links": [
+        {
+          "description": "List executions.",
+          "href": "/v1/executions/{(%23%2Fdefinitions%2Fexecution%2Fdefinitions%2Fjob_name)}",
+          "method": "GET",
+          "rel": "instances",
+          "title": "List"
+        }
+      ],
+      "properties": {
+        "job_name": {
+          "$ref": "#/definitions/execution/definitions/job_name"
+        },
+        "started_at": {
+          "$ref": "#/definitions/execution/definitions/started_at"
+        },
+        "finished_at": {
+          "$ref": "#/definitions/execution/definitions/finished_at"
+        },
+        "success": {
+          "$ref": "#/definitions/execution/definitions/success"
+        },
+        "output": {
+          "$ref": "#/definitions/execution/definitions/output"
+        },
+        "node_name": {
+          "$ref": "#/definitions/execution/definitions/node_name"
+        }
+      }
+    }
+  },
+  "properties": {
+    "status": {
+      "$ref": "#/definitions/status"
+    },
+    "job": {
+      "$ref": "#/definitions/job"
+    },
+    "member": {
+      "$ref": "#/definitions/member"
+    },
+    "execution": {
+      "$ref": "#/definitions/execution"
+    }
+  },
+  "description": "The Dkron API.",
+  "id": "http://dkron.io/schema#",
+  "links": [
+    {
+      "href": "dkron-node:8080",
+      "method": "GET",
+      "rel": "self",
+      "targetSchema": {
+        "additionalProperties": true
+      }
+    }
+  ],
+  "title": "Dkron API"
+}
