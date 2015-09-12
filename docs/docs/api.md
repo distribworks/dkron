@@ -5,7 +5,7 @@ You can communicate with dkron using a RESTful JSON API over HTTP. dkron nodes u
 dkron implements a RESTful JSON API over HTTP to communicate with software clients. dkron listens in port `8080` by default. All examples in this section assume that you're using the default port.
 
 
-## <a name="resource-status"></a>Status
+## Status
 
 Status represents details about the node.
 
@@ -57,7 +57,7 @@ HTTP/1.1 200 OK
 ```
 
 
-## <a name="resource-job"></a>Job
+## Job
 
 A Job represents a scheduled task to execute.
 
@@ -259,7 +259,7 @@ HTTP/1.1 200 OK
 ```
 
 
-## <a name="resource-member"></a>Member
+## Member
 
 A member represents a cluster member node.
 
@@ -364,7 +364,7 @@ HTTP/1.1 200 OK
 ```
 
 
-## <a name="resource-execution"></a>Execution
+## Execution
 
 An execution represents a timed job run.
 
