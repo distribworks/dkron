@@ -219,6 +219,13 @@
           }
         },
         {
+          "description": "Show job.",
+          "href": "/v1/jobs/{(%23%2Fdefinitions%2Fjob%2Fdefinitions%2Fname)}",
+          "method": "GET",
+          "rel": "show",
+          "title": "Show"
+        },
+        {
           "description": "Delete job.",
           "href": "/v1/jobs/{(%23%2Fdefinitions%2Fjob%2Fdefinitions%2Fname)}",
           "method": "DELETE",
