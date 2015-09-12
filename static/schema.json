@@ -133,7 +133,7 @@
         },
         {
           "description": "Run job.",
-          "href": "/v1/jobs/job_name",
+          "href": "/v1/jobs/{job_name}",
           "method": "POST",
           "rel": "instances",
           "title": "Run"
@@ -189,68 +189,68 @@
       "definitions": {
         "Name": {
           "type": "boolean",
-          "description": "An explanation about the puropose of this instance described by this schema.",
-          "example": "node1",
+          "description": "Node name",
+          "example": "dkron1",
           "readOnly": true
         },
         "Addr": {
           "type": "string",
-          "description": "An explanation about the puropose of this instance described by this schema.",
-          "example": "node1",
+          "description": "IP Address",
+          "example": "10.0.0.1",
           "readOnly": true
         },
         "Port": {
           "type": "integer",
-          "description": "An explanation about the puropose of this instance described by this schema.",
-          "example": "node1",
+          "description": "Port number",
+          "example": 5001,
           "readOnly": true
         },
         "Tags": {
           "type": "object",
-          "description": "An explanation about the puropose of this instance described by this schema.",
-          "example": "node1",
+          "description": "Tags asociated with this node",
+          "example": {"role":"web","server":"true"},
           "readOnly": true
         },
         "Status": {
           "type": "integer",
-          "description": "An explanation about the puropose of this instance described by this schema.",
-          "example": "node1",
+          "description": "The serf status of the node see: https://godoc.org/github.com/hashicorp/serf/serf#MemberStatus",
+          "example": 1,
           "readOnly": true
         },
         "ProtocolMin": {
           "type": "integer",
-          "description": "An explanation about the puropose of this instance described by this schema.",
-          "example": "node1",
+          "description": "Serf protocol minimum version this node can understand or speak",
+          "example": 1,
           "readOnly": true
         },
         "ProtocolMax": {
           "type": "integer",
-          "description": "An explanation about the puropose of this instance described by this schema.",
-          "example": "node1",
+          "description": "Serf protocol minimum version this node can understand or speak",
+          "example": 2,
           "readOnly": true
         },
         "ProtocolCur": {
           "type": "integer",
-          "description": "An explanation about the puropose of this instance described by this schema.",
-          "example": "node1",
+          "description": "Serf protocol current version this node can understand or speak",
+          "example": 2,
           "readOnly": true
         },
         "DelegateMin": {
           "type": "integer",
-          "description": "An explanation about the puropose of this instance described by this schema.",
-          "example": "node1",
+          "description": "Serf delegate protocol minimum version this node can understand or speak",
+          "example": 2, 
           "readOnly": true
         },
         "DelegateMax": {
           "type": "integer",
-          "description": "An explanation about the puropose of this instance described by this schema.",
-          "example": "node1",
+          "description": "Serf delegate protocol minimum version this node can understand or speak",
+          "example": 4,
           "readOnly": true
         },
         "DelegateCur": {
           "type": "integer",
-          "description": "An explanation about the puropose of this instance described by this schema.",
-          "example": "node1",
+          "description": "Serf delegate protocol minimum version this node can understand or speak",
+          "example": 4,
           "readOnly": true
         }
       },
@@ -400,13 +400,19 @@
   "properties": {
     "member": {
       "$ref": "#/definitions/member"
+    },
+    "job": {
+      "$ref": "#/definitions/job"
+    },
+    "execution": {
+      "$ref": "#/definitions/execution"
     }
   },
   "description": "The Dkron API.",
   "id": "http://dkron.io/schema#",
   "links": [
     {
-      "href": "/schema",
+      "href": "dkron-node:8080",
       "method": "GET",
       "rel": "self",
       "targetSchema": {
