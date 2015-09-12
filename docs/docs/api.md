@@ -91,7 +91,19 @@ POST /v1/jobs
 | Name | Type | Description | Example |
 | ------- | ------- | ------- | ------- |
 | **name** | *string* | job name | `"cron_job"` |
+| **schedule** | *string* | cron expression for the job | `"0 30 * * * *"` |
+| **command** | *string* | command to run. Must be a shell command to execute | `"/usr/bin/date"` |
 
+
+#### Optional Parameters
+
+| Name | Type | Description | Example |
+| ------- | ------- | ------- | ------- |
+| **owner** | *string* | owner of the job | `"John Doe"` |
+| **owner_email** | *email* | email of the owner | `"john@doe.com"` |
+| **run_as_user** | *hostname* | the user to use to run the job | `"johndoe"` |
+| **disabled** | *boolean* | disabled state of the job | `false` |
+| **tags** | *object* | tags of the target server to run this job | `{"role":"web"}` |
 
 
 #### Curl Example
@@ -101,7 +113,16 @@ $ curl -n -X POST dkron-node:8080/v1/jobs \
   -H "Content-Type: application/json" \
  \
   -d '{
-  "name": "cron_job"
+  "name": "cron_job",
+  "schedule": "0 30 * * * *",
+  "command": "/usr/bin/date",
+  "owner": "John Doe",
+  "owner_email": "john@doe.com",
+  "run_as_user": "johndoe",
+  "disabled": false,
+  "tags": {
+    "role": "web"
+  }
 }'
 ```
 

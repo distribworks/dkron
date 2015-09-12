@@ -185,10 +185,33 @@
             "properties": {
               "name": {
                 "$ref": "#/definitions/job/definitions/name"
+              },
+              "schedule": {
+                "$ref": "#/definitions/job/definitions/schedule"
+              },
+              "command": {
+                "$ref": "#/definitions/job/definitions/command"
+              },
+              "owner": {
+                "$ref": "#/definitions/job/definitions/owner"
+              },
+              "owner_email": {
+                "$ref": "#/definitions/job/definitions/owner_email"
+              },
+              "run_as_user": {
+                "$ref": "#/definitions/job/definitions/run_as_user"
+              },
+              "disabled": {
+                "$ref": "#/definitions/job/definitions/disabled"
+              },
+              "tags": {
+                "$ref": "#/definitions/job/definitions/tags"
               }
             },
             "required": [
-              "name"
+              "name",
+              "schedule",
+              "command"
             ],
             "type": [
               "object"
