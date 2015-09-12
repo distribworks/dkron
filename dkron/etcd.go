@@ -145,10 +145,16 @@ func (e *etcdClient) GetLeader() string {
 	return res.Node.Value
 }
 
-func (e *etcdClient) DeleteJob(name string) error {
-	if _, err := e.Client.Delete(e.keyspace+"/jobs/"+name, false); err != nil {
-		return err
+func (e *etcdClient) DeleteJob(name string) (*Job, error) {
+	res, err := e.Client.Delete(e.keyspace+"/jobs/"+name, false)
+	if err != nil {
+		return nil, err
 	}
 
-	return nil
+	var job Job
+	err = json.Unmarshal([]byte(res.Node.Value), &job)
+	if err != nil {
+		return nil, err
+	}
+	return &job, nil
 }
