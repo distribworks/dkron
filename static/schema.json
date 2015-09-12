@@ -4,6 +4,64 @@
     "object"
   ],
   "definitions": {
+    "status": {
+      "description": "Status represents details about the node.",
+      "$schema": "http://json-schema.org/draft-04/hyper-schema",
+      "strictProperties": true,
+      "title": "Dkron API - Status",
+      "type": [
+        "object"
+      ],
+      "definitions": {
+        "agent": {
+          "type": "object",
+          "description": "Node basic details",
+          "example": {
+            "name": "dkron2",
+            "version": "0.0.4"
+          },
+          "readOnly": true
+        },
+        "serf": {
+          "type": "object",
+          "description": "Serf status",
+          "example": {
+            "encrypted": "false",
+            "...": "..."
+          },
+          "readOnly": true
+        },
+        "tags": {
+          "type": "object",
+          "description": "Tags asociated with this node",
+          "example": {
+            "role":"web",
+            "server":"true"
+          },
+          "readOnly": true
+        }
+      },
+      "links": [
+        {
+          "description": "Status.",
+          "href": "/v1/",
+          "method": "GET",
+          "rel": "self",
+          "title": ""
+        }
+      ],
+      "properties": {
+        "agent": {
+          "$ref": "#/definitions/status/definitions/agent"
+        },
+        "serf": {
+          "$ref": "#/definitions/status/definitions/serf"
+        },
+        "tags": {
+          "$ref": "#/definitions/status/definitions/tags"
+        }
+      }
+    },
     "job": {
       "description": "A Job represents a scheduled task to execute.",
       "$schema": "http://json-schema.org/draft-04/hyper-schema",
@@ -81,7 +139,7 @@
         },
         "last_success": {
           "description": "last time this job executed successfully",
-          "example": "2012-01-01T12:00:00Z",
+          "example": "0001-01-01T00:00:00Z",
           "format": "date-time",
           "readOnly": true,
           "type": [
@@ -90,7 +148,7 @@
         },
         "last_error": {
           "description": "last time this job failed",
-          "example": "2012-01-01T12:00:00Z",
+          "example": "0001-01-01T100:00:00Z",
           "format": "date-time",
           "readOnly": true,
           "type": [
@@ -122,20 +180,40 @@
           "href": "/v1/jobs",
           "method": "POST",
           "rel": "create",
-          "title": "Create or update"
+          "title": "Create or update",
+          "schema": {
+            "properties": {
+              "name": {
+                "$ref": "#/definitions/job/definitions/name"
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "type": [
+              "object"
+            ]
+          }
+        },
+        {
+          "description": "Delete job.",
+          "href": "/v1/jobs/{(%23%2Fdefinitions%2Fjob%2Fdefinitions%2Fname)}",
+          "method": "DELETE",
+          "rel": "delete",
+          "title": "Delete"
         },
         {
           "description": "List jobs.",
-          "href": "/v1/apps",
+          "href": "/v1/jobs",
           "method": "GET",
           "rel": "instances",
           "title": "List"
         },
         {
           "description": "Run job.",
-          "href": "/v1/jobs/{job_name}",
+          "href": "/v1/jobs/{(%23%2Fdefinitions%2Fjob%2Fdefinitions%2Fname)}",
           "method": "POST",
-          "rel": "instances",
+          "rel": "run",
           "title": "Run"
         }
       ],
@@ -266,8 +344,8 @@
           "description": "Show leader member.",
           "href": "/v1/leader",
           "method": "GET",
-          "rel": "instances",
-          "title": "Show"
+          "rel": "show",
+          "title": "Leader"
         }
       ],
       "properties": {
@@ -369,7 +447,7 @@
       "links": [
         {
           "description": "List executions.",
-          "href": "/v1/executions/",
+          "href": "/v1/executions/{(%23%2Fdefinitions%2Fexecution%2Fdefinitions%2Fjob_name)}",
           "method": "GET",
           "rel": "instances",
           "title": "List"
@@ -398,11 +476,14 @@
     }
   },
   "properties": {
-    "member": {
-      "$ref": "#/definitions/member"
+    "status": {
+      "$ref": "#/definitions/status"
     },
     "job": {
       "$ref": "#/definitions/job"
+    },
+    "member": {
+      "$ref": "#/definitions/member"
     },
     "execution": {
       "$ref": "#/definitions/execution"
