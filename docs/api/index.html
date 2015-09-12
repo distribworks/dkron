@@ -166,23 +166,13 @@
     
         <li class="main active"><a href="#rest-api">REST API</a></li>
         
-            <li><a href="#leaders">Leaders</a></li>
+            <li><a href="#status">Status</a></li>
         
-            <li><a href="#index">Index</a></li>
+            <li><a href="#job">Job</a></li>
         
-            <li><a href="#members">Members</a></li>
+            <li><a href="#member">Member</a></li>
         
-            <li><a href="#leader">Leader</a></li>
-        
-            <li><a href="#get-jobs">Get Jobs</a></li>
-        
-            <li><a href="#create-or-update-a-job">Create or update a Job</a></li>
-        
-            <li><a href="#deleting-a-job">Deleting a Job</a></li>
-        
-            <li><a href="#manually-starting-a-job">Manually Starting a Job</a></li>
-        
-            <li><a href="#get-job-executions">Get job executions</a></li>
+            <li><a href="#execution">Execution</a></li>
         
     
     </ul>
@@ -190,78 +180,593 @@
                 <div class="col-md-9" role="main">
 
 <h1 id="rest-api">REST API</h1>
-<p>You can communicate with dkron using a RESTful JSON API over HTTP. dkron nodes usually listen on port 8080 for API requests. All examples in this section assume that you've found a running leader at dkron-node:8080.</p>
-<p>dkron implements a RESTful JSON API over HTTP to communicate with software clients. dkron listens in port 8080 by default. All examples in this section assume that you're using the default port.</p>
-<p><a href="#leaders">Leaders</a></p>
-<h2 id="leaders">Leaders</h2>
-<p>When you have multiple dkron nodes in server mode running, only one of them will be elected as the leader. In dkron you can talk to any node running in server mode all of them could handle your request but only the leader will actually run the scheduler.</p>
-<h2 id="index">Index</h2>
-<ul>
-<li>Endpoint: <code>/v1</code></li>
-<li>Method: <code>GET</code></li>
-<li>Example: <code>curl -XGET dkron-node:8080/v1</code></li>
-</ul>
-<p>Returns info about the agent queried.</p>
-<h2 id="members">Members</h2>
-<ul>
-<li>Endpoint: <code>/v1/members</code></li>
-<li>Method: <code>GET</code></li>
-<li>Example: <code>curl -XGET dkron-node:8080/v1/members</code></li>
-</ul>
-<p>Returns the cluster member list.</p>
-<h2 id="leader">Leader</h2>
-<ul>
-<li>Endpoint: <code>/v1/leader</code></li>
-<li>Method: <code>GET</code></li>
-<li>Example: <code>curl -XGET dkron-node:8080/v1/leader</code></li>
-</ul>
-<p>Returns details about the current leader.</p>
-<h2 id="get-jobs">Get Jobs</h2>
-<ul>
-<li>Endpoint: <code>/v1/jobs</code></li>
-<li>Method: <code>GET</code></li>
-<li>Example: <code>curl -L -X GET dkron-node:8080/v1/jobs</code></li>
-</ul>
-<h2 id="create-or-update-a-job">Create or update a Job</h2>
-<p>Creates a new job or updates an exsiting job based on it's <code>name</code>. The <code>schedule</code> can be any valid cron expression or an interval using the <code>@every Xs</code> format.</p>
-<ul>
-<li>Endpoint: <code>/v1/jobs/</code></li>
-<li>Method: <code>POST</code> or <code>PUT</code></li>
-<li>Example: <code>curl -X POST dkron-node:8080/v1/jobs/ -d @jobs.json</code></li>
-</ul>
-<p>Sample job:</p>
-<pre><code>{
-   &quot;name&quot;:&quot;cron_job&quot;,
-   &quot;schedule&quot;:&quot;@every 2s&quot;,
-   &quot;command&quot;:&quot;date&quot;,
-   &quot;owner&quot;:&quot;foo&quot;,
-   &quot;owner_email&quot;:&quot;foo@bar.com&quot;
+<p>You can communicate with dkron using a RESTful JSON API over HTTP. dkron nodes usually listen on port <code>8080</code> for API requests. All examples in this section assume that you've found a running leader at <code>dkron-node:8080</code>.</p>
+<p>dkron implements a RESTful JSON API over HTTP to communicate with software clients. dkron listens in port <code>8080</code> by default. All examples in this section assume that you're using the default port.</p>
+<h2 id="status">Status</h2>
+<p>Status represents details about the node.</p>
+<h3 id="attributes">Attributes</h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>agent</strong></td>
+<td><em>object</em></td>
+<td>Node basic details</td>
+<td><code>{"name":"dkron2","version":"0.0.4"}</code></td>
+</tr>
+<tr>
+<td><strong>serf</strong></td>
+<td><em>object</em></td>
+<td>Serf status</td>
+<td><code>{"encrypted":"false","...":"..."}</code></td>
+</tr>
+<tr>
+<td><strong>tags</strong></td>
+<td><em>object</em></td>
+<td>Tags asociated with this node</td>
+<td><code>{"role":"web","server":"true"}</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="status_1">Status</h3>
+<p>Status.</p>
+<pre><code>GET /v1/
+</code></pre>
+
+<h4 id="curl-example">Curl Example</h4>
+<pre><code class="bash">$ curl -n dkron-node:8080/v1/
+</code></pre>
+
+<h4 id="response-example">Response Example</h4>
+<pre><code>HTTP/1.1 200 OK
+</code></pre>
+
+<pre><code class="json">{
+  &quot;agent&quot;: {
+    &quot;name&quot;: &quot;dkron2&quot;,
+    &quot;version&quot;: &quot;0.0.4&quot;
+  },
+  &quot;serf&quot;: {
+    &quot;encrypted&quot;: &quot;false&quot;,
+    &quot;...&quot;: &quot;...&quot;
+  },
+  &quot;tags&quot;: {
+    &quot;role&quot;: &quot;web&quot;,
+    &quot;server&quot;: &quot;true&quot;
+  }
 }
 </code></pre>
 
-<h2 id="deleting-a-job">Deleting a Job</h2>
-<p>Get a job name from the job listing above. Then:</p>
-<ul>
-<li>Endpoint: <code>/v1/jobs/jobName</code></li>
-<li>Method: <code>DELETE</code></li>
-<li>Example: <code>curl -L -X DELETE dkron-node:8080/v1/job/aggregate_stats</code></li>
-</ul>
-<p>Delete a job definition.</p>
-<h2 id="manually-starting-a-job">Manually Starting a Job</h2>
-<p>You can manually start a job by issuing an HTTP request.</p>
-<ul>
-<li>Endpoint: <code>/v1/jobs/job_name</code></li>
-<li>Method: <code>POST</code> or <code>PUT</code></li>
-<li>Example: <code>curl -L -X POST dkron-node:8080/v1/jobs/aggregate_stats</code></li>
-</ul>
-<p>Will run <code>aggregate_stats</code> job.</p>
-<h2 id="get-job-executions">Get job executions</h2>
-<ul>
-<li>Endpoint: <code>/v1/executions/job</code></li>
-<li>Method: <code>GET</code></li>
-<li>Example: <code>curl -L -X GET dkron-node:8080/v1/executions/aggregate_stats</code></li>
-</ul>
-<p>Get a list with the job executions.</p></div>
+<h2 id="job">Job</h2>
+<p>A Job represents a scheduled task to execute.</p>
+<h3 id="attributes_1">Attributes</h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>name</strong></td>
+<td><em>string</em></td>
+<td>job name</td>
+<td><code>"cron_job"</code></td>
+</tr>
+<tr>
+<td><strong>schedule</strong></td>
+<td><em>string</em></td>
+<td>cron expression for the job</td>
+<td><code>"0 30 * * * *"</code></td>
+</tr>
+<tr>
+<td><strong>command</strong></td>
+<td><em>string</em></td>
+<td>command to run. Must be a shell command to execute</td>
+<td><code>"/usr/bin/date"</code></td>
+</tr>
+<tr>
+<td><strong>owner</strong></td>
+<td><em>string</em></td>
+<td>owner of the job</td>
+<td><code>"John Doe"</code></td>
+</tr>
+<tr>
+<td><strong>owner_email</strong></td>
+<td><em>email</em></td>
+<td>email of the owner</td>
+<td><code>"john@doe.com"</code></td>
+</tr>
+<tr>
+<td><strong>run_as_user</strong></td>
+<td><em>hostname</em></td>
+<td>the user to use to run the job</td>
+<td><code>"johndoe"</code></td>
+</tr>
+<tr>
+<td><strong>success_count</strong></td>
+<td><em>integer</em></td>
+<td>number of successful executions</td>
+<td><code>20</code></td>
+</tr>
+<tr>
+<td><strong>error_count</strong></td>
+<td><em>integer</em></td>
+<td>number of failed executions</td>
+<td><code>5</code></td>
+</tr>
+<tr>
+<td><strong>last_success</strong></td>
+<td><em>date-time</em></td>
+<td>last time this job executed successfully</td>
+<td><code>"0001-01-01T00:00:00Z"</code></td>
+</tr>
+<tr>
+<td><strong>last_error</strong></td>
+<td><em>date-time</em></td>
+<td>last time this job failed</td>
+<td><code>"0001-01-01T100:00:00Z"</code></td>
+</tr>
+<tr>
+<td><strong>disabled</strong></td>
+<td><em>boolean</em></td>
+<td>disabled state of the job</td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><strong>tags</strong></td>
+<td><em>object</em></td>
+<td>tags of the target server to run this job</td>
+<td><code>{"role":"web"}</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="job-create-or-update">Job Create or update</h3>
+<p>Create or updates a new job.</p>
+<pre><code>POST /v1/jobs
+</code></pre>
+
+<h4 id="required-parameters">Required Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>name</strong></td>
+<td><em>string</em></td>
+<td>job name</td>
+<td><code>"cron_job"</code></td>
+</tr>
+<tr>
+<td><strong>schedule</strong></td>
+<td><em>string</em></td>
+<td>cron expression for the job</td>
+<td><code>"0 30 * * * *"</code></td>
+</tr>
+<tr>
+<td><strong>command</strong></td>
+<td><em>string</em></td>
+<td>command to run. Must be a shell command to execute</td>
+<td><code>"/usr/bin/date"</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="optional-parameters">Optional Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>owner</strong></td>
+<td><em>string</em></td>
+<td>owner of the job</td>
+<td><code>"John Doe"</code></td>
+</tr>
+<tr>
+<td><strong>owner_email</strong></td>
+<td><em>email</em></td>
+<td>email of the owner</td>
+<td><code>"john@doe.com"</code></td>
+</tr>
+<tr>
+<td><strong>run_as_user</strong></td>
+<td><em>hostname</em></td>
+<td>the user to use to run the job</td>
+<td><code>"johndoe"</code></td>
+</tr>
+<tr>
+<td><strong>disabled</strong></td>
+<td><em>boolean</em></td>
+<td>disabled state of the job</td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><strong>tags</strong></td>
+<td><em>object</em></td>
+<td>tags of the target server to run this job</td>
+<td><code>{"role":"web"}</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="curl-example_1">Curl Example</h4>
+<pre><code class="bash">$ curl -n -X POST dkron-node:8080/v1/jobs \
+  -H &quot;Content-Type: application/json&quot; \
+ \
+  -d '{
+  &quot;name&quot;: &quot;cron_job&quot;,
+  &quot;schedule&quot;: &quot;0 30 * * * *&quot;,
+  &quot;command&quot;: &quot;/usr/bin/date&quot;,
+  &quot;owner&quot;: &quot;John Doe&quot;,
+  &quot;owner_email&quot;: &quot;john@doe.com&quot;,
+  &quot;run_as_user&quot;: &quot;johndoe&quot;,
+  &quot;disabled&quot;: false,
+  &quot;tags&quot;: {
+    &quot;role&quot;: &quot;web&quot;
+  }
+}'
+</code></pre>
+
+<h4 id="response-example_1">Response Example</h4>
+<pre><code>HTTP/1.1 201 Created
+</code></pre>
+
+<pre><code class="json">{
+  &quot;name&quot;: &quot;cron_job&quot;,
+  &quot;schedule&quot;: &quot;0 30 * * * *&quot;,
+  &quot;command&quot;: &quot;/usr/bin/date&quot;,
+  &quot;owner&quot;: &quot;John Doe&quot;,
+  &quot;owner_email&quot;: &quot;john@doe.com&quot;,
+  &quot;run_as_user&quot;: &quot;johndoe&quot;,
+  &quot;success_count&quot;: 20,
+  &quot;error_count&quot;: 5,
+  &quot;last_success&quot;: &quot;0001-01-01T00:00:00Z&quot;,
+  &quot;last_error&quot;: &quot;0001-01-01T100:00:00Z&quot;,
+  &quot;disabled&quot;: false,
+  &quot;tags&quot;: {
+    &quot;role&quot;: &quot;web&quot;
+  }
+}
+</code></pre>
+
+<h3 id="job-delete">Job Delete</h3>
+<p>Delete job.</p>
+<pre><code>DELETE /v1/jobs/{job_name}
+</code></pre>
+
+<h4 id="curl-example_2">Curl Example</h4>
+<pre><code class="bash">$ curl -n -X DELETE dkron-node:8080/v1/jobs/$JOB_NAME \
+  -H &quot;Content-Type: application/json&quot; \
+</code></pre>
+
+<h4 id="response-example_2">Response Example</h4>
+<pre><code>HTTP/1.1 200 OK
+</code></pre>
+
+<pre><code class="json">{
+  &quot;name&quot;: &quot;cron_job&quot;,
+  &quot;schedule&quot;: &quot;0 30 * * * *&quot;,
+  &quot;command&quot;: &quot;/usr/bin/date&quot;,
+  &quot;owner&quot;: &quot;John Doe&quot;,
+  &quot;owner_email&quot;: &quot;john@doe.com&quot;,
+  &quot;run_as_user&quot;: &quot;johndoe&quot;,
+  &quot;success_count&quot;: 20,
+  &quot;error_count&quot;: 5,
+  &quot;last_success&quot;: &quot;0001-01-01T00:00:00Z&quot;,
+  &quot;last_error&quot;: &quot;0001-01-01T100:00:00Z&quot;,
+  &quot;disabled&quot;: false,
+  &quot;tags&quot;: {
+    &quot;role&quot;: &quot;web&quot;
+  }
+}
+</code></pre>
+
+<h3 id="job-list">Job List</h3>
+<p>List jobs.</p>
+<pre><code>GET /v1/jobs
+</code></pre>
+
+<h4 id="curl-example_3">Curl Example</h4>
+<pre><code class="bash">$ curl -n dkron-node:8080/v1/jobs
+</code></pre>
+
+<h4 id="response-example_3">Response Example</h4>
+<pre><code>HTTP/1.1 200 OK
+</code></pre>
+
+<pre><code class="json">[
+  {
+    &quot;name&quot;: &quot;cron_job&quot;,
+    &quot;schedule&quot;: &quot;0 30 * * * *&quot;,
+    &quot;command&quot;: &quot;/usr/bin/date&quot;,
+    &quot;owner&quot;: &quot;John Doe&quot;,
+    &quot;owner_email&quot;: &quot;john@doe.com&quot;,
+    &quot;run_as_user&quot;: &quot;johndoe&quot;,
+    &quot;success_count&quot;: 20,
+    &quot;error_count&quot;: 5,
+    &quot;last_success&quot;: &quot;0001-01-01T00:00:00Z&quot;,
+    &quot;last_error&quot;: &quot;0001-01-01T100:00:00Z&quot;,
+    &quot;disabled&quot;: false,
+    &quot;tags&quot;: {
+      &quot;role&quot;: &quot;web&quot;
+    }
+  }
+]
+</code></pre>
+
+<h3 id="job-run">Job Run</h3>
+<p>Run job.</p>
+<pre><code>POST /v1/jobs/{job_name}
+</code></pre>
+
+<h4 id="curl-example_4">Curl Example</h4>
+<pre><code class="bash">$ curl -n -X POST dkron-node:8080/v1/jobs/$JOB_NAME \
+  -H &quot;Content-Type: application/json&quot; \
+</code></pre>
+
+<h4 id="response-example_4">Response Example</h4>
+<pre><code>HTTP/1.1 200 OK
+</code></pre>
+
+<pre><code class="json">{
+  &quot;name&quot;: &quot;cron_job&quot;,
+  &quot;schedule&quot;: &quot;0 30 * * * *&quot;,
+  &quot;command&quot;: &quot;/usr/bin/date&quot;,
+  &quot;owner&quot;: &quot;John Doe&quot;,
+  &quot;owner_email&quot;: &quot;john@doe.com&quot;,
+  &quot;run_as_user&quot;: &quot;johndoe&quot;,
+  &quot;success_count&quot;: 20,
+  &quot;error_count&quot;: 5,
+  &quot;last_success&quot;: &quot;0001-01-01T00:00:00Z&quot;,
+  &quot;last_error&quot;: &quot;0001-01-01T100:00:00Z&quot;,
+  &quot;disabled&quot;: false,
+  &quot;tags&quot;: {
+    &quot;role&quot;: &quot;web&quot;
+  }
+}
+</code></pre>
+
+<h2 id="member">Member</h2>
+<p>A member represents a cluster member node.</p>
+<h3 id="attributes_2">Attributes</h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Name</strong></td>
+<td><em>boolean</em></td>
+<td>Node name</td>
+<td><code>"dkron1"</code></td>
+</tr>
+<tr>
+<td><strong>Addr</strong></td>
+<td><em>string</em></td>
+<td>IP Address</td>
+<td><code>"10.0.0.1"</code></td>
+</tr>
+<tr>
+<td><strong>Port</strong></td>
+<td><em>integer</em></td>
+<td>Port number</td>
+<td><code>5001</code></td>
+</tr>
+<tr>
+<td><strong>Tags</strong></td>
+<td><em>object</em></td>
+<td>Tags asociated with this node</td>
+<td><code>{"role":"web","server":"true"}</code></td>
+</tr>
+<tr>
+<td><strong>Status</strong></td>
+<td><em>integer</em></td>
+<td>The serf status of the node see: https://godoc.org/github.com/hashicorp/serf/serf#MemberStatus</td>
+<td><code>1</code></td>
+</tr>
+<tr>
+<td><strong>ProtocolMin</strong></td>
+<td><em>integer</em></td>
+<td>Serf protocol minimum version this node can understand or speak</td>
+<td><code>1</code></td>
+</tr>
+<tr>
+<td><strong>ProtocolMax</strong></td>
+<td><em>integer</em></td>
+<td>Serf protocol minimum version this node can understand or speak</td>
+<td><code>2</code></td>
+</tr>
+<tr>
+<td><strong>ProtocolCur</strong></td>
+<td><em>integer</em></td>
+<td>Serf protocol current version this node can understand or speak</td>
+<td><code>2</code></td>
+</tr>
+<tr>
+<td><strong>DelegateMin</strong></td>
+<td><em>integer</em></td>
+<td>Serf delegate protocol minimum version this node can understand or speak</td>
+<td><code>2</code></td>
+</tr>
+<tr>
+<td><strong>DelegateMax</strong></td>
+<td><em>integer</em></td>
+<td>Serf delegate protocol minimum version this node can understand or speak</td>
+<td><code>4</code></td>
+</tr>
+<tr>
+<td><strong>DelegateCur</strong></td>
+<td><em>integer</em></td>
+<td>Serf delegate protocol minimum version this node can understand or speak</td>
+<td><code>4</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="member-list">Member List</h3>
+<p>List members.</p>
+<pre><code>GET /v1/members
+</code></pre>
+
+<h4 id="curl-example_5">Curl Example</h4>
+<pre><code class="bash">$ curl -n dkron-node:8080/v1/members
+</code></pre>
+
+<h4 id="response-example_5">Response Example</h4>
+<pre><code>HTTP/1.1 200 OK
+</code></pre>
+
+<pre><code class="json">[
+  {
+    &quot;Name&quot;: &quot;dkron1&quot;,
+    &quot;Addr&quot;: &quot;10.0.0.1&quot;,
+    &quot;Port&quot;: 5001,
+    &quot;Tags&quot;: {
+      &quot;role&quot;: &quot;web&quot;,
+      &quot;server&quot;: &quot;true&quot;
+    },
+    &quot;Status&quot;: 1,
+    &quot;ProtocolMin&quot;: 1,
+    &quot;ProtocolMax&quot;: 2,
+    &quot;ProtocolCur&quot;: 2,
+    &quot;DelegateMin&quot;: 2,
+    &quot;DelegateMax&quot;: 4,
+    &quot;DelegateCur&quot;: 4
+  }
+]
+</code></pre>
+
+<h3 id="member-leader">Member Leader</h3>
+<p>Show leader member.</p>
+<pre><code>GET /v1/leader
+</code></pre>
+
+<h4 id="curl-example_6">Curl Example</h4>
+<pre><code class="bash">$ curl -n dkron-node:8080/v1/leader
+</code></pre>
+
+<h4 id="response-example_6">Response Example</h4>
+<pre><code>HTTP/1.1 200 OK
+</code></pre>
+
+<pre><code class="json">{
+  &quot;Name&quot;: &quot;dkron1&quot;,
+  &quot;Addr&quot;: &quot;10.0.0.1&quot;,
+  &quot;Port&quot;: 5001,
+  &quot;Tags&quot;: {
+    &quot;role&quot;: &quot;web&quot;,
+    &quot;server&quot;: &quot;true&quot;
+  },
+  &quot;Status&quot;: 1,
+  &quot;ProtocolMin&quot;: 1,
+  &quot;ProtocolMax&quot;: 2,
+  &quot;ProtocolCur&quot;: 2,
+  &quot;DelegateMin&quot;: 2,
+  &quot;DelegateMax&quot;: 4,
+  &quot;DelegateCur&quot;: 4
+}
+</code></pre>
+
+<h2 id="execution">Execution</h2>
+<p>An execution represents a timed job run.</p>
+<h3 id="attributes_3">Attributes</h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>job_name</strong></td>
+<td><em>string</em></td>
+<td>job name</td>
+<td><code>"cron_job"</code></td>
+</tr>
+<tr>
+<td><strong>started_at</strong></td>
+<td><em>date-time</em></td>
+<td>start time of the execution</td>
+<td><code>"2012-01-01T12:00:00Z"</code></td>
+</tr>
+<tr>
+<td><strong>finished_at</strong></td>
+<td><em>date-time</em></td>
+<td>when the execution finished running</td>
+<td><code>"2012-01-01T12:00:00Z"</code></td>
+</tr>
+<tr>
+<td><strong>success</strong></td>
+<td><em>boolean</em></td>
+<td>the execution run successfuly</td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><strong>output</strong></td>
+<td><em>string</em></td>
+<td>partial output of the command execution</td>
+<td><code>"Sat Sep  5 23:27:10 CEST 2015"</code></td>
+</tr>
+<tr>
+<td><strong>node_name</strong></td>
+<td><em>string</em></td>
+<td>name of the node that executed the command</td>
+<td><code>"dkron-node1"</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="execution-list">Execution List</h3>
+<p>List executions.</p>
+<pre><code>GET /v1/executions/{execution_job_name}
+</code></pre>
+
+<h4 id="curl-example_7">Curl Example</h4>
+<pre><code class="bash">$ curl -n dkron-node:8080/v1/executions/$EXECUTION_JOB_NAME
+</code></pre>
+
+<h4 id="response-example_7">Response Example</h4>
+<pre><code>HTTP/1.1 200 OK
+</code></pre>
+
+<pre><code class="json">[
+  {
+    &quot;job_name&quot;: &quot;cron_job&quot;,
+    &quot;started_at&quot;: &quot;2012-01-01T12:00:00Z&quot;,
+    &quot;finished_at&quot;: &quot;2012-01-01T12:00:00Z&quot;,
+    &quot;success&quot;: true,
+    &quot;output&quot;: &quot;Sat Sep  5 23:27:10 CEST 2015&quot;,
+    &quot;node_name&quot;: &quot;dkron-node1&quot;
+  }
+]
+</code></pre></div>
               </div>
 
             
