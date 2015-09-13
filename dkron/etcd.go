@@ -152,7 +152,7 @@ func (e *etcdClient) DeleteJob(name string) (*Job, error) {
 	}
 
 	var job Job
-	err = json.Unmarshal([]byte(res.Node.Value), &job)
+	err = json.Unmarshal([]byte(res.PrevNode.Value), &job)
 	if err != nil {
 		return nil, err
 	}

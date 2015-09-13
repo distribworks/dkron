@@ -9,10 +9,7 @@ func TestEtcdClient(t *testing.T) {
 	etcd := NewEtcdClient([]string{}, nil, "dkron-test")
 
 	// Cleanup everything
-	_, err := etcd.Client.Delete("dkron-test", true)
-	if err != nil {
-		t.Fatalf("error cleaning up: %s", err)
-	}
+	etcd.Client.Delete("dkron-test", true)
 
 	testJob := &Job{
 		Name:     "test",
@@ -32,11 +29,11 @@ func TestEtcdClient(t *testing.T) {
 		t.Fatalf("error in number of expected jobs: %v", jobs)
 	}
 
-	if err := etcd.DeleteJob("test"); err != nil {
+	if _, err := etcd.DeleteJob("test"); err != nil {
 		t.Fatalf("error deleting job: %s", err)
 	}
 
-	if err := etcd.DeleteJob("test"); err == nil {
+	if _, err := etcd.DeleteJob("test"); err == nil {
 		t.Fatalf("error job deletion should fail: %s", err)
 	}
 
@@ -59,7 +56,7 @@ func TestEtcdClient(t *testing.T) {
 		t.Fatalf("error getting executions: %s", err)
 	}
 
-	if execs[0].StartedAt != testExecution.StartedAt {
+	if !execs[0].StartedAt.Equal(testExecution.StartedAt) {
 		t.Fatalf("error on retrieved excution expected: %s got: %s", testExecution.StartedAt, execs[0].StartedAt)
 	}
 
