@@ -176,8 +176,8 @@ func Test_processFilteredNodes(t *testing.T) {
 	}
 
 	args := []string{
-		"-bind", "127.0.0.1:8950",
-		"-join", "127.0.0.1:8951",
+		"-bind", "127.0.0.1:8949",
+		"-join", "127.0.0.1:8950",
 		"-node", "test1",
 		"-server",
 		"-tag", "role=test",
@@ -199,8 +199,8 @@ func Test_processFilteredNodes(t *testing.T) {
 	}
 
 	args2 := []string{
-		"-bind", "127.0.0.1:8951",
-		"-join", "127.0.0.1:8950",
+		"-bind", "127.0.0.1:8950",
+		"-join", "127.0.0.1:8949",
 		"-node", "test2",
 		"-server",
 		"-tag", "role=test",
