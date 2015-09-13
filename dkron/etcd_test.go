@@ -9,10 +9,7 @@ func TestEtcdClient(t *testing.T) {
 	etcd := NewEtcdClient([]string{}, nil, "dkron-test")
 
 	// Cleanup everything
-	_, err := etcd.Client.Delete("dkron-test", true)
-	if err != nil {
-		t.Fatalf("error cleaning up: %s", err)
-	}
+	etcd.Client.Delete("dkron-test", true)
 
 	testJob := &Job{
 		Name:     "test",
