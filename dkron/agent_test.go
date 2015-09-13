@@ -57,7 +57,7 @@ func TestAgentCommandRun(t *testing.T) {
 }
 
 func TestAgentCommandElectLeader(t *testing.T) {
-	log.Level = logrus.FatalLevel
+	log.Level = logrus.ErrorLevel
 
 	shutdownCh := make(chan struct{})
 	defer close(shutdownCh)
@@ -124,22 +124,30 @@ func TestAgentCommandElectLeader(t *testing.T) {
 	// Send a shutdown request
 	shutdownCh <- struct{}{}
 
-	receiver := make(chan *etcdc.Response)
-	stop := make(chan bool)
 	time.Sleep(2 * time.Second)
 
+	// Listen for leader key changes or timeout
+	receiver := make(chan *etcdc.Response)
+	stop := make(chan bool)
 	go etcd.Watch("/dkron/leader", 0, false, receiver, stop)
 
 	// Verify it runs "forever"
-	select {
-	case res := <-receiver:
-		if res.Node.Value == test2Key {
-			t.Logf("Leader changed: %s", res.Node.Value)
+	for exit := false; exit == false; {
+		select {
+		case res := <-receiver:
+			if res.Node.Value == test2Key {
+				t.Logf("Leader changed: %s", res.Node.Value)
+				stop <- true
+				exit = true
+			}
+			if res.Node.Value == test1Key {
+				t.Logf("Leader set to agent1: %s", res.Node.Value)
+			}
+		case <-time.After(10 * time.Second):
+			t.Fatal("No leader swap occurred")
+			stop <- true
+			exit = true
 		}
-		stop <- true
-	case <-time.After(10 * time.Second):
-		t.Fatal("No leader swap occurred")
-		stop <- true
 	}
 
 	shutdownCh2 <- struct{}{}
