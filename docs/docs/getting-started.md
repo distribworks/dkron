@@ -46,9 +46,9 @@ See the [configuration section](configuration).
 
 dkron relies on etcd for data storage, the etcd executable is included in the package and can be used to run an etcd node along with dkron servers.
 
-By default dkron will start the etcd server when running in server mode and try to form a cluster.
+By default dkron will try to use a local etcd server running in the same machine and in the default port.
 
-If you want to use an existing etcd cluster of your own, you can specify it by setting the `no-etcd` flag in the config file or as a command line flag.
+If you want to use an existing etcd cluster of your own, you can specify it by setting the `etcd-machies` flag in the config file or as a command line flag.
 
 To start a dkron server instance just run:
 
