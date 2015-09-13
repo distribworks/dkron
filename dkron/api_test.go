@@ -40,7 +40,7 @@ func setupAPITest(t *testing.T) (chan<- struct{}, <-chan int) {
 	return shutdownCh, resultCh
 }
 
-func TestAPIJobReschedule(t *testing.T) {
+func TestAPIJobCreate(t *testing.T) {
 	shutdownCh, _ := setupAPITest(t)
 
 	var jsonStr = []byte(`{"name": "test_job", "schedule": "@every 2s", "command": "date", "owner": "mec", "owner_email": "foo@bar.com", "disabled": true}`)
@@ -51,7 +51,7 @@ func TestAPIJobReschedule(t *testing.T) {
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 
-	if string(body) != `{"result": "ok"}` {
+	if bytes.Equal(body, jsonStr) {
 		t.Fatalf("error saving job: %s", string(body))
 	}
 
