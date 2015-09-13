@@ -56,7 +56,7 @@ func TestEtcdClient(t *testing.T) {
 		t.Fatalf("error getting executions: %s", err)
 	}
 
-	if execs[0].StartedAt != testExecution.StartedAt {
+	if !execs[0].StartedAt.Equal(testExecution.StartedAt) {
 		t.Fatalf("error on retrieved excution expected: %s got: %s", testExecution.StartedAt, execs[0].StartedAt)
 	}
 
