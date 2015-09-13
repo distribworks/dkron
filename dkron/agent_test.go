@@ -90,6 +90,11 @@ func TestAgentCommandElectLeader(t *testing.T) {
 		resultCh <- a.Run(args)
 	}()
 
+	// Listen for leader key changes or timeout
+	receiver := make(chan *etcdc.Response)
+	stop := make(chan bool)
+	go etcd.Watch("/dkron/leader", 0, false, receiver, stop)
+
 	// Wait for the first agent to start and set itself as leader
 	time.Sleep(2 * time.Second)
 	test1Key := a.config.Tags["key"]
@@ -125,11 +130,6 @@ func TestAgentCommandElectLeader(t *testing.T) {
 	shutdownCh <- struct{}{}
 
 	time.Sleep(2 * time.Second)
-
-	// Listen for leader key changes or timeout
-	receiver := make(chan *etcdc.Response)
-	stop := make(chan bool)
-	go etcd.Watch("/dkron/leader", 0, false, receiver, stop)
 
 	// Verify it runs "forever"
 	for exit := false; exit == false; {
