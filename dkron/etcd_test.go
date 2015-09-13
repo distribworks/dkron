@@ -32,11 +32,11 @@ func TestEtcdClient(t *testing.T) {
 		t.Fatalf("error in number of expected jobs: %v", jobs)
 	}
 
-	if err := etcd.DeleteJob("test"); err != nil {
+	if _, err := etcd.DeleteJob("test"); err != nil {
 		t.Fatalf("error deleting job: %s", err)
 	}
 
-	if err := etcd.DeleteJob("test"); err == nil {
+	if _, err := etcd.DeleteJob("test"); err == nil {
 		t.Fatalf("error job deletion should fail: %s", err)
 	}
 
