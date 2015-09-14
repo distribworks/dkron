@@ -60,7 +60,7 @@ func (a *AgentCommand) indexHandler(w http.ResponseWriter, r *http.Request) {
 
 	local := a.serf.LocalMember()
 	stats := map[string]map[string]string{
-		"agent": map[string]string{
+		"agent": {
 			"name":    local.Name,
 			"version": a.Version,
 		},
