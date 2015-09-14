@@ -1,1 +1,0 @@
-{"name": "cron_job", "schedule": "@every 2s", "command": "date", "owner": "mec", "owner_email": "foo@bar.com"}

@@ -38,17 +38,17 @@ func (a *AgentCommand) ServeHTTP() {
 }
 
 func (a *AgentCommand) apiRoutes(r *mux.Router) {
+	r.Path("/v1").HandlerFunc(a.indexHandler)
 	subver := r.PathPrefix("/v1").Subrouter()
-	subver.HandleFunc("/", a.indexHandler)
 	subver.HandleFunc("/members", a.membersHandler)
 	subver.HandleFunc("/leader", a.leaderHandler)
 
+	subver.Path("/jobs").HandlerFunc(a.jobCreateOrUpdateHandler).Methods("POST", "PATCH")
+	subver.Path("/jobs").HandlerFunc(a.jobsHandler).Methods("GET")
 	sub := subver.PathPrefix("/jobs").Subrouter()
-	sub.HandleFunc("/", a.jobCreateOrUpdateHandler).Methods("POST", "PUT")
-	sub.HandleFunc("/", a.jobsHandler).Methods("GET")
 	sub.HandleFunc("/{job}", a.jobGetHandler).Methods("GET")
 	sub.HandleFunc("/{job}", a.jobDeleteHandler).Methods("DELETE")
-	sub.HandleFunc("/{job}", a.jobRunHandler).Methods("POST", "PUT")
+	sub.HandleFunc("/{job}", a.jobRunHandler).Methods("POST")
 
 	subex := subver.PathPrefix("/executions").Subrouter()
 	subex.HandleFunc("/{job}", a.executionsHandler).Methods("GET")
@@ -75,7 +75,7 @@ func printJson(w http.ResponseWriter, r *http.Request, v interface{}) error {
 func (a *AgentCommand) indexHandler(w http.ResponseWriter, r *http.Request) {
 	local := a.serf.LocalMember()
 	stats := map[string]map[string]string{
-		"agent": map[string]string{
+		"agent": {
 			"name":    local.Name,
 			"version": a.Version,
 		},
