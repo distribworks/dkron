@@ -25,8 +25,8 @@ func newCommonDashboardData(a *AgentCommand, nodeName string) *commonDashboardDa
 }
 
 func (a *AgentCommand) dashboardRoutes(r *mux.Router) {
+	r.Path("/dashboard").HandlerFunc(a.dashboardIndexHandler).Methods("GET")
 	subui := r.PathPrefix("/dashboard").Subrouter()
-	subui.HandleFunc("/", a.dashboardIndexHandler).Methods("GET")
 	subui.HandleFunc("/jobs", a.dashboardJobsHandler).Methods("GET")
 	subui.HandleFunc("/jobs/{job}/executions", a.dashboardExecutionsHandler).Methods("GET")
 }
@@ -115,7 +115,7 @@ func (a *AgentCommand) dashboardExecutionsHandler(w http.ResponseWriter, r *http
 	}).ParseFiles("templates/dashboard.html.tmpl", "templates/executions.html.tmpl"))
 
 	if len(execs) > 100 {
-		execs = execs[len(execs)-100 : len(execs)]
+		execs = execs[len(execs)-100:]
 	}
 
 	data := struct {
