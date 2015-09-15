@@ -7,7 +7,7 @@
         <th>Job</th>
         <th>Success count</th>
         <th>Error count</th>
-        <th>Last</th>
+        <th>Status</th>
         <th>Actions</th>
       </tr>
       {{ range $job := .Jobs }}
@@ -15,7 +15,17 @@
         <td><a href="/dashboard/jobs/{{$job.Name}}/executions">{{ $job.Name }}</a></td>
         <td>{{ $job.SuccessCount }}</td>
         <td>{{ $job.ErrorCount }}</td>
-        <td>{{if isSuccess $job}}Success{{else}}Failed{{end}}</td>
+        <td>
+          {{if $job.Disabled }}
+            <i class="fa fa-circle text-muted"></i>
+          {{ else }}
+            {{if isSuccess $job}}
+              <i class="fa fa-circle text-success"></i>
+            {{else}}
+              <i class="fa fa-circle text-danger"></i>
+            {{end}}
+          {{end}}
+        </td>
         <td><button ng-click="click('{{ $job.Name }}')">Run</button></td>
       </tr>
       {{ end }}

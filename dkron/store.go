@@ -81,12 +81,17 @@ func (s *Store) GetJob(name string) (*Job, error) {
 	return &job, nil
 }
 
-func (s *Store) DeleteJob(name string) error {
-	if err := s.Client.Delete(s.keyspace + "/jobs/" + name); err != nil {
-		return err
+func (s *Store) DeleteJob(name string) (*Job, error) {
+	job, err := s.Client.Get(s.keyspace + "/jobs/" + name)
+	if err != nil {
+		return nil, err
 	}
 
-	return nil
+	if err := s.Client.Delete(s.keyspace + "/jobs/" + name); err != nil {
+		return nil, err
+	}
+
+	return job, nil
 }
 
 func (s *Store) GetExecutions(jobName string) ([]*Execution, error) {

@@ -2,7 +2,7 @@ var dkron = angular.module('dkron', ['angular-rickshaw']);
 
 dkron.controller('JobListCtrl', function ($scope, $http, $interval) {
   $scope.click = function(jobName) {
-    var response = $http.put('/jobs/' + jobName);
+    var response = $http.put('/v1/jobs/' + jobName);
     response.success(function(data, status, headers, config) {
       $('#message').html('<div class="alert alert-success fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Success running jo ' + jobName + '</div>');
     });
