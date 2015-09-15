@@ -82,8 +82,13 @@ func (s *Store) GetJob(name string) (*Job, error) {
 }
 
 func (s *Store) DeleteJob(name string) (*Job, error) {
-	job, err := s.Client.Get(s.keyspace + "/jobs/" + name)
+	res, err := s.Client.Get(s.keyspace + "/jobs/" + name)
 	if err != nil {
+		return nil, err
+	}
+
+	var job Job
+	if err = json.Unmarshal(res.Value, &job); err != nil {
 		return nil, err
 	}
 
@@ -91,7 +96,7 @@ func (s *Store) DeleteJob(name string) (*Job, error) {
 		return nil, err
 	}
 
-	return job, nil
+	return &job, nil
 }
 
 func (s *Store) GetExecutions(jobName string) ([]*Execution, error) {
