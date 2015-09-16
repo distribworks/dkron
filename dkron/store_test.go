@@ -11,7 +11,7 @@ func TestStore(t *testing.T) {
 	// Cleanup everything
 	err := store.Client.DeleteTree("dkron-test")
 	if err != nil {
-		t.Fatalf("error cleaning up: %s", err)
+		t.Logf("error cleaning up: %s", err)
 	}
 
 	testJob := &Job{

@@ -139,11 +139,15 @@ func (s *Store) SetExecution(execution *Execution) (string, error) {
 func (s *Store) GetLeader() *Leader {
 	res, err := s.Client.Get(s.keyspace + "/leader")
 	if err != nil {
-		log.Fatal(err)
+		if err == store.ErrNotReachable {
+			log.Fatal("etcd not reachable, be sure etcd is running.\nYou can download etc from https://github.com/coreos/etcd/releases")
+		} else if err != store.ErrKeyNotFound {
+			log.Error(err)
+		}
 		return nil
 	}
 
-	log.Debugf("Retrieved leader from datastore: %v", res.Value)
+	log.Debugf("Retrieved leader from datastore: %s", res.Value)
 	return &Leader{Key: res.Value, LastIndex: res.LastIndex}
 }
 
