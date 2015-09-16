@@ -136,7 +136,7 @@ func TestAgentCommandElectLeader(t *testing.T) {
 	for exit := false; exit == false; {
 		select {
 		case res := <-receiver:
-			if bytes.Equal(res.Value, []byte(test2Key)) {
+			if res != nil && bytes.Equal(res.Value, []byte(test2Key)) {
 				t.Logf("Leader changed: %s", res.Value)
 				stop <- struct{}{}
 				exit = true
