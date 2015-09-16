@@ -1,11 +1,12 @@
 package dkron
 
 import (
+	"bytes"
 	"testing"
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	etcdc "github.com/coreos/go-etcd/etcd"
+	"github.com/docker/libkv/store"
 	"github.com/mitchellh/cli"
 )
 
@@ -34,7 +35,7 @@ func TestAgentCommandRun(t *testing.T) {
 		resultCh <- a.Run(args)
 	}()
 
-	time.Sleep(10 * time.Millisecond)
+	time.Sleep(2 * time.Second)
 
 	// Verify it runs "forever"
 	select {
@@ -68,13 +69,11 @@ func TestAgentCommandElectLeader(t *testing.T) {
 		ShutdownCh: shutdownCh,
 	}
 
-	etcd := etcdc.NewClient([]string{})
-	_, err := etcd.DeleteDir("dkron")
+	s := NewStore("etcd", []string{}, nil, "dkron")
+	err := s.Client.DeleteTree("dkron")
 	if err != nil {
-		if eerr, ok := err.(*etcdc.EtcdError); ok {
-			if eerr.ErrorCode == etcdc.ErrCodeEtcdNotReachable {
-				t.Fatal("etcd server needed to run tests")
-			}
+		if err == store.ErrNotReachable {
+			t.Fatal("etcd server needed to run tests")
 		}
 	}
 
@@ -91,9 +90,11 @@ func TestAgentCommandElectLeader(t *testing.T) {
 	}()
 
 	// Listen for leader key changes or timeout
-	receiver := make(chan *etcdc.Response)
-	stop := make(chan bool)
-	go etcd.Watch("/dkron/leader", 0, false, receiver, stop)
+	stop := make(chan struct{})
+	receiver, err := s.Client.Watch("/dkron/leader", stop)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	// Wait for the first agent to start and set itself as leader
 	time.Sleep(2 * time.Second)
@@ -135,17 +136,17 @@ func TestAgentCommandElectLeader(t *testing.T) {
 	for exit := false; exit == false; {
 		select {
 		case res := <-receiver:
-			if res.Node.Value == test2Key {
-				t.Logf("Leader changed: %s", res.Node.Value)
-				stop <- true
+			if bytes.Equal(res.Value, []byte(test2Key)) {
+				t.Logf("Leader changed: %s", res.Value)
+				stop <- struct{}{}
 				exit = true
 			}
-			if res.Node.Value == test1Key {
-				t.Logf("Leader set to agent1: %s", res.Node.Value)
+			if bytes.Equal(res.Value, []byte(test1Key)) {
+				t.Logf("Leader set to agent1: %s", res.Value)
 			}
 		case <-time.After(10 * time.Second):
 			t.Fatal("No leader swap occurred")
-			stop <- true
+			stop <- struct{}{}
 			exit = true
 		}
 	}
@@ -165,13 +166,11 @@ func Test_processFilteredNodes(t *testing.T) {
 		ShutdownCh: shutdownCh,
 	}
 
-	etcd := etcdc.NewClient([]string{})
-	_, err := etcd.DeleteDir("dkron")
+	s := NewStore("etcd", []string{}, nil, "dkron")
+	err := s.Client.DeleteTree("dkron")
 	if err != nil {
-		if eerr, ok := err.(*etcdc.EtcdError); ok {
-			if eerr.ErrorCode == etcdc.ErrCodeEtcdNotReachable {
-				t.Fatal("etcd server needed to run tests")
-			}
+		if err == store.ErrNotReachable {
+			t.Fatal("etcd server needed to run tests")
 		}
 	}
 
@@ -188,6 +187,7 @@ func Test_processFilteredNodes(t *testing.T) {
 		resultCh <- a.Run(args)
 	}()
 
+	time.Sleep(2 * time.Second)
 	// Start another agent
 	shutdownCh2 := make(chan struct{})
 	defer close(shutdownCh2)
@@ -218,7 +218,7 @@ func Test_processFilteredNodes(t *testing.T) {
 		},
 	}
 
-	time.Sleep(100 * time.Millisecond)
+	time.Sleep(2 * time.Second)
 	nodes, err := a.processFilteredNodes(job)
 
 	if nodes[0] != "test1" || nodes[1] != "test2" {
