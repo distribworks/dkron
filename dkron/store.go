@@ -7,6 +7,7 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/libkv"
 	"github.com/docker/libkv/store"
+	"github.com/docker/libkv/store/etcd"
 )
 
 type Leader struct {
@@ -18,6 +19,10 @@ type Store struct {
 	Client   store.Store
 	agent    *AgentCommand
 	keyspace string
+}
+
+func init() {
+	etcd.Register()
 }
 
 func NewStore(backend string, machines []string, a *AgentCommand, keyspace string) *Store {
