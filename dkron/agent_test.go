@@ -141,7 +141,7 @@ func TestAgentCommandElectLeader(t *testing.T) {
 				stop <- struct{}{}
 				exit = true
 			}
-			if bytes.Equal(res.Value, []byte(test1Key)) {
+			if res != nil && bytes.Equal(res.Value, []byte(test1Key)) {
 				t.Logf("Leader set to agent1: %s", res.Value)
 			}
 		case <-time.After(10 * time.Second):
