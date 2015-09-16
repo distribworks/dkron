@@ -24,6 +24,11 @@
 			"Rev": "50c09d12f8624ab10532f931cb630d0bf5f7c2c7"
 		},
 		{
+			"ImportPath": "github.com/coreos/go-etcd/etcd",
+			"Comment": "v2.0.0-22-g9847b93",
+			"Rev": "9847b93751a5fbaf227b893d172cee0104ac6427"
+		},
+		{
 			"ImportPath": "github.com/docker/libkv",
 			"Rev": "2954a885a3b6157267e3ef60446278a27affdd96"
 		},
@@ -85,6 +90,10 @@
 		{
 			"ImportPath": "github.com/spf13/viper",
 			"Rev": "2abb1bebfde865b0bb6bb7ada5be63ec78527fa6"
+		},
+		{
+			"ImportPath": "github.com/ugorji/go/codec",
+			"Rev": "5abd4e96a45c386928ed2ca2a7ef63e2533e18ec"
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/ssh/terminal",
