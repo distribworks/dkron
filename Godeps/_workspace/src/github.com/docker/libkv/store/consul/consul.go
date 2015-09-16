@@ -8,6 +8,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/docker/libkv"
 	"github.com/docker/libkv/store"
 	api "github.com/hashicorp/consul/api"
 )
@@ -35,6 +36,11 @@ type Consul struct {
 
 type consulLock struct {
 	lock *api.Lock
+}
+
+// Register registers consul to libkv
+func Register() {
+	libkv.AddStore(store.CONSUL, New)
 }
 
 // New creates a new Consul client given a list

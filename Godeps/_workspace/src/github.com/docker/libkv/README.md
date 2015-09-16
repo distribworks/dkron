@@ -12,7 +12,7 @@ For example, you can use it to store your metadata or for service discovery to r
 
 You can also easily implement a generic *Leader Election* on top of it (see the [swarm/leadership](https://github.com/docker/swarm/tree/master/leadership) package).
 
-As of now, `libkv` offers support for `Consul`, `Etcd` and `Zookeeper`.
+As of now, `libkv` offers support for `Consul`, `Etcd`, `Zookeeper` and `BoltDB`.
 
 ## Example of usage
 
@@ -24,11 +24,17 @@ package main
 import (
 	"fmt"
 	"time"
-	
+
 	"github.com/docker/libkv"
 	"github.com/docker/libkv/store"
+	"github.com/docker/libkv/store/consul"
 	log "github.com/Sirupsen/logrus"
 )
+
+func init() {
+	// Register consul store to libkv
+	consul.Register()
+}
 
 func main() {
 	client := "localhost:8500"

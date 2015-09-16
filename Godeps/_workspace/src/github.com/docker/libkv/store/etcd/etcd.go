@@ -8,6 +8,7 @@ import (
 	"time"
 
 	etcd "github.com/coreos/go-etcd/etcd"
+	"github.com/docker/libkv"
 	"github.com/docker/libkv/store"
 )
 
@@ -31,6 +32,11 @@ const (
 	defaultLockTTL    = 20 * time.Second
 	defaultUpdateTime = 5 * time.Second
 )
+
+// Register registers etcd to libkv
+func Register() {
+	libkv.AddStore(store.ETCD, New)
+}
 
 // New creates a new Etcd client given a list
 // of endpoints and an optional tls config

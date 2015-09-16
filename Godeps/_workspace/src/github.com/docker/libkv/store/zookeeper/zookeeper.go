@@ -4,6 +4,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/docker/libkv"
 	"github.com/docker/libkv/store"
 	zk "github.com/samuel/go-zookeeper/zk"
 )
@@ -24,6 +25,11 @@ type zookeeperLock struct {
 	lock   *zk.Lock
 	key    string
 	value  []byte
+}
+
+// Register registers zookeeper to libkv
+func Register() {
+	libkv.AddStore(store.ZK, New)
 }
 
 // New creates a new Zookeeper client given a

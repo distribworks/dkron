@@ -4,13 +4,17 @@ import (
 	"testing"
 	"time"
 
+	"github.com/docker/libkv"
 	"github.com/docker/libkv/store"
 	"github.com/docker/libkv/testutils"
 	"github.com/stretchr/testify/assert"
 )
 
+var (
+	client = "localhost:8500"
+)
+
 func makeConsulClient(t *testing.T) store.Store {
-	client := "localhost:8500"
 
 	kv, err := New(
 		[]string{client},
@@ -24,6 +28,18 @@ func makeConsulClient(t *testing.T) store.Store {
 	}
 
 	return kv
+}
+
+func TestRegister(t *testing.T) {
+	Register()
+
+	kv, err := libkv.NewStore(store.CONSUL, []string{client}, nil)
+	assert.NoError(t, err)
+	assert.NotNil(t, kv)
+
+	if _, ok := kv.(*Consul); !ok {
+		t.Fatal("Error registering and initializing consul")
+	}
 }
 
 func TestConsulStore(t *testing.T) {
