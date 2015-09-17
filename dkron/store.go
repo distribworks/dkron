@@ -25,6 +25,8 @@ type Store struct {
 
 func init() {
 	etcd.Register()
+	consul.Register()
+	zookeeper.Register()
 }
 
 func NewStore(backend string, machines []string, a *AgentCommand, keyspace string) *Store {
