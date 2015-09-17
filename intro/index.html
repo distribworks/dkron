@@ -190,9 +190,9 @@
 <li>Reliable: Completely fault tolerant</li>
 <li>High scalable: Able to handle high volumes of scheduled jobs and thousands of nodes</li>
 </ul>
-<p>Dkron is written in Go and leverage the power of <a href="https://coreos.com/etcd/">etcd</a> and <a href="https://www.serfdom.io/">Serf</a> for providing fault tolerance and, reliability and scalability while keeping simple and easily installable.</p>
+<p>Dkron is written in Go and leverage the power of distributed key value stores and <a href="https://www.serfdom.io/">Serf</a> for providing fault tolerance, reliability and scalability while keeping simple and easily installable.</p>
 <p>Dkron is inspired by the google whitepaper <a href="https://queue.acm.org/detail.cfm?id=2745840">Reliable Cron across the Planet</a></p>
-<p>Dkron runs on Linux, OSX and Windows. It can be used to run scheduled commands on a server cluster using any combination of servers for each job. It has no single points of failure due to the use of the fault tolerant distributed database etcd and can work large scale thanks to the efficient and lightweight gossip protocol.</p>
+<p>Dkron runs on Linux, OSX and Windows. It can be used to run scheduled commands on a server cluster using any combination of servers for each job. It has no single points of failure due to the use of the fault tolerant distributed databases and can work at large scale thanks to the efficient and lightweight gossip protocol.</p>
 <p>Dkron uses the efficient and lightweight <a href="https://www.serfdom.io/docs/internals/gossip.html">gossip protocol</a> underneath to communicate with nodes. Failure notification and task handling are run efficiently across an entire cluster of any size.</p>
 <p><center class="hidden-xs">
 <img alt="" src="../img/screenshot1.png" />

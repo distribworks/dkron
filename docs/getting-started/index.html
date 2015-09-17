@@ -203,9 +203,9 @@
 <h2 id="configuration">Configuration</h2>
 <p>See the <a href="../configuration">configuration section</a>.</p>
 <h2 id="usage">Usage</h2>
-<p>dkron relies on etcd for data storage, the etcd executable is included in the package and can be used to run an etcd node along with dkron servers.</p>
+<p>dkron relies on the key-value store for data storage, you can run an instance of the distributed store in the same machines as Dkron or connect it to your existing cluster.</p>
 <p>By default dkron will try to use a local etcd server running in the same machine and in the default port.</p>
-<p>If you want to use an existing etcd cluster of your own, you can specify it by setting the <code>etcd-machies</code> flag in the config file or as a command line flag.</p>
+<p>If you want to use an existing key-value store cluster of your own, you can specify it by setting the <code>backend</code> and <code>backend-machines</code> flag in the config file, env variables or as a command line flag.</p>
 <p>To start a dkron server instance just run:</p>
 <pre><code>dkron agent -server
 </code></pre></div>

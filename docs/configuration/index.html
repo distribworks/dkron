@@ -187,7 +187,10 @@
 <p><code>-http-addr</code> - The address where the web UI will be binded. By default <code>:8080</code></p>
 </li>
 <li>
-<p><code>-etcd-machines</code> - Comma separated addresses of the etcd machines to use. Could be one or several. By default <code>127.0.0.1:2379</code></p>
+<p><code>-backend</code> - Backend storage to use, etcd, consul or zk (zookeeper). The default is etcd.</p>
+</li>
+<li>
+<p><code>-backend-machines</code> - Comma separated addresses of the etcd machines to use. Could be one or several. By default <code>127.0.0.1:2379</code></p>
 </li>
 <li>
 <p><code>-tag</code> - The tag flag is used to associate a new key/value pair with the agent. The tags are gossiped and can be used to provide additional information such as roles, ports, and configuration values to other nodes. Multiple tags can be specified per agent. There is a byte size limit for the maximum number of tags, but in practice dozens of tags may be used. Tags can be changed during a config reload.</p>
@@ -196,7 +199,7 @@
 <p><code>-server</code> - If this agent is a dkron server, just need to be present. Absent by default.</p>
 </li>
 <li>
-<p><code>-keyspace</code> - Keyspace to use for etcd. Allows to run different instances using the same etcd cluster. <code>dkron</code> by default.</p>
+<p><code>-keyspace</code> - Keyspace to use for the store. Allows to run different instances using the same storage cluster. <code>dkron</code> by default.</p>
 </li>
 </ul></div>
               </div>
