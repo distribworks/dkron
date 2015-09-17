@@ -38,9 +38,8 @@ func (a *AgentCommand) dashboardIndexHandler(w http.ResponseWriter, r *http.Requ
 		"templates/dashboard.html.tmpl", "templates/index.html.tmpl", "templates/status.html.tmpl"))
 
 	data := struct {
-		Common      *commonDashboardData
-		EtcdVersion string
-		StartTime   string
+		Common    *commonDashboardData
+		StartTime string
 	}{
 		Common: newCommonDashboardData(a, a.config.NodeName),
 	}
