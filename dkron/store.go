@@ -127,7 +127,7 @@ func (s *Store) SetExecution(execution *Execution) (string, error) {
 	eJson, _ := json.Marshal(execution)
 	key := fmt.Sprintf("%d-%s", execution.StartedAt.UnixNano(), execution.NodeName)
 
-	log.Debugf("Setting etcd key %s: %s", execution.JobName, string(eJson))
+	log.Debugf("Setting key %s: %s", execution.JobName, string(eJson))
 	err := s.Client.Put(fmt.Sprintf("%s/executions/%s/%s", s.keyspace, execution.JobName, key), eJson, nil)
 	if err != nil {
 		return "", err
@@ -140,7 +140,7 @@ func (s *Store) GetLeader() *Leader {
 	res, err := s.Client.Get(s.keyspace + "/leader")
 	if err != nil {
 		if err == store.ErrNotReachable {
-			log.Fatal("etcd not reachable, be sure etcd is running.\nYou can download etc from https://github.com/coreos/etcd/releases")
+			log.Fatal("Store not reachable, be sure you have an existing key-value store running is running and is reachable.")
 		} else if err != store.ErrKeyNotFound {
 			log.Error(err)
 		}

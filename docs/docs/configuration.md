@@ -10,10 +10,12 @@ Settings for dkron can be specified in three ways: Using a `config/dkron.json` c
 
 * `-http-addr` - The address where the web UI will be binded. By default `:8080`
 
-* `-etcd-machines` - Comma separated addresses of the etcd machines to use. Could be one or several. By default `127.0.0.1:2379`
+* `-backend` - Backend storage to use, etcd, consul or zk (zookeeper). The default is etcd.
+
+* `-backend-machines` - Comma separated addresses of the etcd machines to use. Could be one or several. By default `127.0.0.1:2379`
 
 * `-tag` - The tag flag is used to associate a new key/value pair with the agent. The tags are gossiped and can be used to provide additional information such as roles, ports, and configuration values to other nodes. Multiple tags can be specified per agent. There is a byte size limit for the maximum number of tags, but in practice dozens of tags may be used. Tags can be changed during a config reload.
 
 * `-server` - If this agent is a dkron server, just need to be present. Absent by default.
 
-* `-keyspace` - Keyspace to use for etcd. Allows to run different instances using the same etcd cluster. `dkron` by default.
+* `-keyspace` - Keyspace to use for the store. Allows to run different instances using the same storage cluster. `dkron` by default.

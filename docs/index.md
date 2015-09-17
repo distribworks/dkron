@@ -14,7 +14,7 @@
     <img src="img/available.png" />
     <div class="col-md-9">
       <h3>Always available</h3>
-      <p>Using the power of the Raft implementation in etcd, Dkron is designed to be always available. If the leader node fails, a follower will replace it, all without human intervention.</p>
+      <p>Using the power of distributed key-value stores, Dkron is designed to be always available. If the leader node fails, a follower will replace it, all without human intervention.</p>
     </div>
   </div>
 

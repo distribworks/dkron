@@ -103,7 +103,7 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	cmdFlags.Var(startJoin, "join", "address of agent to join on startup")
 	var tag []string
 	cmdFlags.Var((*AppendSliceValue)(&tag), "tag", "tag pair, specified as key=value")
-	cmdFlags.String("keyspace", "dkron", "etcd key namespace to use")
+	cmdFlags.String("keyspace", "dkron", "key namespace to use")
 	viper.SetDefault("keyspace", cmdFlags.Lookup("keyspace").Value)
 
 	if err := cmdFlags.Parse(args); err != nil {
@@ -662,7 +662,7 @@ func (a *AgentCommand) RunQuery(job *Job) {
 					"response": string(resp.Payload),
 				}).Debug("Received response")
 
-				// Save execution to etcd
+				// Save execution to store
 				a.setExecution(resp.Payload)
 			}
 		}
@@ -706,7 +706,7 @@ func (a *AgentCommand) setExecution(payload []byte) *Execution {
 		log.Fatal(err)
 	}
 
-	// Save the new execution to etcd
+	// Save the new execution to store
 	if _, err := a.store.SetExecution(&ex); err != nil {
 		log.Fatal(err)
 	}

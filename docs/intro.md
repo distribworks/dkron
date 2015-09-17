@@ -17,11 +17,11 @@ Dkron is a distributed cron drop-in replacement, easy to setup and fault toleran
 - Reliable: Completely fault tolerant
 - High scalable: Able to handle high volumes of scheduled jobs and thousands of nodes
 
-Dkron is written in Go and leverage the power of [etcd](https://coreos.com/etcd/) and [Serf](https://www.serfdom.io/) for providing fault tolerance and, reliability and scalability while keeping simple and easily installable.
+Dkron is written in Go and leverage the power of distributed key value stores and [Serf](https://www.serfdom.io/) for providing fault tolerance, reliability and scalability while keeping simple and easily installable.
 
 Dkron is inspired by the google whitepaper [Reliable Cron across the Planet](https://queue.acm.org/detail.cfm?id=2745840)
 
-Dkron runs on Linux, OSX and Windows. It can be used to run scheduled commands on a server cluster using any combination of servers for each job. It has no single points of failure due to the use of the fault tolerant distributed database etcd and can work large scale thanks to the efficient and lightweight gossip protocol.
+Dkron runs on Linux, OSX and Windows. It can be used to run scheduled commands on a server cluster using any combination of servers for each job. It has no single points of failure due to the use of the fault tolerant distributed databases and can work at large scale thanks to the efficient and lightweight gossip protocol.
 
 Dkron uses the efficient and lightweight [gossip protocol](https://www.serfdom.io/docs/internals/gossip.html) underneath to communicate with nodes. Failure notification and task handling are run efficiently across an entire cluster of any size.
 

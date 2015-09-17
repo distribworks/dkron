@@ -133,7 +133,7 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	// Save the new job to etcd
+	// Save the new job to the store
 	if err = a.store.SetJob(&job); err != nil {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(422) // unprocessable entity
