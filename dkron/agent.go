@@ -39,7 +39,7 @@ type AgentCommand struct {
 	ShutdownCh <-chan struct{}
 	serf       *serf.Serf
 	config     *Config
-	etcd       *etcdClient
+	store      *Store
 	eventCh    chan serf.Event
 	sched      *Scheduler
 }
@@ -51,23 +51,25 @@ Usage: dkron agent [options]
 
 Options:
 
-  -bind=0.0.0.0:8946       Address to bind network listeners to.
-  -http-addr=0.0.0.0:8080  Address to bind the UI web server to.
-  -discover=cluster        A cluster name used to discovery peers. On
-                           networks that support multicast, this can be used to have
-                           peers join each other without an explicit join.
-  -etcd-machines           etcd servers addresses to connect to. This flag can be
-                           specified multiple times.
-  -join=addr               An initial agent to join with. This flag can be
-                           specified multiple times.
-  -node=hostname           Name of this node. Must be unique in the cluster
-  -profile=[lan|wan|local] Profile is used to control the timing profiles used.
-                           The default if not provided is lan.
-  -server=false            This node is running in server mode.
-  -tag key=value           Tag can be specified multiple times to attach multiple
-                           key/value tag pairs to the given node.
-  -keyspace=dkron          The etcd keyspace to use. A prefix under all data is stored
-                           for this instance.
+  -bind=0.0.0.0:8946              Address to bind network listeners to.
+  -http-addr=0.0.0.0:8080         Address to bind the UI web server to.
+  -discover=cluster               A cluster name used to discovery peers. On
+                                  networks that support multicast, this can be used to have
+                                  peers join each other without an explicit join.
+  -join=addr                      An initial agent to join with. This flag can be
+                                  specified multiple times.
+  -node=hostname                  Name of this node. Must be unique in the cluster
+  -profile=[lan|wan|local]        Profile is used to control the timing profiles used.
+                                  The default if not provided is lan.
+  -server=false                   This node is running in server mode.
+  -tag key=value                  Tag can be specified multiple times to attach multiple
+                                  key/value tag pairs to the given node.
+  -keyspace=dkron                 The etcd keyspace to use. A prefix under all data is stored
+                                  for this instance.
+  -backend=[etcd|consul|zk]       Backend storage to use, etcd, consul or zookeeper. The default
+                                  is etcd.
+  -backend-machine=127.0.0.1:2379 Backend storage servers addresses to connect to. This flag can be
+                                  specified multiple times.
 `
 	return strings.TrimSpace(helpText)
 }
@@ -90,8 +92,10 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	viper.SetDefault("http_addr", cmdFlags.Lookup("http-addr").Value)
 	cmdFlags.String("discover", "dkron", "mDNS discovery name")
 	viper.SetDefault("discover", cmdFlags.Lookup("discover").Value)
-	cmdFlags.String("etcd-machines", "http://127.0.0.1:2379", "etcd machines addresses")
-	viper.SetDefault("etcd_machines", cmdFlags.Lookup("etcd-machines").Value)
+	cmdFlags.String("backend", "etcd", "store backend")
+	viper.SetDefault("backend", cmdFlags.Lookup("backend").Value)
+	cmdFlags.String("backend-machine", "127.0.0.1:2379", "store backend machines addresses")
+	viper.SetDefault("backend_machine", cmdFlags.Lookup("backend-machine").Value)
 	cmdFlags.String("profile", "lan", "timing profile to use (lan, wan, local)")
 	viper.SetDefault("profile", cmdFlags.Lookup("profile").Value)
 	viper.SetDefault("server", cmdFlags.Bool("server", false, "start dkron server"))
@@ -99,7 +103,7 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	cmdFlags.Var(startJoin, "join", "address of agent to join on startup")
 	var tag []string
 	cmdFlags.Var((*AppendSliceValue)(&tag), "tag", "tag pair, specified as key=value")
-	cmdFlags.String("keyspace", "dkron", "etcd key namespace to use")
+	cmdFlags.String("keyspace", "dkron", "key namespace to use")
 	viper.SetDefault("keyspace", cmdFlags.Lookup("keyspace").Value)
 
 	if err := cmdFlags.Parse(args); err != nil {
@@ -124,16 +128,17 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	}
 
 	config := &Config{
-		NodeName:     nodeName,
-		BindAddr:     viper.GetString("bind_addr"),
-		HTTPAddr:     viper.GetString("http_addr"),
-		Discover:     viper.GetString("discover"),
-		EtcdMachines: viper.GetStringSlice("etcd_machines"),
-		Server:       server,
-		Profile:      viper.GetString("profile"),
-		StartJoin:    *startJoin,
-		Tags:         tags,
-		Keyspace:     viper.GetString("keyspace"),
+		NodeName:        nodeName,
+		BindAddr:        viper.GetString("bind_addr"),
+		HTTPAddr:        viper.GetString("http_addr"),
+		Discover:        viper.GetString("discover"),
+		Backend:         viper.GetString("backend"),
+		BackendMachines: viper.GetStringSlice("backend_machine"),
+		Server:          server,
+		Profile:         viper.GetString("profile"),
+		StartJoin:       *startJoin,
+		Tags:            tags,
+		Keyspace:        viper.GetString("keyspace"),
 	}
 
 	// log.Fatal(config.EtcdMachines)
@@ -325,7 +330,7 @@ func (a *AgentCommand) Run(args []string) int {
 	a.join(a.config.StartJoin, true)
 
 	if a.config.Server {
-		a.etcd = NewEtcdClient(a.config.EtcdMachines, a, a.config.Keyspace)
+		a.store = NewStore(a.config.Backend, a.config.BackendMachines, a, a.config.Keyspace)
 		a.sched = NewScheduler()
 
 		go func() {
@@ -396,32 +401,27 @@ func (a *AgentCommand) Synopsis() string {
 
 // Leader election routine
 func (a *AgentCommand) ElectLeader() bool {
-	leaderKey := a.etcd.GetLeader()
+	leader := a.store.GetLeader()
 
-	if leaderKey != "" {
-		if !a.serverAlive(leaderKey) {
+	if leader != nil {
+		if !a.serverAlive(string(leader.Key)) {
 			log.Debug("Trying to set itself as leader")
-			res, err := a.etcd.Client.CompareAndSwap(a.config.Keyspace+"/leader", a.config.Tags["key"], 0, leaderKey, 0)
-			if err != nil {
+			success, err := a.store.TryLeaderSwap(a.config.Tags["key"], leader)
+			if err != nil || success == false {
 				log.Errorln("Error trying to set itself as leader", err)
 				return false
 			}
-
-			log.WithFields(logrus.Fields{
-				"old_leader": res.PrevNode.Value,
-				"new_leader": res.Node.Value,
-			}).Debug("Leader Swap")
 			return true
 		} else {
-			log.Printf("The current leader [%s] is active", leaderKey)
+			log.Printf("The current leader [%s] is active", leader.Key)
 		}
 	} else {
 		log.Debug("Trying to set itself as leader")
-		res, err := a.etcd.Client.Create(a.config.Keyspace+"/leader", a.config.NodeName, 0)
+		err := a.store.SetLeader(a.config.Tags["key"])
 		if err != nil {
-			log.Error(res, err)
+			log.Error(err)
 		}
-		log.Printf("Successfully set [%s] as leader", a.config.NodeName)
+		log.Printf("Successfully set [%s] as leader", a.config.Tags["key"])
 		return true
 	}
 
@@ -441,12 +441,12 @@ func (a *AgentCommand) serverAlive(key string) bool {
 
 // Utility method to check if the node calling the method is the leader.
 func (a *AgentCommand) isLeader() bool {
-	return a.config.Tags["key"] == a.etcd.GetLeader()
+	return a.config.Tags["key"] == string(a.store.GetLeader().Key)
 }
 
 // Utility method to get leader nodename
 func (a *AgentCommand) leaderMember() (*serf.Member, error) {
-	leader := a.etcd.GetLeader()
+	leader := string(a.store.GetLeader().Key)
 	for _, member := range a.serf.Members() {
 		if key, ok := member.Tags["key"]; ok {
 			if key == leader {
@@ -471,7 +471,7 @@ func (a *AgentCommand) eventLoop() {
 			if (e.EventType() == serf.EventMemberFailed || e.EventType() == serf.EventMemberLeave) && a.config.Server {
 				failed := e.(serf.MemberEvent)
 				for _, member := range failed.Members {
-					if member.Tags["key"] == a.etcd.GetLeader() && member.Status != serf.StatusAlive {
+					if member.Tags["key"] == string(a.store.GetLeader().Key) && member.Status != serf.StatusAlive {
 						if a.ElectLeader() {
 							a.schedule()
 						}
@@ -525,7 +525,7 @@ func (a *AgentCommand) eventLoop() {
 					ex := a.setExecution(query.Payload)
 
 					// Save job status
-					job, err := a.etcd.GetJob(ex.JobName)
+					job, err := a.store.GetJob(ex.JobName)
 					if err != nil {
 						log.Fatal(err)
 					}
@@ -537,7 +537,7 @@ func (a *AgentCommand) eventLoop() {
 						job.ErrorCount = job.ErrorCount + 1
 					}
 
-					if err := a.etcd.SetJob(job); err != nil {
+					if err := a.store.SetJob(job); err != nil {
 						log.Fatal(err)
 					}
 					query.Respond([]byte("saved"))
@@ -554,7 +554,7 @@ func (a *AgentCommand) eventLoop() {
 // Start or restart scheduler
 func (a *AgentCommand) schedule() {
 	log.Debug("Restarting scheduler")
-	jobs, err := a.etcd.GetJobs()
+	jobs, err := a.store.GetJobs()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -565,9 +565,9 @@ func (a *AgentCommand) schedule() {
 	}
 }
 
-func (a *AgentCommand) schedulerRestartQuery(leader string) {
+func (a *AgentCommand) schedulerRestartQuery(leader *Leader) {
 	params := &serf.QueryParam{
-		FilterTags: map[string]string{"key": leader},
+		FilterTags: map[string]string{"key": string(leader.Key)},
 		RequestAck: true,
 	}
 
@@ -662,7 +662,7 @@ func (a *AgentCommand) RunQuery(job *Job) {
 					"response": string(resp.Payload),
 				}).Debug("Received response")
 
-				// Save execution to etcd
+				// Save execution to store
 				a.setExecution(resp.Payload)
 			}
 		}
@@ -706,8 +706,8 @@ func (a *AgentCommand) setExecution(payload []byte) *Execution {
 		log.Fatal(err)
 	}
 
-	// Save the new execution to etcd
-	if _, err := a.etcd.SetExecution(&ex); err != nil {
+	// Save the new execution to store
+	if _, err := a.store.SetExecution(&ex); err != nil {
 		log.Fatal(err)
 	}
 

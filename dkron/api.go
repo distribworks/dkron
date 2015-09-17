@@ -89,9 +89,9 @@ func (a *AgentCommand) indexHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *AgentCommand) jobsHandler(w http.ResponseWriter, r *http.Request) {
-	jobs, err := a.etcd.GetJobs()
+	jobs, err := a.store.GetJobs()
 	if err != nil {
-		log.Error(err)
+		log.Fatal(err)
 	}
 	log.Debug(jobs)
 
@@ -104,7 +104,7 @@ func (a *AgentCommand) jobGetHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	jobName := vars["job"]
 
-	job, err := a.etcd.GetJob(jobName)
+	job, err := a.store.GetJob(jobName)
 	if err != nil {
 		log.Error(err)
 	}
@@ -133,8 +133,8 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	// Save the new job to etcd
-	if err = a.etcd.SetJob(&job); err != nil {
+	// Save the new job to the store
+	if err = a.store.SetJob(&job); err != nil {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(422) // unprocessable entity
 		if err := json.NewEncoder(w).Encode(err); err != nil {
@@ -143,7 +143,7 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	a.schedulerRestartQuery(a.etcd.GetLeader())
+	a.schedulerRestartQuery(a.store.GetLeader())
 
 	if err := printJson(w, r, job); err != nil {
 		log.Fatal(err)
@@ -154,7 +154,7 @@ func (a *AgentCommand) jobDeleteHandler(w http.ResponseWriter, r *http.Request) 
 	vars := mux.Vars(r)
 	jobName := vars["job"]
 
-	job, err := a.etcd.DeleteJob(jobName)
+	job, err := a.store.DeleteJob(jobName)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusNotFound)
@@ -173,7 +173,7 @@ func (a *AgentCommand) jobRunHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	jobName := vars["job"]
 
-	job, err := a.etcd.GetJob(jobName)
+	job, err := a.store.GetJob(jobName)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusNotFound)
@@ -194,7 +194,7 @@ func (a *AgentCommand) executionsHandler(w http.ResponseWriter, r *http.Request)
 	vars := mux.Vars(r)
 	jobName := vars["job"]
 
-	executions, err := a.etcd.GetExecutions(jobName)
+	executions, err := a.store.GetExecutions(jobName)
 	if err != nil {
 		log.Error(err)
 	}

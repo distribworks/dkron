@@ -44,11 +44,11 @@ See the [configuration section](configuration).
 
 ## Usage
 
-dkron relies on etcd for data storage, the etcd executable is included in the package and can be used to run an etcd node along with dkron servers.
+dkron relies on the key-value store for data storage, you can run an instance of the distributed store in the same machines as Dkron or connect it to your existing cluster.
 
 By default dkron will try to use a local etcd server running in the same machine and in the default port.
 
-If you want to use an existing etcd cluster of your own, you can specify it by setting the `etcd-machies` flag in the config file or as a command line flag.
+If you want to use an existing key-value store cluster of your own, you can specify it by setting the `backend` and `backend-machines` flag in the config file, env variables or as a command line flag.
 
 To start a dkron server instance just run:
 
