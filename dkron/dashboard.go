@@ -1,11 +1,9 @@
 package dkron
 
 import (
-	// "encoding/json"
 	"html/template"
 	"net/http"
 
-	// etcdc "github.com/coreos/go-etcd/etcd"
 	"github.com/gorilla/mux"
 )
 
@@ -39,35 +37,12 @@ func (a *AgentCommand) dashboardIndexHandler(w http.ResponseWriter, r *http.Requ
 	tmpl := template.Must(template.New("dashboard.html.tmpl").ParseFiles(
 		"templates/dashboard.html.tmpl", "templates/index.html.tmpl", "templates/status.html.tmpl"))
 
-	// rr := etcdc.NewRawRequest("GET", "../version", nil, nil)
-	// res, err := a.etcd.Client.SendRequest(rr)
-	// if err != nil {
-	// 	log.Error(err)
-	// }
-	// var version struct {
-	// 	Etcdserver  string `json:"etcdserver"`
-	// 	Etcdcluster string `json:"etcdcluster"`
-	// }
-	// json.Unmarshal(res.Body, &version)
-
-	// var ss *EtcdServerStats
-	// rr = etcdc.NewRawRequest("GET", "stats/self", nil, nil)
-	// res, err = a.etcd.Client.SendRequest(rr)
-	// if err != nil {
-	// log.Error(err)
-	// }
-	// json.Unmarshal(res.Body, &ss)
-
 	data := struct {
 		Common      *commonDashboardData
 		EtcdVersion string
-		// Stats       *EtcdServerStats
-		StartTime string
+		StartTime   string
 	}{
 		Common: newCommonDashboardData(a, a.config.NodeName),
-		// EtcdVersion: version.Etcdserver,
-		// Stats:       ss,
-		// StartTime:   ss.LeaderInfo.StartTime.Format("2/Jan/2006 15:05:05"),
 	}
 
 	if err := tmpl.Execute(w, data); err != nil {
