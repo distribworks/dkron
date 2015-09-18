@@ -2,7 +2,7 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"os"
 
 	"github.com/mitchellh/cli"
@@ -14,8 +14,21 @@ const (
 )
 
 func main() {
+	// Get the command line args. We shortcut "--version" and "-v" to
+	// just show the version.
+	args := os.Args[1:]
+	for _, arg := range args {
+		if arg == "-v" || arg == "--version" {
+			newArgs := make([]string, len(args)+1)
+			newArgs[0] = "version"
+			copy(newArgs[1:], args)
+			args = newArgs
+			break
+		}
+	}
+
 	c := cli.NewCLI("dkron", VERSION)
-	c.Args = os.Args[1:]
+	c.Args = args
 	c.HelpFunc = cli.BasicHelpFunc("dkron")
 
 	ui := &cli.BasicUi{Writer: os.Stdout}
@@ -26,11 +39,23 @@ func main() {
 				Version: VERSION,
 			}, nil
 		},
+		"keygen": func() (cli.Command, error) {
+			return &dkron.KeygenCommand{
+				Ui: ui,
+			}, nil
+		},
+		"version": func() (cli.Command, error) {
+			return &dkron.VersionCommand{
+				Version: VERSION,
+				Ui:      ui,
+			}, nil
+		},
 	}
 
 	exitStatus, err := c.Run()
 	if err != nil {
-		log.Println(err)
+		fmt.Fprintf(os.Stderr, "Error executing CLI: %s\n", err.Error())
+		os.Exit(1)
 	}
 
 	os.Exit(exitStatus)
