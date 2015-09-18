@@ -3,5 +3,6 @@
     "role": "web",
     "datacenter": "east"
   },
-  "keyspace": "dcron"
+  "keyspace": "dcron",
+  "encrypt": "kPpdjphiipNSsjd4QHWbkA=="
 }
