@@ -70,6 +70,8 @@ Options:
                                   is etcd.
   -backend-machine=127.0.0.1:2379 Backend storage servers addresses to connect to. This flag can be
                                   specified multiple times.
+  -encrypt=foo                    Key for encrypting network traffic.
+                                  Must be a base64-encoded 16-byte key.
 `
 	return strings.TrimSpace(helpText)
 }
@@ -105,6 +107,8 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	cmdFlags.Var((*AppendSliceValue)(&tag), "tag", "tag pair, specified as key=value")
 	cmdFlags.String("keyspace", "dkron", "key namespace to use")
 	viper.SetDefault("keyspace", cmdFlags.Lookup("keyspace").Value)
+	cmdFlags.String("encrypt", "", "encryption key")
+	viper.SetDefault("encrypt", cmdFlags.Lookup("encrypt").Value)
 
 	if err := cmdFlags.Parse(args); err != nil {
 		log.Fatal(err)
@@ -139,6 +143,7 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 		StartJoin:       *startJoin,
 		Tags:            tags,
 		Keyspace:        viper.GetString("keyspace"),
+		EncryptKey:      viper.GetString("encrypt"),
 	}
 
 	// log.Fatal(config.EtcdMachines)

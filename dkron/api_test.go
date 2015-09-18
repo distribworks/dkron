@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/hashicorp/serf/testutil"
 	"github.com/mitchellh/cli"
 )
 
@@ -24,7 +25,7 @@ func setupAPITest(t *testing.T) (chan<- struct{}, <-chan int) {
 	}
 
 	args := []string{
-		"-bind", "127.0.0.1:8970",
+		"-bind", testutil.GetBindAddr().String(),
 		"-http-addr", "127.0.0.1:8090",
 		"-node", "test",
 		"-server",

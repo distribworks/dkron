@@ -7,6 +7,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/libkv/store"
+	"github.com/hashicorp/serf/testutil"
 	"github.com/mitchellh/cli"
 )
 
@@ -27,7 +28,7 @@ func TestAgentCommandRun(t *testing.T) {
 	}
 
 	args := []string{
-		"-bind", "127.0.0.1:8946",
+		"-bind", testutil.GetBindAddr().String(),
 	}
 
 	resultCh := make(chan int)
@@ -64,7 +65,7 @@ func TestAgentCommandElectLeader(t *testing.T) {
 	defer close(shutdownCh)
 
 	ui := new(cli.MockUi)
-	a := &AgentCommand{
+	a1 := &AgentCommand{
 		Ui:         ui,
 		ShutdownCh: shutdownCh,
 	}
@@ -77,21 +78,24 @@ func TestAgentCommandElectLeader(t *testing.T) {
 		}
 	}
 
+	a1Addr := testutil.GetBindAddr().String()
+	a2Addr := testutil.GetBindAddr().String()
+
 	args := []string{
-		"-bind", "127.0.0.1:8947",
-		"-join", "127.0.0.1:8948",
+		"-bind", a1Addr,
+		"-join", a2Addr,
 		"-node", "test1",
 		"-server",
 	}
 
 	resultCh := make(chan int)
 	go func() {
-		resultCh <- a.Run(args)
+		resultCh <- a1.Run(args)
 	}()
 
 	// Wait for the first agent to start and set itself as leader
 	time.Sleep(2 * time.Second)
-	test1Key := a.config.Tags["key"]
+	test1Key := a1.config.Tags["key"]
 	t.Logf("test1 key %s", test1Key)
 
 	// Start another agent
@@ -106,8 +110,8 @@ func TestAgentCommandElectLeader(t *testing.T) {
 	defer func() { shutdownCh2 <- struct{}{} }()
 
 	args2 := []string{
-		"-bind", "127.0.0.1:8948",
-		"-join", "127.0.0.1:8947",
+		"-bind", a2Addr,
+		"-join", a1Addr,
 		"-node", "test2",
 		"-server",
 	}
@@ -175,9 +179,12 @@ func Test_processFilteredNodes(t *testing.T) {
 		}
 	}
 
+	a1Addr := testutil.GetBindAddr().String()
+	a2Addr := testutil.GetBindAddr().String()
+
 	args := []string{
-		"-bind", "127.0.0.1:8949",
-		"-join", "127.0.0.1:8950",
+		"-bind", a1Addr,
+		"-join", a2Addr,
 		"-node", "test1",
 		"-server",
 		"-tag", "role=test",
@@ -200,8 +207,8 @@ func Test_processFilteredNodes(t *testing.T) {
 	}
 
 	args2 := []string{
-		"-bind", "127.0.0.1:8950",
-		"-join", "127.0.0.1:8949",
+		"-bind", a2Addr,
+		"-join", a1Addr,
 		"-node", "test2",
 		"-server",
 		"-tag", "role=test",
@@ -251,8 +258,33 @@ func Test_UnmarshalTags(t *testing.T) {
 	}
 }
 
-func Test_SuccessCount(t *testing.T) {
-}
+func TestEncrypt(t *testing.T) {
+	log.Level = logrus.ErrorLevel
 
-func Test_schedulerRestart(t *testing.T) {
+	shutdownCh := make(chan struct{})
+	defer close(shutdownCh)
+
+	ui := new(cli.MockUi)
+	a := &AgentCommand{
+		Ui:         ui,
+		ShutdownCh: shutdownCh,
+	}
+
+	args := []string{
+		"-bind", testutil.GetBindAddr().String(),
+		"-node", "test1",
+		"-server",
+		"-tag", "role=test",
+		"-encrypt", "kPpdjphiipNSsjd4QHWbkA==",
+	}
+
+	go func() {
+		a.Run(args)
+	}()
+	time.Sleep(2 * time.Second)
+
+	if !a.serf.EncryptionEnabled() {
+		t.Fatal("Encryption not enabled for serf")
+	}
+	shutdownCh <- struct{}{}
 }
