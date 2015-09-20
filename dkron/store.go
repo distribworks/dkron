@@ -128,11 +128,11 @@ func (s *Store) GetExecutions(jobName string) ([]*Execution, error) {
 
 // Save a new execution and returns the key of the new saved item or an error.
 func (s *Store) SetExecution(execution *Execution) (string, error) {
-	eJson, _ := json.Marshal(execution)
+	exJson, _ := json.Marshal(execution)
 	key := fmt.Sprintf("%d-%s", execution.StartedAt.UnixNano(), execution.NodeName)
 
-	log.Debugf("Setting key %s: %s", execution.JobName, string(eJson))
-	err := s.Client.Put(fmt.Sprintf("%s/executions/%s/%s", s.keyspace, execution.JobName, key), eJson, nil)
+	log.Debugf("Setting key %s: %s", execution.JobName, string(exJson))
+	err := s.Client.Put(fmt.Sprintf("%s/executions/%s/%s/%s", s.keyspace, execution.JobName, execution.Group, key), exJson, nil)
 	if err != nil {
 		return "", err
 	}

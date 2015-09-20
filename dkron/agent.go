@@ -20,6 +20,7 @@ import (
 	"github.com/hashicorp/memberlist"
 	"github.com/hashicorp/serf/serf"
 	"github.com/mitchellh/cli"
+	"github.com/satori/go.uuid"
 	"github.com/spf13/viper"
 )
 
@@ -47,7 +48,7 @@ type AgentCommand struct {
 func (a *AgentCommand) Help() string {
 	helpText := `
 Usage: dkron agent [options]
-	Run dkron (option -server to run as server)
+	Run dkron agent
 
 Options:
 
@@ -498,22 +499,19 @@ func (a *AgentCommand) eventLoop() {
 						"at":      query.LTime,
 					}).Info("Running job")
 
-					var job Job
-					if err := json.Unmarshal(query.Payload, &job); err != nil {
+					var ex Execution
+					if err := json.Unmarshal(query.Payload, &ex); err != nil {
 						log.WithFields(logrus.Fields{
 							"query": QueryRunJob,
 						}).Fatal("Error unmarshaling job payload")
 					}
 
-					ex := Execution{
-						JobName:   job.Name,
-						StartedAt: time.Now(),
-						Success:   false,
-						NodeName:  a.config.NodeName,
-					}
+					ex.StartedAt = time.Now()
+					ex.Success = false
+					ex.NodeName = a.config.NodeName
 
 					go func() {
-						a.invokeJob(&job, &ex)
+						a.invokeJob(&ex)
 					}()
 
 					exJson, _ := json.Marshal(ex)
@@ -545,6 +543,11 @@ func (a *AgentCommand) eventLoop() {
 					if err := a.store.SetJob(job); err != nil {
 						log.Fatal(err)
 					}
+
+					// Send notification
+					// If owner email and sendmail config, send an email
+					// If webhook config send a request with payload
+
 					query.Respond([]byte("saved"))
 				}
 			}
@@ -633,12 +636,19 @@ func (a *AgentCommand) RunQuery(job *Job) {
 		RequestAck:  true,
 	}
 
-	jobJson, _ := json.Marshal(job)
+	ex := Execution{
+		JobName: job.Name,
+		Group:   uuid.NewV1(),
+		Job:     job,
+	}
+
+	exJson, _ := json.Marshal(ex)
 	log.WithFields(logrus.Fields{
 		"query":    QueryRunJob,
-		"job_name": job.Name,
+		"job_name": ex.JobName,
 	}).Debug("Sending query")
-	qr, err := a.serf.Query(QueryRunJob, jobJson, params)
+
+	qr, err := a.serf.Query(QueryRunJob, exJson, params)
 	if err != nil {
 		log.WithFields(logrus.Fields{
 			"query": QueryRunJob,
