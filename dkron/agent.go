@@ -545,9 +545,7 @@ func (a *AgentCommand) eventLoop() {
 					}
 
 					// Send notification
-					// If owner email and sendmail config, send an email
-					// If webhook config send a request with payload
-
+					Notification(a.config, job).Send()
 					query.Respond([]byte("saved"))
 				}
 			}

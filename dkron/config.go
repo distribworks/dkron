@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"net"
+	"net/mail"
 	"time"
 
 	"github.com/spf13/viper"
@@ -31,6 +32,15 @@ type Config struct {
 	EncryptKey            string
 	StartJoin             AppendSliceValue
 	Keyspace              string
+
+	MailHost     string
+	MailPort     uint16
+	MailUsername string
+	MailPassword string
+	MailFrom     mail.Address
+
+	WebhookURL     string
+	WebhookPayload string
 }
 
 // This is the default port that we use for Serf communication

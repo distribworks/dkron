@@ -4,5 +4,7 @@
     "datacenter": "east"
   },
   "keyspace": "dcron",
-  "encrypt": "kPpdjphiipNSsjd4QHWbkA=="
+  "encrypt": "kPpdjphiipNSsjd4QHWbkA==",
+  "webhook_url": "https://hooks.slack.com/services/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",
+  "webhook_payload": "{'text': '{{.Content}}', 'channel': '@victorcoder'}"
 }
