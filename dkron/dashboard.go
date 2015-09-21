@@ -55,8 +55,27 @@ func (a *AgentCommand) dashboardJobsHandler(w http.ResponseWriter, r *http.Reque
 	jobs, _ := a.store.GetJobs()
 
 	funcs := template.FuncMap{
-		"isSuccess": func(job *Job) bool {
-			return job.LastSuccess.After(job.LastError)
+		"executionStatus": func(job *Job) string {
+			execs, _ := a.store.GetLastExecutionGroup(job.Name)
+			success := 0
+			failed := 0
+			for _, ex := range execs {
+				if ex.Success {
+					success = success + 1
+				} else {
+					failed = failed + 1
+				}
+			}
+
+			if failed == 0 {
+				return "success"
+			} else if failed > 0 && success == 0 {
+				return "danger"
+			} else if failed > 0 && success > 0 {
+				return "warning"
+			}
+
+			return ""
 		},
 	}
 
