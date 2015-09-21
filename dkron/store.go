@@ -115,7 +115,38 @@ func (s *Store) GetExecutions(jobName string) ([]*Execution, error) {
 	}
 
 	var executions []*Execution
-	for _, node := range res {
+
+	for _, dir := range res {
+		groupRes, err := s.Client.List(dir.Key)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, node := range groupRes {
+			var execution Execution
+			err := json.Unmarshal([]byte(node.Value), &execution)
+			if err != nil {
+				return nil, err
+			}
+			executions = append(executions, &execution)
+		}
+	}
+	return executions, nil
+}
+
+func (s *Store) GetLastExecutionGroup(jobName string) ([]*Execution, error) {
+	res, err := s.Client.List(fmt.Sprintf("%s/executions/%s", s.keyspace, jobName))
+	if err != nil {
+		return nil, err
+	}
+
+	groupRes, err := s.Client.List(res[len(res)-1].Key)
+	if err != nil {
+		return nil, err
+	}
+
+	var executions []*Execution
+	for _, node := range groupRes {
 		var execution Execution
 		err := json.Unmarshal([]byte(node.Value), &execution)
 		if err != nil {
