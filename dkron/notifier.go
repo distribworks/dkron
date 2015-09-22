@@ -42,7 +42,7 @@ func (n *Notifier) sendExecutionEmail() {
 		Headers: textproto.MIMEHeader{},
 	}
 
-	e.Send(fmt.Sprintf("%s:%s", n.Config.MailHost, n.Config.MailPort), smtp.PlainAuth("", n.Config.MailUsername, n.Config.MailPassword, n.Config.MailHost))
+	e.Send(fmt.Sprintf("%s:%d", n.Config.MailHost, n.Config.MailPort), smtp.PlainAuth("", n.Config.MailUsername, n.Config.MailPassword, n.Config.MailHost))
 }
 
 func (n *Notifier) callExecutionWebhook() {
