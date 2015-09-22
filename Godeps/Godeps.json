@@ -1,9 +1,6 @@
 {
 	"ImportPath": "github.com/victorcoder/dkron",
 	"GoVersion": "go1.5",
-	"Packages": [
-		"./..."
-	],
 	"Deps": [
 		{
 			"ImportPath": "github.com/BurntSushi/toml",
@@ -62,9 +59,9 @@
 			"Rev": "558a6876882b2c5c61df29fd3990fb1765fd71d3"
 		},
 		{
-			"ImportPath": "github.com/hashicorp/serf/testutil",
-			"Comment": "v0.6.4-13-g558a687",
-			"Rev": "558a6876882b2c5c61df29fd3990fb1765fd71d3"
+			"ImportPath": "github.com/jordan-wright/email",
+			"Comment": "v2.1",
+			"Rev": "065af43fce517847a750d01a6d389d1a37e011b3"
 		},
 		{
 			"ImportPath": "github.com/kr/pretty",
@@ -91,6 +88,10 @@
 		{
 			"ImportPath": "github.com/samuel/go-zookeeper/zk",
 			"Rev": "177002e16a0061912f02377e2dd8951a8b3551bc"
+		},
+		{
+			"ImportPath": "github.com/satori/go.uuid",
+			"Rev": "08f0718b61e95ddba0ade3346725fe0e4bf28ca6"
 		},
 		{
 			"ImportPath": "github.com/spf13/cast",
