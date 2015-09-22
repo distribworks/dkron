@@ -1,6 +1,9 @@
 {
 	"ImportPath": "github.com/victorcoder/dkron",
 	"GoVersion": "go1.5",
+	"Packages": [
+		"./..."
+	],
 	"Deps": [
 		{
 			"ImportPath": "github.com/BurntSushi/toml",
@@ -55,6 +58,11 @@
 		},
 		{
 			"ImportPath": "github.com/hashicorp/serf/serf",
+			"Comment": "v0.6.4-13-g558a687",
+			"Rev": "558a6876882b2c5c61df29fd3990fb1765fd71d3"
+		},
+		{
+			"ImportPath": "github.com/hashicorp/serf/testutil",
 			"Comment": "v0.6.4-13-g558a687",
 			"Rev": "558a6876882b2c5c61df29fd3990fb1765fd71d3"
 		},
