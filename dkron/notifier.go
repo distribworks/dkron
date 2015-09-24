@@ -53,7 +53,11 @@ func (n *Notifier) callExecutionWebhook() {
 	data := struct {
 		Report string
 	}{
-		"This is the report",
+		fmt.Sprintf("Executed: %s\nStart time: %s\nEnd time: %s\nSuccess: %t",
+			n.Execution.JobName,
+			n.Execution.StartedAt,
+			n.Execution.FinishedAt,
+			n.Execution.Success),
 	}
 
 	out := &bytes.Buffer{}
