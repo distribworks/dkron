@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net"
-	"net/mail"
 	"os"
 	"os/signal"
 	"runtime"
@@ -162,11 +161,6 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 		tags["server"] = "true"
 	}
 
-	mailFrom, err := mail.ParseAddress(viper.GetString("mail_from"))
-	if err != nil {
-		log.Error(err)
-	}
-
 	config := &Config{
 		NodeName:        nodeName,
 		BindAddr:        viper.GetString("bind_addr"),
@@ -185,7 +179,7 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 		MailPort:     uint16(viper.GetInt("mail_port")),
 		MailUsername: viper.GetString("mail_username"),
 		MailPassword: viper.GetString("mail_password"),
-		MailFrom:     mailFrom,
+		MailFrom:     viper.GetString("mail_from"),
 
 		WebhookURL:     viper.GetString("webhook_url"),
 		WebhookPayload: viper.GetString("webhook_payload"),

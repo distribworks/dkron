@@ -4,7 +4,6 @@ import (
 	"encoding/base64"
 	"fmt"
 	"net"
-	"net/mail"
 	"time"
 
 	"github.com/spf13/viper"
@@ -37,7 +36,7 @@ type Config struct {
 	MailPort     uint16
 	MailUsername string
 	MailPassword string
-	MailFrom     *mail.Address
+	MailFrom     string
 
 	WebhookURL     string
 	WebhookPayload string
