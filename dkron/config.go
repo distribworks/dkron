@@ -57,7 +57,7 @@ func init() {
 		log.Infof("No valid config found: %s \n Applying default values.", err)
 	}
 
-	viper.SetEnvPrefix("dcr") // will be uppercased automatically
+	viper.SetEnvPrefix("dkron") // will be uppercased automatically
 	viper.AutomaticEnv()
 }
 
