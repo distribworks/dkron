@@ -27,7 +27,7 @@ func Notification(config *Config, execution *Execution) *Notifier {
 }
 
 func (n *Notifier) Send() {
-	if n.Config.MailHost != "" && n.Config.MailPort != 0 {
+	if n.Config.MailHost != "" && n.Config.MailPort != 0 && n.Execution.Job.OwnerEmail != "" {
 		n.sendExecutionEmail()
 	}
 	if n.Config.WebhookURL != "" && n.Config.WebhookPayload != "" {
@@ -35,19 +35,7 @@ func (n *Notifier) Send() {
 	}
 }
 
-func (n *Notifier) sendExecutionEmail() {
-	e := &email.Email{
-		To:      []string{n.Execution.Job.OwnerEmail},
-		From:    n.Config.MailFrom.String(),
-		Subject: "[Dkron] Job execution report",
-		Text:    []byte("Text Body is, of course, supported!"),
-		Headers: textproto.MIMEHeader{},
-	}
-
-	e.Send(fmt.Sprintf("%s:%d", n.Config.MailHost, n.Config.MailPort), smtp.PlainAuth("", n.Config.MailUsername, n.Config.MailPassword, n.Config.MailHost))
-}
-
-func (n *Notifier) callExecutionWebhook() {
+func (n *Notifier) report() string {
 	t := template.Must(template.New("report").Parse(n.Config.WebhookPayload))
 
 	data := struct {
@@ -66,7 +54,27 @@ func (n *Notifier) callExecutionWebhook() {
 		log.Error("executing template:", err)
 	}
 
-	req, err := http.NewRequest("POST", n.Config.WebhookURL, out)
+	return out.String()
+}
+
+func (n *Notifier) sendExecutionEmail() {
+	e := &email.Email{
+		To:      []string{n.Execution.Job.OwnerEmail},
+		From:    n.Config.MailFrom,
+		Subject: "[Dkron] Job execution report",
+		Text:    []byte(n.report()),
+		Headers: textproto.MIMEHeader{},
+	}
+
+	serverAddr := fmt.Sprintf("%s:%d", n.Config.MailHost, n.Config.MailPort)
+	err := e.Send(serverAddr, smtp.PlainAuth("", n.Config.MailUsername, n.Config.MailPassword, n.Config.MailHost))
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func (n *Notifier) callExecutionWebhook() {
+	req, err := http.NewRequest("POST", n.Config.WebhookURL, bytes.NewBufferString(n.report()))
 	for _, h := range n.Config.WebhookHeaders {
 		if h != "" {
 			kv := strings.Split(h, ":")
