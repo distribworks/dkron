@@ -4,7 +4,5 @@
     "datacenter": "east"
   },
   "keyspace": "dcron",
-  "encrypt": "kPpdjphiipNSsjd4QHWbkA==",
-  "webhook_url": "",
-  "webhook_payload": "{'text': '{{.Report}}', 'channel': '@foo'}"
+  "encrypt": "kPpdjphiipNSsjd4QHWbkA=="
 }
