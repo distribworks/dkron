@@ -4,8 +4,6 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
-	"os"
-	"strconv"
 	"testing"
 )
 
@@ -27,14 +25,12 @@ func TestNotifier_callExecutionWebhook(t *testing.T) {
 }
 
 func TestNotifier_sendExecutionEmail(t *testing.T) {
-	port, _ := strconv.ParseInt(os.Getenv("DKRON_MAIL_PORT"), 10, 16)
-
 	c := &Config{
-		MailHost:     os.Getenv("DKRON_MAIL_HOST"),
-		MailPort:     uint16(port),
-		MailUsername: os.Getenv("DKRON_MAIL_USERNAME"),
-		MailPassword: os.Getenv("DKRON_MAIL_PASSWORD"),
-		MailFrom:     os.Getenv("DKRON_MAIL_FROM"),
+		MailHost:     "mailtrap.io",
+		MailPort:     2525,
+		MailUsername: "45326e3b115066bbb",
+		MailPassword: "7f496ed2b06688",
+		MailFrom:     "dkron@dkron.io",
 	}
 
 	n := Notification(c, &Execution{
