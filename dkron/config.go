@@ -37,7 +37,7 @@ type Config struct {
 	MailPort     uint16
 	MailUsername string
 	MailPassword string
-	MailFrom     mail.Address
+	MailFrom     *mail.Address
 
 	WebhookURL     string
 	WebhookPayload string

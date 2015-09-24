@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net"
+	"net/mail"
 	"os"
 	"os/signal"
 	"runtime"
@@ -73,6 +74,15 @@ Options:
                                   specified multiple times.
   -encrypt=foo                    Key for encrypting network traffic.
                                   Must be a base64-encoded 16-byte key.
+  -mail-host                      Mail server host address to use for notifications.
+  -mail-port                      Mail server port.
+  -mail-username                  Mail server username used for authentication.
+  -mail-password                  Mail server password to use.
+  -mail-from                      From email address to use.
+
+  -webhook-url                    Webhook url to call for notifications.
+  -webhook-payload                Body of the POST request to send on webhook call.
+  -webhook-header                 Headers to use when calling the webhook URL. Can be specified multiple times.
 `
 	return strings.TrimSpace(helpText)
 }
@@ -112,6 +122,17 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	viper.SetDefault("encrypt", cmdFlags.Lookup("encrypt").Value)
 
 	// Notifications
+	cmdFlags.String("mail-host", "", "notification mail server host")
+	viper.SetDefault("mail_host", cmdFlags.Lookup("mail-host").Value)
+	cmdFlags.String("mail-port", "", "port to use for the mail server")
+	viper.SetDefault("mail_port", cmdFlags.Lookup("mail-port").Value)
+	cmdFlags.String("mail-username", "", "username for the mail server")
+	viper.SetDefault("mail_username", cmdFlags.Lookup("mail-username").Value)
+	cmdFlags.String("mail-password", "", "password of the mail server")
+	viper.SetDefault("mail_password", cmdFlags.Lookup("mail-password").Value)
+	cmdFlags.String("mail-from", "", "notification emails from address")
+	viper.SetDefault("mail_from", cmdFlags.Lookup("mail-from").Value)
+
 	cmdFlags.String("webhook-url", "", "notification webhook url")
 	viper.SetDefault("webhook_url", cmdFlags.Lookup("webhook-url").Value)
 	cmdFlags.String("webhook-payload", "", "notification webhook payload")
@@ -141,6 +162,11 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 		tags["server"] = "true"
 	}
 
+	mailFrom, err := mail.ParseAddress(viper.GetString("mail_from"))
+	if err != nil {
+		log.Error(err)
+	}
+
 	config := &Config{
 		NodeName:        nodeName,
 		BindAddr:        viper.GetString("bind_addr"),
@@ -155,12 +181,17 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 		Keyspace:        viper.GetString("keyspace"),
 		EncryptKey:      viper.GetString("encrypt"),
 
+		MailHost:     viper.GetString("mail_host"),
+		MailPort:     uint16(viper.GetInt("mail_port")),
+		MailUsername: viper.GetString("mail_username"),
+		MailPassword: viper.GetString("mail_password"),
+		MailFrom:     mailFrom,
+
 		WebhookURL:     viper.GetString("webhook_url"),
 		WebhookPayload: viper.GetString("webhook_payload"),
 		WebhookHeaders: viper.GetStringSlice("webhook_headers"),
 	}
 
-	// log.Fatal(config.EtcdMachines)
 	return config
 }
 
