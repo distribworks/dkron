@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 )
 
 func TestNotifier_callExecutionWebhook(t *testing.T) {
@@ -34,6 +35,10 @@ func TestNotifier_sendExecutionEmail(t *testing.T) {
 	}
 
 	n := Notification(c, &Execution{
+		JobName:    "test",
+		StartedAt:  time.Now(),
+		FinishedAt: time.Now(),
+		Success:    true,
 		Job: &Job{
 			OwnerEmail: "victorcoder@gmail.com",
 		},
