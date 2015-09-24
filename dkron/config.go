@@ -41,6 +41,7 @@ type Config struct {
 
 	WebhookURL     string
 	WebhookPayload string
+	WebhookHeaders []string
 }
 
 // This is the default port that we use for Serf communication

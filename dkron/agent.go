@@ -111,6 +111,14 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	cmdFlags.String("encrypt", "", "encryption key")
 	viper.SetDefault("encrypt", cmdFlags.Lookup("encrypt").Value)
 
+	// Notifications
+	cmdFlags.String("webhook-url", "", "notification webhook url")
+	viper.SetDefault("webhook_url", cmdFlags.Lookup("webhook-url").Value)
+	cmdFlags.String("webhook-payload", "", "notification webhook payload")
+	viper.SetDefault("webhook_payload", cmdFlags.Lookup("webhook-payload").Value)
+	webhookHeaders := &AppendSliceValue{}
+	cmdFlags.Var(webhookHeaders, "webhook-header", "notification webhook additional header")
+
 	if err := cmdFlags.Parse(args); err != nil {
 		log.Fatal(err)
 	}
@@ -121,6 +129,7 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	}
 	viper.SetDefault("tags", ut)
 	viper.SetDefault("join", startJoin)
+	viper.SetDefault("webhook_headers", webhookHeaders)
 
 	tags := viper.GetStringMapString("tags")
 	server := viper.GetBool("server")
@@ -145,6 +154,10 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 		Tags:            tags,
 		Keyspace:        viper.GetString("keyspace"),
 		EncryptKey:      viper.GetString("encrypt"),
+
+		WebhookURL:     viper.GetString("webhook_url"),
+		WebhookPayload: viper.GetString("webhook_payload"),
+		WebhookHeaders: viper.GetStringSlice("webhook_headers"),
 	}
 
 	// log.Fatal(config.EtcdMachines)
@@ -545,7 +558,7 @@ func (a *AgentCommand) eventLoop() {
 					}
 
 					// Send notification
-					Notification(a.config, job).Send()
+					Notification(a.config, ex).Send()
 					query.Respond([]byte("saved"))
 				}
 			}
