@@ -27,7 +27,7 @@ func Notification(config *Config, execution *Execution) *Notifier {
 }
 
 func (n *Notifier) Send() {
-	if n.Config.MailFrom.String() != "" && n.Config.MailHost != "" && n.Config.MailPort != 0 {
+	if n.Config.MailHost != "" && n.Config.MailPort != 0 {
 		n.sendExecutionEmail()
 	}
 	if n.Config.WebhookURL != "" && n.Config.WebhookPayload != "" {
