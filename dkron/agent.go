@@ -561,7 +561,7 @@ func (a *AgentCommand) eventLoop() {
 						"query":   query.Name,
 						"payload": string(query.Payload),
 						"at":      query.LTime,
-					}).Info("Received execution done")
+					}).Debug("Received execution done")
 
 					ex := a.setExecution(query.Payload)
 
@@ -582,8 +582,15 @@ func (a *AgentCommand) eventLoop() {
 						log.Fatal(err)
 					}
 
+					exg, err := a.store.GetExecutionGroup(ex)
+					if err != nil {
+						log.WithFields(logrus.Fields{
+							"execution_group": ex.Group,
+						}).Error(err)
+					}
+
 					// Send notification
-					Notification(a.config, ex).Send()
+					Notification(a.config, ex, exg).Send()
 					query.Respond([]byte("saved"))
 				}
 			}

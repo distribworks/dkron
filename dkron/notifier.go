@@ -15,14 +15,16 @@ import (
 )
 
 type Notifier struct {
-	Config    *Config
-	Execution *Execution
+	Config         *Config
+	Execution      *Execution
+	ExecutionGroup []*Execution
 }
 
-func Notification(config *Config, execution *Execution) *Notifier {
+func Notification(config *Config, execution *Execution, exGroup []*Execution) *Notifier {
 	return &Notifier{
-		Config:    config,
-		Execution: execution,
+		Config:         config,
+		Execution:      execution,
+		ExecutionGroup: exGroup,
 	}
 }
 

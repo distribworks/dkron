@@ -20,7 +20,7 @@ func TestNotifier_callExecutionWebhook(t *testing.T) {
 		WebhookHeaders: []string{"Content-Type: application/x-www-form-urlencoded"},
 	}
 
-	n := Notification(c, &Execution{})
+	n := Notification(c, &Execution{}, []*Execution{})
 
 	n.Send()
 }
@@ -34,15 +34,32 @@ func TestNotifier_sendExecutionEmail(t *testing.T) {
 		MailFrom:     "dkron@dkron.io",
 	}
 
-	n := Notification(c, &Execution{
+	job := &Job{
+		OwnerEmail: "victorcoder@gmail.com",
+	}
+
+	ex1 := &Execution{
 		JobName:    "test",
 		StartedAt:  time.Now(),
 		FinishedAt: time.Now(),
 		Success:    true,
-		Job: &Job{
-			OwnerEmail: "victorcoder@gmail.com",
+		Job:        job,
+		NodeName:   "test-node",
+		Output:     []byte("test-output"),
+	}
+
+	exg := []*Execution{
+		&Execution{
+			JobName:   "test",
+			StartedAt: time.Now(),
+			Job:       job,
+			NodeName:  "test-node2",
+			Output:    []byte("test-output"),
 		},
-	})
+		ex1,
+	}
+
+	n := Notification(c, ex1, exg)
 
 	n.Send()
 }

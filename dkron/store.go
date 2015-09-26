@@ -157,6 +157,24 @@ func (s *Store) GetLastExecutionGroup(jobName string) ([]*Execution, error) {
 	return executions, nil
 }
 
+func (s *Store) GetExecutionGroup(execution *Execution) ([]*Execution, error) {
+	res, err := s.Client.List(fmt.Sprintf("%s/executions/%s/%s", s.keyspace, execution.JobName, execution.Group))
+	if err != nil {
+		return nil, err
+	}
+
+	var executions []*Execution
+	for _, node := range res {
+		var execution Execution
+		err := json.Unmarshal([]byte(node.Value), &execution)
+		if err != nil {
+			return nil, err
+		}
+		executions = append(executions, &execution)
+	}
+	return executions, nil
+}
+
 // Save a new execution and returns the key of the new saved item or an error.
 func (s *Store) SetExecution(execution *Execution) (string, error) {
 	exJson, _ := json.Marshal(execution)
