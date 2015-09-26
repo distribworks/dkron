@@ -106,7 +106,9 @@ type Execution struct {
 	// Node name of the node that run this execution.
 	NodeName string `json:"node_name,omitempty"`
 
+	// Execution group to what this execution belongs to.
 	Group uuid.UUID `json:"group,omitempty"`
 
+	// The job used to generate this execution.
 	Job *Job `json:"job,omitempty"`
 }
