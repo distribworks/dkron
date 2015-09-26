@@ -49,7 +49,7 @@ func TestNotifier_sendExecutionEmail(t *testing.T) {
 	}
 
 	exg := []*Execution{
-		&Execution{
+		{
 			JobName:   "test",
 			StartedAt: time.Now(),
 			Job:       job,
