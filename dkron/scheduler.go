@@ -4,6 +4,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/satori/go.uuid"
 	"github.com/victorcoder/dkron/cron"
 )
 
@@ -88,20 +89,26 @@ func (j *Job) Run() {
 
 type Execution struct {
 	// Name of the job this executions refers to.
-	JobName string `json:"job_name"`
+	JobName string `json:"job_name,omitempty"`
 
 	// Start time of the execution.
-	StartedAt time.Time `json:"started_at"`
+	StartedAt time.Time `json:"started_at,omitempty"`
 
 	// When the execution finished running.
-	FinishedAt time.Time `json:"finished_at"`
+	FinishedAt time.Time `json:"finished_at,omitempty"`
 
 	// If this execution executed succesfully.
-	Success bool `json:"success"`
+	Success bool `json:"success,omitempty"`
 
 	// Partial output of the execution.
-	Output []byte `json:"output"`
+	Output []byte `json:"output,omitempty"`
 
 	// Node name of the node that run this execution.
-	NodeName string `json:"node_name"`
+	NodeName string `json:"node_name,omitempty"`
+
+	// Execution group to what this execution belongs to.
+	Group uuid.UUID `json:"group,omitempty"`
+
+	// The job used to generate this execution.
+	Job *Job `json:"job,omitempty"`
 }

@@ -78,6 +78,7 @@ func (a *AgentCommand) indexHandler(w http.ResponseWriter, r *http.Request) {
 		"agent": {
 			"name":    local.Name,
 			"version": a.Version,
+			"backend": a.config.Backend,
 		},
 		"serf": a.serf.Stats(),
 		"tags": local.Tags,

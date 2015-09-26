@@ -4,3 +4,4 @@ docs/scss/Gemfile.lock
 docs/scss/.sass-cache
 downloads/
 .goxc.local.json
+.envrc

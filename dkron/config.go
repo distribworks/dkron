@@ -31,6 +31,16 @@ type Config struct {
 	EncryptKey            string
 	StartJoin             AppendSliceValue
 	Keyspace              string
+
+	MailHost     string
+	MailPort     uint16
+	MailUsername string
+	MailPassword string
+	MailFrom     string
+
+	WebhookURL     string
+	WebhookPayload string
+	WebhookHeaders []string
 }
 
 // This is the default port that we use for Serf communication
@@ -46,7 +56,7 @@ func init() {
 		log.Infof("No valid config found: %s \n Applying default values.", err)
 	}
 
-	viper.SetEnvPrefix("dcr") // will be uppercased automatically
+	viper.SetEnvPrefix("dkron") // will be uppercased automatically
 	viper.AutomaticEnv()
 }
 

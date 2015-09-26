@@ -19,11 +19,7 @@
           {{if $job.Disabled }}
             <i class="fa fa-circle text-muted"></i>
           {{ else }}
-            {{if isSuccess $job}}
-              <i class="fa fa-circle text-success"></i>
-            {{else}}
-              <i class="fa fa-circle text-danger"></i>
-            {{end}}
+            <i class="fa fa-circle text-{{ executionStatus $job }}"></i>
           {{end}}
         </td>
         <td><button ng-click="click('{{ $job.Name }}')">Run</button></td>
