@@ -38,32 +38,32 @@ func (n *Notifier) Send() {
 }
 
 func (n *Notifier) report() string {
-	t := template.Must(template.New("report").Parse(n.Config.WebhookPayload))
-
-	data := struct {
-		Report string
-	}{
-		fmt.Sprintf("Executed: %s\nStart time: %s\nEnd time: %s\nSuccess: %t",
-			n.Execution.JobName,
-			n.Execution.StartedAt,
-			n.Execution.FinishedAt,
-			n.Execution.Success),
+	var exgStr string
+	for _, ex := range n.ExecutionGroup {
+		exgStr = fmt.Sprintf("%s\t[Node]: %s [Start]: %s [End]: %s [Success]: %t\n",
+			exgStr,
+			ex.NodeName,
+			ex.StartedAt,
+			ex.FinishedAt,
+			ex.Success)
 	}
 
-	out := &bytes.Buffer{}
-	err := t.Execute(out, data)
-	if err != nil {
-		log.Error("executing template:", err)
-	}
-
-	return out.String()
+	return fmt.Sprintf("Executed: %s\nStart time: %s\nEnd time: %s\nSuccess: %t\nNode: %s\nOutput: %s\nExecution group: %s\n%s",
+		n.Execution.JobName,
+		n.Execution.StartedAt,
+		n.Execution.FinishedAt,
+		n.Execution.Success,
+		n.Execution.NodeName,
+		n.Execution.Output,
+		n.Execution.Group,
+		exgStr)
 }
 
 func (n *Notifier) sendExecutionEmail() {
 	e := &email.Email{
 		To:      []string{n.Execution.Job.OwnerEmail},
 		From:    n.Config.MailFrom,
-		Subject: "[Dkron] Job execution report",
+		Subject: fmt.Sprintf("[Dkron] %s execution report", n.Execution.JobName),
 		Text:    []byte(n.report()),
 		Headers: textproto.MIMEHeader{},
 	}
@@ -76,7 +76,21 @@ func (n *Notifier) sendExecutionEmail() {
 }
 
 func (n *Notifier) callExecutionWebhook() {
-	req, err := http.NewRequest("POST", n.Config.WebhookURL, bytes.NewBufferString(n.report()))
+	t := template.Must(template.New("report").Parse(n.Config.WebhookPayload))
+
+	data := struct {
+		Report string
+	}{
+		n.report(),
+	}
+
+	out := &bytes.Buffer{}
+	err := t.Execute(out, data)
+	if err != nil {
+		log.Error("executing template:", err)
+	}
+
+	req, err := http.NewRequest("POST", n.Config.WebhookURL, out)
 	for _, h := range n.Config.WebhookHeaders {
 		if h != "" {
 			kv := strings.Split(h, ":")
