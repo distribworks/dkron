@@ -5,6 +5,9 @@ all: deps
 deps:
 	godep save -t ./...
 
+docs:
+	mkdocs gh-deploy --clean
+
 prmd:
 	prmd doc --prepend docs/docs/overview.md static/schema.json | sed 's/\<a name\=.*a\>//' > docs/docs/api.md
 
