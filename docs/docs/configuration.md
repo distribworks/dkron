@@ -20,22 +20,22 @@ Settings for dkron can be specified in three ways: Using a `config/dkron.json` c
 
 * `-keyspace` - Keyspace to use for the store. Allows to run different instances using the same storage cluster. `dkron` by default.
 
-* `encrypt` - Key for encrypting network traffic. Must be a base64-encoded 16-byte key.
+* `-encrypt` - Key for encrypting network traffic. Must be a base64-encoded 16-byte key.
 
-* `mail-host` - Mail server host address to use for notifications.
+* `-mail-host` - Mail server host address to use for notifications.
 
-* `mail-port` - Mail server port.
+* `-mail-port` - Mail server port.
 
-* `mail-username` - Mail server username used for authentication.
+* `-mail-username` - Mail server username used for authentication.
 
-* `mail-password` - Mail server password to use.
+* `-mail-password` - Mail server password to use.
 
-* `mail-from` - From email address to use.
+* `-mail-from` - From email address to use.
 
-* `webhook-url` - Webhook url to call for notifications.
+* `-webhook-url` - Webhook url to call for notifications.
 
-* `webhook-payload` - Body of the POST request to send on webhook call.
+* `-webhook-payload` - Body of the POST request to send on webhook call.
 
-* `webhook-header` - Headers to use when calling the webhook URL. Can be specified multiple times.
+* `-webhook-header` - Headers to use when calling the webhook URL. Can be specified multiple times.
 
-* `debug` - Output debug info
+* `-debug` - Output debug info
