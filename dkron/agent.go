@@ -514,7 +514,7 @@ func (a *AgentCommand) eventLoop() {
 		case e := <-a.eventCh:
 			log.WithFields(logrus.Fields{
 				"event": e.String(),
-			}).Info("Received event")
+			}).Debug("Received event")
 
 			if (e.EventType() == serf.EventMemberFailed || e.EventType() == serf.EventMemberLeave) && a.config.Server {
 				failed := e.(serf.MemberEvent)
@@ -539,7 +539,7 @@ func (a *AgentCommand) eventLoop() {
 						"query":   query.Name,
 						"payload": string(query.Payload),
 						"at":      query.LTime,
-					}).Info("Running job")
+					}).Debug("Running job")
 
 					var ex Execution
 					if err := json.Unmarshal(query.Payload, &ex); err != nil {
@@ -547,6 +547,10 @@ func (a *AgentCommand) eventLoop() {
 							"query": QueryRunJob,
 						}).Fatal("Error unmarshaling job payload")
 					}
+
+					log.WithFields(logrus.Fields{
+						"job": ex.JobName,
+					}).Info("Starting job")
 
 					ex.StartedAt = time.Now()
 					ex.Success = false
