@@ -82,6 +82,8 @@ Options:
   -webhook-url                    Webhook url to call for notifications.
   -webhook-payload                Body of the POST request to send on webhook call.
   -webhook-header                 Headers to use when calling the webhook URL. Can be specified multiple times.
+
+  -debug=false                    Output debug log
 `
 	return strings.TrimSpace(helpText)
 }
@@ -119,6 +121,8 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	viper.SetDefault("keyspace", cmdFlags.Lookup("keyspace").Value)
 	cmdFlags.String("encrypt", "", "encryption key")
 	viper.SetDefault("encrypt", cmdFlags.Lookup("encrypt").Value)
+	cmdFlags.Bool("debug", false, "output debug log")
+	viper.SetDefault("debug", cmdFlags.Lookup("debug").Value)
 
 	// Notifications
 	cmdFlags.String("mail-host", "", "notification mail server host")
@@ -161,7 +165,9 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 		tags["server"] = "true"
 	}
 
-	config := &Config{
+	SetLogLevel(viper.GetBool("debug"))
+
+	return &Config{
 		NodeName:        nodeName,
 		BindAddr:        viper.GetString("bind_addr"),
 		HTTPAddr:        viper.GetString("http_addr"),
@@ -185,8 +191,6 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 		WebhookPayload: viper.GetString("webhook_payload"),
 		WebhookHeaders: viper.GetStringSlice("webhook_headers"),
 	}
-
-	return config
 }
 
 // setupAgent is used to create the agent we use
@@ -510,7 +514,7 @@ func (a *AgentCommand) eventLoop() {
 		case e := <-a.eventCh:
 			log.WithFields(logrus.Fields{
 				"event": e.String(),
-			}).Info("Received event")
+			}).Debug("Received event")
 
 			if (e.EventType() == serf.EventMemberFailed || e.EventType() == serf.EventMemberLeave) && a.config.Server {
 				failed := e.(serf.MemberEvent)
@@ -535,7 +539,7 @@ func (a *AgentCommand) eventLoop() {
 						"query":   query.Name,
 						"payload": string(query.Payload),
 						"at":      query.LTime,
-					}).Info("Running job")
+					}).Debug("Running job")
 
 					var ex Execution
 					if err := json.Unmarshal(query.Payload, &ex); err != nil {
@@ -543,6 +547,10 @@ func (a *AgentCommand) eventLoop() {
 							"query": QueryRunJob,
 						}).Fatal("Error unmarshaling job payload")
 					}
+
+					log.WithFields(logrus.Fields{
+						"job": ex.JobName,
+					}).Info("Starting job")
 
 					ex.StartedAt = time.Now()
 					ex.Success = false
