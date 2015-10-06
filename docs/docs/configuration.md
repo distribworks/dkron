@@ -37,3 +37,5 @@ Settings for dkron can be specified in three ways: Using a `config/dkron.json` c
 * `webhook-payload` - Body of the POST request to send on webhook call.
 
 * `webhook-header` - Headers to use when calling the webhook URL. Can be specified multiple times.
+
+* `debug` - Output debug info
