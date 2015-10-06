@@ -82,6 +82,8 @@ Options:
   -webhook-url                    Webhook url to call for notifications.
   -webhook-payload                Body of the POST request to send on webhook call.
   -webhook-header                 Headers to use when calling the webhook URL. Can be specified multiple times.
+
+  -debug=false                    Output debug log
 `
 	return strings.TrimSpace(helpText)
 }
@@ -119,6 +121,8 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	viper.SetDefault("keyspace", cmdFlags.Lookup("keyspace").Value)
 	cmdFlags.String("encrypt", "", "encryption key")
 	viper.SetDefault("encrypt", cmdFlags.Lookup("encrypt").Value)
+	cmdFlags.Bool("debug", false, "output debug log")
+	viper.SetDefault("debug", cmdFlags.Lookup("debug").Value)
 
 	// Notifications
 	cmdFlags.String("mail-host", "", "notification mail server host")
@@ -161,7 +165,9 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 		tags["server"] = "true"
 	}
 
-	config := &Config{
+	SetLogLevel(viper.GetBool("debug"))
+
+	return &Config{
 		NodeName:        nodeName,
 		BindAddr:        viper.GetString("bind_addr"),
 		HTTPAddr:        viper.GetString("http_addr"),
@@ -185,8 +191,6 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 		WebhookPayload: viper.GetString("webhook_payload"),
 		WebhookHeaders: viper.GetStringSlice("webhook_headers"),
 	}
-
-	return config
 }
 
 // setupAgent is used to create the agent we use
