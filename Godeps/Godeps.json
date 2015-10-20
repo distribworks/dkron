@@ -27,9 +27,14 @@
 			"Rev": "50c09d12f8624ab10532f931cb630d0bf5f7c2c7"
 		},
 		{
-			"ImportPath": "github.com/coreos/go-etcd/etcd",
-			"Comment": "v2.0.0-22-g9847b93",
-			"Rev": "9847b93751a5fbaf227b893d172cee0104ac6427"
+			"ImportPath": "github.com/coreos/etcd/client",
+			"Comment": "v2.1.0-alpha.0-55-g3d24269",
+			"Rev": "3d242695b3616cbf8e4094bf945f40cd313fb42a"
+		},
+		{
+			"ImportPath": "github.com/coreos/etcd/pkg/types",
+			"Comment": "v2.1.0-alpha.0-55-g3d24269",
+			"Rev": "3d242695b3616cbf8e4094bf945f40cd313fb42a"
 		},
 		{
 			"ImportPath": "github.com/docker/libkv",
@@ -118,12 +123,12 @@
 			"Rev": "2abb1bebfde865b0bb6bb7ada5be63ec78527fa6"
 		},
 		{
-			"ImportPath": "github.com/ugorji/go/codec",
-			"Rev": "5abd4e96a45c386928ed2ca2a7ef63e2533e18ec"
-		},
-		{
 			"ImportPath": "golang.org/x/crypto/ssh/terminal",
 			"Rev": "24ffb5feb3312a39054178a4b0a4554fc2201248"
+		},
+		{
+			"ImportPath": "golang.org/x/net/context",
+			"Rev": "1dfe7915deaf3f80b962c163b918868d8a6d8974"
 		},
 		{
 			"ImportPath": "gopkg.in/yaml.v2",
