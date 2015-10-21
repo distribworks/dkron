@@ -38,7 +38,7 @@
 		},
 		{
 			"ImportPath": "github.com/docker/libkv",
-			"Rev": "a0a57ed3755665e9a402a3df315402134eb6625f"
+			"Rev": "c2aac5dbbaa5c872211edea7c0f32b3bd67e7410"
 		},
 		{
 			"ImportPath": "github.com/gorilla/context",
