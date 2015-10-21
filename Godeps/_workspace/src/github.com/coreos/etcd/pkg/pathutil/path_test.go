@@ -12,19 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package types
+package pathutil
 
-import (
-	"reflect"
-	"sort"
-	"testing"
-)
+import "testing"
 
-func TestUint64Slice(t *testing.T) {
-	g := Uint64Slice{10, 500, 5, 1, 100, 25}
-	w := Uint64Slice{1, 5, 10, 25, 100, 500}
-	sort.Sort(g)
-	if !reflect.DeepEqual(g, w) {
-		t.Errorf("slice after sort = %#v, want %#v", g, w)
+func TestCanonicalURLPath(t *testing.T) {
+	tests := []struct {
+		p  string
+		wp string
+	}{
+		{"/a", "/a"},
+		{"", "/"},
+		{"a", "/a"},
+		{"//a", "/a"},
+		{"/a/.", "/a"},
+		{"/a/..", "/"},
+		{"/a/", "/a/"},
+		{"/a//", "/a/"},
+	}
+	for i, tt := range tests {
+		if g := CanonicalURLPath(tt.p); g != tt.wp {
+			t.Errorf("#%d: canonical path = %s, want %s", i, g, tt.wp)
+		}
 	}
 }

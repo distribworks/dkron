@@ -14,8 +14,20 @@
 
 package client
 
-// Discoverer is an interface that wraps the Discover method.
-type Discoverer interface {
-	// Discover looks up the etcd servers for the domain.
-	Discover(domain string) ([]string, error)
+import "fmt"
+
+type ClusterError struct {
+	Errors []error
+}
+
+func (ce *ClusterError) Error() string {
+	return ErrClusterUnavailable.Error()
+}
+
+func (ce *ClusterError) Detail() string {
+	s := ""
+	for i, e := range ce.Errors {
+		s += fmt.Sprintf("error #%d: %s\n", i, e)
+	}
+	return s
 }

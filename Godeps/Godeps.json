@@ -28,13 +28,18 @@
 		},
 		{
 			"ImportPath": "github.com/coreos/etcd/client",
-			"Comment": "v2.1.0-alpha.0-55-g3d24269",
-			"Rev": "3d242695b3616cbf8e4094bf945f40cd313fb42a"
+			"Comment": "v2.2.0-250-g56b7584",
+			"Rev": "56b75844186dbf1464c679829787b935c0ba73ec"
+		},
+		{
+			"ImportPath": "github.com/coreos/etcd/pkg/pathutil",
+			"Comment": "v2.2.0-250-g56b7584",
+			"Rev": "56b75844186dbf1464c679829787b935c0ba73ec"
 		},
 		{
 			"ImportPath": "github.com/coreos/etcd/pkg/types",
-			"Comment": "v2.1.0-alpha.0-55-g3d24269",
-			"Rev": "3d242695b3616cbf8e4094bf945f40cd313fb42a"
+			"Comment": "v2.2.0-250-g56b7584",
+			"Rev": "56b75844186dbf1464c679829787b935c0ba73ec"
 		},
 		{
 			"ImportPath": "github.com/docker/libkv",
@@ -121,6 +126,10 @@
 		{
 			"ImportPath": "github.com/spf13/viper",
 			"Rev": "2abb1bebfde865b0bb6bb7ada5be63ec78527fa6"
+		},
+		{
+			"ImportPath": "github.com/ugorji/go/codec",
+			"Rev": "5abd4e96a45c386928ed2ca2a7ef63e2533e18ec"
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/ssh/terminal",
