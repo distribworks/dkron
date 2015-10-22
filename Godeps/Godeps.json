@@ -129,7 +129,7 @@
 		},
 		{
 			"ImportPath": "github.com/ugorji/go/codec",
-			"Rev": "5abd4e96a45c386928ed2ca2a7ef63e2533e18ec"
+			"Rev": "8a2a3a8c488c3ebd98f422a965260278267a0551"
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/ssh/terminal",
