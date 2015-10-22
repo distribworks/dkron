@@ -70,7 +70,7 @@ func TestAgentCommandElectLeader(t *testing.T) {
 		ShutdownCh: shutdownCh,
 	}
 
-	s := NewStore("etcd", []string{}, nil, "dkron")
+	s := NewStore("etcd", []string{"127.0.0.1:2379"}, nil, "dkron")
 	err := s.Client.DeleteTree("dkron")
 	if err != nil {
 		if err == store.ErrNotReachable {
@@ -171,7 +171,7 @@ func Test_processFilteredNodes(t *testing.T) {
 		ShutdownCh: shutdownCh,
 	}
 
-	s := NewStore("etcd", []string{}, nil, "dkron")
+	s := NewStore("etcd", []string{"127.0.0.1:2379"}, nil, "dkron")
 	err := s.Client.DeleteTree("dkron")
 	if err != nil {
 		if err == store.ErrNotReachable {
