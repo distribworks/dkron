@@ -141,7 +141,6 @@ func TestAgentCommandElectLeader(t *testing.T) {
 	for {
 		select {
 		case res := <-receiver:
-			println(string(res.Value))
 			if bytes.Equal(res.Value, []byte(test2Key)) {
 				t.Logf("Leader changed: %s", res.Value)
 				return
