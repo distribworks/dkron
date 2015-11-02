@@ -121,8 +121,7 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	viper.SetDefault("keyspace", cmdFlags.Lookup("keyspace").Value)
 	cmdFlags.String("encrypt", "", "encryption key")
 	viper.SetDefault("encrypt", cmdFlags.Lookup("encrypt").Value)
-	cmdFlags.Bool("debug", false, "output debug log")
-	viper.SetDefault("debug", cmdFlags.Lookup("debug").Value)
+	viper.SetDefault("debug", cmdFlags.Bool("debug", false, "output debug log"))
 
 	// Notifications
 	cmdFlags.String("mail-host", "", "notification mail server host")
@@ -423,7 +422,7 @@ func (a *AgentCommand) handleSignals() int {
 	// Attempt a graceful leave
 	gracefulCh := make(chan struct{})
 	a.Ui.Output("Gracefully shutting down agent...")
-	log.Debug("Gracefully shutting down agent...")
+	log.Info("Gracefully shutting down agent...")
 	go func() {
 		if err := a.serf.Leave(); err != nil {
 			a.Ui.Error(fmt.Sprintf("Error: %s", err))

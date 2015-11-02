@@ -59,8 +59,6 @@ func TestAgentCommandRun(t *testing.T) {
 }
 
 func TestAgentCommandElectLeader(t *testing.T) {
-	log.Level = logrus.ErrorLevel
-
 	shutdownCh := make(chan struct{})
 	defer close(shutdownCh)
 
@@ -70,7 +68,7 @@ func TestAgentCommandElectLeader(t *testing.T) {
 		ShutdownCh: shutdownCh,
 	}
 
-	s := NewStore("etcd", []string{}, nil, "dkron")
+	s := NewStore("etcd", []string{"127.0.0.1:2379"}, nil, "dkron")
 	err := s.Client.DeleteTree("dkron")
 	if err != nil {
 		if err == store.ErrNotReachable {
@@ -86,6 +84,7 @@ func TestAgentCommandElectLeader(t *testing.T) {
 		"-join", a2Addr,
 		"-node", "test1",
 		"-server",
+		"-debug",
 	}
 
 	resultCh := make(chan int)
@@ -114,6 +113,7 @@ func TestAgentCommandElectLeader(t *testing.T) {
 		"-join", a1Addr,
 		"-node", "test2",
 		"-server",
+		"-debug",
 	}
 
 	resultCh2 := make(chan int)
@@ -141,15 +141,12 @@ func TestAgentCommandElectLeader(t *testing.T) {
 	for {
 		select {
 		case res := <-receiver:
-			if res != nil {
-				if bytes.Equal(res.Value, []byte(test2Key)) {
-					t.Logf("Leader changed: %s", res.Value)
-					stopCh <- struct{}{}
-					return
-				}
-				if bytes.Equal(res.Value, []byte(test1Key)) {
-					t.Logf("Leader set to agent1: %s", res.Value)
-				}
+			if bytes.Equal(res.Value, []byte(test2Key)) {
+				t.Logf("Leader changed: %s", res.Value)
+				return
+			}
+			if bytes.Equal(res.Value, []byte(test1Key)) {
+				t.Logf("Leader set to agent1: %s", res.Value)
 			}
 		case <-time.After(10 * time.Second):
 			t.Fatal("No leader swap occurred")
@@ -171,7 +168,7 @@ func Test_processFilteredNodes(t *testing.T) {
 		ShutdownCh: shutdownCh,
 	}
 
-	s := NewStore("etcd", []string{}, nil, "dkron")
+	s := NewStore("etcd", []string{"127.0.0.1:2379"}, nil, "dkron")
 	err := s.Client.DeleteTree("dkron")
 	if err != nil {
 		if err == store.ErrNotReachable {

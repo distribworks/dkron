@@ -211,7 +211,7 @@ func (s *Store) TryLeaderSwap(newKey string, old *Leader) (bool, error) {
 	success, _, err := s.Client.AtomicPut(s.keyspace+"/leader", []byte(newKey), oldKV, nil)
 
 	log.WithFields(logrus.Fields{
-		"old_leader": old.Key,
+		"old_leader": string(old.Key),
 		"new_leader": newKey,
 	}).Debug("Leader Swap")
 
