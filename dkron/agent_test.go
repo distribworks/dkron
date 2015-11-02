@@ -149,7 +149,7 @@ func TestAgentCommandElectLeader(t *testing.T) {
 			if bytes.Equal(res.Value, []byte(test1Key)) {
 				t.Logf("Leader set to agent1: %s", res.Value)
 			}
-		case <-time.After(10 * time.Second):
+		case <-time.After(20 * time.Second):
 			t.Fatal("No leader swap occurred")
 			stopCh <- struct{}{}
 			return
