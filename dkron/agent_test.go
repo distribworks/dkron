@@ -139,7 +139,7 @@ func TestAgentCommandElectLeader(t *testing.T) {
 
 	// Wait for the new leader election
 	for {
-		receiver, err := s.Client.Watch("/dkron/leader", stopCh)
+		receiver, err = s.Client.Watch("/dkron/leader", stopCh)
 		if err != nil {
 			t.Fatal(err)
 		}
