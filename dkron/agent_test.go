@@ -97,13 +97,6 @@ func TestAgentCommandElectLeader(t *testing.T) {
 	test1Key := a1.config.Tags["key"]
 	t.Logf("test1 key %s", test1Key)
 
-	// Listen for leader key changes or timeout
-	stopCh := make(chan struct{})
-	receiver, err := s.Client.Watch("/dkron/leader", stopCh)
-	if err != nil {
-		t.Fatal(err)
-	}
-
 	// Start another agent
 	shutdownCh2 := make(chan struct{})
 	defer close(shutdownCh2)
@@ -137,12 +130,15 @@ func TestAgentCommandElectLeader(t *testing.T) {
 
 	time.Sleep(2 * time.Second)
 
+	// Listen for leader key changes or timeout
+	stopCh := make(chan struct{})
+	receiver, err := s.Client.Watch("/dkron/leader", stopCh)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	// Wait for the new leader election
 	for {
-		receiver, err = s.Client.Watch("/dkron/leader", stopCh)
-		if err != nil {
-			t.Fatal(err)
-		}
 		select {
 		case res := <-receiver:
 			println(string(res.Value))
