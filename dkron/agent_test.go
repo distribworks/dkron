@@ -84,6 +84,7 @@ func TestAgentCommandElectLeader(t *testing.T) {
 		"-join", a2Addr,
 		"-node", "test1",
 		"-server",
+		"-debug",
 	}
 
 	resultCh := make(chan int)
@@ -119,6 +120,7 @@ func TestAgentCommandElectLeader(t *testing.T) {
 		"-join", a1Addr,
 		"-node", "test2",
 		"-server",
+		"-debug",
 	}
 
 	resultCh2 := make(chan int)
