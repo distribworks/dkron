@@ -1,0 +1,17 @@
+# Dkron Agent (Upstart unit)
+description "Dkron Agent"
+start on (local-filesystems and net-device-up IFACE!=lo)
+stop on runlevel [06]
+
+env DKRON=/opt/dkron/dkron
+
+#setuid _dkron
+#setgid _dkron
+
+# Dkron emits log messages to stdout, and upstart will write that to
+# /var/log/upstart/dkron.log
+exec $DKRON agent
+
+respawn
+respawn limit 10 10
+kill timeout 10

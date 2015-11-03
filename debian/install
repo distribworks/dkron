@@ -1,0 +1,2 @@
+bin/dkron /usr/bin/
+debian/dkron.json.example /etc/dkron/
