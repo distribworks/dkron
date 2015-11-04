@@ -144,7 +144,7 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	webhookHeaders := &AppendSliceValue{}
 	cmdFlags.Var(webhookHeaders, "webhook-header", "notification webhook additional header")
 
-	cmdFlags.String("ui-dir", "", "directory to serve web UI")
+	cmdFlags.String("ui-dir", ".", "directory to serve web UI")
 	viper.SetDefault("ui_dir", cmdFlags.Lookup("ui-dir").Value)
 
 	if err := cmdFlags.Parse(args); err != nil {
