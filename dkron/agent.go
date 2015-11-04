@@ -84,6 +84,8 @@ Options:
   -webhook-header                 Headers to use when calling the webhook URL. Can be specified multiple times.
 
   -debug=false                    Output debug log
+
+  -ui-dir                         Directory from where to serve Web UI
 `
 	return strings.TrimSpace(helpText)
 }
@@ -142,6 +144,9 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	webhookHeaders := &AppendSliceValue{}
 	cmdFlags.Var(webhookHeaders, "webhook-header", "notification webhook additional header")
 
+	cmdFlags.String("ui-dir", "", "directory to serve web UI")
+	viper.SetDefault("ui_dir", cmdFlags.Lookup("ui-dir").Value)
+
 	if err := cmdFlags.Parse(args); err != nil {
 		log.Fatal(err)
 	}
@@ -189,6 +194,8 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 		WebhookURL:     viper.GetString("webhook_url"),
 		WebhookPayload: viper.GetString("webhook_payload"),
 		WebhookHeaders: viper.GetStringSlice("webhook_headers"),
+
+		UIDir: viper.GetString("ui_dir"),
 	}
 }
 
