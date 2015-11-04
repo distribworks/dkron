@@ -3,8 +3,13 @@ package dkron
 import (
 	"html/template"
 	"net/http"
+	"path/filepath"
 
 	"github.com/gorilla/mux"
+)
+
+const (
+	tmplPath = "templates"
 )
 
 type commonDashboardData struct {
@@ -31,11 +36,19 @@ func (a *AgentCommand) dashboardRoutes(r *mux.Router) {
 	subui.HandleFunc("/jobs/{job}/executions", a.dashboardExecutionsHandler).Methods("GET")
 }
 
+func templateSet(uiDir string, template string) []string {
+	return []string{
+		filepath.Join(uiDir, tmplPath, "dashboard.html.tmpl"),
+		filepath.Join(uiDir, tmplPath, "status.html.tmpl"),
+		filepath.Join(uiDir, tmplPath, template+".html.tmpl"),
+	}
+}
+
 func (a *AgentCommand) dashboardIndexHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 
 	tmpl := template.Must(template.New("dashboard.html.tmpl").ParseFiles(
-		"templates/dashboard.html.tmpl", "templates/index.html.tmpl", "templates/status.html.tmpl"))
+		templateSet(a.config.UIDir, "index")...))
 
 	data := struct {
 		Common    *commonDashboardData
@@ -80,7 +93,7 @@ func (a *AgentCommand) dashboardJobsHandler(w http.ResponseWriter, r *http.Reque
 	}
 
 	tmpl := template.Must(template.New("dashboard.html.tmpl").Funcs(funcs).ParseFiles(
-		"templates/dashboard.html.tmpl", "templates/jobs.html.tmpl", "templates/status.html.tmpl"))
+		templateSet(a.config.UIDir, "jobs")...))
 
 	data := struct {
 		Common *commonDashboardData
@@ -107,7 +120,7 @@ func (a *AgentCommand) dashboardExecutionsHandler(w http.ResponseWriter, r *http
 		"html": func(value []byte) template.HTML {
 			return template.HTML(value)
 		},
-	}).ParseFiles("templates/dashboard.html.tmpl", "templates/executions.html.tmpl"))
+	}).ParseFiles(templateSet(a.config.UIDir, "executions")...))
 
 	if len(execs) > 100 {
 		execs = execs[len(execs)-100:]
