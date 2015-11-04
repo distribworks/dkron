@@ -27,7 +27,9 @@
             "maintainer": "Victor Castell (https://github.com/victorcoder) <victor@victorcastell.com>"
         },
         "other-mapped-files": {
-            "/": "debian/"
+            "/": "debian/",
+            "/usr/share/dkron/static": "static/",
+            "/usr/share/dkron/templates": "templates/"
         }
     }
 	},
