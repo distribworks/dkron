@@ -5,3 +5,4 @@ docs/scss/.sass-cache
 downloads/
 .goxc.local.json
 .envrc
+.vagrant

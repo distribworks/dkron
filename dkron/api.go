@@ -20,9 +20,6 @@ func (a *AgentCommand) ServeHTTP() {
 	middle := interpose.New()
 	middle.UseHandler(r)
 
-	// Path of static files must be last!
-	r.PathPrefix("/").Handler(http.FileServer(http.Dir("static")))
-
 	srv := &http.Server{Addr: a.config.HTTPAddr, Handler: middle}
 
 	log.Infof("Running HTTP server on %s", a.config.HTTPAddr)

@@ -6,7 +6,8 @@
 		"xc",
 		"archive-zip",
 		"archive-tar-gz",
-		"publish-github"
+    "deb",
+    "publish-github"
 	],
 	"BuildConstraints": "linux,amd64 windows,amd64 darwin,amd64",
 	"ResourcesInclude": "INSTALL*,README*,LICENSE*,config/*,static/*,templates/*",
@@ -20,7 +21,18 @@
 			"owner": "victorcoder",
 			"prerelease": true,
 			"repository": "dkron"
-		}
+		},
+    "deb": {
+        "metadata": {
+            "description": "Distributed, fault tolerant job scheduling system",
+            "maintainer": "Victor Castell (https://github.com/victorcoder) <victor@victorcastell.com>"
+        },
+        "other-mapped-files": {
+            "/": "debian/",
+            "/usr/share/dkron/static": "static/",
+            "/usr/share/dkron/templates": "templates/"
+        }
+    }
 	},
 	"ConfigVersion": "0.9",
 	"Env": [
