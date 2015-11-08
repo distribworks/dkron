@@ -180,7 +180,7 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 		BackendMachines: viper.GetStringSlice("backend_machine"),
 		Server:          server,
 		Profile:         viper.GetString("profile"),
-		StartJoin:       *startJoin,
+		StartJoin:       viper.GetStringSlice("join"),
 		Tags:            tags,
 		Keyspace:        viper.GetString("keyspace"),
 		EncryptKey:      viper.GetString("encrypt"),
