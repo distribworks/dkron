@@ -1,3 +1,9 @@
+## 0.5.1 (2015-11-06)
+
+- Deb package
+- Upgraded libkv to latest
+- New config options (log level, web UI path)
+
 ## 0.5.0 (2015-09-27)
 
 - Email and Webhook configurable notifications for job executions.
