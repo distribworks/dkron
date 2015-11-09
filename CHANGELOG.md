@@ -1,3 +1,7 @@
+## 0.5.2 (2015-11-09)
+
+- Fix bug in join config parameter that rendered it unusable from config file.
+
 ## 0.5.1 (2015-11-06)
 
 - Deb package
