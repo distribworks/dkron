@@ -1,6 +1,7 @@
 package dkron
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
 	"path/filepath"
@@ -9,7 +10,8 @@ import (
 )
 
 const (
-	tmplPath = "templates"
+	tmplPath            = "templates"
+	dashboardPathPrefix = "dashboard"
 )
 
 type commonDashboardData struct {
@@ -17,26 +19,31 @@ type commonDashboardData struct {
 	LeaderName string
 	MemberName string
 	Backend    string
+	Path       string
 }
 
-func newCommonDashboardData(a *AgentCommand, nodeName string) *commonDashboardData {
+func newCommonDashboardData(a *AgentCommand, nodeName, path string) *commonDashboardData {
 	l, _ := a.leaderMember()
 	return &commonDashboardData{
 		Version:    a.Version,
 		LeaderName: l.Name,
 		MemberName: nodeName,
 		Backend:    a.config.Backend,
+		Path:       fmt.Sprintf("%s/%s", dashboardPathPrefix, path),
 	}
 }
 
 func (a *AgentCommand) dashboardRoutes(r *mux.Router) {
-	r.Path("/dashboard").HandlerFunc(a.dashboardIndexHandler).Methods("GET")
-	subui := r.PathPrefix("/dashboard").Subrouter()
+	r.Path("/" + dashboardPathPrefix).HandlerFunc(a.dashboardIndexHandler).Methods("GET")
+	subui := r.PathPrefix("/" + dashboardPathPrefix).Subrouter()
 	subui.HandleFunc("/jobs", a.dashboardJobsHandler).Methods("GET")
 	subui.HandleFunc("/jobs/{job}/executions", a.dashboardExecutionsHandler).Methods("GET")
 
 	// Path of static files must be last!
-	r.PathPrefix("/").Handler(http.FileServer(http.Dir(filepath.Join(a.config.UIDir, "static"))))
+	r.PathPrefix("/dashboard").Handler(
+		http.StripPrefix("/dashboard", http.FileServer(
+			http.Dir(filepath.Join(a.config.UIDir, "static")))))
+	r.PathPrefix("/").Handler(http.RedirectHandler("dashboard", 301))
 }
 
 func templateSet(uiDir string, template string) []string {
@@ -54,10 +61,9 @@ func (a *AgentCommand) dashboardIndexHandler(w http.ResponseWriter, r *http.Requ
 		templateSet(a.config.UIDir, "index")...))
 
 	data := struct {
-		Common    *commonDashboardData
-		StartTime string
+		Common *commonDashboardData
 	}{
-		Common: newCommonDashboardData(a, a.config.NodeName),
+		Common: newCommonDashboardData(a, a.config.NodeName, ""),
 	}
 
 	if err := tmpl.Execute(w, data); err != nil {
@@ -102,7 +108,7 @@ func (a *AgentCommand) dashboardJobsHandler(w http.ResponseWriter, r *http.Reque
 		Common *commonDashboardData
 		Jobs   []*Job
 	}{
-		Common: newCommonDashboardData(a, a.config.NodeName),
+		Common: newCommonDashboardData(a, a.config.NodeName, "../"),
 		Jobs:   jobs,
 	}
 
@@ -134,7 +140,7 @@ func (a *AgentCommand) dashboardExecutionsHandler(w http.ResponseWriter, r *http
 		Executions []*Execution
 		JobName    string
 	}{
-		Common:     newCommonDashboardData(a, a.config.NodeName),
+		Common:     newCommonDashboardData(a, a.config.NodeName, "../../"),
 		Executions: execs,
 		JobName:    job,
 	}
