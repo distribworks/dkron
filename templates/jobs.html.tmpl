@@ -12,7 +12,7 @@
       </tr>
       {{ range $job := .Jobs }}
       <tr>
-        <td><a href="{{ .Common.Path }}jobs/{{$job.Name}}/executions">{{ $job.Name }}</a></td>
+        <td><a href="jobs/{{$job.Name}}/executions">{{ $job.Name }}</a></td>
         <td>{{ $job.SuccessCount }}</td>
         <td>{{ $job.ErrorCount }}</td>
         <td>

@@ -12,6 +12,7 @@ import (
 const (
 	tmplPath            = "templates"
 	dashboardPathPrefix = "dashboard"
+	apiPathPrefix       = "v1"
 )
 
 type commonDashboardData struct {
@@ -20,6 +21,7 @@ type commonDashboardData struct {
 	MemberName string
 	Backend    string
 	Path       string
+	APIPath    string
 }
 
 func newCommonDashboardData(a *AgentCommand, nodeName, path string) *commonDashboardData {
@@ -29,7 +31,8 @@ func newCommonDashboardData(a *AgentCommand, nodeName, path string) *commonDashb
 		LeaderName: l.Name,
 		MemberName: nodeName,
 		Backend:    a.config.Backend,
-		Path:       fmt.Sprintf("%s/%s", dashboardPathPrefix, path),
+		Path:       fmt.Sprintf("%s%s", path, dashboardPathPrefix),
+		APIPath:    fmt.Sprintf("%s%s", path, apiPathPrefix),
 	}
 }
 

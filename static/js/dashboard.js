@@ -2,18 +2,18 @@ var dkron = angular.module('dkron', ['angular-rickshaw']);
 
 dkron.controller('JobListCtrl', function ($scope, $http, $interval) {
   $scope.click = function(jobName) {
-    var response = $http.put('/v1/jobs/' + jobName);
+    var response = $http.put(DKRON_API_PATH + '/jobs/' + jobName);
     response.success(function(data, status, headers, config) {
-      $('#message').html('<div class="alert alert-success fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Success running jo ' + jobName + '</div>');
+      $('#message').html('<div class="alert alert-success fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Success running job ' + jobName + '</div>');
     });
 
     response.error(function(data, status, headers, config) {
-      $('#message').html('<div class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Error running jo ' + jobName + '</div>');
+      $('#message').html('<div class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Error running job ' + jobName + '</div>');
     });
   };
 
   var updateView = function() {
-    var response = $http.get('/v1/jobs/');
+    var response = $http.get(DKRON_API_PATH + '/jobs');
     response.success(function(data, status, headers, config) {
       $scope.updateStatus(data);
     });
@@ -97,7 +97,7 @@ dkron.controller('IndexCtrl', function ($scope, $http, $interval, $element) {
   };
 
   updateView = function() {
-    var response = $http.get('/v1/jobs/');
+    var response = $http.get(DKRON_API_PATH + '/jobs');
     response.success(function(data, status, headers, config) {
       $scope.updateGraph(data);
     });
@@ -106,7 +106,7 @@ dkron.controller('IndexCtrl', function ($scope, $http, $interval, $element) {
       $('#message').html('<div class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Error getting data</div>');
     });
 
-    var mq = $http.get('/v1/members/');
+    var mq = $http.get(DKRON_API_PATH + '/members');
     mq.success(function(data, status, headers, config) {
       $scope.members = data;
     });
