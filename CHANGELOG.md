@@ -1,3 +1,7 @@
+## 0.5.3 (2015-11-16)
+
+- Web UI works behind http proxy
+
 ## 0.5.2 (2015-11-09)
 
 - Fix bug in join config parameter that rendered it unusable from config file.

@@ -11,7 +11,7 @@
 	],
 	"BuildConstraints": "linux,amd64 windows,amd64 darwin,amd64",
 	"ResourcesInclude": "INSTALL*,README*,LICENSE*,config/*,static/*,templates/*",
-	"PackageVersion": "0.5.2",
+	"PackageVersion": "0.5.3",
 	"TaskSettings": {
 		"publish-github": {
 			"apikey": "",
