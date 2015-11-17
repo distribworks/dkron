@@ -143,7 +143,7 @@ func (a *AgentCommand) dashboardExecutionsHandler(w http.ResponseWriter, r *http
 		Executions []*Execution
 		JobName    string
 	}{
-		Common:     newCommonDashboardData(a, a.config.NodeName, "../../"),
+		Common:     newCommonDashboardData(a, a.config.NodeName, "../../../"),
 		Executions: execs,
 		JobName:    job,
 	}
