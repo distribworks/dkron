@@ -1,3 +1,7 @@
+## 0.5.4 (2015-11-17)
+
+- Fix to web UI paths
+
 ## 0.5.3 (2015-11-16)
 
 - Web UI works behind http proxy
