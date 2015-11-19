@@ -116,54 +116,6 @@ func (s *Store) GetExecutions(jobName string) ([]*Execution, error) {
 
 	var executions []*Execution
 
-	for _, dir := range res {
-		groupRes, err := s.Client.List(dir.Key)
-		if err != nil {
-			return nil, err
-		}
-
-		for _, node := range groupRes {
-			var execution Execution
-			err := json.Unmarshal([]byte(node.Value), &execution)
-			if err != nil {
-				return nil, err
-			}
-			executions = append(executions, &execution)
-		}
-	}
-	return executions, nil
-}
-
-func (s *Store) GetLastExecutionGroup(jobName string) ([]*Execution, error) {
-	res, err := s.Client.List(fmt.Sprintf("%s/executions/%s", s.keyspace, jobName))
-	if err != nil {
-		return nil, err
-	}
-
-	groupRes, err := s.Client.List(res[len(res)-1].Key)
-	if err != nil {
-		return nil, err
-	}
-
-	var executions []*Execution
-	for _, node := range groupRes {
-		var execution Execution
-		err := json.Unmarshal([]byte(node.Value), &execution)
-		if err != nil {
-			return nil, err
-		}
-		executions = append(executions, &execution)
-	}
-	return executions, nil
-}
-
-func (s *Store) GetExecutionGroup(execution *Execution) ([]*Execution, error) {
-	res, err := s.Client.List(fmt.Sprintf("%s/executions/%s/%s", s.keyspace, execution.JobName, execution.Group))
-	if err != nil {
-		return nil, err
-	}
-
-	var executions []*Execution
 	for _, node := range res {
 		var execution Execution
 		err := json.Unmarshal([]byte(node.Value), &execution)
@@ -175,13 +127,48 @@ func (s *Store) GetExecutionGroup(execution *Execution) ([]*Execution, error) {
 	return executions, nil
 }
 
+func (s *Store) GetLastExecutionGroup(jobName string) ([]*Execution, error) {
+	res, err := s.Client.List(fmt.Sprintf("%s/executions/%s", s.keyspace, jobName))
+	if err != nil {
+		return nil, err
+	}
+
+	var ex Execution
+	err = json.Unmarshal([]byte(res[len(res)-1].Value), &ex)
+	if err != nil {
+		return nil, err
+	}
+	return s.GetExecutionGroup(&ex)
+}
+
+func (s *Store) GetExecutionGroup(execution *Execution) ([]*Execution, error) {
+	res, err := s.Client.List(fmt.Sprintf("%s/executions/%s", s.keyspace, execution.JobName))
+	if err != nil {
+		return nil, err
+	}
+
+	var executions []*Execution
+	for _, node := range res {
+		var ex Execution
+		err := json.Unmarshal([]byte(node.Value), &ex)
+		if err != nil {
+			return nil, err
+		}
+
+		if ex.Group == execution.Group {
+			executions = append(executions, &ex)
+		}
+	}
+	return executions, nil
+}
+
 // Save a new execution and returns the key of the new saved item or an error.
 func (s *Store) SetExecution(execution *Execution) (string, error) {
 	exJson, _ := json.Marshal(execution)
 	key := fmt.Sprintf("%d-%s", execution.StartedAt.UnixNano(), execution.NodeName)
 
 	log.Debugf("Setting key %s: %s", execution.JobName, string(exJson))
-	err := s.Client.Put(fmt.Sprintf("%s/executions/%s/%s/%s", s.keyspace, execution.JobName, execution.Group, key), exJson, nil)
+	err := s.Client.Put(fmt.Sprintf("%s/executions/%s/%s", s.keyspace, execution.JobName, key), exJson, nil)
 	if err != nil {
 		return "", err
 	}

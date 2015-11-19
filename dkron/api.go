@@ -52,8 +52,7 @@ func (a *AgentCommand) apiRoutes(r *mux.Router) {
 }
 
 func printJson(w http.ResponseWriter, r *http.Request, v interface{}) error {
-	pretty := r.URL.Query().Get("pretty")
-	if pretty != "" {
+	if _, ok := r.URL.Query()["pretty"]; ok {
 		j, _ := json.MarshalIndent(v, "", "\t")
 		if _, err := fmt.Fprintf(w, string(j)); err != nil {
 			return err

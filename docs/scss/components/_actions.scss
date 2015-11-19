@@ -5,3 +5,9 @@
 .button-light {
  @include button($color-base,#fff);
 }
+
+.tooltip-inner {
+  text-align: left;
+  max-width: 450px;
+  white-space: nowrap;
+}

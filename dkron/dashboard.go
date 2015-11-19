@@ -1,6 +1,7 @@
 package dkron
 
 import (
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"net/http"
@@ -102,6 +103,10 @@ func (a *AgentCommand) dashboardJobsHandler(w http.ResponseWriter, r *http.Reque
 
 			return ""
 		},
+		"jobJson": func(job *Job) string {
+			j, _ := json.MarshalIndent(job, "", "<br>")
+			return string(j)
+		},
 	}
 
 	tmpl := template.Must(template.New("dashboard.html.tmpl").Funcs(funcs).ParseFiles(
@@ -127,6 +132,10 @@ func (a *AgentCommand) dashboardExecutionsHandler(w http.ResponseWriter, r *http
 	job := vars["job"]
 
 	execs, _ := a.store.GetExecutions(job)
+	groups := make(map[string][]*Execution)
+	for _, exec := range execs {
+		groups[exec.Group.String()] = append(groups[exec.Group.String()], exec)
+	}
 
 	tmpl := template.Must(template.New("dashboard.html.tmpl").Funcs(template.FuncMap{
 		"html": func(value []byte) template.HTML {
@@ -139,13 +148,13 @@ func (a *AgentCommand) dashboardExecutionsHandler(w http.ResponseWriter, r *http
 	}
 
 	data := struct {
-		Common     *commonDashboardData
-		Executions []*Execution
-		JobName    string
+		Common  *commonDashboardData
+		Groups  map[string][]*Execution
+		JobName string
 	}{
-		Common:     newCommonDashboardData(a, a.config.NodeName, "../../../"),
-		Executions: execs,
-		JobName:    job,
+		Common:  newCommonDashboardData(a, a.config.NodeName, "../../../"),
+		Groups:  groups,
+		JobName: job,
 	}
 
 	if err := tmpl.Execute(w, data); err != nil {
