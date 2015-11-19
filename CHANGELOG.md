@@ -1,3 +1,11 @@
+## 0.5.5 (2015-11-19)
+
+- More backend compatibility
+- Accept just pretty for formatting api requests
+- Show executions grouped in web UI
+- Show job tooltips with all job JSON info in web UI
+- Better alerts
+
 ## 0.5.4 (2015-11-17)
 
 - Fix to web UI paths
