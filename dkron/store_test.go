@@ -6,7 +6,7 @@ import (
 )
 
 func TestStore(t *testing.T) {
-	store := NewStore("etcd", []string{"127.0.0.1:2379"}, nil, "dkron-test")
+	store := NewStore("consul", []string{"127.0.0.1:8500"}, nil, "dkron-test")
 
 	// Cleanup everything
 	err := store.Client.DeleteTree("dkron-test")
@@ -57,6 +57,10 @@ func TestStore(t *testing.T) {
 	execs, err := store.GetExecutions("test")
 	if err != nil {
 		t.Fatalf("error getting executions: %s", err)
+	}
+
+	if len(execs) == 0 {
+		t.Fatal("executions result is empty")
 	}
 
 	if !execs[0].StartedAt.Equal(testExecution.StartedAt) {
