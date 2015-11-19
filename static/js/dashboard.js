@@ -2,9 +2,13 @@ var dkron = angular.module('dkron', ['angular-rickshaw']);
 
 dkron.controller('JobListCtrl', function ($scope, $http, $interval) {
   $scope.click = function(jobName) {
-    var response = $http.put(DKRON_API_PATH + '/jobs/' + jobName);
+    var response = $http.post(DKRON_API_PATH + '/jobs/' + jobName);
     response.success(function(data, status, headers, config) {
       $('#message').html('<div class="alert alert-success fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Success running job ' + jobName + '</div>');
+
+      $(".alert-success").delay(4000).slideUp(200, function(){
+        $(".alert").alert('close');
+      });
     });
 
     response.error(function(data, status, headers, config) {
@@ -16,10 +20,14 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval) {
     var response = $http.get(DKRON_API_PATH + '/jobs');
     response.success(function(data, status, headers, config) {
       $scope.updateStatus(data);
+
+      $("#conn-error").delay(4000).slideUp(200, function(){
+        $("#conn-error").alert('close');
+      });
     });
 
     response.error(function(data, status, headers, config) {
-      $('#message').html('<div class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Error getting data</div>');
+      $('#message').html('<div id="conn-error" class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Error getting data</div>');
     });
   }
 
