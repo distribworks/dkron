@@ -12,7 +12,8 @@
       </tr>
       {{ range $job := .Jobs }}
       <tr>
-        <td><a href="jobs/{{$job.Name}}/executions">{{ $job.Name }}</a></td>
+
+        <td><a href="jobs/{{$job.Name}}/executions" data-toggle="tooltip" data-placement="top" title="{{ jobJson $job }}" data-html="true">{{ $job.Name }}</a></td>
         <td>{{ $job.SuccessCount }}</td>
         <td>{{ $job.ErrorCount }}</td>
         <td>

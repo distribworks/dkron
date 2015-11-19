@@ -1,6 +1,7 @@
 package dkron
 
 import (
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"net/http"
@@ -101,6 +102,10 @@ func (a *AgentCommand) dashboardJobsHandler(w http.ResponseWriter, r *http.Reque
 			}
 
 			return ""
+		},
+		"jobJson": func(job *Job) string {
+			j, _ := json.MarshalIndent(job, "", "<br>")
+			return string(j)
 		},
 	}
 
