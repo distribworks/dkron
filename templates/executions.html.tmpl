@@ -5,6 +5,8 @@
     <h2>Showing Last 100 Job executions for job {{.JobName}}</h2>
   </div>
 
+  {{ range $key, $group := .Groups }}
+  <h4>Execution: {{ $key }}</h4>
   <table class="table table-striped">
     <tr>
       <th>Job</th>
@@ -12,20 +14,19 @@
       <th>Finished At</th>
       <th>Node</th>
       <th>Output</th>
-      <th>Group</th>
       <th>Success</th>
     </tr>
-    {{ range $ex := .Executions }}
+    {{ range $ex := $group }}
     <tr>
       <td>{{ $ex.JobName }}</td>
       <td>{{ $ex.StartedAt }}</td>
       <td>{{ $ex.FinishedAt }}</td>
       <td>{{ $ex.NodeName }}</td>
       <td>{{ html $ex.Output }}</td>
-      <td>{{ $ex.Group }}</td>
       <td>{{ $ex.Success }}</td>
     </tr>
     {{ end }}
   </table>
+  {{ end }}
 </div>
 {{end}}
