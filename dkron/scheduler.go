@@ -4,6 +4,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/Sirupsen/logrus"
 	"github.com/satori/go.uuid"
 	"github.com/victorcoder/dkron/cron"
 )
@@ -20,7 +21,11 @@ func NewScheduler() *Scheduler {
 
 func (s *Scheduler) Start(jobs []*Job) {
 	for _, job := range jobs {
-		log.Debugf("Adding job to cron: %v", job)
+
+		log.WithFields(logrus.Fields{
+			"job": job.Name,
+		}).Debug("scheduler: Adding job to cron")
+
 		s.Cron.AddJob(job.Schedule, job)
 	}
 	s.Cron.Start()
@@ -82,7 +87,12 @@ func (j *Job) Run() {
 
 	// Maybe we are testing
 	if j.Agent != nil && j.Disabled == false {
-		log.Debugf("Running: %s %s", j.Name, j.Schedule)
+
+		log.WithFields(logrus.Fields{
+			"job":      j.Name,
+			"schedule": j.Schedule,
+		}).Debug("scheduler: Run job")
+
 		j.Agent.RunQuery(j)
 	}
 }

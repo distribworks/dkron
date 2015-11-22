@@ -379,7 +379,7 @@ func UnmarshalTags(tags []string) (map[string]string, error) {
 func (a *AgentCommand) Run(args []string) int {
 	a.config = a.readConfig(args)
 	if a.serf = a.setupSerf(a.config); a.serf == nil {
-		log.Fatal("Can not setup serf")
+		log.Fatal("agent: Can not setup serf")
 	}
 	a.join(a.config.StartJoin, true)
 
@@ -429,7 +429,7 @@ func (a *AgentCommand) handleSignals() int {
 	// Attempt a graceful leave
 	gracefulCh := make(chan struct{})
 	a.Ui.Output("Gracefully shutting down agent...")
-	log.Info("Gracefully shutting down agent...")
+	log.Info("agent: Gracefully shutting down agent...")
 	go func() {
 		if err := a.serf.Leave(); err != nil {
 			a.Ui.Error(fmt.Sprintf("Error: %s", err))
@@ -459,23 +459,27 @@ func (a *AgentCommand) ElectLeader() bool {
 
 	if leader != nil {
 		if !a.serverAlive(string(leader.Key)) {
-			log.Debug("Trying to set itself as leader")
+			log.Debug("agent: Trying to set itself as leader")
 			success, err := a.store.TryLeaderSwap(a.config.Tags["key"], leader)
 			if err != nil || success == false {
-				log.Errorln("Error trying to set itself as leader", err)
+				log.Errorln("agent: Error trying to set itself as leader", err)
 				return false
 			}
 			return true
 		} else {
-			log.Printf("The current leader [%s] is active", leader.Key)
+			log.WithFields(logrus.Fields{
+				"key": leader.Key,
+			}).Info("agent: The current leader is active")
 		}
 	} else {
-		log.Debug("Trying to set itself as leader")
+		log.Debug("agent: Trying to set itself as leader")
 		err := a.store.SetLeader(a.config.Tags["key"])
 		if err != nil {
 			log.Error(err)
 		}
-		log.Printf("Successfully set [%s] as leader", a.config.Tags["key"])
+		log.WithFields(logrus.Fields{
+			"key": a.config.Tags["key"],
+		}).Info("agent: Successfully set leader")
 		return true
 	}
 
@@ -520,7 +524,7 @@ func (a *AgentCommand) eventLoop() {
 		case e := <-a.eventCh:
 			log.WithFields(logrus.Fields{
 				"event": e.String(),
-			}).Debug("Received event")
+			}).Debug("agent: Received event")
 
 			if (e.EventType() == serf.EventMemberFailed || e.EventType() == serf.EventMemberLeave) && a.config.Server {
 				failed := e.(serf.MemberEvent)
@@ -545,18 +549,18 @@ func (a *AgentCommand) eventLoop() {
 						"query":   query.Name,
 						"payload": string(query.Payload),
 						"at":      query.LTime,
-					}).Debug("Running job")
+					}).Debug("agent: Running job")
 
 					var ex Execution
 					if err := json.Unmarshal(query.Payload, &ex); err != nil {
 						log.WithFields(logrus.Fields{
 							"query": QueryRunJob,
-						}).Fatal("Error unmarshaling job payload")
+						}).Fatal("agent: Error unmarshaling job payload")
 					}
 
 					log.WithFields(logrus.Fields{
 						"job": ex.JobName,
-					}).Info("Starting job")
+					}).Info("agent: Starting job")
 
 					ex.StartedAt = time.Now()
 					ex.Success = false
@@ -575,7 +579,7 @@ func (a *AgentCommand) eventLoop() {
 						"query":   query.Name,
 						"payload": string(query.Payload),
 						"at":      query.LTime,
-					}).Debug("Received execution done")
+					}).Debug("agent: Received execution done")
 
 					ex := a.setExecution(query.Payload)
 
@@ -618,7 +622,7 @@ func (a *AgentCommand) eventLoop() {
 
 // Start or restart scheduler
 func (a *AgentCommand) schedule() {
-	log.Debug("Restarting scheduler")
+	log.Debug("agent: Restarting scheduler")
 	jobs, err := a.store.GetJobs()
 	if err != nil {
 		log.Fatal(err)
@@ -638,7 +642,7 @@ func (a *AgentCommand) schedulerRestartQuery(leader *Leader) {
 
 	qr, err := a.serf.Query(QuerySchedulerRestart, []byte(""), params)
 	if err != nil {
-		log.Fatal("Error sending the scheduler reload query", err)
+		log.Fatal("agent: Error sending the scheduler reload query", err)
 	}
 	defer qr.Close()
 
@@ -651,18 +655,18 @@ func (a *AgentCommand) schedulerRestartQuery(leader *Leader) {
 			if ok {
 				log.WithFields(logrus.Fields{
 					"from": ack,
-				}).Debug("Received ack")
+				}).Debug("agent: Received ack")
 			}
 		case resp, ok := <-respCh:
 			if ok {
 				log.WithFields(logrus.Fields{
 					"from":    resp.From,
 					"payload": string(resp.Payload),
-				}).Debug("Received response")
+				}).Debug("agent: Received response")
 			}
 		}
 	}
-	log.Debugf("Done receiving acks and responses from scheduler reload query")
+	log.Debug("agent: Done receiving acks and responses from scheduler reload query")
 }
 
 // Join asks the Serf instance to join. See the Serf.Join function.
@@ -682,10 +686,13 @@ func (a *AgentCommand) join(addrs []string, replay bool) (n int, err error) {
 func (a *AgentCommand) RunQuery(job *Job) {
 	filterNodes, err := a.processFilteredNodes(job)
 	if err != nil {
-		log.Fatalf("Error processing filtered nodes for job %s, %s", job.Name, err.Error())
+		log.WithFields(logrus.Fields{
+			"job": job.Name,
+			"err": err.Error(),
+		}).Fatal("agent: Error processing filtered nodes")
 	}
-	log.Debug("Filtered nodes to run: ", filterNodes)
-	log.Debug("Filtered tags to run: ", job.Tags)
+	log.Debug("agent: Filtered nodes to run: ", filterNodes)
+	log.Debug("agent: Filtered tags to run: ", job.Tags)
 
 	params := &serf.QueryParam{
 		FilterNodes: filterNodes,
@@ -703,14 +710,14 @@ func (a *AgentCommand) RunQuery(job *Job) {
 	log.WithFields(logrus.Fields{
 		"query":    QueryRunJob,
 		"job_name": ex.JobName,
-	}).Debug("Sending query")
+	}).Debug("agent: Sending query")
 
 	qr, err := a.serf.Query(QueryRunJob, exJson, params)
 	if err != nil {
 		log.WithFields(logrus.Fields{
 			"query": QueryRunJob,
 			"error": err,
-		}).Debug("Sending query error")
+		}).Debug("agent: Sending query error")
 	}
 	defer qr.Close()
 
@@ -724,7 +731,7 @@ func (a *AgentCommand) RunQuery(job *Job) {
 				log.WithFields(logrus.Fields{
 					"query": QueryRunJob,
 					"from":  ack,
-				}).Debug("Received ack")
+				}).Debug("agent: Received ack")
 			}
 		case resp, ok := <-respCh:
 			if ok {
@@ -732,14 +739,14 @@ func (a *AgentCommand) RunQuery(job *Job) {
 					"query":    QueryRunJob,
 					"from":     resp.From,
 					"response": string(resp.Payload),
-				}).Debug("Received response")
+				}).Debug("agent: Received response")
 
 				// Save execution to store
 				a.setExecution(resp.Payload)
 			}
 		}
 	}
-	log.Debugf("Done receiving acks and responses from run query")
+	log.Debug("agent: Done receiving acks and responses from run query")
 }
 
 func (a *AgentCommand) processFilteredNodes(job *Job) ([]string, error) {
