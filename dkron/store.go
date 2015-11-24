@@ -120,11 +120,13 @@ func (s *Store) GetExecutions(jobName string) ([]*Execution, error) {
 
 	for _, node := range res {
 		var execution Execution
-		err := json.Unmarshal([]byte(node.Value), &execution)
-		if err != nil {
-			return nil, err
+		if len(node.Value) > 0 {
+			err := json.Unmarshal([]byte(node.Value), &execution)
+			if err != nil {
+				return nil, err
+			}
+			executions = append(executions, &execution)
 		}
-		executions = append(executions, &execution)
 	}
 	return executions, nil
 }
@@ -152,13 +154,16 @@ func (s *Store) GetExecutionGroup(execution *Execution) ([]*Execution, error) {
 	var executions []*Execution
 	for _, node := range res {
 		var ex Execution
-		err := json.Unmarshal([]byte(node.Value), &ex)
-		if err != nil {
-			return nil, err
-		}
 
-		if ex.Group == execution.Group {
-			executions = append(executions, &ex)
+		if len(node.Value) > 0 {
+			err := json.Unmarshal([]byte(node.Value), &ex)
+			if err != nil {
+				return nil, err
+			}
+
+			if ex.Group == execution.Group {
+				executions = append(executions, &ex)
+			}
 		}
 	}
 	return executions, nil
