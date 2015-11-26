@@ -71,7 +71,7 @@ Options:
                                   is etcd.
   -backend-machine=127.0.0.1:2379 Backend storage servers addresses to connect to. This flag can be
                                   specified multiple times.
-  -encrypt=foo                    Key for encrypting network traffic.
+  -encrypt                        Key for encrypting network traffic.
                                   Must be a base64-encoded 16-byte key.
   -mail-host                      Mail server host address to use for notifications.
   -mail-port                      Mail server port.
