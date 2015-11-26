@@ -468,7 +468,7 @@ func (a *AgentCommand) ElectLeader() bool {
 			return true
 		} else {
 			log.WithFields(logrus.Fields{
-				"key": leader.Key,
+				"key": string(leader.Key),
 			}).Info("agent: The current leader is active")
 		}
 	} else {
