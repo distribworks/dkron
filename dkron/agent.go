@@ -746,7 +746,10 @@ func (a *AgentCommand) RunQuery(job *Job) {
 			}
 		}
 	}
-	log.Debug("agent: Done receiving acks and responses from run query")
+	log.WithFields(logrus.Fields{
+		"query": QueryRunJob,
+	}).Debug("agent: Done receiving acks and responses")
+
 }
 
 func (a *AgentCommand) processFilteredNodes(job *Job) ([]string, error) {
