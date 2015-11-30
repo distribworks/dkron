@@ -18,7 +18,7 @@ const (
 	// maxBufSize limits how much data we collect from a handler.
 	// This is to prevent Serf's memory from growing to an enormous
 	// amount due to a faulty handler.
-	maxBufSize = 8 * 1024
+	maxBufSize = 64
 )
 
 // spawn command that specified as proc.
@@ -30,10 +30,13 @@ func spawnProc(proc string) (*exec.Cmd, error) {
 	cmd.Stderr = os.Stderr
 	cmd.Env = append(os.Environ())
 
-	log.Printf("Starting %s\n", proc)
+	log.WithFields(logrus.Fields{
+		"proc": proc,
+	}).Info("proc: Starting")
+
 	err := cmd.Start()
 	if err != nil {
-		log.Errorf("Failed to start %s: %s\n", proc, err)
+		log.Errorf("proc: Failed to start %s: %s\n", proc, err)
 		return nil, err
 	}
 	return cmd, nil
@@ -61,7 +64,7 @@ func (a *AgentCommand) invokeJob(execution *Execution) error {
 
 	// Start a timer to warn about slow handlers
 	slowTimer := time.AfterFunc(2*time.Hour, func() {
-		log.Warnf("Script '%s' slow, execution exceeding %v", job.Command, 2*time.Hour)
+		log.Warnf("proc: Script '%s' slow, execution exceeding %v", job.Command, 2*time.Hour)
 	})
 
 	if err := cmd.Start(); err != nil {
@@ -70,13 +73,15 @@ func (a *AgentCommand) invokeJob(execution *Execution) error {
 
 	// Warn if buffer is overritten
 	if output.TotalWritten() > output.Size() {
-		log.Warnf("Script '%s' generated %d bytes of output, truncated to %d", job.Command, output.TotalWritten(), output.Size())
+		log.Warnf("proc: Script '%s' generated %d bytes of output, truncated to %d", job.Command, output.TotalWritten(), output.Size())
 	}
 
 	var success bool
 	err := cmd.Wait()
 	slowTimer.Stop()
-	log.Debugf("Command output: %s", output)
+	log.WithFields(logrus.Fields{
+		"output": output,
+	}).Debug("proc: Command output")
 	if err != nil {
 		log.Error(err)
 		success = false
@@ -100,7 +105,7 @@ func (a *AgentCommand) invokeJob(execution *Execution) error {
 		log.WithFields(logrus.Fields{
 			"query": QueryExecutionDone,
 			"error": err,
-		}).Debug("Error sending query")
+		}).Fatal("proc: Error sending query")
 	}
 	defer qr.Close()
 
@@ -114,7 +119,7 @@ func (a *AgentCommand) invokeJob(execution *Execution) error {
 				log.WithFields(logrus.Fields{
 					"query": QueryExecutionDone,
 					"from":  ack,
-				}).Debug("Received ack")
+				}).Debug("proc: Received ack")
 			}
 		case resp, ok := <-respCh:
 			if ok {
@@ -122,11 +127,13 @@ func (a *AgentCommand) invokeJob(execution *Execution) error {
 					"query":   QueryExecutionDone,
 					"from":    resp.From,
 					"payload": string(resp.Payload),
-				}).Debug("Received response")
+				}).Debug("proc: Received response")
 			}
 		}
 	}
-	log.Debugf("Done receiving acks and responses from %s query", QueryExecutionDone)
+	log.WithFields(logrus.Fields{
+		"query": QueryExecutionDone,
+	}).Debug("proc: Done receiving acks and responses")
 
 	return nil
 }

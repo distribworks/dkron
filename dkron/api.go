@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/Sirupsen/logrus"
 	"github.com/carbocation/interpose"
 	"github.com/gorilla/mux"
 	"io"
@@ -22,7 +23,9 @@ func (a *AgentCommand) ServeHTTP() {
 
 	srv := &http.Server{Addr: a.config.HTTPAddr, Handler: middle}
 
-	log.Infof("Running HTTP server on %s", a.config.HTTPAddr)
+	log.WithFields(logrus.Fields{
+		"address": a.config.HTTPAddr,
+	}).Info("api: Running HTTP server")
 
 	certFile := "" //config.GetString("certFile")
 	keyFile := ""  //config.GetString("keyFile")
@@ -31,7 +34,7 @@ func (a *AgentCommand) ServeHTTP() {
 	} else {
 		srv.ListenAndServe()
 	}
-	log.Debug("Exiting HTTP server")
+	log.Info("api: Exiting HTTP server")
 }
 
 func (a *AgentCommand) apiRoutes(r *mux.Router) {
@@ -90,7 +93,6 @@ func (a *AgentCommand) jobsHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Debug(jobs)
 
 	if err := printJson(w, r, jobs); err != nil {
 		log.Fatal(err)

@@ -40,7 +40,12 @@ func NewStore(backend string, machines []string, a *AgentCommand, keyspace strin
 // Store a job
 func (s *Store) SetJob(job *Job) error {
 	jobJson, _ := json.Marshal(job)
-	log.Debugf("Setting job %s: %s", job.Name, string(jobJson))
+
+	log.WithFields(logrus.Fields{
+		"job":  job.Name,
+		"json": string(jobJson),
+	}).Debug("store: Setting job")
+
 	if err := s.Client.Put(s.keyspace+"/jobs/"+job.Name, jobJson, nil); err != nil {
 		return err
 	}
@@ -61,7 +66,6 @@ func (s *Store) GetJobs() ([]*Job, error) {
 
 	var jobs []*Job
 	for _, node := range res {
-		log.Debug(*node)
 		var job Job
 		err := json.Unmarshal([]byte(node.Value), &job)
 		if err != nil {
@@ -69,7 +73,6 @@ func (s *Store) GetJobs() ([]*Job, error) {
 		}
 		job.Agent = s.agent
 		jobs = append(jobs, &job)
-		log.Debug(job)
 	}
 	return jobs, nil
 }
@@ -85,19 +88,18 @@ func (s *Store) GetJob(name string) (*Job, error) {
 	if err = json.Unmarshal([]byte(res.Value), &job); err != nil {
 		return nil, err
 	}
-	log.Debugf("Retrieved job from datastore: %v", job)
+
+	log.WithFields(logrus.Fields{
+		"job": job.Name,
+	}).Debug("store: Retrieved job from datastore")
+
 	job.Agent = s.agent
 	return &job, nil
 }
 
 func (s *Store) DeleteJob(name string) (*Job, error) {
-	res, err := s.Client.Get(s.keyspace + "/jobs/" + name)
+	job, err := s.GetJob(name)
 	if err != nil {
-		return nil, err
-	}
-
-	var job Job
-	if err = json.Unmarshal(res.Value, &job); err != nil {
 		return nil, err
 	}
 
@@ -105,7 +107,7 @@ func (s *Store) DeleteJob(name string) (*Job, error) {
 		return nil, err
 	}
 
-	return &job, nil
+	return job, nil
 }
 
 func (s *Store) GetExecutions(jobName string) ([]*Execution, error) {
@@ -167,7 +169,11 @@ func (s *Store) SetExecution(execution *Execution) (string, error) {
 	exJson, _ := json.Marshal(execution)
 	key := fmt.Sprintf("%d-%s", execution.StartedAt.UnixNano(), execution.NodeName)
 
-	log.Debugf("Setting key %s: %s", execution.JobName, string(exJson))
+	log.WithFields(logrus.Fields{
+		"job":       execution.JobName,
+		"execution": key,
+	}).Debug("store: Setting key")
+
 	err := s.Client.Put(fmt.Sprintf("%s/executions/%s/%s", s.keyspace, execution.JobName, key), exJson, nil)
 	if err != nil {
 		return "", err
@@ -187,7 +193,10 @@ func (s *Store) GetLeader() *Leader {
 		return nil
 	}
 
-	log.Debugf("Retrieved leader from datastore: %s", res.Value)
+	log.WithFields(logrus.Fields{
+		"key": string(res.Value),
+	}).Debug("store: Retrieved leader from datastore")
+
 	return &Leader{Key: res.Value, LastIndex: res.LastIndex}
 }
 
@@ -200,7 +209,7 @@ func (s *Store) TryLeaderSwap(newKey string, old *Leader) (bool, error) {
 	log.WithFields(logrus.Fields{
 		"old_leader": string(old.Key),
 		"new_leader": newKey,
-	}).Debug("Leader Swap")
+	}).Debug("store: Leader Swap")
 
 	return success, err
 }
