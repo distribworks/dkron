@@ -27,7 +27,6 @@ import (
 const (
 	QuerySchedulerRestart = "scheduler:restart"
 	QueryRunJob           = "run:job"
-	QueryExecutionDone    = "execution:done"
 
 	// gracefulTimeout controls how long we wait before forcefully terminating
 	gracefulTimeout = 3 * time.Second
@@ -572,44 +571,6 @@ func (a *AgentCommand) eventLoop() {
 
 					exJson, _ := json.Marshal(ex)
 					query.Respond(exJson)
-				}
-
-				if query.Name == QueryExecutionDone && a.isLeader() {
-					log.WithFields(logrus.Fields{
-						"query":   query.Name,
-						"payload": string(query.Payload),
-						"at":      query.LTime,
-					}).Debug("agent: Received execution done")
-
-					ex := a.setExecution(query.Payload)
-
-					// Save job status
-					job, err := a.store.GetJob(ex.JobName)
-					if err != nil {
-						log.Fatal(err)
-					}
-					if ex.Success {
-						job.LastSuccess = ex.FinishedAt
-						job.SuccessCount = job.SuccessCount + 1
-					} else {
-						job.LastError = ex.FinishedAt
-						job.ErrorCount = job.ErrorCount + 1
-					}
-
-					if err := a.store.SetJob(job); err != nil {
-						log.Fatal(err)
-					}
-
-					exg, err := a.store.GetExecutionGroup(ex)
-					if err != nil {
-						log.WithFields(logrus.Fields{
-							"execution_group": ex.Group,
-						}).Error(err)
-					}
-
-					// Send notification
-					Notification(a.config, ex, exg).Send()
-					query.Respond([]byte("saved"))
 				}
 			}
 
