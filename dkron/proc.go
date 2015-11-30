@@ -1,10 +1,13 @@
 package dkron
 
 import (
-	"encoding/json"
+	"math/rand"
+	"net"
+	"net/rpc"
 	"os"
 	"os/exec"
 	"runtime"
+	"strconv"
 	"time"
 
 	"github.com/Sirupsen/logrus"
@@ -93,47 +96,37 @@ func (a *AgentCommand) invokeJob(execution *Execution) error {
 	execution.Success = success
 	execution.Output = output.Bytes()
 
-	executionJson, _ := json.Marshal(execution)
+	callExecutionDone(execution, a.selectServer())
+	return nil
+}
 
-	params := &serf.QueryParam{
-		FilterTags: map[string]string{"server": "true"},
-		RequestAck: true,
+func (a *AgentCommand) selectServer() string {
+	servers := a.listServers()
+	server := servers[rand.Intn(len(servers))]
+
+	return server.Addr.String() + ":" + strconv.Itoa((int(server.Port)))
+}
+
+func callExecutionDone(execution *Execution, server string) error {
+	conn, err := net.Dial("tcp", ":1234")
+	if err != nil {
+		log.Fatal("error dialing:", err)
+		return err
 	}
 
-	qr, err := a.serf.Query(QueryExecutionDone, executionJson, params)
+	client := rpc.NewClient(conn)
+	defer client.Close()
+
+	// Synchronous call
+	var reply serf.NodeResponse
+	err = client.Call("RPC.ExecutionDone", execution, &reply)
 	if err != nil {
 		log.WithFields(logrus.Fields{
-			"query": QueryExecutionDone,
 			"error": err,
-		}).Fatal("proc: Error sending query")
+		}).Fatal("rpc: Error calling ExecutionDone")
+		return err
 	}
-	defer qr.Close()
-
-	ackCh := qr.AckCh()
-	respCh := qr.ResponseCh()
-
-	for !qr.Finished() {
-		select {
-		case ack, ok := <-ackCh:
-			if ok {
-				log.WithFields(logrus.Fields{
-					"query": QueryExecutionDone,
-					"from":  ack,
-				}).Debug("proc: Received ack")
-			}
-		case resp, ok := <-respCh:
-			if ok {
-				log.WithFields(logrus.Fields{
-					"query":   QueryExecutionDone,
-					"from":    resp.From,
-					"payload": string(resp.Payload),
-				}).Debug("proc: Received response")
-			}
-		}
-	}
-	log.WithFields(logrus.Fields{
-		"query": QueryExecutionDone,
-	}).Debug("proc: Done receiving acks and responses")
+	log.Debug("rpc: from: %s", reply.From)
 
 	return nil
 }

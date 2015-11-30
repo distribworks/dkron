@@ -74,22 +74,3 @@ func listenRPC(a *AgentCommand) {
 	}
 	go http.Serve(l, nil)
 }
-
-func callExecutionDone(execution *Execution) error {
-	conn, err := net.Dial("tcp", ":1234")
-	if err != nil {
-		log.Fatal("error dialing:", err)
-	}
-
-	client := rpc.NewClient(conn)
-	defer client.Close()
-
-	// Synchronous call
-	var reply serf.NodeResponse
-	err = client.Call("RPC.ExecutionDone", execution, &reply)
-	if err != nil {
-		log.Fatal("arith error:", err)
-	}
-	log.Debug("rpc: from: %s", reply.From)
-	return nil
-}

@@ -390,6 +390,8 @@ func (a *AgentCommand) Run(args []string) int {
 			a.ServeHTTP()
 		}()
 
+		listenRPC(a)
+
 		if a.ElectLeader() {
 			a.schedule()
 		}
@@ -512,6 +514,19 @@ func (a *AgentCommand) leaderMember() (*serf.Member, error) {
 		}
 	}
 	return nil, errors.New("No member leader found in member list")
+}
+
+func (a *AgentCommand) listServers() []serf.Member {
+	members := []serf.Member{}
+
+	for _, member := range a.serf.Members() {
+		if key, ok := member.Tags["server"]; ok {
+			if key == "true" && member.Status == serf.StatusAlive {
+				members = append(members, member)
+			}
+		}
+	}
+	return members
 }
 
 // Listens to events from Serf and handle the event.
