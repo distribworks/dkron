@@ -27,6 +27,7 @@ import (
 const (
 	QuerySchedulerRestart = "scheduler:restart"
 	QueryRunJob           = "run:job"
+	QueryRPCConfig        = "rpc:config"
 
 	// gracefulTimeout controls how long we wait before forcefully terminating
 	gracefulTimeout = 3 * time.Second

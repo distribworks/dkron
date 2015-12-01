@@ -47,7 +47,8 @@ func (r *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeResponse)
 	if err != nil {
 		log.WithFields(logrus.Fields{
 			"group": execution.Group,
-		}).Error(err)
+			"err":   err,
+		}).Error("rpc: Error getting execution group.")
 
 		return err
 	}
@@ -62,11 +63,11 @@ func (r *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeResponse)
 }
 
 func listenRPC(a *AgentCommand) {
-	r := RPCServer{
+	r := &RPCServer{
 		agent: a,
 	}
 
-	rpc.Register(&r)
+	rpc.Register(r)
 	rpc.HandleHTTP()
 	l, e := net.Listen("tcp", ":3234")
 	if e != nil {
