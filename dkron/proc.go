@@ -19,7 +19,7 @@ const (
 	// maxBufSize limits how much data we collect from a handler.
 	// This is to prevent Serf's memory from growing to an enormous
 	// amount due to a faulty handler.
-	maxBufSize = 2 * 1000000
+	maxBufSize = 256000
 )
 
 // spawn command that specified as proc.
