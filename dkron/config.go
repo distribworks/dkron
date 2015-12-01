@@ -31,6 +31,8 @@ type Config struct {
 	EncryptKey            string
 	StartJoin             AppendSliceValue
 	Keyspace              string
+	UIDir                 string
+	RPCAddr               string
 
 	MailHost     string
 	MailPort     uint16
@@ -41,8 +43,6 @@ type Config struct {
 	WebhookURL     string
 	WebhookPayload string
 	WebhookHeaders []string
-
-	UIDir string
 }
 
 // This is the default port that we use for Serf communication
