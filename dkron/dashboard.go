@@ -138,8 +138,19 @@ func (a *AgentCommand) dashboardExecutionsHandler(w http.ResponseWriter, r *http
 	}
 
 	tmpl := template.Must(template.New("dashboard.html.tmpl").Funcs(template.FuncMap{
-		"html": func(value []byte) template.HTML {
-			return template.HTML(value)
+		"b2s": func(value []byte) string {
+			return template.JSEscapeString(string(value))
+		},
+		// Now unicode compliant
+		"truncate": func(s string) string {
+			var numRunes = 0
+			for index, _ := range s {
+				numRunes++
+				if numRunes > 25 {
+					return s[:index]
+				}
+			}
+			return s
 		},
 	}).ParseFiles(templateSet(a.config.UIDir, "executions")...))
 

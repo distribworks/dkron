@@ -22,7 +22,7 @@
       <td>{{ $ex.StartedAt }}</td>
       <td>{{ $ex.FinishedAt }}</td>
       <td>{{ $ex.NodeName }}</td>
-      <td>{{ html $ex.Output }}</td>
+      <td><span data-toggle="tooltip" data-placement="top" title="{{ $ex.Output | b2s }}" data-html="true">{{ $ex.Output | b2s | truncate }}...</span></td>
       <td>{{ $ex.Success }}</td>
     </tr>
     {{ end }}
