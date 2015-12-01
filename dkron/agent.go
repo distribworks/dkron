@@ -590,6 +590,16 @@ func (a *AgentCommand) eventLoop() {
 					exJson, _ := json.Marshal(ex)
 					query.Respond(exJson)
 				}
+
+				if query.Name == QueryRPCConfig && a.config.Server {
+					log.WithFields(logrus.Fields{
+						"query":   query.Name,
+						"payload": string(query.Payload),
+						"at":      query.LTime,
+					}).Debug("agent: RPC Config requested")
+
+					query.Respond([]byte(a.config.RPCAddr))
+				}
 			}
 
 		case <-serfShutdownCh:

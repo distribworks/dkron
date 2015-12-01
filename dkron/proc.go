@@ -6,7 +6,6 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
-	"strconv"
 	"time"
 
 	"github.com/Sirupsen/logrus"
@@ -20,7 +19,7 @@ const (
 	// maxBufSize limits how much data we collect from a handler.
 	// This is to prevent Serf's memory from growing to an enormous
 	// amount due to a faulty handler.
-	maxBufSize = 64
+	maxBufSize = 2 * 1000000
 )
 
 // spawn command that specified as proc.
@@ -98,8 +97,7 @@ func (a *AgentCommand) invokeJob(execution *Execution) error {
 	execution.Output = output.Bytes()
 
 	rpcServer := a.queryRPCConfig()
-	callExecutionDone(execution, rpcServer)
-	return nil
+	return callExecutionDone(execution, rpcServer)
 }
 
 func (a *AgentCommand) selectServer() serf.Member {
@@ -130,6 +128,7 @@ func (a *AgentCommand) queryRPCConfig() string {
 	ackCh := qr.AckCh()
 	respCh := qr.ResponseCh()
 
+	var rpcAddr string
 	for !qr.Finished() {
 		select {
 		case ack, ok := <-ackCh:
@@ -146,6 +145,8 @@ func (a *AgentCommand) queryRPCConfig() string {
 					"from":    resp.From,
 					"payload": string(resp.Payload),
 				}).Debug("proc: Received response")
+
+				rpcAddr = string(resp.Payload)
 			}
 		}
 	}
@@ -153,7 +154,7 @@ func (a *AgentCommand) queryRPCConfig() string {
 		"query": QueryRPCConfig,
 	}).Debug("proc: Done receiving acks and responses")
 
-	return ":3234"
+	return rpcAddr
 }
 
 func callExecutionDone(execution *Execution, server string) error {

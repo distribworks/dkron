@@ -69,7 +69,7 @@ func listenRPC(a *AgentCommand) {
 
 	rpc.Register(r)
 	rpc.HandleHTTP()
-	l, e := net.Listen("tcp", ":3234")
+	l, e := net.Listen("tcp", a.config.RPCAddr)
 	if e != nil {
 		log.Fatal("listen error:", e)
 	}
