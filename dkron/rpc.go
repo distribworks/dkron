@@ -9,11 +9,11 @@ import (
 	"github.com/hashicorp/serf/serf"
 )
 
-type RPC struct {
+type RPCServer struct {
 	agent *AgentCommand
 }
 
-func (r *RPC) ExecutionDone(execution Execution, reply *serf.NodeResponse) error {
+func (r *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeResponse) error {
 	log.WithFields(logrus.Fields{
 		"group": execution.Group,
 		"job":   execution.JobName,
@@ -62,13 +62,13 @@ func (r *RPC) ExecutionDone(execution Execution, reply *serf.NodeResponse) error
 }
 
 func listenRPC(a *AgentCommand) {
-	r := RPC{
+	r := RPCServer{
 		agent: a,
 	}
 
-	rpc.Register(r)
+	rpc.Register(&r)
 	rpc.HandleHTTP()
-	l, e := net.Listen("tcp", ":1234")
+	l, e := net.Listen("tcp", ":3234")
 	if e != nil {
 		log.Fatal("listen error:", e)
 	}

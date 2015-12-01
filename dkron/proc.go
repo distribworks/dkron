@@ -2,7 +2,6 @@ package dkron
 
 import (
 	"math/rand"
-	"net"
 	"net/rpc"
 	"os"
 	"os/exec"
@@ -86,7 +85,9 @@ func (a *AgentCommand) invokeJob(execution *Execution) error {
 		"output": output,
 	}).Debug("proc: Command output")
 	if err != nil {
-		log.Error(err)
+		log.WithFields(logrus.Fields{
+			"err": err,
+		}).Error("proc: command error output")
 		success = false
 	} else {
 		success = true
@@ -108,18 +109,16 @@ func (a *AgentCommand) selectServer() string {
 }
 
 func callExecutionDone(execution *Execution, server string) error {
-	conn, err := net.Dial("tcp", ":1234")
+	client, err := rpc.DialHTTP("tcp", ":3234")
 	if err != nil {
 		log.Fatal("error dialing:", err)
 		return err
 	}
-
-	client := rpc.NewClient(conn)
 	defer client.Close()
 
 	// Synchronous call
 	var reply serf.NodeResponse
-	err = client.Call("RPC.ExecutionDone", execution, &reply)
+	err = client.Call("RPCServer.ExecutionDone", execution, &reply)
 	if err != nil {
 		log.WithFields(logrus.Fields{
 			"error": err,
