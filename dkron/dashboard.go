@@ -17,6 +17,12 @@ const (
 	apiPathPrefix       = "v1"
 )
 
+type int64arr []int64
+
+func (a int64arr) Len() int           { return len(a) }
+func (a int64arr) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a int64arr) Less(i, j int) bool { return a[i] < a[j] }
+
 type commonDashboardData struct {
 	Version    string
 	LeaderName string
@@ -128,12 +134,6 @@ func (a *AgentCommand) dashboardJobsHandler(w http.ResponseWriter, r *http.Reque
 	}
 }
 
-type int64arr []int64
-
-func (a int64arr) Len() int           { return len(a) }
-func (a int64arr) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a int64arr) Less(i, j int) bool { return a[i] < a[j] }
-
 func (a *AgentCommand) dashboardExecutionsHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 
@@ -151,7 +151,7 @@ func (a *AgentCommand) dashboardExecutionsHandler(w http.ResponseWriter, r *http
 	for key, _ := range groups {
 		byGroup = append(byGroup, key)
 	}
-	sort.Reverse(byGroup)
+	sort.Sort(byGroup)
 
 	tmpl := template.Must(template.New("dashboard.html.tmpl").Funcs(template.FuncMap{
 		"html": func(value []byte) string {
