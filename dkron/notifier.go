@@ -48,7 +48,7 @@ func (n *Notifier) report() string {
 			ex.Success)
 	}
 
-	return fmt.Sprintf("Executed: %s\nStart time: %s\nEnd time: %s\nSuccess: %t\nNode: %s\nOutput: %s\nExecution group: %s\n%s",
+	return fmt.Sprintf("Executed: %s\nStart time: %s\nEnd time: %s\nSuccess: %t\nNode: %s\nOutput: %s\nExecution group: %d\n%s",
 		n.Execution.JobName,
 		n.Execution.StartedAt,
 		n.Execution.FinishedAt,
