@@ -140,8 +140,8 @@ func (a *AgentCommand) dashboardExecutionsHandler(w http.ResponseWriter, r *http
 	}
 
 	tmpl := template.Must(template.New("dashboard.html.tmpl").Funcs(template.FuncMap{
-		"b2s": func(value []byte) string {
-			return template.JSEscapeString(string(value))
+		"html": func(value []byte) string {
+			return string(template.HTML(value))
 		},
 		// Now unicode compliant
 		"truncate": func(s string) string {
