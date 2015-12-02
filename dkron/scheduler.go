@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/satori/go.uuid"
 	"github.com/victorcoder/dkron/cron"
 )
 
@@ -117,7 +116,7 @@ type Execution struct {
 	NodeName string `json:"node_name,omitempty"`
 
 	// Execution group to what this execution belongs to.
-	Group uuid.UUID `json:"group,omitempty"`
+	Group int64 `json:"group,omitempty"`
 
 	// The job used to generate this execution.
 	Job *Job `json:"job,omitempty"`

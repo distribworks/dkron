@@ -20,7 +20,6 @@ import (
 	"github.com/hashicorp/memberlist"
 	"github.com/hashicorp/serf/serf"
 	"github.com/mitchellh/cli"
-	"github.com/satori/go.uuid"
 	"github.com/spf13/viper"
 )
 
@@ -691,7 +690,7 @@ func (a *AgentCommand) RunQuery(job *Job) {
 
 	ex := Execution{
 		JobName: job.Name,
-		Group:   uuid.NewV1(),
+		Group:   time.Now().UnixNano(),
 		Job:     job,
 	}
 

@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"net/http"
 	"path/filepath"
+	"sort"
 
 	"github.com/gorilla/mux"
 )
@@ -127,6 +128,12 @@ func (a *AgentCommand) dashboardJobsHandler(w http.ResponseWriter, r *http.Reque
 	}
 }
 
+type int64arr []int64
+
+func (a int64arr) Len() int           { return len(a) }
+func (a int64arr) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a int64arr) Less(i, j int) bool { return a[i] < a[j] }
+
 func (a *AgentCommand) dashboardExecutionsHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 
@@ -134,10 +141,17 @@ func (a *AgentCommand) dashboardExecutionsHandler(w http.ResponseWriter, r *http
 	job := vars["job"]
 
 	execs, _ := a.store.GetExecutions(job)
-	groups := make(map[string][]*Execution)
+	groups := make(map[int64][]*Execution)
 	for _, exec := range execs {
-		groups[exec.Group.String()] = append(groups[exec.Group.String()], exec)
+		groups[exec.Group] = append(groups[exec.Group], exec)
 	}
+
+	// Build a separate data structure to show in order
+	var byGroup int64arr
+	for key, _ := range groups {
+		byGroup = append(byGroup, key)
+	}
+	sort.Reverse(byGroup)
 
 	tmpl := template.Must(template.New("dashboard.html.tmpl").Funcs(template.FuncMap{
 		"html": func(value []byte) string {
@@ -162,12 +176,14 @@ func (a *AgentCommand) dashboardExecutionsHandler(w http.ResponseWriter, r *http
 
 	data := struct {
 		Common  *commonDashboardData
-		Groups  map[string][]*Execution
+		Groups  map[int64][]*Execution
 		JobName string
+		ByGroup int64arr
 	}{
 		Common:  newCommonDashboardData(a, a.config.NodeName, "../../../"),
 		Groups:  groups,
 		JobName: job,
+		ByGroup: byGroup,
 	}
 
 	if err := tmpl.Execute(w, data); err != nil {
