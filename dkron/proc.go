@@ -100,7 +100,7 @@ func (a *AgentCommand) invokeJob(execution *Execution) error {
 		return err
 	}
 
-	rc := RPCClient{ServerAddr: string(rpcServer)}
+	rc := &RPCClient{ServerAddr: string(rpcServer)}
 	return rc.callExecutionDone(execution)
 }
 
