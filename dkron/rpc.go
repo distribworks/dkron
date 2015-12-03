@@ -62,6 +62,8 @@ func (r *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeResponse)
 	return nil
 }
 
+var workaroundRPCHTTPMux = 0
+
 func listenRPC(a *AgentCommand) {
 	r := &RPCServer{
 		agent: a,
@@ -74,9 +76,14 @@ func listenRPC(a *AgentCommand) {
 	rpc.Register(r)
 
 	// ===== workaround ==========
+	// This is needed mainly for testing
+	// see: https://github.com/golang/go/issues/13395
 	oldMux := http.DefaultServeMux
-	mux := http.NewServeMux()
-	http.DefaultServeMux = mux
+	if workaroundRPCHTTPMux > 0 {
+		mux := http.NewServeMux()
+		http.DefaultServeMux = mux
+	}
+	workaroundRPCHTTPMux = workaroundRPCHTTPMux + 1
 	// ===========================
 
 	rpc.HandleHTTP()
@@ -99,7 +106,10 @@ type RPCClient struct {
 func (r *RPCClient) callExecutionDone(execution *Execution) error {
 	client, err := rpc.DialHTTP("tcp", r.ServerAddr)
 	if err != nil {
-		log.Fatal("error dialing:", err)
+		log.WithFields(logrus.Fields{
+			"err":         err,
+			"server_addr": r.ServerAddr,
+		}).Fatal("rpc: error dialing.")
 		return err
 	}
 	defer client.Close()
