@@ -90,3 +90,30 @@ func listenRPC(a *AgentCommand) {
 	}
 	go http.Serve(l, nil)
 }
+
+type RPCClient struct {
+	//Addres of the server to call
+	ServerAddr string
+}
+
+func (r *RPCClient) callExecutionDone(execution *Execution) error {
+	client, err := rpc.DialHTTP("tcp", r.ServerAddr)
+	if err != nil {
+		log.Fatal("error dialing:", err)
+		return err
+	}
+	defer client.Close()
+
+	// Synchronous call
+	var reply serf.NodeResponse
+	err = client.Call("RPCServer.ExecutionDone", execution, &reply)
+	if err != nil {
+		log.WithFields(logrus.Fields{
+			"error": err,
+		}).Fatal("rpc: Error calling ExecutionDone")
+		return err
+	}
+	log.Debug("rpc: from: %s", reply.From)
+
+	return nil
+}

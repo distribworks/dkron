@@ -2,7 +2,6 @@ package dkron
 
 import (
 	"math/rand"
-	"net/rpc"
 	"os"
 	"os/exec"
 	"runtime"
@@ -96,8 +95,13 @@ func (a *AgentCommand) invokeJob(execution *Execution) error {
 	execution.Success = success
 	execution.Output = output.Bytes()
 
-	rpcServer := a.queryRPCConfig()
-	return callExecutionDone(execution, rpcServer)
+	rpcServer, err := a.queryRPCConfig()
+	if err != nil {
+		return err
+	}
+
+	rc := RPCClient{ServerAddr: string(rpcServer)}
+	return rc.callExecutionDone(execution)
 }
 
 func (a *AgentCommand) selectServer() serf.Member {
@@ -107,7 +111,7 @@ func (a *AgentCommand) selectServer() serf.Member {
 	return server
 }
 
-func (a *AgentCommand) queryRPCConfig() string {
+func (a *AgentCommand) queryRPCConfig() ([]byte, error) {
 	nodeName := a.selectServer().Name
 
 	params := &serf.QueryParam{
@@ -122,13 +126,14 @@ func (a *AgentCommand) queryRPCConfig() string {
 			"query": QueryRPCConfig,
 			"error": err,
 		}).Fatal("proc: Error sending query")
+		return nil, err
 	}
 	defer qr.Close()
 
 	ackCh := qr.AckCh()
 	respCh := qr.ResponseCh()
 
-	var rpcAddr string
+	var rpcAddr []byte
 	for !qr.Finished() {
 		select {
 		case ack, ok := <-ackCh:
@@ -146,7 +151,7 @@ func (a *AgentCommand) queryRPCConfig() string {
 					"payload": string(resp.Payload),
 				}).Debug("proc: Received response")
 
-				rpcAddr = string(resp.Payload)
+				rpcAddr = resp.Payload
 			}
 		}
 	}
@@ -154,27 +159,5 @@ func (a *AgentCommand) queryRPCConfig() string {
 		"query": QueryRPCConfig,
 	}).Debug("proc: Done receiving acks and responses")
 
-	return rpcAddr
-}
-
-func callExecutionDone(execution *Execution, server string) error {
-	client, err := rpc.DialHTTP("tcp", server)
-	if err != nil {
-		log.Fatal("error dialing:", err)
-		return err
-	}
-	defer client.Close()
-
-	// Synchronous call
-	var reply serf.NodeResponse
-	err = client.Call("RPCServer.ExecutionDone", execution, &reply)
-	if err != nil {
-		log.WithFields(logrus.Fields{
-			"error": err,
-		}).Fatal("rpc: Error calling ExecutionDone")
-		return err
-	}
-	log.Debug("rpc: from: %s", reply.From)
-
-	return nil
+	return rpcAddr, nil
 }
