@@ -26,6 +26,7 @@ func TestRPCExecutionDone(t *testing.T) {
 		"-rpc-addr", rpcAddr,
 		"-node", "test1",
 		"-server",
+		"-debug",
 		"-keyspace", "dkron-test",
 	}
 
