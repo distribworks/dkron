@@ -9,6 +9,14 @@ import (
 )
 
 func TestRPCExecutionDone(t *testing.T) {
+	store := NewStore("etcd", []string{"127.0.0.1:4001"}, nil, "dkron")
+
+	// Cleanup everything
+	err := store.Client.DeleteTree("dkron")
+	if err != nil {
+		t.Logf("error cleaning up: %s", err)
+	}
+
 	shutdownCh := make(chan struct{})
 	defer close(shutdownCh)
 
@@ -27,7 +35,7 @@ func TestRPCExecutionDone(t *testing.T) {
 		"-node", "test1",
 		"-server",
 		"-debug",
-		"-keyspace", "dkron-test",
+		"-keyspace", "dkron",
 	}
 
 	resultCh := make(chan int)
@@ -35,14 +43,6 @@ func TestRPCExecutionDone(t *testing.T) {
 		resultCh <- a.Run(args)
 	}()
 	time.Sleep(2 * time.Second)
-
-	store := NewStore("etcd", []string{"127.0.0.1:4001"}, nil, "dkron-test")
-
-	// Cleanup everything
-	err := store.Client.DeleteTree("dkron-test")
-	if err != nil {
-		t.Logf("error cleaning up: %s", err)
-	}
 
 	testJob := &Job{
 		Name:     "test",
