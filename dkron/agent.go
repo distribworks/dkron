@@ -20,14 +20,13 @@ import (
 	"github.com/hashicorp/memberlist"
 	"github.com/hashicorp/serf/serf"
 	"github.com/mitchellh/cli"
-	"github.com/satori/go.uuid"
 	"github.com/spf13/viper"
 )
 
 const (
 	QuerySchedulerRestart = "scheduler:restart"
 	QueryRunJob           = "run:job"
-	QueryExecutionDone    = "execution:done"
+	QueryRPCConfig        = "rpc:config"
 
 	// gracefulTimeout controls how long we wait before forcefully terminating
 	gracefulTimeout = 3 * time.Second
@@ -53,7 +52,7 @@ Usage: dkron agent [options]
 Options:
 
   -bind=0.0.0.0:8946              Address to bind network listeners to.
-  -http-addr=0.0.0.0:8080         Address to bind the UI web server to.
+  -http-addr=0.0.0.0:8080         Address to bind the UI web server to. Only used when server.
   -discover=cluster               A cluster name used to discovery peers. On
                                   networks that support multicast, this can be used to have
                                   peers join each other without an explicit join.
@@ -73,6 +72,9 @@ Options:
                                   specified multiple times.
   -encrypt                        Key for encrypting network traffic.
                                   Must be a base64-encoded 16-byte key.
+  -ui-dir                         Directory from where to serve Web UI
+  -rpc-addr=:6868                 RPC Address used to communicate with clients. Only used when server.
+
   -mail-host                      Mail server host address to use for notifications.
   -mail-port                      Mail server port.
   -mail-username                  Mail server username used for authentication.
@@ -84,8 +86,6 @@ Options:
   -webhook-header                 Headers to use when calling the webhook URL. Can be specified multiple times.
 
   -debug=false                    Output debug log
-
-  -ui-dir                         Directory from where to serve Web UI
 `
 	return strings.TrimSpace(helpText)
 }
@@ -124,6 +124,10 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	cmdFlags.String("encrypt", "", "encryption key")
 	viper.SetDefault("encrypt", cmdFlags.Lookup("encrypt").Value)
 	viper.SetDefault("debug", cmdFlags.Bool("debug", false, "output debug log"))
+	cmdFlags.String("ui-dir", ".", "directory to serve web UI")
+	viper.SetDefault("ui_dir", cmdFlags.Lookup("ui-dir").Value)
+	cmdFlags.String("rpc-addr", ":6868", "RPC address")
+	viper.SetDefault("rpc_addr", cmdFlags.Lookup("rpc-addr").Value)
 
 	// Notifications
 	cmdFlags.String("mail-host", "", "notification mail server host")
@@ -143,9 +147,6 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	viper.SetDefault("webhook_payload", cmdFlags.Lookup("webhook-payload").Value)
 	webhookHeaders := &AppendSliceValue{}
 	cmdFlags.Var(webhookHeaders, "webhook-header", "notification webhook additional header")
-
-	cmdFlags.String("ui-dir", ".", "directory to serve web UI")
-	viper.SetDefault("ui_dir", cmdFlags.Lookup("ui-dir").Value)
 
 	if err := cmdFlags.Parse(args); err != nil {
 		log.Fatal(err)
@@ -184,6 +185,8 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 		Tags:            tags,
 		Keyspace:        viper.GetString("keyspace"),
 		EncryptKey:      viper.GetString("encrypt"),
+		UIDir:           viper.GetString("ui_dir"),
+		RPCAddr:         viper.GetString("rpc_addr"),
 
 		MailHost:     viper.GetString("mail_host"),
 		MailPort:     uint16(viper.GetInt("mail_port")),
@@ -194,8 +197,6 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 		WebhookURL:     viper.GetString("webhook_url"),
 		WebhookPayload: viper.GetString("webhook_payload"),
 		WebhookHeaders: viper.GetStringSlice("webhook_headers"),
-
-		UIDir: viper.GetString("ui_dir"),
 	}
 }
 
@@ -391,6 +392,8 @@ func (a *AgentCommand) Run(args []string) int {
 			a.ServeHTTP()
 		}()
 
+		listenRPC(a)
+
 		if a.ElectLeader() {
 			a.schedule()
 		}
@@ -515,6 +518,19 @@ func (a *AgentCommand) leaderMember() (*serf.Member, error) {
 	return nil, errors.New("No member leader found in member list")
 }
 
+func (a *AgentCommand) listServers() []serf.Member {
+	members := []serf.Member{}
+
+	for _, member := range a.serf.Members() {
+		if key, ok := member.Tags["server"]; ok {
+			if key == "true" && member.Status == serf.StatusAlive {
+				members = append(members, member)
+			}
+		}
+	}
+	return members
+}
+
 // Listens to events from Serf and handle the event.
 func (a *AgentCommand) eventLoop() {
 	serfShutdownCh := a.serf.ShutdownCh()
@@ -574,42 +590,14 @@ func (a *AgentCommand) eventLoop() {
 					query.Respond(exJson)
 				}
 
-				if query.Name == QueryExecutionDone && a.isLeader() {
+				if query.Name == QueryRPCConfig && a.config.Server {
 					log.WithFields(logrus.Fields{
 						"query":   query.Name,
 						"payload": string(query.Payload),
 						"at":      query.LTime,
-					}).Debug("agent: Received execution done")
+					}).Debug("agent: RPC Config requested")
 
-					ex := a.setExecution(query.Payload)
-
-					// Save job status
-					job, err := a.store.GetJob(ex.JobName)
-					if err != nil {
-						log.Fatal(err)
-					}
-					if ex.Success {
-						job.LastSuccess = ex.FinishedAt
-						job.SuccessCount = job.SuccessCount + 1
-					} else {
-						job.LastError = ex.FinishedAt
-						job.ErrorCount = job.ErrorCount + 1
-					}
-
-					if err := a.store.SetJob(job); err != nil {
-						log.Fatal(err)
-					}
-
-					exg, err := a.store.GetExecutionGroup(ex)
-					if err != nil {
-						log.WithFields(logrus.Fields{
-							"execution_group": ex.Group,
-						}).Error(err)
-					}
-
-					// Send notification
-					Notification(a.config, ex, exg).Send()
-					query.Respond([]byte("saved"))
+					query.Respond([]byte(a.config.RPCAddr))
 				}
 			}
 
@@ -702,7 +690,7 @@ func (a *AgentCommand) RunQuery(job *Job) {
 
 	ex := Execution{
 		JobName: job.Name,
-		Group:   uuid.NewV1(),
+		Group:   time.Now().UnixNano(),
 		Job:     job,
 	}
 

@@ -1,7 +1,7 @@
 package dkron
 
 import (
-	"encoding/json"
+	"math/rand"
 	"os"
 	"os/exec"
 	"runtime"
@@ -18,7 +18,7 @@ const (
 	// maxBufSize limits how much data we collect from a handler.
 	// This is to prevent Serf's memory from growing to an enormous
 	// amount due to a faulty handler.
-	maxBufSize = 64
+	maxBufSize = 256000
 )
 
 // spawn command that specified as proc.
@@ -83,7 +83,9 @@ func (a *AgentCommand) invokeJob(execution *Execution) error {
 		"output": output,
 	}).Debug("proc: Command output")
 	if err != nil {
-		log.Error(err)
+		log.WithFields(logrus.Fields{
+			"err": err,
+		}).Error("proc: command error output")
 		success = false
 	} else {
 		success = true
@@ -93,47 +95,69 @@ func (a *AgentCommand) invokeJob(execution *Execution) error {
 	execution.Success = success
 	execution.Output = output.Bytes()
 
-	executionJson, _ := json.Marshal(execution)
-
-	params := &serf.QueryParam{
-		FilterTags: map[string]string{"server": "true"},
-		RequestAck: true,
+	rpcServer, err := a.queryRPCConfig()
+	if err != nil {
+		return err
 	}
 
-	qr, err := a.serf.Query(QueryExecutionDone, executionJson, params)
+	rc := &RPCClient{ServerAddr: string(rpcServer)}
+	return rc.callExecutionDone(execution)
+}
+
+func (a *AgentCommand) selectServer() serf.Member {
+	servers := a.listServers()
+	server := servers[rand.Intn(len(servers))]
+
+	return server
+}
+
+func (a *AgentCommand) queryRPCConfig() ([]byte, error) {
+	nodeName := a.selectServer().Name
+
+	params := &serf.QueryParam{
+		FilterNodes: []string{nodeName},
+		FilterTags:  map[string]string{"server": "true"},
+		RequestAck:  true,
+	}
+
+	qr, err := a.serf.Query(QueryRPCConfig, nil, params)
 	if err != nil {
 		log.WithFields(logrus.Fields{
-			"query": QueryExecutionDone,
+			"query": QueryRPCConfig,
 			"error": err,
 		}).Fatal("proc: Error sending query")
+		return nil, err
 	}
 	defer qr.Close()
 
 	ackCh := qr.AckCh()
 	respCh := qr.ResponseCh()
 
+	var rpcAddr []byte
 	for !qr.Finished() {
 		select {
 		case ack, ok := <-ackCh:
 			if ok {
 				log.WithFields(logrus.Fields{
-					"query": QueryExecutionDone,
+					"query": QueryRPCConfig,
 					"from":  ack,
 				}).Debug("proc: Received ack")
 			}
 		case resp, ok := <-respCh:
 			if ok {
 				log.WithFields(logrus.Fields{
-					"query":   QueryExecutionDone,
+					"query":   QueryRPCConfig,
 					"from":    resp.From,
 					"payload": string(resp.Payload),
 				}).Debug("proc: Received response")
+
+				rpcAddr = resp.Payload
 			}
 		}
 	}
 	log.WithFields(logrus.Fields{
-		"query": QueryExecutionDone,
+		"query": QueryRPCConfig,
 	}).Debug("proc: Done receiving acks and responses")
 
-	return nil
+	return rpcAddr, nil
 }

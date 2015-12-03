@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"net/http"
 	"path/filepath"
+	"sort"
 
 	"github.com/gorilla/mux"
 )
@@ -16,6 +17,12 @@ const (
 	apiPathPrefix       = "v1"
 )
 
+type int64arr []int64
+
+func (a int64arr) Len() int           { return len(a) }
+func (a int64arr) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a int64arr) Less(i, j int) bool { return a[i] < a[j] }
+
 type commonDashboardData struct {
 	Version    string
 	LeaderName string
@@ -23,6 +30,7 @@ type commonDashboardData struct {
 	Backend    string
 	Path       string
 	APIPath    string
+	Keyspace   string
 }
 
 func newCommonDashboardData(a *AgentCommand, nodeName, path string) *commonDashboardData {
@@ -34,6 +42,7 @@ func newCommonDashboardData(a *AgentCommand, nodeName, path string) *commonDashb
 		Backend:    a.config.Backend,
 		Path:       fmt.Sprintf("%s%s", path, dashboardPathPrefix),
 		APIPath:    fmt.Sprintf("%s%s", path, apiPathPrefix),
+		Keyspace:   a.config.Keyspace,
 	}
 }
 
@@ -132,14 +141,32 @@ func (a *AgentCommand) dashboardExecutionsHandler(w http.ResponseWriter, r *http
 	job := vars["job"]
 
 	execs, _ := a.store.GetExecutions(job)
-	groups := make(map[string][]*Execution)
+	groups := make(map[int64][]*Execution)
 	for _, exec := range execs {
-		groups[exec.Group.String()] = append(groups[exec.Group.String()], exec)
+		groups[exec.Group] = append(groups[exec.Group], exec)
 	}
 
+	// Build a separate data structure to show in order
+	var byGroup int64arr
+	for key := range groups {
+		byGroup = append(byGroup, key)
+	}
+	sort.Sort(byGroup)
+
 	tmpl := template.Must(template.New("dashboard.html.tmpl").Funcs(template.FuncMap{
-		"html": func(value []byte) template.HTML {
-			return template.HTML(value)
+		"html": func(value []byte) string {
+			return string(template.HTML(value))
+		},
+		// Now unicode compliant
+		"truncate": func(s string) string {
+			var numRunes = 0
+			for index := range s {
+				numRunes++
+				if numRunes > 25 {
+					return s[:index]
+				}
+			}
+			return s
 		},
 	}).ParseFiles(templateSet(a.config.UIDir, "executions")...))
 
@@ -149,12 +176,14 @@ func (a *AgentCommand) dashboardExecutionsHandler(w http.ResponseWriter, r *http
 
 	data := struct {
 		Common  *commonDashboardData
-		Groups  map[string][]*Execution
+		Groups  map[int64][]*Execution
 		JobName string
+		ByGroup int64arr
 	}{
 		Common:  newCommonDashboardData(a, a.config.NodeName, "../../../"),
 		Groups:  groups,
 		JobName: job,
+		ByGroup: byGroup,
 	}
 
 	if err := tmpl.Execute(w, data); err != nil {
