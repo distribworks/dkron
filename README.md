@@ -50,3 +50,9 @@ Full, comprehensive documentation is viewable on the Dkron website: http://dkron
 
 - Twitter: [@dkronio](https://twitter.com/dkronio) or [@victorcoder](https://twitter.com/victorcoder)
 - Email: victor at victorcastell.com
+
+# Sponsor
+
+This project is possible thanks to the Support of Jobandtalent
+
+![](https://upload.wikimedia.org/wikipedia/en/d/db/Jobandtalent_logo.jpg)
