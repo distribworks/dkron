@@ -148,7 +148,7 @@ func (a *AgentCommand) dashboardExecutionsHandler(w http.ResponseWriter, r *http
 
 	// Build a separate data structure to show in order
 	var byGroup int64arr
-	for key, _ := range groups {
+	for key := range groups {
 		byGroup = append(byGroup, key)
 	}
 	sort.Sort(byGroup)
@@ -160,7 +160,7 @@ func (a *AgentCommand) dashboardExecutionsHandler(w http.ResponseWriter, r *http
 		// Now unicode compliant
 		"truncate": func(s string) string {
 			var numRunes = 0
-			for index, _ := range s {
+			for index := range s {
 				numRunes++
 				if numRunes > 25 {
 					return s[:index]
