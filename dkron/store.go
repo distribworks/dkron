@@ -58,7 +58,7 @@ func (s *Store) GetJobs() ([]*Job, error) {
 	res, err := s.Client.List(s.keyspace + "/jobs/")
 	if err != nil {
 		if err == store.ErrKeyNotFound {
-			log.Debug("No jobs found")
+			log.Debug("store: No jobs found")
 			return nil, nil
 		}
 		return nil, err
