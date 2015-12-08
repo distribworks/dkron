@@ -103,6 +103,10 @@ func (s *Store) DeleteJob(name string) (*Job, error) {
 		return nil, err
 	}
 
+	if err := s.DeleteExecutions(name); err != nil {
+		return nil, err
+	}
+
 	if err := s.Client.Delete(s.keyspace + "/jobs/" + name); err != nil {
 		return nil, err
 	}
@@ -180,6 +184,11 @@ func (s *Store) SetExecution(execution *Execution) (string, error) {
 	}
 
 	return key, nil
+}
+
+// Removes all executions of a job
+func (s *Store) DeleteExecutions(jobName string) error {
+	return s.Client.DeleteTree(fmt.Sprintf("%s/executions/%s", s.keyspace, jobName))
 }
 
 func (s *Store) GetLeader() *Leader {

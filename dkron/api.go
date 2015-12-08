@@ -3,13 +3,14 @@ package dkron
 import (
 	"encoding/json"
 	"fmt"
+	"io"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/carbocation/interpose"
+	"github.com/docker/libkv/store"
 	"github.com/gorilla/mux"
-	"io"
-	"io/ioutil"
 )
 
 func (a *AgentCommand) ServeHTTP() {
@@ -195,7 +196,17 @@ func (a *AgentCommand) executionsHandler(w http.ResponseWriter, r *http.Request)
 
 	executions, err := a.store.GetExecutions(jobName)
 	if err != nil {
-		log.Error(err)
+		if err == store.ErrKeyNotFound {
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+			w.WriteHeader(http.StatusNotFound)
+			if err := json.NewEncoder(w).Encode(err); err != nil {
+				log.Fatal(err)
+			}
+			return
+		} else {
+			log.Error(err)
+			return
+		}
 	}
 
 	if err := printJson(w, r, executions); err != nil {
