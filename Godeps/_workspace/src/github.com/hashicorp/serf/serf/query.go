@@ -3,6 +3,7 @@ package serf
 import (
 	"math"
 	"regexp"
+	"strings"
 	"sync"
 	"time"
 )
@@ -64,6 +65,12 @@ func (q *QueryParam) encodeFilters() ([][]byte, error) {
 
 	// Add the tag filters
 	for tag, expr := range q.FilterTags {
+		tags := strings.Split(expr, ":")
+		if len(tags) == 0 {
+			continue
+		}
+		expr = tags[0]
+
 		filt := filterTag{tag, expr}
 		if buf, err := encodeFilter(filterTagType, &filt); err != nil {
 			return nil, err
