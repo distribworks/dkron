@@ -748,7 +748,7 @@ func (a *AgentCommand) processFilteredNodes(job *Job) ([]string, error) {
 			tv := tc[0]
 
 			// Set original tag to clean tag
-			job.Tags[jtk] = tv
+			//job.Tags[jtk] = tv
 
 			count, err := strconv.Atoi(tc[1])
 			if err != nil {
