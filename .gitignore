@@ -6,3 +6,4 @@ downloads/
 .goxc.local.json
 .envrc
 .vagrant
+vendor/
