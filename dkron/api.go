@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"path/filepath"
+	"strings"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/carbocation/interpose"
@@ -64,8 +65,10 @@ func (a *AgentCommand) apiRoutes(r *mux.Router) {
 func metaMiddleware(nodeName string) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-			w.Header().Set("X-Whom", nodeName)
+			if strings.HasPrefix(r.URL.Path, "/"+apiPathPrefix) {
+				w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+				w.Header().Set("X-Whom", nodeName)
+			}
 			next.ServeHTTP(w, r)
 		})
 	}
