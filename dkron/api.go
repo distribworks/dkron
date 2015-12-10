@@ -51,14 +51,14 @@ func (a *AgentCommand) apiRoutes(r *mux.Router) {
 	subver.HandleFunc("/leader", a.leaderHandler)
 
 	subver.Path("/jobs").HandlerFunc(a.jobCreateOrUpdateHandler).Methods("POST", "PATCH")
-	subver.Path("/jobs").HandlerFunc(a.jobsHandler).Methods("GET")
+	subver.Path("/jobs").HandlerFunc(a.jobsHandler)
 	sub := subver.PathPrefix("/jobs").Subrouter()
-	sub.HandleFunc("/{job}", a.jobGetHandler).Methods("GET")
+	sub.HandleFunc("/{job}", a.jobGetHandler)
 	sub.HandleFunc("/{job}", a.jobDeleteHandler).Methods("DELETE")
 	sub.HandleFunc("/{job}", a.jobRunHandler).Methods("POST")
 
 	subex := subver.PathPrefix("/executions").Subrouter()
-	subex.HandleFunc("/{job}", a.executionsHandler).Methods("GET")
+	subex.HandleFunc("/{job}", a.executionsHandler)
 }
 
 func metaMiddleware(nodeName string) func(http.Handler) http.Handler {
