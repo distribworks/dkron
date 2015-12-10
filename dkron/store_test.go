@@ -31,6 +31,9 @@ func TestStore(t *testing.T) {
 	if len(jobs) != 1 {
 		t.Fatalf("error in number of expected jobs: %v", jobs)
 	}
+	if jobs[0].Name != "test" {
+		t.Fatalf("expected job name: %s got: %s", testJob.Name, jobs[0].Name)
+	}
 
 	if _, err := store.DeleteJob("test"); err != nil {
 		t.Fatalf("error deleting job: %s", err)

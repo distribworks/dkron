@@ -104,7 +104,9 @@ func (s *Store) DeleteJob(name string) (*Job, error) {
 	}
 
 	if err := s.DeleteExecutions(name); err != nil {
-		return nil, err
+		if err != store.ErrKeyNotFound {
+			return nil, err
+		}
 	}
 
 	if err := s.Client.Delete(s.keyspace + "/jobs/" + name); err != nil {
