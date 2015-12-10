@@ -6,13 +6,24 @@
 		"xc",
 		"archive-zip",
 		"archive-tar-gz",
-    "deb",
-    "publish-github"
+		"deb",
+		"publish-github"
 	],
 	"BuildConstraints": "linux,amd64 windows,amd64 darwin,amd64",
 	"ResourcesInclude": "INSTALL*,README*,LICENSE*,config/*,static/*,templates/*",
-	"PackageVersion": "0.5.5",
+	"PackageVersion": "0.6.0",
 	"TaskSettings": {
+		"deb": {
+			"metadata": {
+				"description": "Distributed, fault tolerant job scheduling system",
+				"maintainer": "Victor Castell (https://github.com/victorcoder) \u003cvictor@victorcastell.com\u003e"
+			},
+			"other-mapped-files": {
+				"/": "debian/",
+				"/usr/share/dkron/static": "static/",
+				"/usr/share/dkron/templates": "templates/"
+			}
+		},
 		"publish-github": {
 			"apikey": "",
 			"body": "See: https://github.com/victorcoder/dkron/blob/master/CHANGELOG.md",
@@ -21,18 +32,7 @@
 			"owner": "victorcoder",
 			"prerelease": true,
 			"repository": "dkron"
-		},
-    "deb": {
-        "metadata": {
-            "description": "Distributed, fault tolerant job scheduling system",
-            "maintainer": "Victor Castell (https://github.com/victorcoder) <victor@victorcastell.com>"
-        },
-        "other-mapped-files": {
-            "/": "debian/",
-            "/usr/share/dkron/static": "static/",
-            "/usr/share/dkron/templates": "templates/"
-        }
-    }
+		}
 	},
 	"ConfigVersion": "0.9",
 	"Env": [

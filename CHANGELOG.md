@@ -1,3 +1,15 @@
+## 0.6.0 (2015-12-11)
+
+- Some other improvements and bug fixing
+- Vendoring now using Go vendor experiment + glide
+- Fix: Remove executions on job delete
+- Show full execution output in UI modal
+- New executions results internals using RPC
+- Standarized logging
+- Show job tooltips with info
+- Accept just "pretty" for formatting api requests
+- Change how execution groups work to not use the directory concept.
+
 ## 0.5.5 (2015-11-19)
 
 - More backend compatibility
