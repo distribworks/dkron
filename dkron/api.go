@@ -37,9 +37,9 @@ func (a *AgentCommand) ServeHTTP() {
 	certFile := "" //config.GetString("certFile")
 	keyFile := ""  //config.GetString("keyFile")
 	if certFile != "" && keyFile != "" {
-		srv.ListenAndServeTLS(certFile, keyFile)
+		go srv.ListenAndServeTLS(certFile, keyFile)
 	} else {
-		srv.ListenAndServe()
+		go srv.ListenAndServe()
 	}
 	log.Info("api: Exiting HTTP server")
 }
