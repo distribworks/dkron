@@ -34,8 +34,5 @@
 			"repository": "dkron"
 		}
 	},
-	"ConfigVersion": "0.9",
-	"Env": [
-		"GOPATH={{.Env.PWD}}{{.PS}}Godeps{{.PS}}_workspace{{.PLS}}{{.Env.GOPATH}}"
-	]
+	"ConfigVersion": "0.9"
 }
