@@ -4,15 +4,15 @@ import (
 	"testing"
 	"time"
 
-	"github.com/docker/libkv/store"
+	s "github.com/docker/libkv/store"
 )
 
 func TestStore(t *testing.T) {
-	s := NewStore("etcd", []string{"127.0.0.1:4001"}, nil, "dkron-test")
+	store := NewStore("etcd", []string{"127.0.0.1:4001"}, nil, "dkron-test")
 
 	// Cleanup everything
-	err := s.Client.DeleteTree("dkron-test")
-	if err != store.ErrKeyNotFound {
+	err := store.Client.DeleteTree("dkron-test")
+	if err != s.ErrKeyNotFound {
 		t.Logf("error cleaning up: %s", err)
 	}
 
@@ -22,11 +22,11 @@ func TestStore(t *testing.T) {
 		Disabled: true,
 	}
 
-	if err := s.SetJob(testJob); err != nil {
+	if err := store.SetJob(testJob); err != nil {
 		t.Fatalf("error creating job: %s", err)
 	}
 
-	jobs, err := s.GetJobs()
+	jobs, err := store.GetJobs()
 	if err != nil {
 		t.Fatalf("error getting jobs: %s", err)
 	}
@@ -37,11 +37,11 @@ func TestStore(t *testing.T) {
 		t.Fatalf("expected job name: %s got: %s", testJob.Name, jobs[0].Name)
 	}
 
-	if _, err := s.DeleteJob("test"); err != nil {
+	if _, err := store.DeleteJob("test"); err != nil {
 		t.Fatalf("error deleting job: %s", err)
 	}
 
-	if _, err := s.DeleteJob("test"); err == nil {
+	if _, err := store.DeleteJob("test"); err == nil {
 		t.Fatalf("error job deletion should fail: %s", err)
 	}
 
@@ -54,12 +54,12 @@ func TestStore(t *testing.T) {
 		NodeName:   "testNode",
 	}
 
-	_, err = s.SetExecution(testExecution)
+	_, err = store.SetExecution(testExecution)
 	if err != nil {
 		t.Fatalf("error setting the execution: %s", err)
 	}
 
-	execs, err := s.GetExecutions("test")
+	execs, err := store.GetExecutions("test")
 	if err != nil {
 		t.Fatalf("error getting executions: %s", err)
 	}
