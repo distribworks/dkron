@@ -23,3 +23,7 @@ script:
   - go vet ./...
   # - fgt golint ./...
   - go test -v ./dkron
+
+env:
+  global:
+    - GO15VENDOREXPERIMENT=1
