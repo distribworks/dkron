@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"path/filepath"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/carbocation/interpose"
@@ -20,7 +21,12 @@ func (a *AgentCommand) ServeHTTP() {
 	a.dashboardRoutes(r)
 
 	middle := interpose.New()
+	middle.Use(metaMiddleware(a.config.NodeName))
 	middle.UseHandler(r)
+
+	r.PathPrefix("/dashboard").Handler(
+		http.StripPrefix("/dashboard", http.FileServer(
+			http.Dir(filepath.Join(a.config.UIDir, "static")))))
 
 	srv := &http.Server{Addr: a.config.HTTPAddr, Handler: middle}
 
@@ -55,16 +61,26 @@ func (a *AgentCommand) apiRoutes(r *mux.Router) {
 	subex.HandleFunc("/{job}", a.executionsHandler).Methods("GET")
 }
 
+func metaMiddleware(nodeName string) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+			w.Header().Set("X-Whom", nodeName)
+			next.ServeHTTP(w, r)
+		})
+	}
+}
+
 func printJson(w http.ResponseWriter, r *http.Request, v interface{}) error {
 	if _, ok := r.URL.Query()["pretty"]; ok {
 		j, _ := json.MarshalIndent(v, "", "\t")
 		if _, err := fmt.Fprintf(w, string(j)); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
 			return err
 		}
 	} else {
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(http.StatusOK)
 		if err := json.NewEncoder(w).Encode(v); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
 			return err
 		}
 	}
@@ -125,7 +141,6 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.R
 	}
 
 	if err := json.Unmarshal(body, &job); err != nil {
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(422) // unprocessable entity
 		if err := json.NewEncoder(w).Encode(err); err != nil {
 			log.Fatal(err)
@@ -135,7 +150,6 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.R
 
 	// Save the new job to the store
 	if err = a.store.SetJob(&job); err != nil {
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(422) // unprocessable entity
 		if err := json.NewEncoder(w).Encode(err); err != nil {
 			log.Fatal(err)
@@ -156,7 +170,6 @@ func (a *AgentCommand) jobDeleteHandler(w http.ResponseWriter, r *http.Request) 
 
 	job, err := a.store.DeleteJob(jobName)
 	if err != nil {
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusNotFound)
 		if err := json.NewEncoder(w).Encode(err); err != nil {
 			log.Fatal(err)
@@ -175,7 +188,6 @@ func (a *AgentCommand) jobRunHandler(w http.ResponseWriter, r *http.Request) {
 
 	job, err := a.store.GetJob(jobName)
 	if err != nil {
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusNotFound)
 		if err := json.NewEncoder(w).Encode(err); err != nil {
 			log.Fatal(err)
@@ -197,7 +209,6 @@ func (a *AgentCommand) executionsHandler(w http.ResponseWriter, r *http.Request)
 	executions, err := a.store.GetExecutions(jobName)
 	if err != nil {
 		if err == store.ErrKeyNotFound {
-			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 			w.WriteHeader(http.StatusNotFound)
 			if err := json.NewEncoder(w).Encode(err); err != nil {
 				log.Fatal(err)
