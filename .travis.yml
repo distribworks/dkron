@@ -13,6 +13,7 @@ before_install:
   - go get github.com/mattn/goveralls
   - go get github.com/golang/lint/golint
   - go get github.com/GeertJohan/fgt
+  - go get github.com/Masterminds/glide
 
 before_script:
   - scripts/travis_etcd.sh 2.1.1
@@ -22,6 +23,7 @@ script:
   - scripts/validate-gofmt
   - go vet ./...
   # - fgt golint ./...
+  - glide install
   - go test -v ./dkron
 
 env:
