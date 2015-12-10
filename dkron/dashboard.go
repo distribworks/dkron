@@ -47,15 +47,16 @@ func newCommonDashboardData(a *AgentCommand, nodeName, path string) *commonDashb
 }
 
 func (a *AgentCommand) dashboardRoutes(r *mux.Router) {
-	r.Path("/" + dashboardPathPrefix).HandlerFunc(a.dashboardIndexHandler).Methods("GET")
+	r.Path("/" + dashboardPathPrefix).HandlerFunc(a.dashboardIndexHandler)
 	subui := r.PathPrefix("/" + dashboardPathPrefix).Subrouter()
-	subui.HandleFunc("/jobs", a.dashboardJobsHandler).Methods("GET")
-	subui.HandleFunc("/jobs/{job}/executions", a.dashboardExecutionsHandler).Methods("GET")
+	subui.HandleFunc("/jobs", a.dashboardJobsHandler)
+	subui.HandleFunc("/jobs/{job}/executions", a.dashboardExecutionsHandler)
 
 	// Path of static files must be last!
 	r.PathPrefix("/dashboard").Handler(
 		http.StripPrefix("/dashboard", http.FileServer(
 			http.Dir(filepath.Join(a.config.UIDir, "static")))))
+
 	r.PathPrefix("/").Handler(http.RedirectHandler("dashboard", 301))
 }
 

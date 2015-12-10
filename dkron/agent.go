@@ -388,10 +388,7 @@ func (a *AgentCommand) Run(args []string) int {
 		a.store = NewStore(a.config.Backend, a.config.BackendMachines, a, a.config.Keyspace)
 		a.sched = NewScheduler()
 
-		go func() {
-			a.ServeHTTP()
-		}()
-
+		a.ServeHTTP()
 		listenRPC(a)
 
 		if a.ElectLeader() {

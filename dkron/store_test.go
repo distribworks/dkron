@@ -3,6 +3,8 @@ package dkron
 import (
 	"testing"
 	"time"
+
+	s "github.com/docker/libkv/store"
 )
 
 func TestStore(t *testing.T) {
@@ -10,7 +12,7 @@ func TestStore(t *testing.T) {
 
 	// Cleanup everything
 	err := store.Client.DeleteTree("dkron-test")
-	if err != nil {
+	if err != s.ErrKeyNotFound {
 		t.Logf("error cleaning up: %s", err)
 	}
 
@@ -30,6 +32,9 @@ func TestStore(t *testing.T) {
 	}
 	if len(jobs) != 1 {
 		t.Fatalf("error in number of expected jobs: %v", jobs)
+	}
+	if jobs[0].Name != "test" {
+		t.Fatalf("expected job name: %s got: %s", testJob.Name, jobs[0].Name)
 	}
 
 	if _, err := store.DeleteJob("test"); err != nil {
