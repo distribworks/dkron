@@ -280,13 +280,43 @@ func TestEncrypt(t *testing.T) {
 		"-encrypt", "kPpdjphiipNSsjd4QHWbkA==",
 	}
 
-	go func() {
-		a.Run(args)
-	}()
+	go a.Run(args)
 	time.Sleep(2 * time.Second)
 
 	if !a.serf.EncryptionEnabled() {
 		t.Fatal("Encryption not enabled for serf")
 	}
+	shutdownCh <- struct{}{}
+}
+
+func Test_getRPCAddr(t *testing.T) {
+	shutdownCh := make(chan struct{})
+	defer close(shutdownCh)
+
+	ui := new(cli.MockUi)
+	a := &AgentCommand{
+		Ui:         ui,
+		ShutdownCh: shutdownCh,
+	}
+
+	a1Addr := testutil.GetBindAddr()
+
+	args := []string{
+		"-bind", a1Addr.String() + ":5000",
+		"-node", "test1",
+		"-server",
+		"-tag", "role=test",
+	}
+
+	go a.Run(args)
+	time.Sleep(2 * time.Second)
+
+	getRPCAddr := a.getRPCAddr()
+	exRPCAddr := a1Addr.String() + ":6868"
+
+	if exRPCAddr != getRPCAddr {
+		t.Fatalf("Expected address was: %s got %s", exRPCAddr, getRPCAddr)
+	}
+
 	shutdownCh <- struct{}{}
 }
