@@ -269,8 +269,8 @@ func (a *AgentCommand) setupSerf() *serf.Serf {
 		} else {
 			// If there is a bind IP, ensure it is available
 			found := false
-			for _, a := range addrs {
-				addr, ok := a.(*net.IPNet)
+			for _, ad := range addrs {
+				addr, ok := ad.(*net.IPNet)
 				if !ok {
 					continue
 				}
@@ -786,7 +786,8 @@ func (a *AgentCommand) setExecution(payload []byte) *Execution {
 // This function is called when a client request the RPCAddress
 // of the current member.
 func (a *AgentCommand) getRPCAddr() string {
-	addr, _ := net.ResolveTCPAddr("tcp", a.config.BindAddr)
+	bindIp, _, _ := a.config.AddrParts(a.config.BindAddr)
 
-	return fmt.Sprintf("%s:%d", addr.IP.String(), a.config.RPCPort)
+	println(a.config.BindAddr)
+	return fmt.Sprintf("%s:%d", bindIp, a.config.RPCPort)
 }
