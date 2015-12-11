@@ -82,7 +82,6 @@ func TestAgentCommandElectLeader(t *testing.T) {
 	args := []string{
 		"-bind", a1Addr,
 		"-join", a2Addr,
-		"-rpc-addr", testutil.GetBindAddr().String() + ":6868",
 		"-node", "test1",
 		"-server",
 		"-debug",
@@ -112,7 +111,6 @@ func TestAgentCommandElectLeader(t *testing.T) {
 	args2 := []string{
 		"-bind", a2Addr,
 		"-join", a1Addr,
-		"-rpc-addr", testutil.GetBindAddr().String() + ":6868",
 		"-node", "test2",
 		"-server",
 		"-debug",
@@ -184,7 +182,6 @@ func Test_processFilteredNodes(t *testing.T) {
 	args := []string{
 		"-bind", a1Addr,
 		"-join", a2Addr,
-		"-rpc-addr", testutil.GetBindAddr().String() + ":6868",
 		"-node", "test1",
 		"-server",
 		"-tag", "role=test",
@@ -209,7 +206,6 @@ func Test_processFilteredNodes(t *testing.T) {
 	args2 := []string{
 		"-bind", a2Addr,
 		"-join", a1Addr,
-		"-rpc-addr", testutil.GetBindAddr().String() + ":6868",
 		"-node", "test2",
 		"-server",
 		"-tag", "role=test",
@@ -273,7 +269,6 @@ func TestEncrypt(t *testing.T) {
 
 	args := []string{
 		"-bind", testutil.GetBindAddr().String(),
-		"-rpc-addr", testutil.GetBindAddr().String() + ":6868",
 		"-node", "test1",
 		"-server",
 		"-tag", "role=test",
