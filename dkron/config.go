@@ -32,7 +32,7 @@ type Config struct {
 	StartJoin             AppendSliceValue
 	Keyspace              string
 	UIDir                 string
-	RPCAddr               string
+	RPCPort               int
 
 	MailHost     string
 	MailPort     uint16

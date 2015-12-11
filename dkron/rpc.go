@@ -70,7 +70,7 @@ func listenRPC(a *AgentCommand) {
 	}
 
 	log.WithFields(logrus.Fields{
-		"rpc_addr": a.config.RPCAddr,
+		"rpc_addr": a.getRPCAddr(),
 	}).Debug("rpc: Registering RPC server")
 
 	rpc.Register(r)
@@ -91,7 +91,7 @@ func listenRPC(a *AgentCommand) {
 	// workaround
 	http.DefaultServeMux = oldMux
 
-	l, e := net.Listen("tcp", a.config.RPCAddr)
+	l, e := net.Listen("tcp", a.getRPCAddr())
 	if e != nil {
 		log.Fatal("listen error:", e)
 	}

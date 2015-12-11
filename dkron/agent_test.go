@@ -82,7 +82,6 @@ func TestAgentCommandElectLeader(t *testing.T) {
 	args := []string{
 		"-bind", a1Addr,
 		"-join", a2Addr,
-		"-rpc-addr", testutil.GetBindAddr().String() + ":6868",
 		"-node", "test1",
 		"-server",
 		"-debug",
@@ -112,7 +111,6 @@ func TestAgentCommandElectLeader(t *testing.T) {
 	args2 := []string{
 		"-bind", a2Addr,
 		"-join", a1Addr,
-		"-rpc-addr", testutil.GetBindAddr().String() + ":6868",
 		"-node", "test2",
 		"-server",
 		"-debug",
@@ -184,7 +182,6 @@ func Test_processFilteredNodes(t *testing.T) {
 	args := []string{
 		"-bind", a1Addr,
 		"-join", a2Addr,
-		"-rpc-addr", testutil.GetBindAddr().String() + ":6868",
 		"-node", "test1",
 		"-server",
 		"-tag", "role=test",
@@ -209,7 +206,6 @@ func Test_processFilteredNodes(t *testing.T) {
 	args2 := []string{
 		"-bind", a2Addr,
 		"-join", a1Addr,
-		"-rpc-addr", testutil.GetBindAddr().String() + ":6868",
 		"-node", "test2",
 		"-server",
 		"-tag", "role=test",
@@ -273,20 +269,49 @@ func TestEncrypt(t *testing.T) {
 
 	args := []string{
 		"-bind", testutil.GetBindAddr().String(),
-		"-rpc-addr", testutil.GetBindAddr().String() + ":6868",
 		"-node", "test1",
 		"-server",
 		"-tag", "role=test",
 		"-encrypt", "kPpdjphiipNSsjd4QHWbkA==",
 	}
 
-	go func() {
-		a.Run(args)
-	}()
+	go a.Run(args)
 	time.Sleep(2 * time.Second)
 
 	if !a.serf.EncryptionEnabled() {
 		t.Fatal("Encryption not enabled for serf")
 	}
+	shutdownCh <- struct{}{}
+}
+
+func Test_getRPCAddr(t *testing.T) {
+	shutdownCh := make(chan struct{})
+	defer close(shutdownCh)
+
+	ui := new(cli.MockUi)
+	a := &AgentCommand{
+		Ui:         ui,
+		ShutdownCh: shutdownCh,
+	}
+
+	a1Addr := testutil.GetBindAddr()
+
+	args := []string{
+		"-bind", a1Addr.String() + ":5000",
+		"-node", "test1",
+		"-server",
+		"-tag", "role=test",
+	}
+
+	go a.Run(args)
+	time.Sleep(2 * time.Second)
+
+	getRPCAddr := a.getRPCAddr()
+	exRPCAddr := a1Addr.String() + ":6868"
+
+	if exRPCAddr != getRPCAddr {
+		t.Fatalf("Expected address was: %s got %s", exRPCAddr, getRPCAddr)
+	}
+
 	shutdownCh <- struct{}{}
 }

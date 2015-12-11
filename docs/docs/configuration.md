@@ -42,4 +42,4 @@ Settings for dkron can be specified in three ways: Using a `config/dkron.json` c
 
 * `-ui-dir` - Directory from where to serve web UI.
 
-* `-rpc-addr` - The address that Dkron will bind to for the agent's RPC server, defaults to ":6868".
+* `-rpc-port` - The port that Dkron will use to bind for the agent's RPC server, defaults to 6868. The RPC address will be the bind address.

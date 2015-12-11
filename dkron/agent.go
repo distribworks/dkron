@@ -73,7 +73,8 @@ Options:
   -encrypt                        Key for encrypting network traffic.
                                   Must be a base64-encoded 16-byte key.
   -ui-dir                         Directory from where to serve Web UI
-  -rpc-addr=:6868                 RPC Address used to communicate with clients. Only used when server.
+  -rpc-port=6868                  RPC Port used to communicate with clients. Only used when server.
+                                  The RPC IP Address will be the same as the bind address.
 
   -mail-host                      Mail server host address to use for notifications.
   -mail-port                      Mail server port.
@@ -126,8 +127,7 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	viper.SetDefault("debug", cmdFlags.Bool("debug", false, "output debug log"))
 	cmdFlags.String("ui-dir", ".", "directory to serve web UI")
 	viper.SetDefault("ui_dir", cmdFlags.Lookup("ui-dir").Value)
-	cmdFlags.String("rpc-addr", ":6868", "RPC address")
-	viper.SetDefault("rpc_addr", cmdFlags.Lookup("rpc-addr").Value)
+	viper.SetDefault("rpc_port", cmdFlags.Int("rpc-port", 6868, "RPC port"))
 
 	// Notifications
 	cmdFlags.String("mail-host", "", "notification mail server host")
@@ -186,7 +186,7 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 		Keyspace:        viper.GetString("keyspace"),
 		EncryptKey:      viper.GetString("encrypt"),
 		UIDir:           viper.GetString("ui_dir"),
-		RPCAddr:         viper.GetString("rpc_addr"),
+		RPCPort:         viper.GetInt("rpc_port"),
 
 		MailHost:     viper.GetString("mail_host"),
 		MailPort:     uint16(viper.GetInt("mail_port")),
@@ -201,7 +201,9 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 }
 
 // setupAgent is used to create the agent we use
-func (a *AgentCommand) setupSerf(config *Config) *serf.Serf {
+func (a *AgentCommand) setupSerf() *serf.Serf {
+	config := a.config
+
 	bindIP, bindPort, err := config.AddrParts(config.BindAddr)
 	if err != nil {
 		a.Ui.Error(fmt.Sprintf("Invalid bind address: %s", err))
@@ -267,8 +269,8 @@ func (a *AgentCommand) setupSerf(config *Config) *serf.Serf {
 		} else {
 			// If there is a bind IP, ensure it is available
 			found := false
-			for _, a := range addrs {
-				addr, ok := a.(*net.IPNet)
+			for _, ad := range addrs {
+				addr, ok := ad.(*net.IPNet)
 				if !ok {
 					continue
 				}
@@ -346,8 +348,8 @@ func (a *AgentCommand) setupSerf(config *Config) *serf.Serf {
 	serfConfig.EventCh = a.eventCh
 
 	// Start Serf
-	a.Ui.Output("Starting Serf agent...")
-	log.Info("agent: Serf agent starting")
+	a.Ui.Output("Starting Dkron agent...")
+	log.Info("agent: Dkron agent starting")
 
 	serfConfig.LogOutput = ioutil.Discard
 	serfConfig.MemberlistConfig.LogOutput = ioutil.Discard
@@ -379,7 +381,7 @@ func UnmarshalTags(tags []string) (map[string]string, error) {
 
 func (a *AgentCommand) Run(args []string) int {
 	a.config = a.readConfig(args)
-	if a.serf = a.setupSerf(a.config); a.serf == nil {
+	if a.serf = a.setupSerf(); a.serf == nil {
 		log.Fatal("agent: Can not setup serf")
 	}
 	a.join(a.config.StartJoin, true)
@@ -594,7 +596,7 @@ func (a *AgentCommand) eventLoop() {
 						"at":      query.LTime,
 					}).Debug("agent: RPC Config requested")
 
-					query.Respond([]byte(a.config.RPCAddr))
+					query.Respond([]byte(a.getRPCAddr()))
 				}
 			}
 
@@ -779,4 +781,12 @@ func (a *AgentCommand) setExecution(payload []byte) *Execution {
 	}
 
 	return &ex
+}
+
+// This function is called when a client request the RPCAddress
+// of the current member.
+func (a *AgentCommand) getRPCAddr() string {
+	bindIp, _, _ := a.config.AddrParts(a.config.BindAddr)
+
+	return fmt.Sprintf("%s:%d", bindIp, a.config.RPCPort)
 }
