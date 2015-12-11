@@ -788,6 +788,5 @@ func (a *AgentCommand) setExecution(payload []byte) *Execution {
 func (a *AgentCommand) getRPCAddr() string {
 	bindIp, _, _ := a.config.AddrParts(a.config.BindAddr)
 
-	println(a.config.BindAddr)
 	return fmt.Sprintf("%s:%d", bindIp, a.config.RPCPort)
 }
