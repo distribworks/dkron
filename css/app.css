@@ -275,6 +275,12 @@ h1, h2, h3, h4, h5, h6 {
   opacity: .7;
 }
 
+.tooltip-inner {
+  text-align: left;
+  max-width: 450px;
+  white-space: nowrap;
+}
+
 footer[role="contentinfo"] {
   font-size: .6em;
   font-weight: bold;

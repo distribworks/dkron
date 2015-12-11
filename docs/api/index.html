@@ -182,7 +182,7 @@
 <h1 id="rest-api">REST API</h1>
 <p>You can communicate with dkron using a RESTful JSON API over HTTP. dkron nodes usually listen on port <code>8080</code> for API requests. All examples in this section assume that you've found a running leader at <code>dkron-node:8080</code>.</p>
 <p>dkron implements a RESTful JSON API over HTTP to communicate with software clients. dkron listens in port <code>8080</code> by default. All examples in this section assume that you're using the default port.</p>
-<p>Default API responses are unformatted JSON add the <code>pretty=true</code> param to format the response.</p>
+<p>Default API responses are unformatted JSON add <code>?pretty</code> to the URL call to format the response.</p>
 <h2 id="status">Status</h2>
 <p>Status represents details about the node.</p>
 <h3 id="attributes">Attributes</h3>
