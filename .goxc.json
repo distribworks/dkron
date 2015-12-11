@@ -2,7 +2,6 @@
 	"ArtifactsDest": "downloads",
 	"Tasks": [
 		"interpolate-source",
-		"go-vet",
 		"xc",
 		"archive-zip",
 		"archive-tar-gz",
