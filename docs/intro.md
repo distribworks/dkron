@@ -3,7 +3,6 @@
 Welcome to the Dkron documentation! This is the reference guide on how to use Dkron. If you want a getting started guide refer to the [getting started guide](docs/getting-started).
 
 <div class="alert alert-warning" role="alert">Warning: Dkron is Under heavy development, it's considered alpha state, expect dragons.</div>
-<div class="alert alert-info" role="alert">Note: Version in this documentation, 0.0.2</div>
 
 ## What is Dkron
 

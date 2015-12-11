@@ -58,10 +58,7 @@ See the [configuration section](configuration).
 
 ## Usage
 
-
-By default dkron will try to use a local etcd server running in the same machine and in the default port.
-
-If you want to use an existing key-value store cluster of your own, you can specify it by setting the `backend` and `backend-machines` flag in the config file, env variables or as a command line flag.
+By default dkron will try to use a local etcd server running in the same machine and in the default port. You can specify the store by setting the `backend` and `backend-machines` flag in the config file, env variables or as a command line flag.
 
 To start a dkron server instance just run:
 
