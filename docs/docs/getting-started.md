@@ -32,9 +32,9 @@ Dkron relies on the key-value store for data storage, you can run an instance of
 
 It can use etcd, Consul or Zookeeper as data stores. To install any of this systems got to their web site:
 
-- etcd: https://coreos.com/etcd/docs/latest/
-- Consul: https://consul.io/intro/getting-started/install.html
-- ZooKeeper: https://zookeeper.apache.org/doc/r3.3.3/zookeeperStarted.html
+- [etcd](https://coreos.com/etcd/docs/latest/)
+- [Consul](https://consul.io/intro/getting-started/install.html)
+- [ZooKeeper](https://zookeeper.apache.org/doc/r3.3.3/zookeeperStarted.html)
 
 ## Installation
 
