@@ -786,7 +786,7 @@ func (a *AgentCommand) setExecution(payload []byte) *Execution {
 // This function is called when a client request the RPCAddress
 // of the current member.
 func (a *AgentCommand) getRPCAddr() string {
-	bindIp, _, _ := a.config.AddrParts(a.config.BindAddr)
+	bindIp := a.serf.LocalMember().Addr
 
 	return fmt.Sprintf("%s:%d", bindIp, a.config.RPCPort)
 }
