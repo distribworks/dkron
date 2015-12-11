@@ -27,11 +27,9 @@ func TestRPCExecutionDone(t *testing.T) {
 	}
 
 	aAddr := testutil.GetBindAddr().String()
-	rpcAddr := testutil.GetBindAddr().String() + ":6868"
 
 	args := []string{
 		"-bind", aAddr,
-		"-rpc-addr", rpcAddr,
 		"-node", "test1",
 		"-server",
 		"-debug",
@@ -65,7 +63,7 @@ func TestRPCExecutionDone(t *testing.T) {
 	}
 
 	rc := &RPCClient{
-		ServerAddr: rpcAddr,
+		ServerAddr: a.getRPCAddr(),
 	}
 
 	rc.callExecutionDone(testExecution)
