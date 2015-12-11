@@ -52,11 +52,14 @@ func (a *AgentCommand) apiRoutes(r *mux.Router) {
 	subver.HandleFunc("/leader", a.leaderHandler)
 
 	subver.Path("/jobs").HandlerFunc(a.jobCreateOrUpdateHandler).Methods("POST", "PATCH")
+	// Place fallback routes last
 	subver.Path("/jobs").HandlerFunc(a.jobsHandler)
+
 	sub := subver.PathPrefix("/jobs").Subrouter()
-	sub.HandleFunc("/{job}", a.jobGetHandler)
 	sub.HandleFunc("/{job}", a.jobDeleteHandler).Methods("DELETE")
 	sub.HandleFunc("/{job}", a.jobRunHandler).Methods("POST")
+	// Place fallback routes last
+	sub.HandleFunc("/{job}", a.jobGetHandler)
 
 	subex := subver.PathPrefix("/executions").Subrouter()
 	subex.HandleFunc("/{job}", a.executionsHandler)
