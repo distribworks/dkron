@@ -200,7 +200,7 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	}
 }
 
-// setupAgent is used to create the agent we use
+// setupSerf is used to create the agent we use
 func (a *AgentCommand) setupSerf() *serf.Serf {
 	config := a.config
 
