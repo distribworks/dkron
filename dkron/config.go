@@ -62,7 +62,7 @@ func init() {
 	viper.AutomaticEnv()
 }
 
-// BindAddrParts returns the parts of the BindAddr that should be
+// AddrParts returns the parts of the BindAddr that should be
 // used to configure Serf.
 func (c *Config) AddrParts(address string) (string, int, error) {
 	checkAddr := address
