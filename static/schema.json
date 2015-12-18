@@ -44,10 +44,10 @@
       "links": [
         {
           "description": "Status.",
-          "href": "/v1/",
+          "href": "/v1",
           "method": "GET",
           "rel": "self",
-          "title": ""
+          "title": "Status"
         }
       ],
       "properties": {
