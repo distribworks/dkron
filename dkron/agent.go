@@ -671,7 +671,7 @@ func (a *AgentCommand) join(addrs []string, replay bool) (n int, err error) {
 }
 
 func (a *AgentCommand) RunQuery(job *Job) {
-	filterNodes, err := a.processFilteredNodes(job)
+	filterNodes, filterTags, err := a.processFilteredNodes(job)
 	if err != nil {
 		log.WithFields(logrus.Fields{
 			"job": job.Name,
@@ -683,7 +683,7 @@ func (a *AgentCommand) RunQuery(job *Job) {
 
 	params := &serf.QueryParam{
 		FilterNodes: filterNodes,
-		FilterTags:  job.Tags,
+		FilterTags:  filterTags,
 		RequestAck:  true,
 	}
 
@@ -697,6 +697,7 @@ func (a *AgentCommand) RunQuery(job *Job) {
 	log.WithFields(logrus.Fields{
 		"query":    QueryRunJob,
 		"job_name": ex.JobName,
+		"json":     string(exJson),
 	}).Debug("agent: Sending query")
 
 	qr, err := a.serf.Query(QueryRunJob, exJson, params)
@@ -739,19 +740,21 @@ func (a *AgentCommand) RunQuery(job *Job) {
 
 }
 
-func (a *AgentCommand) processFilteredNodes(job *Job) ([]string, error) {
+func (a *AgentCommand) processFilteredNodes(job *Job) ([]string, map[string]string, error) {
 	var nodes []string
+	tags := job.Tags
+
 	for jtk, jtv := range job.Tags {
 		var tc []string
 		if tc = strings.Split(jtv, ":"); len(tc) == 2 {
 			tv := tc[0]
 
 			// Set original tag to clean tag
-			job.Tags[jtk] = tv
+			tags[jtk] = tv
 
 			count, err := strconv.Atoi(tc[1])
 			if err != nil {
-				return nil, err
+				return nil, nil, err
 			}
 
 			for _, member := range a.serf.Members() {
@@ -766,7 +769,7 @@ func (a *AgentCommand) processFilteredNodes(job *Job) ([]string, error) {
 		}
 	}
 
-	return nodes, nil
+	return nodes, tags, nil
 }
 
 func (a *AgentCommand) setExecution(payload []byte) *Execution {
