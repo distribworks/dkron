@@ -231,7 +231,7 @@ func Test_processFilteredNodes(t *testing.T) {
 	}
 
 	if tags["role"] != "test" {
-		t.Fatal("Tags error, expected: test, got %s", tags["role"])
+		t.Fatalf("Tags error, expected: test, got %s", tags["role"])
 	}
 
 	// Send a shutdown request
