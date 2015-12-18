@@ -1,3 +1,4 @@
+*.consul
 *.etcd
 site/
 docs/scss/Gemfile.lock
