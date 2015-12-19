@@ -224,10 +224,14 @@ func Test_processFilteredNodes(t *testing.T) {
 	}
 
 	time.Sleep(2 * time.Second)
-	nodes, err := a.processFilteredNodes(job)
+	nodes, tags, err := a.processFilteredNodes(job)
 
 	if nodes[0] != "test1" || nodes[1] != "test2" {
 		t.Fatal("Not expected returned nodes")
+	}
+
+	if tags["role"] != "test" {
+		t.Fatalf("Tags error, expected: test, got %s", tags["role"])
 	}
 
 	// Send a shutdown request
