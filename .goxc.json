@@ -5,10 +5,10 @@
 		"xc",
 		"archive-zip",
 		"archive-tar-gz",
-		"deb",
+		"deb"
 		"publish-github"
 	],
-	"BuildConstraints": "linux,amd64 windows,amd64 darwin,amd64",
+	"BuildConstraints": "linux,amd64 windows,amd64 darwin,amd64 linux,arm",
 	"ResourcesInclude": "INSTALL*,README*,LICENSE*,config/*,static/*,templates/*",
 	"PackageVersion": "0.6.0",
 	"TaskSettings": {
