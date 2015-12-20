@@ -116,8 +116,8 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	cmdFlags.String("profile", "lan", "timing profile to use (lan, wan, local)")
 	viper.SetDefault("profile", cmdFlags.Lookup("profile").Value)
 	viper.SetDefault("server", cmdFlags.Bool("server", false, "start dkron server"))
-	startJoin := &AppendSliceValue{}
-	cmdFlags.Var(startJoin, "join", "address of agent to join on startup")
+	var startJoin []string
+	cmdFlags.Var((*AppendSliceValue)(&startJoin), "join", "address of agent to join on startup")
 	var tag []string
 	cmdFlags.Var((*AppendSliceValue)(&tag), "tag", "tag pair, specified as key=value")
 	cmdFlags.String("keyspace", "dkron", "key namespace to use")
