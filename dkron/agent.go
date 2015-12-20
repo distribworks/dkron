@@ -417,14 +417,8 @@ func (a *AgentCommand) handleSignals() int {
 	}
 	a.Ui.Output(fmt.Sprintf("Caught signal: %v", sig))
 
-	// Check if we should do a graceful leave
-	graceful := false
-	if sig == syscall.SIGTERM || sig == os.Interrupt {
-		graceful = true
-	}
-
 	// Bail fast if not doing a graceful leave
-	if !graceful {
+	if sig != syscall.SIGTERM && sig != os.Interrupt {
 		return 1
 	}
 
