@@ -26,25 +26,30 @@ Said that, I encourage you to try it, it's very easy to use, see how it works fo
 
 Clone the repository.
 
-*NOTE*: The included etcd binary is compiled for OSX, if you're in another platform, download the apporpriate etcd binary for your platform.
+*NOTE*: The included etcd, consul binary are compiled for OSX, if you're in another platform, download the apporpriate binaries for your platform.
 
 Setup goreman:
 
 `go get github.com/mattn/goreman`
 
+Start etcd or consul:
+
+`bin/etcd -name dkron1`
+`bin/consul agent -server -bootstrap-expect 1 -data-dir ./data.consul`
+
 Next, run the included Procfile
 
 `goreman start`
 
-This will start etcd and some Dkron instances that will form a cluster.
+This will start some Dkron instances that will form a cluster.
 
 Now you can view the web panel at: http://localhost:8081
 
-To add jobs to the system read the API docs or take a look to the `job.json` file.
+To add jobs to the system read the API docs.
 
 ## Documentation
 
-Full, comprehensive documentation is viewable on the Dkron website: http://dkron.io
+Full, comprehensive documentation is viewable on the [Dkron website](http://dkron.io)
 
 ## Get in touch
 
