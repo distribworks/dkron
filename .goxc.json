@@ -5,7 +5,7 @@
 		"xc",
 		"archive-zip",
 		"archive-tar-gz",
-		"deb"
+		"deb",
 		"publish-github"
 	],
 	"BuildConstraints": "linux,amd64 windows,amd64 darwin,amd64 linux,arm",
