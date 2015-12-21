@@ -1,3 +1,8 @@
+## 0.6.1 (2015-12-21)
+
+- Fixed bugs (#55)][https://github.com/victorcoder/dkron/issues/55], (#52)[https://github.com/victorcoder/dkron/issues/52], etc.
+- Build for linux arm
+
 ## 0.6.0 (2015-12-11)
 
 - Some other improvements and bug fixing
