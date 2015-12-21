@@ -742,9 +742,14 @@ func (a *AgentCommand) RunQuery(job *Job) {
 
 func (a *AgentCommand) processFilteredNodes(job *Job) ([]string, map[string]string, error) {
 	var nodes []string
-	tags := job.Tags
+	tags := make(map[string]string)
 
-	for jtk, jtv := range job.Tags {
+	// Actually copy the map
+	for key, val := range job.Tags {
+		tags[key] = val
+	}
+
+	for jtk, jtv := range tags {
 		var tc []string
 		if tc = strings.Split(jtv, ":"); len(tc) == 2 {
 			tv := tc[0]
