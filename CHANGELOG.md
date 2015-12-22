@@ -1,3 +1,7 @@
+## 0.6.2 (2015-12-22)
+
+- Fixed [#62](https://github.com/victorcoder/dkron/issues/55)
+
 ## 0.6.1 (2015-12-21)
 
 - Fixed bugs [#55](https://github.com/victorcoder/dkron/issues/55), [#52](https://github.com/victorcoder/dkron/issues/52), etc.
