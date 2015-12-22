@@ -235,6 +235,10 @@ func Test_processFilteredNodes(t *testing.T) {
 		t.Fatalf("Tags error, expected: test, got %s", tags["role"])
 	}
 
+	if job.Tags["role"] != "test:2" {
+		t.Fatalf("Job tags error, expected: 'role=test:2', got 'role=%s'", job.Tags["role"])
+	}
+
 	// Send a shutdown request
 	shutdownCh <- struct{}{}
 	shutdownCh2 <- struct{}{}
