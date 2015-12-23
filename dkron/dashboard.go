@@ -114,7 +114,7 @@ func (a *AgentCommand) dashboardJobsHandler(w http.ResponseWriter, r *http.Reque
 			return ""
 		},
 		"jobJson": func(job *Job) string {
-			j, _ := json.MarshalIndent(job, "", "<br>")
+			j, _ := json.MarshalIndent(job, "", "\t")
 			return string(j)
 		},
 	}

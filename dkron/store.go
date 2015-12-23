@@ -39,6 +39,9 @@ func NewStore(backend string, machines []string, a *AgentCommand, keyspace strin
 
 // Store a job
 func (s *Store) SetJob(job *Job) error {
+	// Sanitize the job name
+	job.Name = generateSlug(job.Name)
+
 	jobJson, _ := json.Marshal(job)
 
 	log.WithFields(logrus.Fields{
