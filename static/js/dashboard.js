@@ -116,6 +116,25 @@ dkron.controller('IndexCtrl', function ($scope, $http, $interval, $element) {
 
     var mq = $http.get(DKRON_API_PATH + '/members');
     mq.success(function(data, status, headers, config) {
+      angular.forEach(data, function(val, key){
+          switch(val.Status) {
+            case 0:
+              data[key].Status = "none";
+              break;
+            case 1:
+              data[key].Status = "alive";
+              break;
+            case 2:
+              data[key].Status = "leaving";
+              break;
+            case 3:
+              data[key].Status = "left";
+              break;
+            case 4:
+              data[key].Status = "failed";
+              break;
+          }
+      });
       $scope.members = data;
     });
 
