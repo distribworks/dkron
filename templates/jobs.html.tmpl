@@ -13,7 +13,7 @@
       {{ range $job := .Jobs }}
       <tr>
 
-        <td><a href="jobs/{{$job.Name}}/executions" data-toggle="tooltip" data-placement="top" title="{{ jobJson $job }}" data-html="true">{{ $job.Name }}</a></td>
+        <td><a href="jobs/{{$job.Name}}/executions">{{ $job.Name }}</a></td>
         <td>{{ $job.SuccessCount }}</td>
         <td>{{ $job.ErrorCount }}</td>
         <td>
@@ -23,8 +23,29 @@
             <i class="fa fa-circle text-{{ executionStatus $job }}"></i>
           {{end}}
         </td>
-        <td><button ng-click="click('{{ $job.Name }}')">Run</button></td>
+        <td>
+          <button data-toggle="modal" data-target="#{{ $job.Name }}-modal">View</button>
+          <button ng-click="click('{{ $job.Name }}')">Run</button>
+        </td>
       </tr>
+
+      <!-- Modal -->
+      <div class="modal fade" id="{{ $job.Name }}-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="myModalLabel">View {{ $job.Name }}</h4>
+            </div>
+            <div class="modal-body">
+              <pre>{{ $job | jobJson }}</pre>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
       {{ end }}
     </table>
   </div>
