@@ -76,4 +76,10 @@ func TestRPCExecutionDone(t *testing.T) {
 	if string(execs[0].Output) != string(testExecution.Output) {
 		t.Fatalf("error on retrieved excution expected: %s got: %s", testExecution.Output, execs[0].Output)
 	}
+
+	// Test store execution on a deleted job
+	store.DeleteJob(testJob.Name)
+
+	testExecution.FinishedAt = time.Now()
+	rc.callExecutionDone(testExecution)
 }
