@@ -120,7 +120,7 @@ func (r *RPCClient) callExecutionDone(execution *Execution) error {
 		log.WithFields(logrus.Fields{
 			"err":         err,
 			"server_addr": r.ServerAddr,
-		}).Fatal("rpc: error dialing.")
+		}).Error("rpc: error dialing.")
 		return err
 	}
 	defer client.Close()
@@ -131,7 +131,7 @@ func (r *RPCClient) callExecutionDone(execution *Execution) error {
 	if err != nil {
 		log.WithFields(logrus.Fields{
 			"error": err,
-		}).Fatal("rpc: Error calling ExecutionDone")
+		}).Error("rpc: Error calling ExecutionDone")
 		return err
 	}
 	log.Debug("rpc: from: %s", reply.From)
