@@ -1,12 +1,18 @@
 package dkron
 
 import (
+	"errors"
 	"net"
 	"net/http"
 	"net/rpc"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/docker/libkv/store"
 	"github.com/hashicorp/serf/serf"
+)
+
+var (
+	ErrExecutionDoneForDeletedJob = errors.New("rpc: Received execution done for a deleted job.")
 )
 
 type RPCServer struct {
@@ -19,18 +25,23 @@ func (r *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeResponse)
 		"job":   execution.JobName,
 	}).Debug("rpc: Received execution done")
 
+	// Save job status
+	job, err := r.agent.store.GetJob(execution.JobName)
+	if err != nil {
+		if err == store.ErrKeyNotFound {
+			log.Error(ErrExecutionDoneForDeletedJob)
+			return ErrExecutionDoneForDeletedJob
+		}
+		log.Fatal(err)
+		return err
+	}
+
 	// Save the new execution to store
 	if _, err := r.agent.store.SetExecution(&execution); err != nil {
 		log.Fatal(err)
 		return err
 	}
 
-	// Save job status
-	job, err := r.agent.store.GetJob(execution.JobName)
-	if err != nil {
-		log.Fatal(err)
-		return err
-	}
 	if execution.Success {
 		job.LastSuccess = execution.FinishedAt
 		job.SuccessCount = job.SuccessCount + 1
@@ -109,7 +120,7 @@ func (r *RPCClient) callExecutionDone(execution *Execution) error {
 		log.WithFields(logrus.Fields{
 			"err":         err,
 			"server_addr": r.ServerAddr,
-		}).Fatal("rpc: error dialing.")
+		}).Error("rpc: error dialing.")
 		return err
 	}
 	defer client.Close()
@@ -120,7 +131,7 @@ func (r *RPCClient) callExecutionDone(execution *Execution) error {
 	if err != nil {
 		log.WithFields(logrus.Fields{
 			"error": err,
-		}).Fatal("rpc: Error calling ExecutionDone")
+		}).Error("rpc: Error calling ExecutionDone")
 		return err
 	}
 	log.Debug("rpc: from: %s", reply.From)
