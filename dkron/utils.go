@@ -16,7 +16,6 @@ func generateSlug(str string) (slug string) {
 		default:
 			return -1
 		}
-		return -1
 	}, strings.ToLower(strings.TrimSpace(str)))
 }
 
