@@ -6,7 +6,6 @@ import (
 	"html/template"
 	"net/http"
 	"path/filepath"
-	"sort"
 
 	"github.com/gorilla/mux"
 )
@@ -16,12 +15,6 @@ const (
 	dashboardPathPrefix = "dashboard"
 	apiPathPrefix       = "v1"
 )
-
-type int64arr []int64
-
-func (a int64arr) Len() int           { return len(a) }
-func (a int64arr) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a int64arr) Less(i, j int) bool { return a[i] < a[j] }
 
 type commonDashboardData struct {
 	Version    string
@@ -141,18 +134,10 @@ func (a *AgentCommand) dashboardExecutionsHandler(w http.ResponseWriter, r *http
 	vars := mux.Vars(r)
 	job := vars["job"]
 
-	execs, _ := a.store.GetExecutions(job)
-	groups := make(map[int64][]*Execution)
-	for _, exec := range execs {
-		groups[exec.Group] = append(groups[exec.Group], exec)
+	groups, byGroup, err := a.store.GetGroupedExecutions(job)
+	if err != nil {
+		log.Error(err)
 	}
-
-	// Build a separate data structure to show in order
-	var byGroup int64arr
-	for key := range groups {
-		byGroup = append(byGroup, key)
-	}
-	sort.Sort(byGroup)
 
 	tmpl := template.Must(template.New("dashboard.html.tmpl").Funcs(template.FuncMap{
 		"html": func(value []byte) string {
@@ -170,10 +155,6 @@ func (a *AgentCommand) dashboardExecutionsHandler(w http.ResponseWriter, r *http
 			return s
 		},
 	}).ParseFiles(templateSet(a.config.UIDir, "executions")...))
-
-	if len(execs) > 100 {
-		execs = execs[len(execs)-100:]
-	}
 
 	data := struct {
 		Common  *commonDashboardData
