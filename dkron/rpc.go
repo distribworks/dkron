@@ -29,7 +29,7 @@ func (r *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeResponse)
 	job, err := r.agent.store.GetJob(execution.JobName)
 	if err != nil {
 		if err == store.ErrKeyNotFound {
-			log.Error(ErrExecutionDoneForDeletedJob)
+			log.Warning(ErrExecutionDoneForDeletedJob)
 			return ErrExecutionDoneForDeletedJob
 		}
 		log.Fatal("rpc:", err)
@@ -130,7 +130,7 @@ func (r *RPCClient) callExecutionDone(execution *Execution) error {
 	if err != nil {
 		log.WithFields(logrus.Fields{
 			"error": err,
-		}).Error("rpc: Error calling ExecutionDone")
+		}).Warning("rpc: Error calling ExecutionDone")
 		return err
 	}
 	log.Debug("rpc: from: %s", reply.From)
