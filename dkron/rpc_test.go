@@ -32,7 +32,6 @@ func TestRPCExecutionDone(t *testing.T) {
 		"-bind", aAddr,
 		"-node", "test1",
 		"-server",
-		"-debug",
 		"-keyspace", "dkron",
 	}
 
