@@ -1,6 +1,7 @@
 package dkron
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
@@ -120,4 +121,9 @@ type Execution struct {
 
 	// The job used to generate this execution.
 	Job *Job `json:"job,omitempty"`
+}
+
+// Used to enerate the execution Id
+func (e *Execution) Key() string {
+	return fmt.Sprintf("%d-%s", e.StartedAt.UnixNano(), e.NodeName)
 }
