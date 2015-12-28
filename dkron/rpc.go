@@ -32,13 +32,12 @@ func (r *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeResponse)
 			log.Error(ErrExecutionDoneForDeletedJob)
 			return ErrExecutionDoneForDeletedJob
 		}
-		log.Fatal(err)
+		log.Fatal("rpc:", err)
 		return err
 	}
 
 	// Save the new execution to store
 	if _, err := r.agent.store.SetExecution(&execution); err != nil {
-		log.Fatal(err)
 		return err
 	}
 
@@ -51,7 +50,7 @@ func (r *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeResponse)
 	}
 
 	if err := r.agent.store.SetJob(job); err != nil {
-		log.Fatal(err)
+		log.Fatal("rpc:", err)
 	}
 
 	exg, err := r.agent.store.GetExecutionGroup(&execution)
@@ -104,7 +103,7 @@ func listenRPC(a *AgentCommand) {
 
 	l, e := net.Listen("tcp", a.getRPCAddr())
 	if e != nil {
-		log.Fatal("listen error:", e)
+		log.Fatal("rpc:", e)
 	}
 	go http.Serve(l, nil)
 }
