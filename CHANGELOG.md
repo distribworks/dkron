@@ -1,3 +1,8 @@
+## 0.6.3 (2015-12-28)
+
+- UI: Better job view
+- Logic to store only the last 100 executions
+
 ## 0.6.2 (2015-12-22)
 
 - Fixed [#62](https://github.com/victorcoder/dkron/issues/55)
