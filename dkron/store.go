@@ -85,7 +85,6 @@ func (s *Store) GetJobs() ([]*Job, error) {
 func (s *Store) GetJob(name string) (*Job, error) {
 	res, err := s.Client.Get(s.keyspace + "/jobs/" + name)
 	if err != nil {
-		log.Panic("")
 		return nil, err
 	}
 
