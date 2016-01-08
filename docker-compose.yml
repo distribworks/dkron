@@ -2,8 +2,7 @@
 etcd:
   image: microbox/etcd
   ports:
-    - "4001:4001"
-    - "7001:7001"
+    - "4001"
   volumes:
     - ./etcd.data:/data
   command: -name=dcron1
@@ -11,9 +10,7 @@ etcd:
 consul:
   image: progrium/consul
   ports:
-    - "8400:8400"
-    - "8500:8500"
-    - "8600:53/udp"
+    - "8500"
   hostname: node1
   command: -server -bootstrap -ui-dir=/ui
 
@@ -22,9 +19,10 @@ dkron:
     - consul
     - etcd
   ports:
-    - "8080:8080"
-    - "8946:8946"
+    - "8080"
   build: .
   volumes:
     - /Users/victorcoder/src/github.com/victorcoder/dkron:/gopath/src/github.com/victorcoder/dkron
-  command: go run main.go agent -server -backend=etcd -backend-machine=etcd:4001
+  environment:
+    - GODEBUG=netdns=go
+  command: go run main.go agent -server -backend=etcd -backend-machine=etcd:4001 -join=dkron:8946
