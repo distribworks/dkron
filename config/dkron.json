@@ -4,6 +4,5 @@
     "datacenter": "east"
   },
   "keyspace": "dcron",
-  "encrypt": "kPpdjphiipNSsjd4QHWbkA==",
-  "join": ["127.0.0.1:5001", "127.0.0.1:5002"]
+  "encrypt": "kPpdjphiipNSsjd4QHWbkA=="
 }
