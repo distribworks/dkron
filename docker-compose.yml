@@ -22,7 +22,7 @@ dkron_seed:
     - "8080"
   build: .
   volumes:
-    - $(pwd):/gopath/src/github.com/victorcoder/dkron
+    - ./:/gopath/src/github.com/victorcoder/dkron
   environment:
     - GODEBUG=netdns=go
   command: go run main.go agent -server -backend=etcd -backend-machine=etcd:4001 -join=dkron:8946
@@ -36,7 +36,7 @@ dkron:
     - "8080"
   build: .
   volumes:
-    - $(pwd):/gopath/src/github.com/victorcoder/dkron
+    - ./:/gopath/src/github.com/victorcoder/dkron
   environment:
     - GODEBUG=netdns=go
   command: go run main.go agent -server -backend=etcd -backend-machine=etcd:4001 -join=dkron_seed:8946
