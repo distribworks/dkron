@@ -14,7 +14,7 @@ consul:
   hostname: node1
   command: -server -bootstrap -ui-dir=/ui
 
-dkron:
+dkron_seed:
   links:
     - consul
     - etcd
@@ -22,7 +22,21 @@ dkron:
     - "8080"
   build: .
   volumes:
-    - /Users/victorcoder/src/github.com/victorcoder/dkron:/gopath/src/github.com/victorcoder/dkron
+    - $(pwd):/gopath/src/github.com/victorcoder/dkron
   environment:
     - GODEBUG=netdns=go
   command: go run main.go agent -server -backend=etcd -backend-machine=etcd:4001 -join=dkron:8946
+
+dkron:
+  links:
+    - consul
+    - etcd
+    - dkron_seed
+  ports:
+    - "8080"
+  build: .
+  volumes:
+    - $(pwd):/gopath/src/github.com/victorcoder/dkron
+  environment:
+    - GODEBUG=netdns=go
+  command: go run main.go agent -server -backend=etcd -backend-machine=etcd:4001 -join=dkron_seed:8946

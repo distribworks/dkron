@@ -24,26 +24,27 @@ Said that, I encourage you to try it, it's very easy to use, see how it works fo
 
 ## Quick start
 
+The best way to test and develop dkron is using docker, you will need [Docker Toolbox](https://www.docker.com/docker-toolbox) installed before proceding.
+
 Clone the repository.
 
-*NOTE*: The included etcd, consul binary are compiled for OSX, if you're in another platform, download the apporpriate binaries for your platform.
+Install glide:
 
-Setup goreman:
+`go get github.com/Masterminds/glide`
 
-`go get github.com/mattn/goreman`
+Download dependencies:
 
-Start etcd or consul:
+`glide install`
 
-`bin/etcd -name dkron1`
-`bin/consul agent -server -bootstrap-expect 1 -data-dir ./data.consul`
+Next, run the included Docker Compose config:
 
-Next, run the included Procfile
+`docker-compose up`
 
-`goreman start`
+This will start, etc, consul and Dkron instances. To add more Dkron instances to the clusters:
 
-This will start some Dkron instances that will form a cluster.
+`docker-compose scale dkron=4`
 
-Now you can view the web panel at: http://localhost:8081
+Check the port mapping using `docker-compose ps` and use the browser to navigate to the Dkron dashboard using one of the ports mapped by compose.
 
 To add jobs to the system read the API docs.
 
