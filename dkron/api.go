@@ -25,10 +25,13 @@ func (a *AgentCommand) ServeHTTP() {
 	middle.Use(metaMiddleware(a.config.NodeName))
 	middle.UseHandler(r)
 
+	r.Handle("/debug/vars", http.DefaultServeMux)
+
 	r.PathPrefix("/dashboard").Handler(
 		http.StripPrefix("/dashboard", http.FileServer(
 			http.Dir(filepath.Join(a.config.UIDir, "static")))))
 
+	r.PathPrefix("/").Handler(http.RedirectHandler("/dashboard", 301))
 	srv := &http.Server{Addr: a.config.HTTPAddr, Handler: middle}
 
 	log.WithFields(logrus.Fields{
@@ -42,7 +45,6 @@ func (a *AgentCommand) ServeHTTP() {
 	} else {
 		go srv.ListenAndServe()
 	}
-	log.Info("api: Exiting HTTP server")
 }
 
 func (a *AgentCommand) apiRoutes(r *mux.Router) {

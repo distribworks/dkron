@@ -45,12 +45,10 @@ func (a *AgentCommand) dashboardRoutes(r *mux.Router) {
 	subui.HandleFunc("/jobs", a.dashboardJobsHandler)
 	subui.HandleFunc("/jobs/{job}/executions", a.dashboardExecutionsHandler)
 
-	// Path of static files must be last!
-	r.PathPrefix("/dashboard").Handler(
-		http.StripPrefix("/dashboard", http.FileServer(
-			http.Dir(filepath.Join(a.config.UIDir, "static")))))
-
-	r.PathPrefix("/").Handler(http.RedirectHandler("dashboard", 301))
+	// // Path of static files must be last!
+	// r.PathPrefix("/dashboard").Handler(
+	// 	http.StripPrefix("/dashboard", http.FileServer(
+	// 		http.Dir(filepath.Join(a.config.UIDir, "static")))))
 }
 
 func templateSet(uiDir string, template string) []string {
