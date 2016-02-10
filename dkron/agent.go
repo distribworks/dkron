@@ -763,10 +763,12 @@ func (a *AgentCommand) processFilteredNodes(job *Job) ([]string, map[string]stri
 			}
 
 			for _, member := range a.serf.Members() {
-				for mtk, mtv := range member.Tags {
-					if mtk == jtk && mtv == tv {
-						if len(nodes) < count {
-							nodes = append(nodes, member.Name)
+				if member.Status == serf.StatusAlive {
+					for mtk, mtv := range member.Tags {
+						if mtk == jtk && mtv == tv {
+							if len(nodes) < count {
+								nodes = append(nodes, member.Name)
+							}
 						}
 					}
 				}
