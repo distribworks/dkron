@@ -49,8 +49,6 @@ func (a *AgentCommand) dashboardRoutes(r *mux.Router) {
 	r.PathPrefix("/dashboard").Handler(
 		http.StripPrefix("/dashboard", http.FileServer(
 			http.Dir(filepath.Join(a.config.UIDir, "static")))))
-
-	r.PathPrefix("/").Handler(http.RedirectHandler("dashboard", 301))
 }
 
 func templateSet(uiDir string, template string) []string {

@@ -1,6 +1,7 @@
 package dkron
 
 import (
+	"expvar"
 	"fmt"
 	"sync"
 	"time"
@@ -8,6 +9,8 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/victorcoder/dkron/cron"
 )
+
+var cronInspect = expvar.NewMap("cron_entries")
 
 type Scheduler struct {
 	Cron    *cron.Cron
@@ -21,12 +24,12 @@ func NewScheduler() *Scheduler {
 
 func (s *Scheduler) Start(jobs []*Job) {
 	for _, job := range jobs {
-
 		log.WithFields(logrus.Fields{
 			"job": job.Name,
 		}).Debug("scheduler: Adding job to cron")
 
 		s.Cron.AddJob(job.Schedule, job)
+		cronInspect.Set(job.Name, job)
 	}
 	s.Cron.Start()
 	s.Started = true
@@ -95,6 +98,10 @@ func (j *Job) Run() {
 
 		j.Agent.RunQuery(j)
 	}
+}
+
+func (j *Job) String() string {
+	return fmt.Sprintf("\"Job: %s, scheduled at: %s\"", j.Name, j.Schedule)
 }
 
 type Execution struct {
