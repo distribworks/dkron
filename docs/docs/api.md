@@ -1,10 +1,10 @@
 # REST API
 
-You can communicate with dkron using a RESTful JSON API over HTTP. dkron nodes usually listen on port `8080` for API requests. All examples in this section assume that you've found a running leader at `dkron-node:8080`.
+You can communicate with Dkron using a RESTful JSON API over HTTP. Dkron nodes usually listen on port `8080` for API requests. All examples in this section assume that you've found a running leader at `dkron-node:8080`.
 
-dkron implements a RESTful JSON API over HTTP to communicate with software clients. dkron listens in port `8080` by default. All examples in this section assume that you're using the default port.
+Dkron implements a RESTful JSON API over HTTP to communicate with software clients. Dkron listens in port `8080` by default. All examples in this section assume that you're using the default port.
 
-Default API responses are unformatted JSON add `?pretty` to the URL call to format the response.
+Default API responses are unformatted JSON add the `pretty=true` param to format the response.
 
 ## Status
 
@@ -18,19 +18,19 @@ Status represents details about the node.
 | **serf** | *object* | Serf status | `{"encrypted":"false","...":"..."}` |
 | **tags** | *object* | Tags asociated with this node | `{"role":"web","server":"true"}` |
 
-### Status 
+### Status Status
 
 Status.
 
 ```
-GET /v1/
+GET /v1
 ```
 
 
 #### Curl Example
 
 ```bash
-$ curl -n dkron-node:8080/v1/
+$ curl -n dkron-node:8080/v1
 ```
 
 
