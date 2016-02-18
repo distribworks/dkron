@@ -169,6 +169,9 @@
             <li><a href="#command-line-options">Command line options</a></li>
         
     
+        <li class="main "><a href="#example">Example</a></li>
+        
+    
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
@@ -235,9 +238,37 @@
 <p><code>-ui-dir</code> - Directory from where to serve web UI.</p>
 </li>
 <li>
-<p><code>-rpc-port</code> - The port that Dkron will use to bind for the agent's RPC server, defaults to 6868. The RPC address will be the bind address.</p>
+<p><code>-rpc-port</code> - The port that Dkron will use to bind for the agent's RPC server, defaults to <code>6868</code>. The RPC address will be the bind address.</p>
 </li>
-</ul></div>
+</ul>
+<h1 id="example">Example</h1>
+<pre><code class="json"># Dkron example configuration file
+{
+  &quot;backend&quot;: &quot;etcd&quot;,
+  &quot;backend_machine&quot;: &quot;127.0.0.1:2379&quot;,
+  &quot;server&quot;: false,
+  &quot;debug&quot;: false,
+  &quot;tags&quot;: {
+    &quot;role&quot;: &quot;web&quot;,
+    &quot;datacenter&quot;: &quot;east&quot;
+  },
+  &quot;keyspace&quot;: &quot;dkron&quot;,
+  &quot;encrypt&quot;: &quot;a-valid-key-generated-with-dkron-keygen&quot;,
+  &quot;join&quot;: [
+    &quot;10.0.0.1&quot;,
+    &quot;10.0.0.2&quot;,
+    &quot;10.0.0.3&quot;
+  ],
+  &quot;webhook_url&quot;: &quot;https://hooks.slack.com/services/XXXXXX/XXXXXXX/XXXXXXXXXXXXXXXXXXXX&quot;,
+  &quot;webhook_payload&quot;: &quot;payload={\&quot;text\&quot;: \&quot;{{.Report}}\&quot;, \&quot;channel\&quot;: \&quot;#foo\&quot;}&quot;,
+  &quot;webhook_headers&quot;: &quot;Content-Type:application/x-www-form-urlencoded&quot;,
+  &quot;mail_host&quot;: &quot;email-smtp.eu-west-1.amazonaws.com&quot;,
+  &quot;mail_port&quot;: 25,
+  &quot;mail_username&quot;: &quot;mailuser&quot;,
+  &quot;mail_password&quot;: &quot;mailpassword&quot;,
+  &quot;mail_from&quot;: &quot;cron@example.com&quot;
+}
+</code></pre></div>
               </div>
 
             

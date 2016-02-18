@@ -180,9 +180,9 @@
                 <div class="col-md-9" role="main">
 
 <h1 id="rest-api">REST API</h1>
-<p>You can communicate with dkron using a RESTful JSON API over HTTP. dkron nodes usually listen on port <code>8080</code> for API requests. All examples in this section assume that you've found a running leader at <code>dkron-node:8080</code>.</p>
-<p>dkron implements a RESTful JSON API over HTTP to communicate with software clients. dkron listens in port <code>8080</code> by default. All examples in this section assume that you're using the default port.</p>
-<p>Default API responses are unformatted JSON add <code>?pretty</code> to the URL call to format the response.</p>
+<p>You can communicate with Dkron using a RESTful JSON API over HTTP. Dkron nodes usually listen on port <code>8080</code> for API requests. All examples in this section assume that you've found a running leader at <code>dkron-node:8080</code>.</p>
+<p>Dkron implements a RESTful JSON API over HTTP to communicate with software clients. Dkron listens in port <code>8080</code> by default. All examples in this section assume that you're using the default port.</p>
+<p>Default API responses are unformatted JSON add the <code>pretty=true</code> param to format the response.</p>
 <h2 id="status">Status</h2>
 <p>Status represents details about the node.</p>
 <h3 id="attributes">Attributes</h3>
@@ -216,13 +216,13 @@
 </tr>
 </tbody>
 </table>
-<h3 id="status_1">Status</h3>
+<h3 id="status-status">Status Status</h3>
 <p>Status.</p>
-<pre><code>GET /v1/
+<pre><code>GET /v1
 </code></pre>
 
 <h4 id="curl-example">Curl Example</h4>
-<pre><code class="bash">$ curl -n dkron-node:8080/v1/
+<pre><code class="bash">$ curl -n dkron-node:8080/v1
 </code></pre>
 
 <h4 id="response-example">Response Example</h4>
