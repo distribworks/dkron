@@ -1,3 +1,9 @@
+## 0.6.4
+
+- Use expvars to expose metrics
+- fix https://github.com/victorcoder/dkron/issues/71
+- Better example config in package and docs
+
 ## 0.6.3 (2015-12-28)
 
 - UI: Better job view
