@@ -96,12 +96,13 @@ func (j *Job) Run() {
 			"schedule": j.Schedule,
 		}).Debug("scheduler: Run job")
 
+		cronInspect.Set(j.Name, j)
 		j.Agent.RunQuery(j)
 	}
 }
 
 func (j *Job) String() string {
-	return fmt.Sprintf("\"Job: %s, scheduled at: %s\"", j.Name, j.Schedule)
+	return fmt.Sprintf("\"Job: %s, scheduled at: %s, last run: %s, tags:%v\"", j.Name, j.Schedule, time.Now(), j.Tags)
 }
 
 type Execution struct {
