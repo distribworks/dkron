@@ -52,6 +52,11 @@ To add jobs to the system read the API docs.
 
 Full, comprehensive documentation is viewable on the [Dkron website](http://dkron.io)
 
+### Resources
+
+Chef cookbook
+https://supermarket.chef.io/cookbooks/dkron
+
 ## Get in touch
 
 - Twitter: [@dkronio](https://twitter.com/dkronio) or [@victorcoder](https://twitter.com/victorcoder)

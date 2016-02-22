@@ -46,8 +46,6 @@ There's a `.deb` package available too.
 
 The recommended way to install Dkron is using the `.deb` package.
 
-Sample upstart scripts for dkron are included in the `debian` folder
-
 ### Debian
 
 Sample init scripts are included in the `debian` folder
@@ -58,9 +56,17 @@ See the [configuration section](configuration).
 
 ## Usage
 
+By default Dkron uses the following ports:
+
+- `8946` for communicating between agents
+- `8080` for HTTP for the API and Dashboard
+- `6868` for RPC comunication between clients. 
+
+**Be sure you have opened this ports (or the ones that you configured) in your firewall or AWS security groups.**
+
 By default dkron will try to use a local etcd server running in the same machine and in the default port. You can specify the store by setting the `backend` and `backend-machines` flag in the config file, env variables or as a command line flag.
 
-To start a dkron server instance just run:
+To start a Dkron server instance just run:
 
 ```
 dkron agent -server
