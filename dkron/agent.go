@@ -4,6 +4,7 @@ import (
 	"crypto/sha1"
 	"encoding/json"
 	"errors"
+	"expvar"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -31,6 +32,8 @@ const (
 	// gracefulTimeout controls how long we wait before forcefully terminating
 	gracefulTimeout = 3 * time.Second
 )
+
+var expNode = expvar.NewString("node")
 
 // AgentCommand run server
 type AgentCommand struct {
@@ -385,6 +388,9 @@ func (a *AgentCommand) Run(args []string) int {
 		log.Fatal("agent: Can not setup serf")
 	}
 	a.join(a.config.StartJoin, true)
+
+	// Expose the node name
+	expNode.Set(a.config.NodeName)
 
 	if a.config.Server {
 		a.store = NewStore(a.config.Backend, a.config.BackendMachines, a, a.config.Keyspace)
