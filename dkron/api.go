@@ -52,6 +52,7 @@ func (a *AgentCommand) apiRoutes(r *mux.Router) {
 	subver := r.PathPrefix("/v1").Subrouter()
 	subver.HandleFunc("/members", a.membersHandler)
 	subver.HandleFunc("/leader", a.leaderHandler)
+	subver.HandleFunc("/leave", a.leaveHandler)
 
 	subver.Path("/jobs").HandlerFunc(a.jobCreateOrUpdateHandler).Methods("POST", "PATCH")
 	// Place fallback routes last
@@ -243,6 +244,14 @@ func (a *AgentCommand) leaderHandler(w http.ResponseWriter, r *http.Request) {
 	member, err := a.leaderMember()
 	if err == nil {
 		if err := printJson(w, r, member); err != nil {
+			log.Fatal(err)
+		}
+	}
+}
+
+func (a *AgentCommand) leaveHandler(w http.ResponseWriter, r *http.Request) {
+	if err := a.serf.Leave(); err != nil {
+		if err := printJson(w, r, a.listServers()); err != nil {
 			log.Fatal(err)
 		}
 	}
