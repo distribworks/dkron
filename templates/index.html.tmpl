@@ -22,7 +22,7 @@
         <th>Status</th>
         <th>Tags</th>
       </tr>
-      <tr ng-repeat="member in members">
+      <tr ng-repeat="member in members | orderBy:'Name'">
         <td ng-bind="member.Name"></td>
         <td ng-bind="member.Addr"></td>
         <td ng-bind="member.Port"></td>
