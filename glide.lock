@@ -1,12 +1,8 @@
 hash: a047b1ca118eceb0ec5f087e14c85a065be9ba3875781aad594f7a5ccf8889e0
-updated: 2015-12-22T16:01:08.243414273+01:00
+updated: 2016-02-22T23:08:19.361203838+01:00
 imports:
 - name: bitbucket.org/ww/goautoneg
   version: 75cd24fc2f2c
-- name: code.google.com/p/go.net
-  version: 937a34c9de13
-- name: code.google.com/p/go.text
-  version: 5b2527008a4c
 - name: github.com/agtorre/gocolorize
   version: f42b554bf7f006936130c9bb4f971afd2d87f671
 - name: github.com/armon/circbuf
