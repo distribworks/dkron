@@ -7,16 +7,16 @@ etcd:
     - ./etcd.data:/data
   command: -name=dcron1
 
-consul:
-  image: progrium/consul
-  ports:
-    - "8500"
-  hostname: node1
-  command: -server -bootstrap -ui-dir=/ui
+# consul:
+#   image: progrium/consul
+#   ports:
+#     - "8500"
+#   hostname: node1
+#   command: -server -bootstrap -ui-dir=/ui
 
 dkron_seed:
   links:
-    - consul
+    # - consul
     - etcd
   ports:
     - "8080"
@@ -29,7 +29,7 @@ dkron_seed:
 
 dkron:
   links:
-    - consul
+    # - consul
     - etcd
     - dkron_seed
   ports:
