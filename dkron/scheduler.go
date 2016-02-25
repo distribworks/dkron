@@ -102,7 +102,7 @@ func (j *Job) Run() {
 }
 
 func (j *Job) String() string {
-	return fmt.Sprintf("\"Job: %s, scheduled at: %s, last run: %s, tags:%v\"", j.Name, j.Schedule, time.Now(), j.Tags)
+	return fmt.Sprintf("\"Job: %s, scheduled at: %s, tags:%v\"", j.Name, j.Schedule, j.Tags)
 }
 
 type Execution struct {
