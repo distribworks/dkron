@@ -548,10 +548,20 @@ func (a *AgentCommand) eventLoop() {
 			}).Debug("agent: Received event")
 
 			if (e.EventType() == serf.EventMemberFailed || e.EventType() == serf.EventMemberLeave) && a.config.Server {
+
+				// Stop the schedule of all servers
+				a.sched.Cron.Stop()
+
+				// Get all members that failed
 				failed := e.(serf.MemberEvent)
+
 				for _, member := range failed.Members {
+					log.WithField("member", member.Name).Debug("agent: Failed or Leave member")
+					// If the leader is in the failed members list
 					if member.Tags["key"] == string(a.store.GetLeader().Key) && member.Status != serf.StatusAlive {
+						// Run for election
 						if a.ElectLeader() {
+							// If success start the scheduler
 							a.schedule()
 						}
 					}
@@ -659,7 +669,7 @@ func (a *AgentCommand) schedulerRestartQuery(leader *Leader) {
 			}
 		}
 	}
-	log.Debug("agent: Done receiving acks and responses from scheduler reload query")
+	log.WithField("query", QuerySchedulerRestart).Debug("agent: Done receiving acks and responses")
 }
 
 // Join asks the Serf instance to join. See the Serf.Join function.
