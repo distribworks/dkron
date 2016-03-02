@@ -25,7 +25,7 @@ dkron_seed:
     - ./:/gopath/src/github.com/victorcoder/dkron
   environment:
     - GODEBUG=netdns=go
-  command: go run main.go agent -server -backend=etcd -backend-machine=etcd:4001 -join=dkron:8946
+  command: go run main.go agent -server -backend=etcd -backend-machine=etcd:4001 -join=dkron:8946 -debug=true
 
 dkron:
   links:
@@ -39,4 +39,4 @@ dkron:
     - ./:/gopath/src/github.com/victorcoder/dkron
   environment:
     - GODEBUG=netdns=go
-  command: go run main.go agent -server -backend=etcd -backend-machine=etcd:4001 -join=dkron_seed:8946
+  command: go run main.go agent -server -backend=etcd -backend-machine=etcd:4001 -join=dkron_seed:8946 -debug=true
