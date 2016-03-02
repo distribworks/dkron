@@ -465,30 +465,25 @@ func (a *AgentCommand) Synopsis() string {
 func (a *AgentCommand) ElectLeader() bool {
 	leader := a.store.GetLeader()
 
+	log.WithField("node", a.config.NodeName).Debug("agent: Trying to set as leader")
 	if leader != nil {
-		if !a.serverAlive(string(leader.Key)) {
-			log.Debug("agent: Trying to set itself as leader")
+		if a.serverAlive(string(leader.Key)) {
+			log.WithField("key", string(leader.Key)).Info("agent: The current leader is active")
+		} else {
 			success, err := a.store.TryLeaderSwap(a.config.Tags["key"], leader)
 			if err != nil || success == false {
-				log.Errorln("agent: Error trying to set itself as leader", err)
-				return false
+				log.WithError(err).Error("agent: Error trying to set itself as leader")
+			} else {
+				return true
 			}
-			return true
-		} else {
-			log.WithFields(logrus.Fields{
-				"key": string(leader.Key),
-			}).Info("agent: The current leader is active")
 		}
 	} else {
-		log.Debug("agent: Trying to set itself as leader")
-		err := a.store.SetLeader(a.config.Tags["key"])
-		if err != nil {
+		if err := a.store.SetLeader(a.config.Tags["key"]); err != nil {
 			log.Error(err)
+		} else {
+			log.WithField("node", a.config.NodeName).Info("agent: Successfully set as leader")
+			return true
 		}
-		log.WithFields(logrus.Fields{
-			"key": a.config.Tags["key"],
-		}).Info("agent: Successfully set leader")
-		return true
 	}
 
 	return false
@@ -498,8 +493,10 @@ func (a *AgentCommand) ElectLeader() bool {
 func (a *AgentCommand) serverAlive(key string) bool {
 	members := a.serf.Members()
 	for _, member := range members {
-		if member.Tags["key"] == key && member.Status == serf.StatusAlive {
-			return true
+		if server, ok := member.Tags["server"]; ok {
+			if server == "true" && member.Tags["key"] == key && member.Status == serf.StatusAlive {
+				return true
+			}
 		}
 	}
 	return false
@@ -548,21 +545,23 @@ func (a *AgentCommand) eventLoop() {
 			}).Debug("agent: Received event")
 
 			if (e.EventType() == serf.EventMemberFailed || e.EventType() == serf.EventMemberLeave) && a.config.Server {
-
-				// Stop the schedule of all servers
-				a.sched.Cron.Stop()
-
 				// Get all members that failed
 				failed := e.(serf.MemberEvent)
 
+				lk := string(a.store.GetLeader().Key)
 				for _, member := range failed.Members {
 					log.WithField("member", member.Name).Debug("agent: Failed or Leave member")
-					// If the leader is in the failed members list
-					if member.Tags["key"] == string(a.store.GetLeader().Key) && member.Status != serf.StatusAlive {
-						// Run for election
-						if a.ElectLeader() {
-							// If success start the scheduler
-							a.schedule()
+					// If the leader is in the failed members list and it's status isn't alive
+					if mk, ok := member.Tags["key"]; ok {
+						if mk == lk && member.Status != serf.StatusAlive {
+							// Stop the schedule of this server
+							a.sched.Cron.Stop()
+
+							// Run for election
+							if a.ElectLeader() {
+								// If this server is elected as the leader, start the scheduler
+								a.schedule()
+							}
 						}
 					}
 				}
