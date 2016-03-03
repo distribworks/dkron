@@ -553,14 +553,27 @@ func (a *AgentCommand) eventLoop() {
 					log.WithField("member", member.Name).Debug("agent: Failed or Leave member")
 					// If the leader is in the failed members list and it's status isn't alive
 					if mk, ok := member.Tags["key"]; ok {
+
+						log.WithFields(logrus.Fields{
+							"name":   member.Name,
+							"key":    mk,
+							"status": member.Status,
+						}).Debug("agent: Checking failed member and health")
+
 						if mk == lk && member.Status != serf.StatusAlive {
 							// Stop the schedule of this server
-							a.sched.Cron.Stop()
+							if a.sched.Started {
+								log.Debug("agent: Stopping scheduler")
+								a.sched.Cron.Stop()
+							}
 
-							// Run for election
-							if a.ElectLeader() {
-								// If this server is elected as the leader, start the scheduler
-								a.schedule()
+							// If this server is alive run for election
+							if a.serf.State() == serf.SerfAlive {
+								// Run for election
+								if a.ElectLeader() {
+									// If this server is elected as the leader, start the scheduler
+									a.schedule()
+								}
 							}
 						}
 					}
