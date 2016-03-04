@@ -80,3 +80,4 @@ import:
   - context
 - package: gopkg.in/yaml.v2
   version: 49c95bdc21843256fb6c4e0d370a05f24a0bf213
+- package: github.com/docker/leadership

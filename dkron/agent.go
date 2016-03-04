@@ -18,6 +18,7 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/docker/leadership"
 	"github.com/hashicorp/memberlist"
 	"github.com/hashicorp/serf/serf"
 	"github.com/mitchellh/cli"
@@ -31,6 +32,9 @@ const (
 
 	// gracefulTimeout controls how long we wait before forcefully terminating
 	gracefulTimeout = 3 * time.Second
+
+	defaultRecoverTime = 10 * time.Second
+	defaultLeaderTTL   = 15 * time.Second
 )
 
 var expNode = expvar.NewString("node")
@@ -398,10 +402,7 @@ func (a *AgentCommand) Run(args []string) int {
 
 		a.ServeHTTP()
 		listenRPC(a)
-
-		if a.ElectLeader() {
-			a.schedule()
-		}
+		a.participate()
 	}
 	go a.eventLoop()
 
@@ -461,50 +462,46 @@ func (a *AgentCommand) Synopsis() string {
 	return "Run dkron"
 }
 
+func (a *AgentCommand) participate() {
+	foo := leadership.NewCandidate(a.store.Client, a.config.Keyspace+"/leader", a.config.NodeName, defaultLeaderTTL)
+
+	go func() {
+		for {
+			a.runForElection(foo)
+			time.Sleep(defaultRecoverTime)
+			// retry
+		}
+	}()
+}
+
 // Leader election routine
-func (a *AgentCommand) ElectLeader() bool {
-	leader := a.store.GetLeader()
-
-	log.WithField("node", a.config.NodeName).Debug("agent: Trying to set as leader")
-	if leader != nil {
-		if a.serverAlive(string(leader.Key)) {
-			log.WithField("key", string(leader.Key)).Info("agent: The current leader is active")
-		} else {
-			success, err := a.store.TryLeaderSwap(a.config.Tags["key"], leader)
-			if err != nil || success == false {
-				log.WithError(err).Error("agent: Error trying to set itself as leader")
+func (a *AgentCommand) runForElection(candidate *leadership.Candidate) {
+	log.Info("agent: Running for election")
+	electedCh, errCh, err := candidate.RunForElection()
+	if err != nil {
+		return
+	}
+	for {
+		select {
+		case isElected := <-electedCh:
+			if isElected {
+				log.Info("agent: Cluster leadership acquired")
+				// If this server is elected as the leader, start the scheduler
+				a.schedule()
 			} else {
-				return true
+				log.Info("agent: Cluster leadership lost")
+				// Stop the schedule of this server
+				if a.sched.Started {
+					log.Debug("agent: Stopping scheduler due to lost leadership")
+					a.sched.Cron.Stop()
+				}
 			}
-		}
-	} else {
-		if err := a.store.SetLeader(a.config.Tags["key"]); err != nil {
+
+		case err := <-errCh:
 			log.Error(err)
-		} else {
-			log.WithField("node", a.config.NodeName).Info("agent: Successfully set as leader")
-			return true
+			return
 		}
 	}
-
-	return false
-}
-
-// Checks if the server member identified by key, is alive.
-func (a *AgentCommand) serverAlive(key string) bool {
-	members := a.serf.Members()
-	for _, member := range members {
-		if server, ok := member.Tags["server"]; ok {
-			if server == "true" && member.Tags["key"] == key && member.Status == serf.StatusAlive {
-				return true
-			}
-		}
-	}
-	return false
-}
-
-// Utility method to check if the node calling the method is the leader.
-func (a *AgentCommand) isLeader() bool {
-	return a.config.Tags["key"] == string(a.store.GetLeader().Key)
 }
 
 // Utility method to get leader nodename
@@ -548,35 +545,8 @@ func (a *AgentCommand) eventLoop() {
 				// Get all members that failed
 				failed := e.(serf.MemberEvent)
 
-				lk := string(a.store.GetLeader().Key)
 				for _, member := range failed.Members {
 					log.WithField("member", member.Name).Debug("agent: Failed or Leave member")
-					// If the leader is in the failed members list and it's status isn't alive
-					if mk, ok := member.Tags["key"]; ok {
-
-						log.WithFields(logrus.Fields{
-							"name":   member.Name,
-							"key":    mk,
-							"status": member.Status,
-						}).Debug("agent: Checking failed member and health")
-
-						if mk == lk && member.Status != serf.StatusAlive {
-							// Stop the schedule of this server
-							if a.sched.Started {
-								log.Debug("agent: Stopping scheduler")
-								a.sched.Cron.Stop()
-							}
-
-							// If this server is alive run for election
-							if a.serf.State() == serf.SerfAlive {
-								// Run for election
-								if a.ElectLeader() {
-									// If this server is elected as the leader, start the scheduler
-									a.schedule()
-								}
-							}
-						}
-					}
 				}
 			}
 

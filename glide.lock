@@ -1,5 +1,5 @@
-hash: e90812435137247f791d18fa44ab016383da36a837e2dea6c28bef44a0075fc1
-updated: 2016-03-02T12:52:28.449637815+01:00
+hash: e04a8202b519a27ad67af782f72fd2dc484602a3c3df0d9088ac1cd706ca8f16
+updated: 2016-03-03T12:02:24.828962696+01:00
 imports:
 - name: github.com/armon/circbuf
   version: f092b4f207b6e5cce0569056fba9e1a2735cb6cf
@@ -17,6 +17,8 @@ imports:
   - pkg/types
   - Godeps/_workspace/src/github.com/ugorji/go/codec
   - Godeps/_workspace/src/golang.org/x/net/context
+- name: github.com/docker/leadership
+  version: b545f2df5f5cd35a54c5a6bf154dcfe1f29d125b
 - name: github.com/docker/libkv
   version: c2aac5dbbaa5c872211edea7c0f32b3bd67e7410
   subpackages:
