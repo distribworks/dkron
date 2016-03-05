@@ -58,7 +58,7 @@ func TestAgentCommandRun(t *testing.T) {
 	}
 }
 
-func TestAgentCommandElectLeader(t *testing.T) {
+func TestAgentCommand_runForElection(t *testing.T) {
 	shutdownCh := make(chan struct{})
 	defer close(shutdownCh)
 
@@ -94,8 +94,6 @@ func TestAgentCommandElectLeader(t *testing.T) {
 
 	// Wait for the first agent to start and set itself as leader
 	time.Sleep(2 * time.Second)
-	test1Key := a1.config.Tags["key"]
-	t.Logf("test1 key %s", test1Key)
 
 	// Start another agent
 	shutdownCh2 := make(chan struct{})
@@ -123,38 +121,11 @@ func TestAgentCommandElectLeader(t *testing.T) {
 	}()
 
 	time.Sleep(2 * time.Second)
-	test2Key := a2.config.Tags["key"]
-	t.Logf("test2 key %s", test2Key)
 
 	// Send a shutdown request
 	shutdownCh <- struct{}{}
 
 	time.Sleep(2 * time.Second)
-
-	// Listen for leader key changes or timeout
-	stopCh := make(chan struct{})
-	receiver, err := s.Client.Watch("/dkron/leader", stopCh)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	// Wait for the new leader election
-	for {
-		select {
-		case res := <-receiver:
-			if bytes.Equal(res.Value, []byte(test2Key)) {
-				t.Logf("Leader changed: %s", res.Value)
-				return
-			}
-			if bytes.Equal(res.Value, []byte(test1Key)) {
-				t.Logf("Leader set to agent1: %s", res.Value)
-			}
-		case <-time.After(10 * time.Second):
-			t.Fatal("No leader swap occurred")
-			stopCh <- struct{}{}
-			return
-		}
-	}
 }
 
 func Test_processFilteredNodes(t *testing.T) {
