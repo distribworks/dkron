@@ -37,7 +37,12 @@ const (
 	defaultLeaderTTL   = 15 * time.Second
 )
 
-var expNode = expvar.NewString("node")
+var (
+	expNode = expvar.NewString("node")
+
+	// Error thrown on obtained leader from store is not found in member list
+	ErrLeaderNotFound = errors.New("No member leader found in member list")
+)
 
 // AgentCommand run server
 type AgentCommand struct {
@@ -173,7 +178,6 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 
 	if server {
 		data := []byte(nodeName + fmt.Sprintf("%s", time.Now()))
-		tags["key"] = fmt.Sprintf("%x", sha1.Sum(data))
 		tags["server"] = "true"
 	}
 
@@ -463,7 +467,7 @@ func (a *AgentCommand) Synopsis() string {
 }
 
 func (a *AgentCommand) participate() {
-	foo := leadership.NewCandidate(a.store.Client, a.config.Keyspace+"/leader", a.config.NodeName, defaultLeaderTTL)
+	foo := leadership.NewCandidate(a.store.Client, a.store.LeaderKey(), a.config.NodeName, defaultLeaderTTL)
 
 	go func() {
 		for {
@@ -506,15 +510,13 @@ func (a *AgentCommand) runForElection(candidate *leadership.Candidate) {
 
 // Utility method to get leader nodename
 func (a *AgentCommand) leaderMember() (*serf.Member, error) {
-	leader := string(a.store.GetLeader().Key)
+	leaderName := a.store.GetLeader()
 	for _, member := range a.serf.Members() {
-		if key, ok := member.Tags["key"]; ok {
-			if key == leader {
-				return &member, nil
-			}
+		if member.Name == leaderName {
+			return &member, nil
 		}
 	}
-	return nil, errors.New("No member leader found in member list")
+	return nil, ErrLeaderNotFound
 }
 
 func (a *AgentCommand) listServers() []serf.Member {
@@ -619,10 +621,10 @@ func (a *AgentCommand) schedule() {
 	}
 }
 
-func (a *AgentCommand) schedulerRestartQuery(leader *Leader) {
+func (a *AgentCommand) schedulerRestartQuery(leaderName string) {
 	params := &serf.QueryParam{
-		FilterTags: map[string]string{"key": string(leader.Key)},
-		RequestAck: true,
+		FilterNodes: []string{leaderName},
+		RequestAck:  true,
 	}
 
 	qr, err := a.serf.Query(QuerySchedulerRestart, []byte(""), params)
