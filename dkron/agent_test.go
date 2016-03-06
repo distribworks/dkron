@@ -68,11 +68,10 @@ func TestAgentCommand_runForElection(t *testing.T) {
 		ShutdownCh: shutdownCh,
 	}
 
-	etcdAddr := os.Getenv("ETCD_ADDR")
+	etcdAddr := os.Getenv("DKRON_BACKEND_MACHINE")
 	if etcdAddr == "" {
 		etcdAddr = "127.0.0.1:2379"
 	}
-	println(etcdAddr)
 	s := NewStore("etcd", []string{etcdAddr}, nil, "dkron")
 	err := s.Client.DeleteTree("dkron")
 	if err != nil {

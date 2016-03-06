@@ -39,5 +39,5 @@ dkron:
     - ./:/gopath/src/github.com/victorcoder/dkron
   environment:
     - GODEBUG=netdns=go
-    - ETCD_ADDR=etcd:4001
+    - DKRON_BACKEND_MACHINE=etcd:4001
   command: go run main.go agent -server -backend=etcd -backend-machine=etcd:4001 -join=dkron_seed:8946 -debug=true
