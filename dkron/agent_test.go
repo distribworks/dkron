@@ -1,6 +1,7 @@
 package dkron
 
 import (
+	"os"
 	"testing"
 	"time"
 
@@ -67,7 +68,12 @@ func TestAgentCommand_runForElection(t *testing.T) {
 		ShutdownCh: shutdownCh,
 	}
 
-	s := NewStore("etcd", []string{"127.0.0.1:2379"}, nil, "dkron")
+	etcdAddr := os.Getenv("ETCD_ADDR")
+	if etcdAddr == "" {
+		etcdAddr = "127.0.0.1:2379"
+	}
+	println(etcdAddr)
+	s := NewStore("etcd", []string{etcdAddr}, nil, "dkron")
 	err := s.Client.DeleteTree("dkron")
 	if err != nil {
 		if err == store.ErrNotReachable {

@@ -465,11 +465,11 @@ func (a *AgentCommand) Synopsis() string {
 }
 
 func (a *AgentCommand) participate() {
-	foo := leadership.NewCandidate(a.store.Client, a.store.LeaderKey(), a.config.NodeName, defaultLeaderTTL)
+	candidate := leadership.NewCandidate(a.store.Client, a.store.LeaderKey(), a.config.NodeName, defaultLeaderTTL)
 
 	go func() {
 		for {
-			a.runForElection(foo)
+			a.runForElection(candidate)
 			time.Sleep(defaultRecoverTime)
 			// retry
 		}
