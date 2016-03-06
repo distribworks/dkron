@@ -1,7 +1,6 @@
 package dkron
 
 import (
-	"crypto/sha1"
 	"encoding/json"
 	"errors"
 	"expvar"
@@ -177,7 +176,6 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	nodeName := viper.GetString("node_name")
 
 	if server {
-		data := []byte(nodeName + fmt.Sprintf("%s", time.Now()))
 		tags["server"] = "true"
 	}
 
@@ -512,7 +510,7 @@ func (a *AgentCommand) runForElection(candidate *leadership.Candidate) {
 func (a *AgentCommand) leaderMember() (*serf.Member, error) {
 	leaderName := a.store.GetLeader()
 	for _, member := range a.serf.Members() {
-		if member.Name == leaderName {
+		if member.Name == string(leaderName) {
 			return &member, nil
 		}
 	}

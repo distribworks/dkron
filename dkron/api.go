@@ -166,7 +166,7 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	a.schedulerRestartQuery(a.store.GetLeader())
+	a.schedulerRestartQuery(string(a.store.GetLeader()))
 
 	if err := printJson(w, r, job); err != nil {
 		log.Fatal(err)

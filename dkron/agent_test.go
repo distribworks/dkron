@@ -1,7 +1,6 @@
 package dkron
 
 import (
-	"bytes"
 	"testing"
 	"time"
 
