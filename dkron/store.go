@@ -253,7 +253,7 @@ func (s *Store) GetLeader() []byte {
 		return nil
 	}
 
-	log.WithField("node", res.Value).Debug("store: Retrieved leader from datastore")
+	log.WithField("node", string(res.Value)).Debug("store: Retrieved leader from datastore")
 
 	return res.Value
 }
