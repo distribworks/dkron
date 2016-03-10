@@ -33,7 +33,7 @@ const (
 	gracefulTimeout = 3 * time.Second
 
 	defaultRecoverTime = 10 * time.Second
-	defaultLeaderTTL   = 15 * time.Second
+	defaultLeaderTTL   = 5 * time.Second
 )
 
 var (
@@ -53,6 +53,7 @@ type AgentCommand struct {
 	store      *Store
 	eventCh    chan serf.Event
 	sched      *Scheduler
+	candidate  *leadership.Candidate
 }
 
 func (a *AgentCommand) Help() string {
@@ -75,7 +76,7 @@ Options:
   -server=false                   This node is running in server mode.
   -tag key=value                  Tag can be specified multiple times to attach multiple
                                   key/value tag pairs to the given node.
-  -keyspace=dkron                 The etcd keyspace to use. A prefix under all data is stored
+  -keyspace=dkron                 The keyspace to use. A prefix under all data is stored
                                   for this instance.
   -backend=[etcd|consul|zk]       Backend storage to use, etcd, consul or zookeeper. The default
                                   is etcd.
@@ -442,8 +443,14 @@ func (a *AgentCommand) handleSignals() int {
 	a.Ui.Output("Gracefully shutting down agent...")
 	log.Info("agent: Gracefully shutting down agent...")
 	go func() {
+		// If we're exiting a server
+		if a.config.Server {
+			// Stop running for leader election
+			a.candidate.Stop()
+		}
 		if err := a.serf.Leave(); err != nil {
 			a.Ui.Error(fmt.Sprintf("Error: %s", err))
+			log.Error(fmt.Sprintf("Error: %s", err))
 			return
 		}
 		close(gracefulCh)
@@ -465,11 +472,11 @@ func (a *AgentCommand) Synopsis() string {
 }
 
 func (a *AgentCommand) participate() {
-	candidate := leadership.NewCandidate(a.store.Client, a.store.LeaderKey(), a.config.NodeName, defaultLeaderTTL)
+	a.candidate = leadership.NewCandidate(a.store.Client, a.store.LeaderKey(), a.config.NodeName, defaultLeaderTTL)
 
 	go func() {
 		for {
-			a.runForElection(candidate)
+			a.runForElection()
 			time.Sleep(defaultRecoverTime)
 			// retry
 		}
@@ -477,9 +484,9 @@ func (a *AgentCommand) participate() {
 }
 
 // Leader election routine
-func (a *AgentCommand) runForElection(candidate *leadership.Candidate) {
+func (a *AgentCommand) runForElection() {
 	log.Info("agent: Running for election")
-	electedCh, errCh, err := candidate.RunForElection()
+	electedCh, errCh, err := a.candidate.RunForElection()
 	if err != nil {
 		return
 	}
@@ -541,12 +548,14 @@ func (a *AgentCommand) eventLoop() {
 				"event": e.String(),
 			}).Debug("agent: Received event")
 
-			if (e.EventType() == serf.EventMemberFailed || e.EventType() == serf.EventMemberLeave) && a.config.Server {
-				// Get all members that failed
-				failed := e.(serf.MemberEvent)
-
+			// Log all member events
+			if failed, ok := e.(serf.MemberEvent); ok {
 				for _, member := range failed.Members {
-					log.WithField("member", member.Name).Debug("agent: Failed or Leave member")
+					log.WithFields(logrus.Fields{
+						"node":   a.config.NodeName,
+						"member": member.Name,
+						"event":  e.EventType(),
+					}).Debug("agent: Member event")
 				}
 			}
 

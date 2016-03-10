@@ -6,10 +6,21 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/docker/libkv"
 	"github.com/docker/libkv/store"
 	"github.com/hashicorp/serf/testutil"
 	"github.com/mitchellh/cli"
 )
+
+var etcdAddr = getEnvWithDefault()
+
+func getEnvWithDefault() string {
+	ea := os.Getenv("DKRON_BACKEND_MACHINE")
+	if ea == "" {
+		return "127.0.0.1:2379"
+	}
+	return ea
+}
 
 func TestAgentCommand_implements(t *testing.T) {
 	var _ cli.Command = new(AgentCommand)
@@ -59,6 +70,10 @@ func TestAgentCommandRun(t *testing.T) {
 }
 
 func TestAgentCommand_runForElection(t *testing.T) {
+	a1Name := "test1"
+	a2Name := "test2"
+	a1Addr := testutil.GetBindAddr().String()
+	a2Addr := testutil.GetBindAddr().String()
 	shutdownCh := make(chan struct{})
 	defer close(shutdownCh)
 
@@ -68,25 +83,21 @@ func TestAgentCommand_runForElection(t *testing.T) {
 		ShutdownCh: shutdownCh,
 	}
 
-	etcdAddr := os.Getenv("DKRON_BACKEND_MACHINE")
-	if etcdAddr == "" {
-		etcdAddr = "127.0.0.1:2379"
-	}
-	s := NewStore("etcd", []string{etcdAddr}, nil, "dkron")
-	err := s.Client.DeleteTree("dkron")
+	client, err := libkv.NewStore("etcd", []string{etcdAddr}, &store.Config{})
 	if err != nil {
-		if err == store.ErrNotReachable {
-			t.Fatal("etcd server needed to run tests")
+		panic(err)
+	}
+	err = client.DeleteTree("dkron")
+	if err != nil {
+		if err != store.ErrKeyNotFound {
+			panic(err)
 		}
 	}
-
-	a1Addr := testutil.GetBindAddr().String()
-	a2Addr := testutil.GetBindAddr().String()
 
 	args := []string{
 		"-bind", a1Addr,
 		"-join", a2Addr,
-		"-node", "test1",
+		"-node", a1Name,
 		"-server",
 		"-debug",
 	}
@@ -114,7 +125,7 @@ func TestAgentCommand_runForElection(t *testing.T) {
 		"-bind", a2Addr,
 		"-join", a1Addr + ":8946",
 		"-join", a1Addr + ":8946",
-		"-node", "test2",
+		"-node", a2Name,
 		"-server",
 		"-debug",
 	}
@@ -124,12 +135,25 @@ func TestAgentCommand_runForElection(t *testing.T) {
 		resultCh2 <- a2.Run(args2)
 	}()
 
-	time.Sleep(2 * time.Second)
+	kv, _ := client.Get("dkron/leader")
+	leader := string(kv.Value)
+	log.Printf("%s is the current leader", leader)
+	if leader != a1Name {
+		t.Errorf("Expected %s to be the leader, got %s", a1Name, leader)
+	}
 
 	// Send a shutdown request
 	shutdownCh <- struct{}{}
 
+	// Wait until test2 steps as leader
 	time.Sleep(2 * time.Second)
+
+	kv, _ = client.Get("dkron/leader")
+	leader = string(kv.Value)
+	log.Printf("%s is the current leader", leader)
+	if leader != a2Name {
+		t.Errorf("Expected %s to be the leader, got %s", a2Name, leader)
+	}
 }
 
 func Test_processFilteredNodes(t *testing.T) {
@@ -144,7 +168,7 @@ func Test_processFilteredNodes(t *testing.T) {
 		ShutdownCh: shutdownCh,
 	}
 
-	s := NewStore("etcd", []string{"127.0.0.1:2379"}, nil, "dkron")
+	s := NewStore("etcd", []string{etcdAddr}, nil, "dkron")
 	err := s.Client.DeleteTree("dkron")
 	if err != nil {
 		if err == store.ErrNotReachable {
