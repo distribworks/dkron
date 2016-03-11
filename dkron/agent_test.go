@@ -143,7 +143,7 @@ func TestAgentCommand_runForElection(t *testing.T) {
 	shutdownCh <- struct{}{}
 
 	// Wait until test2 steps as leader
-	time.Sleep(10 * time.Second)
+	time.Sleep(20 * time.Second)
 
 	kv, _ = client.Get("dkron/leader")
 	leader = string(kv.Value)
