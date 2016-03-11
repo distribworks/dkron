@@ -241,8 +241,9 @@ func (s *Store) DeleteExecutions(jobName string) error {
 	return s.Client.DeleteTree(fmt.Sprintf("%s/executions/%s", s.keyspace, jobName))
 }
 
-func (s *Store) GetLeader() *Leader {
-	res, err := s.Client.Get(s.keyspace + "/leader")
+// Retrieve the leeader from the store
+func (s *Store) GetLeader() []byte {
+	res, err := s.Client.Get(s.LeaderKey())
 	if err != nil {
 		if err == store.ErrNotReachable {
 			log.Fatal("store: Store not reachable, be sure you have an existing key-value store running is running and is reachable.")
@@ -252,32 +253,12 @@ func (s *Store) GetLeader() *Leader {
 		return nil
 	}
 
-	log.WithFields(logrus.Fields{
-		"key": string(res.Value),
-	}).Debug("store: Retrieved leader from datastore")
+	log.WithField("node", string(res.Value)).Debug("store: Retrieved leader from datastore")
 
-	return &Leader{Key: res.Value, LastIndex: res.LastIndex}
+	return res.Value
 }
 
-func (s *Store) TryLeaderSwap(newKey string, old *Leader) (bool, error) {
-	oldKV := &store.KVPair{
-		LastIndex: old.LastIndex,
-	}
-	success, _, err := s.Client.AtomicPut(s.keyspace+"/leader", []byte(newKey), oldKV, nil)
-
-	log.WithFields(logrus.Fields{
-		"old_leader": string(old.Key),
-		"new_leader": newKey,
-	}).Debug("store: Leader Swap")
-
-	return success, err
-}
-
-func (s *Store) SetLeader(leader string) error {
-	err := s.Client.Put(s.keyspace+"/leader", []byte(leader), nil)
-	if err != nil {
-		return err
-	}
-
-	return nil
+// Retrieve the leader key used in the KV store to store the leader node
+func (s *Store) LeaderKey() string {
+	return s.keyspace + "/leader"
 }

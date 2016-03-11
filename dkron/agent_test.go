@@ -1,15 +1,26 @@
 package dkron
 
 import (
-	"bytes"
+	"os"
 	"testing"
 	"time"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/docker/libkv"
 	"github.com/docker/libkv/store"
 	"github.com/hashicorp/serf/testutil"
 	"github.com/mitchellh/cli"
 )
+
+var etcdAddr = getEnvWithDefault()
+
+func getEnvWithDefault() string {
+	ea := os.Getenv("DKRON_BACKEND_MACHINE")
+	if ea == "" {
+		return "127.0.0.1:2379"
+	}
+	return ea
+}
 
 func TestAgentCommand_implements(t *testing.T) {
 	var _ cli.Command = new(AgentCommand)
@@ -58,7 +69,11 @@ func TestAgentCommandRun(t *testing.T) {
 	}
 }
 
-func TestAgentCommandElectLeader(t *testing.T) {
+func TestAgentCommand_runForElection(t *testing.T) {
+	a1Name := "test1"
+	a2Name := "test2"
+	a1Addr := testutil.GetBindAddr().String()
+	a2Addr := testutil.GetBindAddr().String()
 	shutdownCh := make(chan struct{})
 	defer close(shutdownCh)
 
@@ -68,21 +83,21 @@ func TestAgentCommandElectLeader(t *testing.T) {
 		ShutdownCh: shutdownCh,
 	}
 
-	s := NewStore("etcd", []string{"127.0.0.1:2379"}, nil, "dkron")
-	err := s.Client.DeleteTree("dkron")
+	client, err := libkv.NewStore("etcd", []string{etcdAddr}, &store.Config{})
 	if err != nil {
-		if err == store.ErrNotReachable {
-			t.Fatal("etcd server needed to run tests")
+		panic(err)
+	}
+	err = client.DeleteTree("dkron")
+	if err != nil {
+		if err != store.ErrKeyNotFound {
+			panic(err)
 		}
 	}
-
-	a1Addr := testutil.GetBindAddr().String()
-	a2Addr := testutil.GetBindAddr().String()
 
 	args := []string{
 		"-bind", a1Addr,
 		"-join", a2Addr,
-		"-node", "test1",
+		"-node", a1Name,
 		"-server",
 		"-debug",
 	}
@@ -94,8 +109,6 @@ func TestAgentCommandElectLeader(t *testing.T) {
 
 	// Wait for the first agent to start and set itself as leader
 	time.Sleep(2 * time.Second)
-	test1Key := a1.config.Tags["key"]
-	t.Logf("test1 key %s", test1Key)
 
 	// Start another agent
 	shutdownCh2 := make(chan struct{})
@@ -112,7 +125,7 @@ func TestAgentCommandElectLeader(t *testing.T) {
 		"-bind", a2Addr,
 		"-join", a1Addr + ":8946",
 		"-join", a1Addr + ":8946",
-		"-node", "test2",
+		"-node", a2Name,
 		"-server",
 		"-debug",
 	}
@@ -122,38 +135,24 @@ func TestAgentCommandElectLeader(t *testing.T) {
 		resultCh2 <- a2.Run(args2)
 	}()
 
-	time.Sleep(2 * time.Second)
-	test2Key := a2.config.Tags["key"]
-	t.Logf("test2 key %s", test2Key)
+	kv, _ := client.Get("dkron/leader")
+	leader := string(kv.Value)
+	log.Printf("%s is the current leader", leader)
+	if leader != a1Name {
+		t.Errorf("Expected %s to be the leader, got %s", a1Name, leader)
+	}
 
 	// Send a shutdown request
 	shutdownCh <- struct{}{}
 
-	time.Sleep(2 * time.Second)
+	// Wait until test2 steps as leader
+	time.Sleep(5 * time.Second)
 
-	// Listen for leader key changes or timeout
-	stopCh := make(chan struct{})
-	receiver, err := s.Client.Watch("/dkron/leader", stopCh)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	// Wait for the new leader election
-	for {
-		select {
-		case res := <-receiver:
-			if bytes.Equal(res.Value, []byte(test2Key)) {
-				t.Logf("Leader changed: %s", res.Value)
-				return
-			}
-			if bytes.Equal(res.Value, []byte(test1Key)) {
-				t.Logf("Leader set to agent1: %s", res.Value)
-			}
-		case <-time.After(10 * time.Second):
-			t.Fatal("No leader swap occurred")
-			stopCh <- struct{}{}
-			return
-		}
+	kv, _ = client.Get("dkron/leader")
+	leader = string(kv.Value)
+	log.Printf("%s is the current leader", leader)
+	if leader != a2Name {
+		t.Errorf("Expected %s to be the leader, got %s", a2Name, leader)
 	}
 }
 
@@ -169,7 +168,7 @@ func Test_processFilteredNodes(t *testing.T) {
 		ShutdownCh: shutdownCh,
 	}
 
-	s := NewStore("etcd", []string{"127.0.0.1:2379"}, nil, "dkron")
+	s := NewStore("etcd", []string{etcdAddr}, nil, "dkron")
 	err := s.Client.DeleteTree("dkron")
 	if err != nil {
 		if err == store.ErrNotReachable {

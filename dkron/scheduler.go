@@ -11,6 +11,7 @@ import (
 )
 
 var cronInspect = expvar.NewMap("cron_entries")
+var schedulerStarted = expvar.NewString("scheduler_started")
 
 type Scheduler struct {
 	Cron    *cron.Cron
@@ -19,6 +20,7 @@ type Scheduler struct {
 
 func NewScheduler() *Scheduler {
 	c := cron.New()
+	schedulerStarted.Set("false")
 	return &Scheduler{Cron: c, Started: false}
 }
 
@@ -33,6 +35,7 @@ func (s *Scheduler) Start(jobs []*Job) {
 	}
 	s.Cron.Start()
 	s.Started = true
+	schedulerStarted.Set("true")
 }
 
 func (s *Scheduler) Restart(jobs []*Job) {

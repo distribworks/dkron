@@ -1,7 +1,6 @@
 package dkron
 
 import (
-	"crypto/sha1"
 	"encoding/json"
 	"errors"
 	"expvar"
@@ -18,6 +17,7 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/docker/leadership"
 	"github.com/hashicorp/memberlist"
 	"github.com/hashicorp/serf/serf"
 	"github.com/mitchellh/cli"
@@ -31,9 +31,17 @@ const (
 
 	// gracefulTimeout controls how long we wait before forcefully terminating
 	gracefulTimeout = 3 * time.Second
+
+	defaultRecoverTime = 10 * time.Second
+	defaultLeaderTTL   = 5 * time.Second
 )
 
-var expNode = expvar.NewString("node")
+var (
+	expNode = expvar.NewString("node")
+
+	// Error thrown on obtained leader from store is not found in member list
+	ErrLeaderNotFound = errors.New("No member leader found in member list")
+)
 
 // AgentCommand run server
 type AgentCommand struct {
@@ -45,6 +53,7 @@ type AgentCommand struct {
 	store      *Store
 	eventCh    chan serf.Event
 	sched      *Scheduler
+	candidate  *leadership.Candidate
 }
 
 func (a *AgentCommand) Help() string {
@@ -67,7 +76,7 @@ Options:
   -server=false                   This node is running in server mode.
   -tag key=value                  Tag can be specified multiple times to attach multiple
                                   key/value tag pairs to the given node.
-  -keyspace=dkron                 The etcd keyspace to use. A prefix under all data is stored
+  -keyspace=dkron                 The keyspace to use. A prefix under all data is stored
                                   for this instance.
   -backend=[etcd|consul|zk]       Backend storage to use, etcd, consul or zookeeper. The default
                                   is etcd.
@@ -168,8 +177,6 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	nodeName := viper.GetString("node_name")
 
 	if server {
-		data := []byte(nodeName + fmt.Sprintf("%s", time.Now()))
-		tags["key"] = fmt.Sprintf("%x", sha1.Sum(data))
 		tags["server"] = "true"
 	}
 
@@ -398,10 +405,7 @@ func (a *AgentCommand) Run(args []string) int {
 
 		a.ServeHTTP()
 		listenRPC(a)
-
-		if a.ElectLeader() {
-			a.schedule()
-		}
+		a.participate()
 	}
 	go a.eventLoop()
 
@@ -439,8 +443,14 @@ func (a *AgentCommand) handleSignals() int {
 	a.Ui.Output("Gracefully shutting down agent...")
 	log.Info("agent: Gracefully shutting down agent...")
 	go func() {
+		// If we're exiting a server
+		if a.config.Server {
+			// Stop running for leader election
+			a.candidate.Stop()
+		}
 		if err := a.serf.Leave(); err != nil {
 			a.Ui.Error(fmt.Sprintf("Error: %s", err))
+			log.Error(fmt.Sprintf("Error: %s", err))
 			return
 		}
 		close(gracefulCh)
@@ -461,66 +471,58 @@ func (a *AgentCommand) Synopsis() string {
 	return "Run dkron"
 }
 
+func (a *AgentCommand) participate() {
+	a.candidate = leadership.NewCandidate(a.store.Client, a.store.LeaderKey(), a.config.NodeName, defaultLeaderTTL)
+
+	go func() {
+		for {
+			a.runForElection()
+			// retry
+			time.Sleep(defaultRecoverTime)
+		}
+	}()
+}
+
 // Leader election routine
-func (a *AgentCommand) ElectLeader() bool {
-	leader := a.store.GetLeader()
-
-	if leader != nil {
-		if !a.serverAlive(string(leader.Key)) {
-			log.Debug("agent: Trying to set itself as leader")
-			success, err := a.store.TryLeaderSwap(a.config.Tags["key"], leader)
-			if err != nil || success == false {
-				log.Errorln("agent: Error trying to set itself as leader", err)
-				return false
+func (a *AgentCommand) runForElection() {
+	log.Info("agent: Running for election")
+	electedCh, errCh, err := a.candidate.RunForElection()
+	if err != nil {
+		log.WithError(err).Error("Can't run for election, store is probably down")
+		return
+	}
+	for {
+		select {
+		case isElected := <-electedCh:
+			if isElected {
+				log.Info("agent: Cluster leadership acquired")
+				// If this server is elected as the leader, start the scheduler
+				a.schedule()
+			} else {
+				log.Info("agent: Cluster leadership lost")
+				// Stop the schedule of this server
+				if a.sched.Started {
+					log.Debug("agent: Stopping scheduler due to lost leadership")
+					a.sched.Cron.Stop()
+				}
 			}
-			return true
-		} else {
-			log.WithFields(logrus.Fields{
-				"key": string(leader.Key),
-			}).Info("agent: The current leader is active")
-		}
-	} else {
-		log.Debug("agent: Trying to set itself as leader")
-		err := a.store.SetLeader(a.config.Tags["key"])
-		if err != nil {
-			log.Error(err)
-		}
-		log.WithFields(logrus.Fields{
-			"key": a.config.Tags["key"],
-		}).Info("agent: Successfully set leader")
-		return true
-	}
 
-	return false
-}
-
-// Checks if the server member identified by key, is alive.
-func (a *AgentCommand) serverAlive(key string) bool {
-	members := a.serf.Members()
-	for _, member := range members {
-		if member.Tags["key"] == key && member.Status == serf.StatusAlive {
-			return true
+		case err := <-errCh:
+			log.WithError(err).Error("Leader election failed, channel is probably closed")
+			return
 		}
 	}
-	return false
-}
-
-// Utility method to check if the node calling the method is the leader.
-func (a *AgentCommand) isLeader() bool {
-	return a.config.Tags["key"] == string(a.store.GetLeader().Key)
 }
 
 // Utility method to get leader nodename
 func (a *AgentCommand) leaderMember() (*serf.Member, error) {
-	leader := string(a.store.GetLeader().Key)
+	leaderName := a.store.GetLeader()
 	for _, member := range a.serf.Members() {
-		if key, ok := member.Tags["key"]; ok {
-			if key == leader {
-				return &member, nil
-			}
+		if member.Name == string(leaderName) {
+			return &member, nil
 		}
 	}
-	return nil, errors.New("No member leader found in member list")
+	return nil, ErrLeaderNotFound
 }
 
 func (a *AgentCommand) listServers() []serf.Member {
@@ -547,14 +549,14 @@ func (a *AgentCommand) eventLoop() {
 				"event": e.String(),
 			}).Debug("agent: Received event")
 
-			if (e.EventType() == serf.EventMemberFailed || e.EventType() == serf.EventMemberLeave) && a.config.Server {
-				failed := e.(serf.MemberEvent)
+			// Log all member events
+			if failed, ok := e.(serf.MemberEvent); ok {
 				for _, member := range failed.Members {
-					if member.Tags["key"] == string(a.store.GetLeader().Key) && member.Status != serf.StatusAlive {
-						if a.ElectLeader() {
-							a.schedule()
-						}
-					}
+					log.WithFields(logrus.Fields{
+						"node":   a.config.NodeName,
+						"member": member.Name,
+						"event":  e.EventType(),
+					}).Debug("agent: Member event")
 				}
 			}
 
@@ -627,10 +629,10 @@ func (a *AgentCommand) schedule() {
 	}
 }
 
-func (a *AgentCommand) schedulerRestartQuery(leader *Leader) {
+func (a *AgentCommand) schedulerRestartQuery(leaderName string) {
 	params := &serf.QueryParam{
-		FilterTags: map[string]string{"key": string(leader.Key)},
-		RequestAck: true,
+		FilterNodes: []string{leaderName},
+		RequestAck:  true,
 	}
 
 	qr, err := a.serf.Query(QuerySchedulerRestart, []byte(""), params)
@@ -659,7 +661,7 @@ func (a *AgentCommand) schedulerRestartQuery(leader *Leader) {
 			}
 		}
 	}
-	log.Debug("agent: Done receiving acks and responses from scheduler reload query")
+	log.WithField("query", QuerySchedulerRestart).Debug("agent: Done receiving acks and responses")
 }
 
 // Join asks the Serf instance to join. See the Serf.Join function.
