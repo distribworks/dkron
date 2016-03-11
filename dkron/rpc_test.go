@@ -9,7 +9,7 @@ import (
 )
 
 func TestRPCExecutionDone(t *testing.T) {
-	store := NewStore("etcd", []string{"127.0.0.1:4001"}, nil, "dkron")
+	store := NewStore("etcd", []string{etcdAddr}, nil, "dkron")
 
 	// Cleanup everything
 	err := store.Client.DeleteTree("dkron")
