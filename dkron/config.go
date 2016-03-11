@@ -6,6 +6,7 @@ import (
 	"net"
 	"time"
 
+	"github.com/Sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -55,7 +56,7 @@ func init() {
 	viper.AddConfigPath("./config")     // call multiple times to add many search paths
 	err := viper.ReadInConfig()         // Find and read the config file
 	if err != nil {                     // Handle errors reading the config file
-		log.Infof("No valid config found: %s \n Applying default values.", err)
+		logrus.Infof("No valid config found: %s \n Applying default values.", err)
 	}
 
 	viper.SetEnvPrefix("dkron") // will be uppercased automatically

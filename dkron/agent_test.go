@@ -5,7 +5,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/docker/libkv"
 	"github.com/docker/libkv/store"
 	"github.com/hashicorp/serf/testutil"
@@ -27,8 +26,6 @@ func TestAgentCommand_implements(t *testing.T) {
 }
 
 func TestAgentCommandRun(t *testing.T) {
-	log.Level = logrus.FatalLevel
-
 	shutdownCh := make(chan struct{})
 	defer close(shutdownCh)
 
@@ -99,7 +96,7 @@ func TestAgentCommand_runForElection(t *testing.T) {
 		"-join", a2Addr,
 		"-node", a1Name,
 		"-server",
-		"-debug",
+		"-log-level", "debug",
 	}
 
 	resultCh := make(chan int)
@@ -127,7 +124,7 @@ func TestAgentCommand_runForElection(t *testing.T) {
 		"-join", a1Addr + ":8946",
 		"-node", a2Name,
 		"-server",
-		"-debug",
+		"-log-level", "debug",
 	}
 
 	resultCh2 := make(chan int)
@@ -157,8 +154,6 @@ func TestAgentCommand_runForElection(t *testing.T) {
 }
 
 func Test_processFilteredNodes(t *testing.T) {
-	log.Level = logrus.ErrorLevel
-
 	shutdownCh := make(chan struct{})
 	defer close(shutdownCh)
 
@@ -264,8 +259,6 @@ func Test_UnmarshalTags(t *testing.T) {
 }
 
 func TestEncrypt(t *testing.T) {
-	log.Level = logrus.ErrorLevel
-
 	shutdownCh := make(chan struct{})
 	defer close(shutdownCh)
 
