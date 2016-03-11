@@ -3,7 +3,7 @@
   "backend": "etcd",
   "backend_machine": "127.0.0.1:2379",
   "server": false,
-  "debug": false,
+  "log-level": "debug",
   "tags": {
     "role": "web",
     "datacenter": "east"
