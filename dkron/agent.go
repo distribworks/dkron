@@ -477,8 +477,8 @@ func (a *AgentCommand) participate() {
 	go func() {
 		for {
 			a.runForElection()
-			time.Sleep(defaultRecoverTime)
 			// retry
+			time.Sleep(defaultRecoverTime)
 		}
 	}()
 }
@@ -488,6 +488,7 @@ func (a *AgentCommand) runForElection() {
 	log.Info("agent: Running for election")
 	electedCh, errCh, err := a.candidate.RunForElection()
 	if err != nil {
+		log.WithError(err).Error("Can't run for election, store is probably down")
 		return
 	}
 	for {
@@ -507,7 +508,7 @@ func (a *AgentCommand) runForElection() {
 			}
 
 		case err := <-errCh:
-			log.Error(err)
+			log.WithError(err).Error("Leader election failed, channel is probably closed")
 			return
 		}
 	}
