@@ -16,7 +16,7 @@ before_install:
   - go get github.com/Masterminds/glide
 
 before_script:
-  - scripts/travis_etcd.sh 2.1.1
+  - scripts/travis_etcd.sh 2.2.5
 
 script:
   - ./etcd/etcd >/dev/null 2>&1 &
