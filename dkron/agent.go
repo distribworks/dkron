@@ -508,7 +508,7 @@ func (a *AgentCommand) runForElection() {
 			}
 
 		case err := <-errCh:
-			log.WithError(err).Error("Leader election failed, channel is probably closed")
+			log.WithError(err).Debug("Leader election failed, channel is probably closed")
 			return
 		}
 	}
