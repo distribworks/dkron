@@ -186,6 +186,8 @@ func (a *AgentCommand) jobDeleteHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	a.schedulerRestartQuery(string(a.store.GetLeader()))
+
 	if err := printJson(w, r, job); err != nil {
 		log.Fatal(err)
 	}
