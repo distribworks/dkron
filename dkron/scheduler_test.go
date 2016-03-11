@@ -2,8 +2,6 @@ package dkron
 
 import (
 	"testing"
-
-	"github.com/Sirupsen/logrus"
 )
 
 func testJobs() []*Job {
@@ -18,8 +16,6 @@ func testJobs() []*Job {
 }
 
 func TestSchedule(t *testing.T) {
-	log.Level = logrus.FatalLevel
-
 	sched := NewScheduler()
 
 	if sched.Started == true {

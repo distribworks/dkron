@@ -7,14 +7,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/hashicorp/serf/testutil"
 	"github.com/mitchellh/cli"
 )
 
 func setupAPITest(t *testing.T) (chan<- struct{}, <-chan int) {
-	log.Level = logrus.FatalLevel
-
 	shutdownCh := make(chan struct{})
 	// defer close(shutdownCh)
 

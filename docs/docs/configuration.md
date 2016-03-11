@@ -38,7 +38,7 @@ Settings for dkron can be specified in three ways: Using a `config/dkron.json` c
 
 * `-webhook-header` - Headers to use when calling the webhook URL. Can be specified multiple times.
 
-* `-debug` - Output debug info.
+* `-log-level` - Set the log level (debug, info, warn, error, fatal, panic). Defaults to "info"
 
 * `-ui-dir` - Directory from where to serve web UI.
 

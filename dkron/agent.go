@@ -98,7 +98,7 @@ Options:
   -webhook-payload                Body of the POST request to send on webhook call.
   -webhook-header                 Headers to use when calling the webhook URL. Can be specified multiple times.
 
-  -debug=false                    Output debug log
+  -log-level=info                 Log level (debug, info, warn, error, fatal, panic). Default to info.
 `
 	return strings.TrimSpace(helpText)
 }
@@ -136,7 +136,10 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	viper.SetDefault("keyspace", cmdFlags.Lookup("keyspace").Value)
 	cmdFlags.String("encrypt", "", "encryption key")
 	viper.SetDefault("encrypt", cmdFlags.Lookup("encrypt").Value)
-	viper.SetDefault("debug", cmdFlags.Bool("debug", false, "output debug log"))
+
+	cmdFlags.String("log-level", "info", "Log level (debug, info, warn, error, fatal, panic), defaults to info")
+	viper.SetDefault("log_level", cmdFlags.Lookup("log-level").Value)
+
 	cmdFlags.String("ui-dir", ".", "directory to serve web UI")
 	viper.SetDefault("ui_dir", cmdFlags.Lookup("ui-dir").Value)
 	viper.SetDefault("rpc_port", cmdFlags.Int("rpc-port", 6868, "RPC port"))
@@ -180,7 +183,7 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 		tags["server"] = "true"
 	}
 
-	SetLogLevel(viper.GetBool("debug"))
+	InitLogger(viper.GetString("log_level"), nodeName)
 
 	return &Config{
 		NodeName:        nodeName,
