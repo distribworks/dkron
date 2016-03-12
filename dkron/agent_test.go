@@ -11,6 +11,7 @@ import (
 	"github.com/mitchellh/cli"
 )
 
+var logLevel = "debug"
 var etcdAddr = getEnvWithDefault()
 
 func getEnvWithDefault() string {
@@ -37,6 +38,7 @@ func TestAgentCommandRun(t *testing.T) {
 
 	args := []string{
 		"-bind", testutil.GetBindAddr().String(),
+		"-log-level", logLevel,
 	}
 
 	resultCh := make(chan int)
@@ -96,7 +98,7 @@ func TestAgentCommand_runForElection(t *testing.T) {
 		"-join", a2Addr,
 		"-node", a1Name,
 		"-server",
-		"-log-level", "debug",
+		"-log-level", logLevel,
 	}
 
 	resultCh := make(chan int)
@@ -124,7 +126,7 @@ func TestAgentCommand_runForElection(t *testing.T) {
 		"-join", a1Addr + ":8946",
 		"-node", a2Name,
 		"-server",
-		"-log-level", "debug",
+		"-log-level", logLevel,
 	}
 
 	resultCh2 := make(chan int)
@@ -143,7 +145,7 @@ func TestAgentCommand_runForElection(t *testing.T) {
 	shutdownCh <- struct{}{}
 
 	// Wait until test2 steps as leader
-	time.Sleep(20 * time.Second)
+	time.Sleep(30 * time.Second)
 
 	kv, _ = client.Get("dkron/leader")
 	leader = string(kv.Value)
@@ -163,8 +165,8 @@ func Test_processFilteredNodes(t *testing.T) {
 		ShutdownCh: shutdownCh,
 	}
 
-	s := NewStore("etcd", []string{etcdAddr}, nil, "dkron")
-	err := s.Client.DeleteTree("dkron")
+	client, err := libkv.NewStore("etcd", []string{etcdAddr}, &store.Config{})
+	err = client.DeleteTree("dkron")
 	if err != nil {
 		if err == store.ErrNotReachable {
 			t.Fatal("etcd server needed to run tests")
@@ -180,6 +182,7 @@ func Test_processFilteredNodes(t *testing.T) {
 		"-node", "test1",
 		"-server",
 		"-tag", "role=test",
+		"-log-level", logLevel,
 	}
 
 	resultCh := make(chan int)
@@ -204,6 +207,7 @@ func Test_processFilteredNodes(t *testing.T) {
 		"-node", "test2",
 		"-server",
 		"-tag", "role=test",
+		"-log-level", logLevel,
 	}
 
 	resultCh2 := make(chan int)
@@ -274,6 +278,7 @@ func TestEncrypt(t *testing.T) {
 		"-server",
 		"-tag", "role=test",
 		"-encrypt", "kPpdjphiipNSsjd4QHWbkA==",
+		"-log-level", logLevel,
 	}
 
 	go a.Run(args)
@@ -302,6 +307,7 @@ func Test_getRPCAddr(t *testing.T) {
 		"-node", "test1",
 		"-server",
 		"-tag", "role=test",
+		"-log-level", logLevel,
 	}
 
 	go a.Run(args)

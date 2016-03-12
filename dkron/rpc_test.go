@@ -33,6 +33,7 @@ func TestRPCExecutionDone(t *testing.T) {
 		"-node", "test1",
 		"-server",
 		"-keyspace", "dkron",
+		"-log-level", logLevel,
 	}
 
 	resultCh := make(chan int)
