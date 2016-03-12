@@ -26,6 +26,7 @@ func setupAPITest(t *testing.T) (chan<- struct{}, <-chan int) {
 		"-http-addr", "127.0.0.1:8090",
 		"-node", "test",
 		"-server",
+		"-log-level", logLevel,
 	}
 
 	resultCh := make(chan int)
