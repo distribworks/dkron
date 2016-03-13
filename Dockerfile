@@ -1,4 +1,4 @@
-FROM golang:1.5-alpine
+FROM golang:1.6-alpine
 MAINTAINER Victor Castell <victor@victorcastell.com>
 
 EXPOSE 8080 8946
