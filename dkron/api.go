@@ -133,6 +133,10 @@ func (a *AgentCommand) jobGetHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Error(err)
 	}
+	if job == nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 
 	if err := printJson(w, r, job); err != nil {
 		log.Fatal(err)
