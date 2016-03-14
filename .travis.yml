@@ -1,7 +1,7 @@
 language: go
 
 go:
-  - 1.5
+  - 1.6
 
 # let us have speedy Docker-based Travis workers
 # http://docs.travis-ci.com/user/migrating-from-legacy/#tl%3Bdr
