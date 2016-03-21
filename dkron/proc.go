@@ -2,7 +2,6 @@ package dkron
 
 import (
 	"math/rand"
-	"os"
 	"os/exec"
 	"runtime"
 	"time"
@@ -20,27 +19,6 @@ const (
 	// amount due to a faulty handler.
 	maxBufSize = 256000
 )
-
-// spawn command that specified as proc.
-func spawnProc(proc string) (*exec.Cmd, error) {
-	cs := []string{"/bin/bash", "-c", proc}
-	cmd := exec.Command(cs[0], cs[1:]...)
-	cmd.Stdin = nil
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	cmd.Env = append(os.Environ())
-
-	log.WithFields(logrus.Fields{
-		"proc": proc,
-	}).Info("proc: Starting")
-
-	err := cmd.Start()
-	if err != nil {
-		log.Errorf("proc: Failed to start %s: %s\n", proc, err)
-		return nil, err
-	}
-	return cmd, nil
-}
 
 // invokeJob will execute the given job. Depending on the event.
 func (a *AgentCommand) invokeJob(execution *Execution) error {
