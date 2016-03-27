@@ -4,17 +4,6 @@ import (
 	"testing"
 )
 
-func testJobs() []*Job {
-	var jobs []*Job
-
-	job := &Job{
-		Name: "cron_job", Schedule: "@every 2s", Command: "date", Owner: "John Dough", OwnerEmail: "foo@bar.com",
-	}
-	jobs = append(jobs, job)
-
-	return jobs
-}
-
 func TestSchedule(t *testing.T) {
 	sched := NewScheduler()
 
