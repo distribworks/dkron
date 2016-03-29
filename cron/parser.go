@@ -215,6 +215,16 @@ func parseDescriptor(spec string) Schedule {
 			Month:  all(months),
 			Dow:    all(dow),
 		}
+
+	case "@minutely":
+		return &SpecSchedule{
+			Second: 1 << seconds.min,
+			Minute: all(minutes),
+			Hour:   all(hours),
+			Dom:    all(dom),
+			Month:  all(months),
+			Dow:    all(dow),
+		}
 	}
 
 	const every = "@every "

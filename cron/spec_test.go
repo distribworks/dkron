@@ -31,6 +31,8 @@ func TestActivation(t *testing.T) {
 		{"Mon Jul 16 08:30 2012", "0 30 08 15 Jul ?", false},
 
 		// Predefined schedules
+		{"Mon Jul 9 15:00:00 2012", "@minutely", true},
+		{"Mon Jul 9 15:00:15 2012", "@minutely", false},
 		{"Mon Jul 9 15:00 2012", "@hourly", true},
 		{"Mon Jul 9 15:04 2012", "@hourly", false},
 		{"Mon Jul 9 15:00 2012", "@daily", false},

@@ -81,6 +81,7 @@ You may use one of several pre-defined schedules in place of a cron expression.
 	@weekly                | Run once a week, midnight on Sunday        | 0 0 0 * * 0
 	@daily (or @midnight)  | Run once a day, midnight                   | 0 0 0 * * *
 	@hourly                | Run once an hour, beginning of hour        | 0 0 * * * *
+	@minutely              | Run once a minute, beginning of minute     | 0 * * * * *
 
 Intervals
 
