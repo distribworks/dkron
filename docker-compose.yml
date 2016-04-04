@@ -1,6 +1,7 @@
 ---
 dkron:
   links:
+    - etcd
     - dkron_seed
   ports:
     - "8080"
