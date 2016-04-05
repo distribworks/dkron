@@ -83,6 +83,8 @@ Options:
                                   is etcd.
   -backend-machine=127.0.0.1:2379 Backend storage servers addresses to connect to. This flag can be
                                   specified multiple times.
+  -backend-username               Backend username used for authentication.
+  -backend-password               Backend password to use.
   -encrypt                        Key for encrypting network traffic.
                                   Must be a base64-encoded 16-byte key.
   -ui-dir                         Directory from where to serve Web UI
@@ -128,6 +130,10 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	viper.SetDefault("backend", cmdFlags.Lookup("backend").Value)
 	cmdFlags.String("backend-machine", "127.0.0.1:2379", "store backend machines addresses")
 	viper.SetDefault("backend_machine", cmdFlags.Lookup("backend-machine").Value)
+	cmdFlags.String("backend-username", "", "store backend username")
+	viper.SetDefault("backend_username", cmdFlags.Lookup("backend-username").Value)
+	cmdFlags.String("backend-password", "", "store backend password")
+	viper.SetDefault("backend_password", cmdFlags.Lookup("backend-password").Value)
 	cmdFlags.String("profile", "lan", "timing profile to use (lan, wan, local)")
 	viper.SetDefault("profile", cmdFlags.Lookup("profile").Value)
 	viper.SetDefault("server", cmdFlags.Bool("server", false, "start dkron server"))
@@ -196,6 +202,8 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 		Discover:        viper.GetString("discover"),
 		Backend:         viper.GetString("backend"),
 		BackendMachines: viper.GetStringSlice("backend_machine"),
+		BackendUsername: viper.GetString("backend_username"),
+		BackendPassword: viper.GetString("backend_password"),
 		Server:          server,
 		Profile:         viper.GetString("profile"),
 		StartJoin:       viper.GetStringSlice("join"),
@@ -407,7 +415,7 @@ func (a *AgentCommand) Run(args []string) int {
 	expNode.Set(a.config.NodeName)
 
 	if a.config.Server {
-		a.store = NewStore(a.config.Backend, a.config.BackendMachines, a, a.config.Keyspace)
+		a.store = NewStore(a.config.Backend, a.config.BackendMachines, a, a.config.Keyspace, a.config.BackendUsername, a.config.BackendPassword)
 		a.sched = NewScheduler()
 
 		a.ServeHTTP()

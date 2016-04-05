@@ -27,8 +27,11 @@ func init() {
 	zookeeper.Register()
 }
 
-func NewStore(backend string, machines []string, a *AgentCommand, keyspace string) *Store {
-	store, err := libkv.NewStore(store.Backend(backend), machines, nil)
+func NewStore(backend string, machines []string, a *AgentCommand, keyspace, username, password string) *Store {
+	store, err := libkv.NewStore(store.Backend(backend), machines, &store.Config{
+		Username: username,
+		Password: password,
+	})
 	if err != nil {
 		log.Fatal(err)
 	}
