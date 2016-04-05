@@ -1,5 +1,5 @@
-hash: 36a479508b0306ce919b2a6d4eb99df98b36f9eb14202c3a08c85246ca19e9fe
-updated: 2016-05-03T17:32:15.075162169+02:00
+hash: 80c60f8a98c65f76aa515cc81553064c9099476043af0e0a48e9beafc5e14d5f
+updated: 2016-05-13T16:25:19.895900136+02:00
 imports:
 - name: github.com/armon/circbuf
   version: f092b4f207b6e5cce0569056fba9e1a2735cb6cf
@@ -20,7 +20,7 @@ imports:
 - name: github.com/docker/leadership
   version: bfc7753dd48af19513b29deec23c364bf0f274eb
 - name: github.com/docker/libkv
-  version: c2aac5dbbaa5c872211edea7c0f32b3bd67e7410
+  version: 2358b13f99488ec99e127fc4ef5f905533b5e2a0
   subpackages:
   - store
   - store/consul
