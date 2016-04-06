@@ -7,6 +7,7 @@
 - Order nodes in UI [#81](https://github.com/victorcoder/dkron/issues/81) (kudos @whizz)
 - Add exposed vars to easy debugging
 - Go 1.6
+- Add @minutely as predefined schedule (kudos @mlafeldt)
 
 ### Upgrade from 0.6.x
 
