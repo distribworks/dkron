@@ -20,7 +20,7 @@ dkron_seed:
     - etcd
   ports:
     - "8080"
-  build: .
+  build: ..
   volumes:
     - ./:/gopath/src/github.com/victorcoder/dkron
   environment:
@@ -34,7 +34,7 @@ dkron:
     - dkron_seed
   ports:
     - "8080"
-  build: .
+  build: ..
   volumes:
     - ./:/gopath/src/github.com/victorcoder/dkron
   environment:
