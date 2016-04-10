@@ -28,9 +28,7 @@ The best way to test and develop dkron is using docker, you will need [Docker To
 
 Clone the repository.
 
-Install glide:
-
-`go get github.com/Masterminds/glide`
+Install glide, follow instructions here https://glide.sh/
 
 Download dependencies:
 
