@@ -237,6 +237,18 @@ func Test_processFilteredNodes(t *testing.T) {
 		t.Fatalf("Job tags error, expected: 'role=test:2', got 'role=%s'", job.Tags["role"])
 	}
 
+	job = &Job{
+		Name: "test_job_1",
+		Tags: map[string]string{
+			"role": "test",
+		},
+	}
+
+	nodes, tags, err = a.processFilteredNodes(job)
+
+	log.Error(nodes)
+	log.Error(tags)
+
 	// Send a shutdown request
 	shutdownCh <- struct{}{}
 	shutdownCh2 <- struct{}{}
