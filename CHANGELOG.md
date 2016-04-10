@@ -1,4 +1,4 @@
-## 0.7.0
+## 0.7.0 (2016-04-10)
 
 - Refactor leader election, the old method could lead to cases where 2 or more nodes could have the scheduler running without noticing the other master.
 - Get rid of `keys`, in a serf cluster node names are unique so using it for leader keys now.
