@@ -27,10 +27,15 @@ type commonDashboardData struct {
 }
 
 func newCommonDashboardData(a *AgentCommand, nodeName, path string) *commonDashboardData {
-	l, _ := a.leaderMember()
+	leaderName := ""
+	l, err := a.leaderMember()
+	if err == nil {
+		leaderName = l.Name
+	}
+
 	return &commonDashboardData{
 		Version:    a.Version,
-		LeaderName: l.Name,
+		LeaderName: leaderName,
 		MemberName: nodeName,
 		Backend:    a.config.Backend,
 		Path:       fmt.Sprintf("%s%s", path, dashboardPathPrefix),
