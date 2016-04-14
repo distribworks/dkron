@@ -13,11 +13,6 @@ import (
 	"github.com/docker/libkv/store/zookeeper"
 )
 
-type Leader struct {
-	Key       []byte
-	LastIndex uint64
-}
-
 type Store struct {
 	Client   store.Store
 	agent    *AgentCommand
@@ -241,7 +236,7 @@ func (s *Store) DeleteExecutions(jobName string) error {
 	return s.Client.DeleteTree(fmt.Sprintf("%s/executions/%s", s.keyspace, jobName))
 }
 
-// Retrieve the leeader from the store
+// Retrieve the leader from the store
 func (s *Store) GetLeader() []byte {
 	res, err := s.Client.Get(s.LeaderKey())
 	if err != nil {
