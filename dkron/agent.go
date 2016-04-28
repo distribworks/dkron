@@ -64,6 +64,7 @@ Usage: dkron agent [options]
 Options:
 
   -bind=0.0.0.0:8946              Address to bind network listeners to.
+  -advertise=bind_addr            Address used to advertise to other nodes in the cluster. By default, the bind address is advertised.
   -http-addr=0.0.0.0:8080         Address to bind the UI web server to. Only used when server.
   -discover=cluster               A cluster name used to discovery peers. On
                                   networks that support multicast, this can be used to have
@@ -117,6 +118,8 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	viper.SetDefault("node_name", cmdFlags.Lookup("node").Value)
 	cmdFlags.String("bind", fmt.Sprintf("0.0.0.0:%d", DefaultBindPort), "address to bind listeners to")
 	viper.SetDefault("bind_addr", cmdFlags.Lookup("bind").Value)
+	cmdFlags.String("advertise", cmdFlags.Lookup("bind").Value.String(), "address to advertise to other nodes")
+	viper.SetDefault("advertise_addr", cmdFlags.Lookup("advertise").Value)
 	cmdFlags.String("http-addr", ":8080", "HTTP address")
 	viper.SetDefault("http_addr", cmdFlags.Lookup("http-addr").Value)
 	cmdFlags.String("discover", "dkron", "mDNS discovery name")
@@ -188,6 +191,7 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	return &Config{
 		NodeName:        nodeName,
 		BindAddr:        viper.GetString("bind_addr"),
+		AdvertiseAddr:   viper.GetString("advertise_addr"),
 		HTTPAddr:        viper.GetString("http_addr"),
 		Discover:        viper.GetString("discover"),
 		Backend:         viper.GetString("backend"),

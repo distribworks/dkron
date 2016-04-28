@@ -334,3 +334,46 @@ func Test_getRPCAddr(t *testing.T) {
 
 	shutdownCh <- struct{}{}
 }
+
+func TestAgentConfig(t *testing.T) {
+	shutdownCh := make(chan struct{})
+	defer close(shutdownCh)
+
+	ui := new(cli.MockUi)
+	a := &AgentCommand{
+		Ui:         ui,
+		ShutdownCh: shutdownCh,
+	}
+
+	args := []string{
+		"-bind", testutil.GetBindAddr().String(),
+		"-advertise", testutil.GetBindAddr().String(),
+		"-log-level", logLevel,
+	}
+
+	resultCh := make(chan int)
+	go func() {
+		resultCh <- a.Run(args)
+	}()
+
+	time.Sleep(2 * time.Second)
+
+	t.Log(a.config.BindAddr)
+	t.Log(a.config.AdvertiseAddr)
+
+	if a.config.AdvertiseAddr == a.config.BindAddr {
+		t.Fatal("Expected advertise address to be different than bind address")
+	}
+
+	// Send a shutdown request
+	shutdownCh <- struct{}{}
+
+	select {
+	case code := <-resultCh:
+		if code != 0 {
+			t.Fatalf("bad code: %d", code)
+		}
+	case <-time.After(50 * time.Millisecond):
+		t.Fatalf("timeout")
+	}
+}
