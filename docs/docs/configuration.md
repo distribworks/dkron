@@ -8,6 +8,8 @@ Settings for dkron can be specified in three ways: Using a `config/dkron.json` c
 
 * `-bind` - The address that dkron will bind to for communication with other dkron nodes. By default this is "0.0.0.0:8946". dkron nodes may have different ports. If a join is specified without a port, we default to locally configured port. dkron uses both TCP and UDP and use the same port for both, so if you have any firewalls be sure to allow both protocols. If this configuration value is changed and no port is specified, the default of "8946" will be used.
 
+* `-advertise` - The advertise flag is used to change the address that we advertise to other nodes in the cluster. By default, the bind address is advertised. However, in some cases (specifically NAT traversal), there may be a routable address that cannot be bound to. This flag enables gossiping a different address to support this. If this address is not routable, the node will be in a constant flapping state, as other nodes will treat the non-routability as a failure.
+
 * `-http-addr` - The address where the web UI will be binded. By default `:8080`
 
 * `-backend` - Backend storage to use, etcd, consul or zk (zookeeper). The default is etcd.
