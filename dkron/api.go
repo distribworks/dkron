@@ -13,6 +13,7 @@ import (
 	"github.com/carbocation/interpose"
 	"github.com/docker/libkv/store"
 	"github.com/gorilla/mux"
+	"github.com/imdario/mergo"
 )
 
 func (a *AgentCommand) ServeHTTP() {
@@ -154,6 +155,23 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.R
 	}
 
 	if err := json.Unmarshal(body, &job); err != nil {
+		w.WriteHeader(422) // unprocessable entity
+		if err := json.NewEncoder(w).Encode(err); err != nil {
+			log.Fatal(err)
+		}
+		return
+	}
+
+	ej, err := a.store.GetJob(job.Name)
+	if err != nil {
+		w.WriteHeader(422) // unprocessable entity
+		if err := json.NewEncoder(w).Encode(err); err != nil {
+			log.Fatal(err)
+		}
+		return
+	}
+
+	if err := mergo.Merge(&job, ej); err != nil {
 		w.WriteHeader(422) // unprocessable entity
 		if err := json.NewEncoder(w).Encode(err); err != nil {
 			log.Fatal(err)
