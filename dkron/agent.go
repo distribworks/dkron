@@ -489,11 +489,8 @@ func (a *AgentCommand) participate() {
 // Leader election routine
 func (a *AgentCommand) runForElection() {
 	log.Info("agent: Running for election")
-	electedCh, errCh, err := a.candidate.RunForElection()
-	if err != nil {
-		log.WithError(err).Error("Can't run for election, store is probably down")
-		return
-	}
+	electedCh, errCh := a.candidate.RunForElection()
+
 	for {
 		select {
 		case isElected := <-electedCh:
