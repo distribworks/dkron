@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var logLevel = "debug"
+var logLevel = "error"
 var etcdAddr = getEnvWithDefault()
 
 func getEnvWithDefault() string {
