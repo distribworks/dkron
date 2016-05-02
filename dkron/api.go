@@ -13,6 +13,7 @@ import (
 	"github.com/carbocation/interpose"
 	"github.com/docker/libkv/store"
 	"github.com/gorilla/mux"
+	"github.com/imdario/mergo"
 )
 
 func (a *AgentCommand) ServeHTTP() {
@@ -145,11 +146,9 @@ func (a *AgentCommand) jobGetHandler(w http.ResponseWriter, r *http.Request) {
 
 func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	var job Job
+
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
-		log.Fatal(err)
-	}
-	if err := r.Body.Close(); err != nil {
 		log.Fatal(err)
 	}
 
@@ -159,6 +158,29 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.R
 			log.Fatal(err)
 		}
 		return
+	}
+
+	if err := r.Body.Close(); err != nil {
+		log.Fatal(err)
+	}
+
+	ej, err := a.store.GetJob(job.Name)
+	if err != nil && err != store.ErrKeyNotFound {
+		w.WriteHeader(422) // unprocessable entity
+		if err := json.NewEncoder(w).Encode(err); err != nil {
+			log.Fatal(err)
+		}
+		return
+	}
+
+	if ej != nil {
+		if err := mergo.Merge(&job, ej); err != nil {
+			w.WriteHeader(422) // unprocessable entity
+			if err := json.NewEncoder(w).Encode(err); err != nil {
+				log.Fatal(err)
+			}
+			return
+		}
 	}
 
 	// Save the new job to the store

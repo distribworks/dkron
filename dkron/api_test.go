@@ -2,6 +2,7 @@ package dkron
 
 import (
 	"bytes"
+	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"testing"
@@ -9,6 +10,7 @@ import (
 
 	"github.com/hashicorp/serf/testutil"
 	"github.com/mitchellh/cli"
+	"github.com/stretchr/testify/assert"
 )
 
 func setupAPITest(t *testing.T) (chan<- struct{}, <-chan int) {
@@ -39,20 +41,42 @@ func setupAPITest(t *testing.T) (chan<- struct{}, <-chan int) {
 	return shutdownCh, resultCh
 }
 
-func TestAPIJobCreate(t *testing.T) {
+func TestAPIJobCreateUpdate(t *testing.T) {
 	shutdownCh, _ := setupAPITest(t)
 
-	var jsonStr = []byte(`{"name": "test_job", "schedule": "@every 2s", "command": "date", "owner": "mec", "owner_email": "foo@bar.com", "disabled": true}`)
-	resp, err := http.Post("http://localhost:8090/v1/jobs/", "encoding/json", bytes.NewBuffer(jsonStr))
+	jsonStr := []byte(`{"name": "test_job", "schedule": "@every 2s", "command": "date", "owner": "mec", "owner_email": "foo@bar.com", "disabled": true}`)
+
+	resp, err := http.Post("http://localhost:8090/v1/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
+	if err != nil {
+		t.Fatal(err)
+	}
+	body, _ := ioutil.ReadAll(resp.Body)
+	resp.Body.Close()
+	assert.Equal(t, resp.StatusCode, http.StatusOK)
+
+	var origJob Job
+	if err := json.Unmarshal(body, &origJob); err != nil {
+		t.Fatal(err)
+	}
+
+	jsonStr1 := []byte(`{"name": "test_job", "schedule": "@every 2s", "command": "test"}`)
+	resp, err = http.Post("http://localhost:8090/v1/jobs", "encoding/json", bytes.NewBuffer(jsonStr1))
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer resp.Body.Close()
-	body, _ := ioutil.ReadAll(resp.Body)
+	body, _ = ioutil.ReadAll(resp.Body)
+	assert.Equal(t, resp.StatusCode, http.StatusOK)
 
-	if bytes.Equal(body, jsonStr) {
-		t.Fatalf("error saving job: %s", string(body))
+	var overwriteJob Job
+	if err := json.Unmarshal(body, &overwriteJob); err != nil {
+		t.Fatal(err)
 	}
+
+	assert.Equal(t, origJob.Name, overwriteJob.Name)
+	assert.Equal(t, origJob.Disabled, overwriteJob.Disabled)
+	assert.NotEqual(t, origJob.Command, overwriteJob.Command)
+	assert.Equal(t, "test", overwriteJob.Command)
 
 	// Send a shutdown request
 	shutdownCh <- struct{}{}

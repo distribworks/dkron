@@ -11,3 +11,5 @@ docs:
 prmd:
 	prmd doc --prepend docs/docs/overview.md static/schema.json | sed 's/\<a name\=.*a\>//' > docs/docs/api.md
 
+test:
+	@bash --norc -i ./scripts/test.sh

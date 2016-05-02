@@ -1,5 +1,5 @@
-hash: e04a8202b519a27ad67af782f72fd2dc484602a3c3df0d9088ac1cd706ca8f16
-updated: 2016-03-03T12:02:24.828962696+01:00
+hash: c8a98133409aacd60189b994e021166a4c60cb4cfaba2679f635fac68f4b25b9
+updated: 2016-04-30T00:34:30.779633055+02:00
 imports:
 - name: github.com/armon/circbuf
   version: f092b4f207b6e5cce0569056fba9e1a2735cb6cf
@@ -18,7 +18,7 @@ imports:
   - Godeps/_workspace/src/github.com/ugorji/go/codec
   - Godeps/_workspace/src/golang.org/x/net/context
 - name: github.com/docker/leadership
-  version: b545f2df5f5cd35a54c5a6bf154dcfe1f29d125b
+  version: bfc7753dd48af19513b29deec23c364bf0f274eb
 - name: github.com/docker/libkv
   version: c2aac5dbbaa5c872211edea7c0f32b3bd67e7410
   subpackages:
@@ -45,6 +45,8 @@ imports:
   subpackages:
   - serf
   - testutil
+- name: github.com/imdario/mergo
+  version: ea0151498788f6fab6365eae24f29f41c0ac0acc
 - name: github.com/jordan-wright/email
   version: 065af43fce517847a750d01a6d389d1a37e011b3
 - name: github.com/kr/pretty
@@ -71,6 +73,8 @@ imports:
   version: 463bdc838f2b35e9307e91d480878bda5fff7232
 - name: github.com/spf13/viper
   version: 2abb1bebfde865b0bb6bb7ada5be63ec78527fa6
+- name: github.com/stretchr/testify
+  version: 9cc77fa25329013ce07362c7742952ff887361f2
 - name: github.com/ugorji/go
   version: 8a2a3a8c488c3ebd98f422a965260278267a0551
   subpackages:
