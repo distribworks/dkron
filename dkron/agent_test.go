@@ -98,6 +98,7 @@ func TestAgentCommand_runForElection(t *testing.T) {
 		"-bind", a1Addr,
 		"-join", a2Addr,
 		"-node", a1Name,
+		"-rpc-port", "6869",
 		"-server",
 		"-log-level", logLevel,
 	}
@@ -123,7 +124,6 @@ func TestAgentCommand_runForElection(t *testing.T) {
 
 	args2 := []string{
 		"-bind", a2Addr,
-		"-join", a1Addr + ":8946",
 		"-join", a1Addr + ":8946",
 		"-node", a2Name,
 		"-server",
