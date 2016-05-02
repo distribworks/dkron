@@ -98,7 +98,6 @@ func TestAgentCommand_runForElection(t *testing.T) {
 		"-bind", a1Addr,
 		"-join", a2Addr,
 		"-node", a1Name,
-		"-rpc-port", "6869",
 		"-server",
 		"-log-level", logLevel,
 	}
@@ -126,6 +125,7 @@ func TestAgentCommand_runForElection(t *testing.T) {
 		"-bind", a2Addr,
 		"-join", a1Addr + ":8946",
 		"-node", a2Name,
+		"-rpc-port", "6869",
 		"-server",
 		"-log-level", logLevel,
 	}
@@ -206,6 +206,7 @@ func Test_processFilteredNodes(t *testing.T) {
 		"-bind", a2Addr,
 		"-join", a1Addr,
 		"-node", "test2",
+		"-rpc-port", "6870",
 		"-server",
 		"-tag", "role=test",
 		"-log-level", logLevel,
