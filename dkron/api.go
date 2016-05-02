@@ -2,6 +2,7 @@ package dkron
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -13,7 +14,12 @@ import (
 	"github.com/carbocation/interpose"
 	"github.com/docker/libkv/store"
 	"github.com/gorilla/mux"
+	"github.com/hashicorp/serf/serf"
 	"github.com/imdario/mergo"
+)
+
+var (
+	ErrOversizedJob = errors.New(fmt.Sprintf("Due to serf limitations in message size, the job has a maximum size of %d", serf.UserEventSizeLimit))
 )
 
 func (a *AgentCommand) ServeHTTP() {
@@ -150,6 +156,14 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.R
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	if len(body) >= serf.UserEventSizeLimit {
+		w.WriteHeader(422) // unprocessable entity
+		if err := json.NewEncoder(w).Encode(ErrOversizedJob.Error()); err != nil {
+			log.Fatal(err)
+		}
+		return
 	}
 
 	if err := json.Unmarshal(body, &job); err != nil {
