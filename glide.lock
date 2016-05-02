@@ -1,5 +1,5 @@
-hash: 942d2e73f1ffd948d84de3e1de5ff33c15bfeb5665b2b272787a086ccd6190eb
-updated: 2016-04-28T22:50:51.411803464+02:00
+hash: c8a98133409aacd60189b994e021166a4c60cb4cfaba2679f635fac68f4b25b9
+updated: 2016-04-30T00:34:30.779633055+02:00
 imports:
 - name: github.com/armon/circbuf
   version: f092b4f207b6e5cce0569056fba9e1a2735cb6cf
@@ -73,6 +73,8 @@ imports:
   version: 463bdc838f2b35e9307e91d480878bda5fff7232
 - name: github.com/spf13/viper
   version: 2abb1bebfde865b0bb6bb7ada5be63ec78527fa6
+- name: github.com/stretchr/testify
+  version: 9cc77fa25329013ce07362c7742952ff887361f2
 - name: github.com/ugorji/go
   version: 8a2a3a8c488c3ebd98f422a965260278267a0551
   subpackages:

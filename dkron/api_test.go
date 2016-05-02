@@ -2,6 +2,7 @@ package dkron
 
 import (
 	"bytes"
+	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"testing"
@@ -9,6 +10,7 @@ import (
 
 	"github.com/hashicorp/serf/testutil"
 	"github.com/mitchellh/cli"
+	"github.com/stretchr/testify/assert"
 )
 
 func setupAPITest(t *testing.T) (chan<- struct{}, <-chan int) {
@@ -39,10 +41,16 @@ func setupAPITest(t *testing.T) (chan<- struct{}, <-chan int) {
 	return shutdownCh, resultCh
 }
 
-func TestAPIJobCreate(t *testing.T) {
+func TestAPIJobCreateUpdate(t *testing.T) {
 	shutdownCh, _ := setupAPITest(t)
 
 	var jsonStr = []byte(`{"name": "test_job", "schedule": "@every 2s", "command": "date", "owner": "mec", "owner_email": "foo@bar.com", "disabled": true}`)
+
+	var origJob Job
+	if err := json.Unmarshal(jsonStr, &origJob); err != nil {
+		t.Fatal(err)
+	}
+
 	resp, err := http.Post("http://localhost:8090/v1/jobs/", "encoding/json", bytes.NewBuffer(jsonStr))
 	if err != nil {
 		t.Fatal(err)
@@ -50,9 +58,24 @@ func TestAPIJobCreate(t *testing.T) {
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 
-	if bytes.Equal(body, jsonStr) {
-		t.Fatalf("error saving job: %s", string(body))
+	t.Log(body)
+	assert.Equal(t, jsonStr, body)
+
+	var jsonStr1 = []byte(`{"name": "test_job", "schedule": "@every 2s", "command": "test"}`)
+	resp, err = http.Post("http://localhost:8090/v1/jobs/", "encoding/json", bytes.NewBuffer(jsonStr1))
+	if err != nil {
+		t.Fatal(err)
 	}
+	defer resp.Body.Close()
+	body, _ = ioutil.ReadAll(resp.Body)
+
+	var storedJob Job
+	if err := json.Unmarshal(body, &storedJob); err != nil {
+		t.Fatal(err)
+	}
+
+	assert.Equal(t, origJob.Disabled, storedJob.Disabled)
+	assert.Equal(t, "test", storedJob.Command)
 
 	// Send a shutdown request
 	shutdownCh <- struct{}{}

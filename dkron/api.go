@@ -150,6 +150,7 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.R
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Error(string(body))
 	if err := r.Body.Close(); err != nil {
 		log.Fatal(err)
 	}
@@ -171,6 +172,7 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.R
 		return
 	}
 
+	log.Error(ej)
 	if err := mergo.Merge(&job, ej); err != nil {
 		w.WriteHeader(422) // unprocessable entity
 		if err := json.NewEncoder(w).Encode(err); err != nil {

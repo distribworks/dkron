@@ -82,3 +82,4 @@ import:
   version: 49c95bdc21843256fb6c4e0d370a05f24a0bf213
 - package: github.com/docker/leadership
 - package: github.com/imdario/mergo
+- package: github.com/stretchr/testify
