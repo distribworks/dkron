@@ -146,12 +146,9 @@ func (a *AgentCommand) jobGetHandler(w http.ResponseWriter, r *http.Request) {
 
 func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	var job Job
+
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
-		log.Fatal(err)
-	}
-	log.Error(string(body))
-	if err := r.Body.Close(); err != nil {
 		log.Fatal(err)
 	}
 
@@ -163,8 +160,12 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.R
 		return
 	}
 
+	if err := r.Body.Close(); err != nil {
+		log.Fatal(err)
+	}
+
 	ej, err := a.store.GetJob(job.Name)
-	if err != nil {
+	if err != nil && err != store.ErrKeyNotFound {
 		w.WriteHeader(422) // unprocessable entity
 		if err := json.NewEncoder(w).Encode(err); err != nil {
 			log.Fatal(err)
@@ -172,13 +173,14 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	log.Error(ej)
-	if err := mergo.Merge(&job, ej); err != nil {
-		w.WriteHeader(422) // unprocessable entity
-		if err := json.NewEncoder(w).Encode(err); err != nil {
-			log.Fatal(err)
+	if ej != nil {
+		if err := mergo.Merge(&job, ej); err != nil {
+			w.WriteHeader(422) // unprocessable entity
+			if err := json.NewEncoder(w).Encode(err); err != nil {
+				log.Fatal(err)
+			}
+			return
 		}
-		return
 	}
 
 	// Save the new job to the store
