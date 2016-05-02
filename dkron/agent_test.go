@@ -9,6 +9,7 @@ import (
 	"github.com/docker/libkv/store"
 	"github.com/hashicorp/serf/testutil"
 	"github.com/mitchellh/cli"
+	"github.com/stretchr/testify/assert"
 )
 
 var logLevel = "debug"
@@ -361,9 +362,7 @@ func TestAgentConfig(t *testing.T) {
 	t.Log(a.config.BindAddr)
 	t.Log(a.config.AdvertiseAddr)
 
-	if a.config.AdvertiseAddr == a.config.BindAddr {
-		t.Fatal("Expected advertise address to be different than bind address")
-	}
+	assert.NotEqual(t, a.config.AdvertiseAddr, a.config.BindAddr)
 
 	// Send a shutdown request
 	shutdownCh <- struct{}{}
