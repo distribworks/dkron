@@ -293,9 +293,7 @@ func TestEncrypt(t *testing.T) {
 	go a.Run(args)
 	time.Sleep(2 * time.Second)
 
-	if !a.serf.EncryptionEnabled() {
-		t.Fatal("Encryption not enabled for serf")
-	}
+	assert.True(t, a.serf.EncryptionEnabled())
 	shutdownCh <- struct{}{}
 }
 
@@ -325,9 +323,7 @@ func Test_getRPCAddr(t *testing.T) {
 	getRPCAddr := a.getRPCAddr()
 	exRPCAddr := a1Addr.String() + ":6868"
 
-	if exRPCAddr != getRPCAddr {
-		t.Fatalf("Expected address was: %s got %s", exRPCAddr, getRPCAddr)
-	}
+	assert.Equal(t, exRPCAddr, getRPCAddr)
 
 	shutdownCh <- struct{}{}
 }
