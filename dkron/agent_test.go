@@ -9,9 +9,10 @@ import (
 	"github.com/docker/libkv/store"
 	"github.com/hashicorp/serf/testutil"
 	"github.com/mitchellh/cli"
+	"github.com/stretchr/testify/assert"
 )
 
-var logLevel = "debug"
+var logLevel = "error"
 var etcdAddr = getEnvWithDefault()
 
 func getEnvWithDefault() string {
@@ -122,7 +123,6 @@ func TestAgentCommand_runForElection(t *testing.T) {
 
 	args2 := []string{
 		"-bind", a2Addr,
-		"-join", a1Addr + ":8946",
 		"-join", a1Addr + ":8946",
 		"-node", a2Name,
 		"-server",
@@ -246,9 +246,6 @@ func Test_processFilteredNodes(t *testing.T) {
 
 	nodes, tags, err = a.processFilteredNodes(job)
 
-	log.Error(nodes)
-	log.Error(tags)
-
 	// Send a shutdown request
 	shutdownCh <- struct{}{}
 	shutdownCh2 <- struct{}{}
@@ -296,9 +293,7 @@ func TestEncrypt(t *testing.T) {
 	go a.Run(args)
 	time.Sleep(2 * time.Second)
 
-	if !a.serf.EncryptionEnabled() {
-		t.Fatal("Encryption not enabled for serf")
-	}
+	assert.True(t, a.serf.EncryptionEnabled())
 	shutdownCh <- struct{}{}
 }
 
@@ -328,9 +323,48 @@ func Test_getRPCAddr(t *testing.T) {
 	getRPCAddr := a.getRPCAddr()
 	exRPCAddr := a1Addr.String() + ":6868"
 
-	if exRPCAddr != getRPCAddr {
-		t.Fatalf("Expected address was: %s got %s", exRPCAddr, getRPCAddr)
-	}
+	assert.Equal(t, exRPCAddr, getRPCAddr)
 
 	shutdownCh <- struct{}{}
+}
+
+func TestAgentConfig(t *testing.T) {
+	shutdownCh := make(chan struct{})
+	defer close(shutdownCh)
+
+	ui := new(cli.MockUi)
+	a := &AgentCommand{
+		Ui:         ui,
+		ShutdownCh: shutdownCh,
+	}
+
+	advAddr := testutil.GetBindAddr().String()
+	args := []string{
+		"-bind", testutil.GetBindAddr().String(),
+		"-advertise", advAddr,
+		"-log-level", logLevel,
+	}
+
+	resultCh := make(chan int)
+	go func() {
+		resultCh <- a.Run(args)
+	}()
+
+	time.Sleep(2 * time.Second)
+
+	assert.NotEqual(t, a.config.AdvertiseAddr, a.config.BindAddr)
+	assert.NotEmpty(t, a.config.AdvertiseAddr)
+	assert.Equal(t, advAddr, a.config.AdvertiseAddr)
+
+	// Send a shutdown request
+	shutdownCh <- struct{}{}
+
+	select {
+	case code := <-resultCh:
+		if code != 0 {
+			t.Fatalf("bad code: %d", code)
+		}
+	case <-time.After(50 * time.Millisecond):
+		t.Fatalf("timeout")
+	}
 }
