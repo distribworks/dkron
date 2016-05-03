@@ -1,5 +1,5 @@
-hash: c8a98133409aacd60189b994e021166a4c60cb4cfaba2679f635fac68f4b25b9
-updated: 2016-04-30T00:34:30.779633055+02:00
+hash: 36a479508b0306ce919b2a6d4eb99df98b36f9eb14202c3a08c85246ca19e9fe
+updated: 2016-05-03T17:32:15.075162169+02:00
 imports:
 - name: github.com/armon/circbuf
   version: f092b4f207b6e5cce0569056fba9e1a2735cb6cf
@@ -55,6 +55,8 @@ imports:
   version: 6807e777504f54ad073ecef66747de158294b639
 - name: github.com/magiconair/properties
   version: d5929c67198951106f49f7ea425198d0f1a08f7f
+- name: github.com/mattn/go-shellwords
+  version: 525bedee691b5a8df547cb5cf9f86b7fb1883e24
 - name: github.com/mitchellh/cli
   version: 6cc8bc522243675a2882b81662b0b0d2e04b99c9
 - name: github.com/mitchellh/mapstructure

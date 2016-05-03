@@ -9,6 +9,7 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/armon/circbuf"
 	"github.com/hashicorp/serf/serf"
+	"github.com/mattn/go-shellwords"
 )
 
 const (
@@ -26,17 +27,11 @@ func (a *AgentCommand) invokeJob(execution *Execution) error {
 
 	output, _ := circbuf.NewBuffer(maxBufSize)
 
-	// Determine the shell invocation based on OS
-	var shell, flag string
-	if runtime.GOOS == windows {
-		shell = "cmd"
-		flag = "/C"
-	} else {
-		shell = "/bin/sh"
-		flag = "-c"
+	args, err := shellwords.Parse(job.Command)
+	if err != nil {
+		log.WithError(err).Fatal("proc: Error parsing command arguments")
 	}
-
-	cmd := exec.Command(shell, flag, job.Command)
+	cmd := exec.Command(args)
 	cmd.Stderr = output
 	cmd.Stdout = output
 
