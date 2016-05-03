@@ -118,7 +118,7 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	viper.SetDefault("node_name", cmdFlags.Lookup("node").Value)
 	cmdFlags.String("bind", fmt.Sprintf("0.0.0.0:%d", DefaultBindPort), "address to bind listeners to")
 	viper.SetDefault("bind_addr", cmdFlags.Lookup("bind").Value)
-	cmdFlags.String("advertise", cmdFlags.Lookup("bind").Value.String(), "address to advertise to other nodes")
+	cmdFlags.String("advertise", "", "address to advertise to other nodes")
 	viper.SetDefault("advertise_addr", cmdFlags.Lookup("advertise").Value)
 	cmdFlags.String("http-addr", ":8080", "HTTP address")
 	viper.SetDefault("http_addr", cmdFlags.Lookup("http-addr").Value)
