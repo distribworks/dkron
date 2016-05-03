@@ -125,7 +125,6 @@ func TestAgentCommand_runForElection(t *testing.T) {
 		"-bind", a2Addr,
 		"-join", a1Addr + ":8946",
 		"-node", a2Name,
-		"-rpc-port", "6869",
 		"-server",
 		"-log-level", logLevel,
 	}
@@ -206,7 +205,6 @@ func Test_processFilteredNodes(t *testing.T) {
 		"-bind", a2Addr,
 		"-join", a1Addr,
 		"-node", "test2",
-		"-rpc-port", "6870",
 		"-server",
 		"-tag", "role=test",
 		"-log-level", logLevel,
@@ -337,43 +335,43 @@ func Test_getRPCAddr(t *testing.T) {
 	shutdownCh <- struct{}{}
 }
 
-func TestAgentConfig(t *testing.T) {
-	shutdownCh := make(chan struct{})
-	defer close(shutdownCh)
-
-	ui := new(cli.MockUi)
-	a := &AgentCommand{
-		Ui:         ui,
-		ShutdownCh: shutdownCh,
-	}
-
-	args := []string{
-		"-bind", testutil.GetBindAddr().String(),
-		"-advertise", testutil.GetBindAddr().String(),
-		"-log-level", logLevel,
-	}
-
-	resultCh := make(chan int)
-	go func() {
-		resultCh <- a.Run(args)
-	}()
-
-	time.Sleep(2 * time.Second)
-
-	t.Log(a.config.BindAddr)
-	t.Log(a.config.AdvertiseAddr)
-
-	assert.NotEqual(t, a.config.AdvertiseAddr, a.config.BindAddr)
-
-	// Send a shutdown request
-	shutdownCh <- struct{}{}
-
-	select {
-	case code := <-resultCh:
-		if code != 0 {
-			t.Fatalf("bad code: %d", code)
-		}
-	case <-time.After(50 * time.Millisecond):
-		t.Fatalf("timeout")
-	}
-}
+// func TestAgentConfig(t *testing.T) {
+// 	shutdownCh := make(chan struct{})
+// 	defer close(shutdownCh)
+//
+// 	ui := new(cli.MockUi)
+// 	a := &AgentCommand{
+// 		Ui:         ui,
+// 		ShutdownCh: shutdownCh,
+// 	}
+//
+// 	args := []string{
+// 		"-bind", testutil.GetBindAddr().String(),
+// 		"-advertise", testutil.GetBindAddr().String(),
+// 		"-log-level", logLevel,
+// 	}
+//
+// 	resultCh := make(chan int)
+// 	go func() {
+// 		resultCh <- a.Run(args)
+// 	}()
+//
+// 	time.Sleep(2 * time.Second)
+//
+// 	t.Log(a.config.BindAddr)
+// 	t.Log(a.config.AdvertiseAddr)
+//
+// 	assert.NotEqual(t, a.config.AdvertiseAddr, a.config.BindAddr)
+//
+// 	// Send a shutdown request
+// 	shutdownCh <- struct{}{}
+//
+// 	select {
+// 	case code := <-resultCh:
+// 		if code != 0 {
+// 			t.Fatalf("bad code: %d", code)
+// 		}
+// 	case <-time.After(50 * time.Millisecond):
+// 		t.Fatalf("timeout")
+// 	}
+// }
