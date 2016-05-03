@@ -246,9 +246,6 @@ func Test_processFilteredNodes(t *testing.T) {
 
 	nodes, tags, err = a.processFilteredNodes(job)
 
-	log.Error(nodes)
-	log.Error(tags)
-
 	// Send a shutdown request
 	shutdownCh <- struct{}{}
 	shutdownCh2 <- struct{}{}
