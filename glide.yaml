@@ -83,3 +83,4 @@ import:
 - package: github.com/docker/leadership
 - package: github.com/imdario/mergo
 - package: github.com/stretchr/testify
+- package: github.com/mattn/go-shellwords

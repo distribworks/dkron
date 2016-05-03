@@ -3,12 +3,12 @@ package dkron
 import (
 	"math/rand"
 	"os/exec"
-	"runtime"
 	"time"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/armon/circbuf"
 	"github.com/hashicorp/serf/serf"
+	"github.com/mattn/go-shellwords"
 )
 
 const (
@@ -26,17 +26,11 @@ func (a *AgentCommand) invokeJob(execution *Execution) error {
 
 	output, _ := circbuf.NewBuffer(maxBufSize)
 
-	// Determine the shell invocation based on OS
-	var shell, flag string
-	if runtime.GOOS == windows {
-		shell = "cmd"
-		flag = "/C"
-	} else {
-		shell = "/bin/sh"
-		flag = "-c"
+	args, err := shellwords.Parse(job.Command)
+	if err != nil {
+		log.WithError(err).Fatal("proc: Error parsing command arguments")
 	}
-
-	cmd := exec.Command(shell, flag, job.Command)
+	cmd := exec.Command(args[0], args[1:]...)
 	cmd.Stderr = output
 	cmd.Stdout = output
 
@@ -55,7 +49,7 @@ func (a *AgentCommand) invokeJob(execution *Execution) error {
 	}
 
 	var success bool
-	err := cmd.Wait()
+	err = cmd.Wait()
 	slowTimer.Stop()
 	log.WithFields(logrus.Fields{
 		"output": output,
