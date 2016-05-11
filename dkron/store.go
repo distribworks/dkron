@@ -13,6 +13,8 @@ import (
 	"github.com/docker/libkv/store/zookeeper"
 )
 
+const MaxExecutions = 100
+
 type Store struct {
 	Client   store.Store
 	agent    *AgentCommand
@@ -219,8 +221,8 @@ func (s *Store) SetExecution(execution *Execution) (string, error) {
 	sort.Sort(byGroup)
 
 	// Delete all execution results over the limit, starting from olders
-	if len(byGroup) > 99 {
-		for i := range byGroup[99:] {
+	if len(byGroup) > MaxExecutions {
+		for i := range byGroup[MaxExecutions:] {
 			err := s.Client.Delete(fmt.Sprintf("%s/executions/%s/%s", s.keyspace, execs[i].JobName, execs[i].Key()))
 			if err != nil {
 				log.Errorf("store: Trying to delete overflowed execution %s", execs[i].Key())
