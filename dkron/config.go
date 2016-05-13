@@ -17,6 +17,8 @@ type Config struct {
 	Discover              string
 	Backend               string
 	BackendMachines       []string
+	BackendUsername       string
+	BackendPassword       string
 	Profile               string
 	Interface             string
 	AdvertiseAddr         string
