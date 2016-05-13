@@ -8,7 +8,7 @@ import (
 )
 
 func TestStore(t *testing.T) {
-	store := NewStore("etcd", []string{etcdAddr}, nil, "dkron-test")
+	store := NewStore("etcd", []string{etcdAddr}, nil, "dkron-test", "", "")
 
 	// Cleanup everything
 	err := store.Client.DeleteTree("dkron-test")
