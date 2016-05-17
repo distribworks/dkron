@@ -11,6 +11,7 @@ consul:
   image: progrium/consul
   ports:
     - "8500"
+    - "8300"
   hostname: node1
   command: -server -bootstrap -ui-dir=/ui
 
@@ -40,4 +41,4 @@ dkron:
   environment:
     - GODEBUG=netdns=go
     - DKRON_BACKEND_MACHINE=etcd:4001
-  command: go run main.go agent -server -backend=etcd -backend-machine=etcd:4001 -join=dkron_seed:8946 -log-level=debug
+  command: go run main.go agent -server -backend=consul -backend-machine=consul:8500 -join=dkron_seed:8946 -log-level=debug
