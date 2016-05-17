@@ -3,6 +3,7 @@ package dkron
 import (
 	"math/rand"
 	"os/exec"
+	"runtime"
 	"time"
 
 	"github.com/Sirupsen/logrus"
@@ -26,11 +27,28 @@ func (a *AgentCommand) invokeJob(execution *Execution) error {
 
 	output, _ := circbuf.NewBuffer(maxBufSize)
 
-	args, err := shellwords.Parse(job.Command)
-	if err != nil {
-		log.WithError(err).Fatal("proc: Error parsing command arguments")
+	// Determine the shell invocation based on OS
+	var (
+		shell, flag string
+		cmd         *exec.Cmd
+	)
+	if job.Shell {
+		if runtime.GOOS == windows {
+			shell = "cmd"
+			flag = "/C"
+		} else {
+			shell = "/bin/sh"
+			flag = "-c"
+		}
+		cmd = exec.Command(shell, flag, job.Command)
+	} else {
+		args, err := shellwords.Parse(job.Command)
+		if err != nil {
+			log.WithError(err).Fatal("proc: Error parsing command arguments")
+		}
+		cmd = exec.Command(args[0], args[1:]...)
 	}
-	cmd := exec.Command(args[0], args[1:]...)
+
 	cmd.Stderr = output
 	cmd.Stdout = output
 
