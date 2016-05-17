@@ -1,5 +1,5 @@
-hash: 36a479508b0306ce919b2a6d4eb99df98b36f9eb14202c3a08c85246ca19e9fe
-updated: 2016-05-03T17:32:15.075162169+02:00
+hash: c82dbfcdb212fb76df8a101a2f3ba6cd3d37418d25663f48bea2840af8c232de
+updated: 2016-05-18T00:00:47.170818262+02:00
 imports:
 - name: github.com/armon/circbuf
   version: f092b4f207b6e5cce0569056fba9e1a2735cb6cf
@@ -46,7 +46,7 @@ imports:
   - serf
   - testutil
 - name: github.com/imdario/mergo
-  version: ea0151498788f6fab6365eae24f29f41c0ac0acc
+  version: 50d4dbd4eb0e84778abe37cefef140271d96fade
 - name: github.com/jordan-wright/email
   version: 065af43fce517847a750d01a6d389d1a37e011b3
 - name: github.com/kr/pretty
@@ -76,7 +76,9 @@ imports:
 - name: github.com/spf13/viper
   version: 2abb1bebfde865b0bb6bb7ada5be63ec78527fa6
 - name: github.com/stretchr/testify
-  version: 9cc77fa25329013ce07362c7742952ff887361f2
+  version: 6cb3b85ef5a0efef77caef88363ec4d4b5c0976d
+  subpackages:
+  - assert
 - name: github.com/ugorji/go
   version: 8a2a3a8c488c3ebd98f422a965260278267a0551
   subpackages:

@@ -67,7 +67,7 @@ func (a *AgentCommand) invokeJob(execution *Execution) error {
 	}
 
 	var success bool
-	err = cmd.Wait()
+	err := cmd.Wait()
 	slowTimer.Stop()
 	log.WithFields(logrus.Fields{
 		"output": output,

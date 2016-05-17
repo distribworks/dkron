@@ -9,7 +9,7 @@ import (
 func TestSchedule(t *testing.T) {
 	sched := NewScheduler()
 
-	assert.NotEqual(t, true, sched.Started)
+	assert.False(t, sched.Started)
 
 	testJob1 := &Job{
 		Name:       "cron_job",
@@ -21,7 +21,7 @@ func TestSchedule(t *testing.T) {
 	}
 	sched.Start([]*Job{testJob1})
 
-	assert.Equal(t, true, sched.Started)
+	assert.True(t, sched.Started)
 
 	testJob2 := &Job{
 		Name:       "cron_job",
@@ -33,6 +33,6 @@ func TestSchedule(t *testing.T) {
 	}
 	sched.Restart([]*Job{testJob2})
 
-	assert.Equal(t, true, sched.Started)
-	assert.Len(t, sched.Cron.Entries(), 1, "The scheduler has more jobs than expected.")
+	assert.True(t, sched.Started)
+	assert.Len(t, sched.Cron.Entries(), 1)
 }
