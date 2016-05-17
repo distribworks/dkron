@@ -88,7 +88,7 @@ func (a *AgentCommand) queryRPCConfig() ([]byte, error) {
 
 	params := &serf.QueryParam{
 		FilterNodes: []string{nodeName},
-		FilterTags:  map[string]string{"server": "true"},
+		FilterTags:  map[string]string{"dkron_server": "true"},
 		RequestAck:  true,
 	}
 

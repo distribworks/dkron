@@ -183,7 +183,8 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 	nodeName := viper.GetString("node_name")
 
 	if server {
-		tags["server"] = "true"
+		tags["dkron_server"] = "true"
+		tags["dkron_version"] = a.Version
 	}
 
 	InitLogger(viper.GetString("log_level"), nodeName)
@@ -533,7 +534,7 @@ func (a *AgentCommand) listServers() []serf.Member {
 	members := []serf.Member{}
 
 	for _, member := range a.serf.Members() {
-		if key, ok := member.Tags["server"]; ok {
+		if key, ok := member.Tags["dkron_server"]; ok {
 			if key == "true" && member.Status == serf.StatusAlive {
 				members = append(members, member)
 			}
