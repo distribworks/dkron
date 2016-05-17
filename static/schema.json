@@ -95,6 +95,14 @@
             "string"
           ]
         },
+        "shell": {
+          "description": "use shell to run the command",
+          "example": true,
+          "readOnly": false,
+          "type": [
+            "boolean"
+          ]
+        },
         "owner": {
           "description": "owner of the job",
           "example": "John Doe",
