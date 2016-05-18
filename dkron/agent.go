@@ -33,7 +33,7 @@ const (
 	gracefulTimeout = 3 * time.Second
 
 	defaultRecoverTime = 10 * time.Second
-	defaultLeaderTTL   = 15 * time.Second
+	defaultLeaderTTL   = 20 * time.Second
 )
 
 var (

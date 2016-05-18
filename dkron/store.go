@@ -28,11 +28,23 @@ func init() {
 }
 
 func NewStore(backend string, machines []string, a *AgentCommand, keyspace string) *Store {
-	store, err := libkv.NewStore(store.Backend(backend), machines, nil)
+	s, err := libkv.NewStore(store.Backend(backend), machines, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
-	return &Store{Client: store, agent: a, keyspace: keyspace}
+
+	log.WithFields(logrus.Fields{
+		"backend":  backend,
+		"machines": machines,
+		"keyspace": keyspace,
+	}).Debug("store: Backend config")
+
+	_, err = s.List(keyspace)
+	if err != store.ErrKeyNotFound && err != nil {
+		log.WithError(err).Fatal("store: Store backend not reachable")
+	}
+
+	return &Store{Client: s, agent: a, keyspace: keyspace}
 }
 
 // Store a job
