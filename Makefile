@@ -5,7 +5,7 @@ all: deps
 deps:
 	godep save -t ./...
 
-docs:
+doc:
 	mkdocs gh-deploy --clean
 
 prmd:

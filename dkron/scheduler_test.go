@@ -2,34 +2,37 @@ package dkron
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSchedule(t *testing.T) {
 	sched := NewScheduler()
 
-	if sched.Started == true {
-		t.Fatal("The scheduler should be stopped.")
-	}
+	assert.False(t, sched.Started)
 
 	testJob1 := &Job{
-		Name: "cron_job", Schedule: "@every 2s", Command: "echo 'test1'", Owner: "John Dough", OwnerEmail: "foo@bar.com",
+		Name:       "cron_job",
+		Schedule:   "@every 2s",
+		Command:    "echo 'test1'",
+		Owner:      "John Dough",
+		OwnerEmail: "foo@bar.com",
+		Shell:      true,
 	}
 	sched.Start([]*Job{testJob1})
 
-	if sched.Started != true {
-		t.Fatal("The scheduler should be started.")
-	}
+	assert.True(t, sched.Started)
 
 	testJob2 := &Job{
-		Name: "cron_job", Schedule: "@every 5s", Command: "echo 'test2'", Owner: "John Dough", OwnerEmail: "foo@bar.com",
+		Name:       "cron_job",
+		Schedule:   "@every 5s",
+		Command:    "echo 'test2'",
+		Owner:      "John Dough",
+		OwnerEmail: "foo@bar.com",
+		Shell:      true,
 	}
 	sched.Restart([]*Job{testJob2})
 
-	if sched.Started != true {
-		t.Fatal("The scheduler should be started.")
-	}
-
-	if len(sched.Cron.Entries()) > 1 {
-		t.Fatal("The scheduler has more jobs than expected.")
-	}
+	assert.True(t, sched.Started)
+	assert.Len(t, sched.Cron.Entries(), 1)
 }

@@ -51,6 +51,9 @@ type Job struct {
 	// Cron expression for the job. When to run the job.
 	Schedule string `json:"schedule"`
 
+	// Use shell to run the command.
+	Shell bool `json:"shell"`
+
 	// Command to run. Must be a shell command to execute.
 	Command string `json:"command"`
 

@@ -83,4 +83,7 @@ import:
 - package: github.com/docker/leadership
 - package: github.com/imdario/mergo
 - package: github.com/stretchr/testify
+  version: 6cb3b85ef5a0efef77caef88363ec4d4b5c0976d
+  subpackages:
+  - assert
 - package: github.com/mattn/go-shellwords
