@@ -44,6 +44,16 @@ func (s *Scheduler) Restart(jobs []*Job) {
 	s.Start(jobs)
 }
 
+func (s *Scheduler) GetEntry(job *Job) *cron.Entry {
+	for _, e := range s.Cron.Entries() {
+		j, _ := e.Job.(*Job)
+		if j.Name == job.Name {
+			return e
+		}
+	}
+	return nil
+}
+
 type Job struct {
 	// Job name. Must be unique, acts as the id.
 	Name string `json:"name"`
@@ -90,6 +100,7 @@ type Job struct {
 	running sync.Mutex
 }
 
+// Run the job
 func (j *Job) Run() {
 	j.running.Lock()
 	defer j.running.Unlock()
@@ -107,6 +118,7 @@ func (j *Job) Run() {
 	}
 }
 
+// Friendly format a job
 func (j *Job) String() string {
 	return fmt.Sprintf("\"Job: %s, scheduled at: %s, tags:%v\"", j.Name, j.Schedule, j.Tags)
 }
