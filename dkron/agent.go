@@ -56,6 +56,11 @@ type AgentCommand struct {
 	candidate  *leadership.Candidate
 }
 
+type ExecutionRequest struct {
+	Execution Execution `json:"execution"`
+	RPCServer string    `json:"rpc_server"`
+}
+
 func (a *AgentCommand) Help() string {
 	helpText := `
 Usage: dkron agent [options]
@@ -578,12 +583,13 @@ func (a *AgentCommand) eventLoop() {
 						"at":      query.LTime,
 					}).Debug("agent: Running job")
 
-					var ex Execution
-					if err := json.Unmarshal(query.Payload, &ex); err != nil {
+					var req ExecutionRequest
+					if err := json.Unmarshal(query.Payload, &req); err != nil {
 						log.WithFields(logrus.Fields{
 							"query": QueryRunJob,
 						}).Fatal("agent: Error unmarshaling job payload")
 					}
+					ex := req.Execution
 
 					log.WithFields(logrus.Fields{
 						"job": ex.JobName,
@@ -704,15 +710,19 @@ func (a *AgentCommand) RunQuery(job *Job) {
 		Group:   time.Now().UnixNano(),
 		Job:     job,
 	}
+	req := ExecutionRequest{
+		Execution: ex,
+		RPCServer: a.getRPCAddr(),
+	}
 
-	exJson, _ := json.Marshal(ex)
+	reqJson, _ := json.Marshal(req)
 	log.WithFields(logrus.Fields{
 		"query":    QueryRunJob,
 		"job_name": ex.JobName,
-		"json":     string(exJson),
+		"json":     string(reqJson),
 	}).Debug("agent: Sending query")
 
-	qr, err := a.serf.Query(QueryRunJob, exJson, params)
+	qr, err := a.serf.Query(QueryRunJob, reqJson, params)
 	if err != nil {
 		log.WithField("query", QueryRunJob).WithError(err).Fatal("agent: Sending query error")
 	}
