@@ -364,7 +364,7 @@ func TestAgentConfig(t *testing.T) {
 		if code != 0 {
 			t.Fatalf("bad code: %d", code)
 		}
-	case <-time.After(50 * time.Millisecond):
+	case <-time.After(100 * time.Millisecond):
 		t.Fatalf("timeout")
 	}
 }
