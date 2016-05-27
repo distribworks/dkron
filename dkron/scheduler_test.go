@@ -23,7 +23,7 @@ func TestSchedule(t *testing.T) {
 	sched.Start([]*Job{testJob1})
 
 	assert.True(t, sched.Started)
-	now := time.Now().Truncate(time.Nanosecond)
+	now := time.Now().Truncate(time.Second)
 
 	assert.Equal(t, now.Add(time.Second*2), sched.GetEntry(testJob1).Next)
 
