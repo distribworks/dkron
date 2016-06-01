@@ -8,12 +8,12 @@ etcd:
   command: -name=dcron1
 
 consul:
-  image: progrium/consul
+  image: consul
   ports:
     - "8500"
     - "8300"
   hostname: node1
-  command: -server -bootstrap -ui-dir=/ui
+  command: agent -server -bootstrap -ui-dir=/ui -client=0.0.0.0
 
 dkron_seed:
   links:
