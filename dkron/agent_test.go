@@ -218,6 +218,7 @@ func Test_processFilteredNodes(t *testing.T) {
 	job := &Job{
 		Name: "test_job_1",
 		Tags: map[string]string{
+			"foo":  "bar:1",
 			"role": "test:2",
 		},
 	}
@@ -225,26 +226,11 @@ func Test_processFilteredNodes(t *testing.T) {
 	time.Sleep(2 * time.Second)
 	nodes, tags, err := a.processFilteredNodes(job)
 
-	if nodes[0] != "test1" || nodes[1] != "test2" {
-		t.Fatal("Not expected returned nodes")
-	}
-
-	if tags["role"] != "test" {
-		t.Fatalf("Tags error, expected: test, got %s", tags["role"])
-	}
-
-	if job.Tags["role"] != "test:2" {
-		t.Fatalf("Job tags error, expected: 'role=test:2', got 'role=%s'", job.Tags["role"])
-	}
-
-	job = &Job{
-		Name: "test_job_1",
-		Tags: map[string]string{
-			"role": "test",
-		},
-	}
-
-	nodes, tags, err = a.processFilteredNodes(job)
+	assert.Equal(t, nodes[0], "test1")
+	assert.Equal(t, nodes[1], "test2")
+	assert.Equal(t, tags["role"], "test")
+	assert.Equal(t, job.Tags["role"], "test:2")
+	assert.Equal(t, job.Tags["foo"], "bar:1")
 
 	// Send a shutdown request
 	shutdownCh <- struct{}{}
