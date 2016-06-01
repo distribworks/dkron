@@ -1,3 +1,8 @@
+## 0.7.2 (2016-06-01)
+
+- Add some helpers and bugfixes
+- Add shell property to job, reintroduced the shell execution method but now it's a choice
+
 ## 0.7.1 (2016-05-03)
 
 - Don't use shell call when executing commands, exploding the command line.
