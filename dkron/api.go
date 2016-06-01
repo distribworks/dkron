@@ -257,11 +257,20 @@ func (a *AgentCommand) executionsHandler(w http.ResponseWriter, r *http.Request)
 	vars := mux.Vars(r)
 	jobName := vars["job"]
 
-	executions, err := a.store.GetExecutions(jobName)
+	job, err := a.store.GetJob(jobName)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		if err := json.NewEncoder(w).Encode(err); err != nil {
+			log.Fatal(err)
+		}
+		return
+	}
+
+	executions, err := a.store.GetExecutions(job.Name)
 	if err != nil {
 		if err == store.ErrKeyNotFound {
-			w.WriteHeader(http.StatusNotFound)
-			if err := json.NewEncoder(w).Encode(err); err != nil {
+			w.WriteHeader(http.StatusOK)
+			if err := json.NewEncoder(w).Encode(&[]Execution{}); err != nil {
 				log.Fatal(err)
 			}
 			return
