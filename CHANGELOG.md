@@ -2,6 +2,12 @@
 
 - Add some helpers and bugfixes
 - Add shell property to job, reintroduced the shell execution method but now it's a choice
+- Add reporting node to execution reports
+- Replace server tag for dkron_server and add dkron_version
+
+### Upgrade notes
+
+Due to the change in the internal tags `server` to `dkron_server`, you'll need to adjust job tags if they where using that tag.
 
 ## 0.7.1 (2016-05-03)
 
