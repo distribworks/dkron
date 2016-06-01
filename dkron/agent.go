@@ -184,8 +184,8 @@ func (a *AgentCommand) readConfig(args []string) *Config {
 
 	if server {
 		tags["dkron_server"] = "true"
-		tags["dkron_version"] = a.Version
 	}
+	tags["dkron_version"] = a.Version
 
 	InitLogger(viper.GetString("log_level"), nodeName)
 
