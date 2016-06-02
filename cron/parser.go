@@ -237,13 +237,12 @@ func parseDescriptor(spec string) Schedule {
 	}
 
 	const at = "@at "
-	const longForm = "Jan 2, 2006 at 3:04pm (MST)"
 	if strings.HasPrefix(spec, at) {
-		date, err := time.Parse(longForm, spec[len(at):])
+		date, err := time.Parse(time.RFC3339, spec[len(at):])
 		if err != nil {
-			log.Panicf("Failed to parse duration %s: %s", spec, err)
+			log.Panicf("Failed to parse date %s: %s", spec, err)
 		}
-		return Every(date)
+		return At(date)
 	}
 
 	log.Panicf("Unrecognized descriptor: %s", spec)

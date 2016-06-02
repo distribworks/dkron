@@ -100,6 +100,19 @@ Note: The interval does not take the job runtime into account.  For example,
 if a job takes 3 minutes to run, and it is scheduled to run every 5 minutes,
 it will have only 2 minutes of idle time between each run.
 
+Fixed times
+
+You may also schedule a job to execute once and never more. This is supported by
+formatting the cron spec like this:
+
+    @at <datetime>
+
+Where "datetime" is a string accepted by time.Parse in RFC 3339/ISO 8601 format
+(https://golang.org/pkg/time/#Parse).
+
+For example, "@at 2018-01-02T15:04:00" would run the job on the specified date and time
+assuming UTC timezone.
+
 Time zones
 
 All interpretation and scheduling is done in the machine's local time zone (as
