@@ -4,7 +4,7 @@
     
     <url>
      <loc>http://dkron.io/</loc>
-     <lastmod>2016-05-18</lastmod>
+     <lastmod>2016-06-02</lastmod>
      <changefreq>daily</changefreq>
     </url>
     
@@ -12,7 +12,7 @@
     
     <url>
      <loc>http://dkron.io/intro/</loc>
-     <lastmod>2016-05-18</lastmod>
+     <lastmod>2016-06-02</lastmod>
      <changefreq>daily</changefreq>
     </url>
     
@@ -21,19 +21,25 @@
         
     <url>
      <loc>http://dkron.io/docs/getting-started/</loc>
-     <lastmod>2016-05-18</lastmod>
+     <lastmod>2016-06-02</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
+    <url>
+     <loc>http://dkron.io/docs/guides/</loc>
+     <lastmod>2016-06-02</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>http://dkron.io/docs/configuration/</loc>
-     <lastmod>2016-05-18</lastmod>
+     <lastmod>2016-06-02</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>http://dkron.io/docs/api/</loc>
-     <lastmod>2016-05-18</lastmod>
+     <lastmod>2016-06-02</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
@@ -43,13 +49,13 @@
         
     <url>
      <loc>http://dkron.io/about/dkron_vs_other_software/</loc>
-     <lastmod>2016-05-18</lastmod>
+     <lastmod>2016-06-02</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>http://dkron.io/about/license/</loc>
-     <lastmod>2016-05-18</lastmod>
+     <lastmod>2016-06-02</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
