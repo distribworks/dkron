@@ -226,8 +226,8 @@ func Test_processFilteredNodes(t *testing.T) {
 	time.Sleep(2 * time.Second)
 	nodes, tags, err := a.processFilteredNodes(job)
 
-	assert.Equal(t, nodes[0], "test1")
-	assert.Equal(t, nodes[1], "test2")
+	assert.Contains(t, nodes, "test1")
+	assert.Contains(t, nodes, "test2")
 	assert.Equal(t, tags["role"], "test")
 	assert.Equal(t, job.Tags["role"], "test:2")
 	assert.Equal(t, job.Tags["foo"], "bar:1")
