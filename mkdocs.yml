@@ -14,6 +14,7 @@ pages:
   - Intro: 'intro.md'
   - Docs:
     - 'docs/getting-started.md'
+    - 'docs/guides.md'
     - 'docs/configuration.md'
     - 'docs/api.md'
   - About:
