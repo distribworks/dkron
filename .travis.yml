@@ -23,8 +23,4 @@ script:
   - go vet ./...
   # - fgt golint ./...
   - glide install
-  - go test -v ./dkron
-
-env:
-  global:
-    - GO15VENDOREXPERIMENT=1
+  - go test -v $(glide novendor)
