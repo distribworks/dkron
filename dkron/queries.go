@@ -2,7 +2,6 @@ package dkron
 
 import (
 	"encoding/json"
-	"time"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/hashicorp/serf/serf"
@@ -17,15 +16,15 @@ const (
 // Send a serf run query to the cluster, this is used to ask a node or nodes
 // to run a Job.
 func (a *AgentCommand) RunQuery(execution *Execution) {
-	filterNodes, filterTags, err := a.processFilteredNodes(job)
+	filterNodes, filterTags, err := a.processFilteredNodes(execution.Job)
 	if err != nil {
 		log.WithFields(logrus.Fields{
-			"job": job.Name,
+			"job": execution.JobName,
 			"err": err.Error(),
 		}).Fatal("agent: Error processing filtered nodes")
 	}
 	log.Debug("agent: Filtered nodes to run: ", filterNodes)
-	log.Debug("agent: Filtered tags to run: ", job.Tags)
+	log.Debug("agent: Filtered tags to run: ", execution.Job.Tags)
 
 	params := &serf.QueryParam{
 		FilterNodes: filterNodes,
@@ -33,10 +32,10 @@ func (a *AgentCommand) RunQuery(execution *Execution) {
 		RequestAck:  true,
 	}
 
-	exJson, _ := json.Marshal(ex)
+	exJson, _ := json.Marshal(execution)
 	log.WithFields(logrus.Fields{
 		"query":    QueryRunJob,
-		"job_name": ex.JobName,
+		"job_name": execution.JobName,
 		"json":     string(exJson),
 	}).Debug("agent: Sending query")
 
