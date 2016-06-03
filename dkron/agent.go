@@ -25,10 +25,6 @@ import (
 )
 
 const (
-	QuerySchedulerRestart = "scheduler:restart"
-	QueryRunJob           = "run:job"
-	QueryRPCConfig        = "rpc:config"
-
 	// gracefulTimeout controls how long we wait before forcefully terminating
 	gracefulTimeout = 3 * time.Second
 
@@ -634,41 +630,6 @@ func (a *AgentCommand) schedule() {
 	}
 }
 
-func (a *AgentCommand) schedulerRestartQuery(leaderName string) {
-	params := &serf.QueryParam{
-		FilterNodes: []string{leaderName},
-		RequestAck:  true,
-	}
-
-	qr, err := a.serf.Query(QuerySchedulerRestart, []byte(""), params)
-	if err != nil {
-		log.Fatal("agent: Error sending the scheduler reload query", err)
-	}
-	defer qr.Close()
-
-	ackCh := qr.AckCh()
-	respCh := qr.ResponseCh()
-
-	for !qr.Finished() {
-		select {
-		case ack, ok := <-ackCh:
-			if ok {
-				log.WithFields(logrus.Fields{
-					"from": ack,
-				}).Debug("agent: Received ack")
-			}
-		case resp, ok := <-respCh:
-			if ok {
-				log.WithFields(logrus.Fields{
-					"from":    resp.From,
-					"payload": string(resp.Payload),
-				}).Debug("agent: Received response")
-			}
-		}
-	}
-	log.WithField("query", QuerySchedulerRestart).Debug("agent: Done receiving acks and responses")
-}
-
 // Join asks the Serf instance to join. See the Serf.Join function.
 func (a *AgentCommand) join(addrs []string, replay bool) (n int, err error) {
 	log.Infof("agent: joining: %v replay: %v", addrs, replay)
@@ -681,73 +642,6 @@ func (a *AgentCommand) join(addrs []string, replay bool) (n int, err error) {
 		log.Warnf("agent: error joining: %v", err)
 	}
 	return
-}
-
-func (a *AgentCommand) RunQuery(job *Job) {
-	filterNodes, filterTags, err := a.processFilteredNodes(job)
-	if err != nil {
-		log.WithFields(logrus.Fields{
-			"job": job.Name,
-			"err": err.Error(),
-		}).Fatal("agent: Error processing filtered nodes")
-	}
-	log.Debug("agent: Filtered nodes to run: ", filterNodes)
-	log.Debug("agent: Filtered tags to run: ", job.Tags)
-
-	params := &serf.QueryParam{
-		FilterNodes: filterNodes,
-		FilterTags:  filterTags,
-		RequestAck:  true,
-	}
-
-	ex := Execution{
-		JobName: job.Name,
-		Group:   time.Now().UnixNano(),
-		Job:     job,
-	}
-
-	exJson, _ := json.Marshal(ex)
-	log.WithFields(logrus.Fields{
-		"query":    QueryRunJob,
-		"job_name": ex.JobName,
-		"json":     string(exJson),
-	}).Debug("agent: Sending query")
-
-	qr, err := a.serf.Query(QueryRunJob, exJson, params)
-	if err != nil {
-		log.WithField("query", QueryRunJob).WithError(err).Fatal("agent: Sending query error")
-	}
-	defer qr.Close()
-
-	ackCh := qr.AckCh()
-	respCh := qr.ResponseCh()
-
-	for !qr.Finished() {
-		select {
-		case ack, ok := <-ackCh:
-			if ok {
-				log.WithFields(logrus.Fields{
-					"query": QueryRunJob,
-					"from":  ack,
-				}).Debug("agent: Received ack")
-			}
-		case resp, ok := <-respCh:
-			if ok {
-				log.WithFields(logrus.Fields{
-					"query":    QueryRunJob,
-					"from":     resp.From,
-					"response": string(resp.Payload),
-				}).Debug("agent: Received response")
-
-				// Save execution to store
-				a.setExecution(resp.Payload)
-			}
-		}
-	}
-	log.WithFields(logrus.Fields{
-		"query": QueryRunJob,
-	}).Debug("agent: Done receiving acks and responses")
-
 }
 
 func (a *AgentCommand) processFilteredNodes(job *Job) ([]string, map[string]string, error) {
