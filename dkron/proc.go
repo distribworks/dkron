@@ -1,7 +1,6 @@
 package dkron
 
 import (
-	"fmt"
 	"math/rand"
 	"os/exec"
 	"runtime"
