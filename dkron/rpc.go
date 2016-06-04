@@ -43,31 +43,39 @@ func (r *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeResponse)
 
 	if execution.Success {
 		job.LastSuccess = execution.FinishedAt
-		job.SuccessCount = job.SuccessCount + 1
+		job.SuccessCount++
 	} else {
 		job.LastError = execution.FinishedAt
-		job.ErrorCount = job.ErrorCount + 1
+		job.ErrorCount++
 	}
 
 	if err := r.agent.store.SetJob(job); err != nil {
 		log.Fatal("rpc:", err)
 	}
 
+	reply.From = r.agent.config.NodeName
+	reply.Payload = []byte("saved")
+
+	if !execution.Success && execution.Attempt < job.Retries+1 {
+		execution.Attempt++
+
+		log.WithFields(logrus.Fields{
+			"attempt":   execution.Attempt,
+			"execution": execution,
+		}).Debug("Retrying execution")
+
+		r.agent.RunQuery(&execution)
+		return nil
+	}
+
 	exg, err := r.agent.store.GetExecutionGroup(&execution)
 	if err != nil {
-		log.WithFields(logrus.Fields{
-			"group": execution.Group,
-			"err":   err,
-		}).Error("rpc: Error getting execution group.")
-
+		log.WithError(err).WithField("group", execution.Group).Error("rpc: Error getting execution group.")
 		return err
 	}
 
 	// Send notification
 	Notification(r.agent.config, &execution, exg).Send()
-
-	reply.From = r.agent.config.NodeName
-	reply.Payload = []byte("saved")
 
 	return nil
 }

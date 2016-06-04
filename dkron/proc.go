@@ -52,9 +52,7 @@ func (a *AgentCommand) invokeJob(execution *Execution) error {
 		"output": output,
 	}).Debug("proc: Command output")
 	if err != nil {
-		log.WithFields(logrus.Fields{
-			"err": err,
-		}).Error("proc: command error output")
+		log.WithError(err).Error("proc: command error output")
 		success = false
 	} else {
 		success = true
@@ -78,57 +76,6 @@ func (a *AgentCommand) selectServer() serf.Member {
 	server := servers[rand.Intn(len(servers))]
 
 	return server
-}
-
-func (a *AgentCommand) queryRPCConfig() ([]byte, error) {
-	nodeName := a.selectServer().Name
-
-	params := &serf.QueryParam{
-		FilterNodes: []string{nodeName},
-		FilterTags:  map[string]string{"dkron_server": "true"},
-		RequestAck:  true,
-	}
-
-	qr, err := a.serf.Query(QueryRPCConfig, nil, params)
-	if err != nil {
-		log.WithFields(logrus.Fields{
-			"query": QueryRPCConfig,
-			"error": err,
-		}).Fatal("proc: Error sending query")
-		return nil, err
-	}
-	defer qr.Close()
-
-	ackCh := qr.AckCh()
-	respCh := qr.ResponseCh()
-
-	var rpcAddr []byte
-	for !qr.Finished() {
-		select {
-		case ack, ok := <-ackCh:
-			if ok {
-				log.WithFields(logrus.Fields{
-					"query": QueryRPCConfig,
-					"from":  ack,
-				}).Debug("proc: Received ack")
-			}
-		case resp, ok := <-respCh:
-			if ok {
-				log.WithFields(logrus.Fields{
-					"query":   QueryRPCConfig,
-					"from":    resp.From,
-					"payload": string(resp.Payload),
-				}).Debug("proc: Received response")
-
-				rpcAddr = resp.Payload
-			}
-		}
-	}
-	log.WithFields(logrus.Fields{
-		"query": QueryRPCConfig,
-	}).Debug("proc: Done receiving acks and responses")
-
-	return rpcAddr, nil
 }
 
 // Determine the shell invocation based on OS

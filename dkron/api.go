@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/carbocation/interpose"
@@ -246,7 +247,14 @@ func (a *AgentCommand) jobRunHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	a.RunQuery(job)
+	ex := &Execution{
+		JobName: job.Name,
+		Group:   time.Now().UnixNano(),
+		Job:     job,
+		Attempt: 1,
+	}
+
+	a.RunQuery(ex)
 
 	if err := printJson(w, r, job); err != nil {
 		log.Fatal(err)
