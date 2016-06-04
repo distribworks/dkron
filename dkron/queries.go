@@ -85,7 +85,7 @@ func (a *AgentCommand) schedulerRestartQuery(leaderName string) {
 
 	qr, err := a.serf.Query(QuerySchedulerRestart, []byte(""), params)
 	if err != nil {
-		log.Fatal("agent: Error sending the scheduler reload query", err)
+		log.WithError(err).Fatal("agent: Error sending the scheduler reload query")
 	}
 	defer qr.Close()
 

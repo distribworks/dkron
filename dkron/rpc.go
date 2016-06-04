@@ -58,17 +58,19 @@ func (r *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeResponse)
 
 	if !execution.Success && execution.Attempt < job.Retries+1 {
 		execution.Attempt++
+
+		log.WithFields(logrus.Fields{
+			"attempt":   execution.Attempt,
+			"execution": execution,
+		}).Debug("Retrying execution")
+
 		r.agent.RunQuery(&execution)
 		return nil
 	}
 
 	exg, err := r.agent.store.GetExecutionGroup(&execution)
 	if err != nil {
-		log.WithFields(logrus.Fields{
-			"group": execution.Group,
-			"err":   err,
-		}).Error("rpc: Error getting execution group.")
-
+		log.WithError(err).WithField("group", execution.Group).Error("rpc: Error getting execution group.")
 		return err
 	}
 
