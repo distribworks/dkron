@@ -1,6 +1,8 @@
 package cron
 
-import "time"
+import (
+	"time"
+)
 
 // SimpleDelaySchedule represents a simple non recurring duration.
 type SimpleSchedule struct {
@@ -17,5 +19,11 @@ func At(date time.Time) SimpleSchedule {
 // Next conforms to the Schedule interface but this kind of jobs
 // doesn't need to be run more than once, so it doesn't return a new date but the existing one.
 func (schedule SimpleSchedule) Next(t time.Time) time.Time {
-	return schedule.Date
+	// If the date set is after the reference time return it
+	// if it's before, return a virtually infinite sleep date
+	// so do nothing.
+	if schedule.Date.After(t) {
+		return schedule.Date
+	}
+	return t.AddDate(10, 0, 0)
 }
