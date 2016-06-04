@@ -1,6 +1,7 @@
 package dkron
 
 import (
+	"fmt"
 	"math/rand"
 	"os/exec"
 	"runtime"
@@ -52,9 +53,7 @@ func (a *AgentCommand) invokeJob(execution *Execution) error {
 		"output": output,
 	}).Debug("proc: Command output")
 	if err != nil {
-		log.WithFields(logrus.Fields{
-			"err": err,
-		}).Error("proc: command error output")
+		log.WithError(err).Error("proc: command error output")
 		success = false
 	} else {
 		success = true

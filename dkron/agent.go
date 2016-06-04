@@ -577,9 +577,7 @@ func (a *AgentCommand) eventLoop() {
 
 					var ex Execution
 					if err := json.Unmarshal(query.Payload, &ex); err != nil {
-						log.WithFields(logrus.Fields{
-							"query": QueryRunJob,
-						}).Fatal("agent: Error unmarshaling job payload")
+						log.WithField("query", QueryRunJob).Fatal("agent: Error unmarshaling execution payload")
 					}
 
 					log.WithFields(logrus.Fields{
@@ -591,7 +589,9 @@ func (a *AgentCommand) eventLoop() {
 					ex.NodeName = a.config.NodeName
 
 					go func() {
-						a.invokeJob(&ex)
+						if err := a.invokeJob(&ex); err != nil {
+							log.WithError(err).Error("agent: Error invoking job command")
+						}
 					}()
 
 					exJson, _ := json.Marshal(ex)
