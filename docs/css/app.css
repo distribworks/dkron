@@ -1,7 +1,7 @@
 /* base components */
 /** Font vars **/
 /* Boostrap shitty breakpoints */
-@import url(http://fonts.googleapis.com/css?family=Montserrat:400,700);
+@import url(http://fonts.googleapis.com/css?family=Lato:400,300);
 html {
   font-size: 100%;
 }
@@ -30,7 +30,7 @@ h6[id]:before {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: "Montserrat", "Open-Sans", Sans-serif;
+  font-family: "Lato", "Open-Sans", Sans-serif;
   margin-bottom: 1em;
 }
 
@@ -123,39 +123,26 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 .navbar-default {
-  background: #1F779F;
-  /* Old browsers */
-  background: -moz-linear-gradiyent(left, #72A6B2 0%, #1F779F 100%);
-  /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, right top, color-stop(0%, #72A6B2), color-stop(100%, #1F779F));
-  /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(left, #72A6B2 0%, #1F779F 100%);
-  /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(left, #72A6B2 0%, #1F779F 100%);
-  /* Opera 11.10+ */
-  background: -ms-linear-gradient(left, #72A6B2 0%, #1F779F 100%);
-  /* IE10+ */
-  background: linear-gradient(to right, #72a6b2 0%, #1f779f 100%);
-  /* W3C */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#90a6b2', endColorstr='#6ca4b2',GradientType=1 );
-  /* IE6-9 */
-  background: -webkit-gradient(linear, left top, right top, left, right);
+  background-color: #333;
   margin-bottom: 20px;
 }
 .navbar-default .navbar-header .brand {
-  padding: 1em;
+  margin: 10px;
   line-height: 0;
-  margin-left: 0;
+  margin-left: 5px;
+  font-size: 26px;
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
 }
-.navbar-default .navbar-header .brand .logo {
-  background: transparent url("../img/dkron-logo-white.png") 0 0 no-repeat;
-  background-size: 100%;
-  display: block;
-  width: 100px;
-  height: 51px;
-  overflow: hidden;
-  text-indent: -999em;
-  transition: all .2s;
+.navbar-default .navbar-header .brand a {
+  color: #FFF;
+  text-decoration: none;
+}
+.navbar-default .navbar-header .brand img {
+  margin-top: 7px;
+  margin-bottom: 13px;
+  width: 30px;
+  height: 30px;
 }
 .navbar-default .navbar-collapse {
   border: 0;
@@ -178,7 +165,7 @@ h1, h2, h3, h4, h5, h6 {
 .navbar-default .navbar-nav > li a {
   padding: 0;
   line-height: 1em;
-  font-family: "Montserrat", "Open-Sans", Sans-serif;
+  font-family: "Lato", "Open-Sans", Sans-serif;
   font-size: 0.9em !important;
   text-transform: uppercase;
 }
@@ -205,10 +192,6 @@ h1, h2, h3, h4, h5, h6 {
   .navbar-default .navbar-nav.navbar-right:last-child {
     margin-right: 0;
   }
-  .navbar-default .navbar-header .brand .logo {
-    width: 100px;
-    height: 51px;
-  }
   .navbar-default .navbar-header .navbar-nav > .active > a:before,
   .navbar-default .navbar-header .navbar-nav > .active > a:hover:before,
   .navbar-default .navbar-header .navbar-nav > .active > a:focus:before {
@@ -232,7 +215,7 @@ h1, h2, h3, h4, h5, h6 {
   }
   .navbar-nav.main-links > li.open .dropdown-menu {
     border: none;
-    background-color: #347FA0;
+    background-color: #333;
   }
   .navbar-nav.main-links > li.open .dropdown-menu > li {
     display: block;
@@ -307,7 +290,7 @@ footer[role="contentinfo"] p {
 .page-home blockquote {
   text-align: center;
   border: none;
-  font-family: "Montserrat", "Open-Sans", Sans-serif;
+  font-family: "Lato", "Open-Sans", Sans-serif;
   color: #a3c5cd;
   margin: 1.5em auto;
 }
@@ -488,7 +471,7 @@ footer[role="contentinfo"] p {
   margin: 2em .5em 0 .5em;
   font-size: .7em;
   text-transform: uppercase;
-  font-family: "Montserrat", "Open-Sans", Sans-serif;
+  font-family: "Lato", "Open-Sans", Sans-serif;
 }
 #jumbotron-mask #jumbotron .container h2 {
   text-align: center;
