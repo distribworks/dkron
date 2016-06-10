@@ -1,0 +1,314 @@
+# Example YAML to get you started quickly.
+# Be aware that YAML has indentation based scoping.
+# Code completion support is available so start typing for available options.
+swagger: '2.0'
+basePath: /v1
+host: localhost:8080
+consumes:
+  - application/json
+produces:
+  - application/json
+
+# This is your document metadata
+info:
+  version: "0.7.2"
+  title: Dkron
+  description: |
+    # REST API
+
+    You can communicate with Dkron using a RESTful JSON API over HTTP. Dkron nodes usually listen on port `8080` for API requests. All examples in this section assume that you've found a running leader at `dkron-node:8080`.
+
+    Dkron implements a RESTful JSON API over HTTP to communicate with software clients. Dkron listens in port `8080` by default. All examples in this section assume that you're using the default port.
+
+    Default API responses are unformatted JSON add the `pretty=true` param to format the response.
+
+# Describe your paths here
+paths:
+  # This is a path endpoint. Change it.
+  /:
+    # This is a HTTP operation
+    get:
+      # Describe this verb here. Note: you can use markdown
+      description: |
+        Gets `Status` object.
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          examples:
+            application/json: |-
+              {
+                   "agent": {
+                      "name": "dkron2",
+                      "version": "0.7.2"
+                    },
+                    "serf": {
+                      "encrypted": "false",
+                      "...": "..."
+                    },
+                    "tags": {
+                      "role": "web",
+                      "dkron_server": true
+                    }
+              }
+          # A schema describing your response object.
+          # Use JSON Schema format
+          schema:
+            type: object
+            properties:
+              agent:
+                $ref: '#/definitions/agent'
+              serf:
+                $ref: '#/definitions/serf'
+              tags:
+                $ref: '#/definitions/tags'
+  
+  /jobs:
+    get:
+      # Describe this verb here. Note: you can use markdown
+      description: |
+        List jobs.
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          # A schema describing your response object.
+          # Use JSON Schema format
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/job'
+    post:
+    # Describe this verb here. Note: you can use markdown
+      description: |
+        Create or updates a new job.
+        # Expected responses for this operation:
+      parameters:
+        - in: body
+          name: body
+          description: Updated job object
+          required: true
+          schema:
+            $ref: "#/definitions/job"
+      responses:
+        # Response code
+        201:
+          description: Successful response
+          # A schema describing your response object.
+          # Use JSON Schema format
+          schema:
+            $ref: '#/definitions/job'
+            
+  /jobs/{job_name}:
+    get:
+      # Describe this verb here. Note: you can use markdown
+      description: |
+        Show a job.
+      parameters:
+        - in: path
+          name: job_name
+          description: The job that needs to be fetched.
+          required: true
+          type: string
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          # A schema describing your response object.
+          # Use JSON Schema format
+          schema:
+            $ref: '#/definitions/job'
+    delete:
+      # Describe this verb here. Note: you can use markdown
+      description: |
+        Delete a job.
+      parameters:
+        - in: path
+          name: job_name
+          description: The job that needs to be deleted.
+          required: true
+          type: string
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          # A schema describing your response object.
+          # Use JSON Schema format
+          schema:
+            $ref: '#/definitions/job'
+    post:
+      # Describe this verb here. Note: you can use markdown
+      description: |
+        Executes a job.
+      parameters:
+        - in: path
+          name: job_name
+          description: The job that needs to be run.
+          required: true
+          type: string
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          # A schema describing your response object.
+          # Use JSON Schema format
+          schema:
+            $ref: '#/definitions/job'
+            
+  /members:
+    get:
+      # Describe this verb here. Note: you can use markdown
+      description: |
+        List members.
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          # A schema describing your response object.
+          # Use JSON Schema format
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/member'
+  /leader:
+    get:
+      # Describe this verb here. Note: you can use markdown
+      description: |
+        List members.
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          # A schema describing your response object.
+          # Use JSON Schema format
+          schema:
+            $ref: '#/definitions/member'
+  
+  /executions/{job_name}:
+    get:
+      #Describe this verb here. Note: you can use markdown
+      description: |
+        List executions.
+      parameters:
+        - in: path
+          name: job_name
+          description: The job that owns the executions to be fetched.
+          required: true
+          type: string
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        200:
+          description: Successful response
+          # A schema describing your response object.
+          # Use JSON Schema format
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/execution'
+
+  
+definitions:
+  agent:
+    type: object
+    description: "Node basic details"
+    readOnly: true
+  serf:
+    type: object
+    description: "Serf status"
+    readOnly: true
+  tags:
+    type: object
+    description: "Tags asociated with this node"
+    readOnly: true
+  job:
+    type: object
+    description: "A Job represents a scheduled task to execute."
+    required:
+    - name
+    - schedule
+    - command
+    properties:
+      name: 
+        type: string
+      schedule: 
+        type: string
+        description: |
+          Cron expression for the job. 
+          0 0 0 * * *
+      command:
+        type: string
+        description: Command to run.
+      shell:
+        type: boolean
+      owner: 
+        type: string
+      owner_email:
+        type: string
+      success_count:
+        type: integer
+      error_count:
+        type: integer
+      last_success:
+        type: string
+        format: date-time
+      last_error:
+        type: string
+        format: date-time
+      disabled:
+        type: boolean
+      tags:
+        $ref: '#/definitions/tags'
+  member:
+    type: object
+    description: A member represents a cluster member node.
+    properties:
+      Name:
+        type: string
+      Addr:
+        type: string
+      Port:
+        type: integer
+      Tags:
+        $ref: '#/definitions/tags'
+      Status:
+        type: integer
+      ProtocolMin:
+        type: integer
+      ProtocolMax:
+        type: integer
+      ProtocolCur:
+        type: integer
+      DelegateMin:
+        type: integer
+      DelegateMax:
+        type: integer
+      DelegateCur:
+        type: integer
+  execution:
+    type: object
+    description: An execution represents a timed job run.
+    properties:
+      job_name:
+        type: string
+      started_at:
+        type: string
+        format: date-time
+      finished_at:
+        type: string
+        format: date-time
+      success:
+        type: boolean
+      output:
+        type: string
+      node_name:
+        type: string
+  
+        
