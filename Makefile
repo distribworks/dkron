@@ -8,8 +8,8 @@ deps:
 doc:
 	mkdocs gh-deploy --clean
 
-prmd:
-	prmd doc --prepend docs/docs/overview.md static/schema.json | sed 's/\<a name\=.*a\>//' > docs/docs/api.md
+apidoc:
+	java -jar ~/bin/swagger2markup-cli-1.0.0.jar convert -i static/swagger.yaml -f docs/docs/api -c docs/config.properties
 
 test:
 	@bash --norc -i ./scripts/test.sh
