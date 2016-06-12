@@ -1,10 +1,8 @@
-# Dkron
+# Dkron REST API
 
 
 <a name="overview"></a>
 ## Overview
-# REST API
-
 You can communicate with Dkron using a RESTful JSON API over HTTP. Dkron nodes usually listen on port `8080` for API requests. All examples in this section assume that you've found a running leader at `dkron-node:8080`.
 
 Dkron implements a RESTful JSON API over HTTP to communicate with software clients. Dkron listens in port `8080` by default. All examples in this section assume that you're using the default port.
@@ -59,15 +57,9 @@ Gets `Status` object.
 |**tags**  <br>*optional*||[tags](#tags)|
 
 
-#### Example HTTP response
+#### Tags
 
-##### Response 200
-```
-json :
-{
-  "application/json" : "{\n     \"agent\": {\n        \"name\": \"dkron2\",\n        \"version\": \"0.7.2\"\n      },\n      \"serf\": {\n        \"encrypted\": \"false\",\n        \"...\": \"...\"\n      },\n      \"tags\": {\n        \"role\": \"web\",\n        \"dkron_server\": true\n      }\n}"
-}
-```
+* main
 
 
 <a name="executions-job_name-get"></a>
@@ -91,26 +83,9 @@ List executions.
 |**200**|Successful response|< [execution](#execution) > array|
 
 
-<a name="jobs-post"></a>
-### POST /jobs
+#### Tags
 
-#### Description
-Create or updates a new job.
-# Expected responses for this operation:
-
-
-#### Parameters
-
-|Type|Name|Description|Schema|Default|
-|---|---|---|---|---|
-|**Body**|**body**  <br>*required*|Updated job object|[job](#job)||
-
-
-#### Responses
-
-|HTTP Code|Description|Schema|
-|---|---|---|
-|**201**|Successful response|[job](#job)|
+* executions
 
 
 <a name="jobs-get"></a>
@@ -127,46 +102,35 @@ List jobs.
 |**200**|Successful response|< [job](#job) > array|
 
 
-<a name="jobs-job_name-post"></a>
-### POST /jobs/{job_name}
+#### Tags
+
+* jobs
+
+
+<a name="jobs-post"></a>
+### POST /jobs
 
 #### Description
-Executes a job.
+Create or updates a new job.
 
 
 #### Parameters
 
 |Type|Name|Description|Schema|Default|
 |---|---|---|---|---|
-|**Path**|**job_name**  <br>*required*|The job that needs to be run.|string||
+|**Body**|**body**  <br>*required*|Updated job object|[job](#job)||
 
 
 #### Responses
 
 |HTTP Code|Description|Schema|
 |---|---|---|
-|**200**|Successful response|[job](#job)|
+|**201**|Successful response|[job](#job)|
 
 
-<a name="jobs-job_name-get"></a>
-### GET /jobs/{job_name}
+#### Tags
 
-#### Description
-Show a job.
-
-
-#### Parameters
-
-|Type|Name|Description|Schema|Default|
-|---|---|---|---|---|
-|**Path**|**job_name**  <br>*required*|The job that needs to be fetched.|string||
-
-
-#### Responses
-
-|HTTP Code|Description|Schema|
-|---|---|---|
-|**200**|Successful response|[job](#job)|
+* jobs
 
 
 <a name="jobs-job_name-delete"></a>
@@ -190,6 +154,63 @@ Delete a job.
 |**200**|Successful response|[job](#job)|
 
 
+#### Tags
+
+* jobs
+
+
+<a name="jobs-job_name-get"></a>
+### GET /jobs/{job_name}
+
+#### Description
+Show a job.
+
+
+#### Parameters
+
+|Type|Name|Description|Schema|Default|
+|---|---|---|---|---|
+|**Path**|**job_name**  <br>*required*|The job that needs to be fetched.|string||
+
+
+#### Responses
+
+|HTTP Code|Description|Schema|
+|---|---|---|
+|**200**|Successful response|[job](#job)|
+
+
+#### Tags
+
+* jobs
+
+
+<a name="jobs-job_name-post"></a>
+### POST /jobs/{job_name}
+
+#### Description
+Executes a job.
+
+
+#### Parameters
+
+|Type|Name|Description|Schema|Default|
+|---|---|---|---|---|
+|**Path**|**job_name**  <br>*required*|The job that needs to be run.|string||
+
+
+#### Responses
+
+|HTTP Code|Description|Schema|
+|---|---|---|
+|**200**|Successful response|[job](#job)|
+
+
+#### Tags
+
+* jobs
+
+
 <a name="leader-get"></a>
 ### GET /leader
 
@@ -202,6 +223,11 @@ List members.
 |HTTP Code|Description|Schema|
 |---|---|---|
 |**200**|Successful response|[member](#member)|
+
+
+#### Tags
+
+* main
 
 
 <a name="members-get"></a>
@@ -218,6 +244,11 @@ List members.
 |**200**|Successful response|< [member](#member) > array|
 
 
+#### Tags
+
+* members
+
+
 
 
 <a name="definitions"></a>
@@ -228,62 +259,6 @@ List members.
 Node basic details
 
 *Type* : object
-
-
-<a name="execution"></a>
-### execution
-An execution represents a timed job run.
-
-
-|Name|Description|Schema|
-|---|---|---|
-|**finished_at**  <br>*optional*||string(date-time)|
-|**job_name**  <br>*optional*||string|
-|**node_name**  <br>*optional*||string|
-|**output**  <br>*optional*||string|
-|**started_at**  <br>*optional*||string(date-time)|
-|**success**  <br>*optional*||boolean|
-
-
-<a name="job"></a>
-### job
-A Job represents a scheduled task to execute.
-
-
-|Name|Description|Schema|
-|---|---|---|
-|**command**  <br>*required*|Command to run.|string|
-|**disabled**  <br>*optional*||boolean|
-|**error_count**  <br>*optional*||integer|
-|**last_error**  <br>*optional*||string(date-time)|
-|**last_success**  <br>*optional*||string(date-time)|
-|**name**  <br>*required*||string|
-|**owner**  <br>*optional*||string|
-|**owner_email**  <br>*optional*||string|
-|**schedule**  <br>*required*|Cron expression for the job. <br>0 0 0 * * *|string|
-|**shell**  <br>*optional*||boolean|
-|**success_count**  <br>*optional*||integer|
-|**tags**  <br>*optional*||[tags](#tags)|
-
-
-<a name="member"></a>
-### member
-A member represents a cluster member node.
-
-
-|Name|Description|Schema|
-|---|---|---|
-|**Addr**  <br>*optional*||string|
-|**DelegateCur**  <br>*optional*||integer|
-|**DelegateMax**  <br>*optional*||integer|
-|**DelegateMin**  <br>*optional*||integer|
-|**Name**  <br>*optional*||string|
-|**Port**  <br>*optional*||integer|
-|**ProtocolCur**  <br>*optional*||integer|
-|**ProtocolMax**  <br>*optional*||integer|
-|**ProtocolMin**  <br>*optional*||integer|
-|**Status**  <br>*optional*||integer|
-|**Tags**  <br>*optional*||[tags](#tags)|
 
 
 <a name="serf"></a>
@@ -298,6 +273,62 @@ Serf status
 Tags asociated with this node
 
 *Type* : object
+
+
+<a name="job"></a>
+### job
+A Job represents a scheduled task to execute.
+
+
+|Name|Description|Schema|
+|---|---|---|
+|**name**  <br>*required*|-|string|
+|**schedule**  <br>*required*|Cron expression for the job.|string|
+|**command**  <br>*required*|Command to run.|string|
+|**shell**  <br>*optional*|-|boolean|
+|**owner**  <br>*optional*|-|string|
+|**owner_email**  <br>*optional*|-|string|
+|**success_count**  <br>*optional*|-|integer|
+|**error_count**  <br>*optional*|-|integer|
+|**last_success**  <br>*optional*|-|string(date-time)|
+|**last_error**  <br>*optional*|-|string(date-time)|
+|**disabled**  <br>*optional*|-|boolean|
+|**tags**  <br>*optional*|-|[tags](#tags)|
+
+
+<a name="member"></a>
+### member
+A member represents a cluster member node.
+
+
+|Name|Description|Schema|
+|---|---|---|
+|**Name**  <br>*optional*|-|string|
+|**Addr**  <br>*optional*|-|string|
+|**Port**  <br>*optional*|-|integer|
+|**Tags**  <br>*optional*|-|[tags](#tags)|
+|**Status**  <br>*optional*|-|integer|
+|**ProtocolMin**  <br>*optional*|-|integer|
+|**ProtocolMax**  <br>*optional*|-|integer|
+|**ProtocolCur**  <br>*optional*|-|integer|
+|**DelegateMin**  <br>*optional*|-|integer|
+|**DelegateMax**  <br>*optional*|-|integer|
+|**DelegateCur**  <br>*optional*|-|integer|
+
+
+<a name="execution"></a>
+### execution
+An execution represents a timed job run.
+
+
+|Name|Description|Schema|
+|---|---|---|
+|**job_name**  <br>*optional*|-|string|
+|**started_at**  <br>*optional*|-|string(date-time)|
+|**finished_at**  <br>*optional*|-|string(date-time)|
+|**success**  <br>*optional*|-|boolean|
+|**output**  <br>*optional*|-|string|
+|**node_name**  <br>*optional*|-|string|
 
 
 
