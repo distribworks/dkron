@@ -267,7 +267,7 @@ List members.
 
 <a name="status"></a>
 ### status
-Node basic details
+Status represents details about the node.
 
 *Type* : object
 
@@ -282,15 +282,16 @@ A Job represents a scheduled task to execute.
 |**name**  <br>*required*|Name for the job.|string|
 |**schedule**  <br>*required*|Cron expression for the job.|string|
 |**command**  <br>*required*|Command to run.|string|
-|**shell**  <br>*optional*|-|boolean|
-|**owner**  <br>*optional*|-|string|
-|**owner_email**  <br>*optional*|-|string|
-|**success_count**  <br>*optional*|-|integer|
-|**error_count**  <br>*optional*|-|integer|
-|**last_success**  <br>*optional*|-|string(date-time)|
-|**last_error**  <br>*optional*|-|string(date-time)|
-|**disabled**  <br>*optional*|-|boolean|
+|**shell**  <br>*optional*|use shell to run the command|boolean|
+|**owner**  <br>*optional*|owner of the job|string|
+|**owner_email**  <br>*optional*|email of the owner|string|
+|**success_count**  <br>*optional*|number of successful executions|integer|
+|**error_count**  <br>*optional*|number of failed executions|integer|
+|**last_success**  <br>*optional*|last time this job executed successfully|string(date-time)|
+|**last_error**  <br>*optional*|last time this job failed|string(date-time)|
+|**disabled**  <br>*optional*|disabled state of the job|boolean|
 |**tags**  <br>*optional*|Tags asociated with this node|< string, string > map|
+|**retries**  <br>*optional*|number of times to retry a failed job execution  <br>**Example** : `2`|integer|
 
 
 <a name="member"></a>
@@ -300,17 +301,17 @@ A member represents a cluster member node.
 
 |Name|Description|Schema|
 |---|---|---|
-|**Name**  <br>*optional*|-|string|
-|**Addr**  <br>*optional*|-|string|
-|**Port**  <br>*optional*|-|integer|
+|**Name**  <br>*optional*|Node name|string|
+|**Addr**  <br>*optional*|IP Address|string|
+|**Port**  <br>*optional*|Port number|integer|
 |**Tags**  <br>*optional*|Tags asociated with this node|< string, string > map|
-|**Status**  <br>*optional*|-|integer|
-|**ProtocolMin**  <br>*optional*|-|integer|
-|**ProtocolMax**  <br>*optional*|-|integer|
-|**ProtocolCur**  <br>*optional*|-|integer|
-|**DelegateMin**  <br>*optional*|-|integer|
-|**DelegateMax**  <br>*optional*|-|integer|
-|**DelegateCur**  <br>*optional*|-|integer|
+|**Status**  <br>*optional*|The serf status of the node see: https://godoc.org/github.com/hashicorp/serf/serf#MemberStatus|integer|
+|**ProtocolMin**  <br>*optional*|Serf protocol minimum version this node can understand or speak|integer|
+|**ProtocolMax**  <br>*optional*||integer|
+|**ProtocolCur**  <br>*optional*|Serf protocol current version this node can understand or speak|integer|
+|**DelegateMin**  <br>*optional*|Serf delegate protocol minimum version this node can understand or speak|integer|
+|**DelegateMax**  <br>*optional*|Serf delegate protocol minimum version this node can understand or speak|integer|
+|**DelegateCur**  <br>*optional*|Serf delegate protocol minimum version this node can understand or speak|integer|
 
 
 <a name="execution"></a>
@@ -320,12 +321,12 @@ An execution represents a timed job run.
 
 |Name|Description|Schema|
 |---|---|---|
-|**job_name**  <br>*optional*|-|string|
-|**started_at**  <br>*optional*|-|string(date-time)|
-|**finished_at**  <br>*optional*|-|string(date-time)|
-|**success**  <br>*optional*|-|boolean|
-|**output**  <br>*optional*|-|string|
-|**node_name**  <br>*optional*|-|string|
+|**job_name**  <br>*optional*|job name|string|
+|**started_at**  <br>*optional*|start time of the execution|string(date-time)|
+|**finished_at**  <br>*optional*|when the execution finished running|string(date-time)|
+|**success**  <br>*optional*|the execution run successfuly|boolean|
+|**output**  <br>*optional*|partial output of the command execution|string|
+|**node_name**  <br>*optional*|name of the node that executed the command|string|
 
 
 

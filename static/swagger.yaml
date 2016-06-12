@@ -229,7 +229,7 @@ paths:
 definitions:
   status:
     type: object
-    description: "Status represents details about the node.",
+    description: "Status represents details about the node."
     readOnly: true
     properties:
       agent:
