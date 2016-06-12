@@ -233,22 +233,20 @@ definitions:
     readOnly: true
     properties:
       agent:
-        type: object
         description: "Node basic details"
         readOnly: true
         additionalProperties:
-          type: string  
+          type: object
       serf:
         description: "Serf status"
         readOnly: true
         additionalProperties:
-          type: string  
+          type: object
       tags:
-        type: object
         description: "Tags asociated with this node"
         readOnly: true
         additionalProperties:
-          type: string  
+          type: string
   job:
     type: object
     description: "A Job represents a scheduled task to execute."
@@ -259,7 +257,7 @@ definitions:
     properties:
       name:
         type: string
-        description: "-"
+        description: Name for the job.
       schedule:
         type: string
         description: Cron expression for the job.

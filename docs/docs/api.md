@@ -3,7 +3,7 @@
 
 <a name="overview"></a>
 ## Overview
-You can communicate with Dkron using a RESTful JSON API over HTTP. Dkron nodes usually listen on port `8080` for API requests. All examples in this section assume that you've found a running leader at `dkron-node:8080`.
+You can communicate with Dkron using a RESTful JSON API over HTTP. Dkron nodes usually listen on port `8080` for API requests. All examples in this section assume that you've found a running leader at `localhost:8080`.
 
 Dkron implements a RESTful JSON API over HTTP to communicate with software clients. Dkron listens in port `8080` by default. All examples in this section assume that you're using the default port.
 
@@ -16,7 +16,8 @@ Default API responses are unformatted JSON add the `pretty=true` param to format
 
 ### URI scheme
 *Host* : localhost:8080  
-*BasePath* : /v1
+*BasePath* : /v1  
+*Schemes* : HTTP
 
 
 ### Consumes
@@ -34,7 +35,7 @@ Default API responses are unformatted JSON add the `pretty=true` param to format
 <a name="paths"></a>
 ## Paths
 
-<a name="get"></a>
+<a name="status"></a>
 ### GET /
 
 #### Description
@@ -45,24 +46,15 @@ Gets `Status` object.
 
 |HTTP Code|Description|Schema|
 |---|---|---|
-|**200**|Successful response|[Response 200](#get-response-200)|
-
-<a name="get-response-200"></a>
-**Response 200**
-
-|Name|Description|Schema|
-|---|---|---|
-|**agent**  <br>*optional*||[agent](#agent)|
-|**serf**  <br>*optional*||[serf](#serf)|
-|**tags**  <br>*optional*||[tags](#tags)|
+|**200**|Successful response|[status](#status)|
 
 
 #### Tags
 
-* main
+* default
 
 
-<a name="executions-job_name-get"></a>
+<a name="listexecutionsbyjob"></a>
 ### GET /executions/{job_name}
 
 #### Description
@@ -88,7 +80,7 @@ List executions.
 * executions
 
 
-<a name="jobs-get"></a>
+<a name="getjobs"></a>
 ### GET /jobs
 
 #### Description
@@ -107,7 +99,7 @@ List jobs.
 * jobs
 
 
-<a name="jobs-post"></a>
+<a name="createorupdatejob"></a>
 ### POST /jobs
 
 #### Description
@@ -133,7 +125,7 @@ Create or updates a new job.
 * jobs
 
 
-<a name="jobs-job_name-delete"></a>
+<a name="deletejob"></a>
 ### DELETE /jobs/{job_name}
 
 #### Description
@@ -159,7 +151,7 @@ Delete a job.
 * jobs
 
 
-<a name="jobs-job_name-get"></a>
+<a name="showjobbyname"></a>
 ### GET /jobs/{job_name}
 
 #### Description
@@ -185,7 +177,7 @@ Show a job.
 * jobs
 
 
-<a name="jobs-job_name-post"></a>
+<a name="runjob"></a>
 ### POST /jobs/{job_name}
 
 #### Description
@@ -211,7 +203,7 @@ Executes a job.
 * jobs
 
 
-<a name="leader-get"></a>
+<a name="getleader"></a>
 ### GET /leader
 
 #### Description
@@ -227,10 +219,29 @@ List members.
 
 #### Tags
 
-* main
+* default
 
 
-<a name="members-get"></a>
+<a name="leave"></a>
+### GET /leave
+
+#### Description
+Force the node to leave the cluster.
+
+
+#### Responses
+
+|HTTP Code|Description|Schema|
+|---|---|---|
+|**200**|Successful response|< [member](#member) > array|
+
+
+#### Tags
+
+* default
+
+
+<a name="getmember"></a>
 ### GET /members
 
 #### Description
@@ -254,23 +265,9 @@ List members.
 <a name="definitions"></a>
 ## Definitions
 
-<a name="agent"></a>
-### agent
+<a name="status"></a>
+### status
 Node basic details
-
-*Type* : object
-
-
-<a name="serf"></a>
-### serf
-Serf status
-
-*Type* : object
-
-
-<a name="tags"></a>
-### tags
-Tags asociated with this node
 
 *Type* : object
 
@@ -282,7 +279,7 @@ A Job represents a scheduled task to execute.
 
 |Name|Description|Schema|
 |---|---|---|
-|**name**  <br>*required*|-|string|
+|**name**  <br>*required*|Name for the job.|string|
 |**schedule**  <br>*required*|Cron expression for the job.|string|
 |**command**  <br>*required*|Command to run.|string|
 |**shell**  <br>*optional*|-|boolean|
@@ -293,7 +290,7 @@ A Job represents a scheduled task to execute.
 |**last_success**  <br>*optional*|-|string(date-time)|
 |**last_error**  <br>*optional*|-|string(date-time)|
 |**disabled**  <br>*optional*|-|boolean|
-|**tags**  <br>*optional*|-|[tags](#tags)|
+|**tags**  <br>*optional*|Tags asociated with this node|< string, string > map|
 
 
 <a name="member"></a>
@@ -306,7 +303,7 @@ A member represents a cluster member node.
 |**Name**  <br>*optional*|-|string|
 |**Addr**  <br>*optional*|-|string|
 |**Port**  <br>*optional*|-|integer|
-|**Tags**  <br>*optional*|-|[tags](#tags)|
+|**Tags**  <br>*optional*|Tags asociated with this node|< string, string > map|
 |**Status**  <br>*optional*|-|integer|
 |**ProtocolMin**  <br>*optional*|-|integer|
 |**ProtocolMax**  <br>*optional*|-|integer|
