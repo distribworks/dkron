@@ -229,7 +229,7 @@ paths:
 definitions:
   status:
     type: object
-    description: "Node basic details"
+    description: "Status represents details about the node.",
     readOnly: true
     properties:
       agent:
@@ -257,57 +257,62 @@ definitions:
     properties:
       name:
         type: string
-        description: Name for the job.
+        description: "Name for the job."
       schedule:
         type: string
-        description: Cron expression for the job.
+        description: "Cron expression for the job."
       command:
         type: string
-        description: Command to run.
+        description: "Command to run."
       shell:
         type: boolean
-        description: "-"
+        description: "use shell to run the command"
       owner:
         type: string
-        description: "-"
+        description: "owner of the job"
       owner_email:
         type: string
-        description: "-"
+        description: "email of the owner"
       success_count:
         type: integer
-        description: "-"
+        description: "number of successful executions"
       error_count:
         type: integer
-        description: "-"
+        description: "number of failed executions"
       last_success:
         type: string
         format: date-time
-        description: "-"
+        description: "last time this job executed successfully"
       last_error:
         type: string
         format: date-time
-        description: "-"
+        description: "last time this job failed"
       disabled:
         type: boolean
-        description: "-"
+        description: "disabled state of the job"
       tags:
         type: object
         description: "Tags asociated with this node"
         additionalProperties:
           type: string
+      retries:
+        type: integer
+        description: "number of times to retry a failed job execution"
+        example: 2
+        readOnly: false
   member:
     type: object
     description: A member represents a cluster member node.
     properties:
       Name:
         type: string
-        description: "-"
+        description: "Node name"
       Addr:
         type: string
-        description: "-"
+        description: "IP Address"
       Port:
         type: integer
-        description: "-"
+        description: "Port number"
       Tags:
         type: object
         description: "Tags asociated with this node"
@@ -315,46 +320,47 @@ definitions:
           type: string
       Status:
         type: integer
-        description: "-"
+        description: "The serf status of the node see: https://godoc.org/github.com/hashicorp/serf/serf#MemberStatus"
       ProtocolMin:
         type: integer
-        description: "-"
+        description: "Serf protocol minimum version this node can understand or speak"
       ProtocolMax:
         type: integer
-        description: "-"
+        description": "Serf protocol minimum version this node can understand or speak"
       ProtocolCur:
         type: integer
-        description: "-"
+        description: "Serf protocol current version this node can understand or speak"
       DelegateMin:
         type: integer
-        description: "-"
+        description: "Serf delegate protocol minimum version this node can understand or speak"
       DelegateMax:
         type: integer
-        description: "-"
+        description: "Serf delegate protocol minimum version this node can understand or speak"
       DelegateCur:
         type: integer
-        description: "-"
+        description: "Serf delegate protocol minimum version this node can understand or speak"
   execution:
     type: object
     description: An execution represents a timed job run.
     properties:
       job_name:
         type: string
-        description: "-"
+        description: "job name"
       started_at:
         type: string
         format: date-time
-        description: "-"
+        description: "start time of the execution"
       finished_at:
         type: string
         format: date-time
-        description: "-"
+        description: "when the execution finished running"
       success:
         type: boolean
-        description: "-"
+        description: "the execution run successfuly"
       output:
         type: string
-        description: "-"
+        description: "partial output of the command execution"
       node_name:
         type: string
-        description: "-"
+        description: "name of the node that executed the command"
+
