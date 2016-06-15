@@ -1,17 +1,23 @@
-FROM golang:1.6-alpine
+FROM golang:1.6
 MAINTAINER Victor Castell <victor@victorcastell.com>
 
 EXPOSE 8080 8946
 
-RUN set -x \
-	&& buildDeps='bash git' \
-	&& apk add --update $buildDeps \
-	&& rm -rf /var/cache/apk/*
+RUN wget https://github.com/Masterminds/glide/releases/download/0.10.2/glide-0.10.2-linux-amd64.tar.gz -O /tmp/glide.tar.gz && \
+    tar zxvf /tmp/glide.tar.gz -C /tmp && \
+    mv /tmp/linux-amd64/glide /usr/local/bin/ && \
+    rm -rf /tmp/glide.tar.gz /tmp/linux-amd64
 
 RUN mkdir -p /gopath/src/github.com/victorcoder/dkron
 WORKDIR /gopath/src/github.com/victorcoder/dkron
 
-ENV GO15VENDOREXPERIMENT=1
-ENV GOPATH=/gopath
+ENV GOPATH /gopath
+ENV PATH $PATH:/usr/local/go/bin:$GOPATH/bin
 
-CMD go run *.go
+COPY glide.yaml ./glide.yaml
+COPY glide.lock ./glide.lock
+RUN glide install
+
+COPY . ./
+RUN go build *.go
+CMD ["/gopath/src/github.com/victorcoder/dkron/main"]
