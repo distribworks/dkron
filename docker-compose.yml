@@ -26,7 +26,7 @@ dkron_seed:
     - "8080"
   build: .
   volumes:
-    - ../:/gopath/src/github.com/victorcoder/dkron
+    - ./:/gopath/src/github.com/victorcoder/dkron
   environment:
     - GODEBUG=netdns=go
   command: bash -c "go build *.go && ./main agent -server -backend=consul -backend-machine=consul:8500 -join=dkron:8946 -log-level=debug"
@@ -43,7 +43,7 @@ dkron:
     - "8080"
   build: .
   volumes:
-   - ../:/gopath/src/github.com/victorcoder/dkron
+   - ./:/gopath/src/github.com/victorcoder/dkron
   environment:
     - GODEBUG=netdns=go
   command: bash -c "go build *.go && ./main agent -server -backend=consul -backend-machine=consul:8500 -join=dkron_seed:8946 -log-level=debug"
