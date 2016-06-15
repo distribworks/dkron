@@ -20,7 +20,8 @@ consul:
 dkron_seed:
   links:
     - consul
-    - etcd
+    # Uncommend to use etcd
+    #- etcd
   ports:
     - "8080"
   build: ..
@@ -35,7 +36,8 @@ dkron_seed:
 dkron:
   links:
     - consul
-    - etcd
+    # Uncommend to use etcd
+    #- etcd
     - dkron_seed
   ports:
     - "8080"
