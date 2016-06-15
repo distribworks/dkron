@@ -1,34 +1,49 @@
 ---
+# Uncomment to use etcd
+
+# etcd:
+#   image: microbox/etcd
+#   ports:
+#     - "4001"
+#   volumes:
+#     - ./etcd.data:/data
+#   command: -name=dcron1
+
+consul:
+  image: consul
+  ports:
+    - "8500"
+    - "8300"
+  hostname: node1
+  command: agent -server -bootstrap -ui-dir=/ui -client=0.0.0.0
+
+dkron_seed:
+  links:
+    - consul
+    - etcd
+  ports:
+    - "8080"
+  build: ..
+  volumes:
+    - ../:/gopath/src/github.com/victorcoder/dkron
+  environment:
+    - GODEBUG=netdns=go
+  command: bash -c "go build *.go && ./main agent -server -backend=consul -backend-machine=consul:8500 -join=dkron:8946 -log-level=debug"
+  # Uncomment to use etcd
+  #command: bash -c "go build *.go && ./main agent -server -backend=etcd -backend-machine=etcd:4001 -join=dkron:8946 -log-level=debug"
+
 dkron:
   links:
+    - consul
     - etcd
     - dkron_seed
   ports:
     - "8080"
-  build: .
+  build: ..
   volumes:
-    - ./:/gopath/src/github.com/victorcoder/dkron
+   - ../:/gopath/src/github.com/victorcoder/dkron
   environment:
     - GODEBUG=netdns=go
-    - DKRON_BACKEND_MACHINE=etcd:4001
-  command: go run main.go agent -server -backend=etcd -backend-machine=etcd:4001 -join=dkron_seed:8946 -log-level=debug
-
-dkron_seed:
-  links:
-    - etcd
-  ports:
-    - "8080"
-  build: .
-  volumes:
-    - ./:/gopath/src/github.com/victorcoder/dkron
-  environment:
-    - GODEBUG=netdns=go
-  command: go run main.go agent -server -backend=etcd -backend-machine=etcd:4001 -join=dkron:8946 -log-level=debug
-
-etcd:
-  image: microbox/etcd
-  ports:
-    - "4001"
-  volumes:
-    - ./etcd.data:/data
-  command: -name=dcron1
+  command: bash -c "go build *.go && ./main agent -server -backend=consul -backend-machine=consul:8500 -join=dkron_seed:8946 -log-level=debug"
+  # Uncomment to use etcd
+  #command: bash -c "go build *.go && ./main agent -server -backend=etcd -backend-machine=etcd:4001 -join=dkron:8946 -log-level=debug"
