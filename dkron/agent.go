@@ -408,15 +408,14 @@ func (a *AgentCommand) runForElection() {
 				a.schedule()
 			} else {
 				log.Info("agent: Cluster leadership lost")
-				// Stop the schedule of this server
-				if a.sched.Started {
-					log.Debug("agent: Stopping scheduler due to lost leadership")
-					a.sched.Cron.Stop()
-				}
+				// Always stop the schedule of this server to prevent multiple servers with the scheduler on
+				a.sched.Stop()
 			}
 
 		case err := <-errCh:
 			log.WithError(err).Debug("Leader election failed, channel is probably closed")
+			// Always stop the schedule of this server to prevent multiple servers with the scheduler on
+			a.sched.Stop()
 			return
 		}
 	}
@@ -530,11 +529,7 @@ func (a *AgentCommand) schedule() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	if a.sched.Started {
-		a.sched.Restart(jobs)
-	} else {
-		a.sched.Start(jobs)
-	}
+	a.sched.Restart(jobs)
 }
 
 // Join asks the Serf instance to join. See the Serf.Join function.

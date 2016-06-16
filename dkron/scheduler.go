@@ -28,16 +28,32 @@ func (s *Scheduler) Start(jobs []*Job) {
 		}).Debug("scheduler: Adding job to cron")
 
 		s.Cron.AddJob(job.Schedule, job)
+
 		cronInspect.Set(job.Name, job)
 	}
 	s.Cron.Start()
 	s.Started = true
+
 	schedulerStarted.Set("true")
 }
 
+func (s *Scheduler) Stop() {
+	if s.Started {
+		log.Debug("scheduler: Stopping scheduler")
+		s.Cron.Stop()
+		s.Started = false
+		s.Cron = cron.New()
+
+		// expvars
+		cronInspect.Do(func(kv expvar.KeyValue) {
+			kv.Value = nil
+		})
+		schedulerStarted.Set("false")
+	}
+}
+
 func (s *Scheduler) Restart(jobs []*Job) {
-	s.Cron.Stop()
-	s.Cron = cron.New()
+	s.Stop()
 	s.Start(jobs)
 }
 
