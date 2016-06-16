@@ -45,7 +45,9 @@ func (s *Scheduler) Stop() {
 		s.Cron = cron.New()
 
 		// expvars
-		cronInspect = expvar.NewMap("cron_entries")
+		cronInspect.Do(func(kv expvar.KeyValue) {
+			kv.Value = nil
+		})
 		schedulerStarted.Set("false")
 	}
 }
