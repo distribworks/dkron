@@ -64,7 +64,7 @@ func (n *Notifier) sendExecutionEmail() {
 	e := &email.Email{
 		To:      []string{n.Execution.Job.OwnerEmail},
 		From:    n.Config.MailFrom,
-		Subject: fmt.Sprintf("[Dkron] %s execution report", n.Execution.JobName),
+		Subject: fmt.Sprintf("[Dkron] %s %s execution report", n.statusString(n.Execution), n.Execution.JobName),
 		Text:    []byte(n.report()),
 		Headers: textproto.MIMEHeader{},
 	}
@@ -112,4 +112,12 @@ func (n *Notifier) callExecutionWebhook() {
 		"header": resp.Header,
 		"body":   string(body),
 	}).Debug("Webhook call response")
+}
+
+func (n *Notifier) statusString(execution *Execution) string {
+	if execution.Success {
+		return "Success"
+	}
+
+	return "Failed"
 }
