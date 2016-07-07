@@ -133,11 +133,11 @@ type RPCClient struct {
 }
 
 func (rpcc *RPCClient) callExecutionDone(execution *Execution) error {
-	client, err := rpc.DialHTTP("tcp", r.ServerAddr)
+	client, err := rpc.DialHTTP("tcp", rpcc.ServerAddr)
 	if err != nil {
 		log.WithFields(logrus.Fields{
 			"err":         err,
-			"server_addr": r.ServerAddr,
+			"server_addr": rpcc.ServerAddr,
 		}).Error("rpc: error dialing.")
 		return err
 	}
