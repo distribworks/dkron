@@ -57,8 +57,8 @@ func (a *AgentCommand) ServeHTTP() {
 }
 
 func (a *AgentCommand) apiRoutes(r *mux.Router) {
-	r.Path("/v1").HandlerFunc(a.indexHandler)
 	subver := r.PathPrefix("/v1").Subrouter()
+	subver.HandleFunc("/", a.indexHandler)
 	subver.HandleFunc("/members", a.membersHandler)
 	subver.HandleFunc("/leader", a.leaderHandler)
 	subver.HandleFunc("/leave", a.leaveHandler)

@@ -88,23 +88,16 @@ func (a *AgentCommand) dashboardJobsHandler(w http.ResponseWriter, r *http.Reque
 
 	funcs := template.FuncMap{
 		"executionStatus": func(job *Job) string {
-			execs, _ := a.store.GetLastExecutionGroup(job.Name)
-			success := 0
-			failed := 0
-			for _, ex := range execs {
-				if ex.Success {
-					success = success + 1
-				} else {
-					failed = failed + 1
-				}
-			}
-
-			if failed == 0 {
+			status := job.Status()
+			switch status {
+			case Success:
 				return "success"
-			} else if failed > 0 && success == 0 {
+			case Failed:
 				return "danger"
-			} else if failed > 0 && success > 0 {
+			case PartialyFailed:
 				return "warning"
+			case Running:
+				return ""
 			}
 
 			return ""

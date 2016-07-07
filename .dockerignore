@@ -1,1 +1,9 @@
-*
+docs
+static
+site
+downloads
+*.etcd
+vendor
+scripts
+docker-composte
+dkron_theme

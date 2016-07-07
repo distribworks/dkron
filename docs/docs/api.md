@@ -1,480 +1,334 @@
-# REST API
+# Dkron REST API
 
-You can communicate with Dkron using a RESTful JSON API over HTTP. Dkron nodes usually listen on port `8080` for API requests. All examples in this section assume that you've found a running leader at `dkron-node:8080`.
+
+<a name="overview"></a>
+## Overview
+You can communicate with Dkron using a RESTful JSON API over HTTP. Dkron nodes usually listen on port `8080` for API requests. All examples in this section assume that you've found a running leader at `localhost:8080`.
 
 Dkron implements a RESTful JSON API over HTTP to communicate with software clients. Dkron listens in port `8080` by default. All examples in this section assume that you're using the default port.
 
 Default API responses are unformatted JSON add the `pretty=true` param to format the response.
 
-## Status
 
-Status represents details about the node.
+### Version information
+*Version* : 0.7.2
 
-### Attributes
 
-| Name | Type | Description | Example |
-| ------- | ------- | ------- | ------- |
-| **agent** | *object* | Node basic details | `{"name":"dkron2","version":"0.0.4"}` |
-| **serf** | *object* | Serf status | `{"encrypted":"false","...":"..."}` |
-| **tags** | *object* | Tags asociated with this node | `{"role":"web","server":"true"}` |
+### URI scheme
+*Host* : localhost:8080  
+*BasePath* : /v1  
+*Schemes* : HTTP
 
-### Status Status
 
-Status.
+### Consumes
 
-```
-GET /v1
-```
-
-
-#### Curl Example
+* `application/json`
 
-```bash
-$ curl -n dkron-node:8080/v1
-```
 
+### Produces
 
-#### Response Example
+* `application/json`
 
-```
-HTTP/1.1 200 OK
-```
-
-```json
-{
-  "agent": {
-    "name": "dkron2",
-    "version": "0.0.4"
-  },
-  "serf": {
-    "encrypted": "false",
-    "...": "..."
-  },
-  "tags": {
-    "role": "web",
-    "server": "true"
-  }
-}
-```
-
-
-## Job
-
-A Job represents a scheduled task to execute.
-
-### Attributes
-
-| Name | Type | Description | Example |
-| ------- | ------- | ------- | ------- |
-| **name** | *string* | job name | `"cron_job"` |
-| **schedule** | *string* | cron expression for the job | `"0 30 * * * *"` |
-| **command** | *string* | command to run. Must be a shell command to execute | `"/usr/bin/date"` |
-| **owner** | *string* | owner of the job | `"John Doe"` |
-| **owner_email** | *email* | email of the owner | `"john@doe.com"` |
-| **run_as_user** | *hostname* | the user to use to run the job | `"johndoe"` |
-| **success_count** | *integer* | number of successful executions | `20` |
-| **error_count** | *integer* | number of failed executions | `5` |
-| **last_success** | *date-time* | last time this job executed successfully | `"0001-01-01T00:00:00Z"` |
-| **last_error** | *date-time* | last time this job failed | `"0001-01-01T100:00:00Z"` |
-| **disabled** | *boolean* | disabled state of the job | `false` |
-| **tags** | *object* | tags of the target server to run this job | `{"role":"web"}` |
 
-### Job Create or update
-
-Create or updates a new job.
-
-```
-POST /v1/jobs
-```
-
-#### Required Parameters
-
-| Name | Type | Description | Example |
-| ------- | ------- | ------- | ------- |
-| **name** | *string* | job name | `"cron_job"` |
-| **schedule** | *string* | cron expression for the job | `"0 30 * * * *"` |
-| **command** | *string* | command to run. Must be a shell command to execute | `"/usr/bin/date"` |
-
-
-#### Optional Parameters
-
-| Name | Type | Description | Example |
-| ------- | ------- | ------- | ------- |
-| **owner** | *string* | owner of the job | `"John Doe"` |
-| **owner_email** | *email* | email of the owner | `"john@doe.com"` |
-| **run_as_user** | *hostname* | the user to use to run the job | `"johndoe"` |
-| **disabled** | *boolean* | disabled state of the job | `false` |
-| **tags** | *object* | tags of the target server to run this job | `{"role":"web"}` |
-
-
-#### Curl Example
-
-```bash
-$ curl -n -X POST dkron-node:8080/v1/jobs \
-  -H "Content-Type: application/json" \
- \
-  -d '{
-  "name": "cron_job",
-  "schedule": "0 30 * * * *",
-  "command": "/usr/bin/date",
-  "owner": "John Doe",
-  "owner_email": "john@doe.com",
-  "run_as_user": "johndoe",
-  "disabled": false,
-  "tags": {
-    "role": "web"
-  }
-}'
-```
-
-
-#### Response Example
-
-```
-HTTP/1.1 201 Created
-```
-
-```json
-{
-  "name": "cron_job",
-  "schedule": "0 30 * * * *",
-  "command": "/usr/bin/date",
-  "owner": "John Doe",
-  "owner_email": "john@doe.com",
-  "run_as_user": "johndoe",
-  "success_count": 20,
-  "error_count": 5,
-  "last_success": "0001-01-01T00:00:00Z",
-  "last_error": "0001-01-01T100:00:00Z",
-  "disabled": false,
-  "tags": {
-    "role": "web"
-  }
-}
-```
-
-### Job Show
-
-Show job.
-
-```
-GET /v1/jobs/{job_name}
-```
-
-
-#### Curl Example
-
-```bash
-$ curl -n dkron-node:8080/v1/jobs/$JOB_NAME
-```
-
-
-#### Response Example
-
-```
-HTTP/1.1 200 OK
-```
-
-```json
-{
-  "name": "cron_job",
-  "schedule": "0 30 * * * *",
-  "command": "/usr/bin/date",
-  "owner": "John Doe",
-  "owner_email": "john@doe.com",
-  "run_as_user": "johndoe",
-  "success_count": 20,
-  "error_count": 5,
-  "last_success": "0001-01-01T00:00:00Z",
-  "last_error": "0001-01-01T100:00:00Z",
-  "disabled": false,
-  "tags": {
-    "role": "web"
-  }
-}
-```
-
-### Job Delete
-
-Delete job.
-
-```
-DELETE /v1/jobs/{job_name}
-```
-
-
-#### Curl Example
-
-```bash
-$ curl -n -X DELETE dkron-node:8080/v1/jobs/$JOB_NAME \
-  -H "Content-Type: application/json" \
-```
-
-
-#### Response Example
-
-```
-HTTP/1.1 200 OK
-```
-
-```json
-{
-  "name": "cron_job",
-  "schedule": "0 30 * * * *",
-  "command": "/usr/bin/date",
-  "owner": "John Doe",
-  "owner_email": "john@doe.com",
-  "run_as_user": "johndoe",
-  "success_count": 20,
-  "error_count": 5,
-  "last_success": "0001-01-01T00:00:00Z",
-  "last_error": "0001-01-01T100:00:00Z",
-  "disabled": false,
-  "tags": {
-    "role": "web"
-  }
-}
-```
-
-### Job List
-
-List jobs.
-
-```
-GET /v1/jobs
-```
-
-
-#### Curl Example
-
-```bash
-$ curl -n dkron-node:8080/v1/jobs
-```
-
-
-#### Response Example
-
-```
-HTTP/1.1 200 OK
-```
-
-```json
-[
-  {
-    "name": "cron_job",
-    "schedule": "0 30 * * * *",
-    "command": "/usr/bin/date",
-    "owner": "John Doe",
-    "owner_email": "john@doe.com",
-    "run_as_user": "johndoe",
-    "success_count": 20,
-    "error_count": 5,
-    "last_success": "0001-01-01T00:00:00Z",
-    "last_error": "0001-01-01T100:00:00Z",
-    "disabled": false,
-    "tags": {
-      "role": "web"
-    }
-  }
-]
-```
-
-### Job Run
-
-Run job.
-
-```
-POST /v1/jobs/{job_name}
-```
-
-
-#### Curl Example
-
-```bash
-$ curl -n -X POST dkron-node:8080/v1/jobs/$JOB_NAME \
-  -H "Content-Type: application/json" \
-```
-
-
-#### Response Example
-
-```
-HTTP/1.1 200 OK
-```
-
-```json
-{
-  "name": "cron_job",
-  "schedule": "0 30 * * * *",
-  "command": "/usr/bin/date",
-  "owner": "John Doe",
-  "owner_email": "john@doe.com",
-  "run_as_user": "johndoe",
-  "success_count": 20,
-  "error_count": 5,
-  "last_success": "0001-01-01T00:00:00Z",
-  "last_error": "0001-01-01T100:00:00Z",
-  "disabled": false,
-  "tags": {
-    "role": "web"
-  }
-}
-```
-
-
-## Member
-
-A member represents a cluster member node.
-
-### Attributes
-
-| Name | Type | Description | Example |
-| ------- | ------- | ------- | ------- |
-| **Name** | *boolean* | Node name | `"dkron1"` |
-| **Addr** | *string* | IP Address | `"10.0.0.1"` |
-| **Port** | *integer* | Port number | `5001` |
-| **Tags** | *object* | Tags asociated with this node | `{"role":"web","server":"true"}` |
-| **Status** | *integer* | The serf status of the node see: https://godoc.org/github.com/hashicorp/serf/serf#MemberStatus | `1` |
-| **ProtocolMin** | *integer* | Serf protocol minimum version this node can understand or speak | `1` |
-| **ProtocolMax** | *integer* | Serf protocol minimum version this node can understand or speak | `2` |
-| **ProtocolCur** | *integer* | Serf protocol current version this node can understand or speak | `2` |
-| **DelegateMin** | *integer* | Serf delegate protocol minimum version this node can understand or speak | `2` |
-| **DelegateMax** | *integer* | Serf delegate protocol minimum version this node can understand or speak | `4` |
-| **DelegateCur** | *integer* | Serf delegate protocol minimum version this node can understand or speak | `4` |
-
-### Member List
-
-List members.
-
-```
-GET /v1/members
-```
-
-
-#### Curl Example
-
-```bash
-$ curl -n dkron-node:8080/v1/members
-```
-
-
-#### Response Example
-
-```
-HTTP/1.1 200 OK
-```
-
-```json
-[
-  {
-    "Name": "dkron1",
-    "Addr": "10.0.0.1",
-    "Port": 5001,
-    "Tags": {
-      "role": "web",
-      "server": "true"
-    },
-    "Status": 1,
-    "ProtocolMin": 1,
-    "ProtocolMax": 2,
-    "ProtocolCur": 2,
-    "DelegateMin": 2,
-    "DelegateMax": 4,
-    "DelegateCur": 4
-  }
-]
-```
-
-### Member Leader
-
-Show leader member.
-
-```
-GET /v1/leader
-```
-
-
-#### Curl Example
-
-```bash
-$ curl -n dkron-node:8080/v1/leader
-```
-
-
-#### Response Example
-
-```
-HTTP/1.1 200 OK
-```
-
-```json
-{
-  "Name": "dkron1",
-  "Addr": "10.0.0.1",
-  "Port": 5001,
-  "Tags": {
-    "role": "web",
-    "server": "true"
-  },
-  "Status": 1,
-  "ProtocolMin": 1,
-  "ProtocolMax": 2,
-  "ProtocolCur": 2,
-  "DelegateMin": 2,
-  "DelegateMax": 4,
-  "DelegateCur": 4
-}
-```
-
-
-## Execution
-
-An execution represents a timed job run.
-
-### Attributes
-
-| Name | Type | Description | Example |
-| ------- | ------- | ------- | ------- |
-| **job_name** | *string* | job name | `"cron_job"` |
-| **started_at** | *date-time* | start time of the execution | `"2012-01-01T12:00:00Z"` |
-| **finished_at** | *date-time* | when the execution finished running | `"2012-01-01T12:00:00Z"` |
-| **success** | *boolean* | the execution run successfuly | `true` |
-| **output** | *string* | partial output of the command execution | `"Sat Sep  5 23:27:10 CEST 2015"` |
-| **node_name** | *string* | name of the node that executed the command | `"dkron-node1"` |
-
-### Execution List
 
+
+<a name="paths"></a>
+## Paths
+
+<a name="status"></a>
+### GET /
+
+#### Description
+Gets `Status` object.
+
+
+#### Responses
+
+|HTTP Code|Description|Schema|
+|---|---|---|
+|**200**|Successful response|[status](#status)|
+
+
+#### Tags
+
+* default
+
+
+<a name="listexecutionsbyjob"></a>
+### GET /executions/{job_name}
+
+#### Description
 List executions.
 
-```
-GET /v1/executions/{execution_job_name}
-```
+
+#### Parameters
+
+|Type|Name|Description|Schema|Default|
+|---|---|---|---|---|
+|**Path**|**job_name**  <br>*required*|The job that owns the executions to be fetched.|string||
 
 
-#### Curl Example
+#### Responses
 
-```bash
-$ curl -n dkron-node:8080/v1/executions/$EXECUTION_JOB_NAME
-```
+|HTTP Code|Description|Schema|
+|---|---|---|
+|**200**|Successful response|< [execution](#execution) > array|
 
 
-#### Response Example
+#### Tags
 
-```
-HTTP/1.1 200 OK
-```
+* executions
 
-```json
-[
-  {
-    "job_name": "cron_job",
-    "started_at": "2012-01-01T12:00:00Z",
-    "finished_at": "2012-01-01T12:00:00Z",
-    "success": true,
-    "output": "Sat Sep  5 23:27:10 CEST 2015",
-    "node_name": "dkron-node1"
-  }
-]
-```
+
+<a name="getjobs"></a>
+### GET /jobs
+
+#### Description
+List jobs.
+
+
+#### Responses
+
+|HTTP Code|Description|Schema|
+|---|---|---|
+|**200**|Successful response|< [job](#job) > array|
+
+
+#### Tags
+
+* jobs
+
+
+<a name="createorupdatejob"></a>
+### POST /jobs
+
+#### Description
+Create or updates a new job.
+
+
+#### Parameters
+
+|Type|Name|Description|Schema|Default|
+|---|---|---|---|---|
+|**Body**|**body**  <br>*required*|Updated job object|[job](#job)||
+
+
+#### Responses
+
+|HTTP Code|Description|Schema|
+|---|---|---|
+|**201**|Successful response|[job](#job)|
+
+
+#### Tags
+
+* jobs
+
+
+<a name="deletejob"></a>
+### DELETE /jobs/{job_name}
+
+#### Description
+Delete a job.
+
+
+#### Parameters
+
+|Type|Name|Description|Schema|Default|
+|---|---|---|---|---|
+|**Path**|**job_name**  <br>*required*|The job that needs to be deleted.|string||
+
+
+#### Responses
+
+|HTTP Code|Description|Schema|
+|---|---|---|
+|**200**|Successful response|[job](#job)|
+
+
+#### Tags
+
+* jobs
+
+
+<a name="showjobbyname"></a>
+### GET /jobs/{job_name}
+
+#### Description
+Show a job.
+
+
+#### Parameters
+
+|Type|Name|Description|Schema|Default|
+|---|---|---|---|---|
+|**Path**|**job_name**  <br>*required*|The job that needs to be fetched.|string||
+
+
+#### Responses
+
+|HTTP Code|Description|Schema|
+|---|---|---|
+|**200**|Successful response|[job](#job)|
+
+
+#### Tags
+
+* jobs
+
+
+<a name="runjob"></a>
+### POST /jobs/{job_name}
+
+#### Description
+Executes a job.
+
+
+#### Parameters
+
+|Type|Name|Description|Schema|Default|
+|---|---|---|---|---|
+|**Path**|**job_name**  <br>*required*|The job that needs to be run.|string||
+
+
+#### Responses
+
+|HTTP Code|Description|Schema|
+|---|---|---|
+|**200**|Successful response|[job](#job)|
+
+
+#### Tags
+
+* jobs
+
+
+<a name="getleader"></a>
+### GET /leader
+
+#### Description
+List members.
+
+
+#### Responses
+
+|HTTP Code|Description|Schema|
+|---|---|---|
+|**200**|Successful response|[member](#member)|
+
+
+#### Tags
+
+* default
+
+
+<a name="leave"></a>
+### GET /leave
+
+#### Description
+Force the node to leave the cluster.
+
+
+#### Responses
+
+|HTTP Code|Description|Schema|
+|---|---|---|
+|**200**|Successful response|< [member](#member) > array|
+
+
+#### Tags
+
+* default
+
+
+<a name="getmember"></a>
+### GET /members
+
+#### Description
+List members.
+
+
+#### Responses
+
+|HTTP Code|Description|Schema|
+|---|---|---|
+|**200**|Successful response|< [member](#member) > array|
+
+
+#### Tags
+
+* members
+
+
+
+
+<a name="definitions"></a>
+## Definitions
+
+<a name="status"></a>
+### status
+Status represents details about the node.
+
+*Type* : object
+
+
+<a name="job"></a>
+### job
+A Job represents a scheduled task to execute.
+
+
+|Name|Description|Schema|
+|---|---|---|
+|**name**  <br>*required*|Name for the job.|string|
+|**schedule**  <br>*required*|Cron expression for the job.|string|
+|**command**  <br>*required*|Command to run.|string|
+|**shell**  <br>*optional*|use shell to run the command|boolean|
+|**owner**  <br>*optional*|owner of the job|string|
+|**owner_email**  <br>*optional*|email of the owner|string|
+|**success_count**  <br>*optional*|number of successful executions|integer|
+|**error_count**  <br>*optional*|number of failed executions|integer|
+|**last_success**  <br>*optional*|last time this job executed successfully|string(date-time)|
+|**last_error**  <br>*optional*|last time this job failed|string(date-time)|
+|**disabled**  <br>*optional*|disabled state of the job|boolean|
+|**tags**  <br>*optional*|Tags asociated with this node|< string, string > map|
+|**retries**  <br>*optional*|number of times to retry a failed job execution  <br>**Example** : `2`|integer|
+
+
+<a name="member"></a>
+### member
+A member represents a cluster member node.
+
+
+|Name|Description|Schema|
+|---|---|---|
+|**Name**  <br>*optional*|Node name|string|
+|**Addr**  <br>*optional*|IP Address|string|
+|**Port**  <br>*optional*|Port number|integer|
+|**Tags**  <br>*optional*|Tags asociated with this node|< string, string > map|
+|**Status**  <br>*optional*|The serf status of the node see: https://godoc.org/github.com/hashicorp/serf/serf#MemberStatus|integer|
+|**ProtocolMin**  <br>*optional*|Serf protocol minimum version this node can understand or speak|integer|
+|**ProtocolMax**  <br>*optional*||integer|
+|**ProtocolCur**  <br>*optional*|Serf protocol current version this node can understand or speak|integer|
+|**DelegateMin**  <br>*optional*|Serf delegate protocol minimum version this node can understand or speak|integer|
+|**DelegateMax**  <br>*optional*|Serf delegate protocol minimum version this node can understand or speak|integer|
+|**DelegateCur**  <br>*optional*|Serf delegate protocol minimum version this node can understand or speak|integer|
+
+
+<a name="execution"></a>
+### execution
+An execution represents a timed job run.
+
+
+|Name|Description|Schema|
+|---|---|---|
+|**job_name**  <br>*optional*|job name|string|
+|**started_at**  <br>*optional*|start time of the execution|string(date-time)|
+|**finished_at**  <br>*optional*|when the execution finished running|string(date-time)|
+|**success**  <br>*optional*|the execution run successfuly|boolean|
+|**output**  <br>*optional*|partial output of the command execution|string|
+|**node_name**  <br>*optional*|name of the node that executed the command|string|
+
+
+
 
 

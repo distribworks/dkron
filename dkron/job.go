@@ -8,6 +8,13 @@ import (
 	"github.com/Sirupsen/logrus"
 )
 
+const (
+	Success = iota
+	Running
+	Failed
+	PartialyFailed
+)
+
 type Job struct {
 	// Job name. Must be unique, acts as the id.
 	Name string `json:"name"`
@@ -90,4 +97,41 @@ func (j *Job) Run() {
 // Friendly format a job
 func (j *Job) String() string {
 	return fmt.Sprintf("\"Job: %s, scheduled at: %s, tags:%v\"", j.Name, j.Schedule, j.Tags)
+}
+
+// Return the status of a job
+// Wherever it's running, succeded or failed
+func (j *Job) Status() int {
+	// Maybe we are testing
+	if j.Agent == nil {
+		return -1
+	}
+
+	execs, _ := j.Agent.store.GetLastExecutionGroup(j.Name)
+	success := 0
+	failed := 0
+	for _, ex := range execs {
+		if ex.FinishedAt.IsZero() {
+			return Running
+		}
+	}
+
+	var status int
+	for _, ex := range execs {
+		if ex.Success {
+			success = success + 1
+		} else {
+			failed = failed + 1
+		}
+	}
+
+	if failed == 0 {
+		status = Success
+	} else if failed > 0 && success == 0 {
+		status = Failed
+	} else if failed > 0 && success > 0 {
+		status = PartialyFailed
+	}
+
+	return status
 }
