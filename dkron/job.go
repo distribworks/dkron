@@ -68,8 +68,8 @@ func (j *Job) Run() {
 	j.running.Lock()
 	defer j.running.Unlock()
 
-	// Maybe we are testing
-	if j.Agent != nil {
+	// Maybe we are testing or it's disabled
+	if j.Agent != nil && j.Disabled == false {
 		log.WithFields(logrus.Fields{
 			"job":      j.Name,
 			"schedule": j.Schedule,

@@ -19,14 +19,14 @@ type RPCServer struct {
 	agent *AgentCommand
 }
 
-func (r *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeResponse) error {
+func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeResponse) error {
 	log.WithFields(logrus.Fields{
 		"group": execution.Group,
 		"job":   execution.JobName,
 	}).Debug("rpc: Received execution done")
 
 	// Save job status
-	job, err := r.agent.store.GetJob(execution.JobName)
+	job, err := rpcs.agent.store.GetJob(execution.JobName)
 	if err != nil {
 		if err == store.ErrKeyNotFound {
 			log.Warning(ErrExecutionDoneForDeletedJob)
@@ -37,7 +37,7 @@ func (r *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeResponse)
 	}
 
 	// Save the new execution to store
-	if _, err := r.agent.store.SetExecution(&execution); err != nil {
+	if _, err := rpcs.agent.store.SetExecution(&execution); err != nil {
 		return err
 	}
 
@@ -49,13 +49,14 @@ func (r *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeResponse)
 		job.ErrorCount++
 	}
 
-	if err := r.agent.store.SetJob(job); err != nil {
+	if err := rpcs.agent.store.SetJob(job); err != nil {
 		log.Fatal("rpc:", err)
 	}
 
-	reply.From = r.agent.config.NodeName
+	reply.From = rpcs.agent.config.NodeName
 	reply.Payload = []byte("saved")
 
+	// If the job failed, retry it until retries limit (default: don't retry)
 	if !execution.Success && execution.Attempt < job.Retries+1 {
 		execution.Attempt++
 
@@ -64,18 +65,28 @@ func (r *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeResponse)
 			"execution": execution,
 		}).Debug("Retrying execution")
 
-		r.agent.RunQuery(&execution)
+		rpcs.agent.RunQuery(&execution)
 		return nil
 	}
 
-	exg, err := r.agent.store.GetExecutionGroup(&execution)
+	exg, err := rpcs.agent.store.GetExecutionGroup(&execution)
 	if err != nil {
 		log.WithError(err).WithField("group", execution.Group).Error("rpc: Error getting execution group.")
 		return err
 	}
 
 	// Send notification
-	Notification(r.agent.config, &execution, exg).Send()
+	Notification(rpcs.agent.config, &execution, exg).Send()
+
+	// Run dependent jobs
+	for _, djn := range job.DependentJobs {
+		dj, err := rpcs.agent.store.GetJob(djn)
+		if err != nil {
+			return err
+		}
+		dj.Agent = rpcs.agent
+		dj.Run()
+	}
 
 	return nil
 }
@@ -121,7 +132,7 @@ type RPCClient struct {
 	ServerAddr string
 }
 
-func (r *RPCClient) callExecutionDone(execution *Execution) error {
+func (rpcc *RPCClient) callExecutionDone(execution *Execution) error {
 	client, err := rpc.DialHTTP("tcp", r.ServerAddr)
 	if err != nil {
 		log.WithFields(logrus.Fields{
