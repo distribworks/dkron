@@ -15,10 +15,6 @@ import (
 
 const MaxExecutions = 100
 
-var (
-	ErrParentJobNotFound = errors.New("Specified parent job not found")
-)
-
 type Store struct {
 	Client   store.Store
 	agent    *AgentCommand

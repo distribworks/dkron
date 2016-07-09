@@ -1,11 +1,13 @@
 package dkron
 
 import (
+	"errors"
 	"fmt"
 	"sync"
 	"time"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/docker/libkv/store"
 )
 
 const (
@@ -13,6 +15,11 @@ const (
 	Running
 	Failed
 	PartialyFailed
+)
+
+var (
+	ErrParentJobNotFound = errors.New("Specified parent job not found")
+	ErrNoAgent           = errors.New("No agent defined")
 )
 
 type Job struct {
@@ -140,10 +147,10 @@ func (j *Job) Status() int {
 func (j *Job) GetParent() (*Job, error) {
 	// Maybe we are testing
 	if j.Agent == nil {
-		return -1
+		return nil, ErrNoAgent
 	}
 
-	parentJob, err := s.GetJob(job.ParentJob)
+	parentJob, err := j.Agent.store.GetJob(j.ParentJob)
 	if err != nil {
 		if err == store.ErrKeyNotFound {
 			return nil, ErrParentJobNotFound

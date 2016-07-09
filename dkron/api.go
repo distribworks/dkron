@@ -191,7 +191,6 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.R
 
 	if ej != nil {
 		// Always pick the comming parent job & replace (mandatory)
-		oldParent := ej.ParentJob
 		ej.ParentJob = job.ParentJob
 
 		if err := mergo.Merge(&job, ej); err != nil {

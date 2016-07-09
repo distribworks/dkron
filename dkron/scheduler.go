@@ -25,7 +25,7 @@ func (s *Scheduler) Start(jobs []*Job) {
 	for _, job := range jobs {
 		cronInspect.Set(job.Name, job)
 
-		if job.Disabled || len(job.ParentJobs) > 0 {
+		if job.Disabled || job.ParentJob != "" {
 			continue
 		}
 
