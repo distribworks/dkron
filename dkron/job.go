@@ -135,3 +135,22 @@ func (j *Job) Status() int {
 
 	return status
 }
+
+// Get the parent job of a job
+func (j *Job) GetParent() (*Job, error) {
+	// Maybe we are testing
+	if j.Agent == nil {
+		return -1
+	}
+
+	parentJob, err := s.GetJob(job.ParentJob)
+	if err != nil {
+		if err == store.ErrKeyNotFound {
+			return nil, ErrParentJobNotFound
+		} else {
+			return nil, err
+		}
+	}
+
+	return parentJob, nil
+}

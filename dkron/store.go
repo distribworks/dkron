@@ -114,25 +114,6 @@ func (s *Store) GetJob(name string) (*Job, error) {
 	return &job, nil
 }
 
-// Get the parent job of a job
-func (s *Store) GetParentJob(name string) (*Job, error) {
-	job, err := s.GetJob(name)
-	if err != nil {
-		return nil, err
-	}
-
-	parentJob, err := s.GetJob(job.ParentJob)
-	if err != nil {
-		if err == store.ErrKeyNotFound {
-			return nil, ErrParentJobNotFound
-		} else {
-			return nil, err
-		}
-	}
-
-	return parentJob, nil
-}
-
 func (s *Store) DeleteJob(name string) (*Job, error) {
 	job, err := s.GetJob(name)
 	if err != nil {

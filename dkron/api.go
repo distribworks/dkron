@@ -178,6 +178,7 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.R
 	if err := r.Body.Close(); err != nil {
 		log.Fatal(err)
 	}
+	job.Agent = a
 
 	ej, err := a.store.GetJob(job.Name)
 	if err != nil && err != store.ErrKeyNotFound {
@@ -201,11 +202,9 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.R
 			return
 		}
 
-	} else {
-		pj, _ := a.store.GetJob(newParent)
-		pj.DependentJobs = append(pj.DependentJobs, job.Name)
-		a.store.SetJob(pj)
 	}
+
+	a.setParentJob(&job, ej)
 
 	// Save the new job to the store
 	if err = a.store.SetJob(&job); err != nil {
@@ -225,7 +224,7 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.R
 
 func (a *AgentCommand) setParentJob(job *Job, ej *Job) error {
 	if ej != nil && ej.ParentJob == "" && job.ParentJob != "" {
-		pj, err := a.store.GetParentJob(job)
+		pj, err := job.GetParent()
 		if err != nil {
 			return err
 		}
@@ -234,7 +233,7 @@ func (a *AgentCommand) setParentJob(job *Job, ej *Job) error {
 	}
 
 	if ej != nil && ej.ParentJob != "" && job.ParentJob == "" {
-		pj, err := a.store.GetParentJob(ej)
+		pj, err := ej.GetParent()
 		if err != nil {
 			return err
 		}
@@ -251,7 +250,7 @@ func (a *AgentCommand) setParentJob(job *Job, ej *Job) error {
 	}
 
 	if ej == nil && job.ParentJob != "" {
-		pj, err := a.getParentJob(job)
+		pj, err := job.GetParent()
 		if err != nil {
 			return err
 		}
