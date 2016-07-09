@@ -13,7 +13,6 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/carbocation/interpose"
-	"github.com/deckarep/golang-set"
 	"github.com/docker/libkv/store"
 	"github.com/gorilla/mux"
 	"github.com/hashicorp/serf/serf"
@@ -190,40 +189,9 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.R
 	}
 
 	if ej != nil {
-		ejParents := make([]interface{}, len(ej.ParentJobs))
-		for i := range ej.ParentJobs {
-			ejParents[i] = ej.ParentJobs[i]
-		}
-		existingJobParentsSet := mapset.NewSetFromSlice(ejParents)
-
-		jobParents := make([]interface{}, len(job.ParentJobs))
-		for i := range job.ParentJobs {
-			jobParents[i] = job.ParentJobs[i]
-		}
-		jobParentsSet := mapset.NewSetFromSlice(jobParents)
-
-		removed := existingJobParentsSet.Difference(jobParentsSet)
-		for _, removedParent := range removed.ToSlice() {
-			rpj, _ := a.store.GetJob(removedParent.(string))
-
-			ndx := 0
-			for i, djn := range rpj.DependentJobs {
-				if djn == job.Name {
-					ndx = i
-					break
-				}
-			}
-
-			rpj.DependentJobs = append(rpj.DependentJobs[:ndx], rpj.DependentJobs[ndx+1:]...)
-			a.store.SetJob(rpj)
-		}
-
-		added := jobParentsSet.Difference(existingJobParentsSet)
-		for _, addedParent := range added.ToSlice() {
-			apj, _ := a.store.GetJob(addedParent.(string))
-			apj.DependentJobs = append(apj.DependentJobs, job.Name)
-			a.store.SetJob(apj)
-		}
+		// Always pick the comming parent job & replace (mandatory)
+		oldParent := ej.ParentJob
+		ej.ParentJob = job.ParentJob
 
 		if err := mergo.Merge(&job, ej); err != nil {
 			w.WriteHeader(422) // unprocessable entity
@@ -232,12 +200,11 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.R
 			}
 			return
 		}
+
 	} else {
-		for _, newParent := range job.ParentJobs {
-			apj, _ := a.store.GetJob(newParent)
-			apj.DependentJobs = append(apj.DependentJobs, job.Name)
-			a.store.SetJob(apj)
-		}
+		pj, _ := a.store.GetJob(newParent)
+		pj.DependentJobs = append(pj.DependentJobs, job.Name)
+		a.store.SetJob(pj)
 	}
 
 	// Save the new job to the store
@@ -249,18 +216,51 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	// if it has parent jobs fill the dependent job in there
-	for _, pjn := range job.ParentJobs {
-		pj, _ := a.store.GetJob(pjn)
-		pj.DependentJobs = append(pj.DependentJobs, job.Name)
-		a.store.SetJob(pj)
-	}
-
 	a.schedulerRestartQuery(string(a.store.GetLeader()))
 
 	if err := printJson(w, r, job); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func (a *AgentCommand) setParentJob(job *Job, ej *Job) error {
+	if ej != nil && ej.ParentJob == "" && job.ParentJob != "" {
+		pj, err := a.store.GetParentJob(job)
+		if err != nil {
+			return err
+		}
+		pj.DependentJobs = append(pj.DependentJobs, job.Name)
+		a.store.SetJob(pj)
+	}
+
+	if ej != nil && ej.ParentJob != "" && job.ParentJob == "" {
+		pj, err := a.store.GetParentJob(ej)
+		if err != nil {
+			return err
+		}
+
+		ndx := 0
+		for i, djn := range pj.DependentJobs {
+			if djn == job.Name {
+				ndx = i
+				break
+			}
+		}
+		pj.DependentJobs = append(pj.DependentJobs[:ndx], pj.DependentJobs[ndx+1:]...)
+		a.store.SetJob(pj)
+	}
+
+	if ej == nil && job.ParentJob != "" {
+		pj, err := a.getParentJob(job)
+		if err != nil {
+			return err
+		}
+
+		pj.DependentJobs = append(pj.DependentJobs, job.Name)
+		a.store.SetJob(pj)
+	}
+
+	return nil
 }
 
 func (a *AgentCommand) jobDeleteHandler(w http.ResponseWriter, r *http.Request) {

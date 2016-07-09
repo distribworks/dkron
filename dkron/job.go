@@ -66,8 +66,8 @@ type Job struct {
 	// Jobs that are dependent upon this one will be run after this job runs.
 	DependentJobs []string `json:"dependent_jobs"`
 
-	// List of ids of jobs that this job is dependent upon.
-	ParentJobs []string `json:"parent_jobs"`
+	// Job id of job that this job is dependent upon.
+	ParentJob string `json:"parent_jobs"`
 }
 
 // Run the job
