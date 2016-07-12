@@ -1,3 +1,13 @@
+## 0.7.3 (2016-07-12)
+
+- One off jobs
+- Added cron spec to docs
+- Execution retry on failure
+- Switch JSON schema spec for it's corresponding Open API spec
+- Reload config
+- Fix scheduling bug
+- New job Status gives more info on the job execution
+
 ## 0.7.2 (2016-06-01)
 
 - Add some helpers and bugfixes
