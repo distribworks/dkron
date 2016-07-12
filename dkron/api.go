@@ -16,7 +16,6 @@ import (
 	"github.com/docker/libkv/store"
 	"github.com/gorilla/mux"
 	"github.com/hashicorp/serf/serf"
-	"github.com/imdario/mergo"
 )
 
 var (
@@ -180,31 +179,6 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.R
 	}
 	job.Agent = a
 
-	ej, err := a.store.GetJob(job.Name)
-	if err != nil && err != store.ErrKeyNotFound {
-		w.WriteHeader(422) // unprocessable entity
-		if err := json.NewEncoder(w).Encode(err); err != nil {
-			log.Fatal(err)
-		}
-		return
-	}
-
-	if ej != nil {
-		// Always pick the comming parent job & replace (mandatory)
-		ej.ParentJob = job.ParentJob
-
-		if err := mergo.Merge(&job, ej); err != nil {
-			w.WriteHeader(422) // unprocessable entity
-			if err := json.NewEncoder(w).Encode(err); err != nil {
-				log.Fatal(err)
-			}
-			return
-		}
-
-	}
-
-	a.setParentJob(&job, ej)
-
 	// Save the new job to the store
 	if err = a.store.SetJob(&job); err != nil {
 		w.WriteHeader(422) // unprocessable entity
@@ -219,46 +193,6 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.R
 	if err := printJson(w, r, job); err != nil {
 		log.Fatal(err)
 	}
-}
-
-func (a *AgentCommand) setParentJob(job *Job, ej *Job) error {
-	if ej != nil && ej.ParentJob == "" && job.ParentJob != "" {
-		pj, err := job.GetParent()
-		if err != nil {
-			return err
-		}
-		pj.DependentJobs = append(pj.DependentJobs, job.Name)
-		a.store.SetJob(pj)
-	}
-
-	if ej != nil && ej.ParentJob != "" && job.ParentJob == "" {
-		pj, err := ej.GetParent()
-		if err != nil {
-			return err
-		}
-
-		ndx := 0
-		for i, djn := range pj.DependentJobs {
-			if djn == job.Name {
-				ndx = i
-				break
-			}
-		}
-		pj.DependentJobs = append(pj.DependentJobs[:ndx], pj.DependentJobs[ndx+1:]...)
-		a.store.SetJob(pj)
-	}
-
-	if ej == nil && job.ParentJob != "" {
-		pj, err := job.GetParent()
-		if err != nil {
-			return err
-		}
-
-		pj.DependentJobs = append(pj.DependentJobs, job.Name)
-		a.store.SetJob(pj)
-	}
-
-	return nil
 }
 
 func (a *AgentCommand) jobDeleteHandler(w http.ResponseWriter, r *http.Request) {

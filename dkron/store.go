@@ -11,6 +11,7 @@ import (
 	"github.com/docker/libkv/store/consul"
 	"github.com/docker/libkv/store/etcd"
 	"github.com/docker/libkv/store/zookeeper"
+	"github.com/imdario/mergo"
 )
 
 const MaxExecutions = 100
@@ -52,6 +53,24 @@ func (s *Store) SetJob(job *Job) error {
 	// Sanitize the job name
 	job.Name = generateSlug(job.Name)
 
+	ej, err := s.GetJob(job.Name)
+	if err != nil && err != store.ErrKeyNotFound {
+		return err
+	}
+
+	if err = s.setParentJob(job, ej); err != nil {
+		return err
+	}
+
+	if ej != nil {
+		// Always pick the comming parent job & replace (mandatory)
+		ej.ParentJob = job.ParentJob
+
+		if err := mergo.Merge(&job, ej); err != nil {
+			return err
+		}
+	}
+
 	jobJson, _ := json.Marshal(job)
 
 	log.WithFields(logrus.Fields{
@@ -61,6 +80,46 @@ func (s *Store) SetJob(job *Job) error {
 
 	if err := s.Client.Put(s.keyspace+"/jobs/"+job.Name, jobJson, nil); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (s *Store) setParentJob(job *Job, ej *Job) error {
+	if ej != nil && ej.ParentJob == "" && job.ParentJob != "" {
+		pj, err := job.GetParent()
+		if err != nil {
+			return err
+		}
+		pj.DependentJobs = append(pj.DependentJobs, job.Name)
+		s.SetJob(pj)
+	}
+
+	if ej != nil && ej.ParentJob != "" && job.ParentJob == "" {
+		pj, err := ej.GetParent()
+		if err != nil {
+			return err
+		}
+
+		ndx := 0
+		for i, djn := range pj.DependentJobs {
+			if djn == job.Name {
+				ndx = i
+				break
+			}
+		}
+		pj.DependentJobs = append(pj.DependentJobs[:ndx], pj.DependentJobs[ndx+1:]...)
+		s.SetJob(pj)
+	}
+
+	if ej == nil && job.ParentJob != "" {
+		pj, err := job.GetParent()
+		if err != nil {
+			return err
+		}
+
+		pj.DependentJobs = append(pj.DependentJobs, job.Name)
+		s.SetJob(pj)
 	}
 
 	return nil

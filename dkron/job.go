@@ -20,6 +20,7 @@ const (
 var (
 	ErrParentJobNotFound = errors.New("Specified parent job not found")
 	ErrNoAgent           = errors.New("No agent defined")
+	ErrSameParent        = errors.New("The job can not have itself as parent")
 )
 
 type Job struct {
@@ -148,6 +149,10 @@ func (j *Job) GetParent() (*Job, error) {
 	// Maybe we are testing
 	if j.Agent == nil {
 		return nil, ErrNoAgent
+	}
+
+	if j.Name == j.ParentJob {
+		return nil, ErrSameParent
 	}
 
 	parentJob, err := j.Agent.store.GetJob(j.ParentJob)
