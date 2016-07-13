@@ -53,6 +53,9 @@ func (s *Store) SetJob(job *Job) error {
 	// Sanitize the job name
 	job.Name = generateSlug(job.Name)
 
+	// Init the job agent
+	job.Agent = s.agent
+
 	ej, err := s.GetJob(job.Name)
 	if err != nil && err != store.ErrKeyNotFound {
 		return err
@@ -65,8 +68,9 @@ func (s *Store) SetJob(job *Job) error {
 	if ej != nil {
 		// Always pick the comming parent job & replace (mandatory)
 		ej.ParentJob = job.ParentJob
+		ej.DependentJobs = job.DependentJobs
 
-		if err := mergo.Merge(&job, ej); err != nil {
+		if err := mergo.Merge(job, ej); err != nil {
 			return err
 		}
 	}
@@ -92,7 +96,10 @@ func (s *Store) setParentJob(job *Job, ej *Job) error {
 			return err
 		}
 		pj.DependentJobs = append(pj.DependentJobs, job.Name)
-		s.SetJob(pj)
+		if err := s.SetJob(pj); err != nil {
+			return err
+		}
+
 	}
 
 	if ej != nil && ej.ParentJob != "" && job.ParentJob == "" {
@@ -109,7 +116,9 @@ func (s *Store) setParentJob(job *Job, ej *Job) error {
 			}
 		}
 		pj.DependentJobs = append(pj.DependentJobs[:ndx], pj.DependentJobs[ndx+1:]...)
-		s.SetJob(pj)
+		if err := s.SetJob(pj); err != nil {
+			return err
+		}
 	}
 
 	if ej == nil && job.ParentJob != "" {
@@ -119,7 +128,9 @@ func (s *Store) setParentJob(job *Job, ej *Job) error {
 		}
 
 		pj.DependentJobs = append(pj.DependentJobs, job.Name)
-		s.SetJob(pj)
+		if err := s.SetJob(pj); err != nil {
+			return err
+		}
 	}
 
 	return nil

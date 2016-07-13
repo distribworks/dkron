@@ -37,15 +37,29 @@ func TestJobGetParent(t *testing.T) {
 	if err := store.SetJob(dependentTestJob); err != nil {
 		t.Fatalf("error creating job: %s", err)
 	}
-
-	parentTestJob, err = store.GetJob("parent_test")
-	assert.NoError(t, err)
-
-	assert.Equal(t, []string{"dependent_test"}, parentTestJob.DependentJobs)
-
 	dependentTestJob.Agent = a
+
+	parentTestJob, err = dependentTestJob.GetParent()
+	assert.NoError(t, err)
+	assert.Equal(t, []string{"dependent_test"}, parentTestJob.DependentJobs)
 
 	ptj, err := dependentTestJob.GetParent()
 	assert.NoError(t, err)
 	assert.Equal(t, parentTestJob, ptj)
+
+	// Remove the parent job
+	dependentTestJob.ParentJob = ""
+	err = store.SetJob(dependentTestJob)
+	assert.NoError(t, err)
+
+	dtj, err := store.GetJob("dependent_test")
+	assert.NoError(t, err)
+	assert.Equal(t, "", dtj.ParentJob)
+
+	ptj, err = dtj.GetParent()
+	assert.EqualError(t, ErrNoParent, err.Error())
+
+	ptj, err = store.GetJob("parent_test")
+	assert.NoError(t, err)
+	assert.Equal(t, []string{}, ptj.DependentJobs)
 }
