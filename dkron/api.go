@@ -16,7 +16,6 @@ import (
 	"github.com/docker/libkv/store"
 	"github.com/gorilla/mux"
 	"github.com/hashicorp/serf/serf"
-	"github.com/imdario/mergo"
 )
 
 var (
@@ -179,29 +178,10 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.R
 		log.Fatal(err)
 	}
 
-	ej, err := a.store.GetJob(job.Name)
-	if err != nil && err != store.ErrKeyNotFound {
-		w.WriteHeader(422) // unprocessable entity
-		if err := json.NewEncoder(w).Encode(err); err != nil {
-			log.Fatal(err)
-		}
-		return
-	}
-
-	if ej != nil {
-		if err := mergo.Merge(&job, ej); err != nil {
-			w.WriteHeader(422) // unprocessable entity
-			if err := json.NewEncoder(w).Encode(err); err != nil {
-				log.Fatal(err)
-			}
-			return
-		}
-	}
-
 	// Save the new job to the store
 	if err = a.store.SetJob(&job); err != nil {
 		w.WriteHeader(422) // unprocessable entity
-		if err := json.NewEncoder(w).Encode(err); err != nil {
+		if err := json.NewEncoder(w).Encode(err.Error()); err != nil {
 			log.Fatal(err)
 		}
 		return

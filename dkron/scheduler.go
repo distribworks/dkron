@@ -23,13 +23,17 @@ func NewScheduler() *Scheduler {
 
 func (s *Scheduler) Start(jobs []*Job) {
 	for _, job := range jobs {
+		cronInspect.Set(job.Name, job)
+
+		if job.Disabled || job.ParentJob != "" {
+			continue
+		}
+
 		log.WithFields(logrus.Fields{
 			"job": job.Name,
 		}).Debug("scheduler: Adding job to cron")
 
 		s.Cron.AddJob(job.Schedule, job)
-
-		cronInspect.Set(job.Name, job)
 	}
 	s.Cron.Start()
 	s.Started = true

@@ -108,3 +108,92 @@ func TestAPIJobCreateUpdateLength(t *testing.T) {
 	// Send a shutdown request
 	shutdownCh <- struct{}{}
 }
+
+func TestAPIJobCreateUpdateParentJob(t *testing.T) {
+	shutdownCh, _ := setupAPITest(t)
+
+	jsonStr := []byte(`{
+		"name": "test_job",
+		"schedule": "@every 2s",
+		"command": "date",
+		"owner": "mec",
+		"owner_email":
+		"foo@bar.com",
+		"disabled": true,
+		"parent_job": "test_job"
+	}`)
+
+	resp, err := http.Post("http://localhost:8090/v1/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
+	if err != nil {
+		t.Fatal(err)
+	}
+	body, _ := ioutil.ReadAll(resp.Body)
+	resp.Body.Close()
+
+	assert.Equal(t, 422, resp.StatusCode)
+	errJson, err := json.Marshal(ErrSameParent.Error())
+	assert.Equal(t, string(errJson)+"\n", string(body))
+
+	jsonStr = []byte(`{
+		"name": "test_job",
+		"schedule": "@every 2s",
+		"command": "date",
+		"owner": "mec",
+		"owner_email":
+		"foo@bar.com",
+		"disabled": true,
+		"parent_job": "parent_test_job"
+	}`)
+
+	resp, err = http.Post("http://localhost:8090/v1/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
+	if err != nil {
+		t.Fatal(err)
+	}
+	body, _ = ioutil.ReadAll(resp.Body)
+	resp.Body.Close()
+
+	assert.Equal(t, 422, resp.StatusCode)
+	errJson, err = json.Marshal(ErrParentJobNotFound.Error())
+	assert.Equal(t, string(errJson)+"\n", string(body))
+
+	jsonStr = []byte(`{
+		"name": "parent_test_job",
+		"schedule": "@every 2s",
+		"command": "date",
+		"owner": "mec",
+		"owner_email":
+		"foo@bar.com",
+		"disabled": true
+	}`)
+
+	resp, err = http.Post("http://localhost:8090/v1/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
+	if err != nil {
+		t.Fatal(err)
+	}
+	body, _ = ioutil.ReadAll(resp.Body)
+	resp.Body.Close()
+
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+
+	jsonStr = []byte(`{
+		"name": "test_job",
+		"command": "date",
+		"owner": "mec",
+		"owner_email":
+		"foo@bar.com",
+		"disabled": true,
+		"parent_job": "parent_test_job"
+	}`)
+
+	resp, err = http.Post("http://localhost:8090/v1/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
+	if err != nil {
+		t.Fatal(err)
+	}
+	body, _ = ioutil.ReadAll(resp.Body)
+	resp.Body.Close()
+
+	assert.Equal(t, http.StatusOK, resp.StatusCode, string(body))
+
+	// Send a shutdown request
+	shutdownCh <- struct{}{}
+}

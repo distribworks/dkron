@@ -1,11 +1,13 @@
 package dkron
 
 import (
+	"errors"
 	"fmt"
 	"sync"
 	"time"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/docker/libkv/store"
 )
 
 const (
@@ -13,6 +15,13 @@ const (
 	Running
 	Failed
 	PartialyFailed
+)
+
+var (
+	ErrParentJobNotFound = errors.New("Specified parent job not found")
+	ErrNoAgent           = errors.New("No agent defined")
+	ErrSameParent        = errors.New("The job can not have itself as parent")
+	ErrNoParent          = errors.New("The job doens't have a parent job set")
 )
 
 type Job struct {
@@ -62,6 +71,12 @@ type Job struct {
 	Retries uint `json:"retries"`
 
 	running sync.Mutex
+
+	// Jobs that are dependent upon this one will be run after this job runs.
+	DependentJobs []string `json:"dependent_jobs"`
+
+	// Job id of job that this job is dependent upon.
+	ParentJob string `json:"parent_job"`
 }
 
 // Run the job
@@ -69,9 +84,8 @@ func (j *Job) Run() {
 	j.running.Lock()
 	defer j.running.Unlock()
 
-	// Maybe we are testing
+	// Maybe we are testing or it's disabled
 	if j.Agent != nil && j.Disabled == false {
-
 		log.WithFields(logrus.Fields{
 			"job":      j.Name,
 			"schedule": j.Schedule,
@@ -129,4 +143,31 @@ func (j *Job) Status() int {
 	}
 
 	return status
+}
+
+// Get the parent job of a job
+func (j *Job) GetParent() (*Job, error) {
+	// Maybe we are testing
+	if j.Agent == nil {
+		return nil, ErrNoAgent
+	}
+
+	if j.Name == j.ParentJob {
+		return nil, ErrSameParent
+	}
+
+	if j.ParentJob == "" {
+		return nil, ErrNoParent
+	}
+
+	parentJob, err := j.Agent.store.GetJob(j.ParentJob)
+	if err != nil {
+		if err == store.ErrKeyNotFound {
+			return nil, ErrParentJobNotFound
+		} else {
+			return nil, err
+		}
+	}
+
+	return parentJob, nil
 }
