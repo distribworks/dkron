@@ -12,6 +12,7 @@ import (
 	"github.com/docker/libkv/store/etcd"
 	"github.com/docker/libkv/store/zookeeper"
 	"github.com/imdario/mergo"
+	"github.com/victorcoder/dkron/cron"
 )
 
 const MaxExecutions = 100
@@ -144,6 +145,10 @@ func (s *Store) validateJob(job *Job) error {
 	log.Println(job.ParentJob, job.Name)
 	if job.ParentJob == job.Name {
 		return ErrSameParent
+	}
+
+	if _, err := cron.Parse(job.Schedule); err != nil {
+		return err
 	}
 
 	return nil
