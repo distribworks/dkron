@@ -56,6 +56,10 @@ func (s *Store) SetJob(job *Job) error {
 	// Init the job agent
 	job.Agent = s.agent
 
+	if err := s.validateJob(job); err != nil {
+		return err
+	}
+
 	ej, err := s.GetJob(job.Name)
 	if err != nil && err != store.ErrKeyNotFound {
 		return err
@@ -131,6 +135,15 @@ func (s *Store) setParentJob(job *Job, ej *Job) error {
 		if err := s.SetJob(pj); err != nil {
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (s *Store) validateJob(job *Job) error {
+	log.Println(job.ParentJob, job.Name)
+	if job.ParentJob == job.Name {
+		return ErrSameParent
 	}
 
 	return nil

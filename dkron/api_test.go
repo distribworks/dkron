@@ -157,7 +157,7 @@ func TestAPIJobCreateUpdateParentJob(t *testing.T) {
 	assert.Equal(t, string(errJson)+"\n", string(body))
 
 	jsonStr = []byte(`{
-		"name": "test_job",
+		"name": "parent_test_job",
 		"schedule": "@every 2s",
 		"command": "date",
 		"owner": "mec",
@@ -192,7 +192,7 @@ func TestAPIJobCreateUpdateParentJob(t *testing.T) {
 	body, _ = ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
 
-	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, http.StatusOK, resp.StatusCode, string(body))
 
 	// Send a shutdown request
 	shutdownCh <- struct{}{}

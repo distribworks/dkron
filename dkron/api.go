@@ -177,12 +177,11 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.R
 	if err := r.Body.Close(); err != nil {
 		log.Fatal(err)
 	}
-	job.Agent = a
 
 	// Save the new job to the store
 	if err = a.store.SetJob(&job); err != nil {
 		w.WriteHeader(422) // unprocessable entity
-		if err := json.NewEncoder(w).Encode(err); err != nil {
+		if err := json.NewEncoder(w).Encode(err.Error()); err != nil {
 			log.Fatal(err)
 		}
 		return
