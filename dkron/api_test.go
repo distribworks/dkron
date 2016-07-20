@@ -109,7 +109,7 @@ func TestAPIJobCreateUpdateLength(t *testing.T) {
 	shutdownCh <- struct{}{}
 }
 
-func TestAPIJobCreateUpdateParentJob(t *testing.T) {
+func TestAPIJobCreateUpdateParentJob_SameParent(t *testing.T) {
 	shutdownCh, _ := setupAPITest(t)
 
 	jsonStr := []byte(`{
@@ -134,7 +134,14 @@ func TestAPIJobCreateUpdateParentJob(t *testing.T) {
 	errJson, err := json.Marshal(ErrSameParent.Error())
 	assert.Equal(t, string(errJson)+"\n", string(body))
 
-	jsonStr = []byte(`{
+	// Send a shutdown request
+	shutdownCh <- struct{}{}
+}
+
+func TestAPIJobCreateUpdateParentJob_NoParent(t *testing.T) {
+	shutdownCh, _ := setupAPITest(t)
+
+	jsonStr := []byte(`{
 		"name": "test_job",
 		"schedule": "@every 2s",
 		"command": "date",
@@ -145,18 +152,25 @@ func TestAPIJobCreateUpdateParentJob(t *testing.T) {
 		"parent_job": "parent_test_job"
 	}`)
 
-	resp, err = http.Post("http://localhost:8090/v1/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
+	resp, err := http.Post("http://localhost:8090/v1/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
 	if err != nil {
 		t.Fatal(err)
 	}
-	body, _ = ioutil.ReadAll(resp.Body)
+	body, _ := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
 
 	assert.Equal(t, 422, resp.StatusCode)
-	errJson, err = json.Marshal(ErrParentJobNotFound.Error())
+	errJson, err := json.Marshal(ErrParentJobNotFound.Error())
 	assert.Equal(t, string(errJson)+"\n", string(body))
 
-	jsonStr = []byte(`{
+	// Send a shutdown request
+	shutdownCh <- struct{}{}
+}
+
+func TestAPIJobCreateUpdateParentJob_WithParent(t *testing.T) {
+	shutdownCh, _ := setupAPITest(t)
+
+	jsonStr := []byte(`{
 		"name": "parent_test_job",
 		"schedule": "@every 2s",
 		"command": "date",
@@ -166,11 +180,11 @@ func TestAPIJobCreateUpdateParentJob(t *testing.T) {
 		"disabled": true
 	}`)
 
-	resp, err = http.Post("http://localhost:8090/v1/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
+	resp, err := http.Post("http://localhost:8090/v1/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
 	if err != nil {
 		t.Fatal(err)
 	}
-	body, _ = ioutil.ReadAll(resp.Body)
+	body, _ := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)

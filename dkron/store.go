@@ -2,6 +2,7 @@ package dkron
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"sort"
 
@@ -142,13 +143,15 @@ func (s *Store) setParentJob(job *Job, ej *Job) error {
 }
 
 func (s *Store) validateJob(job *Job) error {
-	log.Println(job.ParentJob, job.Name)
 	if job.ParentJob == job.Name {
 		return ErrSameParent
 	}
 
-	if _, err := cron.Parse(job.Schedule); err != nil {
-		return err
+	// Only validate the schedule if it doesn't have a parent
+	if job.ParentJob == "" {
+		if _, err := cron.Parse(job.Schedule); err != nil {
+			return errors.New(fmt.Sprintf("%s: %s", ErrScheduleParse.Error(), err))
+		}
 	}
 
 	return nil
