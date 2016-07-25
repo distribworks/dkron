@@ -22,6 +22,7 @@ func TestJobGetParent(t *testing.T) {
 
 	parentTestJob := &Job{
 		Name:     "parent_test",
+		Command:  "/bin/false",
 		Schedule: "@every 2s",
 	}
 
@@ -31,6 +32,7 @@ func TestJobGetParent(t *testing.T) {
 
 	dependentTestJob := &Job{
 		Name:      "dependent_test",
+		Command:   "/bin/false",
 		ParentJob: "parent_test",
 	}
 
@@ -49,6 +51,7 @@ func TestJobGetParent(t *testing.T) {
 
 	// Remove the parent job
 	dependentTestJob.ParentJob = ""
+	dependentTestJob.Schedule = "@every 2m"
 	err = store.SetJob(dependentTestJob)
 	assert.NoError(t, err)
 

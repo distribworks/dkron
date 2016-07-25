@@ -17,7 +17,7 @@ import:
   - pkg/pathutil
   - pkg/types
 - package: github.com/docker/libkv
-  version: c2aac5dbbaa5c872211edea7c0f32b3bd67e7410
+  version: v0.2.1
   subpackages:
   - store
   - store/consul

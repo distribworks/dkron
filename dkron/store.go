@@ -2,6 +2,7 @@ package dkron
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"sort"
 
@@ -12,6 +13,7 @@ import (
 	"github.com/docker/libkv/store/etcd"
 	"github.com/docker/libkv/store/zookeeper"
 	"github.com/imdario/mergo"
+	"github.com/victorcoder/dkron/cron"
 )
 
 const MaxExecutions = 100
@@ -141,9 +143,19 @@ func (s *Store) setParentJob(job *Job, ej *Job) error {
 }
 
 func (s *Store) validateJob(job *Job) error {
-	log.Println(job.ParentJob, job.Name)
 	if job.ParentJob == job.Name {
 		return ErrSameParent
+	}
+
+	// Only validate the schedule if it doesn't have a parent
+	if job.ParentJob == "" {
+		if _, err := cron.Parse(job.Schedule); err != nil {
+			return errors.New(fmt.Sprintf("%s: %s", ErrScheduleParse.Error(), err))
+		}
+	}
+
+	if job.Command == "" {
+		return ErrNoCommand
 	}
 
 	return nil

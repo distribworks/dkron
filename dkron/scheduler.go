@@ -1,14 +1,19 @@
 package dkron
 
 import (
+	"errors"
 	"expvar"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/victorcoder/dkron/cron"
 )
 
-var cronInspect = expvar.NewMap("cron_entries")
-var schedulerStarted = expvar.NewString("scheduler_started")
+var (
+	cronInspect      = expvar.NewMap("cron_entries")
+	schedulerStarted = expvar.NewString("scheduler_started")
+
+	ErrScheduleParse = errors.New("Can't parse job schedule")
+)
 
 type Scheduler struct {
 	Cron    *cron.Cron
