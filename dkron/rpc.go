@@ -35,6 +35,10 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 		log.Fatal("rpc:", err)
 		return err
 	}
+	// Lock the job while editing
+	if err = job.Lock(); err != nil {
+		log.Fatal("rpc:", err)
+	}
 
 	// Save the new execution to store
 	if _, err := rpcs.agent.store.SetExecution(&execution); err != nil {
@@ -50,6 +54,11 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 	}
 
 	if err := rpcs.agent.store.SetJob(job); err != nil {
+		log.Fatal("rpc:", err)
+	}
+
+	// Release the lock
+	if err = job.Unlock(); err != nil {
 		log.Fatal("rpc:", err)
 	}
 
@@ -84,7 +93,6 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 		if err != nil {
 			return err
 		}
-		dj.Agent = rpcs.agent
 		dj.Run()
 	}
 

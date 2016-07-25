@@ -178,8 +178,33 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.R
 		log.Fatal(err)
 	}
 
-	// Save the new job to the store
+	// Get if the requested job already exist
+	ej, err := a.store.GetJob(job.Name)
+	if err != nil && err != store.ErrKeyNotFound {
+		w.WriteHeader(422) // unprocessable entity
+		if err := json.NewEncoder(w).Encode(err.Error()); err != nil {
+			log.Fatal(err)
+		}
+		return
+	}
+
+	// If it's an existing job, lock it
+	if ej != nil {
+		ej.Lock()
+		defer ej.Unlock()
+	}
+
+	// Save the job to the store
 	if err = a.store.SetJob(&job); err != nil {
+		w.WriteHeader(422) // unprocessable entity
+		if err := json.NewEncoder(w).Encode(err.Error()); err != nil {
+			log.Fatal(err)
+		}
+		return
+	}
+
+	// Save the job parent
+	if err = a.store.SetJobDependencyTree(&job, ej); err != nil {
 		w.WriteHeader(422) // unprocessable entity
 		if err := json.NewEncoder(w).Encode(err.Error()); err != nil {
 			log.Fatal(err)
