@@ -19,6 +19,7 @@ func TestStore(t *testing.T) {
 	testJob := &Job{
 		Name:     "test",
 		Schedule: "@every 2s",
+		Command:  "/bin/false",
 		Disabled: true,
 	}
 
