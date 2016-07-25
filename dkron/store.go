@@ -154,6 +154,10 @@ func (s *Store) validateJob(job *Job) error {
 		}
 	}
 
+	if job.Command == "" {
+		return ErrNoCommand
+	}
+
 	return nil
 }
 
