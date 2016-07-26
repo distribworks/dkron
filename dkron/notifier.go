@@ -118,6 +118,5 @@ func (n *Notifier) statusString(execution *Execution) string {
 	if execution.Success {
 		return "Success"
 	}
-
 	return "Failed"
 }
