@@ -10,19 +10,11 @@ Servers are agents too. You can use servers to run jobs.
 
 The main distinction is that servers order job executions and can be used to schedule jobs.
 
-Dkron servers have a leader, the leader is responsible of executing jobs in the cluster.
+Dkron clusters have a leader, the leader is responsible of executing jobs in the cluster.
 
 Any Dkron agent or server acts as a cluster member and it's available to run scheduled tasks.
 
-You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run. For example you can specify to run a job at 5:00am in all servers with `role=web` tag or you can specify to run a job in just one server having the `role=web` tag:
-
-```
-role=web:1
-```
-
-dkron will try to run the job in the amount of nodes indicated by that count having that tag.
-
-This gives an unprecedented level of flexibility in runnig jobs across a cluster of any size and with any combination of machines you need.
+You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run. This gives an unprecedented level of flexibility in runnig jobs across a cluster of any size and with any combination of machines you need.
 
 All the execution responses will be gathered by the scheduler and stored in the database.
 
@@ -60,7 +52,7 @@ By default Dkron uses the following ports:
 
 - `8946` for communicating between agents
 - `8080` for HTTP for the API and Dashboard
-- `6868` for RPC comunication between clients. 
+- `6868` for RPC comunication between clients.
 
 **Be sure you have opened this ports (or the ones that you configured) in your firewall or AWS security groups.**
 
