@@ -183,7 +183,8 @@ func (j *Job) Lock() error {
 	}
 
 	lockKey := fmt.Sprintf("%s/job_locks/%s", j.Agent.store.keyspace, j.Name)
-	l, err := j.Agent.store.Client.NewLock(lockKey, nil)
+	// TODO: LockOptions empty is a temporary fix until https://github.com/docker/libkv/pull/99 is fixed
+	l, err := j.Agent.store.Client.NewLock(lockKey, &store.LockOptions{RenewLock: make(chan (struct{}))})
 	if err != nil {
 		return err
 	}
