@@ -16,7 +16,7 @@ Settings for dkron can be specified in three ways: Using a `config/dkron.json` c
 
 * `-backend` - Backend storage to use, etcd, consul or zk (zookeeper). The default is etcd.
 
-* `-backend-machine` - Comma separated addresses of the etcd machines to use. Could be one or several. By default `127.0.0.1:2379`
+* `-backend-machine` - Backend storage servers addresses to connect to. This flag can be specified multiple times. By default `127.0.0.1:2379`
 
 * `-tag` - The tag flag is used to associate a new key/value pair with the agent. The tags are gossiped and can be used to provide additional information such as roles, ports, and configuration values to other nodes. Multiple tags can be specified per agent. There is a byte size limit for the maximum number of tags, but in practice dozens of tags may be used. Tags can be changed during a config reload.
 
