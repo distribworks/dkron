@@ -88,12 +88,14 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 	Notification(rpcs.agent.config, &execution, exg).Send()
 
 	// Run dependent jobs
-	for _, djn := range job.DependentJobs {
-		dj, err := rpcs.agent.store.GetJob(djn)
-		if err != nil {
-			return err
+	if execution.Success {
+		for _, djn := range job.DependentJobs {
+			dj, err := rpcs.agent.store.GetJob(djn)
+			if err != nil {
+				return err
+			}
+			dj.Run()
 		}
-		dj.Run()
 	}
 
 	return nil
