@@ -12,7 +12,7 @@ schemes:
   - http
 # This is your document metadata
 info:
-  version: "0.7.2"
+  version: "0.9.0"
   title: Dkron REST API
   description: |
     You can communicate with Dkron using a RESTful JSON API over HTTP. Dkron nodes usually listen on port `8080` for API requests. All examples in this section assume that you've found a running leader at `localhost:8080`.
@@ -258,48 +258,70 @@ definitions:
       name:
         type: string
         description: "Name for the job."
+        readOnly: false
       schedule:
         type: string
         description: "Cron expression for the job."
+        readOnly: false
       command:
         type: string
         description: "Command to run."
+        readOnly: false
       shell:
         type: boolean
-        description: "use shell to run the command"
+        description: "Use shell to run the command"
+        readOnly: false
       owner:
         type: string
-        description: "owner of the job"
+        description: "Owner of the job"
+        readOnly: false
       owner_email:
         type: string
-        description: "email of the owner"
+        description: "Email of the owner"
+        readOnly: false
       success_count:
         type: integer
-        description: "number of successful executions"
+        description: "Number of successful executions"
+        readOnly: true
       error_count:
         type: integer
-        description: "number of failed executions"
+        description: "Number of failed executions"
+        readOnly: true
       last_success:
         type: string
         format: date-time
-        description: "last time this job executed successfully"
+        description: "Last time this job executed successfully"
+        readOnly: true
       last_error:
         type: string
         format: date-time
-        description: "last time this job failed"
+        description: "Last time this job failed"
+        readOnly: true
       disabled:
         type: boolean
-        description: "disabled state of the job"
+        description: "Disabled state of the job"
+        readOnly: false
       tags:
         type: object
         description: "Tags asociated with this node"
         additionalProperties:
           type: string
+        readOnly: false
       retries:
         type: integer
-        description: "number of times to retry a failed job execution"
+        description: "Number of times to retry a failed job execution"
         example: 2
         readOnly: false
+      parent_job:
+        type: string
+        description: "The name/id of the job that will trigger the execution of this job"
+        example: "parent_job"
+        readOnly: false
+      dependent_jobs:
+        type: string
+        description: "Array containing the jobs that depends on this one"
+        example: ['dependent_job']
+        readOnly: true
   member:
     type: object
     description: A member represents a cluster member node.

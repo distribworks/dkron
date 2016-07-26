@@ -48,7 +48,7 @@ Question mark ( ? )
 Question mark may be used instead of '*' for leaving either day-of-month or
 day-of-week blank.
 
-## Predefined schedules
+### Predefined schedules
 
 You may use one of several pre-defined schedules in place of a cron expression.
 
@@ -61,7 +61,7 @@ You may use one of several pre-defined schedules in place of a cron expression.
 	@hourly                | Run once an hour, beginning of hour        | 0 0 * * * *
 	@minutely              | Run once a minute, beginning of minute     | 0 * * * * *
 
-## Intervals
+### Intervals
 
 You may also schedule a job to execute at fixed intervals.  This is supported by
 formatting the cron spec like this:
@@ -78,7 +78,7 @@ Note: The interval does not take the job runtime into account.  For example,
 if a job takes 3 minutes to run, and it is scheduled to run every 5 minutes,
 it will have only 2 minutes of idle time between each run.
 
-## Fixed times
+### Fixed times
 
 You may also want to schedule a job to be executed once. This is supported by
 formatting the cron spec like this:
@@ -98,3 +98,9 @@ provided by the Go time package (http://www.golang.org/pkg/time).
 
 Be aware that jobs scheduled during daylight-savings leap-ahead transitions will
 not be run!
+
+## Job chaining
+
+You can set some jobs to run after other job is executed. To setup a job that will be executed after any other given job, just set the `parent_job` property when saving the new job.
+
+The dependent job will be executed after the main job finished a successful execution.
