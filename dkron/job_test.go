@@ -36,9 +36,8 @@ func TestJobGetParent(t *testing.T) {
 		ParentJob: "parent_test",
 	}
 
-	store.SetJob(dependentTestJob)
+	err = store.SetJob(dependentTestJob)
 	assert.NoError(t, err)
-	dependentTestJob.Agent = a
 
 	err = store.SetJobDependencyTree(dependentTestJob, nil)
 	assert.NoError(t, err)
