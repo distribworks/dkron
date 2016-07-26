@@ -36,33 +36,39 @@ func TestJobGetParent(t *testing.T) {
 		ParentJob: "parent_test",
 	}
 
-	if err := store.SetJob(dependentTestJob); err != nil {
-		t.Fatalf("error creating job: %s", err)
-	}
-	dependentTestJob.Agent = a
+	err = store.SetJob(dependentTestJob)
+	assert.NoError(t, err)
+
+	err = store.SetJobDependencyTree(dependentTestJob, nil)
+	assert.NoError(t, err)
 
 	parentTestJob, err = dependentTestJob.GetParent()
 	assert.NoError(t, err)
-	assert.Equal(t, []string{"dependent_test"}, parentTestJob.DependentJobs)
+	assert.Equal(t, []string{dependentTestJob.Name}, parentTestJob.DependentJobs)
 
 	ptj, err := dependentTestJob.GetParent()
 	assert.NoError(t, err)
 	assert.Equal(t, parentTestJob, ptj)
 
 	// Remove the parent job
+	ej, _ := store.GetJob(dependentTestJob.Name)
+
 	dependentTestJob.ParentJob = ""
 	dependentTestJob.Schedule = "@every 2m"
 	err = store.SetJob(dependentTestJob)
 	assert.NoError(t, err)
 
-	dtj, err := store.GetJob("dependent_test")
+	err = store.SetJobDependencyTree(dependentTestJob, ej)
+	assert.NoError(t, err)
+
+	dtj, _ := store.GetJob(dependentTestJob.Name)
 	assert.NoError(t, err)
 	assert.Equal(t, "", dtj.ParentJob)
 
 	ptj, err = dtj.GetParent()
 	assert.EqualError(t, ErrNoParent, err.Error())
 
-	ptj, err = store.GetJob("parent_test")
+	ptj, err = store.GetJob(parentTestJob.Name)
 	assert.NoError(t, err)
 	assert.Equal(t, []string{}, ptj.DependentJobs)
 }

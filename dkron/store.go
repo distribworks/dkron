@@ -54,6 +54,7 @@ func NewStore(backend string, machines []string, a *AgentCommand, keyspace strin
 func (s *Store) SetJob(job *Job) error {
 	// Sanitize the job name
 	job.Name = generateSlug(job.Name)
+	jobKey := fmt.Sprintf("%s/jobs/%s", s.keyspace, job.Name)
 
 	// Init the job agent
 	job.Agent = s.agent
@@ -62,15 +63,11 @@ func (s *Store) SetJob(job *Job) error {
 		return err
 	}
 
+	// Get if the requested job already exist
 	ej, err := s.GetJob(job.Name)
 	if err != nil && err != store.ErrKeyNotFound {
 		return err
 	}
-
-	if err = s.setParentJob(job, ej); err != nil {
-		return err
-	}
-
 	if ej != nil {
 		// Always pick the comming parent job & replace (mandatory)
 		ej.ParentJob = job.ParentJob
@@ -88,31 +85,39 @@ func (s *Store) SetJob(job *Job) error {
 		"json": string(jobJson),
 	}).Debug("store: Setting job")
 
-	if err := s.Client.Put(s.keyspace+"/jobs/"+job.Name, jobJson, nil); err != nil {
+	if err := s.Client.Put(jobKey, jobJson, nil); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (s *Store) setParentJob(job *Job, ej *Job) error {
-	if ej != nil && ej.ParentJob == "" && job.ParentJob != "" {
+// Set the depencency tree for a job given the job and the previous version
+// of the Job or nil if it's new.
+func (s *Store) SetJobDependencyTree(job *Job, previousJob *Job) error {
+	// Existing job that doesn't have parent job set and it's being set
+	if previousJob != nil && previousJob.ParentJob == "" && job.ParentJob != "" {
 		pj, err := job.GetParent()
 		if err != nil {
 			return err
 		}
+		pj.Lock()
+		defer pj.Unlock()
+
 		pj.DependentJobs = append(pj.DependentJobs, job.Name)
 		if err := s.SetJob(pj); err != nil {
 			return err
 		}
-
 	}
 
-	if ej != nil && ej.ParentJob != "" && job.ParentJob == "" {
-		pj, err := ej.GetParent()
+	// Existing job that has parent job set and it's being removed
+	if previousJob != nil && previousJob.ParentJob != "" && job.ParentJob == "" {
+		pj, err := previousJob.GetParent()
 		if err != nil {
 			return err
 		}
+		pj.Lock()
+		defer pj.Unlock()
 
 		ndx := 0
 		for i, djn := range pj.DependentJobs {
@@ -127,11 +132,14 @@ func (s *Store) setParentJob(job *Job, ej *Job) error {
 		}
 	}
 
-	if ej == nil && job.ParentJob != "" {
+	// New job that has parent job set
+	if previousJob == nil && job.ParentJob != "" {
 		pj, err := job.GetParent()
 		if err != nil {
 			return err
 		}
+		pj.Lock()
+		defer pj.Unlock()
 
 		pj.DependentJobs = append(pj.DependentJobs, job.Name)
 		if err := s.SetJob(pj); err != nil {

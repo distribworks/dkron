@@ -78,6 +78,8 @@ type Job struct {
 
 	// Job id of job that this job is dependent upon.
 	ParentJob string `json:"parent_job"`
+
+	lock store.Locker
 }
 
 // Run the job
@@ -171,4 +173,40 @@ func (j *Job) GetParent() (*Job, error) {
 	}
 
 	return parentJob, nil
+}
+
+// Lock the job in store
+func (j *Job) Lock() error {
+	// Maybe we are testing
+	if j.Agent == nil {
+		return ErrNoAgent
+	}
+
+	lockKey := fmt.Sprintf("%s/job_locks/%s", j.Agent.store.keyspace, j.Name)
+	l, err := j.Agent.store.Client.NewLock(lockKey, nil)
+	if err != nil {
+		return err
+	}
+	j.lock = l
+
+	_, err = j.lock.Lock(nil)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Unlock the job in store
+func (j *Job) Unlock() error {
+	// Maybe we are testing
+	if j.Agent == nil {
+		return ErrNoAgent
+	}
+
+	if err := j.lock.Unlock(); err != nil {
+		return err
+	}
+
+	return nil
 }
