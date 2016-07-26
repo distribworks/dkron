@@ -87,13 +87,16 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 	// Send notification
 	Notification(rpcs.agent.config, &execution, exg).Send()
 
-	// Run dependent jobs
-	for _, djn := range job.DependentJobs {
-		dj, err := rpcs.agent.store.GetJob(djn)
-		if err != nil {
-			return err
+	// Jobs that have dependent jobs are a bit more expensive because we need to call the Status() method for every execution.
+	// Check first if there's dependent jobs and then check for the job status to begin executiong dependent jobs on success.
+	if len(job.DependentJobs) > 0 && job.Status() == Success {
+		for _, djn := range job.DependentJobs {
+			dj, err := rpcs.agent.store.GetJob(djn)
+			if err != nil {
+				return err
+			}
+			dj.Run()
 		}
-		dj.Run()
 	}
 
 	return nil

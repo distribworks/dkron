@@ -11,7 +11,7 @@ Default API responses are unformatted JSON add the `pretty=true` param to format
 
 
 ### Version information
-*Version* : 0.7.2
+*Version* : 0.9.0
 
 
 ### URI scheme
@@ -282,16 +282,18 @@ A Job represents a scheduled task to execute.
 |**name**  <br>*required*|Name for the job.|string|
 |**schedule**  <br>*required*|Cron expression for the job.|string|
 |**command**  <br>*required*|Command to run.|string|
-|**shell**  <br>*optional*|use shell to run the command|boolean|
-|**owner**  <br>*optional*|owner of the job|string|
-|**owner_email**  <br>*optional*|email of the owner|string|
-|**success_count**  <br>*optional*|number of successful executions|integer|
-|**error_count**  <br>*optional*|number of failed executions|integer|
-|**last_success**  <br>*optional*|last time this job executed successfully|string(date-time)|
-|**last_error**  <br>*optional*|last time this job failed|string(date-time)|
-|**disabled**  <br>*optional*|disabled state of the job|boolean|
+|**shell**  <br>*optional*|Use shell to run the command|boolean|
+|**owner**  <br>*optional*|Owner of the job|string|
+|**owner_email**  <br>*optional*|Email of the owner|string|
+|**success_count**  <br>*optional*  <br>*read-only*|Number of successful executions|integer|
+|**error_count**  <br>*optional*  <br>*read-only*|Number of failed executions|integer|
+|**last_success**  <br>*optional*  <br>*read-only*|Last time this job executed successfully|string(date-time)|
+|**last_error**  <br>*optional*  <br>*read-only*|Last time this job failed|string(date-time)|
+|**disabled**  <br>*optional*|Disabled state of the job|boolean|
 |**tags**  <br>*optional*|Tags asociated with this node|< string, string > map|
-|**retries**  <br>*optional*|number of times to retry a failed job execution  <br>**Example** : `2`|integer|
+|**retries**  <br>*optional*|Number of times to retry a failed job execution  <br>**Example** : `2`|integer|
+|**parent_job**  <br>*optional*|The name/id of the job that will trigger the execution of this job  <br>**Example** : `"parent_job"`|string|
+|**dependent_jobs**  <br>*optional*  <br>*read-only*|Array containing the jobs that depends on this one  <br>**Example** : `""`|string|
 
 
 <a name="member"></a>
