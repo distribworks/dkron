@@ -1,25 +1,29 @@
 .navbar-default {
 
   // want a gradient also in the navbar
-  @include gradient-dkron;
+  //@include gradient-dkron;
+  background-color: $nav-dark;
 
   margin-bottom:20px;
 
   .navbar-header {
     .brand {
-      padding: 1em;
+      margin: 10px;
       line-height: 0;
-      margin-left: 0;
+      margin-left: 5px;
+      font-size: 26px;
+      a {
+        color: #FFF;
+        text-decoration: none;
+      }
 
-      .logo {
-        background: transparent url("../img/dkron-logo-white.png") 0 0 no-repeat;
-        background-size:100%;
-        display: block;
-        width: 100px;
-        height: 51px;
-        overflow:hidden;
-        text-indent:-999em;
-        transition: all .2s;
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      img {
+        margin-top: 7px;
+        margin-bottom: 13px;
+        width: 30px;
+        height: 30px;
       }
     }
   }
@@ -91,13 +95,6 @@
     }
 
     .navbar-header {
-      .brand {
-        .logo {
-          width: 100px;
-          height: 51px;
-        }
-      }
-
       .navbar-nav > .active > a,
       .navbar-nav > .active > a:hover,
       .navbar-nav > .active > a:focus {
@@ -122,7 +119,7 @@
     padding:0;
     padding-left:1em;
     margin:.5em;
-    
+
     &:first-child {
       border:none;
     }
@@ -131,7 +128,7 @@
 
 
       border:none;
-      background-color:$color-base-dark;
+      background-color:$nav-dark;
 
       & > li {
 
