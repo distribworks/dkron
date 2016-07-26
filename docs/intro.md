@@ -2,8 +2,6 @@
 
 Welcome to the Dkron documentation! This is the reference guide on how to use Dkron. If you want a getting started guide refer to the [getting started guide](docs/getting-started).
 
-<div class="alert alert-warning" role="alert">Warning: Dkron is Under heavy development, it's considered alpha state, expect dragons.</div>
-
 ## What is Dkron
 
 Dkron it's distributed system to run scheduled jobs against a server or a group of servers of any size. One of the machines is the leader and the others will be followers. If the leader fails or becomes unreachable, any other one will take over and reschedule all jobs to keep the system healthy.
