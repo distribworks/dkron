@@ -55,7 +55,7 @@ func TestAPIJobCreateUpdate(t *testing.T) {
 	}
 	body, _ := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
-	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, http.StatusCreated, resp.StatusCode)
 
 	var origJob Job
 	if err := json.Unmarshal(body, &origJob); err != nil {
@@ -69,7 +69,7 @@ func TestAPIJobCreateUpdate(t *testing.T) {
 	}
 	defer resp.Body.Close()
 	body, _ = ioutil.ReadAll(resp.Body)
-	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, http.StatusCreated, resp.StatusCode)
 
 	var overwriteJob Job
 	if err := json.Unmarshal(body, &overwriteJob); err != nil {
@@ -187,7 +187,7 @@ func TestAPIJobCreateUpdateParentJob_WithParent(t *testing.T) {
 	body, _ := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
 
-	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, http.StatusCreated, resp.StatusCode)
 
 	jsonStr = []byte(`{
 		"name": "test_job",
@@ -206,7 +206,7 @@ func TestAPIJobCreateUpdateParentJob_WithParent(t *testing.T) {
 	body, _ = ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
 
-	assert.Equal(t, http.StatusOK, resp.StatusCode, string(body))
+	assert.Equal(t, http.StatusCreated, resp.StatusCode, string(body))
 
 	// Send a shutdown request
 	shutdownCh <- struct{}{}
