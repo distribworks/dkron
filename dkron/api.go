@@ -157,14 +157,6 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.R
 		log.Fatal(err)
 	}
 
-	if len(body) >= serf.UserEventSizeLimit {
-		w.WriteHeader(422) // unprocessable entity
-		if err := json.NewEncoder(w).Encode(ErrOversizedJob.Error()); err != nil {
-			log.Fatal(err)
-		}
-		return
-	}
-
 	if err := json.Unmarshal(body, &job); err != nil {
 		w.WriteHeader(422) // unprocessable entity
 		if err := json.NewEncoder(w).Encode(err); err != nil {
