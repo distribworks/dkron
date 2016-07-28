@@ -2,7 +2,6 @@ package dkron
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -14,7 +13,6 @@ import (
 	"github.com/carbocation/interpose"
 	"github.com/docker/libkv/store"
 	"github.com/gorilla/mux"
-	"github.com/hashicorp/serf/serf"
 )
 
 func (a *AgentCommand) ServeHTTP() {
