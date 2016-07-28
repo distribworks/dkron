@@ -19,13 +19,25 @@ type RPCServer struct {
 	agent *AgentCommand
 }
 
+func (rpcs *RPCServer) GetJob(jobName string, job *Job) error {
+	log.WithFields(logrus.Fields{
+		"job": jobName,
+	}).Debug("rpc: Received GetJob")
+
+	job, err := rpcs.agent.store.GetJob(jobName)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeResponse) error {
 	log.WithFields(logrus.Fields{
 		"group": execution.Group,
 		"job":   execution.JobName,
 	}).Debug("rpc: Received execution done")
 
-	// Save job status
+	// Load the job from the store
 	job, err := rpcs.agent.store.GetJob(execution.JobName)
 	if err != nil {
 		if err == store.ErrKeyNotFound {
@@ -66,17 +78,17 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 	reply.Payload = []byte("saved")
 
 	// If the job failed, retry it until retries limit (default: don't retry)
-	if !execution.Success && execution.Attempt < job.Retries+1 {
-		execution.Attempt++
-
-		log.WithFields(logrus.Fields{
-			"attempt":   execution.Attempt,
-			"execution": execution,
-		}).Debug("Retrying execution")
-
-		rpcs.agent.RunQuery(&execution)
-		return nil
-	}
+	// if !execution.Success && execution.Attempt < job.Retries+1 {
+	// 	execution.Attempt++
+	//
+	// 	log.WithFields(logrus.Fields{
+	// 		"attempt":   execution.Attempt,
+	// 		"execution": execution,
+	// 	}).Debug("Retrying execution")
+	//
+	// 	rpcs.agent.RunQuery(job)
+	// 	return nil
+	// }
 
 	exg, err := rpcs.agent.store.GetExecutionGroup(&execution)
 	if err != nil {
@@ -166,4 +178,28 @@ func (rpcc *RPCClient) callExecutionDone(execution *Execution) error {
 	log.Debug("rpc: from: %s", reply.From)
 
 	return nil
+}
+
+func (rpcc *RPCClient) GetJob(jobName string) (*Job, error) {
+	client, err := rpc.DialHTTP("tcp", rpcc.ServerAddr)
+	if err != nil {
+		log.WithFields(logrus.Fields{
+			"err":         err,
+			"server_addr": rpcc.ServerAddr,
+		}).Error("rpc: error dialing.")
+		return nil, err
+	}
+	defer client.Close()
+
+	// Synchronous call
+	var job *Job
+	err = client.Call("RPCServer.GetJob", jobName, &job)
+	if err != nil {
+		log.WithFields(logrus.Fields{
+			"error": err,
+		}).Warning("rpc: Error calling GetJob")
+		return nil, err
+	}
+
+	return job, nil
 }

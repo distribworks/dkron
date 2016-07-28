@@ -481,25 +481,36 @@ func (a *AgentCommand) eventLoop() {
 						"at":      query.LTime,
 					}).Debug("agent: Running job")
 
-					var ex Execution
-					if err := json.Unmarshal(query.Payload, &ex); err != nil {
-						log.WithField("query", QueryRunJob).Fatal("agent: Error unmarshaling execution payload")
+					var rqp RunQueryParam
+					if err := json.Unmarshal(query.Payload, &rqp); err != nil {
+						log.WithField("query", QueryRunJob).Fatal("agent: Error unmarshaling query payload")
 					}
 
 					log.WithFields(logrus.Fields{
-						"job": ex.JobName,
+						"job": rqp.JobName,
 					}).Info("agent: Starting job")
 
-					ex.StartedAt = time.Now()
-					ex.Success = false
-					ex.NodeName = a.config.NodeName
+					rpcc := RPCClient{ServerAddr: rqp.RPCAddr}
+					job, err := rpcc.GetJob(rqp.JobName)
+					if err != nil {
+						log.WithError(err).Error("agent: Error on rpc.GetJob call")
+					}
+
+					ex := &Execution{
+						StartedAt: time.Now(),
+						Success:   false,
+						NodeName:  a.config.NodeName,
+						Job:       job,
+					}
 
 					go func() {
-						if err := a.invokeJob(&ex); err != nil {
+						if err := a.invokeJob(ex); err != nil {
 							log.WithError(err).Error("agent: Error invoking job command")
 						}
 					}()
 
+					// Unset the job in execution before sending the response
+					ex.Job = nil
 					exJson, _ := json.Marshal(ex)
 					query.Respond(exJson)
 				}

@@ -2,6 +2,7 @@ package dkron
 
 import (
 	"encoding/json"
+	"time"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/hashicorp/serf/serf"
@@ -13,18 +14,24 @@ const (
 	QueryRPCConfig        = "rpc:config"
 )
 
+type RunQueryParam struct {
+	JobName        string `json:"job_name"`
+	ExecutionGroup int64  `json:"execution_group"`
+	RPCAddr        string `json:"rpc_addr"`
+}
+
 // Send a serf run query to the cluster, this is used to ask a node or nodes
 // to run a Job.
-func (a *AgentCommand) RunQuery(execution *Execution) {
-	filterNodes, filterTags, err := a.processFilteredNodes(execution.Job)
+func (a *AgentCommand) RunQuery(job *Job) {
+	filterNodes, filterTags, err := a.processFilteredNodes(job)
 	if err != nil {
 		log.WithFields(logrus.Fields{
-			"job": execution.JobName,
+			"job": job.Name,
 			"err": err.Error(),
 		}).Fatal("agent: Error processing filtered nodes")
 	}
 	log.Debug("agent: Filtered nodes to run: ", filterNodes)
-	log.Debug("agent: Filtered tags to run: ", execution.Job.Tags)
+	log.Debug("agent: Filtered tags to run: ", job.Tags)
 
 	params := &serf.QueryParam{
 		FilterNodes: filterNodes,
@@ -32,14 +39,20 @@ func (a *AgentCommand) RunQuery(execution *Execution) {
 		RequestAck:  true,
 	}
 
-	exJson, _ := json.Marshal(execution)
+	rqp := &RunQueryParam{
+		JobName:        job.Name,
+		ExecutionGroup: time.Now().UnixNano(),
+		RPCAddr:        a.getRPCAddr(),
+	}
+	rqpJson, _ := json.Marshal(rqp)
+
 	log.WithFields(logrus.Fields{
 		"query":    QueryRunJob,
-		"job_name": execution.JobName,
-		"json":     string(exJson),
+		"job_name": job.Name,
+		"json":     string(rqpJson),
 	}).Debug("agent: Sending query")
 
-	qr, err := a.serf.Query(QueryRunJob, exJson, params)
+	qr, err := a.serf.Query(QueryRunJob, rqpJson, params)
 	if err != nil {
 		log.WithField("query", QueryRunJob).WithError(err).Fatal("agent: Sending query error")
 	}
