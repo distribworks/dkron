@@ -263,6 +263,8 @@ func (a *AgentCommand) jobRunHandler(w http.ResponseWriter, r *http.Request) {
 
 	a.RunQuery(ex)
 
+	w.Header().Set("Location", r.RequestURI)
+	w.WriteHeader(http.StatusAccepted)
 	if err := printJson(w, r, job); err != nil {
 		log.Fatal(err)
 	}
