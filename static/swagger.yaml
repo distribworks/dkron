@@ -139,7 +139,7 @@ paths:
           type: string
       responses:
         # Response code
-        200:
+        202:
           description: Successful response
           # A schema describing your response object.
           # Use JSON Schema format

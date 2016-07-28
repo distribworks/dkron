@@ -214,6 +214,8 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.R
 
 	a.schedulerRestartQuery(string(a.store.GetLeader()))
 
+	w.Header().Set("Location", fmt.Sprintf("%s/%s", r.RequestURI, job.Name))
+	w.WriteHeader(http.StatusCreated)
 	if err := printJson(w, r, job); err != nil {
 		log.Fatal(err)
 	}
@@ -261,6 +263,8 @@ func (a *AgentCommand) jobRunHandler(w http.ResponseWriter, r *http.Request) {
 
 	a.RunQuery(ex)
 
+	w.Header().Set("Location", r.RequestURI)
+	w.WriteHeader(http.StatusAccepted)
 	if err := printJson(w, r, job); err != nil {
 		log.Fatal(err)
 	}
