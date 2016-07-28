@@ -17,10 +17,6 @@ import (
 	"github.com/hashicorp/serf/serf"
 )
 
-var (
-	ErrOversizedJob = errors.New(fmt.Sprintf("Due to serf limitations in message size, the job has a maximum size of %d", serf.UserEventSizeLimit))
-)
-
 func (a *AgentCommand) ServeHTTP() {
 	r := mux.NewRouter().StrictSlash(true)
 
