@@ -2,11 +2,8 @@ package dkron
 
 import (
 	"bytes"
-	"encoding/base64"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
-	"math/rand"
 	"net/http"
 	"testing"
 	"time"
