@@ -487,30 +487,26 @@ func (a *AgentCommand) eventLoop() {
 					}
 
 					log.WithFields(logrus.Fields{
-						"job": rqp.JobName,
+						"job": rqp.Execution.JobName,
 					}).Info("agent: Starting job")
 
 					rpcc := RPCClient{ServerAddr: rqp.RPCAddr}
-					job, err := rpcc.GetJob(rqp.JobName)
+					job, err := rpcc.GetJob(rqp.Execution.JobName)
 					if err != nil {
 						log.WithError(err).Error("agent: Error on rpc.GetJob call")
 					}
 
 					ex := &Execution{
 						StartedAt: time.Now(),
-						Success:   false,
 						NodeName:  a.config.NodeName,
-						Job:       job,
 					}
 
 					go func() {
-						if err := a.invokeJob(ex); err != nil {
+						if err := a.invokeJob(job, ex); err != nil {
 							log.WithError(err).Error("agent: Error invoking job command")
 						}
 					}()
 
-					// Unset the job in execution before sending the response
-					ex.Job = nil
 					exJson, _ := json.Marshal(ex)
 					query.Respond(exJson)
 				}

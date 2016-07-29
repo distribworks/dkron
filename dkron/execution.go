@@ -29,9 +29,15 @@ type Execution struct {
 
 	// Retry attempt of this execution.
 	Attempt uint `json:"attempt,omitempty"`
+}
 
-	// The job used to generate this execution.
-	Job *Job `json:"job,omitempty"`
+// Init a new execution
+func NewExecution(jobName string) *Execution {
+	return &Execution{
+		JobName: jobName,
+		Group:   time.Now().UnixNano(),
+		Attempt: 1,
+	}
 }
 
 // Used to enerate the execution Id

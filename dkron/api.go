@@ -236,7 +236,9 @@ func (a *AgentCommand) jobRunHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	a.RunQuery(job)
+
+	ex := NewExecution(job.Name)
+	a.RunQuery(ex)
 
 	if err := printJson(w, r, job); err != nil {
 		log.Fatal(err)

@@ -16,20 +16,22 @@ import (
 
 type Notifier struct {
 	Config         *Config
+	Job            *Job
 	Execution      *Execution
 	ExecutionGroup []*Execution
 }
 
-func Notification(config *Config, execution *Execution, exGroup []*Execution) *Notifier {
+func Notification(config *Config, execution *Execution, exGroup []*Execution, job *Job) *Notifier {
 	return &Notifier{
 		Config:         config,
 		Execution:      execution,
 		ExecutionGroup: exGroup,
+		Job:            job,
 	}
 }
 
 func (n *Notifier) Send() {
-	if n.Config.MailHost != "" && n.Config.MailPort != 0 && n.Execution.Job.OwnerEmail != "" {
+	if n.Config.MailHost != "" && n.Config.MailPort != 0 && n.Job.OwnerEmail != "" {
 		n.sendExecutionEmail()
 	}
 	if n.Config.WebhookURL != "" && n.Config.WebhookPayload != "" {
@@ -62,7 +64,7 @@ func (n *Notifier) report() string {
 
 func (n *Notifier) sendExecutionEmail() {
 	e := &email.Email{
-		To:      []string{n.Execution.Job.OwnerEmail},
+		To:      []string{n.Job.OwnerEmail},
 		From:    n.Config.MailFrom,
 		Subject: fmt.Sprintf("[Dkron] %s %s execution report", n.statusString(n.Execution), n.Execution.JobName),
 		Text:    []byte(n.report()),

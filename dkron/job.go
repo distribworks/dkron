@@ -95,7 +95,10 @@ func (j *Job) Run() {
 		}).Debug("scheduler: Run job")
 
 		cronInspect.Set(j.Name, j)
-		j.Agent.RunQuery(j)
+
+		// Simple execution wrapper
+		ex := NewExecution(j.Name)
+		j.Agent.RunQuery(ex)
 	}
 }
 

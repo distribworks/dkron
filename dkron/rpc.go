@@ -52,7 +52,7 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 		log.Fatal("rpc:", err)
 	}
 
-	// Save the new execution to store
+	// Save the execution to store
 	if _, err := rpcs.agent.store.SetExecution(&execution); err != nil {
 		return err
 	}
@@ -77,18 +77,18 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 	reply.From = rpcs.agent.config.NodeName
 	reply.Payload = []byte("saved")
 
-	// If the job failed, retry it until retries limit (default: don't retry)
-	// if !execution.Success && execution.Attempt < job.Retries+1 {
-	// 	execution.Attempt++
-	//
-	// 	log.WithFields(logrus.Fields{
-	// 		"attempt":   execution.Attempt,
-	// 		"execution": execution,
-	// 	}).Debug("Retrying execution")
-	//
-	// 	rpcs.agent.RunQuery(job)
-	// 	return nil
-	// }
+	// If the execution failed, retry it until retries limit (default: don't retry)
+	if !execution.Success && execution.Attempt < job.Retries+1 {
+		execution.Attempt++
+
+		log.WithFields(logrus.Fields{
+			"attempt":   execution.Attempt,
+			"execution": execution,
+		}).Debug("Retrying execution")
+
+		rpcs.agent.RunQuery(&execution)
+		return nil
+	}
 
 	exg, err := rpcs.agent.store.GetExecutionGroup(&execution)
 	if err != nil {
@@ -97,7 +97,7 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 	}
 
 	// Send notification
-	Notification(rpcs.agent.config, &execution, exg).Send()
+	Notification(rpcs.agent.config, &execution, exg, job).Send()
 
 	// Jobs that have dependent jobs are a bit more expensive because we need to call the Status() method for every execution.
 	// Check first if there's dependent jobs and then check for the job status to begin executiong dependent jobs on success.

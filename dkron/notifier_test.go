@@ -20,7 +20,7 @@ func TestNotifier_callExecutionWebhook(t *testing.T) {
 		WebhookHeaders: []string{"Content-Type: application/x-www-form-urlencoded"},
 	}
 
-	n := Notification(c, &Execution{}, []*Execution{})
+	n := Notification(c, &Execution{}, []*Execution{}, &Job{})
 
 	n.Send()
 }
@@ -43,7 +43,6 @@ func TestNotifier_sendExecutionEmail(t *testing.T) {
 		StartedAt:  time.Now(),
 		FinishedAt: time.Now(),
 		Success:    true,
-		Job:        job,
 		NodeName:   "test-node",
 		Output:     []byte("test-output"),
 	}
@@ -52,14 +51,13 @@ func TestNotifier_sendExecutionEmail(t *testing.T) {
 		{
 			JobName:   "test",
 			StartedAt: time.Now(),
-			Job:       job,
 			NodeName:  "test-node2",
 			Output:    []byte("test-output"),
 		},
 		ex1,
 	}
 
-	n := Notification(c, ex1, exg)
+	n := Notification(c, ex1, exg, job)
 
 	n.Send()
 }
