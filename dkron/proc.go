@@ -23,8 +23,6 @@ const (
 
 // invokeJob will execute the given job. Depending on the event.
 func (a *AgentCommand) invokeJob(job *Job, execution *Execution) error {
-	log.Fatal(job.Command, job.Shell)
-
 	output, _ := circbuf.NewBuffer(maxBufSize)
 
 	cmd := buildCmd(job)

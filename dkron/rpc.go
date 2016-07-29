@@ -24,10 +24,14 @@ func (rpcs *RPCServer) GetJob(jobName string, job *Job) error {
 		"job": jobName,
 	}).Debug("rpc: Received GetJob")
 
-	job, err := rpcs.agent.store.GetJob(jobName)
+	j, err := rpcs.agent.store.GetJob(jobName)
 	if err != nil {
 		return err
 	}
+	// Copy the data structure
+	job.Shell = j.Shell
+	job.Command = j.Command
+
 	return nil
 }
 
@@ -192,7 +196,7 @@ func (rpcc *RPCClient) GetJob(jobName string) (*Job, error) {
 	defer client.Close()
 
 	// Synchronous call
-	var job *Job
+	var job Job
 	err = client.Call("RPCServer.GetJob", jobName, &job)
 	if err != nil {
 		log.WithFields(logrus.Fields{
@@ -201,5 +205,5 @@ func (rpcc *RPCClient) GetJob(jobName string) (*Job, error) {
 		return nil, err
 	}
 
-	return job, nil
+	return &job, nil
 }

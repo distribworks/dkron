@@ -495,11 +495,11 @@ func (a *AgentCommand) eventLoop() {
 					if err != nil {
 						log.WithError(err).Error("agent: Error on rpc.GetJob call")
 					}
+					log.WithField("command", job.Command).Debug("agent: GetJob by RPC")
 
-					ex := &Execution{
-						StartedAt: time.Now(),
-						NodeName:  a.config.NodeName,
-					}
+					ex := rqp.Execution
+					ex.StartedAt = time.Now()
+					ex.NodeName = a.config.NodeName
 
 					go func() {
 						if err := a.invokeJob(job, ex); err != nil {
