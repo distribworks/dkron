@@ -13,33 +13,56 @@ const (
 	QueryRPCConfig        = "rpc:config"
 )
 
+type RunQueryParam struct {
+	Execution *Execution `json:"execution"`
+	RPCAddr   string     `json:"rpc_addr"`
+}
+
 // Send a serf run query to the cluster, this is used to ask a node or nodes
 // to run a Job.
-func (a *AgentCommand) RunQuery(execution *Execution) {
-	filterNodes, filterTags, err := a.processFilteredNodes(execution.Job)
-	if err != nil {
-		log.WithFields(logrus.Fields{
-			"job": execution.JobName,
-			"err": err.Error(),
-		}).Fatal("agent: Error processing filtered nodes")
-	}
-	log.Debug("agent: Filtered nodes to run: ", filterNodes)
-	log.Debug("agent: Filtered tags to run: ", execution.Job.Tags)
+func (a *AgentCommand) RunQuery(ex *Execution) {
+	var params *serf.QueryParam
 
-	params := &serf.QueryParam{
-		FilterNodes: filterNodes,
-		FilterTags:  filterTags,
-		RequestAck:  true,
+	job, _ := a.store.GetJob(ex.JobName)
+
+	// In the first execution attempt we build and filter the target nodes
+	// but we use the existing node target in case of retry.
+	if ex.Attempt <= 1 {
+		filterNodes, filterTags, err := a.processFilteredNodes(job)
+		if err != nil {
+			log.WithFields(logrus.Fields{
+				"job": job.Name,
+				"err": err.Error(),
+			}).Fatal("agent: Error processing filtered nodes")
+		}
+		log.Debug("agent: Filtered nodes to run: ", filterNodes)
+		log.Debug("agent: Filtered tags to run: ", job.Tags)
+
+		params = &serf.QueryParam{
+			FilterNodes: filterNodes,
+			FilterTags:  filterTags,
+			RequestAck:  true,
+		}
+	} else {
+		params = &serf.QueryParam{
+			FilterNodes: []string{ex.NodeName},
+			RequestAck:  true,
+		}
 	}
 
-	exJson, _ := json.Marshal(execution)
+	rqp := &RunQueryParam{
+		Execution: ex,
+		RPCAddr:   a.getRPCAddr(),
+	}
+	rqpJson, _ := json.Marshal(rqp)
+
 	log.WithFields(logrus.Fields{
 		"query":    QueryRunJob,
-		"job_name": execution.JobName,
-		"json":     string(exJson),
+		"job_name": job.Name,
+		"json":     string(rqpJson),
 	}).Debug("agent: Sending query")
 
-	qr, err := a.serf.Query(QueryRunJob, exJson, params)
+	qr, err := a.serf.Query(QueryRunJob, rqpJson, params)
 	if err != nil {
 		log.WithField("query", QueryRunJob).WithError(err).Fatal("agent: Sending query error")
 	}

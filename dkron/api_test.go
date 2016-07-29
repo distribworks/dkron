@@ -2,11 +2,8 @@ package dkron
 
 import (
 	"bytes"
-	"encoding/base64"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
-	"math/rand"
 	"net/http"
 	"testing"
 	"time"
@@ -80,30 +77,6 @@ func TestAPIJobCreateUpdate(t *testing.T) {
 	assert.Equal(t, origJob.Disabled, overwriteJob.Disabled)
 	assert.NotEqual(t, origJob.Command, overwriteJob.Command)
 	assert.Equal(t, "test", overwriteJob.Command)
-
-	// Send a shutdown request
-	shutdownCh <- struct{}{}
-}
-
-func TestAPIJobCreateUpdateLength(t *testing.T) {
-	shutdownCh, _ := setupAPITest(t)
-
-	rb := make([]byte, 1024)
-	rand.Read(rb)
-	rs := base64.URLEncoding.EncodeToString(rb)
-
-	jsonStr := []byte(fmt.Sprintf("{\"name\": \"test_job\", \"command\": \"%s\"}", rs))
-
-	resp, err := http.Post("http://localhost:8090/v1/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
-	if err != nil {
-		t.Fatal(err)
-	}
-	body, _ := ioutil.ReadAll(resp.Body)
-	resp.Body.Close()
-
-	assert.Equal(t, 422, resp.StatusCode)
-	errJson, err := json.Marshal(ErrOversizedJob.Error())
-	assert.Equal(t, string(errJson)+"\n", string(body))
 
 	// Send a shutdown request
 	shutdownCh <- struct{}{}

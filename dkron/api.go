@@ -2,24 +2,17 @@ package dkron
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"path/filepath"
 	"strings"
-	"time"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/carbocation/interpose"
 	"github.com/docker/libkv/store"
 	"github.com/gorilla/mux"
-	"github.com/hashicorp/serf/serf"
-)
-
-var (
-	ErrOversizedJob = errors.New(fmt.Sprintf("Due to serf limitations in message size, the job has a maximum size of %d", serf.UserEventSizeLimit))
 )
 
 func (a *AgentCommand) ServeHTTP() {
@@ -158,14 +151,6 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.R
 		log.Fatal(err)
 	}
 
-	if len(body) >= serf.UserEventSizeLimit {
-		w.WriteHeader(422) // unprocessable entity
-		if err := json.NewEncoder(w).Encode(ErrOversizedJob.Error()); err != nil {
-			log.Fatal(err)
-		}
-		return
-	}
-
 	if err := json.Unmarshal(body, &job); err != nil {
 		w.WriteHeader(422) // unprocessable entity
 		if err := json.NewEncoder(w).Encode(err); err != nil {
@@ -254,13 +239,7 @@ func (a *AgentCommand) jobRunHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ex := &Execution{
-		JobName: job.Name,
-		Group:   time.Now().UnixNano(),
-		Job:     job,
-		Attempt: 1,
-	}
-
+	ex := NewExecution(job.Name)
 	a.RunQuery(ex)
 
 	w.Header().Set("Location", r.RequestURI)

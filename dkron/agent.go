@@ -481,21 +481,28 @@ func (a *AgentCommand) eventLoop() {
 						"at":      query.LTime,
 					}).Debug("agent: Running job")
 
-					var ex Execution
-					if err := json.Unmarshal(query.Payload, &ex); err != nil {
-						log.WithField("query", QueryRunJob).Fatal("agent: Error unmarshaling execution payload")
+					var rqp RunQueryParam
+					if err := json.Unmarshal(query.Payload, &rqp); err != nil {
+						log.WithField("query", QueryRunJob).Fatal("agent: Error unmarshaling query payload")
 					}
 
 					log.WithFields(logrus.Fields{
-						"job": ex.JobName,
+						"job": rqp.Execution.JobName,
 					}).Info("agent: Starting job")
 
+					rpcc := RPCClient{ServerAddr: rqp.RPCAddr}
+					job, err := rpcc.GetJob(rqp.Execution.JobName)
+					if err != nil {
+						log.WithError(err).Error("agent: Error on rpc.GetJob call")
+					}
+					log.WithField("command", job.Command).Debug("agent: GetJob by RPC")
+
+					ex := rqp.Execution
 					ex.StartedAt = time.Now()
-					ex.Success = false
 					ex.NodeName = a.config.NodeName
 
 					go func() {
-						if err := a.invokeJob(&ex); err != nil {
+						if err := a.invokeJob(job, ex); err != nil {
 							log.WithError(err).Error("agent: Error invoking job command")
 						}
 					}()

@@ -94,14 +94,10 @@ func (j *Job) Run() {
 			"schedule": j.Schedule,
 		}).Debug("scheduler: Run job")
 
-		ex := &Execution{
-			JobName: j.Name,
-			Group:   time.Now().UnixNano(),
-			Job:     j,
-			Attempt: 1,
-		}
-
 		cronInspect.Set(j.Name, j)
+
+		// Simple execution wrapper
+		ex := NewExecution(j.Name)
 		j.Agent.RunQuery(ex)
 	}
 }
