@@ -69,7 +69,6 @@ func (s *Store) SetJob(job *Job) error {
 	}
 	if ej != nil {
 		// Doubt if don't reset this is the correct thing to do
-		job.DependentJobs = ej.DependentJobs
 		job.LastError = ej.LastError
 		job.LastSuccess = ej.LastError
 		job.SuccessCount = ej.SuccessCount
