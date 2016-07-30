@@ -1,5 +1,5 @@
-hash: f5dea38828313885b5eb4700023c993409ee2cb3b1489393a7ec53e741f82775
-updated: 2016-07-25T11:33:08.088208113+02:00
+hash: 5cf0e717ef610bbbdfe76a0505b06d2b6833746de71dcc8a995110e4d73139a0
+updated: 2016-07-30T17:18:13.198461924+02:00
 imports:
 - name: github.com/armon/circbuf
   version: f092b4f207b6e5cce0569056fba9e1a2735cb6cf
@@ -18,7 +18,7 @@ imports:
   - Godeps/_workspace/src/github.com/ugorji/go/codec
   - Godeps/_workspace/src/golang.org/x/net/context
 - name: github.com/deckarep/golang-set
-  version: 1f0f4ff8d3fbef9328522993ce71c35890f67554
+  version: a847793a0d5f0cfd57c3ece4242e75223cdaf898
 - name: github.com/docker/leadership
   version: bfc7753dd48af19513b29deec23c364bf0f274eb
 - name: github.com/docker/libkv
@@ -47,8 +47,6 @@ imports:
   subpackages:
   - serf
   - testutil
-- name: github.com/imdario/mergo
-  version: 50d4dbd4eb0e84778abe37cefef140271d96fade
 - name: github.com/jordan-wright/email
   version: 065af43fce517847a750d01a6d389d1a37e011b3
 - name: github.com/kr/pretty

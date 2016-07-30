@@ -44,9 +44,6 @@ type Job struct {
 	// Owner email of the job.
 	OwnerEmail string `json:"owner_email"`
 
-	// Actual user to use when running the command.
-	RunAsUser string `json:"run_as_user"`
-
 	// Number of successful executions of this job.
 	SuccessCount int `json:"success_count"`
 

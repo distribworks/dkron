@@ -12,7 +12,6 @@ import (
 	"github.com/docker/libkv/store/consul"
 	"github.com/docker/libkv/store/etcd"
 	"github.com/docker/libkv/store/zookeeper"
-	"github.com/imdario/mergo"
 	"github.com/victorcoder/dkron/cron"
 )
 
@@ -69,13 +68,11 @@ func (s *Store) SetJob(job *Job) error {
 		return err
 	}
 	if ej != nil {
-		// Always pick the comming parent job & replace (mandatory)
-		ej.ParentJob = job.ParentJob
-		ej.DependentJobs = job.DependentJobs
-
-		if err := mergo.Merge(job, ej); err != nil {
-			return err
-		}
+		// Doubt if don't reset this is the correct thing to do
+		job.LastError = ej.LastError
+		job.LastSuccess = ej.LastError
+		job.SuccessCount = ej.SuccessCount
+		job.ErrorCount = ej.ErrorCount
 	}
 
 	jobJson, _ := json.Marshal(job)

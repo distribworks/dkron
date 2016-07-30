@@ -59,7 +59,7 @@ func TestAPIJobCreateUpdate(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	jsonStr1 := []byte(`{"name": "test_job", "schedule": "@every 2s", "command": "test"}`)
+	jsonStr1 := []byte(`{"name": "test_job", "schedule": "@every 2s", "command": "test", "disabled": false}`)
 	resp, err = http.Post("http://localhost:8090/v1/jobs", "encoding/json", bytes.NewBuffer(jsonStr1))
 	if err != nil {
 		t.Fatal(err)
@@ -74,7 +74,7 @@ func TestAPIJobCreateUpdate(t *testing.T) {
 	}
 
 	assert.Equal(t, origJob.Name, overwriteJob.Name)
-	assert.Equal(t, origJob.Disabled, overwriteJob.Disabled)
+	assert.False(t, overwriteJob.Disabled)
 	assert.NotEqual(t, origJob.Command, overwriteJob.Command)
 	assert.Equal(t, "test", overwriteJob.Command)
 
