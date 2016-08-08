@@ -230,7 +230,8 @@ func (s *Store) DeleteJob(name string) (*Job, error) {
 }
 
 func (s *Store) GetExecutions(jobName string) ([]*Execution, error) {
-	res, err := s.Client.List(fmt.Sprintf("%s/executions/%s", s.keyspace, jobName))
+	prefix := fmt.Sprintf("%s/executions/%s", s.keyspace, jobName)
+	res, err := s.Client.List(prefix)
 	if err != nil {
 		return nil, err
 	}
@@ -238,6 +239,11 @@ func (s *Store) GetExecutions(jobName string) ([]*Execution, error) {
 	var executions []*Execution
 
 	for _, node := range res {
+		path := store.SplitKey(node.Key)
+		dir := path[len(path)-2]
+		if dir != jobName {
+			continue
+		}
 		var execution Execution
 		err := json.Unmarshal([]byte(node.Value), &execution)
 		if err != nil {
