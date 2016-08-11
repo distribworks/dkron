@@ -55,6 +55,7 @@ Settings for dkron can be specified in three ways: Using a `config/dkron.json` c
 {
   "backend": "etcd",
   "backend_machine": "127.0.0.1:2379",
+  "advertise_addr": "192.168.50.1",
   "server": false,
   "debug": false,
   "tags": {
