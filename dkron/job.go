@@ -17,6 +17,13 @@ const (
 	PartialyFailed
 )
 
+type JobType string
+
+const (
+	CommandJob JobType = "command"
+	GrpcJob  JobType = "grpc"
+)
+
 var (
 	ErrParentJobNotFound = errors.New("Specified parent job not found")
 	ErrNoAgent           = errors.New("No agent defined")
@@ -24,6 +31,20 @@ var (
 	ErrNoParent          = errors.New("The job doens't have a parent job set")
 	ErrNoCommand         = errors.New("Unespecified command for job")
 )
+
+type GrpcCommand struct {
+	// URL of the remote job executor
+	URL                string `json:"url"`
+	// Payload data to send
+	Payload            string `json:"payload"`
+	// Use secure connection
+	Secure             bool   `json:"secure"`
+	// Do not verify certificate
+	InsecureSkipVerify bool   `json:"insecure_skip_verify"`
+	// TODO add CA cert and Client Cert for auth
+	// TODO add support to authorization
+	// TODO timeout, call grpc call with context.WithTimeout()
+}
 
 type Job struct {
 	// Job name. Must be unique, acts as the id.
@@ -35,8 +56,14 @@ type Job struct {
 	// Use shell to run the command.
 	Shell bool `json:"shell"`
 
+	// Type of the job
+	Type JobType `json:"type"`
+
 	// Command to run. Must be a shell command to execute.
 	Command string `json:"command"`
+
+	// Grpc client information.
+	Grpc *GrpcCommand `json:"grpc"`
 
 	// Owner of the job.
 	Owner string `json:"owner"`

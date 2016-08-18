@@ -107,7 +107,7 @@ imports:
   subpackages:
   - unix
 - name: google.golang.org/grpc
-  version: f5ebd86be717593ab029545492c93ddf8914832b
+  version: 2e4cfe0fc5c4278dfc68fc8c34b2305d5c01647b
   subpackages:
   - codes
   - credentials
