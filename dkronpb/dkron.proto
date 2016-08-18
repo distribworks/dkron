@@ -1,0 +1,18 @@
+syntax = "proto3";
+package dkron.v1;
+
+option go_package = "dkronpb";
+
+message Execution {
+    string job_name = 1;
+    string payload = 2;
+}
+message ExecutionResult{
+    // Partial output of the execution
+    bytes output = 1;
+}
+
+service DkronExecutor {
+    rpc Invoke(Execution) returns (ExecutionResult);
+}
+

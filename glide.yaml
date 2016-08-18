@@ -87,3 +87,4 @@ import:
   - assert
 - package: github.com/mattn/go-shellwords
 - package: github.com/deckarep/golang-set
+- package: google.golang.org/grpc
