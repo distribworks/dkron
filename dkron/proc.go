@@ -82,7 +82,7 @@ func (a *AgentCommand) invokeJob(job *Job, execution *Execution) error {
 		client := dkronpb.NewDkronExecutorClient(cc)
 		ctx := context.Background()
 		if job.Grpc.Timeout > 0 {
-			ctx, _ = context.WithTimeout(ctx, time.Second*job.Grpc.Timeout)
+			ctx, _ = context.WithTimeout(ctx, time.Second*time.Duration(job.Grpc.Timeout))
 		}
 		res, err := client.Invoke(ctx, &dkronpb.Execution{
 			JobName: job.Name,
