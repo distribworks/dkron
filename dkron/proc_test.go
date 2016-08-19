@@ -3,6 +3,7 @@ package dkron
 import (
 	"testing"
 
+	"errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/victorcoder/dkron/dkronpb"
 	"golang.org/x/net/context"
@@ -50,7 +51,7 @@ func (ts *testServer) Invoke(ctx context.Context, in *dkronpb.Execution) (*dkron
 	}
 }
 
-func Test_grpc(t *testing.T) {
+func Test_invokeGrpcJob(t *testing.T) {
 	ts := &testServer{}
 	lis, err := net.Listen("tcp", ":9001")
 	assert.NoError(t, err)
@@ -86,10 +87,25 @@ func Test_grpc(t *testing.T) {
 			},
 			err: grpc.Errorf(codes.DeadlineExceeded, "context deadline exceeded"),
 		},
+		{
+			job: &Job{
+				Name: "no-grpc-field",
+				Type: GrpcJob,
+			},
+			err: errors.New("job.Grpc is not set"),
+		},
+		{
+			job: &Job{
+				Name: "timeout-connection",
+				Type: GrpcJob,
+				Grpc: &GrpcCommand{URL: "localhost:9999", Timeout: 1},
+			},
+			err: grpc.Errorf(codes.Unavailable, "grpc: the connection is unavailable"),
+		},
 	}
 	for i, test := range tests {
 		res, err := invokeGrpcJob(test.job)
-		assert.Equal(t, err, test.err, "case %d", i)
+		assert.Equal(t, test.err, err, "case %d", i)
 		if err != nil {
 			continue
 		}

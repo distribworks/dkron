@@ -3,6 +3,7 @@ package dkron
 import (
 	"crypto/tls"
 	"crypto/x509"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"math/rand"
@@ -105,7 +106,10 @@ func (a *AgentCommand) selectServer() serf.Member {
 }
 
 func invokeGrpcJob(job *Job) (*dkronpb.ExecutionResult, error) {
-	var opt grpc.DialOption
+	opts := make([]grpc.DialOption, 1)
+	if job.Grpc == nil {
+		return nil, errors.New("job.Grpc is not set")
+	}
 	if job.Grpc.Secure {
 		tlsConfig := tls.Config{
 			InsecureSkipVerify: job.Grpc.InsecureSkipTlsVerify,
@@ -126,11 +130,11 @@ func invokeGrpcJob(job *Job) (*dkronpb.ExecutionResult, error) {
 			}
 			tlsConfig.Certificates = []tls.Certificate{cert}
 		}
-		opt = grpc.WithTransportCredentials(credentials.NewTLS(&tlsConfig))
+		opts[0] = grpc.WithTransportCredentials(credentials.NewTLS(&tlsConfig))
 	} else {
-		opt = grpc.WithInsecure()
+		opts[0] = grpc.WithInsecure()
 	}
-	cc, err := grpc.Dial(job.Grpc.URL, opt)
+	cc, err := grpc.Dial(job.Grpc.URL, opts...)
 	if err != nil {
 		log.WithError(err).Error("proc: dial to grpc server failed")
 		return nil, err
