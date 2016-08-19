@@ -21,7 +21,7 @@ type JobType string
 
 const (
 	CommandJob JobType = "command"
-	GrpcJob  JobType = "grpc"
+	GrpcJob    JobType = "grpc"
 )
 
 var (
@@ -34,16 +34,21 @@ var (
 
 type GrpcCommand struct {
 	// URL of the remote job executor
-	URL                string `json:"url"`
+	URL string `json:"url"`
 	// Payload data to send
-	Payload            string `json:"payload"`
+	Payload string `json:"payload"`
 	// Use secure connection
-	Secure             bool   `json:"secure"`
-	// Do not verify certificate
-	InsecureSkipVerify bool   `json:"insecure_skip_verify"`
-	// TODO add CA cert and Client Cert for auth
-	// TODO add support to authorization
-	// TODO timeout, call grpc call with context.WithTimeout()
+	Secure bool `json:"secure"`
+	// If true, the server's certificate will not be checked for validity. This will make your GRPC connections insecure.
+	InsecureSkipTlsVerify bool `json:"insecure_skip_tls_verify"`
+	// Timeout duration in seconds
+	Timeout int `json:"timeout"`
+	//Path to a cert. File for the certificate authority.
+	CertificateAuthority string `json:"certificate_authority"`
+	// Path to a client certificate file for TLS.
+	ClientCertificate string `json:"client_certificate"`
+	// Path to a client key file for TLS.
+	ClientKey string `json:"client_key"`
 }
 
 type Job struct {

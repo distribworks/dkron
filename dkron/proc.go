@@ -2,7 +2,9 @@ package dkron
 
 import (
 	"crypto/tls"
+	"crypto/x509"
 	"fmt"
+	"io/ioutil"
 	"math/rand"
 	"os/exec"
 	"runtime"
@@ -71,20 +73,18 @@ func (a *AgentCommand) invokeJob(job *Job, execution *Execution) error {
 		execution.Success = success
 		execution.Output = output.Bytes()
 	case GrpcJob:
-		var opt grpc.DialOption
-		if job.Grpc.Secure {
-			tlsConfig := tls.Config{InsecureSkipVerify: job.Grpc.InsecureSkipVerify}
-			opt = grpc.WithTransportCredentials(credentials.NewTLS(&tlsConfig))
-		} else {
-			opt = grpc.WithInsecure()
-		}
-		cc, err := grpc.Dial(job.Grpc.URL, opt)
+		cc, err := dialGrpc(job.Grpc)
 		if err != nil {
+			log.WithError(err).Error("proc: dial to grpc server failed")
 			return err
 		}
 		defer cc.Close()
 		client := dkronpb.NewDkronExecutorClient(cc)
-		res, err := client.Invoke(context.Background(), &dkronpb.Execution{
+		ctx := context.Background()
+		if job.Grpc.Timeout > 0 {
+			ctx, _ = context.WithTimeout(ctx, time.Second*job.Grpc.Timeout)
+		}
+		res, err := client.Invoke(ctx, &dkronpb.Execution{
 			JobName: job.Name,
 			Payload: job.Grpc.Payload,
 		})
@@ -99,7 +99,7 @@ func (a *AgentCommand) invokeJob(job *Job, execution *Execution) error {
 		execution.Success = success
 		execution.Output = res.Output
 	default:
-		return fmt.Errorf("Unknown job type=%s", job.Type)
+		return fmt.Errorf("unknown job type=%s", job.Type)
 	}
 
 	rpcServer, err := a.queryRPCConfig()
@@ -116,6 +116,35 @@ func (a *AgentCommand) selectServer() serf.Member {
 	server := servers[rand.Intn(len(servers))]
 
 	return server
+}
+
+func dialGrpc(gcmd *GrpcCommand) (*grpc.ClientConn, error) {
+	var opt grpc.DialOption
+	if gcmd.Secure {
+		tlsConfig := tls.Config{
+			InsecureSkipVerify: gcmd.InsecureSkipTlsVerify,
+		}
+		if gcmd.CertificateAuthority != "" {
+			roots := x509.NewCertPool()
+			pemBlock, err := ioutil.ReadFile(gcmd.CertificateAuthority)
+			if err != nil {
+				return nil, err
+			}
+			roots.AppendCertsFromPEM(pemBlock)
+			tlsConfig.RootCAs = roots
+		}
+		if gcmd.ClientCertificate != "" && gcmd.ClientKey != "" {
+			cert, err := tls.LoadX509KeyPair(gcmd.ClientCertificate, gcmd.ClientKey)
+			if err != nil {
+				return nil, err
+			}
+			tlsConfig.Certificates = []tls.Certificate{cert}
+		}
+		opt = grpc.WithTransportCredentials(credentials.NewTLS(&tlsConfig))
+	} else {
+		opt = grpc.WithInsecure()
+	}
+	return grpc.Dial(gcmd.URL, opt)
 }
 
 // Determine the shell invocation based on OS
