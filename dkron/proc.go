@@ -73,21 +73,7 @@ func (a *AgentCommand) invokeJob(job *Job, execution *Execution) error {
 		execution.Success = success
 		execution.Output = output.Bytes()
 	case GrpcJob:
-		cc, err := dialGrpc(job.Grpc)
-		if err != nil {
-			log.WithError(err).Error("proc: dial to grpc server failed")
-			return err
-		}
-		defer cc.Close()
-		client := dkronpb.NewDkronExecutorClient(cc)
-		ctx := context.Background()
-		if job.Grpc.Timeout > 0 {
-			ctx, _ = context.WithTimeout(ctx, time.Second*time.Duration(job.Grpc.Timeout))
-		}
-		res, err := client.Invoke(ctx, &dkronpb.Execution{
-			JobName: job.Name,
-			Payload: job.Grpc.Payload,
-		})
+		res, err := invokeGrpcJob(job)
 		var success bool
 		if err != nil {
 			log.WithError(err).Error("proc: grpc call error output")
@@ -118,23 +104,23 @@ func (a *AgentCommand) selectServer() serf.Member {
 	return server
 }
 
-func dialGrpc(gcmd *GrpcCommand) (*grpc.ClientConn, error) {
+func invokeGrpcJob(job *Job) (*dkronpb.ExecutionResult, error) {
 	var opt grpc.DialOption
-	if gcmd.Secure {
+	if job.Grpc.Secure {
 		tlsConfig := tls.Config{
-			InsecureSkipVerify: gcmd.InsecureSkipTlsVerify,
+			InsecureSkipVerify: job.Grpc.InsecureSkipTlsVerify,
 		}
-		if gcmd.CertificateAuthority != "" {
+		if job.Grpc.CertificateAuthority != "" {
 			roots := x509.NewCertPool()
-			pemBlock, err := ioutil.ReadFile(gcmd.CertificateAuthority)
+			pemBlock, err := ioutil.ReadFile(job.Grpc.CertificateAuthority)
 			if err != nil {
 				return nil, err
 			}
 			roots.AppendCertsFromPEM(pemBlock)
 			tlsConfig.RootCAs = roots
 		}
-		if gcmd.ClientCertificate != "" && gcmd.ClientKey != "" {
-			cert, err := tls.LoadX509KeyPair(gcmd.ClientCertificate, gcmd.ClientKey)
+		if job.Grpc.ClientCertificate != "" && job.Grpc.ClientKey != "" {
+			cert, err := tls.LoadX509KeyPair(job.Grpc.ClientCertificate, job.Grpc.ClientKey)
 			if err != nil {
 				return nil, err
 			}
@@ -144,7 +130,21 @@ func dialGrpc(gcmd *GrpcCommand) (*grpc.ClientConn, error) {
 	} else {
 		opt = grpc.WithInsecure()
 	}
-	return grpc.Dial(gcmd.URL, opt)
+	cc, err := grpc.Dial(job.Grpc.URL, opt)
+	if err != nil {
+		log.WithError(err).Error("proc: dial to grpc server failed")
+		return nil, err
+	}
+	defer cc.Close()
+	client := dkronpb.NewDkronExecutorClient(cc)
+	ctx := context.Background()
+	if job.Grpc.Timeout > 0 {
+		ctx, _ = context.WithTimeout(ctx, time.Second*time.Duration(job.Grpc.Timeout))
+	}
+	return client.Invoke(ctx, &dkronpb.Execution{
+		JobName: job.Name,
+		Payload: job.Grpc.Payload,
+	})
 }
 
 // Determine the shell invocation based on OS
