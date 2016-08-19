@@ -75,7 +75,7 @@ import:
   subpackages:
   - ssh/terminal
 - package: golang.org/x/net
-  version: 1dfe7915deaf3f80b962c163b918868d8a6d8974
+  version: 07b51741c1d6423d4a6abab1c49940ec09cb1aaf
   subpackages:
   - context
   - http2

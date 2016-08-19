@@ -1,5 +1,5 @@
-hash: 129384abc9e0237a7eee872d0ed29075471f1fa9e2247f40f0a019ac034a0601
-updated: 2016-08-18T23:21:59.885952859+03:00
+hash: c6bdb95a406f103320599d622be308241962053a438032442640e7493ebe90c9
+updated: 2016-08-19T17:26:13.961360509+03:00
 imports:
 - name: github.com/armon/circbuf
   version: f092b4f207b6e5cce0569056fba9e1a2735cb6cf
@@ -96,7 +96,7 @@ imports:
   subpackages:
   - ssh/terminal
 - name: golang.org/x/net
-  version: 1dfe7915deaf3f80b962c163b918868d8a6d8974
+  version: 07b51741c1d6423d4a6abab1c49940ec09cb1aaf
   subpackages:
   - context
   - http2
