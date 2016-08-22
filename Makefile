@@ -13,3 +13,7 @@ apidoc:
 
 test:
 	@bash --norc -i ./scripts/test.sh
+
+release:
+	@$(MAKE) doc
+	@$(MAKE) gocx
