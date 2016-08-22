@@ -10,7 +10,7 @@
 	],
 	"BuildConstraints": "linux,amd64 windows,amd64 darwin,amd64 linux,arm",
 	"ResourcesInclude": "INSTALL*,README*,LICENSE*,config/*,static/*,templates/*",
-	"PackageVersion": "0.7.3",
+	"PackageVersion": "0.9.0",
 	"TaskSettings": {
 		"deb": {
 			"metadata": {

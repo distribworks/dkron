@@ -1,3 +1,18 @@
+## 0.9.0 (2016-08-24)
+
+Features:
+
+- Support any size jobs
+- Support chained jobs
+- Schedule and other job properties validation
+- New site, logo and dashboard design
+
+Bug fixes:
+
+- Fix execution retries
+- Fix executions merge by same prefix
+- Fix correct HTTP status on create/update
+
 ## 0.7.3 (2016-07-12)
 
 - One off jobs
