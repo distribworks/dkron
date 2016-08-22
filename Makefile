@@ -13,3 +13,6 @@ apidoc:
 
 test:
 	@bash --norc -i ./scripts/test.sh
+
+proto:
+	@bash --norc -i ./scripts/proto.sh

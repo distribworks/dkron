@@ -75,9 +75,12 @@ import:
   subpackages:
   - ssh/terminal
 - package: golang.org/x/net
-  version: 1dfe7915deaf3f80b962c163b918868d8a6d8974
+  version: 07b51741c1d6423d4a6abab1c49940ec09cb1aaf
   subpackages:
   - context
+  - http2
+  - http2/hpack
+  - trace
 - package: gopkg.in/yaml.v2
   version: 49c95bdc21843256fb6c4e0d370a05f24a0bf213
 - package: github.com/docker/leadership
@@ -87,3 +90,10 @@ import:
   - assert
 - package: github.com/mattn/go-shellwords
 - package: github.com/deckarep/golang-set
+- package: github.com/gogo/protobuf
+  subpackages:
+  - proto
+- package: github.com/golang/protobuf
+  subpackages:
+  - proto
+- package: google.golang.org/grpc

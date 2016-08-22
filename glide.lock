@@ -1,5 +1,5 @@
-hash: 5cf0e717ef610bbbdfe76a0505b06d2b6833746de71dcc8a995110e4d73139a0
-updated: 2016-07-30T17:18:13.198461924+02:00
+hash: c6bdb95a406f103320599d622be308241962053a438032442640e7493ebe90c9
+updated: 2016-08-19T17:26:13.961360509+03:00
 imports:
 - name: github.com/armon/circbuf
   version: f092b4f207b6e5cce0569056fba9e1a2735cb6cf
@@ -28,6 +28,14 @@ imports:
   - store/consul
   - store/etcd
   - store/zookeeper
+- name: github.com/gogo/protobuf
+  version: f20a1444730c7d9949b880a0309e737d007def25
+  subpackages:
+  - proto
+- name: github.com/golang/protobuf
+  version: f592bd283e9ef86337a432eb50e592278c3d534d
+  subpackages:
+  - proto
 - name: github.com/gorilla/context
   version: 215affda49addc4c8ef7e2534915df2c8c35c6cd
 - name: github.com/gorilla/mux
@@ -88,13 +96,27 @@ imports:
   subpackages:
   - ssh/terminal
 - name: golang.org/x/net
-  version: 1dfe7915deaf3f80b962c163b918868d8a6d8974
+  version: 07b51741c1d6423d4a6abab1c49940ec09cb1aaf
   subpackages:
   - context
+  - http2
+  - trace
+  - http2/hpack
 - name: golang.org/x/sys
   version: 9c60d1c508f5134d1ca726b4641db998f2523357
   subpackages:
   - unix
+- name: google.golang.org/grpc
+  version: 2e4cfe0fc5c4278dfc68fc8c34b2305d5c01647b
+  subpackages:
+  - codes
+  - credentials
+  - grpclog
+  - internal
+  - metadata
+  - naming
+  - transport
+  - peer
 - name: gopkg.in/yaml.v2
   version: 49c95bdc21843256fb6c4e0d370a05f24a0bf213
 testImports:

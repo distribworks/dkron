@@ -31,6 +31,8 @@ func (rpcs *RPCServer) GetJob(jobName string, job *Job) error {
 	// Copy the data structure
 	job.Shell = j.Shell
 	job.Command = j.Command
+	job.Type = j.Type
+	job.Grpc = j.Grpc
 
 	return nil
 }
