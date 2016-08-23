@@ -16,4 +16,4 @@ test:
 
 release:
 	@$(MAKE) doc
-	@$(MAKE) goxc
+	@goxc
