@@ -68,21 +68,30 @@ func (s *Store) SetJob(job *Job) error {
 		return err
 	}
 	if ej != nil {
-		// Doubt if don't reset this is the correct thing to do
-		job.LastError = ej.LastError
-		job.LastSuccess = ej.LastError
-		job.SuccessCount = ej.SuccessCount
-		job.ErrorCount = ej.ErrorCount
+		// When the job runs, these status vars are updated
+		// otherwise use the ones that are stored
+		if ej.LastError.After(job.LastError) {
+			job.LastError = ej.LastError
+		}
+		if ej.LastSuccess.After(job.LastSuccess) {
+			job.LastSuccess = ej.LastSuccess
+		}
+		if ej.SuccessCount > job.SuccessCount {
+			job.SuccessCount = ej.SuccessCount
+		}
+		if ej.ErrorCount > job.ErrorCount {
+			job.ErrorCount = ej.ErrorCount
+		}
 	}
 
-	jobJson, _ := json.Marshal(job)
+	jobJSON, _ := json.Marshal(job)
 
 	log.WithFields(logrus.Fields{
 		"job":  job.Name,
 		"json": string(jobJson),
 	}).Debug("store: Setting job")
 
-	if err := s.Client.Put(jobKey, jobJson, nil); err != nil {
+	if err := s.Client.Put(jobKey, jobJSON, nil); err != nil {
 		return err
 	}
 
