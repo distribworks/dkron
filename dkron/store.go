@@ -88,7 +88,7 @@ func (s *Store) SetJob(job *Job) error {
 
 	log.WithFields(logrus.Fields{
 		"job":  job.Name,
-		"json": string(jobJson),
+		"json": string(jobJSON),
 	}).Debug("store: Setting job")
 
 	if err := s.Client.Put(jobKey, jobJSON, nil); err != nil {
