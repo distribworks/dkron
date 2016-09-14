@@ -25,6 +25,13 @@ func (a *AgentCommand) RunQuery(ex *Execution) {
 
 	job, _ := a.store.GetJob(ex.JobName)
 
+	//Job can be removed and the QuerySchedulerRestart not yet received.
+	//In this case, the job will be nil. Simply cancel the current execution
+	if (job == nil) {
+		log.Debug("Job was removed, cancelling this excution, waiting for QuerySchedulerRestart")
+		return
+	}
+
 	// In the first execution attempt we build and filter the target nodes
 	// but we use the existing node target in case of retry.
 	if ex.Attempt <= 1 {
