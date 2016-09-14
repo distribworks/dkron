@@ -240,6 +240,9 @@ func (s *Store) DeleteJob(name string) (*Job, error) {
 
 func (s *Store) GetExecutions(jobName string) ([]*Execution, error) {
 	prefix := fmt.Sprintf("%s/executions/%s", s.keyspace, jobName)
+	if s.Client == nil {
+		return nil, fmt.Errorf("Store client couldn't be found\n")
+	}
 	res, err := s.Client.List(prefix)
 	if err != nil {
 		return nil, err
