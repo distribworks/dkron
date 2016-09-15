@@ -27,7 +27,7 @@ func (a *AgentCommand) RunQuery(ex *Execution) {
 
 	//Job can be removed and the QuerySchedulerRestart not yet received.
 	//In this case, the job will be nil. Simply cancel the current execution
-	if (job == nil) {
+	if job == nil {
 		log.Debug("Job was removed, cancelling this excution, waiting for QuerySchedulerRestart")
 		return
 	}
