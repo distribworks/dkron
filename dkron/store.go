@@ -186,7 +186,7 @@ func (s *Store) GetJobs() ([]*Job, error) {
 		return nil, err
 	}
 
-	var jobs []*Job
+	var jobs =  make([]*Job, 0)
 	for _, node := range res {
 		var job Job
 		err := json.Unmarshal([]byte(node.Value), &job)
