@@ -3,6 +3,9 @@ language: go
 go:
   - 1.6
 
+# this is necessary for fork builds to work
+go_import_path: github.com/victorcoder/dkron
+
 # let us have speedy Docker-based Travis workers
 # http://docs.travis-ci.com/user/migrating-from-legacy/#tl%3Bdr
 sudo: false
