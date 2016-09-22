@@ -5,6 +5,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/hashicorp/serf/serf"
+	"github.com/docker/libkv/store"
 )
 
 const (
@@ -23,12 +24,12 @@ type RunQueryParam struct {
 func (a *AgentCommand) RunQuery(ex *Execution) {
 	var params *serf.QueryParam
 
-	job, _ := a.store.GetJob(ex.JobName)
+	job, err := a.store.GetJob(ex.JobName)
 
 	//Job can be removed and the QuerySchedulerRestart not yet received.
-	//In this case, the job will be nil. Simply cancel the current execution
-	if job == nil {
-		log.Debug("Job was removed, cancelling this excution, waiting for QuerySchedulerRestart")
+	//In this case, the job will not be found in the store.
+	if err == store.ErrKeyNotFound {
+		log.Debug("Job not found, cancelling this execution")
 		return
 	}
 
