@@ -80,7 +80,7 @@ func TestStore(t *testing.T) {
 
 func TestEmptyStoreShouldReturnEmptyJobsList(t *testing.T) {
 	store := NewStore("etcd", []string{etcdAddr}, nil, "dkron-test")
-	jobs, err := store.GetJobs();
+	jobs, err := store.GetJobs()
 	assert.Nil(t, err, "Getting empty jobs should not return any errors")
 	assert.NotNil(t, jobs, "Getting empty jobs should not return a nil value")
 	assert.Empty(t, jobs, "Jobs should be an empty list")
