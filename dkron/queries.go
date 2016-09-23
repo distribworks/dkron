@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/hashicorp/serf/serf"
 	"github.com/docker/libkv/store"
+	"github.com/hashicorp/serf/serf"
 )
 
 const (
