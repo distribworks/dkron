@@ -1,10 +1,10 @@
 package dkron
 
 import (
+	s "github.com/docker/libkv/store"
+	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
-
-	s "github.com/docker/libkv/store"
 )
 
 func TestStore(t *testing.T) {
@@ -76,4 +76,12 @@ func TestStore(t *testing.T) {
 	if len(execs) != 1 {
 		t.Fatalf("error in number of expected executions: %v", execs)
 	}
+}
+
+func TestEmptyStoreShouldReturnEmptyJobsList(t *testing.T) {
+	store := NewStore("etcd", []string{etcdAddr}, nil, "dkron-test")
+	jobs, err := store.GetJobs()
+	assert.Nil(t, err, "Getting empty jobs should not return any errors")
+	assert.NotNil(t, jobs, "Getting empty jobs should not return a nil value")
+	assert.Empty(t, jobs, "Jobs should be an empty list")
 }
