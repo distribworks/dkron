@@ -21,6 +21,7 @@ type Store struct {
 	Client   store.Store
 	agent    *AgentCommand
 	keyspace string
+	backend  string
 }
 
 func init() {
@@ -46,7 +47,7 @@ func NewStore(backend string, machines []string, a *AgentCommand, keyspace strin
 		log.WithError(err).Fatal("store: Store backend not reachable")
 	}
 
-	return &Store{Client: s, agent: a, keyspace: keyspace}
+	return &Store{Client: s, agent: a, keyspace: keyspace, backend: backend}
 }
 
 // Store a job
@@ -186,7 +187,7 @@ func (s *Store) GetJobs() ([]*Job, error) {
 		return nil, err
 	}
 
-	var jobs []*Job
+	jobs := make([]*Job, 0)
 	for _, node := range res {
 		var job Job
 		err := json.Unmarshal([]byte(node.Value), &job)
@@ -248,10 +249,12 @@ func (s *Store) GetExecutions(jobName string) ([]*Execution, error) {
 	var executions []*Execution
 
 	for _, node := range res {
-		path := store.SplitKey(node.Key)
-		dir := path[len(path)-2]
-		if dir != jobName {
-			continue
+		if store.Backend(s.backend) != store.ZK {
+			path := store.SplitKey(node.Key)
+			dir := path[len(path)-2]
+			if dir != jobName {
+				continue
+			}
 		}
 		var execution Execution
 		err := json.Unmarshal([]byte(node.Value), &execution)
