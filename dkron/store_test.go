@@ -1,10 +1,10 @@
 package dkron
 
 import (
+	s "github.com/docker/libkv/store"
+	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
-	"github.com/stretchr/testify/assert"
-	s "github.com/docker/libkv/store"
 )
 
 func TestStore(t *testing.T) {
