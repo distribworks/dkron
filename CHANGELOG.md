@@ -1,3 +1,12 @@
+## 0.9.1 (2016-09-24)
+
+Bug fixes:
+
+- Fix job stats not being updated #180
+- Fix zookeeper get list of executions #184
+- Fix crash when deleting a job that doesn't exists #182
+- Fix Travis in forks
+
 ## 0.9.0 (2016-08-24)
 
 Features:
