@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/docker/libkv/store"
 	"github.com/hashicorp/serf/serf"
 )
 
@@ -23,7 +24,14 @@ type RunQueryParam struct {
 func (a *AgentCommand) RunQuery(ex *Execution) {
 	var params *serf.QueryParam
 
-	job, _ := a.store.GetJob(ex.JobName)
+	job, err := a.store.GetJob(ex.JobName)
+
+	//Job can be removed and the QuerySchedulerRestart not yet received.
+	//In this case, the job will not be found in the store.
+	if err == store.ErrKeyNotFound {
+		log.Debug("Job not found, cancelling this execution")
+		return
+	}
 
 	// In the first execution attempt we build and filter the target nodes
 	// but we use the existing node target in case of retry.
