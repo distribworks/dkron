@@ -5,7 +5,7 @@ Website: http://dkron.io/
 Dkron is a distributed cron service, easy to setup and fault tolerant with focus in:
 
 - Easy: Easy to use with a great UI
-- Reliable: Completly fault tolerant
+- Reliable: Completely fault tolerant
 - High scalable: Able to handle high volumes of scheduled jobs and thousands of nodes
 
 Dkron is written in Go and leverage the power of distributed key-value stores and serf for providing fault tolerance, reliability and scalability while keeping simple and easily instalable.

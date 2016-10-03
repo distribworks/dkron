@@ -24,10 +24,30 @@
           {{end}}
         </td>
         <td>
-          <button data-toggle="modal" data-target="#{{ $job.Name }}-modal">View</button>
-          <button ng-click="click('{{ $job.Name }}')">Run</button>
+          <a href="#" data-toggle="modal" data-target="#{{ $job.Name }}-modal" title="View"><i class="fa fa-eye fa-1x" aria-hidden="true"></i></a>
+          &nbsp;
+          <a href="#" ng-click="runJob('{{ $job.Name }}')" ng-show="!running" title="Run"><i class="fa fa-cogs fa-1x" aria-hidden="true"></i></a>
+          <a href="#"><i class="fa fa-cog fa-spin fa-1x fa-fw" ng-show="running"></i></a>
+          &nbsp;
+          <a href="#" data-toggle="modal" data-target="#{{ $job.Name }}-modal-delete" ng-show="!deleting" title="Delete"><i class="fa fa-trash-o fa-1x" aria-hidden="true"></i></a>
+          <a href=""><i class="fa fa-spinner fa-spin fa-1x fa-fw" ng-show="deleting"></i></a>
         </td>
       </tr>
+
+      <!-- Modal Delete -->
+      <div class="modal fade" id="{{ $job.Name }}-modal-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-body">
+              Are you sure?
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-default" ng-click="deleteJob('{{ $job.Name }}')" value="Delete" data-dismiss="modal">Confirm</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <!-- Modal -->
       <div class="modal fade" id="{{ $job.Name }}-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
