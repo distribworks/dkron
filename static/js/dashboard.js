@@ -1,13 +1,16 @@
 var dkron = angular.module('dkron', ['angular-rickshaw']);
+dkron.constant('hideDelay', 2000);
 
-dkron.controller('JobListCtrl', function ($scope, $http, $interval) {
-  $scope.click = function(jobName) {
+dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
+  $scope.runJob = function(jobName) {
+    $scope.running = true;
     var response = $http.post(DKRON_API_PATH + '/jobs/' + jobName);
     response.success(function(data, status, headers, config) {
-      $('#message').html('<div class="alert alert-success fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Success running job ' + jobName + '</div>');
+      $('#message').html('<div class="alert alert-success fade in">Success running job ' + jobName + '</div>');
 
-      $(".alert-success").delay(4000).slideUp(200, function(){
+      $(".alert-success").delay(hideDelay).slideUp(200, function(){
         $(".alert").alert('close');
+        window.location.reload();
       });
     });
 
@@ -16,12 +19,29 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval) {
     });
   };
 
+  $scope.deleteJob = function(jobName) {
+    $scope.deleting = true;
+    var response = $http.delete(DKRON_API_PATH + '/jobs/' + jobName);
+    response.success(function(data, status, headers, config) {
+      $('#message').html('<div class="alert alert-success fade in">Successfully removed job ' + jobName + '</div>');
+
+      $(".alert-success").delay(hideDelay).slideUp(200, function(){
+        $(".alert").alert('close');
+        window.location.reload();
+      });
+    });
+
+    response.error(function(data, status, headers, config) {
+      $('#message').html('<div class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Error removing job ' + jobName + '</div>');
+    });
+  };
+
   var updateView = function() {
     var response = $http.get(DKRON_API_PATH + '/jobs');
     response.success(function(data, status, headers, config) {
       $scope.updateStatus(data);
 
-      $("#conn-error").delay(4000).slideUp(200, function(){
+      $("#conn-error").delay(hideDelay).slideUp(200, function(){
         $("#conn-error").alert('close');
       });
     });
