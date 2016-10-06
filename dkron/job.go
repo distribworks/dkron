@@ -204,3 +204,7 @@ func (j *Job) Unlock() error {
 
 	return nil
 }
+
+type Executor interface {
+	Invoke() string
+}

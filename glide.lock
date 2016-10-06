@@ -1,5 +1,5 @@
-hash: 5cf0e717ef610bbbdfe76a0505b06d2b6833746de71dcc8a995110e4d73139a0
-updated: 2016-07-30T17:18:13.198461924+02:00
+hash: a8c20725d8601426446cc434e3aa8e1f099f130723014d6ed1dcea3c9185ae92
+updated: 2016-10-06T23:39:16.511729732+02:00
 imports:
 - name: github.com/armon/circbuf
   version: f092b4f207b6e5cce0569056fba9e1a2735cb6cf
@@ -18,7 +18,7 @@ imports:
   - Godeps/_workspace/src/github.com/ugorji/go/codec
   - Godeps/_workspace/src/golang.org/x/net/context
 - name: github.com/deckarep/golang-set
-  version: a847793a0d5f0cfd57c3ece4242e75223cdaf898
+  version: 33e11e3648887700c33133515e27074ceeb9b674
 - name: github.com/docker/leadership
   version: bfc7753dd48af19513b29deec23c364bf0f274eb
 - name: github.com/docker/libkv
@@ -40,6 +40,8 @@ imports:
   version: 71c2886f5a673a35f909803f38ece5810165097b
   subpackages:
   - codec
+- name: github.com/hashicorp/go-plugin
+  version: 8cf118f7a2f0c7ef1c82f66d4f6ac77c7e27dc12
 - name: github.com/hashicorp/memberlist
   version: 6025015f2dc659ca2c735112d37e753bda6e329d
 - name: github.com/hashicorp/serf
@@ -47,6 +49,8 @@ imports:
   subpackages:
   - serf
   - testutil
+- name: github.com/hashicorp/yamux
+  version: d1caa6c97c9fc1cc9e83bbe34d0603f9ff0ce8bd
 - name: github.com/jordan-wright/email
   version: 065af43fce517847a750d01a6d389d1a37e011b3
 - name: github.com/kr/pretty

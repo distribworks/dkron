@@ -57,6 +57,8 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 	}
 
 	// Save the execution to store
+	log.WithField("execution", execution.Key()).Info(string(execution.Output))
+	execution.Output = nil
 	if _, err := rpcs.agent.store.SetExecution(&execution); err != nil {
 		return err
 	}
