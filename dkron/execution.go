@@ -2,10 +2,7 @@ package dkron
 
 import (
 	"fmt"
-	"net/rpc"
 	"time"
-
-	"github.com/hashicorp/go-plugin"
 )
 
 type Execution struct {
@@ -46,38 +43,4 @@ func NewExecution(jobName string) *Execution {
 // Used to enerate the execution Id
 func (e *Execution) Key() string {
 	return fmt.Sprintf("%d-%s", e.StartedAt.UnixNano(), e.NodeName)
-}
-
-type Outputter interface {
-	Output(execution Execution) string
-}
-
-// pluginMap is the map of plugins we can dispense.
-var pluginMap = map[string]plugin.Plugin{
-	"outputer": new(OutputterPlugin),
-}
-
-type OutputterPlugin struct{}
-
-func (OutputterPlugin) Server(*plugin.MuxBroker) (interface{}, error) {
-	return nil, nil
-}
-
-func (OutputterPlugin) Client(b *plugin.MuxBroker, c *rpc.Client) (interface{}, error) {
-	return &OutputterRPC{client: c}, nil
-}
-
-// Here is an implementation that talks over RPC
-type OutputterRPC struct{ client *rpc.Client }
-
-func (g *OutputterRPC) Output(execution Execution) string {
-	var resp string
-	err := g.client.Call("Plugin.Output", new(interface{}), &resp)
-	if err != nil {
-		// You usually want your interfaces to return errors. If they don't,
-		// there isn't much other choice here.
-		panic(err)
-	}
-
-	return resp
 }
