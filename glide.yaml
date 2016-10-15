@@ -88,3 +88,4 @@ import:
 - package: github.com/mattn/go-shellwords
 - package: github.com/deckarep/golang-set
 - package: github.com/hashicorp/go-plugin
+- package: bitbucket.org/kardianos/osext

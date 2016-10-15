@@ -45,7 +45,7 @@ type OutputterServer struct {
 	Impl   dkron.Outputter
 }
 
-func (s *OutputterServer) Output(execution *dkron.Execution, resp *string) error {
+func (s *OutputterServer) Output(execution *dkron.Execution, resp *[]byte) error {
 	*resp = s.Impl.Output(execution)
 	return nil
 }

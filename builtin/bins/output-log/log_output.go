@@ -6,6 +6,6 @@ import (
 
 type LogOutput struct{}
 
-func (l *LogOutput) Output(execution *dkron.Execution) string {
-	return "mec"
+func (l *LogOutput) Output(execution *dkron.Execution) []byte {
+	return []byte("mec")
 }

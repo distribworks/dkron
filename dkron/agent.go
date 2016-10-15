@@ -37,17 +37,23 @@ var (
 	ErrLeaderNotFound = errors.New("No member leader found in member list")
 )
 
+// OutputterFactory is a function type that creates a new instance
+// of a outputer.
+type OutputterFactory func() (Outputter, error)
+
 // AgentCommand run server
 type AgentCommand struct {
-	Ui         cli.Ui
-	Version    string
-	ShutdownCh <-chan struct{}
-	serf       *serf.Serf
-	config     *Config
-	store      *Store
-	eventCh    chan serf.Event
-	sched      *Scheduler
-	candidate  *leadership.Candidate
+	Ui            cli.Ui
+	Version       string
+	ShutdownCh    <-chan struct{}
+	OutputPlugins map[string]OutputterFactory
+
+	serf      *serf.Serf
+	config    *Config
+	store     *Store
+	eventCh   chan serf.Event
+	sched     *Scheduler
+	candidate *leadership.Candidate
 }
 
 func (a *AgentCommand) Help() string {

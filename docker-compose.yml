@@ -34,13 +34,14 @@ services:
       - zk
     ports:
       - "8080"
+      - "6868"
     build: .
     volumes:
      - ./:/gopath/src/github.com/victorcoder/dkron
     environment:
       - GODEBUG=netdns=go
     # Uncomment to use consul
-    command: bash -c "go build *.go && ./main agent -server -backend=consul -backend-machine=consul:8500 -join=dkron:8946 -log-level=debug"
+    command: bash -c "go build -o dkron-output-log ./builtin/bins/output-log && go build *.go && ./main agent -server -backend=consul -backend-machine=consul:8500 -join=dkron:8946 -log-level=debug"
     # Uncomment to use etcd
     # command: bash -c "go build *.go && ./main agent -server -backend=etcd -backend-machine=etcd:4001 -join=dkron:8946 -log-level=debug"
     # Uncomment to use zk

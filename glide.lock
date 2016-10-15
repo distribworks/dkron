@@ -1,6 +1,8 @@
-hash: a8c20725d8601426446cc434e3aa8e1f099f130723014d6ed1dcea3c9185ae92
-updated: 2016-10-06T23:39:16.511729732+02:00
+hash: 7c3b19f1547e4734f0c79fa49a68290e8ceeab955f208db003c716b79aa0b234
+updated: 2016-10-13T00:33:42.909013377+02:00
 imports:
+- name: bitbucket.org/kardianos/osext
+  version: 816c96ec6fef6a0cd72c9395d192c4bd0d918753
 - name: github.com/armon/circbuf
   version: f092b4f207b6e5cce0569056fba9e1a2735cb6cf
 - name: github.com/armon/go-metrics

@@ -1,5 +1,5 @@
 package dkron
 
 type Outputter interface {
-	Output(execution *Execution) string
+	Output(execution *Execution) []byte
 }

@@ -28,6 +28,7 @@ func (rpcs *RPCServer) GetJob(jobName string, job *Job) error {
 	if err != nil {
 		return err
 	}
+
 	// Copy the data structure
 	job.Shell = j.Shell
 	job.Command = j.Command
@@ -56,9 +57,16 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 		log.Fatal("rpc:", err)
 	}
 
+	// log.WithField("execution", execution.Key()).Info(string(execution.Output))
+	// execution.Output = nil
+
+	// output, err := rpcs.agent.OutputPlugins["log"]()
+	// if err != nil {
+	// 	log.WithError(err).Fatal("rpc: Unable to load output plugin")
+	// }
+	// execution.Output = output.Output(&execution)
+
 	// Save the execution to store
-	log.WithField("execution", execution.Key()).Info(string(execution.Output))
-	execution.Output = nil
 	if _, err := rpcs.agent.store.SetExecution(&execution); err != nil {
 		return err
 	}

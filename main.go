@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/hashicorp/go-plugin"
 	"github.com/mitchellh/cli"
 	"github.com/victorcoder/dkron/dkron"
 )
@@ -32,11 +33,19 @@ func main() {
 	c.HelpFunc = cli.BasicHelpFunc("dkron")
 
 	ui := &cli.BasicUi{Writer: os.Stdout}
+
+	plugins := &Plugins{}
+	plugins.DiscoverPlugins()
+
+	// Make sure we clean up any managed plugins at the end of this
+	defer plugin.CleanupClients()
+
 	c.Commands = map[string]cli.CommandFactory{
 		"agent": func() (cli.Command, error) {
 			return &dkron.AgentCommand{
-				Ui:      ui,
-				Version: VERSION,
+				Ui:            ui,
+				Version:       VERSION,
+				OutputPlugins: plugins.OutputterFactories(),
 			}, nil
 		},
 		"keygen": func() (cli.Command, error) {
