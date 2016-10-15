@@ -25,9 +25,9 @@ type Outputter struct {
 	Client *rpc.Client
 }
 
-func (o *Outputter) Output(execution *dkron.Execution) string {
-	var resp string
-	err := o.Client.Call("Plugin.Output", new(interface{}), &resp)
+func (o *Outputter) Output(execution *dkron.Execution) []byte {
+	var resp []byte
+	err := o.Client.Call("Plugin.Output", execution, &resp)
 	if err != nil {
 		// You usually want your interfaces to return errors. If they don't,
 		// there isn't much other choice here.

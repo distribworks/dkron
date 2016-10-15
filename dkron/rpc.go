@@ -60,11 +60,9 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 	// log.WithField("execution", execution.Key()).Info(string(execution.Output))
 	// execution.Output = nil
 
-	// output, err := rpcs.agent.OutputPlugins["log"]()
-	// if err != nil {
-	// 	log.WithError(err).Fatal("rpc: Unable to load output plugin")
-	// }
-	// execution.Output = output.Output(&execution)
+	log.Println(rpcs.agent.OutputPlugins)
+	output := rpcs.agent.OutputPlugins["log"]
+	execution.Output = output.Output(&execution)
 
 	// Save the execution to store
 	if _, err := rpcs.agent.store.SetExecution(&execution); err != nil {

@@ -46,7 +46,7 @@ type AgentCommand struct {
 	Ui            cli.Ui
 	Version       string
 	ShutdownCh    <-chan struct{}
-	OutputPlugins map[string]OutputterFactory
+	OutputPlugins map[string]Outputter
 
 	serf      *serf.Serf
 	config    *Config

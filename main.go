@@ -45,7 +45,7 @@ func main() {
 			return &dkron.AgentCommand{
 				Ui:            ui,
 				Version:       VERSION,
-				OutputPlugins: plugins.OutputterFactories(),
+				OutputPlugins: plugins.Outputs,
 			}, nil
 		},
 		"keygen": func() (cli.Command, error) {

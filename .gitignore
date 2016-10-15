@@ -8,3 +8,5 @@ downloads/
 .envrc
 .vagrant
 vendor/
+main
+dkron-output-log
