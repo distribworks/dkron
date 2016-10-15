@@ -138,3 +138,21 @@ not be run!
 You can set some jobs to run after other job is executed. To setup a job that will be executed after any other given job, just set the `parent_job` property when saving the new job.
 
 The dependent job will be executed after the main job finished a successful execution.
+
+## Logging output
+
+Logging output of each job execution can be modified by using output plugins.
+
+Output plugins can be used to redirect the output of a job execution to different targets.
+
+Log output is set per job using the `outputs` property. `outputs` is an array of output plugins to use. The plugins must be in Dkron config directory or in Dkron executable directory. Each plugin defined in `output` takes precedence over the next, so `["log", "syslog"]` will firs output to the Dkron log output and then to the syslog.
+
+### Built-in outputs
+
+Depending on your needs the execution log can be redirected using the following plugins:
+
+0. not specified - Store the output in the key value store (Slow performance, good for testing, default method)
+0. log - Output the execution log to Dkron stdout (Good performance, needs parsing)
+0. syslog - Output to the syslog, not available if using docker (Good performance, needs parsing)
+
+
