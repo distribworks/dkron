@@ -77,6 +77,9 @@ type Job struct {
 	ParentJob string `json:"parent_job"`
 
 	lock store.Locker
+
+	// Output types
+	Outputs []string `json:"outputs"`
 }
 
 // Run the job

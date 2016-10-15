@@ -57,12 +57,11 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 		log.Fatal("rpc:", err)
 	}
 
-	// log.WithField("execution", execution.Key()).Info(string(execution.Output))
-	// execution.Output = nil
-
-	log.Println(rpcs.agent.OutputPlugins)
-	output := rpcs.agent.OutputPlugins["log"]
-	execution.Output = output.Output(&execution)
+	// Get the defined output types for the job, and call them
+	for _, output := range job.Outputs {
+		output := rpcs.agent.OutputPlugins[output]
+		execution.Output = output.Output(&execution)
+	}
 
 	// Save the execution to store
 	if _, err := rpcs.agent.store.SetExecution(&execution); err != nil {

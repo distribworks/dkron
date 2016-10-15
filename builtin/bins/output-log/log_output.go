@@ -7,5 +7,5 @@ import (
 type LogOutput struct{}
 
 func (l *LogOutput) Output(execution *dkron.Execution) []byte {
-	return []byte("mec")
+	return execution.Output
 }
