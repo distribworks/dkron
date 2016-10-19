@@ -79,7 +79,7 @@ type Job struct {
 	lock store.Locker
 
 	// Output types
-	Outputs []string `json:"outputs"`
+	Processors []string `json:"processors"`
 }
 
 // Run the job
@@ -206,8 +206,4 @@ func (j *Job) Unlock() error {
 	}
 
 	return nil
-}
-
-type Executor interface {
-	Invoke() string
 }

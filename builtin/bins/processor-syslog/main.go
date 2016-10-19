@@ -6,6 +6,6 @@ import (
 
 func main() {
 	plugin.Serve(&plugin.ServeOpts{
-		Outputter: new(SyslogOutput),
+		Processor: new(SyslogOutput),
 	})
 }

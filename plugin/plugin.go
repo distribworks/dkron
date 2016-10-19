@@ -8,5 +8,5 @@ import (
 
 // PluginMap should be used by clients for the map of plugins.
 var PluginMap = map[string]plugin.Plugin{
-	"outputter": &OutputPlugin{},
+	"processor": &ExecutionProcessorPlugin{},
 }

@@ -8,7 +8,7 @@ import (
 // The constants below are the names of the plugins that can be dispensed
 // from the plugin server.
 const (
-	OutputterPluginName = "outputter"
+	ProcessorPluginName = "processor"
 )
 
 // Handshake is the HandshakeConfig used to configure clients and servers.
@@ -20,7 +20,7 @@ var Handshake = plugin.HandshakeConfig{
 
 // ServeOpts are the configurations to serve a plugin.
 type ServeOpts struct {
-	Outputter dkron.Outputter
+	Processor dkron.ExecutionProcessor
 }
 
 // Serve serves a plugin. This function never returns and should be the final
@@ -36,6 +36,6 @@ func Serve(opts *ServeOpts) {
 // server or client.
 func pluginMap(opts *ServeOpts) map[string]plugin.Plugin {
 	return map[string]plugin.Plugin{
-		"outputter": &OutputPlugin{Outputter: opts.Outputter},
+		"processor": &ExecutionProviderPlugin{Processor: opts.Processor},
 	}
 }

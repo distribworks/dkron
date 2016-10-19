@@ -40,7 +40,7 @@ services:
     environment:
       - GODEBUG=netdns=go
     # Uncomment to use consul
-    command: bash -c "go build -o dkron-output-log ./builtin/bins/output-log && go build -o dkron-output-syslog ./builtin/bins/output-syslog && go build *.go && ./main agent -server -backend=consul -backend-machine=consul:8500 -join=dkron:8946 -log-level=debug"
+    command: bash -c "go build -o dkron-processor-log ./builtin/bins/processor-log && go build -o dkron-processor-syslog ./builtin/bins/processor-syslog && go build *.go && ./main agent -server -backend=consul -backend-machine=consul:8500 -join=dkron:8946 -log-level=debug"
     # Uncomment to use etcd
     # command: bash -c "go build *.go && ./main agent -server -backend=etcd -backend-machine=etcd:4001 -join=dkron:8946 -log-level=debug"
     # Uncomment to use zk

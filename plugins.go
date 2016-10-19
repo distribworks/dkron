@@ -13,7 +13,7 @@ import (
 )
 
 type Plugins struct {
-	Outputs map[string]dkron.Outputter
+	Processors map[string]dkron.ExecutionProcessor
 }
 
 // Discover plugins located on disk
@@ -25,10 +25,10 @@ type Plugins struct {
 //
 // Whichever file is discoverd LAST wins.
 func (p *Plugins) DiscoverPlugins() error {
-	p.Outputs = make(map[string]dkron.Outputter)
+	p.Processors = make(map[string]dkron.ExecutionProcessor)
 
 	// Look in /etc/dkron/plugins
-	outputs, err := plugin.Discover("dkron-output-*", filepath.Join("/etc", "dkron", "plugins"))
+	processors, err := plugin.Discover("dkron-processor-*", filepath.Join("/etc", "dkron", "plugins"))
 	if err != nil {
 		return err
 	}
@@ -39,13 +39,13 @@ func (p *Plugins) DiscoverPlugins() error {
 	if err != nil {
 		logrus.WithError(err).Error("Error loading exe directory")
 	} else {
-		outputs, err = plugin.Discover("dkron-output-*", filepath.Dir(exePath))
+		processors, err = plugin.Discover("dkron-processor-*", filepath.Dir(exePath))
 		if err != nil {
 			return err
 		}
 	}
 
-	for _, file := range outputs {
+	for _, file := range processors {
 		// If the filename has a ".", trim up to there
 		// if idx := strings.Index(file, "."); idx >= 0 {
 		// 	file = file[:idx]
@@ -57,14 +57,14 @@ func (p *Plugins) DiscoverPlugins() error {
 			continue
 		}
 
-		outputter, _ := p.outputterFactory(file)
-		p.Outputs[parts[2]] = outputter
+		processor, _ := p.processorFactory(file)
+		p.Processors[parts[2]] = processor
 	}
 
 	return nil
 }
 
-func (p *Plugins) outputterFactory(path string) (dkron.Outputter, error) {
+func (p *Plugins) processorFactory(path string) (dkron.ExecutionProcessor, error) {
 	// Build the plugin client configuration and init the plugin
 	var config plugin.ClientConfig
 	config.Cmd = exec.Command(path)
@@ -80,10 +80,10 @@ func (p *Plugins) outputterFactory(path string) (dkron.Outputter, error) {
 		return nil, err
 	}
 
-	raw, err := rpcClient.Dispense(dkplugin.OutputterPluginName)
+	raw, err := rpcClient.Dispense(dkplugin.ProcessorPluginName)
 	if err != nil {
 		return nil, err
 	}
 
-	return raw.(dkron.Outputter), nil
+	return raw.(dkron.ExecutionProcessor), nil
 }

@@ -58,9 +58,10 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 	}
 
 	// Get the defined output types for the job, and call them
-	for _, output := range job.Outputs {
-		output := rpcs.agent.OutputPlugins[output]
-		execution.Output = output.Output(&execution)
+	for _, p := range job.Processors {
+		processor := rpcs.agent.ProcessorPlugins[p]
+		e := processor.Process(&execution)
+		execution = *e
 	}
 
 	// Save the execution to store
