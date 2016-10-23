@@ -14,8 +14,6 @@ func (l *SyslogOutput) Process(args *dkron.ExecutionProcessorArgs) dkron.Executi
 	if err == nil {
 		log.SetOutput(logwriter)
 	}
-
-	log.Print(string(args.Execution.Output))
 	args.Execution.Output = []byte("Output in syslog")
 	return args.Execution
 }
