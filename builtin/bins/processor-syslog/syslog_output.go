@@ -15,7 +15,7 @@ func (l *SyslogOutput) Process(execution *dkron.Execution) dkron.Execution {
 		log.SetOutput(logwriter)
 	}
 
-	log.Print(execution.Output)
+	log.Print(string(execution.Output))
 	execution.Output = []byte("Output in syslog")
 	return *execution
 }
