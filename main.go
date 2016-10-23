@@ -43,9 +43,9 @@ func main() {
 	c.Commands = map[string]cli.CommandFactory{
 		"agent": func() (cli.Command, error) {
 			return &dkron.AgentCommand{
-				Ui:            ui,
-				Version:       VERSION,
-				OutputPlugins: plugins.Outputs,
+				Ui:               ui,
+				Version:          VERSION,
+				ProcessorPlugins: plugins.Processors,
 			}, nil
 		},
 		"keygen": func() (cli.Command, error) {

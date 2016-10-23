@@ -12,11 +12,11 @@ type ExecutionProcessorPlugin struct {
 }
 
 func (p *ExecutionProcessorPlugin) Server(b *plugin.MuxBroker) (interface{}, error) {
-	return &ExecutionProcessorServer{Broker: b, Impl: p.Processor}, nil
+	return &ExecutionProcessorServer{Broker: b, Processor: p.Processor}, nil
 }
 
 func (p *ExecutionProcessorPlugin) Client(b *plugin.MuxBroker, c *rpc.Client) (interface{}, error) {
-	return &Outputter{Broker: b, Client: c}, nil
+	return &ExecutionProcessor{Broker: b, Client: c}, nil
 }
 
 // Here is an implementation that talks over RPC
@@ -25,7 +25,7 @@ type ExecutionProcessor struct {
 	Client *rpc.Client
 }
 
-func (e *ExecutionProcessor) Process(execution *dkron.Execution) *dkron.Execution {
+func (e *ExecutionProcessor) Process(execution *dkron.Execution) dkron.Execution {
 	var resp dkron.Execution
 	err := e.Client.Call("Plugin.Process", execution, &resp)
 	if err != nil {
@@ -45,7 +45,7 @@ type ExecutionProcessorServer struct {
 	Processor dkron.ExecutionProcessor
 }
 
-func (e *ExecutionProcessorServer) Process(execution *dkron.Execution, resp *dkron.ExecutionProcessor) error {
-	*resp = s.Processor.Process(execution)
+func (e *ExecutionProcessorServer) Process(execution *dkron.Execution, resp *dkron.Execution) error {
+	*resp = e.Processor.Process(execution)
 	return nil
 }

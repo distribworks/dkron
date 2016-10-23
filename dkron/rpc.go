@@ -61,7 +61,8 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 	for _, p := range job.Processors {
 		processor := rpcs.agent.ProcessorPlugins[p]
 		e := processor.Process(&execution)
-		execution = *e
+		log.Println(e)
+		log.Println(execution)
 	}
 
 	// Save the execution to store

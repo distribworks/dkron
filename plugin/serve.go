@@ -36,6 +36,6 @@ func Serve(opts *ServeOpts) {
 // server or client.
 func pluginMap(opts *ServeOpts) map[string]plugin.Plugin {
 	return map[string]plugin.Plugin{
-		"processor": &ExecutionProviderPlugin{Processor: opts.Processor},
+		"processor": &ExecutionProcessorPlugin{Processor: opts.Processor},
 	}
 }

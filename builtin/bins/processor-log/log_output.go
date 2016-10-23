@@ -6,6 +6,6 @@ import (
 
 type LogOutput struct{}
 
-func (l *LogOutput) Process(execution *dkron.Execution) *dkron.Execution {
-	return execution
+func (l *LogOutput) Process(execution *dkron.Execution) dkron.Execution {
+	return *execution
 }
