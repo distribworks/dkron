@@ -9,13 +9,13 @@ import (
 
 type SyslogOutput struct{}
 
-func (l *SyslogOutput) Process(execution *dkron.Execution) dkron.Execution {
+func (l *SyslogOutput) Process(args *dkron.ExecutionProcessorArgs) dkron.Execution {
 	logwriter, err := syslog.New(syslog.LOG_INFO, "dkron")
 	if err == nil {
 		log.SetOutput(logwriter)
 	}
 
-	log.Print(string(execution.Output))
-	execution.Output = []byte("Output in syslog")
-	return *execution
+	log.Print(string(args.Execution.Output))
+	args.Execution.Output = []byte("Output in syslog")
+	return args.Execution
 }

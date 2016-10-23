@@ -78,8 +78,8 @@ type Job struct {
 
 	lock store.Locker
 
-	// Output types
-	Processors []string `json:"processors"`
+	// Processors to use for this job
+	Processors map[string]map[string]string `json:"processors"`
 }
 
 // Run the job

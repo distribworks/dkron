@@ -25,9 +25,9 @@ type ExecutionProcessor struct {
 	Client *rpc.Client
 }
 
-func (e *ExecutionProcessor) Process(execution *dkron.Execution) dkron.Execution {
+func (e *ExecutionProcessor) Process(args *dkron.ExecutionProcessorArgs) dkron.Execution {
 	var resp dkron.Execution
-	err := e.Client.Call("Plugin.Process", execution, &resp)
+	err := e.Client.Call("Plugin.Process", args, &resp)
 	if err != nil {
 		// You usually want your interfaces to return errors. If they don't,
 		// there isn't much other choice here.
@@ -45,7 +45,7 @@ type ExecutionProcessorServer struct {
 	Processor dkron.ExecutionProcessor
 }
 
-func (e *ExecutionProcessorServer) Process(execution *dkron.Execution, resp *dkron.Execution) error {
-	*resp = e.Processor.Process(execution)
+func (e *ExecutionProcessorServer) Process(args *dkron.ExecutionProcessorArgs, resp *dkron.Execution) error {
+	*resp = e.Processor.Process(args)
 	return nil
 }
