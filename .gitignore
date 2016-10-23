@@ -9,4 +9,4 @@ downloads/
 .vagrant
 vendor/
 main
-dkron-output-*
+dkron-processor-*
