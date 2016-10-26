@@ -60,7 +60,7 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 	// Get the defined output types for the job, and call them
 	origExec := execution
 	for k, v := range job.Processors {
-		log.WithField("plugin", k).Debug("Processing execution with plugin")
+		log.WithField("plugin", k).Debug("rpc: Processing execution with plugin")
 		processor := rpcs.agent.ProcessorPlugins[k]
 		e := processor.Process(&ExecutionProcessorArgs{Execution: origExec, Config: v})
 		execution = e
