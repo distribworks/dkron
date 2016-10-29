@@ -79,7 +79,7 @@ type Job struct {
 	lock store.Locker
 
 	// Processors to use for this job
-	Processors map[string]map[string]string `json:"processors"`
+	Processors map[string]PluginConfig `json:"processors"`
 }
 
 // Run the job

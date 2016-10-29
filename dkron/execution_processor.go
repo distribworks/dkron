@@ -6,5 +6,7 @@ type ExecutionProcessor interface {
 
 type ExecutionProcessorArgs struct {
 	Execution Execution
-	Config    map[string]string
+	Config    PluginConfig
 }
+
+type PluginConfig map[string]interface{}
