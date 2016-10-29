@@ -4,7 +4,7 @@ Plugins in Dkron allow you to add funcionality that integrates with the workflow
 
 This page documents the basics of how the plugin system in Dkron works, and how to setup a basic development environment for plugin development if you're writing a Dkron plugin.
 
-Advanced topic! Plugin development is a highly advanced topic, and is not required knowledge for day-to-day usage. If you don't plan on writing any plugins, we recommend not reading this section of the documentation.
+<div class="alert alert-warning" role="alert">Advanced topic! Plugin development is a highly advanced topic, and is not required knowledge for day-to-day usage. If you don't plan on writing any plugins, we recommend not reading this section of the documentation.</div>
 
 ## How it Works
 
