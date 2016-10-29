@@ -1,9 +1,9 @@
 package main
 
 import (
-	"log"
 	"log/syslog"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/victorcoder/dkron/dkron"
 )
 

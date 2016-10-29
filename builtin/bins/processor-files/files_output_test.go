@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -12,12 +13,12 @@ func TestProcess(t *testing.T) {
 	now := time.Now()
 
 	pa := &dkron.ExecutionProcessorArgs{
-		Execution: &dkron.Execution{
+		Execution: dkron.Execution{
 			StartedAt: now,
-			Node:      "testNode",
-			Output:    "test",
+			NodeName:  "testNode",
+			Output:    []byte("test"),
 		},
-		Config: &dkron.PluginConfig{
+		Config: dkron.PluginConfig{
 			"forward": false,
 		},
 	}
@@ -25,5 +26,5 @@ func TestProcess(t *testing.T) {
 	fo := &FilesOutput{}
 	ex := fo.Process(pa)
 
-	assert.Equal(t, "./"+ex.Key(), ex.Output)
+	assert.Equal(t, fmt.Sprintf("./%s.log", ex.Key()), string(ex.Output))
 }
