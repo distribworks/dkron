@@ -25,6 +25,7 @@ type ExecutionProcessor struct {
 	Client *rpc.Client
 }
 
+// The Process method that actually call the plugin Process method.
 func (e *ExecutionProcessor) Process(args *dkron.ExecutionProcessorArgs) dkron.Execution {
 	var resp dkron.Execution
 	err := e.Client.Call("Plugin.Process", args, &resp)
@@ -37,7 +38,7 @@ func (e *ExecutionProcessor) Process(args *dkron.ExecutionProcessorArgs) dkron.E
 	return resp
 }
 
-// Here is the RPC server that Outputter talks to, conforming to
+// Here is the RPC server that client talks to, conforming to
 // the requirements of net/rpc
 type ExecutionProcessorServer struct {
 	// This is the real implementation
