@@ -79,6 +79,7 @@ Create a new Go project somewhere in your $GOPATH. If you're a GitHub user, we r
 
 With the directory made, create a main.go file. This project will be a binary so the package is "main":
 
+```
 package main
 
 import (
@@ -90,6 +91,8 @@ func main() {
 		Processor: new(MyPlugin),
 	})
 }
+```
+
 And that's basically it! You'll have to change the argument given to plugin.Serve to be your actual plugin, but that is the only change you'll have to make. The argument should be a structure implementing one of the plugin interfaces (depending on what sort of plugin you're creating).
 
 Dkron plugins must follow a very specific naming convention of dkron-TYPE-NAME. For example, dkron-processor-files, which tells Dkron that the plugin is a processor that can be referenced as "files".
