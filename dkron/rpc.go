@@ -28,6 +28,7 @@ func (rpcs *RPCServer) GetJob(jobName string, job *Job) error {
 	if err != nil {
 		return err
 	}
+
 	// Copy the data structure
 	job.Shell = j.Shell
 	job.Command = j.Command
@@ -54,6 +55,15 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 	// Lock the job while editing
 	if err = job.Lock(); err != nil {
 		log.Fatal("rpc:", err)
+	}
+
+	// Get the defined output types for the job, and call them
+	origExec := execution
+	for k, v := range job.Processors {
+		log.WithField("plugin", k).Debug("rpc: Processing execution with plugin")
+		processor := rpcs.agent.ProcessorPlugins[k]
+		e := processor.Process(&ExecutionProcessorArgs{Execution: origExec, Config: v})
+		execution = e
 	}
 
 	// Save the execution to store

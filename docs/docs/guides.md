@@ -138,3 +138,12 @@ not be run!
 You can set some jobs to run after other job is executed. To setup a job that will be executed after any other given job, just set the `parent_job` property when saving the new job.
 
 The dependent job will be executed after the main job finished a successful execution.
+
+## Logging output
+
+Logging output of each job execution can be modified by using processor plugins.
+
+Processor plugins can be used to redirect the output of a job execution to different targets.
+
+Refer to the [plugins documentation](plugins.md) from more info
+

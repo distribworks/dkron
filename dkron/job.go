@@ -77,6 +77,9 @@ type Job struct {
 	ParentJob string `json:"parent_job"`
 
 	lock store.Locker
+
+	// Processors to use for this job
+	Processors map[string]PluginConfig `json:"processors"`
 }
 
 // Run the job

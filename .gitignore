@@ -8,3 +8,6 @@ downloads/
 .envrc
 .vagrant
 vendor/
+main
+dkron-processor-*
+*.log
