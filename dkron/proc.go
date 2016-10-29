@@ -34,9 +34,7 @@ func (a *AgentCommand) invokeJob(job *Job, execution *Execution) error {
 		log.Warnf("proc: Script '%s' slow, execution exceeding %v", job.Command, 2*time.Hour)
 	})
 
-	if err := cmd.Start(); err != nil {
-		return err
-	}
+	err := cmd.Start()
 
 	// Warn if buffer is overritten
 	if output.TotalWritten() > output.Size() {
@@ -44,7 +42,7 @@ func (a *AgentCommand) invokeJob(job *Job, execution *Execution) error {
 	}
 
 	var success bool
-	err := cmd.Wait()
+	err = cmd.Wait()
 	slowTimer.Stop()
 	log.WithFields(logrus.Fields{
 		"output": output,
