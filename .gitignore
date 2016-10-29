@@ -10,3 +10,4 @@ downloads/
 vendor/
 main
 dkron-processor-*
+*.log
