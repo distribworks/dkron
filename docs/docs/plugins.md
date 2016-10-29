@@ -46,6 +46,8 @@ Depending on your needs the execution log can be redirected using the following 
 0. syslog - Output to the syslog (Good performance, needs parsing)
 0. files - Output to multiple files (Good performance, needs parsing)
 
+All plugins accepts one configuration option: `forward` Indicated if the plugin must forward the original execution output. This allows for chaining plugins and sending output to different targets at the same time.
+
 ## Using plugins
 
 For each job you can configure an arbitrary number of plugins.
