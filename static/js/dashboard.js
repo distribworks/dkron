@@ -84,6 +84,7 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
   }, 2000);
 
   updateView();
+  hljs.initHighlightingOnLoad();
 
 });
 
