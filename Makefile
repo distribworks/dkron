@@ -1,9 +1,4 @@
-all: deps
-	@mkdir -p bin/
-	@bash --norc -i ./scripts/build.sh
-
-deps:
-	godep save -t ./...
+all: test
 
 doc:
 	mkdocs gh-deploy --clean
