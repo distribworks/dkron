@@ -1,5 +1,5 @@
-hash: 7c3b19f1547e4734f0c79fa49a68290e8ceeab955f208db003c716b79aa0b234
-updated: 2016-10-13T00:33:42.909013377+02:00
+hash: a760cb97ebcf82644166c6748d040802fbe9b3614e4396bd55f06f696a4486ae
+updated: 2016-11-09T22:15:10.57771928+01:00
 imports:
 - name: bitbucket.org/kardianos/osext
   version: 816c96ec6fef6a0cd72c9395d192c4bd0d918753
@@ -20,7 +20,7 @@ imports:
   - Godeps/_workspace/src/github.com/ugorji/go/codec
   - Godeps/_workspace/src/golang.org/x/net/context
 - name: github.com/deckarep/golang-set
-  version: 33e11e3648887700c33133515e27074ceeb9b674
+  version: 2e9696acaf8dc5b879518fbed0450778cfef4ec6
 - name: github.com/docker/leadership
   version: bfc7753dd48af19513b29deec23c364bf0f274eb
 - name: github.com/docker/libkv
@@ -44,6 +44,8 @@ imports:
   - codec
 - name: github.com/hashicorp/go-plugin
   version: 8cf118f7a2f0c7ef1c82f66d4f6ac77c7e27dc12
+- name: github.com/hashicorp/go-syslog
+  version: 315de0c1920b18b942603ffdc2229e2af4803c17
 - name: github.com/hashicorp/memberlist
   version: 6025015f2dc659ca2c735112d37e753bda6e329d
 - name: github.com/hashicorp/serf
