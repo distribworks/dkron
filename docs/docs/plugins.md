@@ -73,9 +73,9 @@ For each job you can configure an arbitrary number of plugins.
 
 Developing a plugin is simple. The only knowledge necessary to write a plugin is basic command-line skills and basic knowledge of the Go programming language.
 
-Note: A common pitfall is not properly setting up a $GOPATH. This can lead to strange errors. You can read more about this here to familiarize yourself.
+Note: A common pitfall is not properly setting up a `$GOPATH`. This can lead to strange errors. You can read more about this here to familiarize yourself.
 
-Create a new Go project somewhere in your $GOPATH. If you're a GitHub user, we recommend creating the project in the directory $GOPATH/src/github.com/USERNAME/dkron-NAME, where USERNAME is your GitHub username and NAME is the name of the plugin you're developing. This structure is what Go expects and simplifies things down the road.
+Create a new Go project somewhere in your `$GOPATH`. If you're a GitHub user, we recommend creating the project in the directory `$GOPATH/src/github.com/USERNAME/dkron-NAME-TYPE`, where `USERNAME` is your GitHub username and `NAME` is the name of the plugin you're developing. This structure is what Go expects and simplifies things down the road.
 
 With the directory made, create a main.go file. This project will be a binary so the package is "main":
 
@@ -95,4 +95,4 @@ func main() {
 
 And that's basically it! You'll have to change the argument given to plugin.Serve to be your actual plugin, but that is the only change you'll have to make. The argument should be a structure implementing one of the plugin interfaces (depending on what sort of plugin you're creating).
 
-Dkron plugins must follow a very specific naming convention of dkron-TYPE-NAME. For example, dkron-processor-files, which tells Dkron that the plugin is a processor that can be referenced as "files".
+Dkron plugins must follow a very specific naming convention of `dkron-TYPE-NAME`. For example, `dkron-processor-files`, which tells Dkron that the plugin is a processor that can be referenced as "files".
