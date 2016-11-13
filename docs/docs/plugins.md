@@ -4,8 +4,6 @@ Plugins in Dkron allow you to add funcionality that integrates with the workflow
 
 This page documents the basics of how the plugin system in Dkron works, and how to setup a basic development environment for plugin development if you're writing a Dkron plugin.
 
-<div class="alert alert-warning" role="alert">Advanced topic! Plugin development is a highly advanced topic, and is not required knowledge for day-to-day usage. If you don't plan on writing any plugins, we recommend not reading this section of the documentation.</div>
-
 ## How it Works
 
 Dkron execution execution processors are provided via plugins. Each plugin exposes functionality for modifying the execution. Plugins are executed as a separate process and communicate with the main Dkron binary over an RPC interface.
@@ -68,8 +66,9 @@ For each job you can configure an arbitrary number of plugins.
 }
 ```
 
-
 ## Developing a Plugin
+
+<div class="alert alert-warning" role="alert">Advanced topic! Plugin development is a highly advanced topic, and is not required knowledge for day-to-day usage. If you don't plan on writing any plugins, we recommend not reading the following section of the documentation.</div>
 
 Developing a plugin is simple. The only knowledge necessary to write a plugin is basic command-line skills and basic knowledge of the Go programming language.
 
