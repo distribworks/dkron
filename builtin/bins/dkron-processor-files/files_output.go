@@ -11,11 +11,14 @@ import (
 
 const defaultLogDir = "/var/log/dkron"
 
+// Files output plugin that saves each execution log
+// in it's own file in the file system.
 type FilesOutput struct {
 	forward bool
 	logDir  string
 }
 
+// Plugin process
 func (l *FilesOutput) Process(args *dkron.ExecutionProcessorArgs) dkron.Execution {
 	log.SetFormatter(&log.TextFormatter{FullTimestamp: true})
 	l.parseConfig(args.Config)
