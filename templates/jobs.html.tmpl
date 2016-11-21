@@ -26,11 +26,11 @@
         <td>
           <a href="#" data-toggle="modal" data-target="#{{ $job.Name }}-modal" title="View"><i class="fa fa-eye fa-1x" aria-hidden="true"></i></a>
           &nbsp;
-          <a href="#" ng-click="runJob('{{ $job.Name }}')" ng-show="!running" title="Run"><i class="fa fa-cogs fa-1x" aria-hidden="true"></i></a>
-          <a href="#"><i class="fa fa-cog fa-spin fa-1x fa-fw" ng-show="running"></i></a>
+          <a href="#" ng-click="runJob('{{ $job.Name }}')" ng-show="!running_{{ $job.Name }}" title="Run"><i class="fa fa-cogs fa-1x" aria-hidden="true"></i></a>
+          <a href="#"><i class="fa fa-cog fa-spin fa-1x fa-fw" ng-show="running_{{ $job.Name }}"></i></a>
           &nbsp;
-          <a href="#" data-toggle="modal" data-target="#{{ $job.Name }}-modal-delete" ng-show="!deleting" title="Delete"><i class="fa fa-trash-o fa-1x" aria-hidden="true"></i></a>
-          <a href=""><i class="fa fa-spinner fa-spin fa-1x fa-fw" ng-show="deleting"></i></a>
+          <a href="#" data-toggle="modal" data-target="#{{ $job.Name }}-modal-delete" ng-show="!deleting_{{ $job.Name }}" title="Delete"><i class="fa fa-trash-o fa-1x" aria-hidden="true"></i></a>
+          <a href=""><i class="fa fa-spinner fa-spin fa-1x fa-fw" ng-show="deleting_{{ $job.Name }}"></i></a>
         </td>
       </tr>
 

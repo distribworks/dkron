@@ -3,7 +3,7 @@ dkron.constant('hideDelay', 2000);
 
 dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
   $scope.runJob = function(jobName) {
-    $scope.running = true;
+    $scope["running_" + jobName] = true;
     var response = $http.post(DKRON_API_PATH + '/jobs/' + jobName);
     response.success(function(data, status, headers, config) {
       $('#message').html('<div class="alert alert-success fade in">Success running job ' + jobName + '</div>');
@@ -20,7 +20,7 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
   };
 
   $scope.deleteJob = function(jobName) {
-    $scope.deleting = true;
+    $scope["deleting_" + jobName] = true;
     var response = $http.delete(DKRON_API_PATH + '/jobs/' + jobName);
     response.success(function(data, status, headers, config) {
       $('#message').html('<div class="alert alert-success fade in">Successfully removed job ' + jobName + '</div>');
