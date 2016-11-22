@@ -340,6 +340,12 @@ footer[role="contentinfo"] p {
 .page-home .main-content .vertical-align {
   margin-bottom: 4em;
 }
+.page-home #users-mask {
+  color: #fff;
+  background-color: #333;
+  padding: 3em 0;
+  text-align: center;
+}
 .page-home #use-cases-mask {
   background: #1F779F;
   /* Old browsers */

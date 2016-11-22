@@ -69,7 +69,14 @@
       margin-bottom:4em;
     }
   }
-
+  
+  #users-mask {
+    color: #fff;
+    background-color: #333;
+    padding: 3em 0;
+    text-align: center;
+  }
+  
   #use-cases-mask {
     @include gradient-dkron;
     padding:3em 0;
