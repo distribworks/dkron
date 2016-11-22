@@ -30,17 +30,16 @@ It can use etcd, Consul or Zookeeper as data stores. To install any of this syst
 
 ## Installation
 
+### Recommended method
+
+APT repository: `deb [trusted=yes] https://apt.fury.io/victorcoder/ /`
+
+Unstable release: `sudo apt-get install dkron-unstable`
+Stable release: `sudo apt-get install dkron`
+
+### Other methods
+
 Simply download the packaged archive for your platform from the [downloads page](https://github.com/victorcoder/dkron/releases), extract the package to a shared location in your drive, like `/opt/local` and run it from there.
-
-There's a `.deb` package available too.
-
-### Ubuntu
-
-The recommended way to install Dkron is using the `.deb` package.
-
-### Debian
-
-Sample init scripts are included in the `debian` folder
 
 ## Configuration
 
