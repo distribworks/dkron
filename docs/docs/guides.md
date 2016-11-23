@@ -139,6 +139,8 @@ You can set some jobs to run after other job is executed. To setup a job that wi
 
 The dependent job will be executed after the main job finished a successful execution.
 
+Child jobs schedule property will be ignored if it's present.
+
 ## Logging output
 
 Logging output of each job execution can be modified by using processor plugins.
