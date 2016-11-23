@@ -26,6 +26,7 @@ var (
 	ErrSameParent        = errors.New("The job can not have itself as parent")
 	ErrNoParent          = errors.New("The job doens't have a parent job set")
 	ErrNoCommand         = errors.New("Unespecified command for job")
+	ErrWrongConcurrency  = errors.New("Wrong concurrency policy value use: allow/forbid")
 )
 
 type Job struct {
@@ -228,7 +229,7 @@ func (j *Job) isRunnable() bool {
 				"job":         j.Name,
 				"concurrency": j.Concurrency,
 				"job_status":  status,
-			}).Debug("scheduler: Missing schedule")
+			}).Debug("scheduler: Skipping execution")
 			return false
 		}
 	}
