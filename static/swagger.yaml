@@ -318,7 +318,7 @@ definitions:
         example: "parent_job"
         readOnly: false
       dependent_jobs:
-        type: string
+        type: array
         description: "Array containing the jobs that depends on this one"
         example: ['dependent_job']
         readOnly: true
@@ -327,6 +327,11 @@ definitions:
         description: "Processor plugins used to process executions results of this job"
         additionalProperties:
           type: string
+        readOnly: false
+      concurrency:
+        type: string
+        description: "Concurrency policy for the job allow/forbid"
+        example: "allow"
         readOnly: false
   member:
     type: object

@@ -173,6 +173,10 @@ func (s *Store) validateJob(job *Job) error {
 		return ErrNoCommand
 	}
 
+	if job.Concurrency != ConcurrencyAllow || job.Concurrency != ConcurrencyForbid {
+		return ErrWrongConcurrency
+	}
+
 	return nil
 }
 

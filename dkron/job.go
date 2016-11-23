@@ -15,6 +15,9 @@ const (
 	Running
 	Failed
 	PartialyFailed
+
+	ConcurrencyAllow  = "allow"
+	ConcurrencyForbid = "forbid"
 )
 
 var (
@@ -23,6 +26,7 @@ var (
 	ErrSameParent        = errors.New("The job can not have itself as parent")
 	ErrNoParent          = errors.New("The job doens't have a parent job set")
 	ErrNoCommand         = errors.New("Unespecified command for job")
+	ErrWrongConcurrency  = errors.New("Wrong concurrency policy value use: allow/forbid")
 )
 
 type Job struct {
@@ -80,6 +84,9 @@ type Job struct {
 
 	// Processors to use for this job
 	Processors map[string]PluginConfig `json:"processors"`
+
+	// Concurrency policy for this job (allow, forbid)
+	Concurrency string `json:"concurrency"`
 }
 
 // Run the job
@@ -89,16 +96,19 @@ func (j *Job) Run() {
 
 	// Maybe we are testing or it's disabled
 	if j.Agent != nil && j.Disabled == false {
-		log.WithFields(logrus.Fields{
-			"job":      j.Name,
-			"schedule": j.Schedule,
-		}).Debug("scheduler: Run job")
+		// Check if it's runnable
+		if j.isRunnable() {
+			log.WithFields(logrus.Fields{
+				"job":      j.Name,
+				"schedule": j.Schedule,
+			}).Debug("scheduler: Run job")
 
-		cronInspect.Set(j.Name, j)
+			cronInspect.Set(j.Name, j)
 
-		// Simple execution wrapper
-		ex := NewExecution(j.Name)
-		j.Agent.RunQuery(ex)
+			// Simple execution wrapper
+			ex := NewExecution(j.Name)
+			j.Agent.RunQuery(ex)
+		}
 	}
 }
 
@@ -206,4 +216,23 @@ func (j *Job) Unlock() error {
 	}
 
 	return nil
+}
+
+func (j *Job) isRunnable() bool {
+	status := j.Status()
+
+	if status == Running {
+		if j.Concurrency == ConcurrencyAllow {
+			return true
+		} else if j.Concurrency == ConcurrencyForbid {
+			log.WithFields(logrus.Fields{
+				"job":         j.Name,
+				"concurrency": j.Concurrency,
+				"job_status":  status,
+			}).Debug("scheduler: Skipping execution")
+			return false
+		}
+	}
+
+	return true
 }

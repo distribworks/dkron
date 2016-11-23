@@ -144,7 +144,10 @@ func (a *AgentCommand) jobGetHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.Request) {
-	var job Job
+	// Init the Job object with defaults
+	job := Job{
+		Concurrency: ConcurrencyAllow,
+	}
 
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
