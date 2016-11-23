@@ -27,5 +27,5 @@ func TestProcess(t *testing.T) {
 	fo := &FilesOutput{}
 	ex := fo.Process(pa)
 
-	assert.Equal(t, fmt.Sprintf("./%s.log", ex.Key()), string(ex.Output))
+	assert.Equal(t, fmt.Sprintf("/tmp/%s.log", ex.Key()), string(ex.Output))
 }
