@@ -224,6 +224,11 @@ func (j *Job) isRunnable() bool {
 		if j.Concurrency == ConcurrencyAllow {
 			return true
 		} else if j.Concurrency == ConcurrencyForbid {
+			log.WithFields(logrus.Fields{
+				"job":         j.Name,
+				"concurrency": j.Concurrency,
+				"job_status":  status,
+			}).Debug("scheduler: Missing schedule")
 			return false
 		}
 	}
