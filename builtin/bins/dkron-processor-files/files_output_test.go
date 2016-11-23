@@ -20,6 +20,7 @@ func TestProcess(t *testing.T) {
 		},
 		Config: dkron.PluginConfig{
 			"forward": false,
+			"log_dir": "/tmp",
 		},
 	}
 
