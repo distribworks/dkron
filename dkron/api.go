@@ -204,7 +204,7 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.R
 
 	w.Header().Set("Location", fmt.Sprintf("%s/%s", r.RequestURI, job.Name))
 	w.WriteHeader(http.StatusCreated)
-	if err := printJson(w, r, job); err != nil {
+	if err := printJson(w, r, &job); err != nil {
 		log.Fatal(err)
 	}
 }
