@@ -16,6 +16,8 @@ before_install:
   - go get github.com/golang/lint/golint
   - go get github.com/GeertJohan/fgt
   - go get github.com/Masterminds/glide
+  - sudo apt-get -qq update
+  - sudo apt-get install -y rsyslog
 
 before_script:
   - scripts/travis_etcd.sh 2.2.5
