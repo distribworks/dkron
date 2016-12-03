@@ -143,7 +143,7 @@ func NewConfig(args []string, agent *AgentCommand) *Config {
 func ReadConfig(agent *AgentCommand) *Config {
 	err := viper.ReadInConfig() // Find and read the config file
 	if err != nil {             // Handle errors reading the config file
-		logrus.Infof("No valid config found: %s \n Applying default values.", err)
+		logrus.WithError(err).Info("No valid config found: Applying default values.")
 	}
 
 	tags := viper.GetStringMapString("tags")
