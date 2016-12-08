@@ -62,12 +62,50 @@ func (n *Notifier) report() string {
 		exgStr)
 }
 
+func (n *Notifier) buildTemplate(templ string) *bytes.Buffer {
+	t := template.Must(template.New("report").Parse(templ))
+
+	data := struct {
+		Report        string
+		JobName       string
+		ReportingNode string
+		StartTime     string
+		FinishedAt    string
+		Success       string
+		NodeName      string
+		Output        string
+	}{
+		n.report(),
+		n.Execution.JobName,
+		n.Config.NodeName,
+		fmt.Sprintf("%s", n.Execution.StartedAt),
+		fmt.Sprintf("%s", n.Execution.FinishedAt),
+		fmt.Sprintf("%t", n.Execution.Success),
+		n.Execution.NodeName,
+		fmt.Sprintf("%s", n.Execution.Output),
+	}
+
+	out := &bytes.Buffer{}
+	err := t.Execute(out, data)
+	if err != nil {
+		log.Error("executing template:", err)
+		return bytes.NewBuffer([]byte("Failed to execute template:" + err.Error()))
+	}
+	return out
+}
+
 func (n *Notifier) sendExecutionEmail() {
+	var data *bytes.Buffer
+	if n.Config.MailPayload != "" {
+		data = n.buildTemplate(n.Config.MailPayload)
+	} else {
+		data = bytes.NewBuffer(n.Execution.Output)
+	}
 	e := &email.Email{
 		To:      []string{n.Job.OwnerEmail},
 		From:    n.Config.MailFrom,
 		Subject: fmt.Sprintf("[Dkron] %s %s execution report", n.statusString(n.Execution), n.Execution.JobName),
-		Text:    []byte(n.report()),
+		Text:    []byte(data.Bytes()),
 		Headers: textproto.MIMEHeader{},
 	}
 
@@ -79,20 +117,7 @@ func (n *Notifier) sendExecutionEmail() {
 }
 
 func (n *Notifier) callExecutionWebhook() {
-	t := template.Must(template.New("report").Parse(n.Config.WebhookPayload))
-
-	data := struct {
-		Report string
-	}{
-		n.report(),
-	}
-
-	out := &bytes.Buffer{}
-	err := t.Execute(out, data)
-	if err != nil {
-		log.Error("executing template:", err)
-	}
-
+	out := n.buildTemplate(n.Config.WebhookPayload)
 	req, err := http.NewRequest("POST", n.Config.WebhookURL, out)
 	for _, h := range n.Config.WebhookHeaders {
 		if h != "" {

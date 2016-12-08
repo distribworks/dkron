@@ -42,6 +42,7 @@ type Config struct {
 	MailUsername string
 	MailPassword string
 	MailFrom     string
+	MailPayload  string
 
 	WebhookURL     string
 	WebhookPayload string
@@ -114,6 +115,8 @@ func NewConfig(args []string, agent *AgentCommand) *Config {
 	viper.SetDefault("mail_password", cmdFlags.Lookup("mail-password").Value)
 	cmdFlags.String("mail-from", "", "notification emails from address")
 	viper.SetDefault("mail_from", cmdFlags.Lookup("mail-from").Value)
+	cmdFlags.String("mail-payload", "", "notification mail payload")
+	viper.SetDefault("mail_payload", cmdFlags.Lookup("mail-payload").Value)
 
 	cmdFlags.String("webhook-url", "", "notification webhook url")
 	viper.SetDefault("webhook_url", cmdFlags.Lookup("webhook-url").Value)
@@ -176,6 +179,7 @@ func ReadConfig(agent *AgentCommand) *Config {
 		MailUsername: viper.GetString("mail_username"),
 		MailPassword: viper.GetString("mail_password"),
 		MailFrom:     viper.GetString("mail_from"),
+		MailPayload:  viper.GetString("mail_payload"),
 
 		WebhookURL:     viper.GetString("webhook_url"),
 		WebhookPayload: viper.GetString("webhook_payload"),
