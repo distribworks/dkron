@@ -54,6 +54,7 @@ type AgentCommand struct {
 	eventCh   chan serf.Event
 	sched     *Scheduler
 	candidate *leadership.Candidate
+	ready     bool
 }
 
 func (a *AgentCommand) Help() string {
@@ -302,7 +303,7 @@ func (a *AgentCommand) Run(args []string) int {
 		a.participate()
 	}
 	go a.eventLoop()
-
+	a.ready = true
 	return a.handleSignals()
 }
 
