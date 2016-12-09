@@ -31,6 +31,10 @@ func Notification(config *Config, execution *Execution, exGroup []*Execution, jo
 }
 
 func (n *Notifier) Send() {
+	if (n.Job.NotifyOn == "success" && !n.Execution.Success) ||
+		(n.Job.NotifyOn == "failure" && n.Execution.Success) {
+		return
+	}
 	if n.Config.MailHost != "" && n.Config.MailPort != 0 && n.Job.OwnerEmail != "" {
 		n.sendExecutionEmail()
 	}

@@ -80,6 +80,9 @@ type Job struct {
 
 	// Processors to use for this job
 	Processors map[string]PluginConfig `json:"processors"`
+
+	// Notify condition (success/failure)
+	NotifyOn string `json:"notify_on"`
 }
 
 // Run the job

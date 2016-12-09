@@ -147,3 +147,87 @@ var templateTestCases = func(n *Notifier) []templateTestCase {
 		},
 	}
 }
+
+func TestNotifier_notifyOnSuccessPass(t *testing.T) {
+	notified := false
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		io.Copy(w, r.Body)
+		notified = true
+	}))
+	defer ts.Close()
+	c := &Config{
+		WebhookURL:     ts.URL,
+		WebhookPayload: `payload={"text": "{{.Report}}"}`,
+		WebhookHeaders: []string{"Content-Type: application/x-www-form-urlencoded"},
+	}
+
+	n := Notification(c, &Execution{Success: true}, []*Execution{}, &Job{NotifyOn: "success"})
+	n.Send()
+
+	if !notified {
+		t.Errorf("Expected notified to be true")
+	}
+}
+
+func TestNotifier_notifyOnSuccessFail(t *testing.T) {
+	notified := false
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		io.Copy(w, r.Body)
+		notified = true
+	}))
+	defer ts.Close()
+	c := &Config{
+		WebhookURL:     ts.URL,
+		WebhookPayload: `payload={"text": "{{.Report}}"}`,
+		WebhookHeaders: []string{"Content-Type: application/x-www-form-urlencoded"},
+	}
+
+	n := Notification(c, &Execution{Success: false}, []*Execution{}, &Job{NotifyOn: "success"})
+	n.Send()
+
+	if notified {
+		t.Errorf("Expected notified to be false")
+	}
+}
+
+func TestNotifier_notifyOnFailurePass(t *testing.T) {
+	notified := false
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		io.Copy(w, r.Body)
+		notified = true
+	}))
+	defer ts.Close()
+	c := &Config{
+		WebhookURL:     ts.URL,
+		WebhookPayload: `payload={"text": "{{.Report}}"}`,
+		WebhookHeaders: []string{"Content-Type: application/x-www-form-urlencoded"},
+	}
+
+	n := Notification(c, &Execution{Success: false}, []*Execution{}, &Job{NotifyOn: "failure"})
+	n.Send()
+
+	if !notified {
+		t.Errorf("Expected notified to be true")
+	}
+}
+
+func TestNotifier_notifyOnFailureFail(t *testing.T) {
+	notified := false
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		io.Copy(w, r.Body)
+		notified = true
+	}))
+	defer ts.Close()
+	c := &Config{
+		WebhookURL:     ts.URL,
+		WebhookPayload: `payload={"text": "{{.Report}}"}`,
+		WebhookHeaders: []string{"Content-Type: application/x-www-form-urlencoded"},
+	}
+
+	n := Notification(c, &Execution{Success: true}, []*Execution{}, &Job{NotifyOn: "failure"})
+	n.Send()
+
+	if notified {
+		t.Errorf("Expected notified to be false")
+	}
+}
