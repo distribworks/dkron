@@ -23,11 +23,19 @@ func TestStore(t *testing.T) {
 		Disabled: true,
 	}
 
+	// Check that we still get an empty job list
+	jobs, err := store.GetJobs()
+	if err != nil {
+		t.Fatalf("error getting jobs: %s", err)
+	} else if jobs == nil {
+		t.Fatal("jobs empty, expecting empty slice")
+	}
+
 	if err := store.SetJob(testJob); err != nil {
 		t.Fatalf("error creating job: %s", err)
 	}
 
-	jobs, err := store.GetJobs()
+	jobs, err = store.GetJobs()
 	if err != nil {
 		t.Fatalf("error getting jobs: %s", err)
 	}

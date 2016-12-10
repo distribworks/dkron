@@ -182,7 +182,7 @@ func (s *Store) GetJobs() ([]*Job, error) {
 	if err != nil {
 		if err == store.ErrKeyNotFound {
 			log.Debug("store: No jobs found")
-			return nil, nil
+			return []*Job{}, nil
 		}
 		return nil, err
 	}
