@@ -36,7 +36,12 @@ func setupAPITest(t *testing.T) (chan<- struct{}, <-chan int) {
 		resultCh <- a.Run(args)
 	}()
 
-	time.Sleep(10 * time.Millisecond)
+	for {
+		if a.ready {
+			break
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
 
 	return shutdownCh, resultCh
 }
