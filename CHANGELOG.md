@@ -1,3 +1,18 @@
+## 0.9.2 (2016-12-12)
+
+Features:
+
+- Implement concurrency policy
+- Improved UI: allow delete jobs from UI, highlight JSON
+- Execution Processor plugins
+- Template variables for customization of notification emails (kudos @oldmantaiter)
+
+Bug fixes:
+
+- Fix tests randomly failing (kudos @oldmantaiter)
+- Return empty list when no jobs instead of null
+- Allow POST usage on /leave method, deprecate GET
+
 ## 0.9.1 (2016-09-24)
 
 Bug fixes:
