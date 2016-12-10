@@ -1,34 +1,7 @@
-language: go
+sudo: required
 
-go:
-  - 1.7
-
-# this is necessary for fork builds to work
-go_import_path: github.com/victorcoder/dkron
-
-# let us have speedy Docker-based Travis workers
-# http://docs.travis-ci.com/user/migrating-from-legacy/#tl%3Bdr
-sudo: false
-
-addons:
-  apt:
-    packages:
-    - rsyslog
-
-before_install:
-  - go get golang.org/x/tools/cmd/cover
-  - go get github.com/mattn/goveralls
-  - go get github.com/golang/lint/golint
-  - go get github.com/GeertJohan/fgt
-  - go get github.com/Masterminds/glide
-
-before_script:
-  - scripts/travis_etcd.sh 2.2.5
+services:
+  - docker
 
 script:
-  - ./etcd/etcd >/dev/null 2>&1 &
-  - scripts/validate-gofmt
-  - go vet ./...
-  # - fgt golint ./...
-  - glide install
-  - go test -v $(glide novendor)
+  - scripts/test.sh
