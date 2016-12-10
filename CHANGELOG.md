@@ -7,7 +7,7 @@ Features:
 - Execution Processor plugins, allows flexible routing of execution results
 - Template variables for customization of notification emails (kudos @oldmantaiter)
 - Go 1.7
-- Test with docker
+- Test with docker-compose, this will allow to test multiple stores easily
 
 Bug fixes:
 
