@@ -14,10 +14,8 @@ WORKDIR /gopath/src/github.com/victorcoder/dkron
 ENV GOPATH /gopath
 ENV PATH $PATH:/usr/local/go/bin:$GOPATH/bin
 
-COPY glide.yaml ./glide.yaml
-COPY glide.lock ./glide.lock
+COPY . ./
 RUN glide install
 
-COPY . ./
 RUN go build *.go
 CMD ["/gopath/src/github.com/victorcoder/dkron/main"]

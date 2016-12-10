@@ -11,3 +11,4 @@ vendor/
 main
 /dkron-processor-*
 *.log
+.glide
