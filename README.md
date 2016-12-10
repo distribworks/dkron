@@ -55,6 +55,9 @@ Full, comprehensive documentation is viewable on the [Dkron website](http://dkro
 Chef cookbook
 https://supermarket.chef.io/cookbooks/dkron
 
+Python Client Library
+https://github.com/oldmantaiter/pydkron
+
 ## Get in touch
 
 - Twitter: [@dkronio](https://twitter.com/dkronio) or [@victorcoder](https://twitter.com/victorcoder)
