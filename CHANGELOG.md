@@ -6,6 +6,8 @@ Features:
 - Improved UI: allow delete jobs from UI, highlight JSON
 - Execution Processor plugins, allows flexible routing of execution results
 - Template variables for customization of notification emails (kudos @oldmantaiter)
+- Go 1.7
+- Test with docker
 
 Bug fixes:
 
