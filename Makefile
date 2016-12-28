@@ -10,5 +10,6 @@ test:
 	@bash --norc -i ./scripts/test.sh
 
 release:
+	@$(MAKE) apidoc
 	@$(MAKE) doc
-	@goxc
+	@goxc -tasks+=publish-github
