@@ -4,6 +4,5 @@ site
 downloads
 *.etcd
 vendor
-scripts
-docker-composte
+docker-compose
 dkron_theme

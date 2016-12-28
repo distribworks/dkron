@@ -52,15 +52,15 @@ func (a *AgentCommand) apiRoutes(r *mux.Router) {
 	subver.HandleFunc("/", a.indexHandler)
 	subver.HandleFunc("/members", a.membersHandler)
 	subver.HandleFunc("/leader", a.leaderHandler)
-	subver.HandleFunc("/leave", a.leaveHandler)
+	subver.HandleFunc("/leave", a.leaveHandler).Methods(http.MethodGet, http.MethodPost)
 
-	subver.Path("/jobs").HandlerFunc(a.jobCreateOrUpdateHandler).Methods("POST", "PATCH")
+	subver.Path("/jobs").HandlerFunc(a.jobCreateOrUpdateHandler).Methods(http.MethodPost, http.MethodPatch)
 	// Place fallback routes last
 	subver.Path("/jobs").HandlerFunc(a.jobsHandler)
 
 	sub := subver.PathPrefix("/jobs").Subrouter()
-	sub.HandleFunc("/{job}", a.jobDeleteHandler).Methods("DELETE")
-	sub.HandleFunc("/{job}", a.jobRunHandler).Methods("POST")
+	sub.HandleFunc("/{job}", a.jobDeleteHandler).Methods(http.MethodDelete)
+	sub.HandleFunc("/{job}", a.jobRunHandler).Methods(http.MethodPost)
 	// Place fallback routes last
 	sub.HandleFunc("/{job}", a.jobGetHandler)
 
@@ -144,7 +144,10 @@ func (a *AgentCommand) jobGetHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.Request) {
-	var job Job
+	// Init the Job object with defaults
+	job := Job{
+		Concurrency: ConcurrencyAllow,
+	}
 
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
@@ -201,7 +204,7 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(w http.ResponseWriter, r *http.R
 
 	w.Header().Set("Location", fmt.Sprintf("%s/%s", r.RequestURI, job.Name))
 	w.WriteHeader(http.StatusCreated)
-	if err := printJson(w, r, job); err != nil {
+	if err := printJson(w, r, &job); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -297,6 +300,9 @@ func (a *AgentCommand) leaderHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *AgentCommand) leaveHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodGet {
+		log.Warn("/leave GET is deprecated and will be removed, use POST")
+	}
 	if err := a.serf.Leave(); err != nil {
 		if err := printJson(w, r, a.listServers()); err != nil {
 			log.Fatal(err)

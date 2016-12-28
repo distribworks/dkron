@@ -139,6 +139,8 @@ You can set some jobs to run after other job is executed. To setup a job that wi
 
 The dependent job will be executed after the main job finished a successful execution.
 
+Child jobs schedule property will be ignored if it's present.
+
 ## Logging output
 
 Logging output of each job execution can be modified by using processor plugins.
@@ -147,3 +149,11 @@ Processor plugins can be used to redirect the output of a job execution to diffe
 
 Refer to the [plugins documentation](plugins.md) from more info
 
+## Concurrency
+
+Jobs can be configured to allow overlapping executions or forbid them. 
+
+Concurrency property accepts two option: 
+
+* **allow** (default): Allow concurrent job executions.
+* **forbid**: If the job is already running don't send the execution, it will skip the executions until the next schedule.

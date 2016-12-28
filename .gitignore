@@ -9,5 +9,6 @@ downloads/
 .vagrant
 vendor/
 main
-dkron-processor-*
+/dkron-processor-*
 *.log
+.glide

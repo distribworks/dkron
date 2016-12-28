@@ -18,12 +18,12 @@ func TestProcess(t *testing.T) {
 			Output:    []byte("test"),
 		},
 		Config: dkron.PluginConfig{
-			"forward": false,
+			"forward": true,
 		},
 	}
 
 	fo := &SyslogOutput{}
 	ex := fo.Process(pa)
 
-	assert.Equal(t, "Output in syslog", string(ex.Output))
+	assert.Equal(t, "test", string(ex.Output))
 }

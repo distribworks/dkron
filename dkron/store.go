@@ -2,7 +2,6 @@ package dkron
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"sort"
 
@@ -165,7 +164,7 @@ func (s *Store) validateJob(job *Job) error {
 	// Only validate the schedule if it doesn't have a parent
 	if job.ParentJob == "" {
 		if _, err := cron.Parse(job.Schedule); err != nil {
-			return errors.New(fmt.Sprintf("%s: %s", ErrScheduleParse.Error(), err))
+			return fmt.Errorf("%s: %s", ErrScheduleParse.Error(), err)
 		}
 	}
 
@@ -173,10 +172,14 @@ func (s *Store) validateJob(job *Job) error {
 		return ErrNoCommand
 	}
 
+	if job.Concurrency != ConcurrencyAllow && job.Concurrency != ConcurrencyForbid && job.Concurrency != "" {
+		return ErrWrongConcurrency
+	}
+
 	return nil
 }
 
-// Get all jobs
+// GetJobs returns all jobs
 func (s *Store) GetJobs() ([]*Job, error) {
 	res, err := s.Client.List(s.keyspace + "/jobs/")
 	if err != nil {

@@ -18,6 +18,7 @@ pages:
     - 'docs/configuration.md'
     - 'docs/api.md'
     - 'docs/plugins.md'
+    - 'docs/integration.md'
   - About:
     - 'about/dkron_vs_other_software.md'
     - 'about/license.md'
