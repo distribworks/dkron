@@ -182,6 +182,8 @@
         
             <li><a href="#paths">Paths</a></li>
         
+            <li><a href="#definitions">Definitions</a></li>
+        
     
     </ul>
 </div></div>
@@ -234,6 +236,18 @@
 <ul>
 <li>default</li>
 </ul>
+<h4 id="example-http-request">Example HTTP request</h4>
+<h5 id="request-path">Request path</h5>
+<pre><code>json :
+&quot;/&quot;
+</code></pre>
+
+<h4 id="example-http-response">Example HTTP response</h4>
+<h5 id="response-200">Response 200</h5>
+<pre><code>json :
+{ }
+</code></pre>
+
 <p><a name="listexecutionsbyjob"></a></p>
 <h3 id="get-executionsjob_name">GET /executions/{job_name}</h3>
 <h4 id="description_1">Description</h4>
@@ -246,7 +260,6 @@
 <th>Name</th>
 <th>Description</th>
 <th>Schema</th>
-<th>Default</th>
 </tr>
 </thead>
 <tbody>
@@ -255,7 +268,6 @@
 <td><strong>job_name</strong>  <br><em>required</em></td>
 <td>The job that owns the executions to be fetched.</td>
 <td>string</td>
-<td></td>
 </tr>
 </tbody>
 </table>
@@ -280,6 +292,18 @@
 <ul>
 <li>executions</li>
 </ul>
+<h4 id="example-http-request_1">Example HTTP request</h4>
+<h5 id="request-path_1">Request path</h5>
+<pre><code>json :
+&quot;/executions/string&quot;
+</code></pre>
+
+<h4 id="example-http-response_1">Example HTTP response</h4>
+<h5 id="response-200_1">Response 200</h5>
+<pre><code>json :
+&quot;array&quot;
+</code></pre>
+
 <p><a name="getjobs"></a></p>
 <h3 id="get-jobs">GET /jobs</h3>
 <h4 id="description_2">Description</h4>
@@ -305,6 +329,18 @@
 <ul>
 <li>jobs</li>
 </ul>
+<h4 id="example-http-request_2">Example HTTP request</h4>
+<h5 id="request-path_2">Request path</h5>
+<pre><code>json :
+&quot;/jobs&quot;
+</code></pre>
+
+<h4 id="example-http-response_2">Example HTTP response</h4>
+<h5 id="response-200_2">Response 200</h5>
+<pre><code>json :
+&quot;array&quot;
+</code></pre>
+
 <p><a name="createorupdatejob"></a></p>
 <h3 id="post-jobs">POST /jobs</h3>
 <h4 id="description_3">Description</h4>
@@ -317,7 +353,6 @@
 <th>Name</th>
 <th>Description</th>
 <th>Schema</th>
-<th>Default</th>
 </tr>
 </thead>
 <tbody>
@@ -326,7 +361,6 @@
 <td><strong>body</strong>  <br><em>required</em></td>
 <td>Updated job object</td>
 <td><a href="#job">job</a></td>
-<td></td>
 </tr>
 </tbody>
 </table>
@@ -351,6 +385,67 @@
 <ul>
 <li>jobs</li>
 </ul>
+<h4 id="example-http-request_3">Example HTTP request</h4>
+<h5 id="request-path_3">Request path</h5>
+<pre><code>json :
+&quot;/jobs&quot;
+</code></pre>
+
+<h5 id="request-body">Request body</h5>
+<pre><code>json :
+{
+  &quot;name&quot; : &quot;string&quot;,
+  &quot;schedule&quot; : &quot;string&quot;,
+  &quot;command&quot; : &quot;string&quot;,
+  &quot;shell&quot; : true,
+  &quot;owner&quot; : &quot;string&quot;,
+  &quot;owner_email&quot; : &quot;string&quot;,
+  &quot;success_count&quot; : 0,
+  &quot;error_count&quot; : 0,
+  &quot;last_success&quot; : &quot;string&quot;,
+  &quot;last_error&quot; : &quot;string&quot;,
+  &quot;disabled&quot; : true,
+  &quot;tags&quot; : {
+    &quot;string&quot; : &quot;string&quot;
+  },
+  &quot;retries&quot; : 2,
+  &quot;parent_job&quot; : &quot;parent_job&quot;,
+  &quot;dependent_jobs&quot; : &quot;&quot;,
+  &quot;processors&quot; : {
+    &quot;string&quot; : &quot;string&quot;
+  },
+  &quot;concurrency&quot; : &quot;allow&quot;
+}
+</code></pre>
+
+<h4 id="example-http-response_3">Example HTTP response</h4>
+<h5 id="response-201">Response 201</h5>
+<pre><code>json :
+{
+  &quot;name&quot; : &quot;string&quot;,
+  &quot;schedule&quot; : &quot;string&quot;,
+  &quot;command&quot; : &quot;string&quot;,
+  &quot;shell&quot; : true,
+  &quot;owner&quot; : &quot;string&quot;,
+  &quot;owner_email&quot; : &quot;string&quot;,
+  &quot;success_count&quot; : 0,
+  &quot;error_count&quot; : 0,
+  &quot;last_success&quot; : &quot;string&quot;,
+  &quot;last_error&quot; : &quot;string&quot;,
+  &quot;disabled&quot; : true,
+  &quot;tags&quot; : {
+    &quot;string&quot; : &quot;string&quot;
+  },
+  &quot;retries&quot; : 2,
+  &quot;parent_job&quot; : &quot;parent_job&quot;,
+  &quot;dependent_jobs&quot; : &quot;&quot;,
+  &quot;processors&quot; : {
+    &quot;string&quot; : &quot;string&quot;
+  },
+  &quot;concurrency&quot; : &quot;allow&quot;
+}
+</code></pre>
+
 <p><a name="deletejob"></a></p>
 <h3 id="delete-jobsjob_name">DELETE /jobs/{job_name}</h3>
 <h4 id="description_4">Description</h4>
@@ -363,7 +458,6 @@
 <th>Name</th>
 <th>Description</th>
 <th>Schema</th>
-<th>Default</th>
 </tr>
 </thead>
 <tbody>
@@ -372,7 +466,6 @@
 <td><strong>job_name</strong>  <br><em>required</em></td>
 <td>The job that needs to be deleted.</td>
 <td>string</td>
-<td></td>
 </tr>
 </tbody>
 </table>
@@ -397,6 +490,40 @@
 <ul>
 <li>jobs</li>
 </ul>
+<h4 id="example-http-request_4">Example HTTP request</h4>
+<h5 id="request-path_4">Request path</h5>
+<pre><code>json :
+&quot;/jobs/string&quot;
+</code></pre>
+
+<h4 id="example-http-response_4">Example HTTP response</h4>
+<h5 id="response-200_3">Response 200</h5>
+<pre><code>json :
+{
+  &quot;name&quot; : &quot;string&quot;,
+  &quot;schedule&quot; : &quot;string&quot;,
+  &quot;command&quot; : &quot;string&quot;,
+  &quot;shell&quot; : true,
+  &quot;owner&quot; : &quot;string&quot;,
+  &quot;owner_email&quot; : &quot;string&quot;,
+  &quot;success_count&quot; : 0,
+  &quot;error_count&quot; : 0,
+  &quot;last_success&quot; : &quot;string&quot;,
+  &quot;last_error&quot; : &quot;string&quot;,
+  &quot;disabled&quot; : true,
+  &quot;tags&quot; : {
+    &quot;string&quot; : &quot;string&quot;
+  },
+  &quot;retries&quot; : 2,
+  &quot;parent_job&quot; : &quot;parent_job&quot;,
+  &quot;dependent_jobs&quot; : &quot;&quot;,
+  &quot;processors&quot; : {
+    &quot;string&quot; : &quot;string&quot;
+  },
+  &quot;concurrency&quot; : &quot;allow&quot;
+}
+</code></pre>
+
 <p><a name="showjobbyname"></a></p>
 <h3 id="get-jobsjob_name">GET /jobs/{job_name}</h3>
 <h4 id="description_5">Description</h4>
@@ -409,7 +536,6 @@
 <th>Name</th>
 <th>Description</th>
 <th>Schema</th>
-<th>Default</th>
 </tr>
 </thead>
 <tbody>
@@ -418,7 +544,6 @@
 <td><strong>job_name</strong>  <br><em>required</em></td>
 <td>The job that needs to be fetched.</td>
 <td>string</td>
-<td></td>
 </tr>
 </tbody>
 </table>
@@ -443,6 +568,40 @@
 <ul>
 <li>jobs</li>
 </ul>
+<h4 id="example-http-request_5">Example HTTP request</h4>
+<h5 id="request-path_5">Request path</h5>
+<pre><code>json :
+&quot;/jobs/string&quot;
+</code></pre>
+
+<h4 id="example-http-response_5">Example HTTP response</h4>
+<h5 id="response-200_4">Response 200</h5>
+<pre><code>json :
+{
+  &quot;name&quot; : &quot;string&quot;,
+  &quot;schedule&quot; : &quot;string&quot;,
+  &quot;command&quot; : &quot;string&quot;,
+  &quot;shell&quot; : true,
+  &quot;owner&quot; : &quot;string&quot;,
+  &quot;owner_email&quot; : &quot;string&quot;,
+  &quot;success_count&quot; : 0,
+  &quot;error_count&quot; : 0,
+  &quot;last_success&quot; : &quot;string&quot;,
+  &quot;last_error&quot; : &quot;string&quot;,
+  &quot;disabled&quot; : true,
+  &quot;tags&quot; : {
+    &quot;string&quot; : &quot;string&quot;
+  },
+  &quot;retries&quot; : 2,
+  &quot;parent_job&quot; : &quot;parent_job&quot;,
+  &quot;dependent_jobs&quot; : &quot;&quot;,
+  &quot;processors&quot; : {
+    &quot;string&quot; : &quot;string&quot;
+  },
+  &quot;concurrency&quot; : &quot;allow&quot;
+}
+</code></pre>
+
 <p><a name="runjob"></a></p>
 <h3 id="post-jobsjob_name">POST /jobs/{job_name}</h3>
 <h4 id="description_6">Description</h4>
@@ -455,7 +614,6 @@
 <th>Name</th>
 <th>Description</th>
 <th>Schema</th>
-<th>Default</th>
 </tr>
 </thead>
 <tbody>
@@ -464,7 +622,6 @@
 <td><strong>job_name</strong>  <br><em>required</em></td>
 <td>The job that needs to be run.</td>
 <td>string</td>
-<td></td>
 </tr>
 </tbody>
 </table>
@@ -489,6 +646,40 @@
 <ul>
 <li>jobs</li>
 </ul>
+<h4 id="example-http-request_6">Example HTTP request</h4>
+<h5 id="request-path_6">Request path</h5>
+<pre><code>json :
+&quot;/jobs/string&quot;
+</code></pre>
+
+<h4 id="example-http-response_6">Example HTTP response</h4>
+<h5 id="response-202">Response 202</h5>
+<pre><code>json :
+{
+  &quot;name&quot; : &quot;string&quot;,
+  &quot;schedule&quot; : &quot;string&quot;,
+  &quot;command&quot; : &quot;string&quot;,
+  &quot;shell&quot; : true,
+  &quot;owner&quot; : &quot;string&quot;,
+  &quot;owner_email&quot; : &quot;string&quot;,
+  &quot;success_count&quot; : 0,
+  &quot;error_count&quot; : 0,
+  &quot;last_success&quot; : &quot;string&quot;,
+  &quot;last_error&quot; : &quot;string&quot;,
+  &quot;disabled&quot; : true,
+  &quot;tags&quot; : {
+    &quot;string&quot; : &quot;string&quot;
+  },
+  &quot;retries&quot; : 2,
+  &quot;parent_job&quot; : &quot;parent_job&quot;,
+  &quot;dependent_jobs&quot; : &quot;&quot;,
+  &quot;processors&quot; : {
+    &quot;string&quot; : &quot;string&quot;
+  },
+  &quot;concurrency&quot; : &quot;allow&quot;
+}
+</code></pre>
+
 <p><a name="getleader"></a></p>
 <h3 id="get-leader">GET /leader</h3>
 <h4 id="description_7">Description</h4>
@@ -514,6 +705,32 @@
 <ul>
 <li>default</li>
 </ul>
+<h4 id="example-http-request_7">Example HTTP request</h4>
+<h5 id="request-path_7">Request path</h5>
+<pre><code>json :
+&quot;/leader&quot;
+</code></pre>
+
+<h4 id="example-http-response_7">Example HTTP response</h4>
+<h5 id="response-200_5">Response 200</h5>
+<pre><code>json :
+{
+  &quot;Name&quot; : &quot;string&quot;,
+  &quot;Addr&quot; : &quot;string&quot;,
+  &quot;Port&quot; : 0,
+  &quot;Tags&quot; : {
+    &quot;string&quot; : &quot;string&quot;
+  },
+  &quot;Status&quot; : 0,
+  &quot;ProtocolMin&quot; : 0,
+  &quot;ProtocolMax&quot; : 0,
+  &quot;ProtocolCur&quot; : 0,
+  &quot;DelegateMin&quot; : 0,
+  &quot;DelegateMax&quot; : 0,
+  &quot;DelegateCur&quot; : 0
+}
+</code></pre>
+
 <p><a name="leave"></a></p>
 <h3 id="get-leave">GET /leave</h3>
 <h4 id="description_8">Description</h4>
@@ -539,6 +756,18 @@
 <ul>
 <li>default</li>
 </ul>
+<h4 id="example-http-request_8">Example HTTP request</h4>
+<h5 id="request-path_8">Request path</h5>
+<pre><code>json :
+&quot;/leave&quot;
+</code></pre>
+
+<h4 id="example-http-response_8">Example HTTP response</h4>
+<h5 id="response-200_6">Response 200</h5>
+<pre><code>json :
+&quot;array&quot;
+</code></pre>
+
 <p><a name="getmember"></a></p>
 <h3 id="get-members">GET /members</h3>
 <h4 id="description_9">Description</h4>
@@ -563,7 +792,237 @@
 <h4 id="tags_9">Tags</h4>
 <ul>
 <li>members</li>
-</ul></div>
+</ul>
+<h4 id="example-http-request_9">Example HTTP request</h4>
+<h5 id="request-path_9">Request path</h5>
+<pre><code>json :
+&quot;/members&quot;
+</code></pre>
+
+<h4 id="example-http-response_9">Example HTTP response</h4>
+<h5 id="response-200_7">Response 200</h5>
+<pre><code>json :
+&quot;array&quot;
+</code></pre>
+
+<p><a name="definitions"></a></p>
+<h2 id="definitions">Definitions</h2>
+<p><a name="status"></a></p>
+<h3 id="status">status</h3>
+<p>Status represents details about the node.</p>
+<p><em>Type</em> : object</p>
+<p><a name="job"></a></p>
+<h3 id="job">job</h3>
+<p>A Job represents a scheduled task to execute.</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>name</strong>  <br><em>required</em></td>
+<td>Name for the job.  <br><strong>Example</strong> : <code>"string"</code></td>
+<td>string</td>
+</tr>
+<tr>
+<td><strong>schedule</strong>  <br><em>required</em></td>
+<td>Cron expression for the job.  <br><strong>Example</strong> : <code>"string"</code></td>
+<td>string</td>
+</tr>
+<tr>
+<td><strong>command</strong>  <br><em>required</em></td>
+<td>Command to run.  <br><strong>Example</strong> : <code>"string"</code></td>
+<td>string</td>
+</tr>
+<tr>
+<td><strong>shell</strong>  <br><em>optional</em></td>
+<td>Use shell to run the command  <br><strong>Example</strong> : <code>true</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><strong>owner</strong>  <br><em>optional</em></td>
+<td>Owner of the job  <br><strong>Example</strong> : <code>"string"</code></td>
+<td>string</td>
+</tr>
+<tr>
+<td><strong>owner_email</strong>  <br><em>optional</em></td>
+<td>Email of the owner  <br><strong>Example</strong> : <code>"string"</code></td>
+<td>string</td>
+</tr>
+<tr>
+<td><strong>success_count</strong>  <br><em>optional</em>  <br><em>read-only</em></td>
+<td>Number of successful executions  <br><strong>Example</strong> : <code>0</code></td>
+<td>integer</td>
+</tr>
+<tr>
+<td><strong>error_count</strong>  <br><em>optional</em>  <br><em>read-only</em></td>
+<td>Number of failed executions  <br><strong>Example</strong> : <code>0</code></td>
+<td>integer</td>
+</tr>
+<tr>
+<td><strong>last_success</strong>  <br><em>optional</em>  <br><em>read-only</em></td>
+<td>Last time this job executed successfully  <br><strong>Example</strong> : <code>"string"</code></td>
+<td>string(date-time)</td>
+</tr>
+<tr>
+<td><strong>last_error</strong>  <br><em>optional</em>  <br><em>read-only</em></td>
+<td>Last time this job failed  <br><strong>Example</strong> : <code>"string"</code></td>
+<td>string(date-time)</td>
+</tr>
+<tr>
+<td><strong>disabled</strong>  <br><em>optional</em></td>
+<td>Disabled state of the job  <br><strong>Example</strong> : <code>true</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><strong>tags</strong>  <br><em>optional</em></td>
+<td>Target nodes tags of this job  <br><strong>Example</strong> : <code>{&lt;br&gt;  "string" : "string"&lt;br&gt;}</code></td>
+<td>&lt; string, string &gt; map</td>
+</tr>
+<tr>
+<td><strong>retries</strong>  <br><em>optional</em></td>
+<td>Number of times to retry a failed job execution  <br><strong>Example</strong> : <code>2</code></td>
+<td>integer</td>
+</tr>
+<tr>
+<td><strong>parent_job</strong>  <br><em>optional</em></td>
+<td>The name/id of the job that will trigger the execution of this job  <br><strong>Example</strong> : <code>"parent_job"</code></td>
+<td>string</td>
+</tr>
+<tr>
+<td><strong>dependent_jobs</strong>  <br><em>optional</em>  <br><em>read-only</em></td>
+<td>Array containing the jobs that depends on this one  <br><strong>Example</strong> : <code>""</code></td>
+<td>&lt; object &gt; array</td>
+</tr>
+<tr>
+<td><strong>processors</strong>  <br><em>optional</em></td>
+<td>Processor plugins used to process executions results of this job  <br><strong>Example</strong> : <code>{&lt;br&gt;  "string" : "string"&lt;br&gt;}</code></td>
+<td>&lt; string, string &gt; map</td>
+</tr>
+<tr>
+<td><strong>concurrency</strong>  <br><em>optional</em></td>
+<td>Concurrency policy for the job allow/forbid  <br><strong>Example</strong> : <code>"allow"</code></td>
+<td>string</td>
+</tr>
+</tbody>
+</table>
+<p><a name="member"></a></p>
+<h3 id="member">member</h3>
+<p>A member represents a cluster member node.</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Name</strong>  <br><em>optional</em></td>
+<td>Node name  <br><strong>Example</strong> : <code>"string"</code></td>
+<td>string</td>
+</tr>
+<tr>
+<td><strong>Addr</strong>  <br><em>optional</em></td>
+<td>IP Address  <br><strong>Example</strong> : <code>"string"</code></td>
+<td>string</td>
+</tr>
+<tr>
+<td><strong>Port</strong>  <br><em>optional</em></td>
+<td>Port number  <br><strong>Example</strong> : <code>0</code></td>
+<td>integer</td>
+</tr>
+<tr>
+<td><strong>Tags</strong>  <br><em>optional</em></td>
+<td>Tags asociated with this node  <br><strong>Example</strong> : <code>{&lt;br&gt;  "string" : "string"&lt;br&gt;}</code></td>
+<td>&lt; string, string &gt; map</td>
+</tr>
+<tr>
+<td><strong>Status</strong>  <br><em>optional</em></td>
+<td>The serf status of the node see: https://godoc.org/github.com/hashicorp/serf/serf#MemberStatus  <br><strong>Example</strong> : <code>0</code></td>
+<td>integer</td>
+</tr>
+<tr>
+<td><strong>ProtocolMin</strong>  <br><em>optional</em></td>
+<td>Serf protocol minimum version this node can understand or speak  <br><strong>Example</strong> : <code>0</code></td>
+<td>integer</td>
+</tr>
+<tr>
+<td><strong>ProtocolMax</strong>  <br><em>optional</em></td>
+<td><strong>Example</strong> : <code>0</code></td>
+<td>integer</td>
+</tr>
+<tr>
+<td><strong>ProtocolCur</strong>  <br><em>optional</em></td>
+<td>Serf protocol current version this node can understand or speak  <br><strong>Example</strong> : <code>0</code></td>
+<td>integer</td>
+</tr>
+<tr>
+<td><strong>DelegateMin</strong>  <br><em>optional</em></td>
+<td>Serf delegate protocol minimum version this node can understand or speak  <br><strong>Example</strong> : <code>0</code></td>
+<td>integer</td>
+</tr>
+<tr>
+<td><strong>DelegateMax</strong>  <br><em>optional</em></td>
+<td>Serf delegate protocol minimum version this node can understand or speak  <br><strong>Example</strong> : <code>0</code></td>
+<td>integer</td>
+</tr>
+<tr>
+<td><strong>DelegateCur</strong>  <br><em>optional</em></td>
+<td>Serf delegate protocol minimum version this node can understand or speak  <br><strong>Example</strong> : <code>0</code></td>
+<td>integer</td>
+</tr>
+</tbody>
+</table>
+<p><a name="execution"></a></p>
+<h3 id="execution">execution</h3>
+<p>An execution represents a timed job run.</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>job_name</strong>  <br><em>optional</em></td>
+<td>job name  <br><strong>Example</strong> : <code>"string"</code></td>
+<td>string</td>
+</tr>
+<tr>
+<td><strong>started_at</strong>  <br><em>optional</em></td>
+<td>start time of the execution  <br><strong>Example</strong> : <code>"string"</code></td>
+<td>string(date-time)</td>
+</tr>
+<tr>
+<td><strong>finished_at</strong>  <br><em>optional</em></td>
+<td>when the execution finished running  <br><strong>Example</strong> : <code>"string"</code></td>
+<td>string(date-time)</td>
+</tr>
+<tr>
+<td><strong>success</strong>  <br><em>optional</em></td>
+<td>the execution run successfuly  <br><strong>Example</strong> : <code>true</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><strong>output</strong>  <br><em>optional</em></td>
+<td>partial output of the command execution  <br><strong>Example</strong> : <code>"string"</code></td>
+<td>string</td>
+</tr>
+<tr>
+<td><strong>node_name</strong>  <br><em>optional</em></td>
+<td>name of the node that executed the command  <br><strong>Example</strong> : <code>"string"</code></td>
+<td>string</td>
+</tr>
+</tbody>
+</table></div>
               </div>
 
             
