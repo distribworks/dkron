@@ -6,10 +6,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         <meta name="author" content="Victor Castell">
-        <link rel="canonical" href="http://dkron.io/about/license/">
+        <link rel="canonical" href="http://dkron.io/docs/integration/">
         <link rel="shortcut icon" href="../../img/favicon.ico">
 
-	<title>License - Dkron - Distributed, fault tolerant job scheduling system</title>
+	<title>Integration - Dkron - Distributed, fault tolerant job scheduling system</title>
 
         <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
@@ -73,32 +73,32 @@
                 
                 
                 
-                    <li class="dropdown">
+                    <li class="dropdown active">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Docs <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                         
                             <li >
-                                <a href="../../docs/getting-started/">Getting started</a>
+                                <a href="../getting-started/">Getting started</a>
                             </li>
                         
                             <li >
-                                <a href="../../docs/guides/">Guides</a>
+                                <a href="../guides/">Guides</a>
                             </li>
                         
                             <li >
-                                <a href="../../docs/configuration/">Configuration</a>
+                                <a href="../configuration/">Configuration</a>
                             </li>
                         
                             <li >
-                                <a href="../../docs/api/">Api</a>
+                                <a href="../api/">Api</a>
                             </li>
                         
                             <li >
-                                <a href="../../docs/plugins/">Plugins</a>
+                                <a href="../plugins/">Plugins</a>
                             </li>
                         
-                            <li >
-                                <a href="../../docs/integration/">Integration</a>
+                            <li class="active">
+                                <a href="./">Integration</a>
                             </li>
                         
                         </ul>
@@ -106,16 +106,16 @@
                 
                 
                 
-                    <li class="dropdown active">
+                    <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                         
                             <li >
-                                <a href="../dkron_vs_other_software/">Dkron vs other software</a>
+                                <a href="../../about/dkron_vs_other_software/">Dkron vs other software</a>
                             </li>
                         
-                            <li class="active">
-                                <a href="./">License</a>
+                            <li >
+                                <a href="../../about/license/">License</a>
                             </li>
                         
                         </ul>
@@ -130,12 +130,12 @@
                     
 
                     <li >
-                        <a rel="next" href="../dkron_vs_other_software/">
+                        <a rel="next" href="../plugins/">
                             <i class="fa fa-arrow-left"></i> Previous
                         </a>
                     </li>
-                    <li class="disabled">
-                        <a rel="prev" >
+                    <li >
+                        <a rel="prev" href="../../about/dkron_vs_other_software/">
                             Next <i class="fa fa-arrow-right"></i>
                         </a>
                     </li>
@@ -176,18 +176,29 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
-        <li class="main active"><a href="#license">License</a></li>
+        <li class="main active"><a href="#integration">Integration</a></li>
+        
+            <li><a href="#use-with-amazon-ecs">Use with Amazon ECS</a></li>
         
     
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="license">License</h1>
-<p>Copyright (c) Victor Castell</p>
-<p>Dkron is an Open Source project licensed under the terms of
-the LGPLv3 license.  Please see <a href="http://www.gnu.org/licenses/lgpl-3.0.html">http://www.gnu.org/licenses/lgpl-3.0.html</a>
-for license text.</p></div>
+<h1 id="integration">Integration</h1>
+<h2 id="use-with-amazon-ecs">Use with Amazon ECS</h2>
+<p>To use Dkron to schedule jobs that run in containers, a wrapper ECS script is needed.</p>
+<p>Install the following snippet in the node that will run the call to ECS</p>
+<script src="https://gist.github.com/victorcoder/3ac4aae9279d7c68c486fecccc2546cc.js"></script>
+
+<h3 id="prerequisites">Prerequisites</h3>
+<p>The node that will run the call to ECS will need to have installed</p>
+<ul>
+<li>AWS cli</li>
+<li>jq</li>
+</ul>
+<h3 id="example">Example</h3>
+<p><code>ecs-run --cluster cron --task-definition cron-taskdef --container-name cron --region us-east-1 --command "rake foo"</code></p></div>
               </div>
 
             

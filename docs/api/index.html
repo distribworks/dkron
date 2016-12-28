@@ -93,6 +93,14 @@
                                 <a href="./">Api</a>
                             </li>
                         
+                            <li >
+                                <a href="../plugins/">Plugins</a>
+                            </li>
+                        
+                            <li >
+                                <a href="../integration/">Integration</a>
+                            </li>
+                        
                         </ul>
                     </li>
                 
@@ -127,7 +135,7 @@
                         </a>
                     </li>
                     <li >
-                        <a rel="prev" href="../../about/dkron_vs_other_software/">
+                        <a rel="prev" href="../plugins/">
                             Next <i class="fa fa-arrow-right"></i>
                         </a>
                     </li>
@@ -174,8 +182,6 @@
         
             <li><a href="#paths">Paths</a></li>
         
-            <li><a href="#definitions">Definitions</a></li>
-        
     
     </ul>
 </div></div>
@@ -188,7 +194,7 @@
 <p>Dkron implements a RESTful JSON API over HTTP to communicate with software clients. Dkron listens in port <code>8080</code> by default. All examples in this section assume that you're using the default port.</p>
 <p>Default API responses are unformatted JSON add the <code>pretty=true</code> param to format the response.</p>
 <h3 id="version-information">Version information</h3>
-<p><em>Version</em> : 0.9.0</p>
+<p><em>Version</em> : 0.9.2</p>
 <h3 id="uri-scheme">URI scheme</h3>
 <p><em>Host</em> : localhost:8080<br />
 <em>BasePath</em> : /v1<br />
@@ -473,7 +479,7 @@
 </thead>
 <tbody>
 <tr>
-<td><strong>200</strong></td>
+<td><strong>202</strong></td>
 <td>Successful response</td>
 <td><a href="#job">job</a></td>
 </tr>
@@ -557,215 +563,7 @@
 <h4 id="tags_9">Tags</h4>
 <ul>
 <li>members</li>
-</ul>
-<p><a name="definitions"></a></p>
-<h2 id="definitions">Definitions</h2>
-<p><a name="status"></a></p>
-<h3 id="status">status</h3>
-<p>Status represents details about the node.</p>
-<p><em>Type</em> : object</p>
-<p><a name="job"></a></p>
-<h3 id="job">job</h3>
-<p>A Job represents a scheduled task to execute.</p>
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Description</th>
-<th>Schema</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>name</strong>  <br><em>required</em></td>
-<td>Name for the job.</td>
-<td>string</td>
-</tr>
-<tr>
-<td><strong>schedule</strong>  <br><em>required</em></td>
-<td>Cron expression for the job.</td>
-<td>string</td>
-</tr>
-<tr>
-<td><strong>command</strong>  <br><em>required</em></td>
-<td>Command to run.</td>
-<td>string</td>
-</tr>
-<tr>
-<td><strong>shell</strong>  <br><em>optional</em></td>
-<td>Use shell to run the command</td>
-<td>boolean</td>
-</tr>
-<tr>
-<td><strong>owner</strong>  <br><em>optional</em></td>
-<td>Owner of the job</td>
-<td>string</td>
-</tr>
-<tr>
-<td><strong>owner_email</strong>  <br><em>optional</em></td>
-<td>Email of the owner</td>
-<td>string</td>
-</tr>
-<tr>
-<td><strong>success_count</strong>  <br><em>optional</em>  <br><em>read-only</em></td>
-<td>Number of successful executions</td>
-<td>integer</td>
-</tr>
-<tr>
-<td><strong>error_count</strong>  <br><em>optional</em>  <br><em>read-only</em></td>
-<td>Number of failed executions</td>
-<td>integer</td>
-</tr>
-<tr>
-<td><strong>last_success</strong>  <br><em>optional</em>  <br><em>read-only</em></td>
-<td>Last time this job executed successfully</td>
-<td>string(date-time)</td>
-</tr>
-<tr>
-<td><strong>last_error</strong>  <br><em>optional</em>  <br><em>read-only</em></td>
-<td>Last time this job failed</td>
-<td>string(date-time)</td>
-</tr>
-<tr>
-<td><strong>disabled</strong>  <br><em>optional</em></td>
-<td>Disabled state of the job</td>
-<td>boolean</td>
-</tr>
-<tr>
-<td><strong>tags</strong>  <br><em>optional</em></td>
-<td>Tags asociated with this node</td>
-<td>&lt; string, string &gt; map</td>
-</tr>
-<tr>
-<td><strong>retries</strong>  <br><em>optional</em></td>
-<td>Number of times to retry a failed job execution  <br><strong>Example</strong> : <code>2</code></td>
-<td>integer</td>
-</tr>
-<tr>
-<td><strong>parent_job</strong>  <br><em>optional</em></td>
-<td>The name/id of the job that will trigger the execution of this job  <br><strong>Example</strong> : <code>"parent_job"</code></td>
-<td>string</td>
-</tr>
-<tr>
-<td><strong>dependent_jobs</strong>  <br><em>optional</em>  <br><em>read-only</em></td>
-<td>Array containing the jobs that depends on this one  <br><strong>Example</strong> : <code>""</code></td>
-<td>string</td>
-</tr>
-</tbody>
-</table>
-<p><a name="member"></a></p>
-<h3 id="member">member</h3>
-<p>A member represents a cluster member node.</p>
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Description</th>
-<th>Schema</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Name</strong>  <br><em>optional</em></td>
-<td>Node name</td>
-<td>string</td>
-</tr>
-<tr>
-<td><strong>Addr</strong>  <br><em>optional</em></td>
-<td>IP Address</td>
-<td>string</td>
-</tr>
-<tr>
-<td><strong>Port</strong>  <br><em>optional</em></td>
-<td>Port number</td>
-<td>integer</td>
-</tr>
-<tr>
-<td><strong>Tags</strong>  <br><em>optional</em></td>
-<td>Tags asociated with this node</td>
-<td>&lt; string, string &gt; map</td>
-</tr>
-<tr>
-<td><strong>Status</strong>  <br><em>optional</em></td>
-<td>The serf status of the node see: https://godoc.org/github.com/hashicorp/serf/serf#MemberStatus</td>
-<td>integer</td>
-</tr>
-<tr>
-<td><strong>ProtocolMin</strong>  <br><em>optional</em></td>
-<td>Serf protocol minimum version this node can understand or speak</td>
-<td>integer</td>
-</tr>
-<tr>
-<td><strong>ProtocolMax</strong>  <br><em>optional</em></td>
-<td>integer</td>
-<td></td>
-</tr>
-<tr>
-<td><strong>ProtocolCur</strong>  <br><em>optional</em></td>
-<td>Serf protocol current version this node can understand or speak</td>
-<td>integer</td>
-</tr>
-<tr>
-<td><strong>DelegateMin</strong>  <br><em>optional</em></td>
-<td>Serf delegate protocol minimum version this node can understand or speak</td>
-<td>integer</td>
-</tr>
-<tr>
-<td><strong>DelegateMax</strong>  <br><em>optional</em></td>
-<td>Serf delegate protocol minimum version this node can understand or speak</td>
-<td>integer</td>
-</tr>
-<tr>
-<td><strong>DelegateCur</strong>  <br><em>optional</em></td>
-<td>Serf delegate protocol minimum version this node can understand or speak</td>
-<td>integer</td>
-</tr>
-</tbody>
-</table>
-<p><a name="execution"></a></p>
-<h3 id="execution">execution</h3>
-<p>An execution represents a timed job run.</p>
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Description</th>
-<th>Schema</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>job_name</strong>  <br><em>optional</em></td>
-<td>job name</td>
-<td>string</td>
-</tr>
-<tr>
-<td><strong>started_at</strong>  <br><em>optional</em></td>
-<td>start time of the execution</td>
-<td>string(date-time)</td>
-</tr>
-<tr>
-<td><strong>finished_at</strong>  <br><em>optional</em></td>
-<td>when the execution finished running</td>
-<td>string(date-time)</td>
-</tr>
-<tr>
-<td><strong>success</strong>  <br><em>optional</em></td>
-<td>the execution run successfuly</td>
-<td>boolean</td>
-</tr>
-<tr>
-<td><strong>output</strong>  <br><em>optional</em></td>
-<td>partial output of the command execution</td>
-<td>string</td>
-</tr>
-<tr>
-<td><strong>node_name</strong>  <br><em>optional</em></td>
-<td>name of the node that executed the command</td>
-<td>string</td>
-</tr>
-</tbody>
-</table></div>
+</ul></div>
               </div>
 
             

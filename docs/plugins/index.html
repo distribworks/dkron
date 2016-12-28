@@ -6,10 +6,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         <meta name="author" content="Victor Castell">
-        <link rel="canonical" href="http://dkron.io/docs/guides/">
+        <link rel="canonical" href="http://dkron.io/docs/plugins/">
         <link rel="shortcut icon" href="../../img/favicon.ico">
 
-	<title>Guides - Dkron - Distributed, fault tolerant job scheduling system</title>
+	<title>Plugins - Dkron - Distributed, fault tolerant job scheduling system</title>
 
         <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
@@ -81,8 +81,8 @@
                                 <a href="../getting-started/">Getting started</a>
                             </li>
                         
-                            <li class="active">
-                                <a href="./">Guides</a>
+                            <li >
+                                <a href="../guides/">Guides</a>
                             </li>
                         
                             <li >
@@ -93,8 +93,8 @@
                                 <a href="../api/">Api</a>
                             </li>
                         
-                            <li >
-                                <a href="../plugins/">Plugins</a>
+                            <li class="active">
+                                <a href="./">Plugins</a>
                             </li>
                         
                             <li >
@@ -130,12 +130,12 @@
                     
 
                     <li >
-                        <a rel="next" href="../getting-started/">
+                        <a rel="next" href="../api/">
                             <i class="fa fa-arrow-left"></i> Previous
                         </a>
                     </li>
                     <li >
-                        <a rel="prev" href="../configuration/">
+                        <a rel="prev" href="../integration/">
                             Next <i class="fa fa-arrow-right"></i>
                         </a>
                     </li>
@@ -176,136 +176,97 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
-        <li class="main active"><a href="#guides">Guides</a></li>
+        <li class="main active"><a href="#intro">Intro</a></li>
         
-            <li><a href="#target-nodes-spec">Target nodes spec</a></li>
+            <li><a href="#how-it-works">How it Works</a></li>
         
-            <li><a href="#cron-expression-format">CRON Expression Format</a></li>
+            <li><a href="#installing-a-plugin">Installing a Plugin</a></li>
         
-            <li><a href="#job-chaining">Job chaining</a></li>
+            <li><a href="#execution-processors">Execution Processors</a></li>
         
-            <li><a href="#logging-output">Logging output</a></li>
+            <li><a href="#logging-processors">Logging processors</a></li>
         
-            <li><a href="#concurrency">Concurrency</a></li>
+            <li><a href="#using-plugins">Using plugins</a></li>
+        
+            <li><a href="#developing-a-plugin">Developing a Plugin</a></li>
         
     
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="guides">Guides</h1>
-<h2 id="target-nodes-spec">Target nodes spec</h2>
-<p>You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run.</p>
-<h3 id="examples">Examples:</h3>
-<p>Target all nodes with a tag:</p>
+<h1 id="intro">Intro</h1>
+<p>Plugins in Dkron allow you to add funcionality that integrates with the workflow of the job execution in Dkron. It's a powerful system that allows you to extend and adapt Dkron to your special needs.</p>
+<p>This page documents the basics of how the plugin system in Dkron works, and how to setup a basic development environment for plugin development if you're writing a Dkron plugin.</p>
+<h2 id="how-it-works">How it Works</h2>
+<p>Dkron execution execution processors are provided via plugins. Each plugin exposes functionality for modifying the execution. Plugins are executed as a separate process and communicate with the main Dkron binary over an RPC interface.</p>
+<p>The code within the binaries must adhere to certain interfaces. The network communication and RPC is handled automatically by higher-level libraries. The exact interface to implement is documented in its respective documentation section.</p>
+<h2 id="installing-a-plugin">Installing a Plugin</h2>
+<p>Dkron searches for plugins at startup, to install a plugin just drop the binary in one of the following locations:</p>
+<ol>
+<li>/etc/dkron/plugins</li>
+<li>Dkron executable directory</li>
+</ol>
+<h2 id="execution-processors">Execution Processors</h2>
+<p>Processor plugins are called when an execution response has been received. They are passed the resulting execution data and configuration parameters, this plugins can perform a variety of operations with the execution and it's very flexible and per Job, examples of operations this plugins can do:</p>
+<ul>
+<li>Execution output storage, forwarding or redirection.</li>
+<li>Notification</li>
+<li>Monitoring</li>
+</ul>
+<p>Currently Dkron provides you with some stock plugins but the list keeps growing. Some of the features previously implemented in the application will be progessively moved to plugins.</p>
+<h2 id="logging-processors">Logging processors</h2>
+<p>Logging output of each job execution can be modified by using processor plugins.</p>
+<p>Processor plugins can be used to redirect the output of a job execution to different targets.</p>
+<p>Processors are set per job using the <code>processors</code> property. <code>processors</code> is an object of processor plugins to use and it's corresponding configuration. To know what parameters each plugin accepts refer to the plugin documentation.</p>
+<h3 id="built-in-logging-processors">Built-in logging processors</h3>
+<p>Depending on your needs the execution log can be redirected using the following plugins:</p>
+<ol>
+<li>not specified - Store the output in the key value store (Slow performance, good for testing, default method)</li>
+<li>log - Output the execution log to Dkron stdout (Good performance, needs parsing)</li>
+<li>syslog - Output to the syslog (Good performance, needs parsing)</li>
+<li>files - Output to multiple files (Good performance, needs parsing)</li>
+</ol>
+<p>All plugins accepts one configuration option: <code>forward</code> Indicated if the plugin must forward the original execution output. This allows for chaining plugins and sending output to different targets at the same time.</p>
+<h2 id="using-plugins">Using plugins</h2>
+<p>For each job you can configure an arbitrary number of plugins.</p>
 <pre><code>{
     &quot;name&quot;: &quot;job_name&quot;,
     &quot;command&quot;: &quot;/bin/true&quot;,
     &quot;schedule&quot;: &quot;@every 2m&quot;,
     &quot;tags&quot;: {
         &quot;role&quot;: &quot;web&quot;
+    },
+    &quot;processors&quot;: {
+        &quot;files&quot;: {
+            &quot;forward&quot;: true
+        }
     }
 }
 </code></pre>
 
-<p>Target only two nodes of a group of nodes with a tag:</p>
-<pre><code>{
-    &quot;name&quot;: &quot;job_name&quot;,
-    &quot;command&quot;: &quot;/bin/true&quot;,
-    &quot;schedule&quot;: &quot;@every 2m&quot;,
-    &quot;tags&quot;: {
-        &quot;role&quot;: &quot;web:2&quot;
-    }
+<h2 id="developing-a-plugin">Developing a Plugin</h2>
+<div class="alert alert-warning" role="alert">Advanced topic! Plugin development is a highly advanced topic, and is not required knowledge for day-to-day usage. If you don't plan on writing any plugins, we recommend not reading the following section of the documentation.</div>
+
+<p>Developing a plugin is simple. The only knowledge necessary to write a plugin is basic command-line skills and basic knowledge of the Go programming language.</p>
+<p>Note: A common pitfall is not properly setting up a <code>$GOPATH</code>. This can lead to strange errors. You can read more about this here to familiarize yourself.</p>
+<p>Create a new Go project somewhere in your <code>$GOPATH</code>. If you're a GitHub user, we recommend creating the project in the directory <code>$GOPATH/src/github.com/USERNAME/dkron-NAME-TYPE</code>, where <code>USERNAME</code> is your GitHub username and <code>NAME</code> is the name of the plugin you're developing. This structure is what Go expects and simplifies things down the road.</p>
+<p>With the directory made, create a main.go file. This project will be a binary so the package is "main":</p>
+<pre><code>package main
+
+import (
+    &quot;github.com/victorcoder/dkron/plugin&quot;
+)
+
+func main() {
+    plugin.Serve(&amp;plugin.ServeOpts{
+        Processor: new(MyPlugin),
+    })
 }
 </code></pre>
 
-<p>Dkron will try to run the job in the amount of nodes indicated by that count having that tag.</p>
-<h2 id="cron-expression-format">CRON Expression Format</h2>
-<p>A cron expression represents a set of times, using 6 space-separated fields.</p>
-<pre><code>Field name   | Mandatory? | Allowed values  | Allowed special characters
-----------   | ---------- | --------------  | --------------------------
-Seconds      | Yes        | 0-59            | * / , -
-Minutes      | Yes        | 0-59            | * / , -
-Hours        | Yes        | 0-23            | * / , -
-Day of month | Yes        | 1-31            | * / , - ?
-Month        | Yes        | 1-12 or JAN-DEC | * / , -
-Day of week  | Yes        | 0-6 or SUN-SAT  | * / , - ?
-</code></pre>
-<p>Note: Month and Day-of-week field values are case insensitive.  "SUN", "Sun",
-and "sun" are equally accepted.</p>
-<p>Special Characters</p>
-<p>Asterisk ( * )</p>
-<p>The asterisk indicates that the cron expression will match for all values of the
-field; e.g., using an asterisk in the 5th field (month) would indicate every
-month.</p>
-<p>Slash ( / )</p>
-<p>Slashes are used to describe increments of ranges. For example 3-59/15 in the
-1st field (minutes) would indicate the 3rd minute of the hour and every 15
-minutes thereafter. The form "*\/..." is equivalent to the form "first-last/...",
-that is, an increment over the largest possible range of the field.  The form
-"N/..." is accepted as meaning "N-MAX/...", that is, starting at N, use the
-increment until the end of that specific range.  It does not wrap around.</p>
-<p>Comma ( , )</p>
-<p>Commas are used to separate items of a list. For example, using "MON,WED,FRI" in
-the 5th field (day of week) would mean Mondays, Wednesdays and Fridays.</p>
-<p>Hyphen ( - )</p>
-<p>Hyphens are used to define ranges. For example, 9-17 would indicate every
-hour between 9am and 5pm inclusive.</p>
-<p>Question mark ( ? )</p>
-<p>Question mark may be used instead of '*' for leaving either day-of-month or
-day-of-week blank.</p>
-<h3 id="predefined-schedules">Predefined schedules</h3>
-<p>You may use one of several pre-defined schedules in place of a cron expression.</p>
-<pre><code>Entry                  | Description                                | Equivalent To
------                  | -----------                                | -------------
-@yearly (or @annually) | Run once a year, midnight, Jan. 1st        | 0 0 0 1 1 *
-@monthly               | Run once a month, midnight, first of month | 0 0 0 1 * *
-@weekly                | Run once a week, midnight on Sunday        | 0 0 0 * * 0
-@daily (or @midnight)  | Run once a day, midnight                   | 0 0 0 * * *
-@hourly                | Run once an hour, beginning of hour        | 0 0 * * * *
-@minutely              | Run once a minute, beginning of minute     | 0 * * * * *
-</code></pre>
-<h3 id="intervals">Intervals</h3>
-<p>You may also schedule a job to execute at fixed intervals.  This is supported by
-formatting the cron spec like this:</p>
-<pre><code>@every &lt;duration&gt;
-</code></pre>
-<p>where "duration" is a string accepted by time.ParseDuration
-(http://golang.org/pkg/time/#ParseDuration).</p>
-<p>For example, "@every 1h30m10s" would indicate a schedule that activates every
-1 hour, 30 minutes, 10 seconds.</p>
-<p>Note: The interval does not take the job runtime into account.  For example,
-if a job takes 3 minutes to run, and it is scheduled to run every 5 minutes,
-it will have only 2 minutes of idle time between each run.</p>
-<h3 id="fixed-times">Fixed times</h3>
-<p>You may also want to schedule a job to be executed once. This is supported by
-formatting the cron spec like this:</p>
-<pre><code>@at &lt;datetime&gt;
-</code></pre>
-<p>Where "datetime" is a string accepted by time.Parse in RFC3339 format
-(https://golang.org/pkg/time/#Parse).</p>
-<p>For example, "@at 2018-01-02T15:04:00Z" would run the job on the specified date and time
-assuming UTC timezone.</p>
-<h3 id="time-zones">Time zones</h3>
-<p>All interpretation and scheduling is done in the machine's local time zone (as
-provided by the Go time package (http://www.golang.org/pkg/time).</p>
-<p>Be aware that jobs scheduled during daylight-savings leap-ahead transitions will
-not be run!</p>
-<h2 id="job-chaining">Job chaining</h2>
-<p>You can set some jobs to run after other job is executed. To setup a job that will be executed after any other given job, just set the <code>parent_job</code> property when saving the new job.</p>
-<p>The dependent job will be executed after the main job finished a successful execution.</p>
-<p>Child jobs schedule property will be ignored if it's present.</p>
-<h2 id="logging-output">Logging output</h2>
-<p>Logging output of each job execution can be modified by using processor plugins.</p>
-<p>Processor plugins can be used to redirect the output of a job execution to different targets.</p>
-<p>Refer to the <a href="../plugins/">plugins documentation</a> from more info</p>
-<h2 id="concurrency">Concurrency</h2>
-<p>Jobs can be configured to allow overlapping executions or forbid them. </p>
-<p>Concurrency property accepts two option: </p>
-<ul>
-<li><strong>allow</strong> (default): Allow concurrent job executions.</li>
-<li><strong>forbid</strong>: If the job is already running don't send the execution, it will skip the executions until the next schedule.</li>
-</ul></div>
+<p>And that's basically it! You'll have to change the argument given to plugin.Serve to be your actual plugin, but that is the only change you'll have to make. The argument should be a structure implementing one of the plugin interfaces (depending on what sort of plugin you're creating).</p>
+<p>Dkron plugins must follow a very specific naming convention of <code>dkron-TYPE-NAME</code>. For example, <code>dkron-processor-files</code>, which tells Dkron that the plugin is a processor that can be referenced as "files".</p></div>
               </div>
 
             
