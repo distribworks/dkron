@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-docker-compose up -d etcd
-export COMPOSE_ETCD_PORT=`docker port dkron_etcd_1 4001/tcp | cut -d":" -f 2`
-export DKRON_BACKEND_MACHINE=`docker-machine ip default`:$COMPOSE_ETCD_PORT
-go test -v $(glide novendor) $1
+NOVENDOR=$(docker-compose run dkron glide novendor | tr -d '\r')
+
+docker-compose run dkron scripts/validate-gofmt
+docker-compose run dkron go vet $NOVENDOR
+docker-compose run -e DKRON_BACKEND_MACHINE=etcd:4001 dkron go test -v $NOVENDOR $1

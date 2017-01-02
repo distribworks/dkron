@@ -13,7 +13,11 @@ type SyslogOutput struct {
 func (l *SyslogOutput) Process(args *dkron.ExecutionProcessorArgs) dkron.Execution {
 	logger, err := gsyslog.NewLogger(gsyslog.LOG_INFO, "CRON", "[dkron]")
 	if err != nil {
+<<<<<<< HEAD:builtin/bins/dkron-processor-syslog/syslog_output.go
 		log.Error("Error creating logger")
+=======
+		log.WithError(err).Error("Error creating logger")
+>>>>>>> master:builtin/bins/dkron-processor-syslog/syslog_output.go
 		return args.Execution
 	}
 	logger.WriteLevel(gsyslog.LOG_INFO, args.Execution.Output)

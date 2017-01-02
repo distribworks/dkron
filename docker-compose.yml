@@ -26,12 +26,9 @@ services:
 
   dkron:
     depends_on:
-      # Uncomment to use consul
       - consul
-      # Uncommend to use etcd
-      # - etcd
-      # Uncommend to use zk
-      # - zk
+      - etcd
+      - zk
     ports:
       - "8080"
     build: .

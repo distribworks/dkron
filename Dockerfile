@@ -8,16 +8,13 @@ RUN wget https://github.com/Masterminds/glide/releases/download/v0.12.3/glide-v0
     mv /tmp/linux-amd64/glide /usr/local/bin/ && \
     rm -rf /tmp/glide.tar.gz /tmp/linux-amd64
 
-RUN mkdir -p /gopath/src/github.com/victorcoder/dkron
 WORKDIR /gopath/src/github.com/victorcoder/dkron
 
 ENV GOPATH /gopath
 ENV PATH $PATH:/usr/local/go/bin:$GOPATH/bin
 
-COPY glide.yaml ./glide.yaml
-COPY glide.lock ./glide.lock
+COPY . ./
 RUN glide install
 
-COPY . ./
 RUN go build *.go
 CMD ["/gopath/src/github.com/victorcoder/dkron/main"]

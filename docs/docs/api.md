@@ -11,7 +11,7 @@ Default API responses are unformatted JSON add the `pretty=true` param to format
 
 
 ### Version information
-*Version* : 0.9.0
+*Version* : 0.9.2
 
 
 ### URI scheme
@@ -54,6 +54,24 @@ Gets `Status` object.
 * default
 
 
+#### Example HTTP request
+
+##### Request path
+```
+json :
+"/"
+```
+
+
+#### Example HTTP response
+
+##### Response 200
+```
+json :
+{ }
+```
+
+
 <a name="listexecutionsbyjob"></a>
 ### GET /executions/{job_name}
 
@@ -63,9 +81,9 @@ List executions.
 
 #### Parameters
 
-|Type|Name|Description|Schema|Default|
-|---|---|---|---|---|
-|**Path**|**job_name**  <br>*required*|The job that owns the executions to be fetched.|string||
+|Type|Name|Description|Schema|
+|---|---|---|---|
+|**Path**|**job_name**  <br>*required*|The job that owns the executions to be fetched.|string|
 
 
 #### Responses
@@ -78,6 +96,24 @@ List executions.
 #### Tags
 
 * executions
+
+
+#### Example HTTP request
+
+##### Request path
+```
+json :
+"/executions/string"
+```
+
+
+#### Example HTTP response
+
+##### Response 200
+```
+json :
+"array"
+```
 
 
 <a name="getjobs"></a>
@@ -99,6 +135,24 @@ List jobs.
 * jobs
 
 
+#### Example HTTP request
+
+##### Request path
+```
+json :
+"/jobs"
+```
+
+
+#### Example HTTP response
+
+##### Response 200
+```
+json :
+"array"
+```
+
+
 <a name="createorupdatejob"></a>
 ### POST /jobs
 
@@ -108,9 +162,9 @@ Create or updates a new job.
 
 #### Parameters
 
-|Type|Name|Description|Schema|Default|
-|---|---|---|---|---|
-|**Body**|**body**  <br>*required*|Updated job object|[job](#job)||
+|Type|Name|Description|Schema|
+|---|---|---|---|
+|**Body**|**body**  <br>*required*|Updated job object|[job](#job)|
 
 
 #### Responses
@@ -125,6 +179,75 @@ Create or updates a new job.
 * jobs
 
 
+#### Example HTTP request
+
+##### Request path
+```
+json :
+"/jobs"
+```
+
+
+##### Request body
+```
+json :
+{
+  "name" : "string",
+  "schedule" : "string",
+  "command" : "string",
+  "shell" : true,
+  "owner" : "string",
+  "owner_email" : "string",
+  "success_count" : 0,
+  "error_count" : 0,
+  "last_success" : "string",
+  "last_error" : "string",
+  "disabled" : true,
+  "tags" : {
+    "string" : "string"
+  },
+  "retries" : 2,
+  "parent_job" : "parent_job",
+  "dependent_jobs" : "",
+  "processors" : {
+    "string" : "string"
+  },
+  "concurrency" : "allow"
+}
+```
+
+
+#### Example HTTP response
+
+##### Response 201
+```
+json :
+{
+  "name" : "string",
+  "schedule" : "string",
+  "command" : "string",
+  "shell" : true,
+  "owner" : "string",
+  "owner_email" : "string",
+  "success_count" : 0,
+  "error_count" : 0,
+  "last_success" : "string",
+  "last_error" : "string",
+  "disabled" : true,
+  "tags" : {
+    "string" : "string"
+  },
+  "retries" : 2,
+  "parent_job" : "parent_job",
+  "dependent_jobs" : "",
+  "processors" : {
+    "string" : "string"
+  },
+  "concurrency" : "allow"
+}
+```
+
+
 <a name="deletejob"></a>
 ### DELETE /jobs/{job_name}
 
@@ -134,9 +257,9 @@ Delete a job.
 
 #### Parameters
 
-|Type|Name|Description|Schema|Default|
-|---|---|---|---|---|
-|**Path**|**job_name**  <br>*required*|The job that needs to be deleted.|string||
+|Type|Name|Description|Schema|
+|---|---|---|---|
+|**Path**|**job_name**  <br>*required*|The job that needs to be deleted.|string|
 
 
 #### Responses
@@ -149,6 +272,46 @@ Delete a job.
 #### Tags
 
 * jobs
+
+
+#### Example HTTP request
+
+##### Request path
+```
+json :
+"/jobs/string"
+```
+
+
+#### Example HTTP response
+
+##### Response 200
+```
+json :
+{
+  "name" : "string",
+  "schedule" : "string",
+  "command" : "string",
+  "shell" : true,
+  "owner" : "string",
+  "owner_email" : "string",
+  "success_count" : 0,
+  "error_count" : 0,
+  "last_success" : "string",
+  "last_error" : "string",
+  "disabled" : true,
+  "tags" : {
+    "string" : "string"
+  },
+  "retries" : 2,
+  "parent_job" : "parent_job",
+  "dependent_jobs" : "",
+  "processors" : {
+    "string" : "string"
+  },
+  "concurrency" : "allow"
+}
+```
 
 
 <a name="showjobbyname"></a>
@@ -160,9 +323,9 @@ Show a job.
 
 #### Parameters
 
-|Type|Name|Description|Schema|Default|
-|---|---|---|---|---|
-|**Path**|**job_name**  <br>*required*|The job that needs to be fetched.|string||
+|Type|Name|Description|Schema|
+|---|---|---|---|
+|**Path**|**job_name**  <br>*required*|The job that needs to be fetched.|string|
 
 
 #### Responses
@@ -175,6 +338,46 @@ Show a job.
 #### Tags
 
 * jobs
+
+
+#### Example HTTP request
+
+##### Request path
+```
+json :
+"/jobs/string"
+```
+
+
+#### Example HTTP response
+
+##### Response 200
+```
+json :
+{
+  "name" : "string",
+  "schedule" : "string",
+  "command" : "string",
+  "shell" : true,
+  "owner" : "string",
+  "owner_email" : "string",
+  "success_count" : 0,
+  "error_count" : 0,
+  "last_success" : "string",
+  "last_error" : "string",
+  "disabled" : true,
+  "tags" : {
+    "string" : "string"
+  },
+  "retries" : 2,
+  "parent_job" : "parent_job",
+  "dependent_jobs" : "",
+  "processors" : {
+    "string" : "string"
+  },
+  "concurrency" : "allow"
+}
+```
 
 
 <a name="runjob"></a>
@@ -186,21 +389,61 @@ Executes a job.
 
 #### Parameters
 
-|Type|Name|Description|Schema|Default|
-|---|---|---|---|---|
-|**Path**|**job_name**  <br>*required*|The job that needs to be run.|string||
+|Type|Name|Description|Schema|
+|---|---|---|---|
+|**Path**|**job_name**  <br>*required*|The job that needs to be run.|string|
 
 
 #### Responses
 
 |HTTP Code|Description|Schema|
 |---|---|---|
-|**200**|Successful response|[job](#job)|
+|**202**|Successful response|[job](#job)|
 
 
 #### Tags
 
 * jobs
+
+
+#### Example HTTP request
+
+##### Request path
+```
+json :
+"/jobs/string"
+```
+
+
+#### Example HTTP response
+
+##### Response 202
+```
+json :
+{
+  "name" : "string",
+  "schedule" : "string",
+  "command" : "string",
+  "shell" : true,
+  "owner" : "string",
+  "owner_email" : "string",
+  "success_count" : 0,
+  "error_count" : 0,
+  "last_success" : "string",
+  "last_error" : "string",
+  "disabled" : true,
+  "tags" : {
+    "string" : "string"
+  },
+  "retries" : 2,
+  "parent_job" : "parent_job",
+  "dependent_jobs" : "",
+  "processors" : {
+    "string" : "string"
+  },
+  "concurrency" : "allow"
+}
+```
 
 
 <a name="getleader"></a>
@@ -222,6 +465,38 @@ List members.
 * default
 
 
+#### Example HTTP request
+
+##### Request path
+```
+json :
+"/leader"
+```
+
+
+#### Example HTTP response
+
+##### Response 200
+```
+json :
+{
+  "Name" : "string",
+  "Addr" : "string",
+  "Port" : 0,
+  "Tags" : {
+    "string" : "string"
+  },
+  "Status" : 0,
+  "ProtocolMin" : 0,
+  "ProtocolMax" : 0,
+  "ProtocolCur" : 0,
+  "DelegateMin" : 0,
+  "DelegateMax" : 0,
+  "DelegateCur" : 0
+}
+```
+
+
 <a name="leave"></a>
 ### GET /leave
 
@@ -239,6 +514,24 @@ Force the node to leave the cluster.
 #### Tags
 
 * default
+
+
+#### Example HTTP request
+
+##### Request path
+```
+json :
+"/leave"
+```
+
+
+#### Example HTTP response
+
+##### Response 200
+```
+json :
+"array"
+```
 
 
 <a name="getmember"></a>
@@ -260,6 +553,24 @@ List members.
 * members
 
 
+#### Example HTTP request
+
+##### Request path
+```
+json :
+"/members"
+```
+
+
+#### Example HTTP response
+
+##### Response 200
+```
+json :
+"array"
+```
+
+
 
 
 <a name="definitions"></a>
@@ -279,21 +590,23 @@ A Job represents a scheduled task to execute.
 
 |Name|Description|Schema|
 |---|---|---|
-|**name**  <br>*required*|Name for the job.|string|
-|**schedule**  <br>*required*|Cron expression for the job.|string|
-|**command**  <br>*required*|Command to run.|string|
-|**shell**  <br>*optional*|Use shell to run the command|boolean|
-|**owner**  <br>*optional*|Owner of the job|string|
-|**owner_email**  <br>*optional*|Email of the owner|string|
-|**success_count**  <br>*optional*  <br>*read-only*|Number of successful executions|integer|
-|**error_count**  <br>*optional*  <br>*read-only*|Number of failed executions|integer|
-|**last_success**  <br>*optional*  <br>*read-only*|Last time this job executed successfully|string(date-time)|
-|**last_error**  <br>*optional*  <br>*read-only*|Last time this job failed|string(date-time)|
-|**disabled**  <br>*optional*|Disabled state of the job|boolean|
-|**tags**  <br>*optional*|Tags asociated with this node|< string, string > map|
+|**name**  <br>*required*|Name for the job.  <br>**Example** : `"string"`|string|
+|**schedule**  <br>*required*|Cron expression for the job.  <br>**Example** : `"string"`|string|
+|**command**  <br>*required*|Command to run.  <br>**Example** : `"string"`|string|
+|**shell**  <br>*optional*|Use shell to run the command  <br>**Example** : `true`|boolean|
+|**owner**  <br>*optional*|Owner of the job  <br>**Example** : `"string"`|string|
+|**owner_email**  <br>*optional*|Email of the owner  <br>**Example** : `"string"`|string|
+|**success_count**  <br>*optional*  <br>*read-only*|Number of successful executions  <br>**Example** : `0`|integer|
+|**error_count**  <br>*optional*  <br>*read-only*|Number of failed executions  <br>**Example** : `0`|integer|
+|**last_success**  <br>*optional*  <br>*read-only*|Last time this job executed successfully  <br>**Example** : `"string"`|string(date-time)|
+|**last_error**  <br>*optional*  <br>*read-only*|Last time this job failed  <br>**Example** : `"string"`|string(date-time)|
+|**disabled**  <br>*optional*|Disabled state of the job  <br>**Example** : `true`|boolean|
+|**tags**  <br>*optional*|Target nodes tags of this job  <br>**Example** : `{<br>  "string" : "string"<br>}`|< string, string > map|
 |**retries**  <br>*optional*|Number of times to retry a failed job execution  <br>**Example** : `2`|integer|
 |**parent_job**  <br>*optional*|The name/id of the job that will trigger the execution of this job  <br>**Example** : `"parent_job"`|string|
-|**dependent_jobs**  <br>*optional*  <br>*read-only*|Array containing the jobs that depends on this one  <br>**Example** : `""`|string|
+|**dependent_jobs**  <br>*optional*  <br>*read-only*|Array containing the jobs that depends on this one  <br>**Example** : `""`|< object > array|
+|**processors**  <br>*optional*|Processor plugins used to process executions results of this job  <br>**Example** : `{<br>  "string" : "string"<br>}`|< string, string > map|
+|**concurrency**  <br>*optional*|Concurrency policy for the job allow/forbid  <br>**Example** : `"allow"`|string|
 
 
 <a name="member"></a>
@@ -303,17 +616,17 @@ A member represents a cluster member node.
 
 |Name|Description|Schema|
 |---|---|---|
-|**Name**  <br>*optional*|Node name|string|
-|**Addr**  <br>*optional*|IP Address|string|
-|**Port**  <br>*optional*|Port number|integer|
-|**Tags**  <br>*optional*|Tags asociated with this node|< string, string > map|
-|**Status**  <br>*optional*|The serf status of the node see: https://godoc.org/github.com/hashicorp/serf/serf#MemberStatus|integer|
-|**ProtocolMin**  <br>*optional*|Serf protocol minimum version this node can understand or speak|integer|
-|**ProtocolMax**  <br>*optional*||integer|
-|**ProtocolCur**  <br>*optional*|Serf protocol current version this node can understand or speak|integer|
-|**DelegateMin**  <br>*optional*|Serf delegate protocol minimum version this node can understand or speak|integer|
-|**DelegateMax**  <br>*optional*|Serf delegate protocol minimum version this node can understand or speak|integer|
-|**DelegateCur**  <br>*optional*|Serf delegate protocol minimum version this node can understand or speak|integer|
+|**Name**  <br>*optional*|Node name  <br>**Example** : `"string"`|string|
+|**Addr**  <br>*optional*|IP Address  <br>**Example** : `"string"`|string|
+|**Port**  <br>*optional*|Port number  <br>**Example** : `0`|integer|
+|**Tags**  <br>*optional*|Tags asociated with this node  <br>**Example** : `{<br>  "string" : "string"<br>}`|< string, string > map|
+|**Status**  <br>*optional*|The serf status of the node see: https://godoc.org/github.com/hashicorp/serf/serf#MemberStatus  <br>**Example** : `0`|integer|
+|**ProtocolMin**  <br>*optional*|Serf protocol minimum version this node can understand or speak  <br>**Example** : `0`|integer|
+|**ProtocolMax**  <br>*optional*|**Example** : `0`|integer|
+|**ProtocolCur**  <br>*optional*|Serf protocol current version this node can understand or speak  <br>**Example** : `0`|integer|
+|**DelegateMin**  <br>*optional*|Serf delegate protocol minimum version this node can understand or speak  <br>**Example** : `0`|integer|
+|**DelegateMax**  <br>*optional*|Serf delegate protocol minimum version this node can understand or speak  <br>**Example** : `0`|integer|
+|**DelegateCur**  <br>*optional*|Serf delegate protocol minimum version this node can understand or speak  <br>**Example** : `0`|integer|
 
 
 <a name="execution"></a>
@@ -323,12 +636,12 @@ An execution represents a timed job run.
 
 |Name|Description|Schema|
 |---|---|---|
-|**job_name**  <br>*optional*|job name|string|
-|**started_at**  <br>*optional*|start time of the execution|string(date-time)|
-|**finished_at**  <br>*optional*|when the execution finished running|string(date-time)|
-|**success**  <br>*optional*|the execution run successfuly|boolean|
-|**output**  <br>*optional*|partial output of the command execution|string|
-|**node_name**  <br>*optional*|name of the node that executed the command|string|
+|**job_name**  <br>*optional*|job name  <br>**Example** : `"string"`|string|
+|**started_at**  <br>*optional*|start time of the execution  <br>**Example** : `"string"`|string(date-time)|
+|**finished_at**  <br>*optional*|when the execution finished running  <br>**Example** : `"string"`|string(date-time)|
+|**success**  <br>*optional*|the execution run successfuly  <br>**Example** : `true`|boolean|
+|**output**  <br>*optional*|partial output of the command execution  <br>**Example** : `"string"`|string|
+|**node_name**  <br>*optional*|name of the node that executed the command  <br>**Example** : `"string"`|string|
 
 
 
