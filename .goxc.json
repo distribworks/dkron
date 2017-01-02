@@ -18,6 +18,9 @@
 				"maintainer": "Victor Castell (https://github.com/victorcoder)",
         		"maintainer-email": "victor@victorcastell.com"
 			},
+			"metadata-deb": {
+				"Homepage": "https://dkron.io"
+			},
 			"other-mapped-files": {
 				"/": "debian/",
 				"/usr/share/dkron/static": "static/",
