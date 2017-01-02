@@ -346,6 +346,9 @@ footer[role="contentinfo"] p {
   padding: 3em 0;
   text-align: center;
 }
+.page-home #users-mask .users {
+  padding-bottom: 20px;
+}
 .page-home #use-cases-mask {
   background: #1F779F;
   /* Old browsers */
