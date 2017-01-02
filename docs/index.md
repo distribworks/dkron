@@ -1,7 +1,5 @@
 <div class="container">
-
-<h2>Characteristics</h2>
-
+  <h2>Characteristics</h2>
   <div id="easy-integration" class="row vertical-align">
     <img src="img/integration.png" />
     <div class="col-md-9">
@@ -22,8 +20,7 @@
     <img src="img/targets.png" />
     <div class="col-md-9">
       <h3>Flexible targets</h3>
-      <p>Simple but powerful tag-based target node selection for jobs. Tag node count allows to run jobs in an arbitrary number nodes in the same group or groups.</p>
+      <p>Simple but powerful tag-based target node selection for jobs. Tag node count allows to run jobs in an arbitrary number of nodes in the same group or groups.</p>
     </div>
   </div>
-
 </div>

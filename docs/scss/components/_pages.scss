@@ -69,7 +69,18 @@
       margin-bottom:4em;
     }
   }
-
+  
+  #users-mask {
+    color: #fff;
+    background-color: #333;
+    padding: 3em 0;
+    text-align: center;
+    
+    .users {
+      padding-bottom: 20px;
+    }
+  }
+  
   #use-cases-mask {
     @include gradient-dkron;
     padding:3em 0;

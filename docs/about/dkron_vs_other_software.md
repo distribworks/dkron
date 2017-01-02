@@ -4,8 +4,6 @@
 
 Airbnb's Chronos is a job scheduler that is similar to dkron, it's distributed and fault tolerant thanks to the use of Zookeeper and Apache Mesos.
 
-It has a lot of nice features, like task dependencies, etc.
-
 If you don't have/want to run a Mesos cluster and deal with the not easy configuration and maintenance of Zookeeper and you want something lighter, Dkron could help you.
 
 ## Dkron vs. Rundeck
@@ -19,6 +17,6 @@ It has cool features:
 
 It's written in Java and it's not trivial to setup right.
 
-It uses a central database to store job execution results and configuration data, that makes it vulnerable to failures and you need to care yourself of providing it an HA environement or database to run and that's not an easy task to do with the Rundeck's supported databases.
+It uses a central database to store job execution results and configuration data, that makes it vulnerable to failures, and you need to care yourself of providing an HA environement for the database, and that's not an easy task to do with the Rundeck's supported databases.
 
 Dkron lacks some of it's features but it's lightweight and fault-tolerant out-of-the-box.
