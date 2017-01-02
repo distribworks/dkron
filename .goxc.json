@@ -16,7 +16,7 @@
 			"metadata": {
 				"description": "Distributed, fault tolerant job scheduling system",
 				"maintainer": "Victor Castell (https://github.com/victorcoder)",
-        		"maintainer-email": "victor@victorcastell.com"
+				"maintainer-email": "victor@victorcastell.com"
 			},
 			"metadata-deb": {
 				"Homepage": "https://dkron.io"
