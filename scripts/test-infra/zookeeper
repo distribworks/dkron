@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+# docker service rm zoo1 zoo2 zoo3
+
+docker service create \
+--name zoo1 \
+--network my-net \
+--env ZOO_MY_ID=1 \
+--env ZOO_SERVERS='server.1=0.0.0.0:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888' \
+zookeeper
+
+docker service create \
+--name zoo2 \
+--network my-net \
+--env ZOO_MY_ID=2 \
+--env ZOO_SERVERS='server.1=zoo1:2888:3888 server.2=0.0.0.0:2888:3888 server.3=zoo3:2888:3888' \
+zookeeper
+
+docker service create \
+--name zoo3 \
+--network my-net \
+--env ZOO_MY_ID=3 \
+--env ZOO_SERVERS='server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=0.0.0.0:2888:3888' \
+zookeeper
+
+# docker service rm dkron-zk-0 dkron-zk
+
+docker service create \
+--name dkron-zk-0 \
+--network my-net \
+--publish 8082:8080 \
+dkron/dkron \
+agent -server -bind=0.0.0.0:8948 -backend=zk -backend-machine=zoo1:2181 -join=dkron-zk-0:8948 -log-level=debug
+
+docker service create \
+--name dkron-zk \
+--network my-net \
+--replicas 5 \
+dkron/dkron \
+agent -server -bind=0.0.0.0:8946 -backend=zk -backend-machine=zoo1:2181 -join=dkron-zk-0:8948 -log-level=debug

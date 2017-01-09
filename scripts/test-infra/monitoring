@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+for node in manager1 worker1 worker2 worker3 worker4
+do
+    docker-machine scp -r scripts/test-infra/dd-conf/ $node:/opt/dd-agent-conf.d
+    eval $(docker-machine env $node)
+    docker kill dd-agent
+    docker rm dd-agent
+    docker run -d --name dd-agent \
+    -v /var/run/docker.sock:/var/run/docker.sock:ro \
+    -v /proc/:/host/proc/:ro \
+    -v /sys/fs/cgroup/:/host/sys/fs/cgroup:ro \
+    -v /opt/dd-agent-conf.d:/conf.d:ro \
+    -e API_KEY=$DD_API_KEY datadog/docker-dd-agent:latest
+done
+
+eval $(docker-machine env manager1)

@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+
+# docker service rm etcd0 etcd1 etcd2
+
+DISCOVERY_URL=$(curl -s 'https://discovery.etcd.io/new?size=3')
+
+docker service create --mount type=bind,source=/usr/share/ca-certificates/mozilla,destination=/etc/ssl/certs \
+--name etcd0 \
+--network my-net \
+--publish 4001:4001 \
+quay.io/coreos/etcd etcd \
+-name etcd0 \
+-advertise-client-urls http://0.0.0.0:2379,http://0.0.0.0:4001 \
+-listen-client-urls http://0.0.0.0:2379,http://0.0.0.0:4001 \
+-listen-peer-urls http://0.0.0.0:2380 \
+-initial-advertise-peer-urls http://etcd0:2380 \
+-initial-cluster-state new \
+--discovery $DISCOVERY_URL
+
+docker service create --mount type=bind,source=/usr/share/ca-certificates/mozilla,destination=/etc/ssl/certs \
+--name etcd1 \
+--network my-net \
+quay.io/coreos/etcd etcd \
+-name etcd1 \
+-advertise-client-urls http://0.0.0.0:2379,http://0.0.0.0:4001 \
+-listen-client-urls http://0.0.0.0:2379,http://0.0.0.0:4001 \
+-listen-peer-urls http://0.0.0.0:2380 \
+-initial-advertise-peer-urls http://etcd1:2380 \
+-initial-cluster-state new \
+-discovery $DISCOVERY_URL
+
+docker service create --mount type=bind,source=/usr/share/ca-certificates/mozilla,destination=/etc/ssl/certs \
+--name etcd2 \
+--network my-net \
+quay.io/coreos/etcd etcd \
+-name etcd2 \
+-advertise-client-urls http://0.0.0.0:2379,http://0.0.0.0:4001 \
+-listen-client-urls http://0.0.0.0:2379,http://0.0.0.0:4001 \
+-listen-peer-urls http://0.0.0.0:2380 \
+-initial-advertise-peer-urls http://etcd2:2380 \
+-initial-cluster-state new \
+-discovery $DISCOVERY_URL
+
+# docker service rm dkron-etcd-0 dkron-etcd
+
+docker service create \
+--name dkron-etcd-0 \
+--network my-net \
+--publish 8080:8080 \
+dkron/dkron \
+agent -server -bind=0.0.0.0:8946 -backend=etcd -backend-machine=etcd0:4001 -join=dkron-etcd-0:8946 -log-level=debug
+
+docker service create \
+--name dkron-etcd \
+--network my-net \
+--replicas 7 \
+dkron/dkron \
+agent -server -bind=0.0.0.0:8946 -backend=etcd -backend-machine=etcd0:4001 -join=dkron-etcd-0:8946 -log-level=debug
