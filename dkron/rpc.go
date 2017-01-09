@@ -189,7 +189,7 @@ func (rpcc *RPCClient) callExecutionDone(execution *Execution) error {
 		}).Warning("rpc: Error calling ExecutionDone")
 		return err
 	}
-	log.Debug("rpc: from: %s", reply.From)
+	log.Debug("rpc: from: ", reply.From)
 
 	return nil
 }
