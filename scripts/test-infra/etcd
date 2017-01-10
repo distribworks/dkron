@@ -58,5 +58,6 @@ docker service create \
 --name dkron-etcd \
 --network my-net \
 --replicas 5 \
+--publish 8081:8080 \
 dkron/dkron \
 agent -server -bind=0.0.0.0:8946 -backend=etcd -backend-machine=etcd0:4001 -join=dkron-etcd0:8946 -log-level=debug

@@ -28,7 +28,7 @@ zookeeper
 docker service create \
 --name dkron-zoo0 \
 --network my-net \
---publish 8082:8080 \
+--publish 9090:8080 \
 dkron/dkron \
 agent -server -bind=0.0.0.0:8946 -backend=zk -backend-machine=zoo1:2181 -join=dkron-zoo0:8946 -log-level=debug
 
@@ -38,6 +38,7 @@ docker service create \
 --name dkron-zoo \
 --network my-net \
 --replicas 5 \
+--publish 9091:8080 \
 dkron/dkron \
 agent -server -bind=0.0.0.0:8946 -backend=zk -backend-machine=zoo1:2181 -join=dkron-zoo0:8946 -log-level=debug
 

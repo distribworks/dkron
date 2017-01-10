@@ -20,7 +20,7 @@ progrium/consul -server -join consul0
 docker service create \
 --name dkron-consul-0 \
 --network my-net \
---publish 8081:8080 \
+--publish 8090:8080 \
 dkron/dkron \
 agent -server -bind=0.0.0.0:8946 -backend=consul -backend-machine=consul0:8500 -join=dkron-consul-0:8946 -log-level=debug
 
@@ -30,5 +30,6 @@ docker service create \
 --name dkron-consul \
 --network my-net \
 --replicas 5 \
+--publish 8091:8080 \
 dkron/dkron \
 agent -server -bind=0.0.0.0:8946 -backend=consul -backend-machine=consul0:8500 -join=dkron-consul-0:8946 -log-level=debug
