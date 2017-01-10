@@ -5,7 +5,6 @@
 docker service create \
 --name zoo1 \
 --network my-net \
---publish 2181:2181 \
 --env ZOO_MY_ID=1 \
 --env ZOO_SERVERS='server.1=0.0.0.0:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888' \
 zookeeper
@@ -33,6 +32,8 @@ docker service create \
 dkron/dkron \
 agent -server -bind=0.0.0.0:8946 -backend=zk -backend-machine=zoo1:2181 -join=dkron-zoo0:8946 -log-level=debug
 
+sleep 10
+
 docker service create \
 --name dkron-zoo \
 --network my-net \
@@ -40,10 +41,10 @@ docker service create \
 dkron/dkron \
 agent -server -bind=0.0.0.0:8946 -backend=zk -backend-machine=zoo1:2181 -join=dkron-zoo0:8946 -log-level=debug
 
-docker service create \
---mount type=bind,source=/tmp,destination=/opt/local/dkron/config \
---name dkron-zoo-tags \
---network my-net \
---replicas 5 \
-dkron/dkron \
-agent -server -bind=0.0.0.0:8946 -backend=zk -backend-machine=zoo1:2181 -join=dkron-zoo0:8946 -tag foo=bar -encrypt=kPpdjphiipNSsjd4QHWbkA== -log-level=debug
+# docker service create \
+# --mount type=bind,source=/tmp,destination=/opt/local/dkron/config \
+# --name dkron-zoo-tags \
+# --network my-net \
+# --replicas 5 \
+# dkron/dkron \
+# agent -server -bind=0.0.0.0:8946 -backend=zk -backend-machine=zoo1:2181 -join=dkron-zoo0:8946 -tag foo=bar -encrypt=kPpdjphiipNSsjd4QHWbkA== -log-level=debug

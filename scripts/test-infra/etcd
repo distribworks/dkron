@@ -5,7 +5,6 @@
 docker service create \
 --name etcd0 \
 --network my-net \
---publish 4001:4001 \
 quay.io/coreos/etcd etcd \
 -name etcd0 \
 -advertise-client-urls http://etcd0:2379,http://etcd0:4001 \
@@ -15,6 +14,8 @@ quay.io/coreos/etcd etcd \
 -initial-cluster-token etcd-cluster-1 \
 -initial-cluster etcd0=http://etcd0:2380,etcd1=http://etcd1:2380,etcd2=http://etcd2:2380 \
 -initial-cluster-state new
+
+sleep 5
 
 docker service create \
 --name etcd1 \
@@ -42,7 +43,7 @@ quay.io/coreos/etcd etcd \
 -initial-cluster etcd0=http://etcd0:2380,etcd1=http://etcd1:2380,etcd2=http://etcd2:2380 \
 -initial-cluster-state new
 
-# docker service rm dkron-etcd-0 dkron-etcd
+# docker service rm dkron-etcd0 dkron-etcd
 
 docker service create \
 --name dkron-etcd0 \
