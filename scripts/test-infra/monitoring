@@ -2,16 +2,22 @@
 
 for node in manager1 worker1 worker2 worker3 worker4
 do
-    docker-machine scp -r scripts/test-infra/dd-conf/ $node:/opt/dd-agent-conf.d
+    docker-machine ssh $node "rm -rf /opt/dd-agent-conf.d"
+    docker-machine scp -r scripts/test-infra/dd-conf $node:/opt/dd-agent-conf.d
     eval $(docker-machine env $node)
-    docker kill dd-agent
-    docker rm dd-agent
-    docker run -d --name dd-agent \
-    -v /var/run/docker.sock:/var/run/docker.sock:ro \
-    -v /proc/:/host/proc/:ro \
-    -v /sys/fs/cgroup/:/host/sys/fs/cgroup:ro \
-    -v /opt/dd-agent-conf.d:/conf.d:ro \
-    -e API_KEY=$DD_API_KEY datadog/docker-dd-agent:latest
 done
-
 eval $(docker-machine env manager1)
+
+docker service create \
+  --name dd-agent \
+  --mode global \
+  --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock \
+  --mount type=bind,source=/proc/,target=/host/proc/,ro=true \
+  --mount type=bind,source=/sys/fs/cgroup/,target=/host/sys/fs/cgroup,ro=true \
+  --mount type=bind,source=/opt/dd-agent-conf.d/,target=/conf.d/,ro=true \
+  -e API_KEY=$DD_API_KEY \
+  -e SD_BACKEND=docker \
+  --network my-net \
+  datadog/docker-dd-agent:latest
+
+
