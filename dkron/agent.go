@@ -291,6 +291,7 @@ func (a *AgentCommand) Run(args []string) int {
 	}
 	a.join(a.config.StartJoin, true)
 
+	initMetrics(a.config)
 	// Expose the node name
 	expNode.Set(a.config.NodeName)
 
