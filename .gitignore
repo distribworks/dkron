@@ -12,3 +12,4 @@ main
 /dkron-processor-*
 *.log
 .glide
+config/
