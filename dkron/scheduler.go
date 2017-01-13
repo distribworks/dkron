@@ -5,6 +5,7 @@ import (
 	"expvar"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/armon/go-metrics"
 	"github.com/victorcoder/dkron/cron"
 )
 
@@ -27,9 +28,8 @@ func NewScheduler() *Scheduler {
 }
 
 func (s *Scheduler) Start(jobs []*Job) {
+	metrics.IncrCounter([]string{"scheduler", "start"}, 1)
 	for _, job := range jobs {
-		cronInspect.Set(job.Name, job)
-
 		if job.Disabled || job.ParentJob != "" {
 			continue
 		}
@@ -37,6 +37,9 @@ func (s *Scheduler) Start(jobs []*Job) {
 		log.WithFields(logrus.Fields{
 			"job": job.Name,
 		}).Debug("scheduler: Adding job to cron")
+
+		cronInspect.Set(job.Name, job)
+		metrics.EmitKey([]string{"scheduler", "job", "add", job.Name}, 1)
 
 		s.Cron.AddJob(job.Schedule, job)
 	}
