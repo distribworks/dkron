@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
+	metrics "github.com/armon/go-metrics"
 	"github.com/docker/leadership"
 	"github.com/hashicorp/memberlist"
 	"github.com/hashicorp/serf/serf"
@@ -291,6 +292,10 @@ func (a *AgentCommand) Run(args []string) int {
 	}
 	a.join(a.config.StartJoin, true)
 
+	if i := initMetrics(a); i != 0 {
+		return i
+	}
+
 	// Expose the node name
 	expNode.Set(a.config.NodeName)
 
@@ -404,6 +409,7 @@ func (a *AgentCommand) participate() {
 // Leader election routine
 func (a *AgentCommand) runForElection() {
 	log.Info("agent: Running for election")
+	defer metrics.MeasureSince([]string{"agent", "runForElection"}, time.Now())
 	electedCh, errCh := a.candidate.RunForElection()
 
 	for {
@@ -411,16 +417,19 @@ func (a *AgentCommand) runForElection() {
 		case isElected := <-electedCh:
 			if isElected {
 				log.Info("agent: Cluster leadership acquired")
+				metrics.IncrCounter([]string{"agent", "leadership_acquired"}, 1)
 				// If this server is elected as the leader, start the scheduler
 				a.schedule()
 			} else {
 				log.Info("agent: Cluster leadership lost")
+				metrics.IncrCounter([]string{"agent", "leadership_lost"}, 1)
 				// Always stop the schedule of this server to prevent multiple servers with the scheduler on
 				a.sched.Stop()
 			}
 
 		case err := <-errCh:
 			log.WithError(err).Debug("Leader election failed, channel is probably closed")
+			metrics.IncrCounter([]string{"agent", "election", "failure"}, 1)
 			// Always stop the schedule of this server to prevent multiple servers with the scheduler on
 			a.sched.Stop()
 			return
@@ -462,6 +471,7 @@ func (a *AgentCommand) eventLoop() {
 			log.WithFields(logrus.Fields{
 				"event": e.String(),
 			}).Debug("agent: Received event")
+			metrics.AddSample([]string{"agent", "event_received", e.String()}, 1)
 
 			// Log all member events
 			if failed, ok := e.(serf.MemberEvent); ok {

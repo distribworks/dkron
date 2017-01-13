@@ -47,6 +47,9 @@ type Config struct {
 	WebhookURL     string
 	WebhookPayload string
 	WebhookHeaders []string
+
+	DogStatsdAddr string
+	StatsdAddr    string
 }
 
 // This is the default port that we use for Serf communication
@@ -125,6 +128,11 @@ func NewConfig(args []string, agent *AgentCommand) *Config {
 	webhookHeaders := &AppendSliceValue{}
 	cmdFlags.Var(webhookHeaders, "webhook-header", "notification webhook additional header")
 
+	cmdFlags.String("dog-statsd-addr", "", "DataDog Agent address")
+	viper.SetDefault("dog_statsd_addr", cmdFlags.Lookup("dog-statsd-addr").Value)
+	cmdFlags.String("statsd-addr", "", "Statsd Address")
+	viper.SetDefault("statsd_addr", cmdFlags.Lookup("statsd-addr").Value)
+
 	if err := cmdFlags.Parse(args); err != nil {
 		log.Fatal(err)
 	}
@@ -184,6 +192,9 @@ func ReadConfig(agent *AgentCommand) *Config {
 		WebhookURL:     viper.GetString("webhook_url"),
 		WebhookPayload: viper.GetString("webhook_payload"),
 		WebhookHeaders: viper.GetStringSlice("webhook_headers"),
+
+		DogStatsdAddr: viper.GetString("dog_statsd_addr"),
+		StatsdAddr:    viper.GetString("statsd_addr"),
 	}
 }
 
