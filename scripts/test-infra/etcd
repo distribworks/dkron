@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# docker service rm etcd0 etcd1 etcd2
+docker service rm etcd0 etcd1 etcd2
 
 docker service create \
 --name etcd0 \
@@ -43,7 +43,9 @@ quay.io/coreos/etcd etcd \
 -initial-cluster etcd0=http://etcd0:2380,etcd1=http://etcd1:2380,etcd2=http://etcd2:2380 \
 -initial-cluster-state new
 
-# docker service rm dkron-etcd0 dkron-etcd
+sleep 10
+
+docker service rm dkron-etcd0 dkron-etcd
 
 docker service create \
 --name dkron-etcd0 \
