@@ -7,4 +7,5 @@ services:
 
 script:
   - docker-compose build dkron
+  - docker-compose run dkron ./main version
   - scripts/test.sh
