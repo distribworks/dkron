@@ -321,7 +321,7 @@ func (s *Store) GetGroupedExecutions(jobName string) (map[int64][]*Execution, []
 	for key := range groups {
 		byGroup = append(byGroup, key)
 	}
-	sort.Sort(byGroup)
+	sort.Sort(sort.Reverse(byGroup))
 
 	return groups, byGroup, nil
 }
