@@ -471,7 +471,7 @@ func (a *AgentCommand) eventLoop() {
 			log.WithFields(logrus.Fields{
 				"event": e.String(),
 			}).Debug("agent: Received event")
-			metrics.AddSample([]string{"agent", "event_received", e.String()}, 1)
+			metrics.IncrCounter([]string{"agent", "event_received", e.String()}, 1)
 
 			// Log all member events
 			if failed, ok := e.(serf.MemberEvent); ok {

@@ -22,7 +22,7 @@ type RPCServer struct {
 }
 
 func (rpcs *RPCServer) GetJob(jobName string, job *Job) error {
-	defer metrics.MeasureSince([]string{"rpc", "GetJob"}, time.Now())
+	defer metrics.MeasureSince([]string{"rpc", "get_job"}, time.Now())
 	log.WithFields(logrus.Fields{
 		"job": jobName,
 	}).Debug("rpc: Received GetJob")
@@ -40,7 +40,7 @@ func (rpcs *RPCServer) GetJob(jobName string, job *Job) error {
 }
 
 func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeResponse) error {
-	defer metrics.MeasureSince([]string{"rpc", "ExecutionDone"}, time.Now())
+	defer metrics.MeasureSince([]string{"rpc", "execution_done"}, time.Now())
 	log.WithFields(logrus.Fields{
 		"group": execution.Group,
 		"job":   execution.JobName,
@@ -174,7 +174,7 @@ type RPCClient struct {
 }
 
 func (rpcc *RPCClient) callExecutionDone(execution *Execution) error {
-	defer metrics.MeasureSince([]string{"rpc", "callExecutionDone"}, time.Now())
+	defer metrics.MeasureSince([]string{"rpc", "call_execution_done"}, time.Now())
 	client, err := rpc.DialHTTP("tcp", rpcc.ServerAddr)
 	if err != nil {
 		log.WithFields(logrus.Fields{
@@ -200,7 +200,7 @@ func (rpcc *RPCClient) callExecutionDone(execution *Execution) error {
 }
 
 func (rpcc *RPCClient) GetJob(jobName string) (*Job, error) {
-	defer metrics.MeasureSince([]string{"rpc", "callGetJob"}, time.Now())
+	defer metrics.MeasureSince([]string{"rpc", "call_get_job"}, time.Now())
 	client, err := rpc.DialHTTP("tcp", rpcc.ServerAddr)
 	if err != nil {
 		log.WithFields(logrus.Fields{
