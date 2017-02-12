@@ -2,6 +2,7 @@ package dkron
 
 import (
 	"errors"
+	"fmt"
 	"net"
 	"net/http"
 	"net/rpc"
@@ -139,8 +140,13 @@ func listenRPC(a *AgentCommand) {
 		agent: a,
 	}
 
+	bindIp, err := a.GetBindIP()
+	if err != nil {
+		log.Fatal("rpc:", err)
+	}
+	RPCAddr := fmt.Sprintf("%s:%d", bindIp, a.config.RPCPort)
 	log.WithFields(logrus.Fields{
-		"rpc_addr": a.getRPCAddr(),
+		"rpc_addr": RPCAddr,
 	}).Debug("rpc: Registering RPC server")
 
 	rpc.Register(r)
@@ -161,7 +167,7 @@ func listenRPC(a *AgentCommand) {
 	// workaround
 	http.DefaultServeMux = oldMux
 
-	l, e := net.Listen("tcp", a.getRPCAddr())
+	l, e := net.Listen("tcp", RPCAddr)
 	if e != nil {
 		log.Fatal("rpc:", e)
 	}

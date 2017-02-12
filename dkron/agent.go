@@ -466,6 +466,11 @@ func (a *AgentCommand) listServers() []serf.Member {
 	return members
 }
 
+func (a *AgentCommand) GetBindIP() (string, error) {
+	bindIP, _, err := a.config.AddrParts(a.config.BindAddr)
+	return bindIP, err
+}
+
 // Listens to events from Serf and handle the event.
 func (a *AgentCommand) eventLoop() {
 	serfShutdownCh := a.serf.ShutdownCh()
@@ -540,7 +545,10 @@ func (a *AgentCommand) eventLoop() {
 						"at":      query.LTime,
 					}).Debug("agent: RPC Config requested")
 
-					query.Respond([]byte(a.getRPCAddr()))
+					err := query.Respond([]byte(a.getRPCAddr()))
+					if err != nil {
+						log.WithError(err).Error("agent: query.Respond")
+					}
 				}
 			}
 
