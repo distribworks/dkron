@@ -27,11 +27,18 @@ func initMetrics(a *AgentCommand) int {
 
 	// Configure the DogStatsd sink
 	if a.config.DogStatsdAddr != "" {
+		var tags []string
+
+		if a.config.DogStatsdTags != nil {
+			tags = a.config.DogStatsdTags
+		}
+
 		sink, err := datadog.NewDogStatsdSink(a.config.DogStatsdAddr, a.config.NodeName)
 		if err != nil {
 			a.Ui.Error(fmt.Sprintf("Failed to start DogStatsd sink. Got: %s", err))
 			return 1
 		}
+		sink.SetTags(tags)
 		fanout = append(fanout, sink)
 	}
 

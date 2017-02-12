@@ -48,7 +48,12 @@ type Config struct {
 	WebhookPayload string
 	WebhookHeaders []string
 
+	// DogStatsdAddr is the address of a dogstatsd instance. If provided,
+	// metrics will be sent to that instance
 	DogStatsdAddr string
+	// DogStatsdTags are the global tags that should be sent with each packet to dogstatsd
+	// It is a list of strings, where each string looks like "my_tag_name:my_tag_value"
+	DogStatsdTags []string
 	StatsdAddr    string
 }
 
@@ -130,6 +135,8 @@ func NewConfig(args []string, agent *AgentCommand) *Config {
 
 	cmdFlags.String("dog-statsd-addr", "", "DataDog Agent address")
 	viper.SetDefault("dog_statsd_addr", cmdFlags.Lookup("dog-statsd-addr").Value)
+	var dogStatsdTags []string
+	cmdFlags.Var((*AppendSliceValue)(&dogStatsdTags), "dog-statsd-tags", "Datadog tags, specified as key:value")
 	cmdFlags.String("statsd-addr", "", "Statsd Address")
 	viper.SetDefault("statsd_addr", cmdFlags.Lookup("statsd-addr").Value)
 
@@ -137,6 +144,7 @@ func NewConfig(args []string, agent *AgentCommand) *Config {
 		log.Fatal(err)
 	}
 
+	// Set array params defaults
 	ut, err := UnmarshalTags(tag)
 	if err != nil {
 		log.Fatal(err)
@@ -144,6 +152,7 @@ func NewConfig(args []string, agent *AgentCommand) *Config {
 	viper.SetDefault("tags", ut)
 	viper.SetDefault("join", startJoin)
 	viper.SetDefault("webhook_headers", webhookHeaders)
+	viper.SetDefault("dog_statsd_tags", dogStatsdTags)
 
 	return ReadConfig(agent)
 }
