@@ -3,12 +3,12 @@ version: '2'
 services:
   # Uncomment to use etcd
   etcd:
-    image: microbox/etcd
+    image: quay.io/coreos/etcd
     ports:
       - "4001"
     volumes:
       - ./etcd.data:/data
-    command: -name=dkron1
+    command: etcd -name=dkron1 -advertise-client-urls http://etcd:2379,http://etcd:4001 -listen-client-urls http://0.0.0.0:2379,http://0.0.0.0:4001
 
   consul:
     image: consul
@@ -49,6 +49,6 @@ services:
     # Uncomment to use consul
     command: ./main agent -server -backend=consul -backend-machine=consul:8500 -join=dkron:8946 -log-level=debug
     # Uncomment to use etcd
-    # command: bash -c "GOBIN=`pwd` go clean -i ./builtin/... && GOBIN=`pwd` go install ./builtin/... && go build -o main && ./main agent -server -backend=etcd -backend-machine=etcd:4001 -join=dkron:8946 -log-level=debug"
+    # command: ./main agent -server -backend=etcd -backend-machine=etcd:4001 -join=dkron:8946 -log-level=debug
     # Uncomment to use zk
-    # command: bash -c "GOBIN=`pwd` go clean -i ./builtin/... && GOBIN=`pwd` go install ./builtin/... && go build -o main && ./main agent -server -backend=zk -backend-machine=zk:2181 -join=dkron:8946 -log-level=debug"
+    # command: ./main agent -server -backend=zk -backend-machine=zk:2181 -join=dkron:8946 -log-level=debug

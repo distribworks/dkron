@@ -1,8 +1,0 @@
-{
-  "tags": {
-    "role": "web",
-    "datacenter": "east"
-  },
-  "keyspace": "dkron",
-  "encrypt": "kPpdjphiipNSsjd4QHWbkA=="
-}

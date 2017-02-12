@@ -103,6 +103,10 @@ Options:
   -webhook-header                 Headers to use when calling the webhook URL. Can be specified multiple times.
 
   -log-level=info                 Log level (debug, info, warn, error, fatal, panic). Default to info.
+
+  -dog-statsd-addr                DataDog Agent address
+  -dog-statsd-tags                Datadog tags, specified as key:value
+  -statsd-addr                    Statsd Address
 `
 	return strings.TrimSpace(helpText)
 }
@@ -481,7 +485,7 @@ func (a *AgentCommand) eventLoop() {
 			log.WithFields(logrus.Fields{
 				"event": e.String(),
 			}).Debug("agent: Received event")
-			metrics.AddSample([]string{"agent", "event_received", e.String()}, 1)
+			metrics.IncrCounter([]string{"agent", "event_received", e.String()}, 1)
 
 			// Log all member events
 			if failed, ok := e.(serf.MemberEvent); ok {
