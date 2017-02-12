@@ -90,6 +90,7 @@ Options:
   -ui-dir                         Directory from where to serve Web UI
   -rpc-port=6868                  RPC Port used to communicate with clients. Only used when server.
                                   The RPC IP Address will be the same as the bind address.
+  -advertise-rpc-port             Use the value of -rpc-port by default
 
   -mail-host                      Mail server host address to use for notifications.
   -mail-port                      Mail server port.
@@ -201,6 +202,10 @@ func (a *AgentCommand) setupSerf() *serf.Serf {
 			a.Ui.Error(fmt.Sprintf("Invalid advertise address: %s", err))
 			return nil
 		}
+	}
+	//Ues the value of "RPCPort" if AdvertiseRPCPort has not been set 
+	if config.AdvertiseRPCPort <= 0 {
+		config.AdvertiseRPCPort = config.RPCPort
 	}
 
 	encryptKey, err := config.EncryptBytes()
@@ -625,8 +630,9 @@ func (a *AgentCommand) setExecution(payload []byte) *Execution {
 
 // This function is called when a client request the RPCAddress
 // of the current member.
+// in marathon, it would return the host's IP and advertise RPC port
 func (a *AgentCommand) getRPCAddr() string {
 	bindIp := a.serf.LocalMember().Addr
 
-	return fmt.Sprintf("%s:%d", bindIp, a.config.RPCPort)
+	return fmt.Sprintf("%s:%d", bindIp, a.config.AdvertiseRPCPort)
 }

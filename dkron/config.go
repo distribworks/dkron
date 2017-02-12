@@ -36,6 +36,7 @@ type Config struct {
 	Keyspace              string
 	UIDir                 string
 	RPCPort               int
+	AdvertiseRPCPort      int
 
 	MailHost     string
 	MailPort     uint16
@@ -106,6 +107,7 @@ func NewConfig(args []string, agent *AgentCommand) *Config {
 	cmdFlags.String("ui-dir", ".", "directory to serve web UI")
 	viper.SetDefault("ui_dir", cmdFlags.Lookup("ui-dir").Value)
 	viper.SetDefault("rpc_port", cmdFlags.Int("rpc-port", 6868, "RPC port"))
+	viper.SetDefault("advertise_rpc_port", cmdFlags.Int("advertise-rpc-port", 0, "advertise RPC port"))
 
 	// Notifications
 	cmdFlags.String("mail-host", "", "notification mail server host")
@@ -166,21 +168,22 @@ func ReadConfig(agent *AgentCommand) *Config {
 	InitLogger(viper.GetString("log_level"), nodeName)
 
 	return &Config{
-		NodeName:        nodeName,
-		BindAddr:        viper.GetString("bind_addr"),
-		AdvertiseAddr:   viper.GetString("advertise_addr"),
-		HTTPAddr:        viper.GetString("http_addr"),
-		Discover:        viper.GetString("discover"),
-		Backend:         viper.GetString("backend"),
-		BackendMachines: viper.GetStringSlice("backend_machine"),
-		Server:          server,
-		Profile:         viper.GetString("profile"),
-		StartJoin:       viper.GetStringSlice("join"),
-		Tags:            tags,
-		Keyspace:        viper.GetString("keyspace"),
-		EncryptKey:      viper.GetString("encrypt"),
-		UIDir:           viper.GetString("ui_dir"),
-		RPCPort:         viper.GetInt("rpc_port"),
+		NodeName:         nodeName,
+		BindAddr:         viper.GetString("bind_addr"),
+		AdvertiseAddr:    viper.GetString("advertise_addr"),
+		HTTPAddr:         viper.GetString("http_addr"),
+		Discover:         viper.GetString("discover"),
+		Backend:          viper.GetString("backend"),
+		BackendMachines:  viper.GetStringSlice("backend_machine"),
+		Server:           server,
+		Profile:          viper.GetString("profile"),
+		StartJoin:        viper.GetStringSlice("join"),
+		Tags:             tags,
+		Keyspace:         viper.GetString("keyspace"),
+		EncryptKey:       viper.GetString("encrypt"),
+		UIDir:            viper.GetString("ui_dir"),
+		RPCPort:          viper.GetInt("rpc_port"),
+		AdvertiseRPCPort: viper.GetInt("advertise_rpc_port"),
 
 		MailHost:     viper.GetString("mail_host"),
 		MailPort:     uint16(viper.GetInt("mail_port")),
