@@ -53,7 +53,14 @@ docker service create \
 --publish 8080:8080 \
 --container-label beta="1" \
 dkron/dkron:v0.9.3-beta \
-agent -server -bind=0.0.0.0:8946 -backend=etcd -backend-machine=etcd0:4001 -join=dkron-etcd0:8946 -dog-statsd-addr=dd-agent:8125 -log-level=debug
+agent -server \
+-bind=0.0.0.0:8946 \
+-backend=etcd \
+-backend-machine=etcd0:4001 \
+-join=dkron-etcd0:8946 \
+-dog-statsd-addr=dd-agent:8125 \
+-dog-statsd-tags=backend:etcd \
+-log-level=debug
 
 sleep 10
 
@@ -64,4 +71,11 @@ docker service create \
 --publish 8081:8080 \
 --container-label beta="1" \
 dkron/dkron:v0.9.3-beta \
-agent -server -bind=0.0.0.0:8946 -backend=etcd -backend-machine=etcd0:4001 -join=dkron-etcd0:8946 -dog-statsd-addr=dd-agent:8125 -log-level=debug
+agent -server \
+-bind=0.0.0.0:8946 \
+-backend=etcd \
+-backend-machine=etcd0:4001 \
+-join=dkron-etcd0:8946 \
+-dog-statsd-addr=dd-agent:8125 \
+-dog-statsd-tags=backend:etcd \
+-log-level=debug
