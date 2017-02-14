@@ -62,7 +62,7 @@ agent -server \
 -dog-statsd-tags=backend:etcd \
 -log-level=debug
 
-sleep 10
+sleep 20
 
 docker service create \
 --name dkron-etcd \
