@@ -206,6 +206,7 @@ func ReadConfig(agent *AgentCommand) *Config {
 		WebhookHeaders: viper.GetStringSlice("webhook_headers"),
 
 		DogStatsdAddr: viper.GetString("dog_statsd_addr"),
+		DogStatsdTags: viper.GetStringSlice("dog_statsd_tags"),
 		StatsdAddr:    viper.GetString("statsd_addr"),
 	}
 }
