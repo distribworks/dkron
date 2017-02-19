@@ -1,0 +1,9 @@
+[Unit]
+Description=Dkron Agent
+
+[Service]
+User=root
+ExecStart=/usr/bin/dkron agent -ui-dir=/usr/share/dkron >> /var/log/dkron.log 2>&1
+
+[Install]
+WantedBy=multi-user.target
