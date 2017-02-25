@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/gorilla/mux"
+	"gopkg.in/gin-gonic/gin.v1"
 )
 
 const (
@@ -44,16 +45,13 @@ func newCommonDashboardData(a *AgentCommand, nodeName, path string) *commonDashb
 	}
 }
 
-func (a *AgentCommand) dashboardRoutes(r *mux.Router) {
-	r.Path("/" + dashboardPathPrefix).HandlerFunc(a.dashboardIndexHandler)
-	subui := r.PathPrefix("/" + dashboardPathPrefix).Subrouter()
-	subui.HandleFunc("/jobs", a.dashboardJobsHandler)
-	subui.HandleFunc("/jobs/{job}/executions", a.dashboardExecutionsHandler)
+func (a *AgentCommand) dashboardRoutes(r *gin.Engine) {
+	r.LoadHTMLGlob(filepath.Join(a.config.UIDir, tmplPath, "*"))
 
-	// Path of static files must be last!
-	r.PathPrefix("/dashboard").Handler(
-		http.StripPrefix("/dashboard", http.FileServer(
-			http.Dir(filepath.Join(a.config.UIDir, "static")))))
+	dashboard := r.Group("/" + dashboardPathPrefix)
+	dashboard.GET("/", a.dashboardIndexHandler)
+	// dashboard.GET("/jobs", a.dashboardJobsHandler)
+	// dashboard.GET("/jobs/:job/executions", a.dashboardExecutionsHandler)
 }
 
 func templateSet(uiDir string, template string) []string {
@@ -64,21 +62,13 @@ func templateSet(uiDir string, template string) []string {
 	}
 }
 
-func (a *AgentCommand) dashboardIndexHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html")
-
-	tmpl := template.Must(template.New("dashboard.html.tmpl").ParseFiles(
-		templateSet(a.config.UIDir, "index")...))
-
+func (a *AgentCommand) dashboardIndexHandler(c *gin.Context) {
 	data := struct {
 		Common *commonDashboardData
 	}{
 		Common: newCommonDashboardData(a, a.config.NodeName, ""),
 	}
-
-	if err := tmpl.Execute(w, data); err != nil {
-		log.Error(err)
-	}
+	c.HTML(http.StatusOK, "dashboard.html.tmpl", data)
 }
 
 func (a *AgentCommand) dashboardJobsHandler(w http.ResponseWriter, r *http.Request) {

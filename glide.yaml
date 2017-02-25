@@ -92,3 +92,5 @@ import:
   version: 97c69685293dce4c0a2d0b19535179bbc976e4d2
   subpackages:
   - datadog
+- package: gopkg.in/gin-gonic/gin.v1
+  version: ^1.1.4
