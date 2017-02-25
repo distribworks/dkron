@@ -1,5 +1,5 @@
-hash: e4f1a3b9e2881fadbfdabe1acdbd7678374481c4eb595efb5a07821852530d4d
-updated: 2017-01-11T12:25:25.943085711+01:00
+hash: ec8d536c7baac353752fc25ce8f3635f8f520256ae7e52f62c4982e32834a414
+updated: 2017-03-24T17:39:15.746603774+01:00
 imports:
 - name: bitbucket.org/kardianos/osext
   version: 816c96ec6fef6a0cd72c9395d192c4bd0d918753
@@ -22,7 +22,7 @@ imports:
   - pkg/pathutil
   - pkg/types
 - name: github.com/DataDog/datadog-go
-  version: 6ea09a7540648568ce58b3d00eb1da133c2dcdd7
+  version: 6fa3e39b86f8cbb638a971f2a90b9ebd98074c6b
   subpackages:
   - statsd
 - name: github.com/deckarep/golang-set
@@ -36,6 +36,19 @@ imports:
   - store/consul
   - store/etcd
   - store/zookeeper
+- name: github.com/gin-contrib/expvar
+  version: 298a578c5a53a558df60ebd72fd9d20b269e7da9
+- name: github.com/gin-contrib/multitemplate
+  version: 7d1ec4f2119934983b106718265783fc48a38b77
+- name: github.com/gin-gonic/gin
+  version: e2212d40c62a98b388a5eb48ecbdcf88534688ba
+  subpackages:
+  - binding
+  - render
+- name: github.com/golang/protobuf
+  version: 2402d76f3d41f928c7902a765dfc872356dd3aad
+  subpackages:
+  - proto
 - name: github.com/gorilla/context
   version: 215affda49addc4c8ef7e2534915df2c8c35c6cd
 - name: github.com/gorilla/mux
@@ -69,6 +82,10 @@ imports:
   version: 6807e777504f54ad073ecef66747de158294b639
 - name: github.com/magiconair/properties
   version: d5929c67198951106f49f7ea425198d0f1a08f7f
+- name: github.com/manucorporat/sse
+  version: ee05b128a739a0fb76c7ebd3ae4810c1de808d6d
+- name: github.com/mattn/go-isatty
+  version: fc9e8d8ef48496124e79ae0df75490096eccf6fe
 - name: github.com/mattn/go-shellwords
   version: 525bedee691b5a8df547cb5cf9f86b7fb1883e24
 - name: github.com/mitchellh/cli
@@ -106,9 +123,13 @@ imports:
   subpackages:
   - context
 - name: golang.org/x/sys
-  version: 9c60d1c508f5134d1ca726b4641db998f2523357
+  version: 30de6d19a3bd89a5f38ae4028e23aaa5582648af
   subpackages:
   - unix
+- name: gopkg.in/gin-gonic/gin.v1
+  version: e2212d40c62a98b388a5eb48ecbdcf88534688ba
+- name: gopkg.in/go-playground/validator.v8
+  version: c193cecd124b5cc722d7ee5538e945bdb3348435
 - name: gopkg.in/yaml.v2
   version: 49c95bdc21843256fb6c4e0d370a05f24a0bf213
 testImports:
@@ -117,6 +138,6 @@ testImports:
   subpackages:
   - spew
 - name: github.com/pmezard/go-difflib
-  version: d8ed2627bdf02c080bf22230dbb337003b7aba2d
+  version: 792786c7400a136282c1664665ae0a8db921c6c2
   subpackages:
   - difflib

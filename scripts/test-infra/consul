@@ -23,8 +23,8 @@ docker service create \
 --name dkron-consul0 \
 --network my-net \
 --publish 8090:8080 \
---container-label beta="1" \
-dkron/dkron:v0.9.3-beta \
+--container-label beta="0" \
+dkron/dkron:v0.9.3 \
 agent -server -bind=0.0.0.0:8946 -backend=consul -backend-machine=consul0:8500 -join=dkron-consul0:8946 -dog-statsd-addr=dd-agent:8125 -log-level=debug
 
 sleep 5
@@ -34,6 +34,6 @@ docker service create \
 --network my-net \
 --replicas 5 \
 --publish 8091:8080 \
---container-label beta="1" \
-dkron/dkron:v0.9.3-beta \
+--container-label beta="0" \
+dkron/dkron:v0.9.3 \
 agent -server -bind=0.0.0.0:8946 -backend=consul -backend-machine=consul0:8500 -join=dkron-consul0:8946 -dog-statsd-addr=dd-agent:8125 -log-level=debug
