@@ -207,7 +207,7 @@ func (a *AgentCommand) setupSerf() *serf.Serf {
 			return nil
 		}
 	}
-	//Ues the value of "RPCPort" if AdvertiseRPCPort has not been set 
+	//Ues the value of "RPCPort" if AdvertiseRPCPort has not been set
 	if config.AdvertiseRPCPort <= 0 {
 		config.AdvertiseRPCPort = config.RPCPort
 	}
@@ -359,11 +359,6 @@ WAIT:
 	a.Ui.Output("Gracefully shutting down agent...")
 	log.Info("agent: Gracefully shutting down agent...")
 	go func() {
-		// If we're exiting a server
-		if a.config.Server {
-			// Stop running for leader election
-			a.candidate.Stop()
-		}
 		if err := a.serf.Leave(); err != nil {
 			a.Ui.Error(fmt.Sprintf("Error: %s", err))
 			log.Error(fmt.Sprintf("Error: %s", err))
