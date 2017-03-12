@@ -117,7 +117,8 @@ func (a *AgentCommand) indexHandler(w http.ResponseWriter, r *http.Request) {
 func (a *AgentCommand) jobsHandler(w http.ResponseWriter, r *http.Request) {
 	jobs, err := a.store.GetJobs()
 	if err != nil {
-		log.Fatal(err)
+		log.WithError(err).Error("api: Unable to get jobs, store not reachable.")
+		return
 	}
 
 	if err := printJson(w, r, jobs); err != nil {

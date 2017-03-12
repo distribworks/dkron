@@ -1,3 +1,11 @@
+## 0.9.3 (2017-02-12)
+
+- Fix RPC server listen address (@firstway)
+- Basic implementation of the testing infrastructure using swarm
+- Basic Telemetry implementation for sending metrics to statsd and datadog
+- Fix crash on backend failure
+- Reverse sort executions in UI (@Eyjafjallajokull)
+
 ## 0.9.2 (2016-12-28)
 
 Features:

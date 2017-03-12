@@ -1,12 +1,14 @@
-hash: a760cb97ebcf82644166c6748d040802fbe9b3614e4396bd55f06f696a4486ae
-updated: 2016-11-09T22:15:10.57771928+01:00
+hash: e4f1a3b9e2881fadbfdabe1acdbd7678374481c4eb595efb5a07821852530d4d
+updated: 2017-01-11T12:25:25.943085711+01:00
 imports:
 - name: bitbucket.org/kardianos/osext
   version: 816c96ec6fef6a0cd72c9395d192c4bd0d918753
 - name: github.com/armon/circbuf
   version: f092b4f207b6e5cce0569056fba9e1a2735cb6cf
 - name: github.com/armon/go-metrics
-  version: a54701ebec11868993bc198c3f315353e9de2ed6
+  version: 97c69685293dce4c0a2d0b19535179bbc976e4d2
+  subpackages:
+  - datadog
 - name: github.com/BurntSushi/toml
   version: 2ceedfee35ad3848e49308ab0c9a4f640cfb5fb2
 - name: github.com/carbocation/interpose
@@ -14,11 +16,15 @@ imports:
 - name: github.com/coreos/etcd
   version: 56b75844186dbf1464c679829787b935c0ba73ec
   subpackages:
+  - Godeps/_workspace/src/github.com/ugorji/go/codec
+  - Godeps/_workspace/src/golang.org/x/net/context
   - client
   - pkg/pathutil
   - pkg/types
-  - Godeps/_workspace/src/github.com/ugorji/go/codec
-  - Godeps/_workspace/src/golang.org/x/net/context
+- name: github.com/DataDog/datadog-go
+  version: 6ea09a7540648568ce58b3d00eb1da133c2dcdd7
+  subpackages:
+  - statsd
 - name: github.com/deckarep/golang-set
   version: 2e9696acaf8dc5b879518fbed0450778cfef4ec6
 - name: github.com/docker/leadership

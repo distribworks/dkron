@@ -36,6 +36,7 @@ type Config struct {
 	Keyspace              string
 	UIDir                 string
 	RPCPort               int
+	AdvertiseRPCPort      int
 
 	MailHost     string
 	MailPort     uint16
@@ -47,6 +48,14 @@ type Config struct {
 	WebhookURL     string
 	WebhookPayload string
 	WebhookHeaders []string
+
+	// DogStatsdAddr is the address of a dogstatsd instance. If provided,
+	// metrics will be sent to that instance
+	DogStatsdAddr string
+	// DogStatsdTags are the global tags that should be sent with each packet to dogstatsd
+	// It is a list of strings, where each string looks like "my_tag_name:my_tag_value"
+	DogStatsdTags []string
+	StatsdAddr    string
 }
 
 // This is the default port that we use for Serf communication
@@ -103,6 +112,7 @@ func NewConfig(args []string, agent *AgentCommand) *Config {
 	cmdFlags.String("ui-dir", ".", "directory to serve web UI")
 	viper.SetDefault("ui_dir", cmdFlags.Lookup("ui-dir").Value)
 	viper.SetDefault("rpc_port", cmdFlags.Int("rpc-port", 6868, "RPC port"))
+	viper.SetDefault("advertise_rpc_port", cmdFlags.Int("advertise-rpc-port", 0, "advertise RPC port"))
 
 	// Notifications
 	cmdFlags.String("mail-host", "", "notification mail server host")
@@ -125,10 +135,18 @@ func NewConfig(args []string, agent *AgentCommand) *Config {
 	webhookHeaders := &AppendSliceValue{}
 	cmdFlags.Var(webhookHeaders, "webhook-header", "notification webhook additional header")
 
+	cmdFlags.String("dog-statsd-addr", "", "DataDog Agent address")
+	viper.SetDefault("dog_statsd_addr", cmdFlags.Lookup("dog-statsd-addr").Value)
+	var dogStatsdTags []string
+	cmdFlags.Var((*AppendSliceValue)(&dogStatsdTags), "dog-statsd-tags", "Datadog tags, specified as key:value")
+	cmdFlags.String("statsd-addr", "", "Statsd Address")
+	viper.SetDefault("statsd_addr", cmdFlags.Lookup("statsd-addr").Value)
+
 	if err := cmdFlags.Parse(args); err != nil {
 		log.Fatal(err)
 	}
 
+	// Set array params defaults
 	ut, err := UnmarshalTags(tag)
 	if err != nil {
 		log.Fatal(err)
@@ -136,6 +154,7 @@ func NewConfig(args []string, agent *AgentCommand) *Config {
 	viper.SetDefault("tags", ut)
 	viper.SetDefault("join", startJoin)
 	viper.SetDefault("webhook_headers", webhookHeaders)
+	viper.SetDefault("dog_statsd_tags", dogStatsdTags)
 
 	return ReadConfig(agent)
 }
@@ -158,21 +177,22 @@ func ReadConfig(agent *AgentCommand) *Config {
 	InitLogger(viper.GetString("log_level"), nodeName)
 
 	return &Config{
-		NodeName:        nodeName,
-		BindAddr:        viper.GetString("bind_addr"),
-		AdvertiseAddr:   viper.GetString("advertise_addr"),
-		HTTPAddr:        viper.GetString("http_addr"),
-		Discover:        viper.GetString("discover"),
-		Backend:         viper.GetString("backend"),
-		BackendMachines: viper.GetStringSlice("backend_machine"),
-		Server:          server,
-		Profile:         viper.GetString("profile"),
-		StartJoin:       viper.GetStringSlice("join"),
-		Tags:            tags,
-		Keyspace:        viper.GetString("keyspace"),
-		EncryptKey:      viper.GetString("encrypt"),
-		UIDir:           viper.GetString("ui_dir"),
-		RPCPort:         viper.GetInt("rpc_port"),
+		NodeName:         nodeName,
+		BindAddr:         viper.GetString("bind_addr"),
+		AdvertiseAddr:    viper.GetString("advertise_addr"),
+		HTTPAddr:         viper.GetString("http_addr"),
+		Discover:         viper.GetString("discover"),
+		Backend:          viper.GetString("backend"),
+		BackendMachines:  viper.GetStringSlice("backend_machine"),
+		Server:           server,
+		Profile:          viper.GetString("profile"),
+		StartJoin:        viper.GetStringSlice("join"),
+		Tags:             tags,
+		Keyspace:         viper.GetString("keyspace"),
+		EncryptKey:       viper.GetString("encrypt"),
+		UIDir:            viper.GetString("ui_dir"),
+		RPCPort:          viper.GetInt("rpc_port"),
+		AdvertiseRPCPort: viper.GetInt("advertise_rpc_port"),
 
 		MailHost:     viper.GetString("mail_host"),
 		MailPort:     uint16(viper.GetInt("mail_port")),
@@ -184,6 +204,10 @@ func ReadConfig(agent *AgentCommand) *Config {
 		WebhookURL:     viper.GetString("webhook_url"),
 		WebhookPayload: viper.GetString("webhook_payload"),
 		WebhookHeaders: viper.GetStringSlice("webhook_headers"),
+
+		DogStatsdAddr: viper.GetString("dog_statsd_addr"),
+		DogStatsdTags: viper.GetStringSlice("dog_statsd_tags"),
+		StatsdAddr:    viper.GetString("statsd_addr"),
 	}
 }
 

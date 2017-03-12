@@ -6,8 +6,6 @@ import:
   version: 0.9.0
 - package: github.com/armon/circbuf
   version: f092b4f207b6e5cce0569056fba9e1a2735cb6cf
-- package: github.com/armon/go-metrics
-  version: a54701ebec11868993bc198c3f315353e9de2ed6
 - package: github.com/carbocation/interpose
   version: 50c09d12f8624ab10532f931cb630d0bf5f7c2c7
 - package: github.com/coreos/etcd
@@ -90,3 +88,7 @@ import:
 - package: github.com/hashicorp/go-plugin
 - package: bitbucket.org/kardianos/osext
 - package: github.com/hashicorp/go-syslog
+- package: github.com/armon/go-metrics
+  version: 97c69685293dce4c0a2d0b19535179bbc976e4d2
+  subpackages:
+  - datadog

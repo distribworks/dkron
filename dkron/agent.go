@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
+	metrics "github.com/armon/go-metrics"
 	"github.com/docker/leadership"
 	"github.com/hashicorp/memberlist"
 	"github.com/hashicorp/serf/serf"
@@ -89,6 +90,7 @@ Options:
   -ui-dir                         Directory from where to serve Web UI
   -rpc-port=6868                  RPC Port used to communicate with clients. Only used when server.
                                   The RPC IP Address will be the same as the bind address.
+  -advertise-rpc-port             Use the value of -rpc-port by default
 
   -mail-host                      Mail server host address to use for notifications.
   -mail-port                      Mail server port.
@@ -101,6 +103,10 @@ Options:
   -webhook-header                 Headers to use when calling the webhook URL. Can be specified multiple times.
 
   -log-level=info                 Log level (debug, info, warn, error, fatal, panic). Default to info.
+
+  -dog-statsd-addr                DataDog Agent address
+  -dog-statsd-tags                Datadog tags, specified as key:value
+  -statsd-addr                    Statsd Address
 `
 	return strings.TrimSpace(helpText)
 }
@@ -201,6 +207,10 @@ func (a *AgentCommand) setupSerf() *serf.Serf {
 			return nil
 		}
 	}
+	//Ues the value of "RPCPort" if AdvertiseRPCPort has not been set
+	if config.AdvertiseRPCPort <= 0 {
+		config.AdvertiseRPCPort = config.RPCPort
+	}
 
 	encryptKey, err := config.EncryptBytes()
 	if err != nil {
@@ -291,6 +301,10 @@ func (a *AgentCommand) Run(args []string) int {
 	}
 	a.join(a.config.StartJoin, true)
 
+	if i := initMetrics(a); i != 0 {
+		return i
+	}
+
 	// Expose the node name
 	expNode.Set(a.config.NodeName)
 
@@ -345,11 +359,6 @@ WAIT:
 	a.Ui.Output("Gracefully shutting down agent...")
 	log.Info("agent: Gracefully shutting down agent...")
 	go func() {
-		// If we're exiting a server
-		if a.config.Server {
-			// Stop running for leader election
-			a.candidate.Stop()
-		}
 		if err := a.serf.Leave(); err != nil {
 			a.Ui.Error(fmt.Sprintf("Error: %s", err))
 			log.Error(fmt.Sprintf("Error: %s", err))
@@ -404,6 +413,7 @@ func (a *AgentCommand) participate() {
 // Leader election routine
 func (a *AgentCommand) runForElection() {
 	log.Info("agent: Running for election")
+	defer metrics.MeasureSince([]string{"agent", "runForElection"}, time.Now())
 	electedCh, errCh := a.candidate.RunForElection()
 
 	for {
@@ -411,16 +421,19 @@ func (a *AgentCommand) runForElection() {
 		case isElected := <-electedCh:
 			if isElected {
 				log.Info("agent: Cluster leadership acquired")
+				metrics.IncrCounter([]string{"agent", "leadership_acquired"}, 1)
 				// If this server is elected as the leader, start the scheduler
 				a.schedule()
 			} else {
 				log.Info("agent: Cluster leadership lost")
+				metrics.IncrCounter([]string{"agent", "leadership_lost"}, 1)
 				// Always stop the schedule of this server to prevent multiple servers with the scheduler on
 				a.sched.Stop()
 			}
 
 		case err := <-errCh:
 			log.WithError(err).Debug("Leader election failed, channel is probably closed")
+			metrics.IncrCounter([]string{"agent", "election", "failure"}, 1)
 			// Always stop the schedule of this server to prevent multiple servers with the scheduler on
 			a.sched.Stop()
 			return
@@ -452,6 +465,11 @@ func (a *AgentCommand) listServers() []serf.Member {
 	return members
 }
 
+func (a *AgentCommand) GetBindIP() (string, error) {
+	bindIP, _, err := a.config.AddrParts(a.config.BindAddr)
+	return bindIP, err
+}
+
 // Listens to events from Serf and handle the event.
 func (a *AgentCommand) eventLoop() {
 	serfShutdownCh := a.serf.ShutdownCh()
@@ -462,6 +480,7 @@ func (a *AgentCommand) eventLoop() {
 			log.WithFields(logrus.Fields{
 				"event": e.String(),
 			}).Debug("agent: Received event")
+			metrics.IncrCounter([]string{"agent", "event_received", e.String()}, 1)
 
 			// Log all member events
 			if failed, ok := e.(serf.MemberEvent); ok {
@@ -525,7 +544,10 @@ func (a *AgentCommand) eventLoop() {
 						"at":      query.LTime,
 					}).Debug("agent: RPC Config requested")
 
-					query.Respond([]byte(a.getRPCAddr()))
+					err := query.Respond([]byte(a.getRPCAddr()))
+					if err != nil {
+						log.WithError(err).Error("agent: query.Respond")
+					}
 				}
 			}
 
@@ -615,8 +637,9 @@ func (a *AgentCommand) setExecution(payload []byte) *Execution {
 
 // This function is called when a client request the RPCAddress
 // of the current member.
+// in marathon, it would return the host's IP and advertise RPC port
 func (a *AgentCommand) getRPCAddr() string {
 	bindIp := a.serf.LocalMember().Addr
 
-	return fmt.Sprintf("%s:%d", bindIp, a.config.RPCPort)
+	return fmt.Sprintf("%s:%d", bindIp, a.config.AdvertiseRPCPort)
 }
