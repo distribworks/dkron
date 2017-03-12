@@ -34,7 +34,6 @@
 			"include": "*.zip,*.tar.gz,*.deb",
 			"outputFormat": "by-file-extension",
 			"owner": "victorcoder",
-			"prerelease": true,
 			"repository": "dkron"
 		}
 	},
