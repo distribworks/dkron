@@ -12,7 +12,7 @@ schemes:
   - http
 # This is your document metadata
 info:
-  version: "0.9.2"
+  version: "0.9.3"
   title: Dkron REST API
   description: |
     You can communicate with Dkron using a RESTful JSON API over HTTP. Dkron nodes usually listen on port `8080` for API requests. All examples in this section assume that you've found a running leader at `localhost:8080`.
@@ -319,6 +319,9 @@ definitions:
         readOnly: false
       dependent_jobs:
         type: array
+        items: {
+          type: string
+        }
         description: "Array containing the jobs that depends on this one"
         example: ['dependent_job']
         readOnly: true
@@ -359,7 +362,7 @@ definitions:
         description: "Serf protocol minimum version this node can understand or speak"
       ProtocolMax:
         type: integer
-        description": "Serf protocol minimum version this node can understand or speak"
+        description: "Serf protocol minimum version this node can understand or speak"
       ProtocolCur:
         type: integer
         description: "Serf protocol current version this node can understand or speak"
