@@ -1,7 +1,5 @@
 ## 0.9.3 (2017-02-12)
 
-Features:
-
 - Fix RPC server listen address (@firstway)
 - Basic implementation of the testing infrastructure using swarm
 - Basic Telemetry implementation for sending metrics to statsd and datadog
