@@ -77,6 +77,9 @@ func TestAgentCommand_runForElection(t *testing.T) {
 	shutdownCh := make(chan struct{})
 	defer close(shutdownCh)
 
+	// Override leader TTL
+	defaultLeaderTTL = 2 * time.Second
+
 	ui := new(cli.MockUi)
 	a1 := &AgentCommand{
 		Ui:         ui,
@@ -143,9 +146,10 @@ func TestAgentCommand_runForElection(t *testing.T) {
 
 	// Send a shutdown request
 	shutdownCh <- struct{}{}
+	a1.candidate.Stop()
 
 	// Wait until test2 steps as leader
-	time.Sleep(30 * time.Second)
+	time.Sleep(4 * time.Second)
 
 	kv, _ = client.Get("dkron/leader")
 	leader = string(kv.Value)
