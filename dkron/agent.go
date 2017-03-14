@@ -28,7 +28,6 @@ const (
 	gracefulTimeout = 3 * time.Second
 
 	defaultRecoverTime = 10 * time.Second
-	defaultLeaderTTL   = 20 * time.Second
 )
 
 var (
@@ -36,6 +35,8 @@ var (
 
 	// Error thrown on obtained leader from store is not found in member list
 	ErrLeaderNotFound = errors.New("No member leader found in member list")
+
+	defaultLeaderTTL = 20 * time.Second
 )
 
 // ProcessorFactory is a function type that creates a new instance
