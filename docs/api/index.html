@@ -198,7 +198,7 @@
 <p>Dkron implements a RESTful JSON API over HTTP to communicate with software clients. Dkron listens in port <code>8080</code> by default. All examples in this section assume that you're using the default port.</p>
 <p>Default API responses are unformatted JSON add the <code>pretty=true</code> param to format the response.</p>
 <h3 id="version-information">Version information</h3>
-<p><em>Version</em> : 0.9.2</p>
+<p><em>Version</em> : 0.9.3</p>
 <h3 id="uri-scheme">URI scheme</h3>
 <p><em>Host</em> : localhost:8080<br />
 <em>BasePath</em> : /v1<br />
@@ -240,14 +240,13 @@
 </ul>
 <h4 id="example-http-request">Example HTTP request</h4>
 <h5 id="request-path">Request path</h5>
-<pre><code>json :
-&quot;/&quot;
+<pre><code>/
 </code></pre>
 
 <h4 id="example-http-response">Example HTTP response</h4>
 <h5 id="response-200">Response 200</h5>
 <pre><code>json :
-{ }
+&quot;{ }&quot;
 </code></pre>
 
 <p><a name="listexecutionsbyjob"></a></p>
@@ -296,8 +295,7 @@
 </ul>
 <h4 id="example-http-request_1">Example HTTP request</h4>
 <h5 id="request-path_1">Request path</h5>
-<pre><code>json :
-&quot;/executions/string&quot;
+<pre><code>/executions/string
 </code></pre>
 
 <h4 id="example-http-response_1">Example HTTP response</h4>
@@ -333,8 +331,7 @@
 </ul>
 <h4 id="example-http-request_2">Example HTTP request</h4>
 <h5 id="request-path_2">Request path</h5>
-<pre><code>json :
-&quot;/jobs&quot;
+<pre><code>/jobs
 </code></pre>
 
 <h4 id="example-http-response_2">Example HTTP response</h4>
@@ -389,8 +386,7 @@
 </ul>
 <h4 id="example-http-request_3">Example HTTP request</h4>
 <h5 id="request-path_3">Request path</h5>
-<pre><code>json :
-&quot;/jobs&quot;
+<pre><code>/jobs
 </code></pre>
 
 <h5 id="request-body">Request body</h5>
@@ -412,7 +408,7 @@
   },
   &quot;retries&quot; : 2,
   &quot;parent_job&quot; : &quot;parent_job&quot;,
-  &quot;dependent_jobs&quot; : &quot;&quot;,
+  &quot;dependent_jobs&quot; : [ &quot;string&quot; ],
   &quot;processors&quot; : {
     &quot;string&quot; : &quot;string&quot;
   },
@@ -440,7 +436,7 @@
   },
   &quot;retries&quot; : 2,
   &quot;parent_job&quot; : &quot;parent_job&quot;,
-  &quot;dependent_jobs&quot; : &quot;&quot;,
+  &quot;dependent_jobs&quot; : [ &quot;string&quot; ],
   &quot;processors&quot; : {
     &quot;string&quot; : &quot;string&quot;
   },
@@ -448,10 +444,10 @@
 }
 </code></pre>
 
-<p><a name="deletejob"></a></p>
-<h3 id="delete-jobsjob_name">DELETE /jobs/{job_name}</h3>
+<p><a name="showjobbyname"></a></p>
+<h3 id="get-jobsjob_name">GET /jobs/{job_name}</h3>
 <h4 id="description_4">Description</h4>
-<p>Delete a job.</p>
+<p>Show a job.</p>
 <h4 id="parameters_2">Parameters</h4>
 <table>
 <thead>
@@ -466,7 +462,7 @@
 <tr>
 <td><strong>Path</strong></td>
 <td><strong>job_name</strong>  <br><em>required</em></td>
-<td>The job that needs to be deleted.</td>
+<td>The job that needs to be fetched.</td>
 <td>string</td>
 </tr>
 </tbody>
@@ -494,8 +490,7 @@
 </ul>
 <h4 id="example-http-request_4">Example HTTP request</h4>
 <h5 id="request-path_4">Request path</h5>
-<pre><code>json :
-&quot;/jobs/string&quot;
+<pre><code>/jobs/string
 </code></pre>
 
 <h4 id="example-http-response_4">Example HTTP response</h4>
@@ -518,85 +513,7 @@
   },
   &quot;retries&quot; : 2,
   &quot;parent_job&quot; : &quot;parent_job&quot;,
-  &quot;dependent_jobs&quot; : &quot;&quot;,
-  &quot;processors&quot; : {
-    &quot;string&quot; : &quot;string&quot;
-  },
-  &quot;concurrency&quot; : &quot;allow&quot;
-}
-</code></pre>
-
-<p><a name="showjobbyname"></a></p>
-<h3 id="get-jobsjob_name">GET /jobs/{job_name}</h3>
-<h4 id="description_5">Description</h4>
-<p>Show a job.</p>
-<h4 id="parameters_3">Parameters</h4>
-<table>
-<thead>
-<tr>
-<th>Type</th>
-<th>Name</th>
-<th>Description</th>
-<th>Schema</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Path</strong></td>
-<td><strong>job_name</strong>  <br><em>required</em></td>
-<td>The job that needs to be fetched.</td>
-<td>string</td>
-</tr>
-</tbody>
-</table>
-<h4 id="responses_5">Responses</h4>
-<table>
-<thead>
-<tr>
-<th>HTTP Code</th>
-<th>Description</th>
-<th>Schema</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>200</strong></td>
-<td>Successful response</td>
-<td><a href="#job">job</a></td>
-</tr>
-</tbody>
-</table>
-<h4 id="tags_5">Tags</h4>
-<ul>
-<li>jobs</li>
-</ul>
-<h4 id="example-http-request_5">Example HTTP request</h4>
-<h5 id="request-path_5">Request path</h5>
-<pre><code>json :
-&quot;/jobs/string&quot;
-</code></pre>
-
-<h4 id="example-http-response_5">Example HTTP response</h4>
-<h5 id="response-200_4">Response 200</h5>
-<pre><code>json :
-{
-  &quot;name&quot; : &quot;string&quot;,
-  &quot;schedule&quot; : &quot;string&quot;,
-  &quot;command&quot; : &quot;string&quot;,
-  &quot;shell&quot; : true,
-  &quot;owner&quot; : &quot;string&quot;,
-  &quot;owner_email&quot; : &quot;string&quot;,
-  &quot;success_count&quot; : 0,
-  &quot;error_count&quot; : 0,
-  &quot;last_success&quot; : &quot;string&quot;,
-  &quot;last_error&quot; : &quot;string&quot;,
-  &quot;disabled&quot; : true,
-  &quot;tags&quot; : {
-    &quot;string&quot; : &quot;string&quot;
-  },
-  &quot;retries&quot; : 2,
-  &quot;parent_job&quot; : &quot;parent_job&quot;,
-  &quot;dependent_jobs&quot; : &quot;&quot;,
+  &quot;dependent_jobs&quot; : [ &quot;string&quot; ],
   &quot;processors&quot; : {
     &quot;string&quot; : &quot;string&quot;
   },
@@ -606,9 +523,9 @@
 
 <p><a name="runjob"></a></p>
 <h3 id="post-jobsjob_name">POST /jobs/{job_name}</h3>
-<h4 id="description_6">Description</h4>
+<h4 id="description_5">Description</h4>
 <p>Executes a job.</p>
-<h4 id="parameters_4">Parameters</h4>
+<h4 id="parameters_3">Parameters</h4>
 <table>
 <thead>
 <tr>
@@ -627,7 +544,7 @@
 </tr>
 </tbody>
 </table>
-<h4 id="responses_6">Responses</h4>
+<h4 id="responses_5">Responses</h4>
 <table>
 <thead>
 <tr>
@@ -644,17 +561,16 @@
 </tr>
 </tbody>
 </table>
-<h4 id="tags_6">Tags</h4>
+<h4 id="tags_5">Tags</h4>
 <ul>
 <li>jobs</li>
 </ul>
-<h4 id="example-http-request_6">Example HTTP request</h4>
-<h5 id="request-path_6">Request path</h5>
-<pre><code>json :
-&quot;/jobs/string&quot;
+<h4 id="example-http-request_5">Example HTTP request</h4>
+<h5 id="request-path_5">Request path</h5>
+<pre><code>/jobs/string
 </code></pre>
 
-<h4 id="example-http-response_6">Example HTTP response</h4>
+<h4 id="example-http-response_5">Example HTTP response</h4>
 <h5 id="response-202">Response 202</h5>
 <pre><code>json :
 {
@@ -674,7 +590,84 @@
   },
   &quot;retries&quot; : 2,
   &quot;parent_job&quot; : &quot;parent_job&quot;,
-  &quot;dependent_jobs&quot; : &quot;&quot;,
+  &quot;dependent_jobs&quot; : [ &quot;string&quot; ],
+  &quot;processors&quot; : {
+    &quot;string&quot; : &quot;string&quot;
+  },
+  &quot;concurrency&quot; : &quot;allow&quot;
+}
+</code></pre>
+
+<p><a name="deletejob"></a></p>
+<h3 id="delete-jobsjob_name">DELETE /jobs/{job_name}</h3>
+<h4 id="description_6">Description</h4>
+<p>Delete a job.</p>
+<h4 id="parameters_4">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Name</th>
+<th>Description</th>
+<th>Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Path</strong></td>
+<td><strong>job_name</strong>  <br><em>required</em></td>
+<td>The job that needs to be deleted.</td>
+<td>string</td>
+</tr>
+</tbody>
+</table>
+<h4 id="responses_6">Responses</h4>
+<table>
+<thead>
+<tr>
+<th>HTTP Code</th>
+<th>Description</th>
+<th>Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>200</strong></td>
+<td>Successful response</td>
+<td><a href="#job">job</a></td>
+</tr>
+</tbody>
+</table>
+<h4 id="tags_6">Tags</h4>
+<ul>
+<li>jobs</li>
+</ul>
+<h4 id="example-http-request_6">Example HTTP request</h4>
+<h5 id="request-path_6">Request path</h5>
+<pre><code>/jobs/string
+</code></pre>
+
+<h4 id="example-http-response_6">Example HTTP response</h4>
+<h5 id="response-200_4">Response 200</h5>
+<pre><code>json :
+{
+  &quot;name&quot; : &quot;string&quot;,
+  &quot;schedule&quot; : &quot;string&quot;,
+  &quot;command&quot; : &quot;string&quot;,
+  &quot;shell&quot; : true,
+  &quot;owner&quot; : &quot;string&quot;,
+  &quot;owner_email&quot; : &quot;string&quot;,
+  &quot;success_count&quot; : 0,
+  &quot;error_count&quot; : 0,
+  &quot;last_success&quot; : &quot;string&quot;,
+  &quot;last_error&quot; : &quot;string&quot;,
+  &quot;disabled&quot; : true,
+  &quot;tags&quot; : {
+    &quot;string&quot; : &quot;string&quot;
+  },
+  &quot;retries&quot; : 2,
+  &quot;parent_job&quot; : &quot;parent_job&quot;,
+  &quot;dependent_jobs&quot; : [ &quot;string&quot; ],
   &quot;processors&quot; : {
     &quot;string&quot; : &quot;string&quot;
   },
@@ -709,8 +702,7 @@
 </ul>
 <h4 id="example-http-request_7">Example HTTP request</h4>
 <h5 id="request-path_7">Request path</h5>
-<pre><code>json :
-&quot;/leader&quot;
+<pre><code>/leader
 </code></pre>
 
 <h4 id="example-http-response_7">Example HTTP response</h4>
@@ -760,8 +752,7 @@
 </ul>
 <h4 id="example-http-request_8">Example HTTP request</h4>
 <h5 id="request-path_8">Request path</h5>
-<pre><code>json :
-&quot;/leave&quot;
+<pre><code>/leave
 </code></pre>
 
 <h4 id="example-http-response_8">Example HTTP response</h4>
@@ -797,8 +788,7 @@
 </ul>
 <h4 id="example-http-request_9">Example HTTP request</h4>
 <h5 id="request-path_9">Request path</h5>
-<pre><code>json :
-&quot;/members&quot;
+<pre><code>/members
 </code></pre>
 
 <h4 id="example-http-response_9">Example HTTP response</h4>
@@ -896,9 +886,9 @@
 <td>string</td>
 </tr>
 <tr>
-<td><strong>dependent_jobs</strong>  <br><em>optional</em>  <br><em>read-only</em></td>
-<td>Array containing the jobs that depends on this one  <br><strong>Example</strong> : <code>""</code></td>
-<td>&lt; object &gt; array</td>
+<td><strong>dependent_jobs</strong>  <br><em>optional</em></td>
+<td>Array containing the jobs that depends on this one  <br><strong>Example</strong> : <code>[ "string" ]</code></td>
+<td>&lt; string &gt; array</td>
 </tr>
 <tr>
 <td><strong>processors</strong>  <br><em>optional</em></td>
@@ -956,7 +946,7 @@
 </tr>
 <tr>
 <td><strong>ProtocolMax</strong>  <br><em>optional</em></td>
-<td><strong>Example</strong> : <code>0</code></td>
+<td>Serf protocol minimum version this node can understand or speak  <br><strong>Example</strong> : <code>0</code></td>
 <td>integer</td>
 </tr>
 <tr>

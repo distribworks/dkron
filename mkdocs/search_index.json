@@ -47,8 +47,18 @@
         }, 
         {
             "location": "/docs/getting-started/#installation", 
-            "text": "Recommended method  APT repository:  deb [trusted=yes] https://apt.fury.io/victorcoder/ /  Unstable release:  sudo apt-get install dkron-unstable \nStable release:  sudo apt-get install dkron  Other methods  Simply download the packaged archive for your platform from the  downloads page , extract the package to a shared location in your drive, like  /opt/local  and run it from there.", 
+            "text": "", 
             "title": "Installation"
+        }, 
+        {
+            "location": "/docs/getting-started/#recommended-method", 
+            "text": "APT repository:  deb [trusted=yes] https://apt.fury.io/victorcoder/ /  Unstable release:  sudo apt-get install dkron-unstable \nStable release:  sudo apt-get install dkron", 
+            "title": "Recommended method"
+        }, 
+        {
+            "location": "/docs/getting-started/#other-methods", 
+            "text": "Simply download the packaged archive for your platform from the  downloads page , extract the package to a shared location in your drive, like  /opt/local  and run it from there.", 
+            "title": "Other methods"
         }, 
         {
             "location": "/docs/getting-started/#configuration", 
@@ -72,13 +82,38 @@
         }, 
         {
             "location": "/docs/guides/#target-nodes-spec", 
-            "text": "You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run.  Examples:  Target all nodes with a tag:  {\n     name :  job_name ,\n     command :  /bin/true ,\n     schedule :  @every 2m ,\n     tags : {\n         role :  web \n    }\n}  Target only two nodes of a group of nodes with a tag:  {\n     name :  job_name ,\n     command :  /bin/true ,\n     schedule :  @every 2m ,\n     tags : {\n         role :  web:2 \n    }\n}  Dkron will try to run the job in the amount of nodes indicated by that count having that tag.", 
+            "text": "You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run.", 
             "title": "Target nodes spec"
         }, 
         {
+            "location": "/docs/guides/#examples", 
+            "text": "Target all nodes with a tag:  {\n     name :  job_name ,\n     command :  /bin/true ,\n     schedule :  @every 2m ,\n     tags : {\n         role :  web \n    }\n}  Target only two nodes of a group of nodes with a tag:  {\n     name :  job_name ,\n     command :  /bin/true ,\n     schedule :  @every 2m ,\n     tags : {\n         role :  web:2 \n    }\n}  Dkron will try to run the job in the amount of nodes indicated by that count having that tag.", 
+            "title": "Examples:"
+        }, 
+        {
             "location": "/docs/guides/#cron-expression-format", 
-            "text": "A cron expression represents a set of times, using 6 space-separated fields.  Field name   | Mandatory? | Allowed values  | Allowed special characters\n----------   | ---------- | --------------  | --------------------------\nSeconds      | Yes        | 0-59            | * / , -\nMinutes      | Yes        | 0-59            | * / , -\nHours        | Yes        | 0-23            | * / , -\nDay of month | Yes        | 1-31            | * / , - ?\nMonth        | Yes        | 1-12 or JAN-DEC | * / , -\nDay of week  | Yes        | 0-6 or SUN-SAT  | * / , - ?  Note: Month and Day-of-week field values are case insensitive.  \"SUN\", \"Sun\",\nand \"sun\" are equally accepted.  Special Characters  Asterisk ( * )  The asterisk indicates that the cron expression will match for all values of the\nfield; e.g., using an asterisk in the 5th field (month) would indicate every\nmonth.  Slash ( / )  Slashes are used to describe increments of ranges. For example 3-59/15 in the\n1st field (minutes) would indicate the 3rd minute of the hour and every 15\nminutes thereafter. The form \"*\\/...\" is equivalent to the form \"first-last/...\",\nthat is, an increment over the largest possible range of the field.  The form\n\"N/...\" is accepted as meaning \"N-MAX/...\", that is, starting at N, use the\nincrement until the end of that specific range.  It does not wrap around.  Comma ( , )  Commas are used to separate items of a list. For example, using \"MON,WED,FRI\" in\nthe 5th field (day of week) would mean Mondays, Wednesdays and Fridays.  Hyphen ( - )  Hyphens are used to define ranges. For example, 9-17 would indicate every\nhour between 9am and 5pm inclusive.  Question mark ( ? )  Question mark may be used instead of '*' for leaving either day-of-month or\nday-of-week blank.  Predefined schedules  You may use one of several pre-defined schedules in place of a cron expression.  Entry                  | Description                                | Equivalent To\n-----                  | -----------                                | -------------\n@yearly (or @annually) | Run once a year, midnight, Jan. 1st        | 0 0 0 1 1 *\n@monthly               | Run once a month, midnight, first of month | 0 0 0 1 * *\n@weekly                | Run once a week, midnight on Sunday        | 0 0 0 * * 0\n@daily (or @midnight)  | Run once a day, midnight                   | 0 0 0 * * *\n@hourly                | Run once an hour, beginning of hour        | 0 0 * * * *\n@minutely              | Run once a minute, beginning of minute     | 0 * * * * *  Intervals  You may also schedule a job to execute at fixed intervals.  This is supported by\nformatting the cron spec like this:  @every  duration   where \"duration\" is a string accepted by time.ParseDuration\n(http://golang.org/pkg/time/#ParseDuration).  For example, \"@every 1h30m10s\" would indicate a schedule that activates every\n1 hour, 30 minutes, 10 seconds.  Note: The interval does not take the job runtime into account.  For example,\nif a job takes 3 minutes to run, and it is scheduled to run every 5 minutes,\nit will have only 2 minutes of idle time between each run.  Fixed times  You may also want to schedule a job to be executed once. This is supported by\nformatting the cron spec like this:  @at  datetime   Where \"datetime\" is a string accepted by time.Parse in RFC3339 format\n(https://golang.org/pkg/time/#Parse).  For example, \"@at 2018-01-02T15:04:00Z\" would run the job on the specified date and time\nassuming UTC timezone.  Time zones  All interpretation and scheduling is done in the machine's local time zone (as\nprovided by the Go time package (http://www.golang.org/pkg/time).  Be aware that jobs scheduled during daylight-savings leap-ahead transitions will\nnot be run!", 
+            "text": "A cron expression represents a set of times, using 6 space-separated fields.  Field name   | Mandatory? | Allowed values  | Allowed special characters\n----------   | ---------- | --------------  | --------------------------\nSeconds      | Yes        | 0-59            | * / , -\nMinutes      | Yes        | 0-59            | * / , -\nHours        | Yes        | 0-23            | * / , -\nDay of month | Yes        | 1-31            | * / , - ?\nMonth        | Yes        | 1-12 or JAN-DEC | * / , -\nDay of week  | Yes        | 0-6 or SUN-SAT  | * / , - ?  Note: Month and Day-of-week field values are case insensitive.  \"SUN\", \"Sun\",\nand \"sun\" are equally accepted.  Special Characters  Asterisk ( * )  The asterisk indicates that the cron expression will match for all values of the\nfield; e.g., using an asterisk in the 5th field (month) would indicate every\nmonth.  Slash ( / )  Slashes are used to describe increments of ranges. For example 3-59/15 in the\n1st field (minutes) would indicate the 3rd minute of the hour and every 15\nminutes thereafter. The form \"*\\/...\" is equivalent to the form \"first-last/...\",\nthat is, an increment over the largest possible range of the field.  The form\n\"N/...\" is accepted as meaning \"N-MAX/...\", that is, starting at N, use the\nincrement until the end of that specific range.  It does not wrap around.  Comma ( , )  Commas are used to separate items of a list. For example, using \"MON,WED,FRI\" in\nthe 5th field (day of week) would mean Mondays, Wednesdays and Fridays.  Hyphen ( - )  Hyphens are used to define ranges. For example, 9-17 would indicate every\nhour between 9am and 5pm inclusive.  Question mark ( ? )  Question mark may be used instead of '*' for leaving either day-of-month or\nday-of-week blank.", 
             "title": "CRON Expression Format"
+        }, 
+        {
+            "location": "/docs/guides/#predefined-schedules", 
+            "text": "You may use one of several pre-defined schedules in place of a cron expression.  Entry                  | Description                                | Equivalent To\n-----                  | -----------                                | -------------\n@yearly (or @annually) | Run once a year, midnight, Jan. 1st        | 0 0 0 1 1 *\n@monthly               | Run once a month, midnight, first of month | 0 0 0 1 * *\n@weekly                | Run once a week, midnight on Sunday        | 0 0 0 * * 0\n@daily (or @midnight)  | Run once a day, midnight                   | 0 0 0 * * *\n@hourly                | Run once an hour, beginning of hour        | 0 0 * * * *\n@minutely              | Run once a minute, beginning of minute     | 0 * * * * *", 
+            "title": "Predefined schedules"
+        }, 
+        {
+            "location": "/docs/guides/#intervals", 
+            "text": "You may also schedule a job to execute at fixed intervals.  This is supported by\nformatting the cron spec like this:  @every  duration   where \"duration\" is a string accepted by time.ParseDuration\n(http://golang.org/pkg/time/#ParseDuration).  For example, \"@every 1h30m10s\" would indicate a schedule that activates every\n1 hour, 30 minutes, 10 seconds.  Note: The interval does not take the job runtime into account.  For example,\nif a job takes 3 minutes to run, and it is scheduled to run every 5 minutes,\nit will have only 2 minutes of idle time between each run.", 
+            "title": "Intervals"
+        }, 
+        {
+            "location": "/docs/guides/#fixed-times", 
+            "text": "You may also want to schedule a job to be executed once. This is supported by\nformatting the cron spec like this:  @at  datetime   Where \"datetime\" is a string accepted by time.Parse in RFC3339 format\n(https://golang.org/pkg/time/#Parse).  For example, \"@at 2018-01-02T15:04:00Z\" would run the job on the specified date and time\nassuming UTC timezone.", 
+            "title": "Fixed times"
+        }, 
+        {
+            "location": "/docs/guides/#time-zones", 
+            "text": "All interpretation and scheduling is done in the machine's local time zone (as\nprovided by the Go time package (http://www.golang.org/pkg/time).  Be aware that jobs scheduled during daylight-savings leap-ahead transitions will\nnot be run!", 
+            "title": "Time zones"
         }, 
         {
             "location": "/docs/guides/#job-chaining", 
@@ -117,7 +152,7 @@
         }, 
         {
             "location": "/docs/api/", 
-            "text": "Dkron REST API\n\n\n\n\nOverview\n\n\nYou can communicate with Dkron using a RESTful JSON API over HTTP. Dkron nodes usually listen on port \n8080\n for API requests. All examples in this section assume that you've found a running leader at \nlocalhost:8080\n.\n\n\nDkron implements a RESTful JSON API over HTTP to communicate with software clients. Dkron listens in port \n8080\n by default. All examples in this section assume that you're using the default port.\n\n\nDefault API responses are unformatted JSON add the \npretty=true\n param to format the response.\n\n\nVersion information\n\n\nVersion\n : 0.9.2\n\n\nURI scheme\n\n\nHost\n : localhost:8080\n\n\nBasePath\n : /v1\n\n\nSchemes\n : HTTP\n\n\nConsumes\n\n\n\n\napplication/json\n\n\n\n\nProduces\n\n\n\n\napplication/json\n\n\n\n\n\n\nPaths\n\n\n\n\nGET /\n\n\nDescription\n\n\nGets \nStatus\n object.\n\n\nResponses\n\n\n\n\n\n\n\n\nHTTP Code\n\n\nDescription\n\n\nSchema\n\n\n\n\n\n\n\n\n\n\n200\n\n\nSuccessful response\n\n\nstatus\n\n\n\n\n\n\n\n\nTags\n\n\n\n\ndefault\n\n\n\n\nExample HTTP request\n\n\nRequest path\n\n\njson :\n\n/\n\n\n\n\n\nExample HTTP response\n\n\nResponse 200\n\n\njson :\n{ }\n\n\n\n\n\n\nGET /executions/{job_name}\n\n\nDescription\n\n\nList executions.\n\n\nParameters\n\n\n\n\n\n\n\n\nType\n\n\nName\n\n\nDescription\n\n\nSchema\n\n\n\n\n\n\n\n\n\n\nPath\n\n\njob_name\n  \nrequired\n\n\nThe job that owns the executions to be fetched.\n\n\nstring\n\n\n\n\n\n\n\n\nResponses\n\n\n\n\n\n\n\n\nHTTP Code\n\n\nDescription\n\n\nSchema\n\n\n\n\n\n\n\n\n\n\n200\n\n\nSuccessful response\n\n\n \nexecution\n \n array\n\n\n\n\n\n\n\n\nTags\n\n\n\n\nexecutions\n\n\n\n\nExample HTTP request\n\n\nRequest path\n\n\njson :\n\n/executions/string\n\n\n\n\n\nExample HTTP response\n\n\nResponse 200\n\n\njson :\n\narray\n\n\n\n\n\n\n\nGET /jobs\n\n\nDescription\n\n\nList jobs.\n\n\nResponses\n\n\n\n\n\n\n\n\nHTTP Code\n\n\nDescription\n\n\nSchema\n\n\n\n\n\n\n\n\n\n\n200\n\n\nSuccessful response\n\n\n \njob\n \n array\n\n\n\n\n\n\n\n\nTags\n\n\n\n\njobs\n\n\n\n\nExample HTTP request\n\n\nRequest path\n\n\njson :\n\n/jobs\n\n\n\n\n\nExample HTTP response\n\n\nResponse 200\n\n\njson :\n\narray\n\n\n\n\n\n\n\nPOST /jobs\n\n\nDescription\n\n\nCreate or updates a new job.\n\n\nParameters\n\n\n\n\n\n\n\n\nType\n\n\nName\n\n\nDescription\n\n\nSchema\n\n\n\n\n\n\n\n\n\n\nBody\n\n\nbody\n  \nrequired\n\n\nUpdated job object\n\n\njob\n\n\n\n\n\n\n\n\nResponses\n\n\n\n\n\n\n\n\nHTTP Code\n\n\nDescription\n\n\nSchema\n\n\n\n\n\n\n\n\n\n\n201\n\n\nSuccessful response\n\n\njob\n\n\n\n\n\n\n\n\nTags\n\n\n\n\njobs\n\n\n\n\nExample HTTP request\n\n\nRequest path\n\n\njson :\n\n/jobs\n\n\n\n\n\nRequest body\n\n\njson :\n{\n  \nname\n : \nstring\n,\n  \nschedule\n : \nstring\n,\n  \ncommand\n : \nstring\n,\n  \nshell\n : true,\n  \nowner\n : \nstring\n,\n  \nowner_email\n : \nstring\n,\n  \nsuccess_count\n : 0,\n  \nerror_count\n : 0,\n  \nlast_success\n : \nstring\n,\n  \nlast_error\n : \nstring\n,\n  \ndisabled\n : true,\n  \ntags\n : {\n    \nstring\n : \nstring\n\n  },\n  \nretries\n : 2,\n  \nparent_job\n : \nparent_job\n,\n  \ndependent_jobs\n : \n,\n  \nprocessors\n : {\n    \nstring\n : \nstring\n\n  },\n  \nconcurrency\n : \nallow\n\n}\n\n\n\n\nExample HTTP response\n\n\nResponse 201\n\n\njson :\n{\n  \nname\n : \nstring\n,\n  \nschedule\n : \nstring\n,\n  \ncommand\n : \nstring\n,\n  \nshell\n : true,\n  \nowner\n : \nstring\n,\n  \nowner_email\n : \nstring\n,\n  \nsuccess_count\n : 0,\n  \nerror_count\n : 0,\n  \nlast_success\n : \nstring\n,\n  \nlast_error\n : \nstring\n,\n  \ndisabled\n : true,\n  \ntags\n : {\n    \nstring\n : \nstring\n\n  },\n  \nretries\n : 2,\n  \nparent_job\n : \nparent_job\n,\n  \ndependent_jobs\n : \n,\n  \nprocessors\n : {\n    \nstring\n : \nstring\n\n  },\n  \nconcurrency\n : \nallow\n\n}\n\n\n\n\n\n\nDELETE /jobs/{job_name}\n\n\nDescription\n\n\nDelete a job.\n\n\nParameters\n\n\n\n\n\n\n\n\nType\n\n\nName\n\n\nDescription\n\n\nSchema\n\n\n\n\n\n\n\n\n\n\nPath\n\n\njob_name\n  \nrequired\n\n\nThe job that needs to be deleted.\n\n\nstring\n\n\n\n\n\n\n\n\nResponses\n\n\n\n\n\n\n\n\nHTTP Code\n\n\nDescription\n\n\nSchema\n\n\n\n\n\n\n\n\n\n\n200\n\n\nSuccessful response\n\n\njob\n\n\n\n\n\n\n\n\nTags\n\n\n\n\njobs\n\n\n\n\nExample HTTP request\n\n\nRequest path\n\n\njson :\n\n/jobs/string\n\n\n\n\n\nExample HTTP response\n\n\nResponse 200\n\n\njson :\n{\n  \nname\n : \nstring\n,\n  \nschedule\n : \nstring\n,\n  \ncommand\n : \nstring\n,\n  \nshell\n : true,\n  \nowner\n : \nstring\n,\n  \nowner_email\n : \nstring\n,\n  \nsuccess_count\n : 0,\n  \nerror_count\n : 0,\n  \nlast_success\n : \nstring\n,\n  \nlast_error\n : \nstring\n,\n  \ndisabled\n : true,\n  \ntags\n : {\n    \nstring\n : \nstring\n\n  },\n  \nretries\n : 2,\n  \nparent_job\n : \nparent_job\n,\n  \ndependent_jobs\n : \n,\n  \nprocessors\n : {\n    \nstring\n : \nstring\n\n  },\n  \nconcurrency\n : \nallow\n\n}\n\n\n\n\n\n\nGET /jobs/{job_name}\n\n\nDescription\n\n\nShow a job.\n\n\nParameters\n\n\n\n\n\n\n\n\nType\n\n\nName\n\n\nDescription\n\n\nSchema\n\n\n\n\n\n\n\n\n\n\nPath\n\n\njob_name\n  \nrequired\n\n\nThe job that needs to be fetched.\n\n\nstring\n\n\n\n\n\n\n\n\nResponses\n\n\n\n\n\n\n\n\nHTTP Code\n\n\nDescription\n\n\nSchema\n\n\n\n\n\n\n\n\n\n\n200\n\n\nSuccessful response\n\n\njob\n\n\n\n\n\n\n\n\nTags\n\n\n\n\njobs\n\n\n\n\nExample HTTP request\n\n\nRequest path\n\n\njson :\n\n/jobs/string\n\n\n\n\n\nExample HTTP response\n\n\nResponse 200\n\n\njson :\n{\n  \nname\n : \nstring\n,\n  \nschedule\n : \nstring\n,\n  \ncommand\n : \nstring\n,\n  \nshell\n : true,\n  \nowner\n : \nstring\n,\n  \nowner_email\n : \nstring\n,\n  \nsuccess_count\n : 0,\n  \nerror_count\n : 0,\n  \nlast_success\n : \nstring\n,\n  \nlast_error\n : \nstring\n,\n  \ndisabled\n : true,\n  \ntags\n : {\n    \nstring\n : \nstring\n\n  },\n  \nretries\n : 2,\n  \nparent_job\n : \nparent_job\n,\n  \ndependent_jobs\n : \n,\n  \nprocessors\n : {\n    \nstring\n : \nstring\n\n  },\n  \nconcurrency\n : \nallow\n\n}\n\n\n\n\n\n\nPOST /jobs/{job_name}\n\n\nDescription\n\n\nExecutes a job.\n\n\nParameters\n\n\n\n\n\n\n\n\nType\n\n\nName\n\n\nDescription\n\n\nSchema\n\n\n\n\n\n\n\n\n\n\nPath\n\n\njob_name\n  \nrequired\n\n\nThe job that needs to be run.\n\n\nstring\n\n\n\n\n\n\n\n\nResponses\n\n\n\n\n\n\n\n\nHTTP Code\n\n\nDescription\n\n\nSchema\n\n\n\n\n\n\n\n\n\n\n202\n\n\nSuccessful response\n\n\njob\n\n\n\n\n\n\n\n\nTags\n\n\n\n\njobs\n\n\n\n\nExample HTTP request\n\n\nRequest path\n\n\njson :\n\n/jobs/string\n\n\n\n\n\nExample HTTP response\n\n\nResponse 202\n\n\njson :\n{\n  \nname\n : \nstring\n,\n  \nschedule\n : \nstring\n,\n  \ncommand\n : \nstring\n,\n  \nshell\n : true,\n  \nowner\n : \nstring\n,\n  \nowner_email\n : \nstring\n,\n  \nsuccess_count\n : 0,\n  \nerror_count\n : 0,\n  \nlast_success\n : \nstring\n,\n  \nlast_error\n : \nstring\n,\n  \ndisabled\n : true,\n  \ntags\n : {\n    \nstring\n : \nstring\n\n  },\n  \nretries\n : 2,\n  \nparent_job\n : \nparent_job\n,\n  \ndependent_jobs\n : \n,\n  \nprocessors\n : {\n    \nstring\n : \nstring\n\n  },\n  \nconcurrency\n : \nallow\n\n}\n\n\n\n\n\n\nGET /leader\n\n\nDescription\n\n\nList members.\n\n\nResponses\n\n\n\n\n\n\n\n\nHTTP Code\n\n\nDescription\n\n\nSchema\n\n\n\n\n\n\n\n\n\n\n200\n\n\nSuccessful response\n\n\nmember\n\n\n\n\n\n\n\n\nTags\n\n\n\n\ndefault\n\n\n\n\nExample HTTP request\n\n\nRequest path\n\n\njson :\n\n/leader\n\n\n\n\n\nExample HTTP response\n\n\nResponse 200\n\n\njson :\n{\n  \nName\n : \nstring\n,\n  \nAddr\n : \nstring\n,\n  \nPort\n : 0,\n  \nTags\n : {\n    \nstring\n : \nstring\n\n  },\n  \nStatus\n : 0,\n  \nProtocolMin\n : 0,\n  \nProtocolMax\n : 0,\n  \nProtocolCur\n : 0,\n  \nDelegateMin\n : 0,\n  \nDelegateMax\n : 0,\n  \nDelegateCur\n : 0\n}\n\n\n\n\n\n\nGET /leave\n\n\nDescription\n\n\nForce the node to leave the cluster.\n\n\nResponses\n\n\n\n\n\n\n\n\nHTTP Code\n\n\nDescription\n\n\nSchema\n\n\n\n\n\n\n\n\n\n\n200\n\n\nSuccessful response\n\n\n \nmember\n \n array\n\n\n\n\n\n\n\n\nTags\n\n\n\n\ndefault\n\n\n\n\nExample HTTP request\n\n\nRequest path\n\n\njson :\n\n/leave\n\n\n\n\n\nExample HTTP response\n\n\nResponse 200\n\n\njson :\n\narray\n\n\n\n\n\n\n\nGET /members\n\n\nDescription\n\n\nList members.\n\n\nResponses\n\n\n\n\n\n\n\n\nHTTP Code\n\n\nDescription\n\n\nSchema\n\n\n\n\n\n\n\n\n\n\n200\n\n\nSuccessful response\n\n\n \nmember\n \n array\n\n\n\n\n\n\n\n\nTags\n\n\n\n\nmembers\n\n\n\n\nExample HTTP request\n\n\nRequest path\n\n\njson :\n\n/members\n\n\n\n\n\nExample HTTP response\n\n\nResponse 200\n\n\njson :\n\narray\n\n\n\n\n\n\n\nDefinitions\n\n\n\n\nstatus\n\n\nStatus represents details about the node.\n\n\nType\n : object\n\n\n\n\njob\n\n\nA Job represents a scheduled task to execute.\n\n\n\n\n\n\n\n\nName\n\n\nDescription\n\n\nSchema\n\n\n\n\n\n\n\n\n\n\nname\n  \nrequired\n\n\nName for the job.  \nExample\n : \n\"string\"\n\n\nstring\n\n\n\n\n\n\nschedule\n  \nrequired\n\n\nCron expression for the job.  \nExample\n : \n\"string\"\n\n\nstring\n\n\n\n\n\n\ncommand\n  \nrequired\n\n\nCommand to run.  \nExample\n : \n\"string\"\n\n\nstring\n\n\n\n\n\n\nshell\n  \noptional\n\n\nUse shell to run the command  \nExample\n : \ntrue\n\n\nboolean\n\n\n\n\n\n\nowner\n  \noptional\n\n\nOwner of the job  \nExample\n : \n\"string\"\n\n\nstring\n\n\n\n\n\n\nowner_email\n  \noptional\n\n\nEmail of the owner  \nExample\n : \n\"string\"\n\n\nstring\n\n\n\n\n\n\nsuccess_count\n  \noptional\n  \nread-only\n\n\nNumber of successful executions  \nExample\n : \n0\n\n\ninteger\n\n\n\n\n\n\nerror_count\n  \noptional\n  \nread-only\n\n\nNumber of failed executions  \nExample\n : \n0\n\n\ninteger\n\n\n\n\n\n\nlast_success\n  \noptional\n  \nread-only\n\n\nLast time this job executed successfully  \nExample\n : \n\"string\"\n\n\nstring(date-time)\n\n\n\n\n\n\nlast_error\n  \noptional\n  \nread-only\n\n\nLast time this job failed  \nExample\n : \n\"string\"\n\n\nstring(date-time)\n\n\n\n\n\n\ndisabled\n  \noptional\n\n\nDisabled state of the job  \nExample\n : \ntrue\n\n\nboolean\n\n\n\n\n\n\ntags\n  \noptional\n\n\nTarget nodes tags of this job  \nExample\n : \n{\nbr\n  \"string\" : \"string\"\nbr\n}\n\n\n string, string \n map\n\n\n\n\n\n\nretries\n  \noptional\n\n\nNumber of times to retry a failed job execution  \nExample\n : \n2\n\n\ninteger\n\n\n\n\n\n\nparent_job\n  \noptional\n\n\nThe name/id of the job that will trigger the execution of this job  \nExample\n : \n\"parent_job\"\n\n\nstring\n\n\n\n\n\n\ndependent_jobs\n  \noptional\n  \nread-only\n\n\nArray containing the jobs that depends on this one  \nExample\n : \n\"\"\n\n\n object \n array\n\n\n\n\n\n\nprocessors\n  \noptional\n\n\nProcessor plugins used to process executions results of this job  \nExample\n : \n{\nbr\n  \"string\" : \"string\"\nbr\n}\n\n\n string, string \n map\n\n\n\n\n\n\nconcurrency\n  \noptional\n\n\nConcurrency policy for the job allow/forbid  \nExample\n : \n\"allow\"\n\n\nstring\n\n\n\n\n\n\n\n\n\n\nmember\n\n\nA member represents a cluster member node.\n\n\n\n\n\n\n\n\nName\n\n\nDescription\n\n\nSchema\n\n\n\n\n\n\n\n\n\n\nName\n  \noptional\n\n\nNode name  \nExample\n : \n\"string\"\n\n\nstring\n\n\n\n\n\n\nAddr\n  \noptional\n\n\nIP Address  \nExample\n : \n\"string\"\n\n\nstring\n\n\n\n\n\n\nPort\n  \noptional\n\n\nPort number  \nExample\n : \n0\n\n\ninteger\n\n\n\n\n\n\nTags\n  \noptional\n\n\nTags asociated with this node  \nExample\n : \n{\nbr\n  \"string\" : \"string\"\nbr\n}\n\n\n string, string \n map\n\n\n\n\n\n\nStatus\n  \noptional\n\n\nThe serf status of the node see: https://godoc.org/github.com/hashicorp/serf/serf#MemberStatus  \nExample\n : \n0\n\n\ninteger\n\n\n\n\n\n\nProtocolMin\n  \noptional\n\n\nSerf protocol minimum version this node can understand or speak  \nExample\n : \n0\n\n\ninteger\n\n\n\n\n\n\nProtocolMax\n  \noptional\n\n\nExample\n : \n0\n\n\ninteger\n\n\n\n\n\n\nProtocolCur\n  \noptional\n\n\nSerf protocol current version this node can understand or speak  \nExample\n : \n0\n\n\ninteger\n\n\n\n\n\n\nDelegateMin\n  \noptional\n\n\nSerf delegate protocol minimum version this node can understand or speak  \nExample\n : \n0\n\n\ninteger\n\n\n\n\n\n\nDelegateMax\n  \noptional\n\n\nSerf delegate protocol minimum version this node can understand or speak  \nExample\n : \n0\n\n\ninteger\n\n\n\n\n\n\nDelegateCur\n  \noptional\n\n\nSerf delegate protocol minimum version this node can understand or speak  \nExample\n : \n0\n\n\ninteger\n\n\n\n\n\n\n\n\n\n\nexecution\n\n\nAn execution represents a timed job run.\n\n\n\n\n\n\n\n\nName\n\n\nDescription\n\n\nSchema\n\n\n\n\n\n\n\n\n\n\njob_name\n  \noptional\n\n\njob name  \nExample\n : \n\"string\"\n\n\nstring\n\n\n\n\n\n\nstarted_at\n  \noptional\n\n\nstart time of the execution  \nExample\n : \n\"string\"\n\n\nstring(date-time)\n\n\n\n\n\n\nfinished_at\n  \noptional\n\n\nwhen the execution finished running  \nExample\n : \n\"string\"\n\n\nstring(date-time)\n\n\n\n\n\n\nsuccess\n  \noptional\n\n\nthe execution run successfuly  \nExample\n : \ntrue\n\n\nboolean\n\n\n\n\n\n\noutput\n  \noptional\n\n\npartial output of the command execution  \nExample\n : \n\"string\"\n\n\nstring\n\n\n\n\n\n\nnode_name\n  \noptional\n\n\nname of the node that executed the command  \nExample\n : \n\"string\"\n\n\nstring", 
+            "text": "Dkron REST API\n\n\n\n\nOverview\n\n\nYou can communicate with Dkron using a RESTful JSON API over HTTP. Dkron nodes usually listen on port \n8080\n for API requests. All examples in this section assume that you've found a running leader at \nlocalhost:8080\n.\n\n\nDkron implements a RESTful JSON API over HTTP to communicate with software clients. Dkron listens in port \n8080\n by default. All examples in this section assume that you're using the default port.\n\n\nDefault API responses are unformatted JSON add the \npretty=true\n param to format the response.\n\n\nVersion information\n\n\nVersion\n : 0.9.3\n\n\nURI scheme\n\n\nHost\n : localhost:8080\n\n\nBasePath\n : /v1\n\n\nSchemes\n : HTTP\n\n\nConsumes\n\n\n\n\napplication/json\n\n\n\n\nProduces\n\n\n\n\napplication/json\n\n\n\n\n\n\nPaths\n\n\n\n\nGET /\n\n\nDescription\n\n\nGets \nStatus\n object.\n\n\nResponses\n\n\n\n\n\n\n\n\nHTTP Code\n\n\nDescription\n\n\nSchema\n\n\n\n\n\n\n\n\n\n\n200\n\n\nSuccessful response\n\n\nstatus\n\n\n\n\n\n\n\n\nTags\n\n\n\n\ndefault\n\n\n\n\nExample HTTP request\n\n\nRequest path\n\n\n/\n\n\n\n\nExample HTTP response\n\n\nResponse 200\n\n\njson :\n\n{ }\n\n\n\n\n\n\n\nGET /executions/{job_name}\n\n\nDescription\n\n\nList executions.\n\n\nParameters\n\n\n\n\n\n\n\n\nType\n\n\nName\n\n\nDescription\n\n\nSchema\n\n\n\n\n\n\n\n\n\n\nPath\n\n\njob_name\n  \nrequired\n\n\nThe job that owns the executions to be fetched.\n\n\nstring\n\n\n\n\n\n\n\n\nResponses\n\n\n\n\n\n\n\n\nHTTP Code\n\n\nDescription\n\n\nSchema\n\n\n\n\n\n\n\n\n\n\n200\n\n\nSuccessful response\n\n\n \nexecution\n \n array\n\n\n\n\n\n\n\n\nTags\n\n\n\n\nexecutions\n\n\n\n\nExample HTTP request\n\n\nRequest path\n\n\n/executions/string\n\n\n\n\nExample HTTP response\n\n\nResponse 200\n\n\njson :\n\narray\n\n\n\n\n\n\n\nGET /jobs\n\n\nDescription\n\n\nList jobs.\n\n\nResponses\n\n\n\n\n\n\n\n\nHTTP Code\n\n\nDescription\n\n\nSchema\n\n\n\n\n\n\n\n\n\n\n200\n\n\nSuccessful response\n\n\n \njob\n \n array\n\n\n\n\n\n\n\n\nTags\n\n\n\n\njobs\n\n\n\n\nExample HTTP request\n\n\nRequest path\n\n\n/jobs\n\n\n\n\nExample HTTP response\n\n\nResponse 200\n\n\njson :\n\narray\n\n\n\n\n\n\n\nPOST /jobs\n\n\nDescription\n\n\nCreate or updates a new job.\n\n\nParameters\n\n\n\n\n\n\n\n\nType\n\n\nName\n\n\nDescription\n\n\nSchema\n\n\n\n\n\n\n\n\n\n\nBody\n\n\nbody\n  \nrequired\n\n\nUpdated job object\n\n\njob\n\n\n\n\n\n\n\n\nResponses\n\n\n\n\n\n\n\n\nHTTP Code\n\n\nDescription\n\n\nSchema\n\n\n\n\n\n\n\n\n\n\n201\n\n\nSuccessful response\n\n\njob\n\n\n\n\n\n\n\n\nTags\n\n\n\n\njobs\n\n\n\n\nExample HTTP request\n\n\nRequest path\n\n\n/jobs\n\n\n\n\nRequest body\n\n\njson :\n{\n  \nname\n : \nstring\n,\n  \nschedule\n : \nstring\n,\n  \ncommand\n : \nstring\n,\n  \nshell\n : true,\n  \nowner\n : \nstring\n,\n  \nowner_email\n : \nstring\n,\n  \nsuccess_count\n : 0,\n  \nerror_count\n : 0,\n  \nlast_success\n : \nstring\n,\n  \nlast_error\n : \nstring\n,\n  \ndisabled\n : true,\n  \ntags\n : {\n    \nstring\n : \nstring\n\n  },\n  \nretries\n : 2,\n  \nparent_job\n : \nparent_job\n,\n  \ndependent_jobs\n : [ \nstring\n ],\n  \nprocessors\n : {\n    \nstring\n : \nstring\n\n  },\n  \nconcurrency\n : \nallow\n\n}\n\n\n\n\nExample HTTP response\n\n\nResponse 201\n\n\njson :\n{\n  \nname\n : \nstring\n,\n  \nschedule\n : \nstring\n,\n  \ncommand\n : \nstring\n,\n  \nshell\n : true,\n  \nowner\n : \nstring\n,\n  \nowner_email\n : \nstring\n,\n  \nsuccess_count\n : 0,\n  \nerror_count\n : 0,\n  \nlast_success\n : \nstring\n,\n  \nlast_error\n : \nstring\n,\n  \ndisabled\n : true,\n  \ntags\n : {\n    \nstring\n : \nstring\n\n  },\n  \nretries\n : 2,\n  \nparent_job\n : \nparent_job\n,\n  \ndependent_jobs\n : [ \nstring\n ],\n  \nprocessors\n : {\n    \nstring\n : \nstring\n\n  },\n  \nconcurrency\n : \nallow\n\n}\n\n\n\n\n\n\nGET /jobs/{job_name}\n\n\nDescription\n\n\nShow a job.\n\n\nParameters\n\n\n\n\n\n\n\n\nType\n\n\nName\n\n\nDescription\n\n\nSchema\n\n\n\n\n\n\n\n\n\n\nPath\n\n\njob_name\n  \nrequired\n\n\nThe job that needs to be fetched.\n\n\nstring\n\n\n\n\n\n\n\n\nResponses\n\n\n\n\n\n\n\n\nHTTP Code\n\n\nDescription\n\n\nSchema\n\n\n\n\n\n\n\n\n\n\n200\n\n\nSuccessful response\n\n\njob\n\n\n\n\n\n\n\n\nTags\n\n\n\n\njobs\n\n\n\n\nExample HTTP request\n\n\nRequest path\n\n\n/jobs/string\n\n\n\n\nExample HTTP response\n\n\nResponse 200\n\n\njson :\n{\n  \nname\n : \nstring\n,\n  \nschedule\n : \nstring\n,\n  \ncommand\n : \nstring\n,\n  \nshell\n : true,\n  \nowner\n : \nstring\n,\n  \nowner_email\n : \nstring\n,\n  \nsuccess_count\n : 0,\n  \nerror_count\n : 0,\n  \nlast_success\n : \nstring\n,\n  \nlast_error\n : \nstring\n,\n  \ndisabled\n : true,\n  \ntags\n : {\n    \nstring\n : \nstring\n\n  },\n  \nretries\n : 2,\n  \nparent_job\n : \nparent_job\n,\n  \ndependent_jobs\n : [ \nstring\n ],\n  \nprocessors\n : {\n    \nstring\n : \nstring\n\n  },\n  \nconcurrency\n : \nallow\n\n}\n\n\n\n\n\n\nPOST /jobs/{job_name}\n\n\nDescription\n\n\nExecutes a job.\n\n\nParameters\n\n\n\n\n\n\n\n\nType\n\n\nName\n\n\nDescription\n\n\nSchema\n\n\n\n\n\n\n\n\n\n\nPath\n\n\njob_name\n  \nrequired\n\n\nThe job that needs to be run.\n\n\nstring\n\n\n\n\n\n\n\n\nResponses\n\n\n\n\n\n\n\n\nHTTP Code\n\n\nDescription\n\n\nSchema\n\n\n\n\n\n\n\n\n\n\n202\n\n\nSuccessful response\n\n\njob\n\n\n\n\n\n\n\n\nTags\n\n\n\n\njobs\n\n\n\n\nExample HTTP request\n\n\nRequest path\n\n\n/jobs/string\n\n\n\n\nExample HTTP response\n\n\nResponse 202\n\n\njson :\n{\n  \nname\n : \nstring\n,\n  \nschedule\n : \nstring\n,\n  \ncommand\n : \nstring\n,\n  \nshell\n : true,\n  \nowner\n : \nstring\n,\n  \nowner_email\n : \nstring\n,\n  \nsuccess_count\n : 0,\n  \nerror_count\n : 0,\n  \nlast_success\n : \nstring\n,\n  \nlast_error\n : \nstring\n,\n  \ndisabled\n : true,\n  \ntags\n : {\n    \nstring\n : \nstring\n\n  },\n  \nretries\n : 2,\n  \nparent_job\n : \nparent_job\n,\n  \ndependent_jobs\n : [ \nstring\n ],\n  \nprocessors\n : {\n    \nstring\n : \nstring\n\n  },\n  \nconcurrency\n : \nallow\n\n}\n\n\n\n\n\n\nDELETE /jobs/{job_name}\n\n\nDescription\n\n\nDelete a job.\n\n\nParameters\n\n\n\n\n\n\n\n\nType\n\n\nName\n\n\nDescription\n\n\nSchema\n\n\n\n\n\n\n\n\n\n\nPath\n\n\njob_name\n  \nrequired\n\n\nThe job that needs to be deleted.\n\n\nstring\n\n\n\n\n\n\n\n\nResponses\n\n\n\n\n\n\n\n\nHTTP Code\n\n\nDescription\n\n\nSchema\n\n\n\n\n\n\n\n\n\n\n200\n\n\nSuccessful response\n\n\njob\n\n\n\n\n\n\n\n\nTags\n\n\n\n\njobs\n\n\n\n\nExample HTTP request\n\n\nRequest path\n\n\n/jobs/string\n\n\n\n\nExample HTTP response\n\n\nResponse 200\n\n\njson :\n{\n  \nname\n : \nstring\n,\n  \nschedule\n : \nstring\n,\n  \ncommand\n : \nstring\n,\n  \nshell\n : true,\n  \nowner\n : \nstring\n,\n  \nowner_email\n : \nstring\n,\n  \nsuccess_count\n : 0,\n  \nerror_count\n : 0,\n  \nlast_success\n : \nstring\n,\n  \nlast_error\n : \nstring\n,\n  \ndisabled\n : true,\n  \ntags\n : {\n    \nstring\n : \nstring\n\n  },\n  \nretries\n : 2,\n  \nparent_job\n : \nparent_job\n,\n  \ndependent_jobs\n : [ \nstring\n ],\n  \nprocessors\n : {\n    \nstring\n : \nstring\n\n  },\n  \nconcurrency\n : \nallow\n\n}\n\n\n\n\n\n\nGET /leader\n\n\nDescription\n\n\nList members.\n\n\nResponses\n\n\n\n\n\n\n\n\nHTTP Code\n\n\nDescription\n\n\nSchema\n\n\n\n\n\n\n\n\n\n\n200\n\n\nSuccessful response\n\n\nmember\n\n\n\n\n\n\n\n\nTags\n\n\n\n\ndefault\n\n\n\n\nExample HTTP request\n\n\nRequest path\n\n\n/leader\n\n\n\n\nExample HTTP response\n\n\nResponse 200\n\n\njson :\n{\n  \nName\n : \nstring\n,\n  \nAddr\n : \nstring\n,\n  \nPort\n : 0,\n  \nTags\n : {\n    \nstring\n : \nstring\n\n  },\n  \nStatus\n : 0,\n  \nProtocolMin\n : 0,\n  \nProtocolMax\n : 0,\n  \nProtocolCur\n : 0,\n  \nDelegateMin\n : 0,\n  \nDelegateMax\n : 0,\n  \nDelegateCur\n : 0\n}\n\n\n\n\n\n\nGET /leave\n\n\nDescription\n\n\nForce the node to leave the cluster.\n\n\nResponses\n\n\n\n\n\n\n\n\nHTTP Code\n\n\nDescription\n\n\nSchema\n\n\n\n\n\n\n\n\n\n\n200\n\n\nSuccessful response\n\n\n \nmember\n \n array\n\n\n\n\n\n\n\n\nTags\n\n\n\n\ndefault\n\n\n\n\nExample HTTP request\n\n\nRequest path\n\n\n/leave\n\n\n\n\nExample HTTP response\n\n\nResponse 200\n\n\njson :\n\narray\n\n\n\n\n\n\n\nGET /members\n\n\nDescription\n\n\nList members.\n\n\nResponses\n\n\n\n\n\n\n\n\nHTTP Code\n\n\nDescription\n\n\nSchema\n\n\n\n\n\n\n\n\n\n\n200\n\n\nSuccessful response\n\n\n \nmember\n \n array\n\n\n\n\n\n\n\n\nTags\n\n\n\n\nmembers\n\n\n\n\nExample HTTP request\n\n\nRequest path\n\n\n/members\n\n\n\n\nExample HTTP response\n\n\nResponse 200\n\n\njson :\n\narray\n\n\n\n\n\n\n\nDefinitions\n\n\n\n\nstatus\n\n\nStatus represents details about the node.\n\n\nType\n : object\n\n\n\n\njob\n\n\nA Job represents a scheduled task to execute.\n\n\n\n\n\n\n\n\nName\n\n\nDescription\n\n\nSchema\n\n\n\n\n\n\n\n\n\n\nname\n  \nrequired\n\n\nName for the job.  \nExample\n : \n\"string\"\n\n\nstring\n\n\n\n\n\n\nschedule\n  \nrequired\n\n\nCron expression for the job.  \nExample\n : \n\"string\"\n\n\nstring\n\n\n\n\n\n\ncommand\n  \nrequired\n\n\nCommand to run.  \nExample\n : \n\"string\"\n\n\nstring\n\n\n\n\n\n\nshell\n  \noptional\n\n\nUse shell to run the command  \nExample\n : \ntrue\n\n\nboolean\n\n\n\n\n\n\nowner\n  \noptional\n\n\nOwner of the job  \nExample\n : \n\"string\"\n\n\nstring\n\n\n\n\n\n\nowner_email\n  \noptional\n\n\nEmail of the owner  \nExample\n : \n\"string\"\n\n\nstring\n\n\n\n\n\n\nsuccess_count\n  \noptional\n  \nread-only\n\n\nNumber of successful executions  \nExample\n : \n0\n\n\ninteger\n\n\n\n\n\n\nerror_count\n  \noptional\n  \nread-only\n\n\nNumber of failed executions  \nExample\n : \n0\n\n\ninteger\n\n\n\n\n\n\nlast_success\n  \noptional\n  \nread-only\n\n\nLast time this job executed successfully  \nExample\n : \n\"string\"\n\n\nstring(date-time)\n\n\n\n\n\n\nlast_error\n  \noptional\n  \nread-only\n\n\nLast time this job failed  \nExample\n : \n\"string\"\n\n\nstring(date-time)\n\n\n\n\n\n\ndisabled\n  \noptional\n\n\nDisabled state of the job  \nExample\n : \ntrue\n\n\nboolean\n\n\n\n\n\n\ntags\n  \noptional\n\n\nTarget nodes tags of this job  \nExample\n : \n{\nbr\n  \"string\" : \"string\"\nbr\n}\n\n\n string, string \n map\n\n\n\n\n\n\nretries\n  \noptional\n\n\nNumber of times to retry a failed job execution  \nExample\n : \n2\n\n\ninteger\n\n\n\n\n\n\nparent_job\n  \noptional\n\n\nThe name/id of the job that will trigger the execution of this job  \nExample\n : \n\"parent_job\"\n\n\nstring\n\n\n\n\n\n\ndependent_jobs\n  \noptional\n\n\nArray containing the jobs that depends on this one  \nExample\n : \n[ \"string\" ]\n\n\n string \n array\n\n\n\n\n\n\nprocessors\n  \noptional\n\n\nProcessor plugins used to process executions results of this job  \nExample\n : \n{\nbr\n  \"string\" : \"string\"\nbr\n}\n\n\n string, string \n map\n\n\n\n\n\n\nconcurrency\n  \noptional\n\n\nConcurrency policy for the job allow/forbid  \nExample\n : \n\"allow\"\n\n\nstring\n\n\n\n\n\n\n\n\n\n\nmember\n\n\nA member represents a cluster member node.\n\n\n\n\n\n\n\n\nName\n\n\nDescription\n\n\nSchema\n\n\n\n\n\n\n\n\n\n\nName\n  \noptional\n\n\nNode name  \nExample\n : \n\"string\"\n\n\nstring\n\n\n\n\n\n\nAddr\n  \noptional\n\n\nIP Address  \nExample\n : \n\"string\"\n\n\nstring\n\n\n\n\n\n\nPort\n  \noptional\n\n\nPort number  \nExample\n : \n0\n\n\ninteger\n\n\n\n\n\n\nTags\n  \noptional\n\n\nTags asociated with this node  \nExample\n : \n{\nbr\n  \"string\" : \"string\"\nbr\n}\n\n\n string, string \n map\n\n\n\n\n\n\nStatus\n  \noptional\n\n\nThe serf status of the node see: https://godoc.org/github.com/hashicorp/serf/serf#MemberStatus  \nExample\n : \n0\n\n\ninteger\n\n\n\n\n\n\nProtocolMin\n  \noptional\n\n\nSerf protocol minimum version this node can understand or speak  \nExample\n : \n0\n\n\ninteger\n\n\n\n\n\n\nProtocolMax\n  \noptional\n\n\nSerf protocol minimum version this node can understand or speak  \nExample\n : \n0\n\n\ninteger\n\n\n\n\n\n\nProtocolCur\n  \noptional\n\n\nSerf protocol current version this node can understand or speak  \nExample\n : \n0\n\n\ninteger\n\n\n\n\n\n\nDelegateMin\n  \noptional\n\n\nSerf delegate protocol minimum version this node can understand or speak  \nExample\n : \n0\n\n\ninteger\n\n\n\n\n\n\nDelegateMax\n  \noptional\n\n\nSerf delegate protocol minimum version this node can understand or speak  \nExample\n : \n0\n\n\ninteger\n\n\n\n\n\n\nDelegateCur\n  \noptional\n\n\nSerf delegate protocol minimum version this node can understand or speak  \nExample\n : \n0\n\n\ninteger\n\n\n\n\n\n\n\n\n\n\nexecution\n\n\nAn execution represents a timed job run.\n\n\n\n\n\n\n\n\nName\n\n\nDescription\n\n\nSchema\n\n\n\n\n\n\n\n\n\n\njob_name\n  \noptional\n\n\njob name  \nExample\n : \n\"string\"\n\n\nstring\n\n\n\n\n\n\nstarted_at\n  \noptional\n\n\nstart time of the execution  \nExample\n : \n\"string\"\n\n\nstring(date-time)\n\n\n\n\n\n\nfinished_at\n  \noptional\n\n\nwhen the execution finished running  \nExample\n : \n\"string\"\n\n\nstring(date-time)\n\n\n\n\n\n\nsuccess\n  \noptional\n\n\nthe execution run successfuly  \nExample\n : \ntrue\n\n\nboolean\n\n\n\n\n\n\noutput\n  \noptional\n\n\npartial output of the command execution  \nExample\n : \n\"string\"\n\n\nstring\n\n\n\n\n\n\nnode_name\n  \noptional\n\n\nname of the node that executed the command  \nExample\n : \n\"string\"\n\n\nstring", 
             "title": "Api"
         }, 
         {
@@ -127,18 +162,488 @@
         }, 
         {
             "location": "/docs/api/#overview", 
-            "text": "You can communicate with Dkron using a RESTful JSON API over HTTP. Dkron nodes usually listen on port  8080  for API requests. All examples in this section assume that you've found a running leader at  localhost:8080 .  Dkron implements a RESTful JSON API over HTTP to communicate with software clients. Dkron listens in port  8080  by default. All examples in this section assume that you're using the default port.  Default API responses are unformatted JSON add the  pretty=true  param to format the response.  Version information  Version  : 0.9.2  URI scheme  Host  : localhost:8080  BasePath  : /v1  Schemes  : HTTP  Consumes   application/json   Produces   application/json", 
+            "text": "You can communicate with Dkron using a RESTful JSON API over HTTP. Dkron nodes usually listen on port  8080  for API requests. All examples in this section assume that you've found a running leader at  localhost:8080 .  Dkron implements a RESTful JSON API over HTTP to communicate with software clients. Dkron listens in port  8080  by default. All examples in this section assume that you're using the default port.  Default API responses are unformatted JSON add the  pretty=true  param to format the response.", 
             "title": "Overview"
         }, 
         {
+            "location": "/docs/api/#version-information", 
+            "text": "Version  : 0.9.3", 
+            "title": "Version information"
+        }, 
+        {
+            "location": "/docs/api/#uri-scheme", 
+            "text": "Host  : localhost:8080  BasePath  : /v1  Schemes  : HTTP", 
+            "title": "URI scheme"
+        }, 
+        {
+            "location": "/docs/api/#consumes", 
+            "text": "application/json", 
+            "title": "Consumes"
+        }, 
+        {
+            "location": "/docs/api/#produces", 
+            "text": "application/json", 
+            "title": "Produces"
+        }, 
+        {
             "location": "/docs/api/#paths", 
-            "text": "GET /  Description  Gets  Status  object.  Responses     HTTP Code  Description  Schema      200  Successful response  status     Tags   default   Example HTTP request  Request path  json : /   Example HTTP response  Response 200  json :\n{ }   GET /executions/{job_name}  Description  List executions.  Parameters     Type  Name  Description  Schema      Path  job_name    required  The job that owns the executions to be fetched.  string     Responses     HTTP Code  Description  Schema      200  Successful response    execution    array     Tags   executions   Example HTTP request  Request path  json : /executions/string   Example HTTP response  Response 200  json : array    GET /jobs  Description  List jobs.  Responses     HTTP Code  Description  Schema      200  Successful response    job    array     Tags   jobs   Example HTTP request  Request path  json : /jobs   Example HTTP response  Response 200  json : array    POST /jobs  Description  Create or updates a new job.  Parameters     Type  Name  Description  Schema      Body  body    required  Updated job object  job     Responses     HTTP Code  Description  Schema      201  Successful response  job     Tags   jobs   Example HTTP request  Request path  json : /jobs   Request body  json :\n{\n   name  :  string ,\n   schedule  :  string ,\n   command  :  string ,\n   shell  : true,\n   owner  :  string ,\n   owner_email  :  string ,\n   success_count  : 0,\n   error_count  : 0,\n   last_success  :  string ,\n   last_error  :  string ,\n   disabled  : true,\n   tags  : {\n     string  :  string \n  },\n   retries  : 2,\n   parent_job  :  parent_job ,\n   dependent_jobs  :  ,\n   processors  : {\n     string  :  string \n  },\n   concurrency  :  allow \n}  Example HTTP response  Response 201  json :\n{\n   name  :  string ,\n   schedule  :  string ,\n   command  :  string ,\n   shell  : true,\n   owner  :  string ,\n   owner_email  :  string ,\n   success_count  : 0,\n   error_count  : 0,\n   last_success  :  string ,\n   last_error  :  string ,\n   disabled  : true,\n   tags  : {\n     string  :  string \n  },\n   retries  : 2,\n   parent_job  :  parent_job ,\n   dependent_jobs  :  ,\n   processors  : {\n     string  :  string \n  },\n   concurrency  :  allow \n}   DELETE /jobs/{job_name}  Description  Delete a job.  Parameters     Type  Name  Description  Schema      Path  job_name    required  The job that needs to be deleted.  string     Responses     HTTP Code  Description  Schema      200  Successful response  job     Tags   jobs   Example HTTP request  Request path  json : /jobs/string   Example HTTP response  Response 200  json :\n{\n   name  :  string ,\n   schedule  :  string ,\n   command  :  string ,\n   shell  : true,\n   owner  :  string ,\n   owner_email  :  string ,\n   success_count  : 0,\n   error_count  : 0,\n   last_success  :  string ,\n   last_error  :  string ,\n   disabled  : true,\n   tags  : {\n     string  :  string \n  },\n   retries  : 2,\n   parent_job  :  parent_job ,\n   dependent_jobs  :  ,\n   processors  : {\n     string  :  string \n  },\n   concurrency  :  allow \n}   GET /jobs/{job_name}  Description  Show a job.  Parameters     Type  Name  Description  Schema      Path  job_name    required  The job that needs to be fetched.  string     Responses     HTTP Code  Description  Schema      200  Successful response  job     Tags   jobs   Example HTTP request  Request path  json : /jobs/string   Example HTTP response  Response 200  json :\n{\n   name  :  string ,\n   schedule  :  string ,\n   command  :  string ,\n   shell  : true,\n   owner  :  string ,\n   owner_email  :  string ,\n   success_count  : 0,\n   error_count  : 0,\n   last_success  :  string ,\n   last_error  :  string ,\n   disabled  : true,\n   tags  : {\n     string  :  string \n  },\n   retries  : 2,\n   parent_job  :  parent_job ,\n   dependent_jobs  :  ,\n   processors  : {\n     string  :  string \n  },\n   concurrency  :  allow \n}   POST /jobs/{job_name}  Description  Executes a job.  Parameters     Type  Name  Description  Schema      Path  job_name    required  The job that needs to be run.  string     Responses     HTTP Code  Description  Schema      202  Successful response  job     Tags   jobs   Example HTTP request  Request path  json : /jobs/string   Example HTTP response  Response 202  json :\n{\n   name  :  string ,\n   schedule  :  string ,\n   command  :  string ,\n   shell  : true,\n   owner  :  string ,\n   owner_email  :  string ,\n   success_count  : 0,\n   error_count  : 0,\n   last_success  :  string ,\n   last_error  :  string ,\n   disabled  : true,\n   tags  : {\n     string  :  string \n  },\n   retries  : 2,\n   parent_job  :  parent_job ,\n   dependent_jobs  :  ,\n   processors  : {\n     string  :  string \n  },\n   concurrency  :  allow \n}   GET /leader  Description  List members.  Responses     HTTP Code  Description  Schema      200  Successful response  member     Tags   default   Example HTTP request  Request path  json : /leader   Example HTTP response  Response 200  json :\n{\n   Name  :  string ,\n   Addr  :  string ,\n   Port  : 0,\n   Tags  : {\n     string  :  string \n  },\n   Status  : 0,\n   ProtocolMin  : 0,\n   ProtocolMax  : 0,\n   ProtocolCur  : 0,\n   DelegateMin  : 0,\n   DelegateMax  : 0,\n   DelegateCur  : 0\n}   GET /leave  Description  Force the node to leave the cluster.  Responses     HTTP Code  Description  Schema      200  Successful response    member    array     Tags   default   Example HTTP request  Request path  json : /leave   Example HTTP response  Response 200  json : array    GET /members  Description  List members.  Responses     HTTP Code  Description  Schema      200  Successful response    member    array     Tags   members   Example HTTP request  Request path  json : /members   Example HTTP response  Response 200  json : array", 
+            "text": "", 
             "title": "Paths"
         }, 
         {
+            "location": "/docs/api/#get", 
+            "text": "", 
+            "title": "GET /"
+        }, 
+        {
+            "location": "/docs/api/#description", 
+            "text": "Gets  Status  object.", 
+            "title": "Description"
+        }, 
+        {
+            "location": "/docs/api/#responses", 
+            "text": "HTTP Code  Description  Schema      200  Successful response  status", 
+            "title": "Responses"
+        }, 
+        {
+            "location": "/docs/api/#tags", 
+            "text": "default", 
+            "title": "Tags"
+        }, 
+        {
+            "location": "/docs/api/#example-http-request", 
+            "text": "", 
+            "title": "Example HTTP request"
+        }, 
+        {
+            "location": "/docs/api/#request-path", 
+            "text": "/", 
+            "title": "Request path"
+        }, 
+        {
+            "location": "/docs/api/#example-http-response", 
+            "text": "", 
+            "title": "Example HTTP response"
+        }, 
+        {
+            "location": "/docs/api/#response-200", 
+            "text": "json : { }", 
+            "title": "Response 200"
+        }, 
+        {
+            "location": "/docs/api/#get-executionsjob_name", 
+            "text": "", 
+            "title": "GET /executions/{job_name}"
+        }, 
+        {
+            "location": "/docs/api/#description_1", 
+            "text": "List executions.", 
+            "title": "Description"
+        }, 
+        {
+            "location": "/docs/api/#parameters", 
+            "text": "Type  Name  Description  Schema      Path  job_name    required  The job that owns the executions to be fetched.  string", 
+            "title": "Parameters"
+        }, 
+        {
+            "location": "/docs/api/#responses_1", 
+            "text": "HTTP Code  Description  Schema      200  Successful response    execution    array", 
+            "title": "Responses"
+        }, 
+        {
+            "location": "/docs/api/#tags_1", 
+            "text": "executions", 
+            "title": "Tags"
+        }, 
+        {
+            "location": "/docs/api/#example-http-request_1", 
+            "text": "", 
+            "title": "Example HTTP request"
+        }, 
+        {
+            "location": "/docs/api/#request-path_1", 
+            "text": "/executions/string", 
+            "title": "Request path"
+        }, 
+        {
+            "location": "/docs/api/#example-http-response_1", 
+            "text": "", 
+            "title": "Example HTTP response"
+        }, 
+        {
+            "location": "/docs/api/#response-200_1", 
+            "text": "json : array", 
+            "title": "Response 200"
+        }, 
+        {
+            "location": "/docs/api/#get-jobs", 
+            "text": "", 
+            "title": "GET /jobs"
+        }, 
+        {
+            "location": "/docs/api/#description_2", 
+            "text": "List jobs.", 
+            "title": "Description"
+        }, 
+        {
+            "location": "/docs/api/#responses_2", 
+            "text": "HTTP Code  Description  Schema      200  Successful response    job    array", 
+            "title": "Responses"
+        }, 
+        {
+            "location": "/docs/api/#tags_2", 
+            "text": "jobs", 
+            "title": "Tags"
+        }, 
+        {
+            "location": "/docs/api/#example-http-request_2", 
+            "text": "", 
+            "title": "Example HTTP request"
+        }, 
+        {
+            "location": "/docs/api/#request-path_2", 
+            "text": "/jobs", 
+            "title": "Request path"
+        }, 
+        {
+            "location": "/docs/api/#example-http-response_2", 
+            "text": "", 
+            "title": "Example HTTP response"
+        }, 
+        {
+            "location": "/docs/api/#response-200_2", 
+            "text": "json : array", 
+            "title": "Response 200"
+        }, 
+        {
+            "location": "/docs/api/#post-jobs", 
+            "text": "", 
+            "title": "POST /jobs"
+        }, 
+        {
+            "location": "/docs/api/#description_3", 
+            "text": "Create or updates a new job.", 
+            "title": "Description"
+        }, 
+        {
+            "location": "/docs/api/#parameters_1", 
+            "text": "Type  Name  Description  Schema      Body  body    required  Updated job object  job", 
+            "title": "Parameters"
+        }, 
+        {
+            "location": "/docs/api/#responses_3", 
+            "text": "HTTP Code  Description  Schema      201  Successful response  job", 
+            "title": "Responses"
+        }, 
+        {
+            "location": "/docs/api/#tags_3", 
+            "text": "jobs", 
+            "title": "Tags"
+        }, 
+        {
+            "location": "/docs/api/#example-http-request_3", 
+            "text": "", 
+            "title": "Example HTTP request"
+        }, 
+        {
+            "location": "/docs/api/#request-path_3", 
+            "text": "/jobs", 
+            "title": "Request path"
+        }, 
+        {
+            "location": "/docs/api/#request-body", 
+            "text": "json :\n{\n   name  :  string ,\n   schedule  :  string ,\n   command  :  string ,\n   shell  : true,\n   owner  :  string ,\n   owner_email  :  string ,\n   success_count  : 0,\n   error_count  : 0,\n   last_success  :  string ,\n   last_error  :  string ,\n   disabled  : true,\n   tags  : {\n     string  :  string \n  },\n   retries  : 2,\n   parent_job  :  parent_job ,\n   dependent_jobs  : [  string  ],\n   processors  : {\n     string  :  string \n  },\n   concurrency  :  allow \n}", 
+            "title": "Request body"
+        }, 
+        {
+            "location": "/docs/api/#example-http-response_3", 
+            "text": "", 
+            "title": "Example HTTP response"
+        }, 
+        {
+            "location": "/docs/api/#response-201", 
+            "text": "json :\n{\n   name  :  string ,\n   schedule  :  string ,\n   command  :  string ,\n   shell  : true,\n   owner  :  string ,\n   owner_email  :  string ,\n   success_count  : 0,\n   error_count  : 0,\n   last_success  :  string ,\n   last_error  :  string ,\n   disabled  : true,\n   tags  : {\n     string  :  string \n  },\n   retries  : 2,\n   parent_job  :  parent_job ,\n   dependent_jobs  : [  string  ],\n   processors  : {\n     string  :  string \n  },\n   concurrency  :  allow \n}", 
+            "title": "Response 201"
+        }, 
+        {
+            "location": "/docs/api/#get-jobsjob_name", 
+            "text": "", 
+            "title": "GET /jobs/{job_name}"
+        }, 
+        {
+            "location": "/docs/api/#description_4", 
+            "text": "Show a job.", 
+            "title": "Description"
+        }, 
+        {
+            "location": "/docs/api/#parameters_2", 
+            "text": "Type  Name  Description  Schema      Path  job_name    required  The job that needs to be fetched.  string", 
+            "title": "Parameters"
+        }, 
+        {
+            "location": "/docs/api/#responses_4", 
+            "text": "HTTP Code  Description  Schema      200  Successful response  job", 
+            "title": "Responses"
+        }, 
+        {
+            "location": "/docs/api/#tags_4", 
+            "text": "jobs", 
+            "title": "Tags"
+        }, 
+        {
+            "location": "/docs/api/#example-http-request_4", 
+            "text": "", 
+            "title": "Example HTTP request"
+        }, 
+        {
+            "location": "/docs/api/#request-path_4", 
+            "text": "/jobs/string", 
+            "title": "Request path"
+        }, 
+        {
+            "location": "/docs/api/#example-http-response_4", 
+            "text": "", 
+            "title": "Example HTTP response"
+        }, 
+        {
+            "location": "/docs/api/#response-200_3", 
+            "text": "json :\n{\n   name  :  string ,\n   schedule  :  string ,\n   command  :  string ,\n   shell  : true,\n   owner  :  string ,\n   owner_email  :  string ,\n   success_count  : 0,\n   error_count  : 0,\n   last_success  :  string ,\n   last_error  :  string ,\n   disabled  : true,\n   tags  : {\n     string  :  string \n  },\n   retries  : 2,\n   parent_job  :  parent_job ,\n   dependent_jobs  : [  string  ],\n   processors  : {\n     string  :  string \n  },\n   concurrency  :  allow \n}", 
+            "title": "Response 200"
+        }, 
+        {
+            "location": "/docs/api/#post-jobsjob_name", 
+            "text": "", 
+            "title": "POST /jobs/{job_name}"
+        }, 
+        {
+            "location": "/docs/api/#description_5", 
+            "text": "Executes a job.", 
+            "title": "Description"
+        }, 
+        {
+            "location": "/docs/api/#parameters_3", 
+            "text": "Type  Name  Description  Schema      Path  job_name    required  The job that needs to be run.  string", 
+            "title": "Parameters"
+        }, 
+        {
+            "location": "/docs/api/#responses_5", 
+            "text": "HTTP Code  Description  Schema      202  Successful response  job", 
+            "title": "Responses"
+        }, 
+        {
+            "location": "/docs/api/#tags_5", 
+            "text": "jobs", 
+            "title": "Tags"
+        }, 
+        {
+            "location": "/docs/api/#example-http-request_5", 
+            "text": "", 
+            "title": "Example HTTP request"
+        }, 
+        {
+            "location": "/docs/api/#request-path_5", 
+            "text": "/jobs/string", 
+            "title": "Request path"
+        }, 
+        {
+            "location": "/docs/api/#example-http-response_5", 
+            "text": "", 
+            "title": "Example HTTP response"
+        }, 
+        {
+            "location": "/docs/api/#response-202", 
+            "text": "json :\n{\n   name  :  string ,\n   schedule  :  string ,\n   command  :  string ,\n   shell  : true,\n   owner  :  string ,\n   owner_email  :  string ,\n   success_count  : 0,\n   error_count  : 0,\n   last_success  :  string ,\n   last_error  :  string ,\n   disabled  : true,\n   tags  : {\n     string  :  string \n  },\n   retries  : 2,\n   parent_job  :  parent_job ,\n   dependent_jobs  : [  string  ],\n   processors  : {\n     string  :  string \n  },\n   concurrency  :  allow \n}", 
+            "title": "Response 202"
+        }, 
+        {
+            "location": "/docs/api/#delete-jobsjob_name", 
+            "text": "", 
+            "title": "DELETE /jobs/{job_name}"
+        }, 
+        {
+            "location": "/docs/api/#description_6", 
+            "text": "Delete a job.", 
+            "title": "Description"
+        }, 
+        {
+            "location": "/docs/api/#parameters_4", 
+            "text": "Type  Name  Description  Schema      Path  job_name    required  The job that needs to be deleted.  string", 
+            "title": "Parameters"
+        }, 
+        {
+            "location": "/docs/api/#responses_6", 
+            "text": "HTTP Code  Description  Schema      200  Successful response  job", 
+            "title": "Responses"
+        }, 
+        {
+            "location": "/docs/api/#tags_6", 
+            "text": "jobs", 
+            "title": "Tags"
+        }, 
+        {
+            "location": "/docs/api/#example-http-request_6", 
+            "text": "", 
+            "title": "Example HTTP request"
+        }, 
+        {
+            "location": "/docs/api/#request-path_6", 
+            "text": "/jobs/string", 
+            "title": "Request path"
+        }, 
+        {
+            "location": "/docs/api/#example-http-response_6", 
+            "text": "", 
+            "title": "Example HTTP response"
+        }, 
+        {
+            "location": "/docs/api/#response-200_4", 
+            "text": "json :\n{\n   name  :  string ,\n   schedule  :  string ,\n   command  :  string ,\n   shell  : true,\n   owner  :  string ,\n   owner_email  :  string ,\n   success_count  : 0,\n   error_count  : 0,\n   last_success  :  string ,\n   last_error  :  string ,\n   disabled  : true,\n   tags  : {\n     string  :  string \n  },\n   retries  : 2,\n   parent_job  :  parent_job ,\n   dependent_jobs  : [  string  ],\n   processors  : {\n     string  :  string \n  },\n   concurrency  :  allow \n}", 
+            "title": "Response 200"
+        }, 
+        {
+            "location": "/docs/api/#get-leader", 
+            "text": "", 
+            "title": "GET /leader"
+        }, 
+        {
+            "location": "/docs/api/#description_7", 
+            "text": "List members.", 
+            "title": "Description"
+        }, 
+        {
+            "location": "/docs/api/#responses_7", 
+            "text": "HTTP Code  Description  Schema      200  Successful response  member", 
+            "title": "Responses"
+        }, 
+        {
+            "location": "/docs/api/#tags_7", 
+            "text": "default", 
+            "title": "Tags"
+        }, 
+        {
+            "location": "/docs/api/#example-http-request_7", 
+            "text": "", 
+            "title": "Example HTTP request"
+        }, 
+        {
+            "location": "/docs/api/#request-path_7", 
+            "text": "/leader", 
+            "title": "Request path"
+        }, 
+        {
+            "location": "/docs/api/#example-http-response_7", 
+            "text": "", 
+            "title": "Example HTTP response"
+        }, 
+        {
+            "location": "/docs/api/#response-200_5", 
+            "text": "json :\n{\n   Name  :  string ,\n   Addr  :  string ,\n   Port  : 0,\n   Tags  : {\n     string  :  string \n  },\n   Status  : 0,\n   ProtocolMin  : 0,\n   ProtocolMax  : 0,\n   ProtocolCur  : 0,\n   DelegateMin  : 0,\n   DelegateMax  : 0,\n   DelegateCur  : 0\n}", 
+            "title": "Response 200"
+        }, 
+        {
+            "location": "/docs/api/#get-leave", 
+            "text": "", 
+            "title": "GET /leave"
+        }, 
+        {
+            "location": "/docs/api/#description_8", 
+            "text": "Force the node to leave the cluster.", 
+            "title": "Description"
+        }, 
+        {
+            "location": "/docs/api/#responses_8", 
+            "text": "HTTP Code  Description  Schema      200  Successful response    member    array", 
+            "title": "Responses"
+        }, 
+        {
+            "location": "/docs/api/#tags_8", 
+            "text": "default", 
+            "title": "Tags"
+        }, 
+        {
+            "location": "/docs/api/#example-http-request_8", 
+            "text": "", 
+            "title": "Example HTTP request"
+        }, 
+        {
+            "location": "/docs/api/#request-path_8", 
+            "text": "/leave", 
+            "title": "Request path"
+        }, 
+        {
+            "location": "/docs/api/#example-http-response_8", 
+            "text": "", 
+            "title": "Example HTTP response"
+        }, 
+        {
+            "location": "/docs/api/#response-200_6", 
+            "text": "json : array", 
+            "title": "Response 200"
+        }, 
+        {
+            "location": "/docs/api/#get-members", 
+            "text": "", 
+            "title": "GET /members"
+        }, 
+        {
+            "location": "/docs/api/#description_9", 
+            "text": "List members.", 
+            "title": "Description"
+        }, 
+        {
+            "location": "/docs/api/#responses_9", 
+            "text": "HTTP Code  Description  Schema      200  Successful response    member    array", 
+            "title": "Responses"
+        }, 
+        {
+            "location": "/docs/api/#tags_9", 
+            "text": "members", 
+            "title": "Tags"
+        }, 
+        {
+            "location": "/docs/api/#example-http-request_9", 
+            "text": "", 
+            "title": "Example HTTP request"
+        }, 
+        {
+            "location": "/docs/api/#request-path_9", 
+            "text": "/members", 
+            "title": "Request path"
+        }, 
+        {
+            "location": "/docs/api/#example-http-response_9", 
+            "text": "", 
+            "title": "Example HTTP response"
+        }, 
+        {
+            "location": "/docs/api/#response-200_7", 
+            "text": "json : array", 
+            "title": "Response 200"
+        }, 
+        {
             "location": "/docs/api/#definitions", 
-            "text": "status  Status represents details about the node.  Type  : object   job  A Job represents a scheduled task to execute.     Name  Description  Schema      name    required  Name for the job.   Example  :  \"string\"  string    schedule    required  Cron expression for the job.   Example  :  \"string\"  string    command    required  Command to run.   Example  :  \"string\"  string    shell    optional  Use shell to run the command   Example  :  true  boolean    owner    optional  Owner of the job   Example  :  \"string\"  string    owner_email    optional  Email of the owner   Example  :  \"string\"  string    success_count    optional    read-only  Number of successful executions   Example  :  0  integer    error_count    optional    read-only  Number of failed executions   Example  :  0  integer    last_success    optional    read-only  Last time this job executed successfully   Example  :  \"string\"  string(date-time)    last_error    optional    read-only  Last time this job failed   Example  :  \"string\"  string(date-time)    disabled    optional  Disabled state of the job   Example  :  true  boolean    tags    optional  Target nodes tags of this job   Example  :  { br   \"string\" : \"string\" br }   string, string   map    retries    optional  Number of times to retry a failed job execution   Example  :  2  integer    parent_job    optional  The name/id of the job that will trigger the execution of this job   Example  :  \"parent_job\"  string    dependent_jobs    optional    read-only  Array containing the jobs that depends on this one   Example  :  \"\"   object   array    processors    optional  Processor plugins used to process executions results of this job   Example  :  { br   \"string\" : \"string\" br }   string, string   map    concurrency    optional  Concurrency policy for the job allow/forbid   Example  :  \"allow\"  string      member  A member represents a cluster member node.     Name  Description  Schema      Name    optional  Node name   Example  :  \"string\"  string    Addr    optional  IP Address   Example  :  \"string\"  string    Port    optional  Port number   Example  :  0  integer    Tags    optional  Tags asociated with this node   Example  :  { br   \"string\" : \"string\" br }   string, string   map    Status    optional  The serf status of the node see: https://godoc.org/github.com/hashicorp/serf/serf#MemberStatus   Example  :  0  integer    ProtocolMin    optional  Serf protocol minimum version this node can understand or speak   Example  :  0  integer    ProtocolMax    optional  Example  :  0  integer    ProtocolCur    optional  Serf protocol current version this node can understand or speak   Example  :  0  integer    DelegateMin    optional  Serf delegate protocol minimum version this node can understand or speak   Example  :  0  integer    DelegateMax    optional  Serf delegate protocol minimum version this node can understand or speak   Example  :  0  integer    DelegateCur    optional  Serf delegate protocol minimum version this node can understand or speak   Example  :  0  integer      execution  An execution represents a timed job run.     Name  Description  Schema      job_name    optional  job name   Example  :  \"string\"  string    started_at    optional  start time of the execution   Example  :  \"string\"  string(date-time)    finished_at    optional  when the execution finished running   Example  :  \"string\"  string(date-time)    success    optional  the execution run successfuly   Example  :  true  boolean    output    optional  partial output of the command execution   Example  :  \"string\"  string    node_name    optional  name of the node that executed the command   Example  :  \"string\"  string", 
+            "text": "", 
             "title": "Definitions"
+        }, 
+        {
+            "location": "/docs/api/#status", 
+            "text": "Status represents details about the node.  Type  : object", 
+            "title": "status"
+        }, 
+        {
+            "location": "/docs/api/#job", 
+            "text": "A Job represents a scheduled task to execute.     Name  Description  Schema      name    required  Name for the job.   Example  :  \"string\"  string    schedule    required  Cron expression for the job.   Example  :  \"string\"  string    command    required  Command to run.   Example  :  \"string\"  string    shell    optional  Use shell to run the command   Example  :  true  boolean    owner    optional  Owner of the job   Example  :  \"string\"  string    owner_email    optional  Email of the owner   Example  :  \"string\"  string    success_count    optional    read-only  Number of successful executions   Example  :  0  integer    error_count    optional    read-only  Number of failed executions   Example  :  0  integer    last_success    optional    read-only  Last time this job executed successfully   Example  :  \"string\"  string(date-time)    last_error    optional    read-only  Last time this job failed   Example  :  \"string\"  string(date-time)    disabled    optional  Disabled state of the job   Example  :  true  boolean    tags    optional  Target nodes tags of this job   Example  :  { br   \"string\" : \"string\" br }   string, string   map    retries    optional  Number of times to retry a failed job execution   Example  :  2  integer    parent_job    optional  The name/id of the job that will trigger the execution of this job   Example  :  \"parent_job\"  string    dependent_jobs    optional  Array containing the jobs that depends on this one   Example  :  [ \"string\" ]   string   array    processors    optional  Processor plugins used to process executions results of this job   Example  :  { br   \"string\" : \"string\" br }   string, string   map    concurrency    optional  Concurrency policy for the job allow/forbid   Example  :  \"allow\"  string", 
+            "title": "job"
+        }, 
+        {
+            "location": "/docs/api/#member", 
+            "text": "A member represents a cluster member node.     Name  Description  Schema      Name    optional  Node name   Example  :  \"string\"  string    Addr    optional  IP Address   Example  :  \"string\"  string    Port    optional  Port number   Example  :  0  integer    Tags    optional  Tags asociated with this node   Example  :  { br   \"string\" : \"string\" br }   string, string   map    Status    optional  The serf status of the node see: https://godoc.org/github.com/hashicorp/serf/serf#MemberStatus   Example  :  0  integer    ProtocolMin    optional  Serf protocol minimum version this node can understand or speak   Example  :  0  integer    ProtocolMax    optional  Serf protocol minimum version this node can understand or speak   Example  :  0  integer    ProtocolCur    optional  Serf protocol current version this node can understand or speak   Example  :  0  integer    DelegateMin    optional  Serf delegate protocol minimum version this node can understand or speak   Example  :  0  integer    DelegateMax    optional  Serf delegate protocol minimum version this node can understand or speak   Example  :  0  integer    DelegateCur    optional  Serf delegate protocol minimum version this node can understand or speak   Example  :  0  integer", 
+            "title": "member"
+        }, 
+        {
+            "location": "/docs/api/#execution", 
+            "text": "An execution represents a timed job run.     Name  Description  Schema      job_name    optional  job name   Example  :  \"string\"  string    started_at    optional  start time of the execution   Example  :  \"string\"  string(date-time)    finished_at    optional  when the execution finished running   Example  :  \"string\"  string(date-time)    success    optional  the execution run successfuly   Example  :  true  boolean    output    optional  partial output of the command execution   Example  :  \"string\"  string    node_name    optional  name of the node that executed the command   Example  :  \"string\"  string", 
+            "title": "execution"
         }, 
         {
             "location": "/docs/plugins/", 
@@ -167,8 +672,13 @@
         }, 
         {
             "location": "/docs/plugins/#logging-processors", 
-            "text": "Logging output of each job execution can be modified by using processor plugins.  Processor plugins can be used to redirect the output of a job execution to different targets.  Processors are set per job using the  processors  property.  processors  is an object of processor plugins to use and it's corresponding configuration. To know what parameters each plugin accepts refer to the plugin documentation.  Built-in logging processors  Depending on your needs the execution log can be redirected using the following plugins:   not specified - Store the output in the key value store (Slow performance, good for testing, default method)  log - Output the execution log to Dkron stdout (Good performance, needs parsing)  syslog - Output to the syslog (Good performance, needs parsing)  files - Output to multiple files (Good performance, needs parsing)   All plugins accepts one configuration option:  forward  Indicated if the plugin must forward the original execution output. This allows for chaining plugins and sending output to different targets at the same time.", 
+            "text": "Logging output of each job execution can be modified by using processor plugins.  Processor plugins can be used to redirect the output of a job execution to different targets.  Processors are set per job using the  processors  property.  processors  is an object of processor plugins to use and it's corresponding configuration. To know what parameters each plugin accepts refer to the plugin documentation.", 
             "title": "Logging processors"
+        }, 
+        {
+            "location": "/docs/plugins/#built-in-logging-processors", 
+            "text": "Depending on your needs the execution log can be redirected using the following plugins:   not specified - Store the output in the key value store (Slow performance, good for testing, default method)  log - Output the execution log to Dkron stdout (Good performance, needs parsing)  syslog - Output to the syslog (Good performance, needs parsing)  files - Output to multiple files (Good performance, needs parsing)   All plugins accepts one configuration option:  forward  Indicated if the plugin must forward the original execution output. This allows for chaining plugins and sending output to different targets at the same time.", 
+            "title": "Built-in logging processors"
         }, 
         {
             "location": "/docs/plugins/#using-plugins", 
@@ -192,8 +702,18 @@
         }, 
         {
             "location": "/docs/integration/#use-with-amazon-ecs", 
-            "text": "To use Dkron to schedule jobs that run in containers, a wrapper ECS script is needed.  Install the following snippet in the node that will run the call to ECS   Prerequisites  The node that will run the call to ECS will need to have installed   AWS cli  jq   Example  ecs-run --cluster cron --task-definition cron-taskdef --container-name cron --region us-east-1 --command \"rake foo\"", 
+            "text": "To use Dkron to schedule jobs that run in containers, a wrapper ECS script is needed.  Install the following snippet in the node that will run the call to ECS", 
             "title": "Use with Amazon ECS"
+        }, 
+        {
+            "location": "/docs/integration/#prerequisites", 
+            "text": "The node that will run the call to ECS will need to have installed   AWS cli  jq", 
+            "title": "Prerequisites"
+        }, 
+        {
+            "location": "/docs/integration/#example", 
+            "text": "ecs-run --cluster cron --task-definition cron-taskdef --container-name cron --region us-east-1 --command \"rake foo\"", 
+            "title": "Example"
         }, 
         {
             "location": "/about/dkron_vs_other_software/", 
