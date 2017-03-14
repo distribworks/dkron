@@ -349,7 +349,7 @@ WAIT:
 		graceful = true
 	}
 
-	// Bail fast if not doing a graceful leave
+	// Fail fast if not doing a graceful leave
 	if !graceful {
 		return 1
 	}
