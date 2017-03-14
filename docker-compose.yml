@@ -25,7 +25,7 @@ services:
     hostname: node1
 
   dkron:
-    image: dkron
+    build: .
     depends_on:
       - consul
       - etcd
