@@ -81,7 +81,8 @@ func (a *AgentCommand) indexHandler(c *gin.Context) {
 func (a *AgentCommand) jobsHandler(c *gin.Context) {
 	jobs, err := a.store.GetJobs()
 	if err != nil {
-		log.Fatal(err)
+		log.WithError(err).Error("api: Unable to get jobs, store not reachable.")
+		return
 	}
 	render(c, jobs)
 }

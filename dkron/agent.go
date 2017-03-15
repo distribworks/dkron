@@ -28,7 +28,6 @@ const (
 	gracefulTimeout = 3 * time.Second
 
 	defaultRecoverTime = 10 * time.Second
-	defaultLeaderTTL   = 20 * time.Second
 )
 
 var (
@@ -36,6 +35,8 @@ var (
 
 	// Error thrown on obtained leader from store is not found in member list
 	ErrLeaderNotFound = errors.New("No member leader found in member list")
+
+	defaultLeaderTTL = 20 * time.Second
 )
 
 // ProcessorFactory is a function type that creates a new instance
@@ -207,7 +208,7 @@ func (a *AgentCommand) setupSerf() *serf.Serf {
 			return nil
 		}
 	}
-	//Ues the value of "RPCPort" if AdvertiseRPCPort has not been set 
+	//Ues the value of "RPCPort" if AdvertiseRPCPort has not been set
 	if config.AdvertiseRPCPort <= 0 {
 		config.AdvertiseRPCPort = config.RPCPort
 	}
@@ -349,7 +350,7 @@ WAIT:
 		graceful = true
 	}
 
-	// Bail fast if not doing a graceful leave
+	// Fail fast if not doing a graceful leave
 	if !graceful {
 		return 1
 	}
@@ -359,11 +360,6 @@ WAIT:
 	a.Ui.Output("Gracefully shutting down agent...")
 	log.Info("agent: Gracefully shutting down agent...")
 	go func() {
-		// If we're exiting a server
-		if a.config.Server {
-			// Stop running for leader election
-			a.candidate.Stop()
-		}
 		if err := a.serf.Leave(); err != nil {
 			a.Ui.Error(fmt.Sprintf("Error: %s", err))
 			log.Error(fmt.Sprintf("Error: %s", err))

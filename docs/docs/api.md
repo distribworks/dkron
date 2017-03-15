@@ -11,7 +11,7 @@ Default API responses are unformatted JSON add the `pretty=true` param to format
 
 
 ### Version information
-*Version* : 0.9.2
+*Version* : 0.9.3
 
 
 ### URI scheme
@@ -58,8 +58,7 @@ Gets `Status` object.
 
 ##### Request path
 ```
-json :
-"/"
+/
 ```
 
 
@@ -68,7 +67,7 @@ json :
 ##### Response 200
 ```
 json :
-{ }
+"{ }"
 ```
 
 
@@ -102,8 +101,7 @@ List executions.
 
 ##### Request path
 ```
-json :
-"/executions/string"
+/executions/string
 ```
 
 
@@ -139,8 +137,7 @@ List jobs.
 
 ##### Request path
 ```
-json :
-"/jobs"
+/jobs
 ```
 
 
@@ -183,8 +180,7 @@ Create or updates a new job.
 
 ##### Request path
 ```
-json :
-"/jobs"
+/jobs
 ```
 
 
@@ -208,7 +204,7 @@ json :
   },
   "retries" : 2,
   "parent_job" : "parent_job",
-  "dependent_jobs" : "",
+  "dependent_jobs" : [ "string" ],
   "processors" : {
     "string" : "string"
   },
@@ -239,73 +235,7 @@ json :
   },
   "retries" : 2,
   "parent_job" : "parent_job",
-  "dependent_jobs" : "",
-  "processors" : {
-    "string" : "string"
-  },
-  "concurrency" : "allow"
-}
-```
-
-
-<a name="deletejob"></a>
-### DELETE /jobs/{job_name}
-
-#### Description
-Delete a job.
-
-
-#### Parameters
-
-|Type|Name|Description|Schema|
-|---|---|---|---|
-|**Path**|**job_name**  <br>*required*|The job that needs to be deleted.|string|
-
-
-#### Responses
-
-|HTTP Code|Description|Schema|
-|---|---|---|
-|**200**|Successful response|[job](#job)|
-
-
-#### Tags
-
-* jobs
-
-
-#### Example HTTP request
-
-##### Request path
-```
-json :
-"/jobs/string"
-```
-
-
-#### Example HTTP response
-
-##### Response 200
-```
-json :
-{
-  "name" : "string",
-  "schedule" : "string",
-  "command" : "string",
-  "shell" : true,
-  "owner" : "string",
-  "owner_email" : "string",
-  "success_count" : 0,
-  "error_count" : 0,
-  "last_success" : "string",
-  "last_error" : "string",
-  "disabled" : true,
-  "tags" : {
-    "string" : "string"
-  },
-  "retries" : 2,
-  "parent_job" : "parent_job",
-  "dependent_jobs" : "",
+  "dependent_jobs" : [ "string" ],
   "processors" : {
     "string" : "string"
   },
@@ -344,8 +274,7 @@ Show a job.
 
 ##### Request path
 ```
-json :
-"/jobs/string"
+/jobs/string
 ```
 
 
@@ -371,7 +300,7 @@ json :
   },
   "retries" : 2,
   "parent_job" : "parent_job",
-  "dependent_jobs" : "",
+  "dependent_jobs" : [ "string" ],
   "processors" : {
     "string" : "string"
   },
@@ -410,8 +339,7 @@ Executes a job.
 
 ##### Request path
 ```
-json :
-"/jobs/string"
+/jobs/string
 ```
 
 
@@ -437,7 +365,72 @@ json :
   },
   "retries" : 2,
   "parent_job" : "parent_job",
-  "dependent_jobs" : "",
+  "dependent_jobs" : [ "string" ],
+  "processors" : {
+    "string" : "string"
+  },
+  "concurrency" : "allow"
+}
+```
+
+
+<a name="deletejob"></a>
+### DELETE /jobs/{job_name}
+
+#### Description
+Delete a job.
+
+
+#### Parameters
+
+|Type|Name|Description|Schema|
+|---|---|---|---|
+|**Path**|**job_name**  <br>*required*|The job that needs to be deleted.|string|
+
+
+#### Responses
+
+|HTTP Code|Description|Schema|
+|---|---|---|
+|**200**|Successful response|[job](#job)|
+
+
+#### Tags
+
+* jobs
+
+
+#### Example HTTP request
+
+##### Request path
+```
+/jobs/string
+```
+
+
+#### Example HTTP response
+
+##### Response 200
+```
+json :
+{
+  "name" : "string",
+  "schedule" : "string",
+  "command" : "string",
+  "shell" : true,
+  "owner" : "string",
+  "owner_email" : "string",
+  "success_count" : 0,
+  "error_count" : 0,
+  "last_success" : "string",
+  "last_error" : "string",
+  "disabled" : true,
+  "tags" : {
+    "string" : "string"
+  },
+  "retries" : 2,
+  "parent_job" : "parent_job",
+  "dependent_jobs" : [ "string" ],
   "processors" : {
     "string" : "string"
   },
@@ -469,8 +462,7 @@ List members.
 
 ##### Request path
 ```
-json :
-"/leader"
+/leader
 ```
 
 
@@ -520,8 +512,7 @@ Force the node to leave the cluster.
 
 ##### Request path
 ```
-json :
-"/leave"
+/leave
 ```
 
 
@@ -557,8 +548,7 @@ List members.
 
 ##### Request path
 ```
-json :
-"/members"
+/members
 ```
 
 
@@ -604,7 +594,7 @@ A Job represents a scheduled task to execute.
 |**tags**  <br>*optional*|Target nodes tags of this job  <br>**Example** : `{<br>  "string" : "string"<br>}`|< string, string > map|
 |**retries**  <br>*optional*|Number of times to retry a failed job execution  <br>**Example** : `2`|integer|
 |**parent_job**  <br>*optional*|The name/id of the job that will trigger the execution of this job  <br>**Example** : `"parent_job"`|string|
-|**dependent_jobs**  <br>*optional*  <br>*read-only*|Array containing the jobs that depends on this one  <br>**Example** : `""`|< object > array|
+|**dependent_jobs**  <br>*optional*|Array containing the jobs that depends on this one  <br>**Example** : `[ "string" ]`|< string > array|
 |**processors**  <br>*optional*|Processor plugins used to process executions results of this job  <br>**Example** : `{<br>  "string" : "string"<br>}`|< string, string > map|
 |**concurrency**  <br>*optional*|Concurrency policy for the job allow/forbid  <br>**Example** : `"allow"`|string|
 
@@ -622,7 +612,7 @@ A member represents a cluster member node.
 |**Tags**  <br>*optional*|Tags asociated with this node  <br>**Example** : `{<br>  "string" : "string"<br>}`|< string, string > map|
 |**Status**  <br>*optional*|The serf status of the node see: https://godoc.org/github.com/hashicorp/serf/serf#MemberStatus  <br>**Example** : `0`|integer|
 |**ProtocolMin**  <br>*optional*|Serf protocol minimum version this node can understand or speak  <br>**Example** : `0`|integer|
-|**ProtocolMax**  <br>*optional*|**Example** : `0`|integer|
+|**ProtocolMax**  <br>*optional*|Serf protocol minimum version this node can understand or speak  <br>**Example** : `0`|integer|
 |**ProtocolCur**  <br>*optional*|Serf protocol current version this node can understand or speak  <br>**Example** : `0`|integer|
 |**DelegateMin**  <br>*optional*|Serf delegate protocol minimum version this node can understand or speak  <br>**Example** : `0`|integer|
 |**DelegateMax**  <br>*optional*|Serf delegate protocol minimum version this node can understand or speak  <br>**Example** : `0`|integer|
