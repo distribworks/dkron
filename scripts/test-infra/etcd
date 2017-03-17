@@ -51,8 +51,8 @@ docker service create \
 --name dkron-etcd0 \
 --network my-net \
 --publish 8080:8080 \
---container-label beta="1" \
-dkron/dkron:v0.9.3-beta \
+--container-label beta="0" \
+dkron/dkron:v0.9.3 \
 agent -server \
 -bind=0.0.0.0:8946 \
 -backend=etcd \
@@ -69,8 +69,8 @@ docker service create \
 --network my-net \
 --replicas 5 \
 --publish 8081:8080 \
---container-label beta="1" \
-dkron/dkron:v0.9.3-beta \
+--container-label beta="0" \
+dkron/dkron:v0.9.3 \
 agent -server \
 -bind=0.0.0.0:8946 \
 -backend=etcd \
