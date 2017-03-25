@@ -93,7 +93,7 @@ func TestAgentCommand_runForElection(t *testing.T) {
 	err = client.DeleteTree("dkron")
 	if err != nil {
 		if err != store.ErrKeyNotFound {
-			panic(err)
+			t.Fatal(err)
 		}
 	}
 
@@ -137,7 +137,10 @@ func TestAgentCommand_runForElection(t *testing.T) {
 		resultCh2 <- a2.Run(args2)
 	}()
 
-	kv, _ := client.Get("dkron/leader")
+	kv, err := client.Get("dkron/leader")
+	if err != nil {
+		t.Fatal(err)
+	}
 	leader := string(kv.Value)
 	log.Printf("%s is the current leader", leader)
 	if leader != a1Name {
