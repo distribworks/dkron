@@ -1,5 +1,5 @@
-hash: aee0e4e1414b471bd49a31d53c362cae49bfbafebd407d64fc8fd49ef19f7857
-updated: 2017-02-21T16:54:24.657614343+01:00
+hash: ec8d536c7baac353752fc25ce8f3635f8f520256ae7e52f62c4982e32834a414
+updated: 2017-03-24T17:39:15.746603774+01:00
 imports:
 - name: bitbucket.org/kardianos/osext
   version: 816c96ec6fef6a0cd72c9395d192c4bd0d918753
@@ -36,6 +36,10 @@ imports:
   - store/consul
   - store/etcd
   - store/zookeeper
+- name: github.com/gin-contrib/expvar
+  version: 298a578c5a53a558df60ebd72fd9d20b269e7da9
+- name: github.com/gin-contrib/multitemplate
+  version: 7d1ec4f2119934983b106718265783fc48a38b77
 - name: github.com/gin-gonic/gin
   version: e2212d40c62a98b388a5eb48ecbdcf88534688ba
   subpackages:
@@ -81,7 +85,7 @@ imports:
 - name: github.com/manucorporat/sse
   version: ee05b128a739a0fb76c7ebd3ae4810c1de808d6d
 - name: github.com/mattn/go-isatty
-  version: dda3de49cbfcec471bd7a70e6cc01fcc3ff90109
+  version: fc9e8d8ef48496124e79ae0df75490096eccf6fe
 - name: github.com/mattn/go-shellwords
   version: 525bedee691b5a8df547cb5cf9f86b7fb1883e24
 - name: github.com/mitchellh/cli
@@ -119,7 +123,7 @@ imports:
   subpackages:
   - context
 - name: golang.org/x/sys
-  version: 9c60d1c508f5134d1ca726b4641db998f2523357
+  version: 30de6d19a3bd89a5f38ae4028e23aaa5582648af
   subpackages:
   - unix
 - name: gopkg.in/gin-gonic/gin.v1

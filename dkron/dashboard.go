@@ -7,13 +7,14 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/gorilla/mux"
+	"github.com/gin-contrib/multitemplate"
 	"gopkg.in/gin-gonic/gin.v1"
 )
 
 const (
 	tmplPath            = "templates"
 	dashboardPathPrefix = "dashboard"
+	assetsPrefix        = "assets"
 	apiPathPrefix       = "v1"
 )
 
@@ -22,6 +23,7 @@ type commonDashboardData struct {
 	LeaderName string
 	MemberName string
 	Backend    string
+	AssetsPath string
 	Path       string
 	APIPath    string
 	Keyspace   string
@@ -39,6 +41,7 @@ func newCommonDashboardData(a *AgentCommand, nodeName, path string) *commonDashb
 		LeaderName: leaderName,
 		MemberName: nodeName,
 		Backend:    a.config.Backend,
+		AssetsPath: fmt.Sprintf("%s%s", path, assetsPrefix),
 		Path:       fmt.Sprintf("%s%s", path, dashboardPathPrefix),
 		APIPath:    fmt.Sprintf("%s%s", path, apiPathPrefix),
 		Keyspace:   a.config.Keyspace,
@@ -46,36 +49,85 @@ func newCommonDashboardData(a *AgentCommand, nodeName, path string) *commonDashb
 }
 
 func (a *AgentCommand) dashboardRoutes(r *gin.Engine) {
-	r.LoadHTMLGlob(filepath.Join(a.config.UIDir, tmplPath, "*"))
+	r.HTMLRender = createMyRender(filepath.Join(a.config.UIDir, tmplPath))
 
 	dashboard := r.Group("/" + dashboardPathPrefix)
 	dashboard.GET("/", a.dashboardIndexHandler)
-	// dashboard.GET("/jobs", a.dashboardJobsHandler)
-	// dashboard.GET("/jobs/:job/executions", a.dashboardExecutionsHandler)
-}
-
-func templateSet(uiDir string, template string) []string {
-	return []string{
-		filepath.Join(uiDir, tmplPath, "dashboard.html.tmpl"),
-		filepath.Join(uiDir, tmplPath, "status.html.tmpl"),
-		filepath.Join(uiDir, tmplPath, template+".html.tmpl"),
-	}
+	dashboard.GET("/jobs", a.dashboardJobsHandler)
+	dashboard.GET("/jobs/:job/executions", a.dashboardExecutionsHandler)
 }
 
 func (a *AgentCommand) dashboardIndexHandler(c *gin.Context) {
 	data := struct {
 		Common *commonDashboardData
 	}{
-		Common: newCommonDashboardData(a, a.config.NodeName, ""),
+		Common: newCommonDashboardData(a, a.config.NodeName, "/"),
 	}
-	c.HTML(http.StatusOK, "dashboard.html.tmpl", data)
+	c.HTML(http.StatusOK, "index", data)
 }
 
-func (a *AgentCommand) dashboardJobsHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html")
-
+func (a *AgentCommand) dashboardJobsHandler(c *gin.Context) {
 	jobs, _ := a.store.GetJobs()
 
+	data := struct {
+		Common *commonDashboardData
+		Jobs   []*Job
+	}{
+		Common: newCommonDashboardData(a, a.config.NodeName, "/"),
+		Jobs:   jobs,
+	}
+
+	c.HTML(http.StatusOK, "jobs", data)
+}
+
+func (a *AgentCommand) dashboardExecutionsHandler(c *gin.Context) {
+	job := c.Param("job")
+
+	groups, byGroup, err := a.store.GetGroupedExecutions(job)
+	if err != nil {
+		log.Error(err)
+	}
+
+	data := struct {
+		Common  *commonDashboardData
+		Groups  map[int64][]*Execution
+		JobName string
+		ByGroup int64arr
+	}{
+		Common:  newCommonDashboardData(a, a.config.NodeName, "/"),
+		Groups:  groups,
+		JobName: job,
+		ByGroup: byGroup,
+	}
+
+	c.HTML(http.StatusOK, "executions", data)
+}
+
+func createMyRender(path string) multitemplate.Render {
+	r := multitemplate.New()
+
+	r.AddFromFilesFuncs("index",
+		funcMap(),
+		filepath.Join(path, "dashboard.html.tmpl"),
+		filepath.Join(path, "status.html.tmpl"),
+		filepath.Join(path, "index.html.tmpl"))
+
+	r.AddFromFilesFuncs("jobs",
+		funcMap(),
+		filepath.Join(path, "dashboard.html.tmpl"),
+		filepath.Join(path, "status.html.tmpl"),
+		filepath.Join(path, "jobs.html.tmpl"))
+
+	r.AddFromFilesFuncs("executions",
+		funcMap(),
+		filepath.Join(path, "dashboard.html.tmpl"),
+		filepath.Join(path, "status.html.tmpl"),
+		filepath.Join(path, "executions.html.tmpl"))
+
+	return r
+}
+
+func funcMap() template.FuncMap {
 	funcs := template.FuncMap{
 		"executionStatus": func(job *Job) string {
 			status := job.Status()
@@ -96,36 +148,6 @@ func (a *AgentCommand) dashboardJobsHandler(w http.ResponseWriter, r *http.Reque
 			j, _ := json.MarshalIndent(job, "", "\t")
 			return string(j)
 		},
-	}
-
-	tmpl := template.Must(template.New("dashboard.html.tmpl").Funcs(funcs).ParseFiles(
-		templateSet(a.config.UIDir, "jobs")...))
-
-	data := struct {
-		Common *commonDashboardData
-		Jobs   []*Job
-	}{
-		Common: newCommonDashboardData(a, a.config.NodeName, "../"),
-		Jobs:   jobs,
-	}
-
-	if err := tmpl.Execute(w, data); err != nil {
-		log.Error(err)
-	}
-}
-
-func (a *AgentCommand) dashboardExecutionsHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html")
-
-	vars := mux.Vars(r)
-	job := vars["job"]
-
-	groups, byGroup, err := a.store.GetGroupedExecutions(job)
-	if err != nil {
-		log.Error(err)
-	}
-
-	tmpl := template.Must(template.New("dashboard.html.tmpl").Funcs(template.FuncMap{
 		"html": func(value []byte) string {
 			return string(template.HTML(value))
 		},
@@ -140,21 +162,7 @@ func (a *AgentCommand) dashboardExecutionsHandler(w http.ResponseWriter, r *http
 			}
 			return s
 		},
-	}).ParseFiles(templateSet(a.config.UIDir, "executions")...))
-
-	data := struct {
-		Common  *commonDashboardData
-		Groups  map[int64][]*Execution
-		JobName string
-		ByGroup int64arr
-	}{
-		Common:  newCommonDashboardData(a, a.config.NodeName, "../../../"),
-		Groups:  groups,
-		JobName: job,
-		ByGroup: byGroup,
 	}
 
-	if err := tmpl.Execute(w, data); err != nil {
-		log.Error(err)
-	}
+	return funcs
 }
