@@ -3,11 +3,9 @@ package dkron
 import (
 	"fmt"
 	"net/http"
-	"path/filepath"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/libkv/store"
-	"github.com/gin-contrib/expvar"
 	gin "gopkg.in/gin-gonic/gin.v1"
 )
 
@@ -23,12 +21,8 @@ func (a *AgentCommand) ServeHTTP() {
 	a.dashboardRoutes(r)
 
 	r.Use(a.metaMiddleware())
-	r.GET("/debug/vars", expvar.Handler())
+	//r.GET("/debug/vars", expvar.Handler())
 
-	r.Static("/assets", filepath.Join(a.config.UIDir, "static"))
-	r.GET("/", func(c *gin.Context) {
-		c.Redirect(http.StatusMovedPermanently, "/dashboard")
-	})
 	log.WithFields(logrus.Fields{
 		"address": a.config.HTTPAddr,
 	}).Info("api: Running HTTP server")

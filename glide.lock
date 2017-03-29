@@ -1,5 +1,5 @@
-hash: ec8d536c7baac353752fc25ce8f3635f8f520256ae7e52f62c4982e32834a414
-updated: 2017-03-24T17:39:15.746603774+01:00
+hash: 4e8cde78d402381d6cbbd0e899f2999e73a456a18598d8b4f2261ed07095683c
+updated: 2017-03-28T10:03:45.729827384+02:00
 imports:
 - name: bitbucket.org/kardianos/osext
   version: 816c96ec6fef6a0cd72c9395d192c4bd0d918753
@@ -37,7 +37,7 @@ imports:
   - store/etcd
   - store/zookeeper
 - name: github.com/gin-contrib/expvar
-  version: 298a578c5a53a558df60ebd72fd9d20b269e7da9
+  version: 5f834d3672079e82c5f79f42c069475f636d3a11
 - name: github.com/gin-contrib/multitemplate
   version: 7d1ec4f2119934983b106718265783fc48a38b77
 - name: github.com/gin-gonic/gin
@@ -76,6 +76,10 @@ imports:
   version: d1caa6c97c9fc1cc9e83bbe34d0603f9ff0ce8bd
 - name: github.com/jordan-wright/email
   version: 065af43fce517847a750d01a6d389d1a37e011b3
+- name: github.com/jteeuwen/go-bindata
+  version: bbd0c6e271208dce66d8fda4bc536453cd27fc4a
+  subpackages:
+  - '...'
 - name: github.com/kr/pretty
   version: 088c856450c08c03eb32f7a6c221e6eefaa10e6f
 - name: github.com/kr/text
