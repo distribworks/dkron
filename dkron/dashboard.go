@@ -5,16 +5,16 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-	"path/filepath"
+	"strings"
 
-	"github.com/gin-contrib/multitemplate"
+	"github.com/victorcoder/dkron/dkron/multitemplate"
 	"gopkg.in/gin-gonic/gin.v1"
 )
 
 const (
 	tmplPath            = "templates"
 	dashboardPathPrefix = "dashboard"
-	assetsPrefix        = "assets"
+	assetsPrefix        = "static"
 	apiPathPrefix       = "v1"
 )
 
@@ -49,7 +49,12 @@ func newCommonDashboardData(a *AgentCommand, nodeName, path string) *commonDashb
 }
 
 func (a *AgentCommand) dashboardRoutes(r *gin.Engine) {
-	r.HTMLRender = createMyRender(filepath.Join(a.config.UIDir, tmplPath))
+	r.HTMLRender = createMyRender()
+
+	r.NoRoute(func(c *gin.Context) {
+		c.Redirect(http.StatusMovedPermanently, "/dashboard")
+	})
+	r.GET("/static/*asset", servePublic)
 
 	dashboard := r.Group("/" + dashboardPathPrefix)
 	dashboard.GET("/", a.dashboardIndexHandler)
@@ -103,28 +108,78 @@ func (a *AgentCommand) dashboardExecutionsHandler(c *gin.Context) {
 	c.HTML(http.StatusOK, "executions", data)
 }
 
-func createMyRender(path string) multitemplate.Render {
+func mustLoadTemplate(path string) []byte {
+	tmpl, err := Asset(path)
+	if err != nil {
+		log.Error(err)
+		return nil
+	}
+
+	return tmpl
+}
+
+func createMyRender() multitemplate.Render {
 	r := multitemplate.New()
 
-	r.AddFromFilesFuncs("index",
-		funcMap(),
-		filepath.Join(path, "dashboard.html.tmpl"),
-		filepath.Join(path, "status.html.tmpl"),
-		filepath.Join(path, "index.html.tmpl"))
+	status := mustLoadTemplate(tmplPath + "/status.html.tmpl")
+	dash := mustLoadTemplate(tmplPath + "/dashboard.html.tmpl")
 
-	r.AddFromFilesFuncs("jobs",
-		funcMap(),
-		filepath.Join(path, "dashboard.html.tmpl"),
-		filepath.Join(path, "status.html.tmpl"),
-		filepath.Join(path, "jobs.html.tmpl"))
+	r.AddFromStringsFuncs("index", funcMap(),
+		string(dash),
+		string(status),
+		string(mustLoadTemplate(tmplPath+"/index.html.tmpl")))
 
-	r.AddFromFilesFuncs("executions",
-		funcMap(),
-		filepath.Join(path, "dashboard.html.tmpl"),
-		filepath.Join(path, "status.html.tmpl"),
-		filepath.Join(path, "executions.html.tmpl"))
+	r.AddFromStringsFuncs("jobs", funcMap(),
+		string(dash),
+		string(status),
+		string(mustLoadTemplate(tmplPath+"/jobs.html.tmpl")))
+
+	r.AddFromStringsFuncs("executions", funcMap(),
+		string(dash),
+		string(status),
+		string(mustLoadTemplate(tmplPath+"/executions.html.tmpl")))
 
 	return r
+}
+
+//go:generate go-bindata -prefix "../" -pkg dkron -ignore=.*\.md -ignore=\.?bower\.json -ignore=\.gitignore -ignore=Makefile -ignore=examples -ignore=tutorial -ignore=tests -ignore=rickshaw\/src -o bindata.go ../static/... ../templates
+func servePublic(c *gin.Context) {
+	path := c.Request.URL.Path
+
+	path = strings.Replace(path, "/", "", 1)
+	split := strings.Split(path, ".")
+	suffix := split[len(split)-1]
+
+	res, err := Asset(path)
+	if err != nil {
+		c.Next()
+		return
+	}
+
+	contentType := "text/plain"
+	switch suffix {
+	case "png":
+		contentType = "image/png"
+	case "jpg", "jpeg":
+		contentType = "image/jpeg"
+	case "gif":
+		contentType = "image/gif"
+	case "js":
+		contentType = "application/javascript"
+	case "css":
+		contentType = "text/css"
+	case "woff":
+		contentType = "application/x-font-woff"
+	case "ttf":
+		contentType = "application/x-font-ttf"
+	case "otf":
+		contentType = "application/x-font-otf"
+	case "html":
+		contentType = "text/html"
+	}
+
+	c.Writer.Header().Set("content-type", contentType)
+	c.String(200, string(res))
 }
 
 func funcMap() template.FuncMap {

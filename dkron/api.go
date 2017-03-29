@@ -3,11 +3,9 @@ package dkron
 import (
 	"fmt"
 	"net/http"
-	"path/filepath"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/libkv/store"
-	"github.com/gin-contrib/expvar"
 	gin "gopkg.in/gin-gonic/gin.v1"
 )
 
@@ -23,12 +21,8 @@ func (a *AgentCommand) ServeHTTP() {
 	a.dashboardRoutes(r)
 
 	r.Use(a.metaMiddleware())
-	r.GET("/debug/vars", expvar.Handler())
+	//r.GET("/debug/vars", expvar.Handler())
 
-	r.Static("/assets", filepath.Join(a.config.UIDir, "static"))
-	r.GET("/", func(c *gin.Context) {
-		c.Redirect(http.StatusMovedPermanently, "/dashboard")
-	})
 	log.WithFields(logrus.Fields{
 		"address": a.config.HTTPAddr,
 	}).Info("api: Running HTTP server")
@@ -63,11 +57,11 @@ func (a *AgentCommand) metaMiddleware() gin.HandlerFunc {
 	}
 }
 
-func renderJSON(c *gin.Context, v interface{}) {
+func renderJSON(c *gin.Context, status int, v interface{}) {
 	if _, ok := c.GetQuery(pretty); ok {
-		c.IndentedJSON(http.StatusOK, v)
+		c.IndentedJSON(status, v)
 	} else {
-		c.JSON(http.StatusOK, v)
+		c.JSON(status, v)
 	}
 }
 
@@ -82,7 +76,7 @@ func (a *AgentCommand) indexHandler(c *gin.Context) {
 		"serf": a.serf.Stats(),
 		"tags": local.Tags,
 	}
-	renderJSON(c, stats)
+	renderJSON(c, http.StatusOK, stats)
 }
 
 func (a *AgentCommand) jobsHandler(c *gin.Context) {
@@ -91,7 +85,7 @@ func (a *AgentCommand) jobsHandler(c *gin.Context) {
 		log.WithError(err).Error("api: Unable to get jobs, store not reachable.")
 		return
 	}
-	renderJSON(c, jobs)
+	renderJSON(c, http.StatusOK, jobs)
 }
 
 func (a *AgentCommand) jobGetHandler(c *gin.Context) {
@@ -105,7 +99,7 @@ func (a *AgentCommand) jobGetHandler(c *gin.Context) {
 		c.AbortWithStatus(http.StatusNotFound)
 		return
 	}
-	renderJSON(c, job)
+	renderJSON(c, http.StatusOK, job)
 }
 
 func (a *AgentCommand) jobCreateOrUpdateHandler(c *gin.Context) {
@@ -143,8 +137,7 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(c *gin.Context) {
 	a.schedulerRestartQuery(string(a.store.GetLeader()))
 
 	c.Header("Location", fmt.Sprintf("%s/%s", c.Request.RequestURI, job.Name))
-	c.Status(http.StatusCreated)
-	renderJSON(c, job)
+	renderJSON(c, http.StatusCreated, job)
 }
 
 func (a *AgentCommand) jobDeleteHandler(c *gin.Context) {
@@ -157,7 +150,7 @@ func (a *AgentCommand) jobDeleteHandler(c *gin.Context) {
 	}
 
 	a.schedulerRestartQuery(string(a.store.GetLeader()))
-	renderJSON(c, job)
+	renderJSON(c, http.StatusOK, job)
 }
 
 func (a *AgentCommand) jobRunHandler(c *gin.Context) {
@@ -174,7 +167,7 @@ func (a *AgentCommand) jobRunHandler(c *gin.Context) {
 
 	c.Header("Location", c.Request.RequestURI)
 	c.Status(http.StatusAccepted)
-	renderJSON(c, job)
+	renderJSON(c, http.StatusOK, job)
 }
 
 func (a *AgentCommand) executionsHandler(c *gin.Context) {
@@ -189,24 +182,24 @@ func (a *AgentCommand) executionsHandler(c *gin.Context) {
 	executions, err := a.store.GetExecutions(job.Name)
 	if err != nil {
 		if err == store.ErrKeyNotFound {
-			renderJSON(c, &[]Execution{})
+			renderJSON(c, http.StatusOK, &[]Execution{})
 			return
 		} else {
 			log.Error(err)
 			return
 		}
 	}
-	renderJSON(c, executions)
+	renderJSON(c, http.StatusOK, executions)
 }
 
 func (a *AgentCommand) membersHandler(c *gin.Context) {
-	renderJSON(c, a.serf.Members())
+	renderJSON(c, http.StatusOK, a.serf.Members())
 }
 
 func (a *AgentCommand) leaderHandler(c *gin.Context) {
 	member, err := a.leaderMember()
 	if err == nil {
-		renderJSON(c, member)
+		renderJSON(c, http.StatusOK, member)
 	}
 }
 
@@ -215,6 +208,6 @@ func (a *AgentCommand) leaveHandler(c *gin.Context) {
 		log.Warn("/leave GET is deprecated and will be removed, use POST")
 	}
 	if err := a.serf.Leave(); err != nil {
-		renderJSON(c, a.listServers())
+		renderJSON(c, http.StatusOK, a.listServers())
 	}
 }
