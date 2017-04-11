@@ -273,6 +273,8 @@ func (s *Store) GetLastExecutionGroup(jobName string) ([]*Execution, error) {
 	res, err := s.Client.List(fmt.Sprintf("%s/executions/%s", s.keyspace, jobName))
 	if err != nil {
 		return nil, err
+	} else if len(res) == 0 {
+		return  nil, fmt.Errorf("%s", "The result is empty")
 	}
 
 	var ex Execution
