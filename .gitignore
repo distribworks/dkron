@@ -13,3 +13,4 @@ main
 *.log
 .glide
 config/
+.idea/
