@@ -6,5 +6,7 @@ services:
   - docker
 
 script:
-  - docker-compose run dkron glide install
+  - docker-compose build dkron
+  - docker-compose run dkron true
   - scripts/test.sh
+  - docker-compose run dkron bash -c "GOBIN=`pwd` go clean -i ./builtin/... && GOBIN=`pwd` go install ./builtin/... && go build -o main"
