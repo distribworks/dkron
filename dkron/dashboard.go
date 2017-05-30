@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/gin-contrib/multitemplate"
+	"github.com/victorcoder/dkron/dkron/multitemplate"
 	"gopkg.in/gin-gonic/gin.v1"
 )
 
@@ -112,11 +112,28 @@ func (a *AgentCommand) dashboardExecutionsHandler(c *gin.Context) {
 func createMyRender(path string) multitemplate.Render {
 	r := multitemplate.New()
 
-	r.AddFromFilesFuncs("index",
-		funcMap(),
-		filepath.Join(path, "dashboard.html.tmpl"),
-		filepath.Join(path, "status.html.tmpl"),
-		filepath.Join(path, "index.html.tmpl"))
+	dash, err := Asset("templates/dashboard.html.tmpl")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	stats, err := Asset("templates/status.html.tmpl")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	index, err := Asset("templates/index.html.tmpl")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	r.AddFromStringFuncs("index", funcMap(), string(dash), string(stats), string(index))
+
+	// r.AddFromFilesFuncs("index",
+	// 	funcMap(),
+	// 	filepath.Join(path, "dashboard.html.tmpl"),
+	// 	filepath.Join(path, "status.html.tmpl"),
+	// 	filepath.Join(path, "index.html.tmpl"))
 
 	r.AddFromFilesFuncs("jobs",
 		funcMap(),
@@ -133,7 +150,7 @@ func createMyRender(path string) multitemplate.Render {
 	return r
 }
 
-//go:generate go-bindata -prefix "../" -pkg dkron -ignore=.*\.md -ignore=\.?bower\.json -ignore=\.gitignore -ignore=Makefile -ignore=examples -ignore=tutorial -ignore=tests -ignore=rickshaw\/src -o bindata.go ../static/...
+//go:generate go-bindata -prefix "../" -pkg dkron -ignore=.*\.md -ignore=\.?bower\.json -ignore=\.gitignore -ignore=Makefile -ignore=examples -ignore=tutorial -ignore=tests -ignore=rickshaw\/src -o bindata.go ../static/... ../templates
 func servePublic(c *gin.Context) {
 	path := c.Request.URL.Path
 
