@@ -193,7 +193,7 @@ func (a *AgentCommand) executionsHandler(c *gin.Context) {
 }
 
 func (a *AgentCommand) membersHandler(c *gin.Context) {
-	renderJSON(c, a.serf.Members())
+	renderJSON(c, http.StatusOK, a.serf.Members())
 }
 
 func (a *AgentCommand) leaderHandler(c *gin.Context) {
