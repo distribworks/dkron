@@ -49,11 +49,11 @@ func (r *Render) AddFromString(name, templateString string) *template.Template {
 	return tmpl
 }
 
-// AddFromStringFuncs supply add template from strings
-func (r *Render) AddFromStringFuncs(name string, funcMap template.FuncMap, templateString ...string) *template.Template {
-	tmpl := template.New("name").Funcs(funcMap)
+// AddFromStringsFuncs supply add template from strings
+func (r *Render) AddFromStringsFuncs(name string, funcMap template.FuncMap, templateStrings ...string) *template.Template {
+	tmpl := template.New(name).Funcs(funcMap)
 
-	for _, ts := range templateString {
+	for _, ts := range templateStrings {
 		tmpl = template.Must(tmpl.Parse(ts))
 	}
 
