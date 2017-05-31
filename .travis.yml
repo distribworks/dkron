@@ -6,4 +6,5 @@ services:
   - docker
 
 script:
+  - docker-compose run dkron glide install
   - scripts/test.sh
