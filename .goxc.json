@@ -10,7 +10,7 @@
 		"publish-github"
 	],
 	"BuildConstraints": "linux,amd64 windows,amd64 darwin,amd64 linux,arm",
-	"ResourcesInclude": "INSTALL*,README*,LICENSE*,config/*,static/*,templates/*",
+	"ResourcesInclude": "INSTALL*,README*,LICENSE*,config/*",
 	"PackageVersion": "0.9.3",
 	"TaskSettings": {
 		"deb": {
@@ -23,9 +23,7 @@
 				"Homepage": "https://dkron.io"
 			},
 			"other-mapped-files": {
-				"/": "debian/",
-				"/usr/share/dkron/static": "static/",
-				"/usr/share/dkron/templates": "templates/"
+				"/": "debian/"
 			}
 		},
 		"publish-github": {
