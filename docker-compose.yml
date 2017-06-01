@@ -16,7 +16,7 @@ services:
       - "8500"
       - "8300"
     hostname: node1
-    command: agent -server -bootstrap -ui-dir=/ui -client=0.0.0.0
+    command: agent -server -bootstrap -client=0.0.0.0
 
   zk:
     image: zookeeper

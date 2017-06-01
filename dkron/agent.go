@@ -88,7 +88,6 @@ Options:
                                   specified multiple times.
   -encrypt                        Key for encrypting network traffic.
                                   Must be a base64-encoded 16-byte key.
-  -ui-dir                         Directory from where to serve Web UI
   -rpc-port=6868                  RPC Port used to communicate with clients. Only used when server.
                                   The RPC IP Address will be the same as the bind address.
   -advertise-rpc-port             Use the value of -rpc-port by default
