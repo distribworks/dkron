@@ -27,7 +27,6 @@ paths:
   /:
     # This is a HTTP operation
     get:
-      # Describe this verb here. Note: you can use markdown
       description: |
         Gets `Status` object.
       operationId: status
@@ -43,7 +42,6 @@ paths:
             $ref: '#/definitions/status'
   /jobs:
     get:
-      # Describe this verb here. Note: you can use markdown
       description: |
         List jobs.
       operationId: getJobs
@@ -60,7 +58,6 @@ paths:
             items:
               $ref: '#/definitions/job'
     post:
-    # Describe this verb here. Note: you can use markdown
       description: |
         Create or updates a new job.
       operationId: createOrUpdateJob
@@ -83,7 +80,6 @@ paths:
             $ref: '#/definitions/job'
   /jobs/{job_name}:
     get:
-      # Describe this verb here. Note: you can use markdown
       description: |
         Show a job.
       operationId: showJobByName
@@ -104,7 +100,6 @@ paths:
           schema:
             $ref: '#/definitions/job'
     delete:
-      # Describe this verb here. Note: you can use markdown
       description: |
         Delete a job.
       operationId: deleteJob
@@ -125,7 +120,6 @@ paths:
           schema:
             $ref: '#/definitions/job'
     post:
-      # Describe this verb here. Note: you can use markdown
       description: |
         Executes a job.
       operationId: runJob
@@ -147,7 +141,6 @@ paths:
             $ref: '#/definitions/job'
   /members:
     get:
-      # Describe this verb here. Note: you can use markdown
       description: |
         List members.
       operationId: getMember
@@ -166,9 +159,8 @@ paths:
               $ref: '#/definitions/member'
   /leader:
     get:
-      # Describe this verb here. Note: you can use markdown
       description: |
-        List members.
+        List leader of cluster.
       operationId: getLeader
       tags:
         - default
@@ -183,7 +175,6 @@ paths:
             $ref: '#/definitions/member'
   /leave:
     get:
-      # Describe this verb here. Note: you can use markdown
       description: |
         Force the node to leave the cluster.
       operationId: leave
@@ -362,7 +353,7 @@ definitions:
         description: "Serf protocol minimum version this node can understand or speak"
       ProtocolMax:
         type: integer
-        description: "Serf protocol minimum version this node can understand or speak"
+        description: "Serf protocol maximum version this node can understand or speak"
       ProtocolCur:
         type: integer
         description: "Serf protocol current version this node can understand or speak"
@@ -371,10 +362,10 @@ definitions:
         description: "Serf delegate protocol minimum version this node can understand or speak"
       DelegateMax:
         type: integer
-        description: "Serf delegate protocol minimum version this node can understand or speak"
+        description: "Serf delegate protocol maximum version this node can understand or speak"
       DelegateCur:
         type: integer
-        description: "Serf delegate protocol minimum version this node can understand or speak"
+        description: "Serf delegate protocol current version this node can understand or speak"
   execution:
     type: object
     description: An execution represents a timed job run.
