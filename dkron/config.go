@@ -109,8 +109,6 @@ func NewConfig(args []string, agent *AgentCommand) *Config {
 	cmdFlags.String("log-level", "info", "Log level (debug, info, warn, error, fatal, panic), defaults to info")
 	viper.SetDefault("log_level", cmdFlags.Lookup("log-level").Value)
 
-	cmdFlags.String("ui-dir", ".", "directory to serve web UI")
-	viper.SetDefault("ui_dir", cmdFlags.Lookup("ui-dir").Value)
 	viper.SetDefault("rpc_port", cmdFlags.Int("rpc-port", 6868, "RPC port"))
 	viper.SetDefault("advertise_rpc_port", cmdFlags.Int("advertise-rpc-port", 0, "advertise RPC port"))
 
