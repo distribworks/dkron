@@ -10,7 +10,7 @@
         <th>Status</th>
         <th>Actions</th>
       </tr>
-      {{ range $job := .Jobs }}
+      {{ range $i, $job := .Jobs }}
       <tr>
 
         <td><a href="jobs/{{$job.Name}}/executions">{{ $job.Name }}</a></td>
@@ -24,18 +24,18 @@
           {{end}}
         </td>
         <td>
-          <a href="#" data-toggle="modal" data-target="#{{ $job.Name }}-modal" title="View"><i class="fa fa-eye fa-1x" aria-hidden="true"></i></a>
+          <a href="#" data-toggle="modal" data-target="#{{ $i }}-modal" title="View"><i class="fa fa-eye fa-1x" aria-hidden="true"></i></a>
           &nbsp;
-          <a href="#" ng-click="runJob('{{ $job.Name }}')" ng-show="!running_{{ $job.Name }}" title="Run"><i class="fa fa-cogs fa-1x" aria-hidden="true"></i></a>
-          <a href="#"><i class="fa fa-cog fa-spin fa-1x fa-fw" ng-show="running_{{ $job.Name }}"></i></a>
+          <a href="#" ng-click="runJob('{{ $job.Name }}')" ng-show="!running_{{ $i }}" title="Run"><i class="fa fa-cogs fa-1x" aria-hidden="true"></i></a>
+          <a href="#"><i class="fa fa-cog fa-spin fa-1x fa-fw" ng-show="running_{{ $i }}"></i></a>
           &nbsp;
-          <a href="#" data-toggle="modal" data-target="#{{ $job.Name }}-modal-delete" ng-show="!deleting_{{ $job.Name }}" title="Delete"><i class="fa fa-trash-o fa-1x" aria-hidden="true"></i></a>
-          <a href=""><i class="fa fa-spinner fa-spin fa-1x fa-fw" ng-show="deleting_{{ $job.Name }}"></i></a>
+          <a href="#" data-toggle="modal" data-target="#{{ $i }}-modal-delete" ng-show="!deleting_{{ $i }}" title="Delete"><i class="fa fa-trash-o fa-1x" aria-hidden="true"></i></a>
+          <a href=""><i class="fa fa-spinner fa-spin fa-1x fa-fw" ng-show="deleting_{{ $i }}"></i></a>
         </td>
       </tr>
 
       <!-- Modal Delete -->
-      <div class="modal fade" id="{{ $job.Name }}-modal-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal fade" id="{{ $i }}-modal-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-body">
@@ -50,7 +50,7 @@
       </div>
 
       <!-- Modal -->
-      <div class="modal fade" id="{{ $job.Name }}-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal fade" id="{{ $i }}-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
