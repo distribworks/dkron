@@ -111,7 +111,7 @@ func TestAPIJobCreateUpdateParentJob_SameParent(t *testing.T) {
 
 	assert.Equal(t, 422, resp.StatusCode)
 	errJson, err := json.Marshal(ErrSameParent.Error())
-	assert.Equal(t, string(errJson)+"\n", string(body))
+	assert.Contains(t, string(errJson)+"\n", string(body))
 
 	// Send a shutdown request
 	shutdownCh <- struct{}{}
@@ -140,7 +140,7 @@ func TestAPIJobCreateUpdateParentJob_NoParent(t *testing.T) {
 
 	assert.Equal(t, 422, resp.StatusCode)
 	errJson, err := json.Marshal(ErrParentJobNotFound.Error())
-	assert.Equal(t, string(errJson)+"\n", string(body))
+	assert.Contains(t, string(errJson)+"\n", string(body))
 
 	// Send a shutdown request
 	shutdownCh <- struct{}{}

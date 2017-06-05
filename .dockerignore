@@ -6,3 +6,4 @@ downloads
 vendor
 docker-compose
 dkron_theme
+etcd.*

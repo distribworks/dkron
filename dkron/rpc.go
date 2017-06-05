@@ -66,9 +66,10 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 	origExec := execution
 	for k, v := range job.Processors {
 		log.WithField("plugin", k).Debug("rpc: Processing execution with plugin")
-		processor := rpcs.agent.ProcessorPlugins[k]
-		e := processor.Process(&ExecutionProcessorArgs{Execution: origExec, Config: v})
-		execution = e
+		if processor, ok := rpcs.agent.ProcessorPlugins[k]; ok {
+			e := processor.Process(&ExecutionProcessorArgs{Execution: origExec, Config: v})
+			execution = e
+		}
 	}
 
 	// Save the execution to store

@@ -44,8 +44,6 @@ Settings for dkron can be specified in three ways: Using a `config/dkron.json` c
 
 * `-log-level` - Set the log level (debug, info, warn, error, fatal, panic). Defaults to "info"
 
-* `-ui-dir` - Directory from where to serve web UI.
-
 * `-rpc-port` - The port that Dkron will use to bind for the agent's RPC server, defaults to `6868`. The RPC address will be the bind address.
 
 # Example

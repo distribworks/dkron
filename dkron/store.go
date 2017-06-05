@@ -32,7 +32,7 @@ func init() {
 func NewStore(backend string, machines []string, a *AgentCommand, keyspace string) *Store {
 	s, err := libkv.NewStore(store.Backend(backend), machines, nil)
 	if err != nil {
-		log.Fatal(err)
+		log.Error(err)
 	}
 
 	log.WithFields(logrus.Fields{
