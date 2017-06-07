@@ -1,3 +1,14 @@
+## 0.9.4 (2017-06-07)
+
+- Fix mistakes in API docs
+- Using "jobs", "1am" or "1pm" in the name of job leads to a dashboard bug
+- Fix crash on non existent plugin name
+- Embed all assets in binary, removed -ui-dir config param
+
+### Upgrade notes
+
+This is a breaking change; `ui-dir` configuration param has been removed, all scripting using this param should be updated.
+
 ## 0.9.3 (2017-02-12)
 
 - Fix RPC server listen address (@firstway)
