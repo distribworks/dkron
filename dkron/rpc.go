@@ -101,6 +101,10 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 	if !execution.Success && execution.Attempt < job.Retries+1 {
 		execution.Attempt++
 
+		// Keep all execution properties intact except the last output
+		// as it could exceed serf query limits.
+		execution.Output = []byte{}
+
 		log.WithFields(logrus.Fields{
 			"attempt":   execution.Attempt,
 			"execution": execution,
