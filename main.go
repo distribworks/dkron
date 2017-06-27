@@ -38,7 +38,6 @@ func main() {
 	plugins.DiscoverPlugins()
 
 	// Make sure we clean up any managed plugins at the end of this
-	defer plugin.CleanupClients()
 
 	c.Commands = map[string]cli.CommandFactory{
 		"agent": func() (cli.Command, error) {
@@ -64,8 +63,8 @@ func main() {
 	exitStatus, err := c.Run()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error executing CLI: %s\n", err.Error())
-		os.Exit(1)
 	}
 
+	plugin.CleanupClients()
 	os.Exit(exitStatus)
 }
