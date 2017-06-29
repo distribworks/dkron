@@ -1,5 +1,5 @@
-hash: 39e5b342bec9c95c7bb621f4d88e72141a37d64249e835248bc3f3f48d76be43
-updated: 2017-06-29T15:43:34.215967111+02:00
+hash: 5be59208dff1806eecee36e41eccb3319764fefe35e4ec6d0fe74c82c530b3f7
+updated: 2017-06-29T15:50:51.577858316+02:00
 imports:
 - name: bitbucket.org/kardianos/osext
   version: 816c96ec6fef6a0cd72c9395d192c4bd0d918753
@@ -14,13 +14,17 @@ imports:
 - name: github.com/carbocation/interpose
   version: 50c09d12f8624ab10532f931cb630d0bf5f7c2c7
 - name: github.com/coreos/etcd
-  version: 56b75844186dbf1464c679829787b935c0ba73ec
+  version: 61fc123e7a8b14a0a258aa3f5c4159861b1ec2e7
   subpackages:
-  - Godeps/_workspace/src/github.com/ugorji/go/codec
-  - Godeps/_workspace/src/golang.org/x/net/context
   - client
   - pkg/pathutil
+  - pkg/srv
   - pkg/types
+  - version
+- name: github.com/coreos/go-semver
+  version: 8ab6407b697782a06568d4b7f1db25550ec2e4c6
+  subpackages:
+  - semver
 - name: github.com/DataDog/datadog-go
   version: 6fa3e39b86f8cbb638a971f2a90b9ebd98074c6b
   subpackages:
