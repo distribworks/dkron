@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/victorcoder/dkron/dkron/multitemplate"
+	"github.com/gin-contrib/multitemplate"
 	"gopkg.in/gin-gonic/gin.v1"
 )
 

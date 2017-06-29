@@ -1,5 +1,5 @@
-hash: 4e8cde78d402381d6cbbd0e899f2999e73a456a18598d8b4f2261ed07095683c
-updated: 2017-03-28T10:03:45.729827384+02:00
+hash: fc08bac314446e5bd09180f37354d92a1e6fee9082c940d34d7f6b1b1ae868e3
+updated: 2017-06-29T15:40:29.177535461+02:00
 imports:
 - name: bitbucket.org/kardianos/osext
   version: 816c96ec6fef6a0cd72c9395d192c4bd0d918753
@@ -39,7 +39,7 @@ imports:
 - name: github.com/gin-contrib/expvar
   version: 5f834d3672079e82c5f79f42c069475f636d3a11
 - name: github.com/gin-contrib/multitemplate
-  version: 7d1ec4f2119934983b106718265783fc48a38b77
+  version: 753bf9175717da70b3b268251659ad318533d764
 - name: github.com/gin-gonic/gin
   version: e2212d40c62a98b388a5eb48ecbdcf88534688ba
   subpackages:
