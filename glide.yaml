@@ -32,7 +32,7 @@ import:
 - package: github.com/hashicorp/memberlist
   version: 6025015f2dc659ca2c735112d37e753bda6e329d
 - package: github.com/hashicorp/serf
-  version: 558a6876882b2c5c61df29fd3990fb1765fd71d3
+  version: 0.7.0
   subpackages:
   - serf
   - testutil
