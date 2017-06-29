@@ -3,7 +3,7 @@ import:
 - package: github.com/BurntSushi/toml
   version: 2ceedfee35ad3848e49308ab0c9a4f640cfb5fb2
 - package: github.com/Sirupsen/logrus
-  version: 0.9.0
+  version: 1.0.0
 - package: github.com/armon/circbuf
   version: f092b4f207b6e5cce0569056fba9e1a2735cb6cf
 - package: github.com/carbocation/interpose

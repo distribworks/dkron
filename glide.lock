@@ -1,5 +1,5 @@
-hash: fc08bac314446e5bd09180f37354d92a1e6fee9082c940d34d7f6b1b1ae868e3
-updated: 2017-06-29T15:40:29.177535461+02:00
+hash: 39e5b342bec9c95c7bb621f4d88e72141a37d64249e835248bc3f3f48d76be43
+updated: 2017-06-29T15:43:34.215967111+02:00
 imports:
 - name: bitbucket.org/kardianos/osext
   version: 816c96ec6fef6a0cd72c9395d192c4bd0d918753
@@ -101,7 +101,7 @@ imports:
   subpackages:
   - zk
 - name: github.com/Sirupsen/logrus
-  version: be52937128b38f1d99787bb476c789e2af1147f1
+  version: 202f25545ea4cf9b191ff7f846df5d87c9382c2b
 - name: github.com/spf13/cast
   version: ee815aaf958c707ad07547cd62150d973710f747
 - name: github.com/spf13/jwalterweatherman
