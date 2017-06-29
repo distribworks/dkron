@@ -274,6 +274,9 @@ func (s *Store) GetLastExecutionGroup(jobName string) ([]*Execution, error) {
 	if err != nil {
 		return nil, err
 	}
+	if len(res) == 0{
+		return []*Execution{}, nil
+	}
 
 	var ex Execution
 	err = json.Unmarshal([]byte(res[len(res)-1].Value), &ex)
