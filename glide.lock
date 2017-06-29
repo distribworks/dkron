@@ -1,5 +1,5 @@
-hash: 6c06dc79167f052310fe23813348ff50790d8dab39eab849b19112d2b83e611b
-updated: 2017-06-29T16:00:58.658621602+02:00
+hash: e7827524866cee883432ff33955a03d424a0ea119e93a8f72ca6b79ad54b07d0
+updated: 2017-06-29T16:03:08.525801952+02:00
 imports:
 - name: bitbucket.org/kardianos/osext
   version: 816c96ec6fef6a0cd72c9395d192c4bd0d918753
@@ -49,10 +49,6 @@ imports:
   version: 2402d76f3d41f928c7902a765dfc872356dd3aad
   subpackages:
   - proto
-- name: github.com/gorilla/context
-  version: 215affda49addc4c8ef7e2534915df2c8c35c6cd
-- name: github.com/gorilla/mux
-  version: 8096f47503459bcc74d1f4c487b7e6e42e5746b5
 - name: github.com/hashicorp/consul
   version: 4adc0b5c660919e3f21c9a60f567fd872b9e3d1e
   subpackages:
