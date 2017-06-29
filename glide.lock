@@ -1,5 +1,5 @@
-hash: fc08bac314446e5bd09180f37354d92a1e6fee9082c940d34d7f6b1b1ae868e3
-updated: 2017-06-29T15:40:29.177535461+02:00
+hash: 2121c83a7ff41a2e75d24b0fe6b5420c648659027a15488f2bcffc1f2658cb6b
+updated: 2017-06-29T22:46:27.550387105+02:00
 imports:
 - name: bitbucket.org/kardianos/osext
   version: 816c96ec6fef6a0cd72c9395d192c4bd0d918753
@@ -14,7 +14,7 @@ imports:
 - name: github.com/carbocation/interpose
   version: 50c09d12f8624ab10532f931cb630d0bf5f7c2c7
 - name: github.com/coreos/etcd
-  version: 56b75844186dbf1464c679829787b935c0ba73ec
+  version: 7e4fc7eaa931298732c880a703bccc9c177ae1de
   subpackages:
   - Godeps/_workspace/src/github.com/ugorji/go/codec
   - Godeps/_workspace/src/golang.org/x/net/context
@@ -49,27 +49,28 @@ imports:
   version: 2402d76f3d41f928c7902a765dfc872356dd3aad
   subpackages:
   - proto
-- name: github.com/gorilla/context
-  version: 215affda49addc4c8ef7e2534915df2c8c35c6cd
-- name: github.com/gorilla/mux
-  version: 8096f47503459bcc74d1f4c487b7e6e42e5746b5
 - name: github.com/hashicorp/consul
-  version: 4adc0b5c660919e3f21c9a60f567fd872b9e3d1e
+  version: 2c7715154d8d4568524b76d2d4deb7ca6fd1b285
   subpackages:
   - api
+- name: github.com/hashicorp/go-cleanhttp
+  version: 3573b8b52aa7b37b9358d966a898feb387f62437
 - name: github.com/hashicorp/go-msgpack
   version: 71c2886f5a673a35f909803f38ece5810165097b
   subpackages:
   - codec
 - name: github.com/hashicorp/go-plugin
   version: 8cf118f7a2f0c7ef1c82f66d4f6ac77c7e27dc12
+- name: github.com/hashicorp/go-rootcerts
+  version: 6bb64b370b90e7ef1fa532be9e591a81c3493e00
 - name: github.com/hashicorp/go-syslog
   version: 315de0c1920b18b942603ffdc2229e2af4803c17
 - name: github.com/hashicorp/memberlist
   version: 6025015f2dc659ca2c735112d37e753bda6e329d
 - name: github.com/hashicorp/serf
-  version: 558a6876882b2c5c61df29fd3990fb1765fd71d3
+  version: 0df3e3df1703f838243a7f3f12bf0b88566ade5a
   subpackages:
+  - coordinate
   - serf
   - testutil
 - name: github.com/hashicorp/yamux
@@ -94,6 +95,8 @@ imports:
   version: 525bedee691b5a8df547cb5cf9f86b7fb1883e24
 - name: github.com/mitchellh/cli
   version: 6cc8bc522243675a2882b81662b0b0d2e04b99c9
+- name: github.com/mitchellh/go-homedir
+  version: b8bc1bf767474819792c23f32d8286a45736f1c6
 - name: github.com/mitchellh/mapstructure
   version: 740c764bc6149d3f1806231418adb9f52c11bcbf
 - name: github.com/samuel/go-zookeeper
@@ -101,7 +104,7 @@ imports:
   subpackages:
   - zk
 - name: github.com/Sirupsen/logrus
-  version: be52937128b38f1d99787bb476c789e2af1147f1
+  version: 202f25545ea4cf9b191ff7f846df5d87c9382c2b
 - name: github.com/spf13/cast
   version: ee815aaf958c707ad07547cd62150d973710f747
 - name: github.com/spf13/jwalterweatherman

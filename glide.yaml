@@ -3,13 +3,13 @@ import:
 - package: github.com/BurntSushi/toml
   version: 2ceedfee35ad3848e49308ab0c9a4f640cfb5fb2
 - package: github.com/Sirupsen/logrus
-  version: 0.9.0
+  version: 1.0.0
 - package: github.com/armon/circbuf
   version: f092b4f207b6e5cce0569056fba9e1a2735cb6cf
 - package: github.com/carbocation/interpose
   version: 50c09d12f8624ab10532f931cb630d0bf5f7c2c7
 - package: github.com/coreos/etcd
-  version: 56b75844186dbf1464c679829787b935c0ba73ec
+  version: 2.3.8
   subpackages:
   - client
   - pkg/pathutil
@@ -21,12 +21,8 @@ import:
   - store/consul
   - store/etcd
   - store/zookeeper
-- package: github.com/gorilla/context
-  version: 215affda49addc4c8ef7e2534915df2c8c35c6cd
-- package: github.com/gorilla/mux
-  version: 8096f47503459bcc74d1f4c487b7e6e42e5746b5
 - package: github.com/hashicorp/consul
-  version: 4adc0b5c660919e3f21c9a60f567fd872b9e3d1e
+  version: 0.8.5
   subpackages:
   - api
 - package: github.com/hashicorp/go-msgpack
@@ -36,7 +32,7 @@ import:
 - package: github.com/hashicorp/memberlist
   version: 6025015f2dc659ca2c735112d37e753bda6e329d
 - package: github.com/hashicorp/serf
-  version: 558a6876882b2c5c61df29fd3990fb1765fd71d3
+  version: 0.7.0
   subpackages:
   - serf
   - testutil
