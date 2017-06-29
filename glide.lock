@@ -1,5 +1,5 @@
-hash: 39e5b342bec9c95c7bb621f4d88e72141a37d64249e835248bc3f3f48d76be43
-updated: 2017-06-29T15:43:34.215967111+02:00
+hash: 6c06dc79167f052310fe23813348ff50790d8dab39eab849b19112d2b83e611b
+updated: 2017-06-29T16:00:58.658621602+02:00
 imports:
 - name: bitbucket.org/kardianos/osext
   version: 816c96ec6fef6a0cd72c9395d192c4bd0d918753
@@ -14,7 +14,7 @@ imports:
 - name: github.com/carbocation/interpose
   version: 50c09d12f8624ab10532f931cb630d0bf5f7c2c7
 - name: github.com/coreos/etcd
-  version: 56b75844186dbf1464c679829787b935c0ba73ec
+  version: 7e4fc7eaa931298732c880a703bccc9c177ae1de
   subpackages:
   - Godeps/_workspace/src/github.com/ugorji/go/codec
   - Godeps/_workspace/src/golang.org/x/net/context

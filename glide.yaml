@@ -9,7 +9,7 @@ import:
 - package: github.com/carbocation/interpose
   version: 50c09d12f8624ab10532f931cb630d0bf5f7c2c7
 - package: github.com/coreos/etcd
-  version: 56b75844186dbf1464c679829787b935c0ba73ec
+  version: 2.3.8
   subpackages:
   - client
   - pkg/pathutil
