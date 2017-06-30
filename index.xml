@@ -34,6 +34,16 @@ Dkron clusters have a leader, the leader is responsible of executing jobs in the
     </item>
     
     <item>
+      <title>API</title>
+      <link>http://example.org/usage/api/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/usage/api/</guid>
+      <description>Overview You can communicate with Dkron using a RESTful JSON API over HTTP. Dkron nodes usually listen on port 8080 for API requests. All examples in this section assume that you&amp;rsquo;ve found a running leader at localhost:8080.
+Dkron implements a RESTful JSON API over HTTP to communicate with software clients. Dkron listens in port 8080 by default. All examples in this section assume that you&amp;rsquo;re using the default port.</description>
+    </item>
+    
+    <item>
       <title>Configuration</title>
       <link>http://example.org/basics/configuration/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -42,16 +52,6 @@ Dkron clusters have a leader, the leader is responsible of executing jobs in the
       <description>Settings for dkron can be specified in three ways: Using a config/dkron.json config file, using env variables starting with DKRON_ or using command line arguments.
 Command line options  -node - Name of the node, must be unique in the cluster. By default this is the hostname of the machine.
  -bind - The address that dkron will bind to for communication with other dkron nodes. By default this is &amp;ldquo;0.</description>
-    </item>
-    
-    <item>
-      <title>Dkron REST API</title>
-      <link>http://example.org/usage/api/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>http://example.org/usage/api/</guid>
-      <description>Overview You can communicate with Dkron using a RESTful JSON API over HTTP. Dkron nodes usually listen on port 8080 for API requests. All examples in this section assume that you&amp;rsquo;ve found a running leader at localhost:8080.
-Dkron implements a RESTful JSON API over HTTP to communicate with software clients. Dkron listens in port 8080 by default. All examples in this section assume that you&amp;rsquo;re using the default port.</description>
     </item>
     
     <item>
