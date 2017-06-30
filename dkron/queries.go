@@ -29,7 +29,7 @@ func (a *AgentCommand) RunQuery(ex *Execution) {
 	//Job can be removed and the QuerySchedulerRestart not yet received.
 	//In this case, the job will not be found in the store.
 	if err == store.ErrKeyNotFound {
-		log.Debug("Job not found, cancelling this execution")
+		log.Warning("agent: Job not found, cancelling this execution")
 		return
 	}
 
