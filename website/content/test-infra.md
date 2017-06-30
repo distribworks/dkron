@@ -13,17 +13,17 @@ The testing environment is composed by several single tenant bare metal machines
 This environment is public and rebuilt from time to time. Following some useful links:
 
 ### etcd backend
-- discovery [](http://test.dkron.io:8080/dashboard)
-- cluster [](http://test.dkron.io:8081/dashboard)
+- [discovery](http://test.dkron.io:8080/dashboard)
+- [cluster](http://test.dkron.io:8081/dashboard)
 
 ### consul backend
 
-- discovery [](http://test.dkron.io:8090/dashboard)
-- cluster [](http://test.dkron.io:8091/dashboard)
+- [discovery](http://test.dkron.io:8090/dashboard)
+- [cluster](http://test.dkron.io:8091/dashboard)
 
 ### zookeeper backend
 
-- discovery [](http://test.dkron.io:9090/dashboard)
-- cluster [](http://test.dkron.io:9091/dashboard)
+- [discovery](http://test.dkron.io:9090/dashboard)
+- [cluster](http://test.dkron.io:9091/dashboard)
 
-Metrics: https://p.datadoghq.com/sb/cccdeb5eb-9aca75019c
+[Metrics](https://p.datadoghq.com/sb/cccdeb5eb-9aca75019c)

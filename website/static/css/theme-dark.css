@@ -58,4 +58,21 @@ a:hover {
 	border-color: var(--SIDE-FOCUS-BACK-color);
 }
 
-
+.brand {
+  margin: 10px;
+  line-height: 0;
+  margin-left: 5px;
+  font-size: 26px;
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+}
+.brand a {
+  color: #FFF;
+  text-decoration: none;
+}
+.brand img {
+  margin-top: 7px;
+  margin-bottom: -5px;
+  width: 30px;
+  height: 30px;
+}
