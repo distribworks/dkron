@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="author" content="Victor Castell">
+        <link rel="canonical" href="http://dkron.io/">
+        <link rel="shortcut icon" href="./img/favicon.ico">
+
+	    <title>Dkron - Distributed, fault tolerant job scheduling system</title>
+
+        <link href="./css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="./css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link rel="stylesheet" href="./css/highlight.css">
+        <link href="./css/app.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+            ga('create', 'UA-571371-14', 'dkron.io');
+            ga('send', 'pageview');
+        </script>
+        
+    </head>
+
+    <body class="page-home ">
+
+            <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+
+            <!-- Collapsed navigation -->
+            <div class="navbar-header">
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+
+                <!-- Main title -->
+                <div class="brand">
+                  <a class="logo" href="."><img src="/img/dkron-badge-bw.png"/> Dkron</a>
+                </div>
+            </div>
+
+            <!-- Expanded navigation -->
+            <div class="navbar-collapse collapse">
+                <!-- Main navigation -->
+                <ul class="main-links nav navbar-nav">
+                
+                
+                    <li class="active">
+                        <a href=".">Home</a>
+                    </li>
+                
+                
+                
+                    <li >
+                        <a href="intro/">Intro</a>
+                    </li>
+                
+                
+                
+                    <li>
+                        <a href="basics/">Docs</a>
+                    </li>
+                
+                
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            <li >
+                                <a href="about/dkron_vs_other_software/">Dkron vs other software</a>
+                            </li>
+                        
+                            <li >
+                                <a href="about/license/">License</a>
+                            </li>
+                        
+                        </ul>
+                    </li>
+                
+                
+                </ul>
+
+                <!-- Search, Navigation and Repo links -->
+                <ul class="nav navbar-nav navbar-right">
+
+                    
+
+                    <li>
+                        <a href="https://twitter.com/dkronio">
+                          <i class="fa fa-twitter fa-lg"></i>
+                          Follow
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="https://github.com/victorcoder/dkron/releases">
+                          <i class="fa fa-cloud-download fa-lg"></i>
+                          Download
+                        </a>
+                    </li>
+
+                    
+                    <li>
+                        <a href="https://github.com/victorcoder/dkron">
+                            <i class="fa fa-github fa-lg"></i>
+                            GitHub
+                        </a>
+                    </li>
+                    
+
+                    <a class="github-button" href="https://github.com/victorcoder/dkron" data-icon="octicon-star" data-count-href="/victorcoder/dkron/stargazers" data-count-api="/repos/victorcoder/dkron#stargazers_count" data-count-aria-label="# stargazers on GitHub" aria-label="Star victorcoder/dkron on GitHub">Star</a>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+        
+
+        <div id="jumbotron-mask">
+          <div id="jumbotron">
+            <div class="container">
+              <div class="text-wrapper">
+                <h2>Job scheduling made easy, distributed and highly-available</h2>
+                <!--a href="#" class="button">Community</a--> <a href="https://github.com/victorcoder/dkron/releases" class="button button-light">Download</a>
+              </div>
+                <div class="dkron-logo"><img src="../img/dkron-jumbo-logo-white.png"></div>
+            </div>
+          </div>
+        </div>
+
+        <blockquote>
+          <div class="container">
+            <p>Dkron is a system service that runs scheduled jobs at given intervals or times, just like the cron unix service but distributed in several machines in a cluster. If a machine fails (the leader), a follower will take over and keep running the scheduled jobs without human intervention. Dkron is Open Source and freely available.</p>
+          </div>
+        </blockquote>
+
+        
+            
+
+            <div class="home-wrapper">
+              <div class="container">
+                <div class="class-md-12 main-content">
+                  
+
+<div class="container">
+  <h2>Characteristics</h2>
+  <div id="easy-integration" class="row vertical-align">
+    <img src="img/integration.png" />
+    <div class="col-md-9">
+      <h3>Easy integration</h3>
+      <p>Dkron is easy to setup and use. Choose your OS package and it's ready to run out-of-the-box. The administration panel and it's simple JSON API makes a breeze to integrate with you current workflow or deploy system.</p>
+    </div>
+  </div>
+
+  <div id="always-available" class="row vertical-align">
+    <img src="img/available.png" />
+    <div class="col-md-9">
+      <h3>Always available</h3>
+      <p>Using the power of distributed key-value stores, Dkron is designed to be always available. If the leader node fails, a follower will replace it, all without human intervention.</p>
+    </div>
+  </div>
+
+  <div id="flexible-targets" class="row vertical-align">
+    <img src="img/targets.png" />
+    <div class="col-md-9">
+      <h3>Flexible targets</h3>
+      <p>Simple but powerful tag-based target node selection for jobs. Tag node count allows to run jobs in an arbitrary number of nodes in the same group or groups.</p>
+    </div>
+  </div>
+</div>
+                </div>
+              </div>
+          </div>
+
+            
+
+        
+
+        <div id="use-cases-mask">
+          <div class="use-cases container">
+            <h2>Example use cases</h2>
+
+            <div class="case-container">
+                <div class="case">
+                    <img src="img/email-delivery.png"/>
+                    <span>Email delivery</span>
+                </div>
+                <div class="case">
+                    <img src="img/payroll-generation.png"/>
+                    <span>Payroll generation</span>
+                </div>
+                <div class="case">
+                    <img src="img/book-keeping.png"/>
+                    <span>Bookkeeping</span>
+                </div>
+                <div class="case">
+                    <img src="img/data-consolidation.png"/>
+                    <span>Data consolidation for BI</span>
+                </div>
+                <div class="case">
+                    <img src="img/recurring-invoicing.png"/>
+                    <span>Recurring invoicing</span>
+                </div>
+                <div class="case">
+                    <img src="img/data-transfer.png"/>
+                    <span>Data transfer</span>
+                </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="users-mask">
+            <div class="container">
+                <h2>Some of our users</h2>
+                <div class="col-md-4 users">
+                    <a href="http://mallgroup.com/" target="_blank">
+                        <img width="200" src="img/mallgroup-logo.svg" />
+                    </a>
+                </div>
+                <div class="col-md-4 users">
+                    <a href="https://www.jobandtalent.com" target="_blank">
+                        <img width="200" src="img/jt-logo.png" />
+                    </a>
+                </div>
+                <div class="col-md-4 users">
+                    <a href="http://rubiconproject.com/" target="_blank">
+                        <img width="200" src="img/rubicon-logo.svg" />
+                    </a>
+                </div>
+            </div>
+            <div class="container">
+                <div class="col-md-12 sponsor">
+                    Dkron testing infrastructure provided by:
+                    <a href="http://packet.net/" target="_blank">
+                        <img width="100" src="https://assets.packet.net/company/logo.svg" />
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+
+        <footer class="col-md-12" role="contentinfo">
+            <hr>
+             
+                <p>© 2015 Victor Castell - victor@victorcastell.com</p>
+            
+            <p>Web design by <a href="http://www.collagestudio.es/">Collage Studio</a>.</p>
+        </footer>
+
+        <script src="./js/jquery-1.10.2.min.js"></script>
+        <script src="./js/bootstrap-3.0.3.min.js"></script>
+        <script src="./js/highlight.pack.js"></script>
+        <script src="./js/base.js"></script>
+        <script async defer src="https://buttons.github.io/buttons.js"></script>
+        <script src="./js/app.js"></script>
+    </body>
+</html>

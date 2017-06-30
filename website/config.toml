@@ -1,0 +1,28 @@
+baseURL = "http://example.org/"
+languageCode = "en-us"
+title = "Dkron - Distributed job scheduling system"
+theme = "docdock"
+MetaDataFormat = "yaml"
+
+[params]
+  # Prefix URL to edit current page. Useful to give opportunity to people to create merge request for your doc.
+  # See the config.toml file from this documentation site to have an example.
+  editURL = ""
+  # Author of the site, will be used in meta information
+  author = ""
+  # Description of the site, will be used in meta information
+  description = ""
+  # Shows a checkmark for visited pages on the menu. Default to false
+  showVisitedLinks = false
+  # Automatically generates prev and next arrows
+  autoNav = false
+  # Activate search. Don't forget to generate the JSON index file (go check get started page)
+  search = true
+  themeVariant = "dark"
+
+[[menu.shortcuts]]
+pre = "<h3>More</h3>"
+name = "<i class='fa fa-github'></i> Github repo"
+identifier = "ds"
+url = "https://github.com/victorcoder/dkron"
+weight = 1
