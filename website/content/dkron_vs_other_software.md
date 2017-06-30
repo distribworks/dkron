@@ -1,4 +1,8 @@
-# Dkron vs. Other Software
+---
+title: Dkron vs. Other Software
+wight: 5
+toc: false
+---
 
 ## Dkron vs. Chronos
 
