@@ -1,5 +1,6 @@
-# Dkron REST API
-
+--- 
+title: API
+---
 
 <a name="overview"></a>
 ## Overview
@@ -11,7 +12,7 @@ Default API responses are unformatted JSON add the `pretty=true` param to format
 
 
 ### Version information
-*Version* : 0.9.3
+*Version* : 0.9.4
 
 
 ### URI scheme

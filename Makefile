@@ -1,9 +1,8 @@
 all: test
 
 doc:
-	# @$(MAKE) apidoc
 	cd website; hugo -d ../public
-	ghp-import public
+	ghp-import -p public
 
 apidoc:
 	java -jar ~/bin/swagger2markup-cli-1.2.0.jar convert -i docs/swagger.yaml -f website/content/usage/api -c docs/config.properties
