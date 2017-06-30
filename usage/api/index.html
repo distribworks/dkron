@@ -1,0 +1,1717 @@
+<!DOCTYPE html>
+<html lang="en" class="js csstransforms3d">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="generator" content="Hugo 0.24.1" />
+    <meta name="description" content="">
+
+
+    <title> :: Dkron - Distributed job scheduling system</title>
+    <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
+    <link href="/css/nucleus.css" rel="stylesheet">
+    <link href="/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/css/hybrid.css" rel="stylesheet">
+    <link href="/css/featherlight.min.css" rel="stylesheet">
+    <link href="/css/horsey.css" rel="stylesheet">
+    <link href="/css/theme.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <script src="/js/jquery-2.x.min.js"></script>
+    <style type="text/css">
+      :root #header + #content > #left > #rlblock_left {
+        display:none !important;
+      }
+    </style>
+
+    
+    <link href="/css/theme-dark.css" rel="stylesheet">
+    
+    
+
+    
+
+  </head>
+  <body class="" data-url="/usage/api/">
+    <nav id="sidebar" class="">
+  <div id="header-wrapper">
+    <div id="header">
+       
+	<div class="brand">
+  <a class="logo" href="."><img src="/img/dkron-badge-bw.png"/> Dkron</a>
+</div>
+ 
+
+
+    </div>
+    
+        <div class="searchbox">
+    <label for="search-by"><i class="fa fa-search"></i></label>
+    <input data-search-input id="search-by" type="text" placeholder="Search...">
+    <span data-search-clear=""><i class="fa fa-close"></i></span>
+</div>
+<script type="text/javascript" src="/js/lunr.min.js"></script>
+<script type="text/javascript" src="/js/horsey.js"></script>
+<script type="text/javascript">
+    var baseurl = "http:\/\/example.org\/";
+</script>
+<script type="text/javascript" src="/js/search.js"></script>
+
+    
+  </div>
+
+
+
+
+
+<div class="highlightable">
+    <ul class="topics">
+        
+        
+            <li data-nav-id="/" class="dd-item">
+            <a href="/"><i class="fa fa-fw fa-home"></i></a>
+            </li>
+        
+
+        
+
+
+
+
+<li data-nav-id="/basics/" class="dd-item 
+
+
+
+">
+  <a href="/basics/">
+    <span>Basics</span>
+
+    
+    <i class="fa fa-angle-right fa-lg category-icon"></i>
+    
+    
+    
+  </a>
+    <ul>
+        
+         
+          <li data-nav-id="/basics/getting-started/" class="dd-item
+         
+          ">
+            <a href="/basics/getting-started/">
+            <span>Getting started</span> 
+            
+
+            </a></li>
+         
+        
+         
+          <li data-nav-id="/basics/configuration/" class="dd-item
+         
+          ">
+            <a href="/basics/configuration/">
+            <span>Configuration</span> 
+            
+
+            </a></li>
+         
+        
+        
+
+
+
+
+    </ul>
+</li>
+
+
+<li data-nav-id="/usage/" class="dd-item 
+parent
+
+
+">
+  <a href="/usage/">
+    <span>Usage</span>
+
+    
+    <i class="fa fa-angle-down fa-lg category-icon"></i>
+    
+    
+    
+  </a>
+    <ul>
+        
+         
+          <li data-nav-id="/usage/api/" class="dd-item
+         active
+          ">
+            <a href="/usage/api/">
+            <span></span> 
+            
+
+            </a></li>
+         
+        
+         
+          <li data-nav-id="/usage/guides/" class="dd-item
+         
+          ">
+            <a href="/usage/guides/">
+            <span>Guides</span> 
+            
+
+            </a></li>
+         
+        
+         
+          <li data-nav-id="/usage/integration/" class="dd-item
+         
+          ">
+            <a href="/usage/integration/">
+            <span>Integration</span> 
+            
+
+            </a></li>
+         
+        
+        
+
+
+
+
+    </ul>
+</li>
+
+
+<li data-nav-id="/internal/" class="dd-item 
+
+
+
+">
+  <a href="/internal/">
+    <span>Internals</span>
+
+    
+    <i class="fa fa-angle-right fa-lg category-icon"></i>
+    
+    
+    
+  </a>
+    <ul>
+        
+         
+          <li data-nav-id="/internal/internals/" class="dd-item
+         
+          ">
+            <a href="/internal/internals/">
+            <span>Internals</span> 
+            
+
+            </a></li>
+         
+        
+         
+          <li data-nav-id="/internal/plugins/" class="dd-item
+         
+          ">
+            <a href="/internal/plugins/">
+            <span>Plugins</span> 
+            
+
+            </a></li>
+         
+        
+        
+
+
+
+
+    </ul>
+</li>
+
+
+
+        
+        <section id="shortcuts">
+            
+                <li class="" role="">
+                    <h3>More</h3>
+                    <a href="https://github.com/victorcoder/dkron"><i class='fa fa-github'></i> Github repo</a>
+                    
+                </li>
+            
+                <li class="" role="">
+                    
+                    <a href="/test-infra"><i class='fa fa-camera'></i> Test infra</a>
+                    
+                </li>
+            
+        </section>    
+        
+        
+
+        
+    </ul>
+    
+     
+    <section id="footer">
+      <center>
+
+<a class="github-button" href="https://github.com/victorcoder/dkron" data-icon="octicon-star" data-show-count="true" aria-label="Star victorcoder/dkron on GitHub">Star</a>
+
+
+<a class="github-button" href="https://github.com/victorcoder/dkron/fork" data-icon="octicon-repo-forked" data-show-count="true" aria-label="Fork victorcoder/dkron on GitHub">Fork</a>
+
+</center>
+
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+
+    </section>
+  </div>
+</nav>
+
+
+
+        <section id="body">
+        <div id="overlay"></div>
+        <div class="padding highlightable">
+        
+          <div id="top-bar">
+            
+
+            <div id="breadcrumbs" itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+                <span id="sidebar-toggle-span">
+                  <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
+                    <i class="fa fa-bars"></i>
+                  </a>
+                </span>
+                <span id="toc-menu"><i class="fa fa-list-alt"></i></span>
+                <span class="links">
+                
+
+
+
+
+
+
+
+ <a href='/'>Dkron - Distributed job scheduling system</a> > <a href='/usage/'>Usage</a> > 
+
+ 
+
+ 
+
+   
+                </span>
+            </div>
+            <div class="progress">
+    <div class="wrapper">
+<nav id="TableOfContents">
+<ul>
+<li><a href="#dkron-rest-api">Dkron REST API</a>
+<ul>
+<li><a href="#overview">Overview</a>
+<ul>
+<li><a href="#version-information">Version information</a></li>
+<li><a href="#uri-scheme">URI scheme</a></li>
+<li><a href="#consumes">Consumes</a></li>
+<li><a href="#produces">Produces</a></li>
+</ul></li>
+<li><a href="#paths">Paths</a>
+<ul>
+<li><a href="#get">GET /</a>
+<ul>
+<li><a href="#description">Description</a></li>
+<li><a href="#responses">Responses</a></li>
+<li><a href="#tags">Tags</a></li>
+<li><a href="#example-http-request">Example HTTP request</a>
+<ul>
+<li><a href="#request-path">Request path</a></li>
+</ul></li>
+<li><a href="#example-http-response">Example HTTP response</a>
+<ul>
+<li><a href="#response-200">Response 200</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#get-executions-job-name">GET /executions/{job_name}</a>
+<ul>
+<li><a href="#description-1">Description</a></li>
+<li><a href="#parameters">Parameters</a></li>
+<li><a href="#responses-1">Responses</a></li>
+<li><a href="#tags-1">Tags</a></li>
+<li><a href="#example-http-request-1">Example HTTP request</a>
+<ul>
+<li><a href="#request-path-1">Request path</a></li>
+</ul></li>
+<li><a href="#example-http-response-1">Example HTTP response</a>
+<ul>
+<li><a href="#response-200-1">Response 200</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#get-jobs">GET /jobs</a>
+<ul>
+<li><a href="#description-2">Description</a></li>
+<li><a href="#responses-2">Responses</a></li>
+<li><a href="#tags-2">Tags</a></li>
+<li><a href="#example-http-request-2">Example HTTP request</a>
+<ul>
+<li><a href="#request-path-2">Request path</a></li>
+</ul></li>
+<li><a href="#example-http-response-2">Example HTTP response</a>
+<ul>
+<li><a href="#response-200-2">Response 200</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#post-jobs">POST /jobs</a>
+<ul>
+<li><a href="#description-3">Description</a></li>
+<li><a href="#parameters-1">Parameters</a></li>
+<li><a href="#responses-3">Responses</a></li>
+<li><a href="#tags-3">Tags</a></li>
+<li><a href="#example-http-request-3">Example HTTP request</a>
+<ul>
+<li><a href="#request-path-3">Request path</a></li>
+<li><a href="#request-body">Request body</a></li>
+</ul></li>
+<li><a href="#example-http-response-3">Example HTTP response</a>
+<ul>
+<li><a href="#response-201">Response 201</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#get-jobs-job-name">GET /jobs/{job_name}</a>
+<ul>
+<li><a href="#description-4">Description</a></li>
+<li><a href="#parameters-2">Parameters</a></li>
+<li><a href="#responses-4">Responses</a></li>
+<li><a href="#tags-4">Tags</a></li>
+<li><a href="#example-http-request-4">Example HTTP request</a>
+<ul>
+<li><a href="#request-path-4">Request path</a></li>
+</ul></li>
+<li><a href="#example-http-response-4">Example HTTP response</a>
+<ul>
+<li><a href="#response-200-3">Response 200</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#post-jobs-job-name">POST /jobs/{job_name}</a>
+<ul>
+<li><a href="#description-5">Description</a></li>
+<li><a href="#parameters-3">Parameters</a></li>
+<li><a href="#responses-5">Responses</a></li>
+<li><a href="#tags-5">Tags</a></li>
+<li><a href="#example-http-request-5">Example HTTP request</a>
+<ul>
+<li><a href="#request-path-5">Request path</a></li>
+</ul></li>
+<li><a href="#example-http-response-5">Example HTTP response</a>
+<ul>
+<li><a href="#response-202">Response 202</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#delete-jobs-job-name">DELETE /jobs/{job_name}</a>
+<ul>
+<li><a href="#description-6">Description</a></li>
+<li><a href="#parameters-4">Parameters</a></li>
+<li><a href="#responses-6">Responses</a></li>
+<li><a href="#tags-6">Tags</a></li>
+<li><a href="#example-http-request-6">Example HTTP request</a>
+<ul>
+<li><a href="#request-path-6">Request path</a></li>
+</ul></li>
+<li><a href="#example-http-response-6">Example HTTP response</a>
+<ul>
+<li><a href="#response-200-4">Response 200</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#get-leader">GET /leader</a>
+<ul>
+<li><a href="#description-7">Description</a></li>
+<li><a href="#responses-7">Responses</a></li>
+<li><a href="#tags-7">Tags</a></li>
+<li><a href="#example-http-request-7">Example HTTP request</a>
+<ul>
+<li><a href="#request-path-7">Request path</a></li>
+</ul></li>
+<li><a href="#example-http-response-7">Example HTTP response</a>
+<ul>
+<li><a href="#response-200-5">Response 200</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#get-leave">GET /leave</a>
+<ul>
+<li><a href="#description-8">Description</a></li>
+<li><a href="#responses-8">Responses</a></li>
+<li><a href="#tags-8">Tags</a></li>
+<li><a href="#example-http-request-8">Example HTTP request</a>
+<ul>
+<li><a href="#request-path-8">Request path</a></li>
+</ul></li>
+<li><a href="#example-http-response-8">Example HTTP response</a>
+<ul>
+<li><a href="#response-200-6">Response 200</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#get-members">GET /members</a>
+<ul>
+<li><a href="#description-9">Description</a></li>
+<li><a href="#responses-9">Responses</a></li>
+<li><a href="#tags-9">Tags</a></li>
+<li><a href="#example-http-request-9">Example HTTP request</a>
+<ul>
+<li><a href="#request-path-9">Request path</a></li>
+</ul></li>
+<li><a href="#example-http-response-9">Example HTTP response</a>
+<ul>
+<li><a href="#response-200-7">Response 200</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><a href="#definitions">Definitions</a>
+<ul>
+<li><a href="#status">status</a></li>
+<li><a href="#job">job</a></li>
+<li><a href="#member">member</a></li>
+<li><a href="#execution">execution</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+
+          </div>
+        
+        
+        <div id="body-inner">
+          
+            <h1></h1>
+          
+
+
+
+
+
+
+<h1 id="dkron-rest-api">Dkron REST API</h1>
+
+<p><a name="overview"></a></p>
+
+<h2 id="overview">Overview</h2>
+
+<p>You can communicate with Dkron using a RESTful JSON API over HTTP. Dkron nodes usually listen on port <code>8080</code> for API requests. All examples in this section assume that you&rsquo;ve found a running leader at <code>localhost:8080</code>.</p>
+
+<p>Dkron implements a RESTful JSON API over HTTP to communicate with software clients. Dkron listens in port <code>8080</code> by default. All examples in this section assume that you&rsquo;re using the default port.</p>
+
+<p>Default API responses are unformatted JSON add the <code>pretty=true</code> param to format the response.</p>
+
+<h3 id="version-information">Version information</h3>
+
+<p><em>Version</em> : 0.9.3</p>
+
+<h3 id="uri-scheme">URI scheme</h3>
+
+<p><em>Host</em> : localhost:8080<br />
+<em>BasePath</em> : /v1<br />
+<em>Schemes</em> : HTTP</p>
+
+<h3 id="consumes">Consumes</h3>
+
+<ul>
+<li><code>application/json</code></li>
+</ul>
+
+<h3 id="produces">Produces</h3>
+
+<ul>
+<li><code>application/json</code></li>
+</ul>
+
+<p><a name="paths"></a></p>
+
+<h2 id="paths">Paths</h2>
+
+<p><a name="status"></a></p>
+
+<h3 id="get">GET /</h3>
+
+<h4 id="description">Description</h4>
+
+<p>Gets <code>Status</code> object.</p>
+
+<h4 id="responses">Responses</h4>
+
+<table>
+<thead>
+<tr>
+<th>HTTP Code</th>
+<th>Description</th>
+<th>Schema</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><strong>200</strong></td>
+<td>Successful response</td>
+<td><a href="#status">status</a></td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="tags">Tags</h4>
+
+<ul>
+<li>default</li>
+</ul>
+
+<h4 id="example-http-request">Example HTTP request</h4>
+
+<h5 id="request-path">Request path</h5>
+
+<pre><code>/
+</code></pre>
+
+<h4 id="example-http-response">Example HTTP response</h4>
+
+<h5 id="response-200">Response 200</h5>
+
+<pre><code>json :
+&quot;{ }&quot;
+</code></pre>
+
+<p><a name="listexecutionsbyjob"></a></p>
+
+<h3 id="get-executions-job-name">GET /executions/{job_name}</h3>
+
+<h4 id="description-1">Description</h4>
+
+<p>List executions.</p>
+
+<h4 id="parameters">Parameters</h4>
+
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Name</th>
+<th>Description</th>
+<th>Schema</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><strong>Path</strong></td>
+<td><strong>job_name</strong>  <br><em>required</em></td>
+<td>The job that owns the executions to be fetched.</td>
+<td>string</td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="responses-1">Responses</h4>
+
+<table>
+<thead>
+<tr>
+<th>HTTP Code</th>
+<th>Description</th>
+<th>Schema</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><strong>200</strong></td>
+<td>Successful response</td>
+<td>&lt; <a href="#execution">execution</a> &gt; array</td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="tags-1">Tags</h4>
+
+<ul>
+<li>executions</li>
+</ul>
+
+<h4 id="example-http-request-1">Example HTTP request</h4>
+
+<h5 id="request-path-1">Request path</h5>
+
+<pre><code>/executions/string
+</code></pre>
+
+<h4 id="example-http-response-1">Example HTTP response</h4>
+
+<h5 id="response-200-1">Response 200</h5>
+
+<pre><code>json :
+&quot;array&quot;
+</code></pre>
+
+<p><a name="getjobs"></a></p>
+
+<h3 id="get-jobs">GET /jobs</h3>
+
+<h4 id="description-2">Description</h4>
+
+<p>List jobs.</p>
+
+<h4 id="responses-2">Responses</h4>
+
+<table>
+<thead>
+<tr>
+<th>HTTP Code</th>
+<th>Description</th>
+<th>Schema</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><strong>200</strong></td>
+<td>Successful response</td>
+<td>&lt; <a href="#job">job</a> &gt; array</td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="tags-2">Tags</h4>
+
+<ul>
+<li>jobs</li>
+</ul>
+
+<h4 id="example-http-request-2">Example HTTP request</h4>
+
+<h5 id="request-path-2">Request path</h5>
+
+<pre><code>/jobs
+</code></pre>
+
+<h4 id="example-http-response-2">Example HTTP response</h4>
+
+<h5 id="response-200-2">Response 200</h5>
+
+<pre><code>json :
+&quot;array&quot;
+</code></pre>
+
+<p><a name="createorupdatejob"></a></p>
+
+<h3 id="post-jobs">POST /jobs</h3>
+
+<h4 id="description-3">Description</h4>
+
+<p>Create or updates a new job.</p>
+
+<h4 id="parameters-1">Parameters</h4>
+
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Name</th>
+<th>Description</th>
+<th>Schema</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><strong>Body</strong></td>
+<td><strong>body</strong>  <br><em>required</em></td>
+<td>Updated job object</td>
+<td><a href="#job">job</a></td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="responses-3">Responses</h4>
+
+<table>
+<thead>
+<tr>
+<th>HTTP Code</th>
+<th>Description</th>
+<th>Schema</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><strong>201</strong></td>
+<td>Successful response</td>
+<td><a href="#job">job</a></td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="tags-3">Tags</h4>
+
+<ul>
+<li>jobs</li>
+</ul>
+
+<h4 id="example-http-request-3">Example HTTP request</h4>
+
+<h5 id="request-path-3">Request path</h5>
+
+<pre><code>/jobs
+</code></pre>
+
+<h5 id="request-body">Request body</h5>
+
+<pre><code>json :
+{
+  &quot;name&quot; : &quot;string&quot;,
+  &quot;schedule&quot; : &quot;string&quot;,
+  &quot;command&quot; : &quot;string&quot;,
+  &quot;shell&quot; : true,
+  &quot;owner&quot; : &quot;string&quot;,
+  &quot;owner_email&quot; : &quot;string&quot;,
+  &quot;success_count&quot; : 0,
+  &quot;error_count&quot; : 0,
+  &quot;last_success&quot; : &quot;string&quot;,
+  &quot;last_error&quot; : &quot;string&quot;,
+  &quot;disabled&quot; : true,
+  &quot;tags&quot; : {
+    &quot;string&quot; : &quot;string&quot;
+  },
+  &quot;retries&quot; : 2,
+  &quot;parent_job&quot; : &quot;parent_job&quot;,
+  &quot;dependent_jobs&quot; : [ &quot;string&quot; ],
+  &quot;processors&quot; : {
+    &quot;string&quot; : &quot;string&quot;
+  },
+  &quot;concurrency&quot; : &quot;allow&quot;
+}
+</code></pre>
+
+<h4 id="example-http-response-3">Example HTTP response</h4>
+
+<h5 id="response-201">Response 201</h5>
+
+<pre><code>json :
+{
+  &quot;name&quot; : &quot;string&quot;,
+  &quot;schedule&quot; : &quot;string&quot;,
+  &quot;command&quot; : &quot;string&quot;,
+  &quot;shell&quot; : true,
+  &quot;owner&quot; : &quot;string&quot;,
+  &quot;owner_email&quot; : &quot;string&quot;,
+  &quot;success_count&quot; : 0,
+  &quot;error_count&quot; : 0,
+  &quot;last_success&quot; : &quot;string&quot;,
+  &quot;last_error&quot; : &quot;string&quot;,
+  &quot;disabled&quot; : true,
+  &quot;tags&quot; : {
+    &quot;string&quot; : &quot;string&quot;
+  },
+  &quot;retries&quot; : 2,
+  &quot;parent_job&quot; : &quot;parent_job&quot;,
+  &quot;dependent_jobs&quot; : [ &quot;string&quot; ],
+  &quot;processors&quot; : {
+    &quot;string&quot; : &quot;string&quot;
+  },
+  &quot;concurrency&quot; : &quot;allow&quot;
+}
+</code></pre>
+
+<p><a name="showjobbyname"></a></p>
+
+<h3 id="get-jobs-job-name">GET /jobs/{job_name}</h3>
+
+<h4 id="description-4">Description</h4>
+
+<p>Show a job.</p>
+
+<h4 id="parameters-2">Parameters</h4>
+
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Name</th>
+<th>Description</th>
+<th>Schema</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><strong>Path</strong></td>
+<td><strong>job_name</strong>  <br><em>required</em></td>
+<td>The job that needs to be fetched.</td>
+<td>string</td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="responses-4">Responses</h4>
+
+<table>
+<thead>
+<tr>
+<th>HTTP Code</th>
+<th>Description</th>
+<th>Schema</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><strong>200</strong></td>
+<td>Successful response</td>
+<td><a href="#job">job</a></td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="tags-4">Tags</h4>
+
+<ul>
+<li>jobs</li>
+</ul>
+
+<h4 id="example-http-request-4">Example HTTP request</h4>
+
+<h5 id="request-path-4">Request path</h5>
+
+<pre><code>/jobs/string
+</code></pre>
+
+<h4 id="example-http-response-4">Example HTTP response</h4>
+
+<h5 id="response-200-3">Response 200</h5>
+
+<pre><code>json :
+{
+  &quot;name&quot; : &quot;string&quot;,
+  &quot;schedule&quot; : &quot;string&quot;,
+  &quot;command&quot; : &quot;string&quot;,
+  &quot;shell&quot; : true,
+  &quot;owner&quot; : &quot;string&quot;,
+  &quot;owner_email&quot; : &quot;string&quot;,
+  &quot;success_count&quot; : 0,
+  &quot;error_count&quot; : 0,
+  &quot;last_success&quot; : &quot;string&quot;,
+  &quot;last_error&quot; : &quot;string&quot;,
+  &quot;disabled&quot; : true,
+  &quot;tags&quot; : {
+    &quot;string&quot; : &quot;string&quot;
+  },
+  &quot;retries&quot; : 2,
+  &quot;parent_job&quot; : &quot;parent_job&quot;,
+  &quot;dependent_jobs&quot; : [ &quot;string&quot; ],
+  &quot;processors&quot; : {
+    &quot;string&quot; : &quot;string&quot;
+  },
+  &quot;concurrency&quot; : &quot;allow&quot;
+}
+</code></pre>
+
+<p><a name="runjob"></a></p>
+
+<h3 id="post-jobs-job-name">POST /jobs/{job_name}</h3>
+
+<h4 id="description-5">Description</h4>
+
+<p>Executes a job.</p>
+
+<h4 id="parameters-3">Parameters</h4>
+
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Name</th>
+<th>Description</th>
+<th>Schema</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><strong>Path</strong></td>
+<td><strong>job_name</strong>  <br><em>required</em></td>
+<td>The job that needs to be run.</td>
+<td>string</td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="responses-5">Responses</h4>
+
+<table>
+<thead>
+<tr>
+<th>HTTP Code</th>
+<th>Description</th>
+<th>Schema</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><strong>202</strong></td>
+<td>Successful response</td>
+<td><a href="#job">job</a></td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="tags-5">Tags</h4>
+
+<ul>
+<li>jobs</li>
+</ul>
+
+<h4 id="example-http-request-5">Example HTTP request</h4>
+
+<h5 id="request-path-5">Request path</h5>
+
+<pre><code>/jobs/string
+</code></pre>
+
+<h4 id="example-http-response-5">Example HTTP response</h4>
+
+<h5 id="response-202">Response 202</h5>
+
+<pre><code>json :
+{
+  &quot;name&quot; : &quot;string&quot;,
+  &quot;schedule&quot; : &quot;string&quot;,
+  &quot;command&quot; : &quot;string&quot;,
+  &quot;shell&quot; : true,
+  &quot;owner&quot; : &quot;string&quot;,
+  &quot;owner_email&quot; : &quot;string&quot;,
+  &quot;success_count&quot; : 0,
+  &quot;error_count&quot; : 0,
+  &quot;last_success&quot; : &quot;string&quot;,
+  &quot;last_error&quot; : &quot;string&quot;,
+  &quot;disabled&quot; : true,
+  &quot;tags&quot; : {
+    &quot;string&quot; : &quot;string&quot;
+  },
+  &quot;retries&quot; : 2,
+  &quot;parent_job&quot; : &quot;parent_job&quot;,
+  &quot;dependent_jobs&quot; : [ &quot;string&quot; ],
+  &quot;processors&quot; : {
+    &quot;string&quot; : &quot;string&quot;
+  },
+  &quot;concurrency&quot; : &quot;allow&quot;
+}
+</code></pre>
+
+<p><a name="deletejob"></a></p>
+
+<h3 id="delete-jobs-job-name">DELETE /jobs/{job_name}</h3>
+
+<h4 id="description-6">Description</h4>
+
+<p>Delete a job.</p>
+
+<h4 id="parameters-4">Parameters</h4>
+
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Name</th>
+<th>Description</th>
+<th>Schema</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><strong>Path</strong></td>
+<td><strong>job_name</strong>  <br><em>required</em></td>
+<td>The job that needs to be deleted.</td>
+<td>string</td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="responses-6">Responses</h4>
+
+<table>
+<thead>
+<tr>
+<th>HTTP Code</th>
+<th>Description</th>
+<th>Schema</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><strong>200</strong></td>
+<td>Successful response</td>
+<td><a href="#job">job</a></td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="tags-6">Tags</h4>
+
+<ul>
+<li>jobs</li>
+</ul>
+
+<h4 id="example-http-request-6">Example HTTP request</h4>
+
+<h5 id="request-path-6">Request path</h5>
+
+<pre><code>/jobs/string
+</code></pre>
+
+<h4 id="example-http-response-6">Example HTTP response</h4>
+
+<h5 id="response-200-4">Response 200</h5>
+
+<pre><code>json :
+{
+  &quot;name&quot; : &quot;string&quot;,
+  &quot;schedule&quot; : &quot;string&quot;,
+  &quot;command&quot; : &quot;string&quot;,
+  &quot;shell&quot; : true,
+  &quot;owner&quot; : &quot;string&quot;,
+  &quot;owner_email&quot; : &quot;string&quot;,
+  &quot;success_count&quot; : 0,
+  &quot;error_count&quot; : 0,
+  &quot;last_success&quot; : &quot;string&quot;,
+  &quot;last_error&quot; : &quot;string&quot;,
+  &quot;disabled&quot; : true,
+  &quot;tags&quot; : {
+    &quot;string&quot; : &quot;string&quot;
+  },
+  &quot;retries&quot; : 2,
+  &quot;parent_job&quot; : &quot;parent_job&quot;,
+  &quot;dependent_jobs&quot; : [ &quot;string&quot; ],
+  &quot;processors&quot; : {
+    &quot;string&quot; : &quot;string&quot;
+  },
+  &quot;concurrency&quot; : &quot;allow&quot;
+}
+</code></pre>
+
+<p><a name="getleader"></a></p>
+
+<h3 id="get-leader">GET /leader</h3>
+
+<h4 id="description-7">Description</h4>
+
+<p>List leader of cluster.</p>
+
+<h4 id="responses-7">Responses</h4>
+
+<table>
+<thead>
+<tr>
+<th>HTTP Code</th>
+<th>Description</th>
+<th>Schema</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><strong>200</strong></td>
+<td>Successful response</td>
+<td><a href="#member">member</a></td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="tags-7">Tags</h4>
+
+<ul>
+<li>default</li>
+</ul>
+
+<h4 id="example-http-request-7">Example HTTP request</h4>
+
+<h5 id="request-path-7">Request path</h5>
+
+<pre><code>/leader
+</code></pre>
+
+<h4 id="example-http-response-7">Example HTTP response</h4>
+
+<h5 id="response-200-5">Response 200</h5>
+
+<pre><code>json :
+{
+  &quot;Name&quot; : &quot;string&quot;,
+  &quot;Addr&quot; : &quot;string&quot;,
+  &quot;Port&quot; : 0,
+  &quot;Tags&quot; : {
+    &quot;string&quot; : &quot;string&quot;
+  },
+  &quot;Status&quot; : 0,
+  &quot;ProtocolMin&quot; : 0,
+  &quot;ProtocolMax&quot; : 0,
+  &quot;ProtocolCur&quot; : 0,
+  &quot;DelegateMin&quot; : 0,
+  &quot;DelegateMax&quot; : 0,
+  &quot;DelegateCur&quot; : 0
+}
+</code></pre>
+
+<p><a name="leave"></a></p>
+
+<h3 id="get-leave">GET /leave</h3>
+
+<h4 id="description-8">Description</h4>
+
+<p>Force the node to leave the cluster.</p>
+
+<h4 id="responses-8">Responses</h4>
+
+<table>
+<thead>
+<tr>
+<th>HTTP Code</th>
+<th>Description</th>
+<th>Schema</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><strong>200</strong></td>
+<td>Successful response</td>
+<td>&lt; <a href="#member">member</a> &gt; array</td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="tags-8">Tags</h4>
+
+<ul>
+<li>default</li>
+</ul>
+
+<h4 id="example-http-request-8">Example HTTP request</h4>
+
+<h5 id="request-path-8">Request path</h5>
+
+<pre><code>/leave
+</code></pre>
+
+<h4 id="example-http-response-8">Example HTTP response</h4>
+
+<h5 id="response-200-6">Response 200</h5>
+
+<pre><code>json :
+&quot;array&quot;
+</code></pre>
+
+<p><a name="getmember"></a></p>
+
+<h3 id="get-members">GET /members</h3>
+
+<h4 id="description-9">Description</h4>
+
+<p>List members.</p>
+
+<h4 id="responses-9">Responses</h4>
+
+<table>
+<thead>
+<tr>
+<th>HTTP Code</th>
+<th>Description</th>
+<th>Schema</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><strong>200</strong></td>
+<td>Successful response</td>
+<td>&lt; <a href="#member">member</a> &gt; array</td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="tags-9">Tags</h4>
+
+<ul>
+<li>members</li>
+</ul>
+
+<h4 id="example-http-request-9">Example HTTP request</h4>
+
+<h5 id="request-path-9">Request path</h5>
+
+<pre><code>/members
+</code></pre>
+
+<h4 id="example-http-response-9">Example HTTP response</h4>
+
+<h5 id="response-200-7">Response 200</h5>
+
+<pre><code>json :
+&quot;array&quot;
+</code></pre>
+
+<p><a name="definitions"></a></p>
+
+<h2 id="definitions">Definitions</h2>
+
+<p><a name="status"></a></p>
+
+<h3 id="status">status</h3>
+
+<p>Status represents details about the node.</p>
+
+<p><em>Type</em> : object</p>
+
+<p><a name="job"></a></p>
+
+<h3 id="job">job</h3>
+
+<p>A Job represents a scheduled task to execute.</p>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Schema</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><strong>name</strong>  <br><em>required</em></td>
+<td>Name for the job.  <br><strong>Example</strong> : <code>&quot;string&quot;</code></td>
+<td>string</td>
+</tr>
+
+<tr>
+<td><strong>schedule</strong>  <br><em>required</em></td>
+<td>Cron expression for the job.  <br><strong>Example</strong> : <code>&quot;string&quot;</code></td>
+<td>string</td>
+</tr>
+
+<tr>
+<td><strong>command</strong>  <br><em>required</em></td>
+<td>Command to run.  <br><strong>Example</strong> : <code>&quot;string&quot;</code></td>
+<td>string</td>
+</tr>
+
+<tr>
+<td><strong>shell</strong>  <br><em>optional</em></td>
+<td>Use shell to run the command  <br><strong>Example</strong> : <code>true</code></td>
+<td>boolean</td>
+</tr>
+
+<tr>
+<td><strong>owner</strong>  <br><em>optional</em></td>
+<td>Owner of the job  <br><strong>Example</strong> : <code>&quot;string&quot;</code></td>
+<td>string</td>
+</tr>
+
+<tr>
+<td><strong>owner_email</strong>  <br><em>optional</em></td>
+<td>Email of the owner  <br><strong>Example</strong> : <code>&quot;string&quot;</code></td>
+<td>string</td>
+</tr>
+
+<tr>
+<td><strong>success_count</strong>  <br><em>optional</em>  <br><em>read-only</em></td>
+<td>Number of successful executions  <br><strong>Example</strong> : <code>0</code></td>
+<td>integer</td>
+</tr>
+
+<tr>
+<td><strong>error_count</strong>  <br><em>optional</em>  <br><em>read-only</em></td>
+<td>Number of failed executions  <br><strong>Example</strong> : <code>0</code></td>
+<td>integer</td>
+</tr>
+
+<tr>
+<td><strong>last_success</strong>  <br><em>optional</em>  <br><em>read-only</em></td>
+<td>Last time this job executed successfully  <br><strong>Example</strong> : <code>&quot;string&quot;</code></td>
+<td>string(date-time)</td>
+</tr>
+
+<tr>
+<td><strong>last_error</strong>  <br><em>optional</em>  <br><em>read-only</em></td>
+<td>Last time this job failed  <br><strong>Example</strong> : <code>&quot;string&quot;</code></td>
+<td>string(date-time)</td>
+</tr>
+
+<tr>
+<td><strong>disabled</strong>  <br><em>optional</em></td>
+<td>Disabled state of the job  <br><strong>Example</strong> : <code>true</code></td>
+<td>boolean</td>
+</tr>
+
+<tr>
+<td><strong>tags</strong>  <br><em>optional</em></td>
+<td>Target nodes tags of this job  <br><strong>Example</strong> : <code>{&lt;br&gt;  &quot;string&quot; : &quot;string&quot;&lt;br&gt;}</code></td>
+<td>&lt; string, string &gt; map</td>
+</tr>
+
+<tr>
+<td><strong>retries</strong>  <br><em>optional</em></td>
+<td>Number of times to retry a failed job execution  <br><strong>Example</strong> : <code>2</code></td>
+<td>integer</td>
+</tr>
+
+<tr>
+<td><strong>parent_job</strong>  <br><em>optional</em></td>
+<td>The name/id of the job that will trigger the execution of this job  <br><strong>Example</strong> : <code>&quot;parent_job&quot;</code></td>
+<td>string</td>
+</tr>
+
+<tr>
+<td><strong>dependent_jobs</strong>  <br><em>optional</em></td>
+<td>Array containing the jobs that depends on this one  <br><strong>Example</strong> : <code>[ &quot;string&quot; ]</code></td>
+<td>&lt; string &gt; array</td>
+</tr>
+
+<tr>
+<td><strong>processors</strong>  <br><em>optional</em></td>
+<td>Processor plugins used to process executions results of this job  <br><strong>Example</strong> : <code>{&lt;br&gt;  &quot;string&quot; : &quot;string&quot;&lt;br&gt;}</code></td>
+<td>&lt; string, string &gt; map</td>
+</tr>
+
+<tr>
+<td><strong>concurrency</strong>  <br><em>optional</em></td>
+<td>Concurrency policy for the job allow/forbid  <br><strong>Example</strong> : <code>&quot;allow&quot;</code></td>
+<td>string</td>
+</tr>
+</tbody>
+</table>
+
+<p><a name="member"></a></p>
+
+<h3 id="member">member</h3>
+
+<p>A member represents a cluster member node.</p>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Schema</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><strong>Name</strong>  <br><em>optional</em></td>
+<td>Node name  <br><strong>Example</strong> : <code>&quot;string&quot;</code></td>
+<td>string</td>
+</tr>
+
+<tr>
+<td><strong>Addr</strong>  <br><em>optional</em></td>
+<td>IP Address  <br><strong>Example</strong> : <code>&quot;string&quot;</code></td>
+<td>string</td>
+</tr>
+
+<tr>
+<td><strong>Port</strong>  <br><em>optional</em></td>
+<td>Port number  <br><strong>Example</strong> : <code>0</code></td>
+<td>integer</td>
+</tr>
+
+<tr>
+<td><strong>Tags</strong>  <br><em>optional</em></td>
+<td>Tags asociated with this node  <br><strong>Example</strong> : <code>{&lt;br&gt;  &quot;string&quot; : &quot;string&quot;&lt;br&gt;}</code></td>
+<td>&lt; string, string &gt; map</td>
+</tr>
+
+<tr>
+<td><strong>Status</strong>  <br><em>optional</em></td>
+<td>The serf status of the node see: <a href="https://godoc.org/github.com/hashicorp/serf/serf#MemberStatus">https://godoc.org/github.com/hashicorp/serf/serf#MemberStatus</a>  <br><strong>Example</strong> : <code>0</code></td>
+<td>integer</td>
+</tr>
+
+<tr>
+<td><strong>ProtocolMin</strong>  <br><em>optional</em></td>
+<td>Serf protocol minimum version this node can understand or speak  <br><strong>Example</strong> : <code>0</code></td>
+<td>integer</td>
+</tr>
+
+<tr>
+<td><strong>ProtocolMax</strong>  <br><em>optional</em></td>
+<td>Serf protocol maximum version this node can understand or speak  <br><strong>Example</strong> : <code>0</code></td>
+<td>integer</td>
+</tr>
+
+<tr>
+<td><strong>ProtocolCur</strong>  <br><em>optional</em></td>
+<td>Serf protocol current version this node can understand or speak  <br><strong>Example</strong> : <code>0</code></td>
+<td>integer</td>
+</tr>
+
+<tr>
+<td><strong>DelegateMin</strong>  <br><em>optional</em></td>
+<td>Serf delegate protocol minimum version this node can understand or speak  <br><strong>Example</strong> : <code>0</code></td>
+<td>integer</td>
+</tr>
+
+<tr>
+<td><strong>DelegateMax</strong>  <br><em>optional</em></td>
+<td>Serf delegate protocol maximum version this node can understand or speak  <br><strong>Example</strong> : <code>0</code></td>
+<td>integer</td>
+</tr>
+
+<tr>
+<td><strong>DelegateCur</strong>  <br><em>optional</em></td>
+<td>Serf delegate protocol current version this node can understand or speak  <br><strong>Example</strong> : <code>0</code></td>
+<td>integer</td>
+</tr>
+</tbody>
+</table>
+
+<p><a name="execution"></a></p>
+
+<h3 id="execution">execution</h3>
+
+<p>An execution represents a timed job run.</p>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Schema</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><strong>job_name</strong>  <br><em>optional</em></td>
+<td>job name  <br><strong>Example</strong> : <code>&quot;string&quot;</code></td>
+<td>string</td>
+</tr>
+
+<tr>
+<td><strong>started_at</strong>  <br><em>optional</em></td>
+<td>start time of the execution  <br><strong>Example</strong> : <code>&quot;string&quot;</code></td>
+<td>string(date-time)</td>
+</tr>
+
+<tr>
+<td><strong>finished_at</strong>  <br><em>optional</em></td>
+<td>when the execution finished running  <br><strong>Example</strong> : <code>&quot;string&quot;</code></td>
+<td>string(date-time)</td>
+</tr>
+
+<tr>
+<td><strong>success</strong>  <br><em>optional</em></td>
+<td>the execution run successfuly  <br><strong>Example</strong> : <code>true</code></td>
+<td>boolean</td>
+</tr>
+
+<tr>
+<td><strong>output</strong>  <br><em>optional</em></td>
+<td>partial output of the command execution  <br><strong>Example</strong> : <code>&quot;string&quot;</code></td>
+<td>string</td>
+</tr>
+
+<tr>
+<td><strong>node_name</strong>  <br><em>optional</em></td>
+<td>name of the node that executed the command  <br><strong>Example</strong> : <code>&quot;string&quot;</code></td>
+<td>string</td>
+</tr>
+</tbody>
+</table>
+
+
+<footer class=" footline" >
+	
+</footer>
+
+
+
+      </div>
+    </div>
+
+    
+ 
+    
+
+    <div id="navigation">
+        
+        
+        
+        
+            
+            
+                
+                    
+                    
+                
+                
+                
+                    
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+                
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+                
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+                
+            
+        
+                    
+                
+                    
+            
+            
+                
+                    
+                    
+                
+                
+                
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                    
+                
+                
+                
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+                
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+                
+            
+        
+                    
+                
+                    
+            
+            
+                
+                    
+                
+                
+                
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+                
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+                
+            
+        
+                    
+                
+            
+        
+        
+        
+
+
+        
+            <a class="nav nav-prev" href="/usage/" title="Usage"> <i class="fa fa-chevron-left"></i></a>
+        
+        
+            <a class="nav nav-next" href="/usage/guides/" title="Guides" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+        
+    </div>
+
+    </section>
+    <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+      <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
+    </div>
+    <script src="/js/clipboard.min.js"></script>
+    <script src="/js/featherlight.min.js"></script>
+    <script src="/js/html5shiv-printshiv.min.js"></script>
+    <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="/js/modernizr.custom.71422.js"></script>
+    <script src="/js/learn.js"></script>
+    <script src="/js/hugo-learn.js"></script>
+
+    
+    <link href="/mermaid/mermaid.css" type="text/css" rel="stylesheet"/>
+    <script src="/mermaid/mermaid.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+    
+
+    
+
+  </body>
+</html>
+

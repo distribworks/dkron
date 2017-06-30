@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Internals on Dkron - Distributed job scheduling system</title>
+    <link>http://example.org/internal/</link>
+    <description>Recent content in Internals on Dkron - Distributed job scheduling system</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    
+	<atom:link href="http://example.org/internal/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Internals</title>
+      <link>http://example.org/internal/internals/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/internal/internals/</guid>
+      <description>This document is a WIP, it&amp;rsquo;s intended to describe the reasons that lead to design decissions in Dkron.
+Execution results Dkron store the result of each job execution in each node.
+Every time dkron executes a job it assigns it an execution group, genrating a new uuid and send a serf query to target machines and waits for a response.
+Each target machine that will run the job, then responds with an execution object saying it started to run the job.</description>
+    </item>
+    
+    <item>
+      <title>Plugins</title>
+      <link>http://example.org/internal/plugins/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/internal/plugins/</guid>
+      <description>Intro Plugins in Dkron allow you to add funcionality that integrates with the workflow of the job execution in Dkron. It&amp;rsquo;s a powerful system that allows you to extend and adapt Dkron to your special needs.
+This page documents the basics of how the plugin system in Dkron works, and how to setup a basic development environment for plugin development if you&amp;rsquo;re writing a Dkron plugin.
+How it Works Dkron execution execution processors are provided via plugins.</description>
+    </item>
+    
+  </channel>
+</rss>

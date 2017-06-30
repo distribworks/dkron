@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en" class="js csstransforms3d">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="generator" content="Hugo 0.24.1" />
+    <meta name="description" content="">
+
+
+    <title>Internals :: Dkron - Distributed job scheduling system</title>
+    <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
+    <link href="/css/nucleus.css" rel="stylesheet">
+    <link href="/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/css/hybrid.css" rel="stylesheet">
+    <link href="/css/featherlight.min.css" rel="stylesheet">
+    <link href="/css/horsey.css" rel="stylesheet">
+    <link href="/css/theme.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <script src="/js/jquery-2.x.min.js"></script>
+    <style type="text/css">
+      :root #header + #content > #left > #rlblock_left {
+        display:none !important;
+      }
+    </style>
+
+    
+    <link href="/css/theme-dark.css" rel="stylesheet">
+    
+    
+
+    
+
+  </head>
+  <body class="" data-url="/internal/internals/">
+    <nav id="sidebar" class="">
+  <div id="header-wrapper">
+    <div id="header">
+       
+	<div class="brand">
+  <a class="logo" href="."><img src="/img/dkron-badge-bw.png"/> Dkron</a>
+</div>
+ 
+
+
+    </div>
+    
+        <div class="searchbox">
+    <label for="search-by"><i class="fa fa-search"></i></label>
+    <input data-search-input id="search-by" type="text" placeholder="Search...">
+    <span data-search-clear=""><i class="fa fa-close"></i></span>
+</div>
+<script type="text/javascript" src="/js/lunr.min.js"></script>
+<script type="text/javascript" src="/js/horsey.js"></script>
+<script type="text/javascript">
+    var baseurl = "http:\/\/example.org\/";
+</script>
+<script type="text/javascript" src="/js/search.js"></script>
+
+    
+  </div>
+
+
+
+
+
+<div class="highlightable">
+    <ul class="topics">
+        
+        
+            <li data-nav-id="/" class="dd-item">
+            <a href="/"><i class="fa fa-fw fa-home"></i></a>
+            </li>
+        
+
+        
+
+
+
+
+<li data-nav-id="/basics/" class="dd-item 
+
+
+
+">
+  <a href="/basics/">
+    <span>Basics</span>
+
+    
+    <i class="fa fa-angle-right fa-lg category-icon"></i>
+    
+    
+    
+  </a>
+    <ul>
+        
+         
+          <li data-nav-id="/basics/getting-started/" class="dd-item
+         
+          ">
+            <a href="/basics/getting-started/">
+            <span>Getting started</span> 
+            
+
+            </a></li>
+         
+        
+         
+          <li data-nav-id="/basics/configuration/" class="dd-item
+         
+          ">
+            <a href="/basics/configuration/">
+            <span>Configuration</span> 
+            
+
+            </a></li>
+         
+        
+        
+
+
+
+
+    </ul>
+</li>
+
+
+<li data-nav-id="/usage/" class="dd-item 
+
+
+
+">
+  <a href="/usage/">
+    <span>Usage</span>
+
+    
+    <i class="fa fa-angle-right fa-lg category-icon"></i>
+    
+    
+    
+  </a>
+    <ul>
+        
+         
+          <li data-nav-id="/usage/api/" class="dd-item
+         
+          ">
+            <a href="/usage/api/">
+            <span></span> 
+            
+
+            </a></li>
+         
+        
+         
+          <li data-nav-id="/usage/guides/" class="dd-item
+         
+          ">
+            <a href="/usage/guides/">
+            <span>Guides</span> 
+            
+
+            </a></li>
+         
+        
+         
+          <li data-nav-id="/usage/integration/" class="dd-item
+         
+          ">
+            <a href="/usage/integration/">
+            <span>Integration</span> 
+            
+
+            </a></li>
+         
+        
+        
+
+
+
+
+    </ul>
+</li>
+
+
+<li data-nav-id="/internal/" class="dd-item 
+parent
+
+
+">
+  <a href="/internal/">
+    <span>Internals</span>
+
+    
+    <i class="fa fa-angle-down fa-lg category-icon"></i>
+    
+    
+    
+  </a>
+    <ul>
+        
+         
+          <li data-nav-id="/internal/internals/" class="dd-item
+         active
+          ">
+            <a href="/internal/internals/">
+            <span>Internals</span> 
+            
+
+            </a></li>
+         
+        
+         
+          <li data-nav-id="/internal/plugins/" class="dd-item
+         
+          ">
+            <a href="/internal/plugins/">
+            <span>Plugins</span> 
+            
+
+            </a></li>
+         
+        
+        
+
+
+
+
+    </ul>
+</li>
+
+
+
+        
+        <section id="shortcuts">
+            
+                <li class="" role="">
+                    <h3>More</h3>
+                    <a href="https://github.com/victorcoder/dkron"><i class='fa fa-github'></i> Github repo</a>
+                    
+                </li>
+            
+                <li class="" role="">
+                    
+                    <a href="/test-infra"><i class='fa fa-camera'></i> Test infra</a>
+                    
+                </li>
+            
+        </section>    
+        
+        
+
+        
+    </ul>
+    
+     
+    <section id="footer">
+      <center>
+
+<a class="github-button" href="https://github.com/victorcoder/dkron" data-icon="octicon-star" data-show-count="true" aria-label="Star victorcoder/dkron on GitHub">Star</a>
+
+
+<a class="github-button" href="https://github.com/victorcoder/dkron/fork" data-icon="octicon-repo-forked" data-show-count="true" aria-label="Fork victorcoder/dkron on GitHub">Fork</a>
+
+</center>
+
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+
+    </section>
+  </div>
+</nav>
+
+
+
+        <section id="body">
+        <div id="overlay"></div>
+        <div class="padding highlightable">
+        
+          <div id="top-bar">
+            
+
+            <div id="breadcrumbs" itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+                <span id="sidebar-toggle-span">
+                  <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
+                    <i class="fa fa-bars"></i>
+                  </a>
+                </span>
+                <span id="toc-menu"><i class="fa fa-list-alt"></i></span>
+                <span class="links">
+                
+
+
+
+
+
+
+
+ <a href='/'>Dkron - Distributed job scheduling system</a> > <a href='/internal/'>Internals</a> > Internals
+
+ 
+
+ 
+
+   
+                </span>
+            </div>
+            <div class="progress">
+    <div class="wrapper">
+<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#execution-results">Execution results</a></li>
+<li><a href="#executions-commands-output">Executions commands output</a></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+
+          </div>
+        
+        
+        <div id="body-inner">
+          
+            <h1>Internals</h1>
+          
+
+
+
+
+
+
+<p>This document is a WIP, it&rsquo;s intended to describe the reasons that lead to design decissions in Dkron.</p>
+
+<h2 id="execution-results">Execution results</h2>
+
+<p>Dkron store the result of each job execution in each node.</p>
+
+<p>Every time dkron executes a job it assigns it an execution group, genrating a new uuid and send a serf query to target machines and waits for a response.</p>
+
+<p>Each target machine that will run the job, then responds with an execution object saying it started to run the job.</p>
+
+<p>This allows dkron to know how many machines will be running the job.</p>
+
+<p>The design takes into account the differences of how the different storage backends work.</p>
+
+<p>Due to this issue <a href="https://github.com/docker/libkv/issues/20">https://github.com/docker/libkv/issues/20</a> executions are grouped using the group id in the execution object.</p>
+
+<h2 id="executions-commands-output">Executions commands output</h2>
+
+<p>When a node has finished executing a job it gathers the output of the executed command and sends it back to the a server using an RPC call. This is designed after two main reasons:</p>
+
+<ol>
+<li><p>Scallability, in case of thousands of nodes responding to job the responses are sent to dkron servers in an evenly way selecting a random Dkron server of the ones that are available at the moment and send the response. In the future, Dkron should retry sending the command result with an exponential backoff.</p></li>
+
+<li><p>Due to the limitations of Serf the queries payload can&rsquo;t be bigger that 1KB, this renders impossible to send a minimal command output togheter with the execution metadata.</p></li>
+</ol>
+
+
+<footer class=" footline" >
+	
+</footer>
+
+
+
+      </div>
+    </div>
+
+    
+ 
+    
+
+    <div id="navigation">
+        
+        
+        
+        
+            
+            
+                
+                    
+                    
+                
+                
+                
+                    
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+                
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+                
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+                
+            
+        
+                    
+                
+                    
+            
+            
+                
+                    
+                
+                
+                
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+                
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+                
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+                
+            
+        
+                    
+                
+                    
+            
+            
+                
+                    
+                    
+                
+                
+                
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                    
+                
+                
+                
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+                
+            
+        
+                    
+                
+            
+        
+        
+        
+
+
+        
+            <a class="nav nav-prev" href="/internal/" title="Internals"> <i class="fa fa-chevron-left"></i></a>
+        
+        
+            <a class="nav nav-next" href="/internal/plugins/" title="Plugins" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+        
+    </div>
+
+    </section>
+    <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+      <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
+    </div>
+    <script src="/js/clipboard.min.js"></script>
+    <script src="/js/featherlight.min.js"></script>
+    <script src="/js/html5shiv-printshiv.min.js"></script>
+    <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="/js/modernizr.custom.71422.js"></script>
+    <script src="/js/learn.js"></script>
+    <script src="/js/hugo-learn.js"></script>
+
+    
+    <link href="/mermaid/mermaid.css" type="text/css" rel="stylesheet"/>
+    <script src="/mermaid/mermaid.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+    
+
+    
+
+  </body>
+</html>
+

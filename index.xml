@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Dkron - Distributed job scheduling system</title>
+    <link>http://example.org/</link>
+    <description>Recent content on Dkron - Distributed job scheduling system</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 24 Apr 2017 18:36:24 +0200</lastBuildDate>
+    
+	<atom:link href="http://example.org/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Getting started</title>
+      <link>http://example.org/basics/getting-started/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/basics/getting-started/</guid>
+      <description>Welcome to the intro guide to dkron! This will explain how to setup dkron, how easy is to use it, what problems could it help you to solve, etc.
+Introduction Dkron nodes can work in two modes, agents or servers.
+Servers are agents too. You can use servers to run jobs.
+The main distinction is that servers order job executions and can be used to schedule jobs.
+Dkron clusters have a leader, the leader is responsible of executing jobs in the cluster.</description>
+    </item>
+    
+    <item>
+      <title>header</title>
+      <link>http://example.org/_header/</link>
+      <pubDate>Mon, 24 Apr 2017 18:36:24 +0200</pubDate>
+      
+      <guid>http://example.org/_header/</guid>
+      <description>Dkron  </description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>http://example.org/usage/api/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/usage/api/</guid>
+      <description>Dkron REST API 
+Overview You can communicate with Dkron using a RESTful JSON API over HTTP. Dkron nodes usually listen on port 8080 for API requests. All examples in this section assume that you&amp;rsquo;ve found a running leader at localhost:8080.
+Dkron implements a RESTful JSON API over HTTP to communicate with software clients. Dkron listens in port 8080 by default. All examples in this section assume that you&amp;rsquo;re using the default port.</description>
+    </item>
+    
+    <item>
+      <title>Configuration</title>
+      <link>http://example.org/basics/configuration/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/basics/configuration/</guid>
+      <description>Settings for dkron can be specified in three ways: Using a config/dkron.json config file, using env variables starting with DKRON_ or using command line arguments.
+Command line options  -node - Name of the node, must be unique in the cluster. By default this is the hostname of the machine.
+ -bind - The address that dkron will bind to for communication with other dkron nodes. By default this is &amp;ldquo;0.</description>
+    </item>
+    
+    <item>
+      <title>Dkron vs. Other Software</title>
+      <link>http://example.org/dkron_vs_other_software/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/dkron_vs_other_software/</guid>
+      <description>Dkron vs. Chronos Airbnb&amp;rsquo;s Chronos is a job scheduler that is similar to dkron, it&amp;rsquo;s distributed and fault tolerant thanks to the use of Zookeeper and Apache Mesos.
+If you don&amp;rsquo;t have/want to run a Mesos cluster and deal with the not easy configuration and maintenance of Zookeeper and you want something lighter, Dkron could help you.
+Dkron vs. Rundeck Rundeck is a popular and mature platform to automate operations and schedule jobs.</description>
+    </item>
+    
+    <item>
+      <title>Guides</title>
+      <link>http://example.org/usage/guides/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/usage/guides/</guid>
+      <description>Target nodes spec You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run.
+Examples: Target all nodes with a tag:
+{ &amp;quot;name&amp;quot;: &amp;quot;job_name&amp;quot;, &amp;quot;command&amp;quot;: &amp;quot;/bin/true&amp;quot;, &amp;quot;schedule&amp;quot;: &amp;quot;@every 2m&amp;quot;, &amp;quot;tags&amp;quot;: { &amp;quot;role&amp;quot;: &amp;quot;web&amp;quot; } }  Target only two nodes of a group of nodes with a tag:</description>
+    </item>
+    
+    <item>
+      <title>Integration</title>
+      <link>http://example.org/usage/integration/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/usage/integration/</guid>
+      <description>Use with Amazon ECS To use Dkron to schedule jobs that run in containers, a wrapper ECS script is needed.
+Install the following snippet in the node that will run the call to ECS
+ Prerequisites The node that will run the call to ECS will need to have installed
+ AWS cli jq  Example ecs-run --cluster cron --task-definition cron-taskdef --container-name cron --region us-east-1 --command &amp;quot;rake foo&amp;quot;</description>
+    </item>
+    
+    <item>
+      <title>Internals</title>
+      <link>http://example.org/internal/internals/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/internal/internals/</guid>
+      <description>This document is a WIP, it&amp;rsquo;s intended to describe the reasons that lead to design decissions in Dkron.
+Execution results Dkron store the result of each job execution in each node.
+Every time dkron executes a job it assigns it an execution group, genrating a new uuid and send a serf query to target machines and waits for a response.
+Each target machine that will run the job, then responds with an execution object saying it started to run the job.</description>
+    </item>
+    
+    <item>
+      <title>License</title>
+      <link>http://example.org/license/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/license/</guid>
+      <description>Copyright &amp;copy; Victor Castell
+Dkron is an Open Source project licensed under the terms of the LGPLv3 license. Please see http://www.gnu.org/licenses/lgpl-3.0.html for license text.</description>
+    </item>
+    
+    <item>
+      <title>Plugins</title>
+      <link>http://example.org/internal/plugins/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/internal/plugins/</guid>
+      <description>Intro Plugins in Dkron allow you to add funcionality that integrates with the workflow of the job execution in Dkron. It&amp;rsquo;s a powerful system that allows you to extend and adapt Dkron to your special needs.
+This page documents the basics of how the plugin system in Dkron works, and how to setup a basic development environment for plugin development if you&amp;rsquo;re writing a Dkron plugin.
+How it Works Dkron execution execution processors are provided via plugins.</description>
+    </item>
+    
+    <item>
+      <title>Test infra</title>
+      <link>http://example.org/test-infra/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/test-infra/</guid>
+      <description>Testing/QA Environment Dkron is tested continuously to ensure it doesn&amp;rsquo;t break with new changes. Unit and integration tests are run in TravisCI while there is another environment where Dkron is tested for QA.
+Several types and combinations of jobs are run continuously to ensure everything works as expected with latests releases.
+The testing environment is composed by several single tenant bare metal machines kindly provided by Packet.
+This environment is public and rebuilt from time to time.</description>
+    </item>
+    
+  </channel>
+</rss>

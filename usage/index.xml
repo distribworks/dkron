@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Usage on Dkron - Distributed job scheduling system</title>
+    <link>http://example.org/usage/</link>
+    <description>Recent content in Usage on Dkron - Distributed job scheduling system</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 30 Jun 2017 14:58:54 +0200</lastBuildDate>
+    
+	<atom:link href="http://example.org/usage/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title></title>
+      <link>http://example.org/usage/api/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/usage/api/</guid>
+      <description>Dkron REST API 
+Overview You can communicate with Dkron using a RESTful JSON API over HTTP. Dkron nodes usually listen on port 8080 for API requests. All examples in this section assume that you&amp;rsquo;ve found a running leader at localhost:8080.
+Dkron implements a RESTful JSON API over HTTP to communicate with software clients. Dkron listens in port 8080 by default. All examples in this section assume that you&amp;rsquo;re using the default port.</description>
+    </item>
+    
+    <item>
+      <title>Guides</title>
+      <link>http://example.org/usage/guides/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/usage/guides/</guid>
+      <description>Target nodes spec You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run.
+Examples: Target all nodes with a tag:
+{ &amp;quot;name&amp;quot;: &amp;quot;job_name&amp;quot;, &amp;quot;command&amp;quot;: &amp;quot;/bin/true&amp;quot;, &amp;quot;schedule&amp;quot;: &amp;quot;@every 2m&amp;quot;, &amp;quot;tags&amp;quot;: { &amp;quot;role&amp;quot;: &amp;quot;web&amp;quot; } }  Target only two nodes of a group of nodes with a tag:</description>
+    </item>
+    
+    <item>
+      <title>Integration</title>
+      <link>http://example.org/usage/integration/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/usage/integration/</guid>
+      <description>Use with Amazon ECS To use Dkron to schedule jobs that run in containers, a wrapper ECS script is needed.
+Install the following snippet in the node that will run the call to ECS
+ Prerequisites The node that will run the call to ECS will need to have installed
+ AWS cli jq  Example ecs-run --cluster cron --task-definition cron-taskdef --container-name cron --region us-east-1 --command &amp;quot;rake foo&amp;quot;</description>
+    </item>
+    
+  </channel>
+</rss>
