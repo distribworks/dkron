@@ -1,4 +1,8 @@
-# Intro
+---
+title: Plugins
+---
+
+## Intro
 
 Plugins in Dkron allow you to add funcionality that integrates with the workflow of the job execution in Dkron. It's a powerful system that allows you to extend and adapt Dkron to your special needs.
 

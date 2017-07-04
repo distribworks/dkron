@@ -1,4 +1,6 @@
-# Internals
+---
+title: Internals
+---
 
 This document is a WIP, it's intended to describe the reasons that lead to design decissions in Dkron.
 

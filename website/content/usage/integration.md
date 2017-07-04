@@ -1,4 +1,6 @@
-# Integration
+---
+title: Integration
+---
 
 ## Use with Amazon ECS
 

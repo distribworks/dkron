@@ -1,4 +1,7 @@
-#Getting started
+---
+title: Getting started
+weight: 1
+---
 
 Welcome to the intro guide to dkron! This will explain how to setup dkron, how easy is to use it, what problems could it help you to solve, etc.
 

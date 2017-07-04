@@ -1,6 +1,7 @@
 docs
 static
 site
+public
 downloads
 *.etcd
 vendor

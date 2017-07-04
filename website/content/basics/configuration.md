@@ -1,4 +1,8 @@
-# Configuration
+---
+title: Configuration
+wight: 2
+toc: false
+---
 
 Settings for dkron can be specified in three ways: Using a `config/dkron.json` config file, using env variables starting with `DKRON_` or using command line arguments.
 

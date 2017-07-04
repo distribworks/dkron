@@ -1,4 +1,8 @@
-# License
+---
+title: License
+wight: 6
+toc: false
+---
 
 Copyright (c) Victor Castell
 

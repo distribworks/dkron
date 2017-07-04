@@ -1,11 +1,11 @@
 all: test
 
 doc:
-	@$(MAKE) apidoc
-	mkdocs gh-deploy --clean
+	cd website; hugo -d ../public
+	ghp-import -p public
 
 apidoc:
-	java -jar ~/bin/swagger2markup-cli-1.2.0.jar convert -i docs/swagger.yaml -f docs/docs/api -c docs/config.properties
+	java -jar ~/bin/swagger2markup-cli-1.2.0.jar convert -i docs/swagger.yaml -f website/content/usage/api -c docs/config.properties
 
 gen:
 	go generate ./dkron

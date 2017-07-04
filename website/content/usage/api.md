@@ -1,5 +1,6 @@
-# Dkron REST API
-
+--- 
+title: API
+---
 
 <a name="overview"></a>
 ## Overview
@@ -11,7 +12,7 @@ Default API responses are unformatted JSON add the `pretty=true` param to format
 
 
 ### Version information
-*Version* : 0.9.3
+*Version* : 0.9.4
 
 
 ### URI scheme
@@ -443,7 +444,7 @@ json :
 ### GET /leader
 
 #### Description
-List members.
+List leader of cluster.
 
 
 #### Responses
@@ -612,11 +613,11 @@ A member represents a cluster member node.
 |**Tags**  <br>*optional*|Tags asociated with this node  <br>**Example** : `{<br>  "string" : "string"<br>}`|< string, string > map|
 |**Status**  <br>*optional*|The serf status of the node see: https://godoc.org/github.com/hashicorp/serf/serf#MemberStatus  <br>**Example** : `0`|integer|
 |**ProtocolMin**  <br>*optional*|Serf protocol minimum version this node can understand or speak  <br>**Example** : `0`|integer|
-|**ProtocolMax**  <br>*optional*|Serf protocol minimum version this node can understand or speak  <br>**Example** : `0`|integer|
+|**ProtocolMax**  <br>*optional*|Serf protocol maximum version this node can understand or speak  <br>**Example** : `0`|integer|
 |**ProtocolCur**  <br>*optional*|Serf protocol current version this node can understand or speak  <br>**Example** : `0`|integer|
 |**DelegateMin**  <br>*optional*|Serf delegate protocol minimum version this node can understand or speak  <br>**Example** : `0`|integer|
-|**DelegateMax**  <br>*optional*|Serf delegate protocol minimum version this node can understand or speak  <br>**Example** : `0`|integer|
-|**DelegateCur**  <br>*optional*|Serf delegate protocol minimum version this node can understand or speak  <br>**Example** : `0`|integer|
+|**DelegateMax**  <br>*optional*|Serf delegate protocol maximum version this node can understand or speak  <br>**Example** : `0`|integer|
+|**DelegateCur**  <br>*optional*|Serf delegate protocol current version this node can understand or speak  <br>**Example** : `0`|integer|
 
 
 <a name="execution"></a>

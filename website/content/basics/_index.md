@@ -1,4 +1,11 @@
-# Dkron - Distributed, fault tolerant job scheduling system
+---
+title: "Basics"
+date: 2017-06-30T14:58:54+02:00
+draft: false
+icon: "<b>1. </b>"
+---
+
+## Dkron - Distributed, fault tolerant job scheduling system
 
 Welcome to the Dkron documentation! This is the reference guide on how to use Dkron. If you want a getting started guide refer to the [getting started guide](docs/getting-started).
 
@@ -29,3 +36,4 @@ Dkron uses the efficient and lightweight [gossip protocol](https://www.serfdom.i
 ## Dkron design
 
 Dkron is designed to solve one problem well, executing commands in given intervals. Following the unix philosophy of doing one thing and doing it well (like the battle-tested cron) but with the given addition of being designed for the cloud era, removing single points of failure in environments where scheduled jobs are needed to be run in multiple servers.
+

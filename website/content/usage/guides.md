@@ -1,4 +1,7 @@
-# Guides
+---
+title: Guides
+toc: true
+---
 
 ## Target nodes spec
 
