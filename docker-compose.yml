@@ -13,7 +13,7 @@ services:
   consul:
     image: consul
     ports:
-      - "8500"
+      - "8500:8500"
       - "8300"
     hostname: node1
     command: agent -server -bootstrap -client=0.0.0.0
