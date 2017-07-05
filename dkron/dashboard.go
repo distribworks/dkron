@@ -66,7 +66,7 @@ func (a *AgentCommand) dashboardIndexHandler(c *gin.Context) {
 	data := struct {
 		Common *commonDashboardData
 	}{
-		Common: newCommonDashboardData(a, a.config.NodeName, "/"),
+		Common: newCommonDashboardData(a, a.config.NodeName, "../"),
 	}
 	c.HTML(http.StatusOK, "index", data)
 }
@@ -78,7 +78,7 @@ func (a *AgentCommand) dashboardJobsHandler(c *gin.Context) {
 		Common *commonDashboardData
 		Jobs   []*Job
 	}{
-		Common: newCommonDashboardData(a, a.config.NodeName, "/"),
+		Common: newCommonDashboardData(a, a.config.NodeName, "../../"),
 		Jobs:   jobs,
 	}
 
@@ -99,7 +99,7 @@ func (a *AgentCommand) dashboardExecutionsHandler(c *gin.Context) {
 		JobName string
 		ByGroup int64arr
 	}{
-		Common:  newCommonDashboardData(a, a.config.NodeName, "/"),
+		Common:  newCommonDashboardData(a, a.config.NodeName, "../../../"),
 		Groups:  groups,
 		JobName: job,
 		ByGroup: byGroup,
