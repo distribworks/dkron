@@ -52,7 +52,7 @@ func (a *AgentCommand) dashboardRoutes(r *gin.Engine) {
 	r.HTMLRender = createMyRender()
 
 	r.NoRoute(func(c *gin.Context) {
-		c.Redirect(http.StatusMovedPermanently, "/dashboard")
+		c.Redirect(http.StatusMovedPermanently, "/"+dashboardPathPrefix)
 	})
 	r.GET("/static/*asset", servePublic)
 
