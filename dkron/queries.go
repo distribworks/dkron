@@ -26,10 +26,14 @@ func (a *AgentCommand) RunQuery(ex *Execution) {
 
 	job, err := a.store.GetJob(ex.JobName)
 
-	//Job can be removed and the QuerySchedulerRestart not yet received.
-	//In this case, the job will not be found in the store.
-	if err == store.ErrKeyNotFound {
-		log.Warning("agent: Job not found, cancelling this execution")
+	if err != nil {
+		//Job can be removed and the QuerySchedulerRestart not yet received.
+		//In this case, the job will not be found in the store.
+		if err == store.ErrKeyNotFound {
+			log.Warning("agent: Job not found, cancelling this execution")
+			return
+		}
+		log.WithError(err).Fatal("agent: Getting job error")
 		return
 	}
 
