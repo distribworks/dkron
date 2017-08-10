@@ -78,6 +78,7 @@ Settings for dkron can be specified in three ways: Using a `config/dkron.json` c
   "mail_port": 25,
   "mail_username": "mailuser",
   "mail_password": "mailpassword",
-  "mail_from": "cron@example.com"
+  "mail_from": "cron@example.com",
+  "mail_subject_prefix": "[Dkron]"
 }
 ```
