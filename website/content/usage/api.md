@@ -73,7 +73,7 @@ json :
 
 
 <a name="listexecutionsbyjob"></a>
-### GET /executions/{job_name}
+### GET /jobs/{job_name}/executions
 
 #### Description
 List executions.
@@ -102,7 +102,7 @@ List executions.
 
 ##### Request path
 ```
-/executions/string
+/jobs/string/executions
 ```
 
 
