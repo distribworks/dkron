@@ -274,16 +274,23 @@ func (s *Store) GetLastExecutionGroup(jobName string) ([]*Execution, error) {
 	if err != nil {
 		return nil, err
 	}
-	if len(res) == 0{
+	if len(res) == 0 {
 		return []*Execution{}, nil
 	}
 
+	var lastEx Execution
 	var ex Execution
-	err = json.Unmarshal([]byte(res[len(res)-1].Value), &ex)
-	if err != nil {
-		return nil, err
+	// res does not guarantee any order, so sort them by `StartedAt` time
+	for _, node := range res {
+		err := json.Unmarshal([]byte(node.Value), &ex)
+		if err != nil {
+			return nil, err
+		}
+		if ex.StartedAt.After(lastEx.StartedAt) {
+			lastEx = ex
+		}
 	}
-	return s.GetExecutionGroup(&ex)
+	return s.GetExecutionGroup(&lastEx)
 }
 
 func (s *Store) GetExecutionGroup(execution *Execution) ([]*Execution, error) {
