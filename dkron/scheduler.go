@@ -41,7 +41,11 @@ func (s *Scheduler) Start(jobs []*Job) {
 		cronInspect.Set(job.Name, job)
 		metrics.EmitKey([]string{"scheduler", "job", "add", job.Name}, 1)
 
-		s.Cron.AddJob(job.Schedule, job)
+		if job.Timezone != "" {
+			s.Cron.AddTimezonSensitiveJob(job.Schedule, job.Timezone, job)
+		} else {
+			s.Cron.AddJob(job.Schedule, job)
+		}
 	}
 	s.Cron.Start()
 	s.Started = true

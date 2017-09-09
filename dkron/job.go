@@ -33,6 +33,10 @@ type Job struct {
 	// Job name. Must be unique, acts as the id.
 	Name string `json:"name"`
 
+	// The timezone where the cron expression will be evaluated in.
+	// Empty means local time.
+	Timezone string `json:"timezone"`
+
 	// Cron expression for the job. When to run the job.
 	Schedule string `json:"schedule"`
 

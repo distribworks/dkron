@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"sort"
+	"time"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/libkv"
@@ -156,6 +157,14 @@ func (s *Store) SetJobDependencyTree(job *Job, previousJob *Job) error {
 	return nil
 }
 
+func (s *Store) validateTimeZone(timezone string) error {
+	if timezone == "" {
+		return nil
+	}
+	_, err := time.LoadLocation(timezone)
+	return err
+}
+
 func (s *Store) validateJob(job *Job) error {
 	if job.ParentJob == job.Name {
 		return ErrSameParent
@@ -174,6 +183,9 @@ func (s *Store) validateJob(job *Job) error {
 
 	if job.Concurrency != ConcurrencyAllow && job.Concurrency != ConcurrencyForbid && job.Concurrency != "" {
 		return ErrWrongConcurrency
+	}
+	if err := s.validateTimeZone(job.Timezone); err != nil {
+		return err
 	}
 
 	return nil
