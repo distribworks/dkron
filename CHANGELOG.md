@@ -1,3 +1,16 @@
+## 0.9.5 (2017-09-12)
+
+Features
+
+- New docs website using hugo
+
+Bug fixes:
+
+- Clean up clients upon an exit signal (@danielhan)
+- Fix #280 (@didiecrunch)
+- Upgrade several dependencies
+- Fix static assets relative path
+
 ## 0.9.4 (2017-06-07)
 
 - Fix mistakes in API docs
