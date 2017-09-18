@@ -103,7 +103,7 @@ func (n *Notifier) sendExecutionEmail() {
 	}
 	e := &email.Email{
 		To:      []string{n.Job.OwnerEmail},
-		From:    n.Config.MailSubjectPrefix,
+		From:    n.Config.MailFrom,
 		Subject: fmt.Sprintf("%s%s %s execution report", n.Config.MailSubjectPrefix, n.statusString(n.Execution), n.Execution.JobName),
 		Text:    []byte(data.Bytes()),
 		Headers: textproto.MIMEHeader{},
