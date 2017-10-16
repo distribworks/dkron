@@ -7,7 +7,7 @@
     <meta name="description" content="">
 
 
-    <title>API :: Dkron - Distributed job scheduling system</title>
+    <title> :: Dkron - Distributed job scheduling system</title>
     <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
     <link href="/css/nucleus.css" rel="stylesheet">
     <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -145,7 +145,7 @@ parent
          active
           ">
             <a href="/usage/api/">
-            <span>API</span> 
+            <span></span> 
             
 
             </a></li>
@@ -294,7 +294,7 @@ parent
 
 
 
- <a href='/'>Dkron - Distributed job scheduling system</a> > <a href='/usage/'>Usage</a> > API
+ <a href='/'>Dkron - Distributed job scheduling system</a> > <a href='/usage/'>Usage</a> > 
 
  
 
@@ -307,7 +307,7 @@ parent
     <div class="wrapper">
 <nav id="TableOfContents">
 <ul>
-<li>
+<li><a href="#dkron-rest-api">Dkron REST API</a>
 <ul>
 <li><a href="#overview">Overview</a>
 <ul>
@@ -332,10 +332,9 @@ parent
 <li><a href="#response-200">Response 200</a></li>
 </ul></li>
 </ul></li>
-<li><a href="#get-executions-job-name">GET /executions/{job_name}</a>
+<li><a href="#get-jobs">GET /jobs</a>
 <ul>
 <li><a href="#description-1">Description</a></li>
-<li><a href="#parameters">Parameters</a></li>
 <li><a href="#responses-1">Responses</a></li>
 <li><a href="#tags-1">Tags</a></li>
 <li><a href="#example-http-request-1">Example HTTP request</a>
@@ -347,21 +346,23 @@ parent
 <li><a href="#response-200-1">Response 200</a></li>
 </ul></li>
 </ul></li>
-<li><a href="#get-jobs">GET /jobs</a>
+<li><a href="#post-jobs">POST /jobs</a>
 <ul>
 <li><a href="#description-2">Description</a></li>
+<li><a href="#parameters">Parameters</a></li>
 <li><a href="#responses-2">Responses</a></li>
 <li><a href="#tags-2">Tags</a></li>
 <li><a href="#example-http-request-2">Example HTTP request</a>
 <ul>
 <li><a href="#request-path-2">Request path</a></li>
+<li><a href="#request-body">Request body</a></li>
 </ul></li>
 <li><a href="#example-http-response-2">Example HTTP response</a>
 <ul>
-<li><a href="#response-200-2">Response 200</a></li>
+<li><a href="#response-201">Response 201</a></li>
 </ul></li>
 </ul></li>
-<li><a href="#post-jobs">POST /jobs</a>
+<li><a href="#get-jobs-job-name">GET /jobs/{job_name}</a>
 <ul>
 <li><a href="#description-3">Description</a></li>
 <li><a href="#parameters-1">Parameters</a></li>
@@ -370,14 +371,13 @@ parent
 <li><a href="#example-http-request-3">Example HTTP request</a>
 <ul>
 <li><a href="#request-path-3">Request path</a></li>
-<li><a href="#request-body">Request body</a></li>
 </ul></li>
 <li><a href="#example-http-response-3">Example HTTP response</a>
 <ul>
-<li><a href="#response-201">Response 201</a></li>
+<li><a href="#response-200-2">Response 200</a></li>
 </ul></li>
 </ul></li>
-<li><a href="#get-jobs-job-name">GET /jobs/{job_name}</a>
+<li><a href="#post-jobs-job-name">POST /jobs/{job_name}</a>
 <ul>
 <li><a href="#description-4">Description</a></li>
 <li><a href="#parameters-2">Parameters</a></li>
@@ -389,10 +389,10 @@ parent
 </ul></li>
 <li><a href="#example-http-response-4">Example HTTP response</a>
 <ul>
-<li><a href="#response-200-3">Response 200</a></li>
+<li><a href="#response-202">Response 202</a></li>
 </ul></li>
 </ul></li>
-<li><a href="#post-jobs-job-name">POST /jobs/{job_name}</a>
+<li><a href="#delete-jobs-job-name">DELETE /jobs/{job_name}</a>
 <ul>
 <li><a href="#description-5">Description</a></li>
 <li><a href="#parameters-3">Parameters</a></li>
@@ -404,10 +404,10 @@ parent
 </ul></li>
 <li><a href="#example-http-response-5">Example HTTP response</a>
 <ul>
-<li><a href="#response-202">Response 202</a></li>
+<li><a href="#response-200-3">Response 200</a></li>
 </ul></li>
 </ul></li>
-<li><a href="#delete-jobs-job-name">DELETE /jobs/{job_name}</a>
+<li><a href="#get-jobs-job-name-executions">GET /jobs/{job_name}/executions</a>
 <ul>
 <li><a href="#description-6">Description</a></li>
 <li><a href="#parameters-4">Parameters</a></li>
@@ -483,13 +483,15 @@ parent
         
         <div id="body-inner">
           
-            <h1>API</h1>
+            <h1></h1>
           
 
 
 
 
 
+
+<h1 id="dkron-rest-api">Dkron REST API</h1>
 
 <p><a name="overview"></a></p>
 
@@ -503,7 +505,7 @@ parent
 
 <h3 id="version-information">Version information</h3>
 
-<p><em>Version</em> : 0.9.4</p>
+<p><em>Version</em> : 0.9.5</p>
 
 <h3 id="uri-scheme">URI scheme</h3>
 
@@ -576,86 +578,15 @@ parent
 &quot;{ }&quot;
 </code></pre>
 
-<p><a name="listexecutionsbyjob"></a></p>
-
-<h3 id="get-executions-job-name">GET /executions/{job_name}</h3>
-
-<h4 id="description-1">Description</h4>
-
-<p>List executions.</p>
-
-<h4 id="parameters">Parameters</h4>
-
-<table>
-<thead>
-<tr>
-<th>Type</th>
-<th>Name</th>
-<th>Description</th>
-<th>Schema</th>
-</tr>
-</thead>
-
-<tbody>
-<tr>
-<td><strong>Path</strong></td>
-<td><strong>job_name</strong>  <br><em>required</em></td>
-<td>The job that owns the executions to be fetched.</td>
-<td>string</td>
-</tr>
-</tbody>
-</table>
-
-<h4 id="responses-1">Responses</h4>
-
-<table>
-<thead>
-<tr>
-<th>HTTP Code</th>
-<th>Description</th>
-<th>Schema</th>
-</tr>
-</thead>
-
-<tbody>
-<tr>
-<td><strong>200</strong></td>
-<td>Successful response</td>
-<td>&lt; <a href="#execution">execution</a> &gt; array</td>
-</tr>
-</tbody>
-</table>
-
-<h4 id="tags-1">Tags</h4>
-
-<ul>
-<li>executions</li>
-</ul>
-
-<h4 id="example-http-request-1">Example HTTP request</h4>
-
-<h5 id="request-path-1">Request path</h5>
-
-<pre><code>/executions/string
-</code></pre>
-
-<h4 id="example-http-response-1">Example HTTP response</h4>
-
-<h5 id="response-200-1">Response 200</h5>
-
-<pre><code>json :
-&quot;array&quot;
-</code></pre>
-
 <p><a name="getjobs"></a></p>
 
 <h3 id="get-jobs">GET /jobs</h3>
 
-<h4 id="description-2">Description</h4>
+<h4 id="description-1">Description</h4>
 
 <p>List jobs.</p>
 
-<h4 id="responses-2">Responses</h4>
+<h4 id="responses-1">Responses</h4>
 
 <table>
 <thead>
@@ -675,22 +606,22 @@ parent
 </tbody>
 </table>
 
-<h4 id="tags-2">Tags</h4>
+<h4 id="tags-1">Tags</h4>
 
 <ul>
 <li>jobs</li>
 </ul>
 
-<h4 id="example-http-request-2">Example HTTP request</h4>
+<h4 id="example-http-request-1">Example HTTP request</h4>
 
-<h5 id="request-path-2">Request path</h5>
+<h5 id="request-path-1">Request path</h5>
 
 <pre><code>/jobs
 </code></pre>
 
-<h4 id="example-http-response-2">Example HTTP response</h4>
+<h4 id="example-http-response-1">Example HTTP response</h4>
 
-<h5 id="response-200-2">Response 200</h5>
+<h5 id="response-200-1">Response 200</h5>
 
 <pre><code>json :
 &quot;array&quot;
@@ -700,11 +631,11 @@ parent
 
 <h3 id="post-jobs">POST /jobs</h3>
 
-<h4 id="description-3">Description</h4>
+<h4 id="description-2">Description</h4>
 
 <p>Create or updates a new job.</p>
 
-<h4 id="parameters-1">Parameters</h4>
+<h4 id="parameters">Parameters</h4>
 
 <table>
 <thead>
@@ -726,7 +657,7 @@ parent
 </tbody>
 </table>
 
-<h4 id="responses-3">Responses</h4>
+<h4 id="responses-2">Responses</h4>
 
 <table>
 <thead>
@@ -746,15 +677,15 @@ parent
 </tbody>
 </table>
 
-<h4 id="tags-3">Tags</h4>
+<h4 id="tags-2">Tags</h4>
 
 <ul>
 <li>jobs</li>
 </ul>
 
-<h4 id="example-http-request-3">Example HTTP request</h4>
+<h4 id="example-http-request-2">Example HTTP request</h4>
 
-<h5 id="request-path-3">Request path</h5>
+<h5 id="request-path-2">Request path</h5>
 
 <pre><code>/jobs
 </code></pre>
@@ -787,7 +718,7 @@ parent
 }
 </code></pre>
 
-<h4 id="example-http-response-3">Example HTTP response</h4>
+<h4 id="example-http-response-2">Example HTTP response</h4>
 
 <h5 id="response-201">Response 201</h5>
 
@@ -821,11 +752,11 @@ parent
 
 <h3 id="get-jobs-job-name">GET /jobs/{job_name}</h3>
 
-<h4 id="description-4">Description</h4>
+<h4 id="description-3">Description</h4>
 
 <p>Show a job.</p>
 
-<h4 id="parameters-2">Parameters</h4>
+<h4 id="parameters-1">Parameters</h4>
 
 <table>
 <thead>
@@ -847,7 +778,7 @@ parent
 </tbody>
 </table>
 
-<h4 id="responses-4">Responses</h4>
+<h4 id="responses-3">Responses</h4>
 
 <table>
 <thead>
@@ -867,22 +798,22 @@ parent
 </tbody>
 </table>
 
-<h4 id="tags-4">Tags</h4>
+<h4 id="tags-3">Tags</h4>
 
 <ul>
 <li>jobs</li>
 </ul>
 
-<h4 id="example-http-request-4">Example HTTP request</h4>
+<h4 id="example-http-request-3">Example HTTP request</h4>
 
-<h5 id="request-path-4">Request path</h5>
+<h5 id="request-path-3">Request path</h5>
 
 <pre><code>/jobs/string
 </code></pre>
 
-<h4 id="example-http-response-4">Example HTTP response</h4>
+<h4 id="example-http-response-3">Example HTTP response</h4>
 
-<h5 id="response-200-3">Response 200</h5>
+<h5 id="response-200-2">Response 200</h5>
 
 <pre><code>json :
 {
@@ -914,11 +845,11 @@ parent
 
 <h3 id="post-jobs-job-name">POST /jobs/{job_name}</h3>
 
-<h4 id="description-5">Description</h4>
+<h4 id="description-4">Description</h4>
 
 <p>Executes a job.</p>
 
-<h4 id="parameters-3">Parameters</h4>
+<h4 id="parameters-2">Parameters</h4>
 
 <table>
 <thead>
@@ -940,7 +871,7 @@ parent
 </tbody>
 </table>
 
-<h4 id="responses-5">Responses</h4>
+<h4 id="responses-4">Responses</h4>
 
 <table>
 <thead>
@@ -960,20 +891,20 @@ parent
 </tbody>
 </table>
 
-<h4 id="tags-5">Tags</h4>
+<h4 id="tags-4">Tags</h4>
 
 <ul>
 <li>jobs</li>
 </ul>
 
-<h4 id="example-http-request-5">Example HTTP request</h4>
+<h4 id="example-http-request-4">Example HTTP request</h4>
 
-<h5 id="request-path-5">Request path</h5>
+<h5 id="request-path-4">Request path</h5>
 
 <pre><code>/jobs/string
 </code></pre>
 
-<h4 id="example-http-response-5">Example HTTP response</h4>
+<h4 id="example-http-response-4">Example HTTP response</h4>
 
 <h5 id="response-202">Response 202</h5>
 
@@ -1007,11 +938,11 @@ parent
 
 <h3 id="delete-jobs-job-name">DELETE /jobs/{job_name}</h3>
 
-<h4 id="description-6">Description</h4>
+<h4 id="description-5">Description</h4>
 
 <p>Delete a job.</p>
 
-<h4 id="parameters-4">Parameters</h4>
+<h4 id="parameters-3">Parameters</h4>
 
 <table>
 <thead>
@@ -1033,7 +964,7 @@ parent
 </tbody>
 </table>
 
-<h4 id="responses-6">Responses</h4>
+<h4 id="responses-5">Responses</h4>
 
 <table>
 <thead>
@@ -1053,22 +984,22 @@ parent
 </tbody>
 </table>
 
-<h4 id="tags-6">Tags</h4>
+<h4 id="tags-5">Tags</h4>
 
 <ul>
 <li>jobs</li>
 </ul>
 
-<h4 id="example-http-request-6">Example HTTP request</h4>
+<h4 id="example-http-request-5">Example HTTP request</h4>
 
-<h5 id="request-path-6">Request path</h5>
+<h5 id="request-path-5">Request path</h5>
 
 <pre><code>/jobs/string
 </code></pre>
 
-<h4 id="example-http-response-6">Example HTTP response</h4>
+<h4 id="example-http-response-5">Example HTTP response</h4>
 
-<h5 id="response-200-4">Response 200</h5>
+<h5 id="response-200-3">Response 200</h5>
 
 <pre><code>json :
 {
@@ -1094,6 +1025,77 @@ parent
   },
   &quot;concurrency&quot; : &quot;allow&quot;
 }
+</code></pre>
+
+<p><a name="listexecutionsbyjob"></a></p>
+
+<h3 id="get-jobs-job-name-executions">GET /jobs/{job_name}/executions</h3>
+
+<h4 id="description-6">Description</h4>
+
+<p>List executions.</p>
+
+<h4 id="parameters-4">Parameters</h4>
+
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Name</th>
+<th>Description</th>
+<th>Schema</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><strong>Path</strong></td>
+<td><strong>job_name</strong>  <br><em>required</em></td>
+<td>The job that owns the executions to be fetched.</td>
+<td>string</td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="responses-6">Responses</h4>
+
+<table>
+<thead>
+<tr>
+<th>HTTP Code</th>
+<th>Description</th>
+<th>Schema</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><strong>200</strong></td>
+<td>Successful response</td>
+<td>&lt; <a href="#execution">execution</a> &gt; array</td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="tags-6">Tags</h4>
+
+<ul>
+<li>executions</li>
+</ul>
+
+<h4 id="example-http-request-6">Example HTTP request</h4>
+
+<h5 id="request-path-6">Request path</h5>
+
+<pre><code>/jobs/string/executions
+</code></pre>
+
+<h4 id="example-http-response-6">Example HTTP response</h4>
+
+<h5 id="response-200-4">Response 200</h5>
+
+<pre><code>json :
+&quot;array&quot;
 </code></pre>
 
 <p><a name="getleader"></a></p>
