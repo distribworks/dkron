@@ -1,6 +1,5 @@
---- 
-title: API
----
+# Dkron REST API
+
 
 <a name="overview"></a>
 ## Overview
@@ -12,7 +11,7 @@ Default API responses are unformatted JSON add the `pretty=true` param to format
 
 
 ### Version information
-*Version* : 0.9.4
+*Version* : 0.9.5
 
 
 ### URI scheme
@@ -69,49 +68,6 @@ Gets `Status` object.
 ```
 json :
 "{ }"
-```
-
-
-<a name="listexecutionsbyjob"></a>
-### GET /executions/{job_name}
-
-#### Description
-List executions.
-
-
-#### Parameters
-
-|Type|Name|Description|Schema|
-|---|---|---|---|
-|**Path**|**job_name**  <br>*required*|The job that owns the executions to be fetched.|string|
-
-
-#### Responses
-
-|HTTP Code|Description|Schema|
-|---|---|---|
-|**200**|Successful response|< [execution](#execution) > array|
-
-
-#### Tags
-
-* executions
-
-
-#### Example HTTP request
-
-##### Request path
-```
-/executions/string
-```
-
-
-#### Example HTTP response
-
-##### Response 200
-```
-json :
-"array"
 ```
 
 
@@ -437,6 +393,49 @@ json :
   },
   "concurrency" : "allow"
 }
+```
+
+
+<a name="listexecutionsbyjob"></a>
+### GET /jobs/{job_name}/executions
+
+#### Description
+List executions.
+
+
+#### Parameters
+
+|Type|Name|Description|Schema|
+|---|---|---|---|
+|**Path**|**job_name**  <br>*required*|The job that owns the executions to be fetched.|string|
+
+
+#### Responses
+
+|HTTP Code|Description|Schema|
+|---|---|---|
+|**200**|Successful response|< [execution](#execution) > array|
+
+
+#### Tags
+
+* executions
+
+
+#### Example HTTP request
+
+##### Request path
+```
+/jobs/string/executions
+```
+
+
+#### Example HTTP response
+
+##### Response 200
+```
+json :
+"array"
 ```
 
 

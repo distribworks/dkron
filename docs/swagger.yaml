@@ -1,6 +1,3 @@
-# Example YAML to get you started quickly.
-# Be aware that YAML has indentation based scoping.
-# Code completion support is available so start typing for available options.
 swagger: '2.0'
 basePath: /v1
 host: localhost:8080
@@ -10,9 +7,8 @@ produces:
   - application/json
 schemes:
   - http
-# This is your document metadata
 info:
-  version: "0.9.4"
+  version: "0.9.5"
   title: Dkron REST API
   description: |
     You can communicate with Dkron using a RESTful JSON API over HTTP. Dkron nodes usually listen on port `8080` for API requests. All examples in this section assume that you've found a running leader at `localhost:8080`.
@@ -21,11 +17,8 @@ info:
 
     Default API responses are unformatted JSON add the `pretty=true` param to format the response.
 
-# Describe your paths here
 paths:
-  # This is a path endpoint. Change it.
   /:
-    # This is a HTTP operation
     get:
       description: |
         Gets `Status` object.
@@ -33,11 +26,8 @@ paths:
       tags:
         - default
       responses:
-        # Response code
         200:
           description: Successful response
-          # A schema describing your response object.
-          # Use JSON Schema format
           schema:
             $ref: '#/definitions/status'
   /jobs:
@@ -48,11 +38,8 @@ paths:
       tags:
         - jobs
       responses:
-        # Response code
         200:
           description: Successful response
-          # A schema describing your response object.
-          # Use JSON Schema format
           schema:
             type: array
             items:
@@ -71,11 +58,8 @@ paths:
           schema:
             $ref: "#/definitions/job"
       responses:
-        # Response code
         201:
           description: Successful response
-          # A schema describing your response object.
-          # Use JSON Schema format
           schema:
             $ref: '#/definitions/job'
   /jobs/{job_name}:
@@ -92,11 +76,8 @@ paths:
           required: true
           type: string
       responses:
-        # Response code
         200:
           description: Successful response
-          # A schema describing your response object.
-          # Use JSON Schema format
           schema:
             $ref: '#/definitions/job'
     delete:
@@ -112,11 +93,8 @@ paths:
           required: true
           type: string
       responses:
-        # Response code
         200:
           description: Successful response
-          # A schema describing your response object.
-          # Use JSON Schema format
           schema:
             $ref: '#/definitions/job'
     post:
@@ -132,11 +110,8 @@ paths:
           required: true
           type: string
       responses:
-        # Response code
         202:
           description: Successful response
-          # A schema describing your response object.
-          # Use JSON Schema format
           schema:
             $ref: '#/definitions/job'
   /members:
@@ -146,13 +121,9 @@ paths:
       operationId: getMember
       tags:
         - members
-      # Expected responses for this operation:
       responses:
-        # Response code
         200:
           description: Successful response
-          # A schema describing your response object.
-          # Use JSON Schema format
           schema:
             type: array
             items:
@@ -164,13 +135,9 @@ paths:
       operationId: getLeader
       tags:
         - default
-      # Expected responses for this operation:
       responses:
-        # Response code
         200:
           description: Successful response
-          # A schema describing your response object.
-          # Use JSON Schema format
           schema:
             $ref: '#/definitions/member'
   /leave:
@@ -180,20 +147,15 @@ paths:
       operationId: leave
       tags:
         - default
-      # Expected responses for this operation:
       responses:
-        # Response code
         200:
           description: Successful response
-          # A schema describing your response object.
-          # Use JSON Schema format
           schema:
             type: array
             items:
               $ref: '#/definitions/member'
-  /executions/{job_name}:
+  /jobs/{job_name}/executions:
     get:
-      #Describe this verb here. Note: you can use markdown
       description: |
         List executions.
       operationId: listExecutionsByJob
@@ -205,13 +167,9 @@ paths:
           description: The job that owns the executions to be fetched.
           required: true
           type: string
-      # Expected responses for this operation:
       responses:
-        # Response code
         200:
           description: Successful response
-          # A schema describing your response object.
-          # Use JSON Schema format
           schema:
             type: array
             items:
@@ -390,4 +348,3 @@ definitions:
       node_name:
         type: string
         description: "name of the node that executed the command"
-
