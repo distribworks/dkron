@@ -1,5 +1,7 @@
-# Dkron REST API
-
+---
+title: Dkron REST API
+toc: true
+---
 
 <a name="overview"></a>
 ## Overview
