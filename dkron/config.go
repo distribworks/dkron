@@ -38,12 +38,13 @@ type Config struct {
 	RPCPort               int
 	AdvertiseRPCPort      int
 
-	MailHost     string
-	MailPort     uint16
-	MailUsername string
-	MailPassword string
-	MailFrom     string
-	MailPayload  string
+	MailHost          string
+	MailPort          uint16
+	MailUsername      string
+	MailPassword      string
+	MailFrom          string
+	MailPayload       string
+	MailSubjectPrefix string
 
 	WebhookURL     string
 	WebhookPayload string
@@ -125,6 +126,8 @@ func NewConfig(args []string, agent *AgentCommand) *Config {
 	viper.SetDefault("mail_from", cmdFlags.Lookup("mail-from").Value)
 	cmdFlags.String("mail-payload", "", "notification mail payload")
 	viper.SetDefault("mail_payload", cmdFlags.Lookup("mail-payload").Value)
+	cmdFlags.String("mail-subject-prefix", "[Dkron]", "notification mail subject prefix")
+	viper.SetDefault("mail_subject_prefix", cmdFlags.Lookup("mail-subject-prefix").Value)
 
 	cmdFlags.String("webhook-url", "", "notification webhook url")
 	viper.SetDefault("webhook_url", cmdFlags.Lookup("webhook-url").Value)
@@ -192,12 +195,13 @@ func ReadConfig(agent *AgentCommand) *Config {
 		RPCPort:          viper.GetInt("rpc_port"),
 		AdvertiseRPCPort: viper.GetInt("advertise_rpc_port"),
 
-		MailHost:     viper.GetString("mail_host"),
-		MailPort:     uint16(viper.GetInt("mail_port")),
-		MailUsername: viper.GetString("mail_username"),
-		MailPassword: viper.GetString("mail_password"),
-		MailFrom:     viper.GetString("mail_from"),
-		MailPayload:  viper.GetString("mail_payload"),
+		MailHost:          viper.GetString("mail_host"),
+		MailPort:          uint16(viper.GetInt("mail_port")),
+		MailUsername:      viper.GetString("mail_username"),
+		MailPassword:      viper.GetString("mail_password"),
+		MailFrom:          viper.GetString("mail_from"),
+		MailPayload:       viper.GetString("mail_payload"),
+		MailSubjectPrefix: viper.GetString("mail_subject_prefix"),
 
 		WebhookURL:     viper.GetString("webhook_url"),
 		WebhookPayload: viper.GetString("webhook_payload"),
