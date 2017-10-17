@@ -216,6 +216,13 @@ definitions:
         type: string
         description: "Command to run."
         readOnly: false
+      environment_variables:
+        type: array
+        items:
+          type: string
+          description: "String representing a environment variable, in the form 'key=value'."
+        description: "Extra environment variables to be passed to the process."
+        readOnly: false
       shell:
         type: boolean
         description: "Use shell to run the command"

@@ -2,6 +2,7 @@ package dkron
 
 import (
 	"math/rand"
+	"os"
 	"os/exec"
 	"runtime"
 	"time"
@@ -93,6 +94,9 @@ func buildCmd(job *Job) (cmd *exec.Cmd) {
 			log.WithError(err).Fatal("proc: Error parsing command arguments")
 		}
 		cmd = exec.Command(args[0], args[1:]...)
+	}
+	if job.EnvironmentVariables != nil {
+		cmd.Env = append(os.Environ(), job.EnvironmentVariables...)
 	}
 
 	return

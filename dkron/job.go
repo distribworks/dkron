@@ -42,6 +42,9 @@ type Job struct {
 	// Command to run. Must be a shell command to execute.
 	Command string `json:"command"`
 
+	// Extra environment variable to give to the command to execute.
+	EnvironmentVariables []string `json:"environment_variables"`
+
 	// Owner of the job.
 	Owner string `json:"owner"`
 
