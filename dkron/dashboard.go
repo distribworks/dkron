@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/gin-contrib/multitemplate"
-	"gopkg.in/gin-gonic/gin.v1"
+	"github.com/gin-gonic/gin"
 )
 
 const (
