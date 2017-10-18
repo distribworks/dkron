@@ -1,5 +1,5 @@
-hash: 2121c83a7ff41a2e75d24b0fe6b5420c648659027a15488f2bcffc1f2658cb6b
-updated: 2017-06-29T22:46:27.550387105+02:00
+hash: 50735e5cda0de81d0f9a0a14195559e6e9313daffaf8822c037acb710ddade4a
+updated: 2017-10-18T12:57:13.541232262+02:00
 imports:
 - name: bitbucket.org/kardianos/osext
   version: 816c96ec6fef6a0cd72c9395d192c4bd0d918753
@@ -40,6 +40,8 @@ imports:
   version: 5f834d3672079e82c5f79f42c069475f636d3a11
 - name: github.com/gin-contrib/multitemplate
   version: 753bf9175717da70b3b268251659ad318533d764
+- name: github.com/gin-contrib/sse
+  version: 22d885f9ecc78bf4ee5d72b937e4bbcdc58e8cae
 - name: github.com/gin-gonic/gin
   version: e2212d40c62a98b388a5eb48ecbdcf88534688ba
   subpackages:
@@ -133,8 +135,6 @@ imports:
   version: 30de6d19a3bd89a5f38ae4028e23aaa5582648af
   subpackages:
   - unix
-- name: gopkg.in/gin-gonic/gin.v1
-  version: e2212d40c62a98b388a5eb48ecbdcf88534688ba
 - name: gopkg.in/go-playground/validator.v8
   version: c193cecd124b5cc722d7ee5538e945bdb3348435
 - name: gopkg.in/yaml.v2

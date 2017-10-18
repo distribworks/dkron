@@ -2,6 +2,7 @@ package dkron
 
 import (
 	"github.com/Sirupsen/logrus"
+	"github.com/gin-gonic/gin"
 )
 
 var log = logrus.NewEntry(logrus.New())
@@ -18,4 +19,5 @@ func InitLogger(logLevel string, node string) {
 
 	formattedLogger.Level = level
 	log = logrus.NewEntry(formattedLogger).WithField("node", node)
+	gin.DefaultWriter = log.Writer()
 }

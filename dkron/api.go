@@ -6,7 +6,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/libkv/store"
-	gin "gopkg.in/gin-gonic/gin.v1"
+	gin "github.com/gin-gonic/gin"
 )
 
 const pretty = "pretty"

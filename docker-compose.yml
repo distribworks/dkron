@@ -32,6 +32,7 @@ services:
       - zk
     ports:
       - "8080"
+      - "8946"
     volumes:
      - ./:/gopath/src/github.com/victorcoder/dkron
     environment:
