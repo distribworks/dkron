@@ -280,7 +280,8 @@ func (s *Store) GetLastExecutionGroup(jobName string) ([]*Execution, error) {
 
 	var lastEx Execution
 	var ex Execution
-	// res does not guarantee any order, so sort them by `StartedAt` time
+	// res does not guarantee any order,
+	// so compare them by `StartedAt` time and get the last one
 	for _, node := range res {
 		err := json.Unmarshal([]byte(node.Value), &ex)
 		if err != nil {
