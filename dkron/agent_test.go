@@ -38,7 +38,7 @@ func TestAgentCommandRun(t *testing.T) {
 	}
 
 	args := []string{
-		"-bind", testutil.GetBindAddr().String(),
+		"-bind-addr", testutil.GetBindAddr().String(),
 		"-log-level", logLevel,
 	}
 
@@ -98,9 +98,9 @@ func TestAgentCommand_runForElection(t *testing.T) {
 	}
 
 	args := []string{
-		"-bind", a1Addr,
+		"-bind-addr", a1Addr,
 		"-join", a2Addr,
-		"-node", a1Name,
+		"-node-name", a1Name,
 		"-server",
 		"-log-level", logLevel,
 	}
@@ -125,9 +125,9 @@ func TestAgentCommand_runForElection(t *testing.T) {
 	defer func() { shutdownCh2 <- struct{}{} }()
 
 	args2 := []string{
-		"-bind", a2Addr,
+		"-bind-addr", a2Addr,
 		"-join", a1Addr + ":8946",
-		"-node", a2Name,
+		"-node-name", a2Name,
 		"-server",
 		"-log-level", logLevel,
 	}
@@ -181,9 +181,9 @@ func Test_processFilteredNodes(t *testing.T) {
 	a2Addr := testutil.GetBindAddr().String()
 
 	args := []string{
-		"-bind", a1Addr,
+		"-bind-addr", a1Addr,
 		"-join", a2Addr,
-		"-node", "test1",
+		"-node-name", "test1",
 		"-server",
 		"-tag", "role=test",
 		"-log-level", logLevel,
@@ -206,9 +206,9 @@ func Test_processFilteredNodes(t *testing.T) {
 	}
 
 	args2 := []string{
-		"-bind", a2Addr,
+		"-bind-addr", a2Addr,
 		"-join", a1Addr,
-		"-node", "test2",
+		"-node-name", "test2",
 		"-server",
 		"-tag", "role=test",
 		"-log-level", logLevel,
@@ -272,8 +272,8 @@ func TestEncrypt(t *testing.T) {
 	}
 
 	args := []string{
-		"-bind", testutil.GetBindAddr().String(),
-		"-node", "test1",
+		"-bind-addr", testutil.GetBindAddr().String(),
+		"-node-name", "test1",
 		"-server",
 		"-tag", "role=test",
 		"-encrypt", "kPpdjphiipNSsjd4QHWbkA==",
@@ -300,8 +300,8 @@ func Test_getRPCAddr(t *testing.T) {
 	a1Addr := testutil.GetBindAddr()
 
 	args := []string{
-		"-bind", a1Addr.String() + ":5000",
-		"-node", "test1",
+		"-bind-addr", a1Addr.String() + ":5000",
+		"-node-name", "test1",
 		"-server",
 		"-tag", "role=test",
 		"-log-level", logLevel,
@@ -330,8 +330,8 @@ func TestAgentConfig(t *testing.T) {
 
 	advAddr := testutil.GetBindAddr().String()
 	args := []string{
-		"-bind", testutil.GetBindAddr().String(),
-		"-advertise", advAddr,
+		"-bind-addr", testutil.GetBindAddr().String(),
+		"-advertise-addr", advAddr,
 		"-log-level", logLevel,
 	}
 

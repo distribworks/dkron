@@ -29,8 +29,8 @@ func TestRPCExecutionDone(t *testing.T) {
 	aAddr := testutil.GetBindAddr().String()
 
 	args := []string{
-		"-bind", aAddr,
-		"-node", "test1",
+		"-bind-addr", aAddr,
+		"-node-name", "test1",
 		"-server",
 		"-keyspace", "dkron",
 		"-log-level", logLevel,
