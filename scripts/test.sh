@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 
-NOVENDOR=$(docker-compose run dkron glide novendor | tr -d '\r')
+read -r -d '' NOVENDOR << EOM
+./builtin/...
+./cron/...
+./dkron/...
+./plugin/...
+.
+EOM
 
 docker-compose run dkron scripts/validate-gofmt
 docker-compose run dkron go vet $NOVENDOR

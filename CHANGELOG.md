@@ -1,3 +1,7 @@
+## 0.9.6
+
+- Migrate from glide to dep
+
 ## 0.9.5 (2017-09-12)
 
 Features

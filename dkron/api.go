@@ -1,6 +1,7 @@
 package dkron
 
 import (
+	"flag"
 	"fmt"
 	"net/http"
 
@@ -13,7 +14,9 @@ const pretty = "pretty"
 
 func (a *AgentCommand) ServeHTTP() {
 	r := gin.Default()
-	if log.Level >= logrus.InfoLevel {
+	if flag.Lookup("test.v") != nil {
+		gin.SetMode(gin.TestMode)
+	} else if log.Level >= logrus.InfoLevel {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
