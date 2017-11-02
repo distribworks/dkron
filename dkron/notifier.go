@@ -88,7 +88,7 @@ func (n *Notifier) buildTemplate(templ string) *bytes.Buffer {
 	out := &bytes.Buffer{}
 	err := t.Execute(out, data)
 	if err != nil {
-		log.Error("executing template:", err)
+		log.WithError(err).Error("notifier: error executing template")
 		return bytes.NewBuffer([]byte("Failed to execute template:" + err.Error()))
 	}
 	return out
@@ -112,7 +112,7 @@ func (n *Notifier) sendExecutionEmail() {
 	serverAddr := fmt.Sprintf("%s:%d", n.Config.MailHost, n.Config.MailPort)
 	err := e.Send(serverAddr, smtp.PlainAuth("", n.Config.MailUsername, n.Config.MailPassword, n.Config.MailHost))
 	if err != nil {
-		log.Fatal(err)
+		log.WithError(err).Error("notifier: Error sending email")
 	}
 }
 
@@ -129,7 +129,7 @@ func (n *Notifier) callExecutionWebhook() {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		panic(err)
+		log.WithError(err).Error("notifier: Error posting notification")
 	}
 	defer resp.Body.Close()
 
@@ -138,7 +138,7 @@ func (n *Notifier) callExecutionWebhook() {
 		"status": resp.Status,
 		"header": resp.Header,
 		"body":   string(body),
-	}).Debug("Webhook call response")
+	}).Debug("notifier: Webhook call response")
 }
 
 func (n *Notifier) statusString(execution *Execution) string {
