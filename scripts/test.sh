@@ -10,4 +10,4 @@ EOM
 
 docker-compose run dkron scripts/validate-gofmt
 docker-compose run dkron go vet $NOVENDOR
-docker-compose run -e DKRON_BACKEND_MACHINE=consul:8500 dkron go test -v $NOVENDOR $1
+docker-compose run -e DKRON_BACKEND_MACHINE=etcd:2379 dkron go test -v $NOVENDOR $1
