@@ -171,21 +171,21 @@ func watchOrDie(t *testing.T, client store.Store, key string) (*store.KVPair, er
 }
 
 func Test_processFilteredNodes(t *testing.T) {
-	shutdownCh := make(chan struct{})
-	defer close(shutdownCh)
-
-	ui := new(cli.MockUi)
-	a := &AgentCommand{
-		Ui:         ui,
-		ShutdownCh: shutdownCh,
-	}
-
 	client, err := libkv.NewStore("etcd", []string{etcdAddr}, &store.Config{})
 	err = client.DeleteTree("dkron")
 	if err != nil {
 		if err == store.ErrNotReachable {
 			t.Fatal("etcd server needed to run tests")
 		}
+	}
+
+	shutdownCh1 := make(chan struct{})
+	defer close(shutdownCh1)
+
+	ui := new(cli.MockUi)
+	a1 := &AgentCommand{
+		Ui:         ui,
+		ShutdownCh: shutdownCh1,
 	}
 
 	a1Addr := testutil.GetBindAddr().String()
@@ -200,12 +200,9 @@ func Test_processFilteredNodes(t *testing.T) {
 		"-log-level", logLevel,
 	}
 
-	resultCh := make(chan int)
-	go func() {
-		resultCh <- a.Run(args)
-	}()
-
+	go a1.Run(args)
 	time.Sleep(2 * time.Second)
+
 	// Start another agent
 	shutdownCh2 := make(chan struct{})
 	defer close(shutdownCh2)
@@ -225,10 +222,8 @@ func Test_processFilteredNodes(t *testing.T) {
 		"-log-level", logLevel,
 	}
 
-	resultCh2 := make(chan int)
-	go func() {
-		resultCh2 <- a2.Run(args2)
-	}()
+	go a2.Run(args2)
+	time.Sleep(2 * time.Second)
 
 	job := &Job{
 		Name: "test_job_1",
@@ -238,8 +233,7 @@ func Test_processFilteredNodes(t *testing.T) {
 		},
 	}
 
-	time.Sleep(2 * time.Second)
-	nodes, tags, err := a.processFilteredNodes(job)
+	nodes, tags, err := a1.processFilteredNodes(job)
 
 	assert.Contains(t, nodes, "test1")
 	assert.Contains(t, nodes, "test2")
@@ -248,7 +242,7 @@ func Test_processFilteredNodes(t *testing.T) {
 	assert.Equal(t, job.Tags["foo"], "bar:1")
 
 	// Send a shutdown request
-	shutdownCh <- struct{}{}
+	shutdownCh1 <- struct{}{}
 	shutdownCh2 <- struct{}{}
 }
 
