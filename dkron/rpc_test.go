@@ -31,6 +31,7 @@ func TestRPCExecutionDone(t *testing.T) {
 
 	args := []string{
 		"-bind-addr", aAddr,
+		"-advertise-addr", aAddr,
 		"-node-name", "test1",
 		"-server",
 		"-keyspace", "dkron",
@@ -64,7 +65,6 @@ func TestRPCExecutionDone(t *testing.T) {
 	rc := &RPCClient{
 		ServerAddr: a.getRPCAddr(),
 	}
-
 	rc.callExecutionDone(testExecution)
 	execs, _ := store.GetExecutions("test")
 
@@ -75,5 +75,7 @@ func TestRPCExecutionDone(t *testing.T) {
 	store.DeleteJob(testJob.Name)
 
 	testExecution.FinishedAt = time.Now()
-	rc.callExecutionDone(testExecution)
+	err = rc.callExecutionDone(testExecution)
+
+	assert.Error(t, err, ErrExecutionDoneForDeletedJob)
 }

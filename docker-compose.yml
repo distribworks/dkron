@@ -8,7 +8,7 @@ services:
       - "2379"
     volumes:
       - ./etcd.data:/data
-    command: etcd -name=dkron1 -advertise-client-urls http://etcd:2379,http://127.0.0.1:2379 -listen-client-urls http://0.0.0.0:2379
+    command: etcd -name=dkron1 -advertise-client-urls http://etcd:2379 -listen-client-urls http://0.0.0.0:2379
 
   consul:
     image: consul

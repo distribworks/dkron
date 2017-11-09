@@ -95,8 +95,8 @@ func NewConfig(args []string, agent *AgentCommand) *Config {
 	cmdFlags.String("backend", "etcd", "store backend")
 	cmdFlags.String("backend-machine", "127.0.0.1:2379", "store backend machines addresses")
 	cmdFlags.String("profile", "lan", "timing profile to use (lan, wan, local)")
-	var startJoin []string
-	cmdFlags.Var((*AppendSliceValue)(&startJoin), "join", "address of agent to join on startup")
+	var join []string
+	cmdFlags.Var((*AppendSliceValue)(&join), "join", "address of agent to join on startup")
 	var tag []string
 	cmdFlags.Var((*AppendSliceValue)(&tag), "tag", "tag pair, specified as key=value")
 	cmdFlags.String("keyspace", "dkron", "key namespace to use")

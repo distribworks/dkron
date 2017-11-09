@@ -220,8 +220,7 @@
 [[projects]]
   name = "github.com/mattn/go-shellwords"
   packages = ["."]
-  revision = "02e3cf038dcea8290e44424da473dd12be796a8a"
-  version = "v1.0.3"
+  revision = "525bedee691b5a8df547cb5cf9f86b7fb1883e24"
 
 [[projects]]
   branch = "master"
@@ -375,6 +374,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "b4ba78c85122176d3eec553b8794aff3435d71518d4a23960481300f5bcd79c6"
+  inputs-digest = "2bcce33a49a905258a484bed5395a5f0544bba99c7e82d8d41286bfd297d5ac4"
   solver-name = "gps-cdcl"
   solver-version = 1

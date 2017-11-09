@@ -50,7 +50,7 @@ func setupAPITest(t *testing.T) (chan<- struct{}, <-chan int) {
 func TestAPIJobCreateUpdate(t *testing.T) {
 	shutdownCh, _ := setupAPITest(t)
 
-	jsonStr := []byte(`{"name": "test_job", "schedule": "@every 2s", "command": "date", "owner": "mec", "owner_email": "foo@bar.com", "disabled": true}`)
+	jsonStr := []byte(`{"name": "test_job", "schedule": "@every 1m", "command": "date", "owner": "mec", "owner_email": "foo@bar.com", "disabled": true}`)
 
 	resp, err := http.Post("http://localhost:8090/v1/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
 	if err != nil {
@@ -65,7 +65,7 @@ func TestAPIJobCreateUpdate(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	jsonStr1 := []byte(`{"name": "test_job", "schedule": "@every 2s", "command": "test", "disabled": false}`)
+	jsonStr1 := []byte(`{"name": "test_job", "schedule": "@every 1m", "command": "test", "disabled": false}`)
 	resp, err = http.Post("http://localhost:8090/v1/jobs", "encoding/json", bytes.NewBuffer(jsonStr1))
 	if err != nil {
 		t.Fatal(err)

@@ -65,6 +65,7 @@
 
 [[constraint]]
   name = "github.com/mattn/go-shellwords"
+  revision = "525bedee691b5a8df547cb5cf9f86b7fb1883e24"
 
 [[constraint]]
   name = "github.com/mitchellh/cli"
