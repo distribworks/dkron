@@ -24,9 +24,9 @@ func setupAPITest(t *testing.T) (chan<- struct{}, <-chan int) {
 	}
 
 	args := []string{
-		"-bind", testutil.GetBindAddr().String(),
+		"-bind-addr", testutil.GetBindAddr().String(),
 		"-http-addr", "127.0.0.1:8090",
-		"-node", "test",
+		"-node-name", "test",
 		"-server",
 		"-log-level", logLevel,
 	}
