@@ -12,8 +12,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var logLevel = "error"
-var etcdAddr = getEnvWithDefault()
+var (
+	logLevel = "error"
+	etcdAddr = getEnvWithDefault()
+)
 
 func getEnvWithDefault() string {
 	ea := os.Getenv("DKRON_BACKEND_MACHINE")
@@ -21,10 +23,6 @@ func getEnvWithDefault() string {
 		return "127.0.0.1:2379"
 	}
 	return ea
-}
-
-func TestAgentCommand_implements(t *testing.T) {
-	var _ cli.Command = new(AgentCommand)
 }
 
 func TestAgentCommandRun(t *testing.T) {
@@ -105,13 +103,16 @@ func TestAgentCommand_runForElection(t *testing.T) {
 		"-log-level", logLevel,
 	}
 
-	resultCh := make(chan int)
-	go func() {
-		resultCh <- a1.Run(args)
-	}()
+	go a1.Run(args)
 
 	// Wait for the first agent to start and set itself as leader
-	time.Sleep(2 * time.Second)
+	kv1, err := watchOrDie(t, client, "dkron/leader")
+	if err != nil {
+		t.Fatal(err)
+	}
+	leaderA1 := string(kv1.Value)
+	t.Logf("%s is the current leader", leaderA1)
+	assert.Equal(t, a1Name, leaderA1)
 
 	// Start another agent
 	shutdownCh2 := make(chan struct{})
@@ -132,30 +133,40 @@ func TestAgentCommand_runForElection(t *testing.T) {
 		"-log-level", logLevel,
 	}
 
-	resultCh2 := make(chan int)
-	go func() {
-		resultCh2 <- a2.Run(args2)
-	}()
-
-	kv, _ := client.Get("dkron/leader")
-	leader := string(kv.Value)
-	log.Printf("%s is the current leader", leader)
-	if leader != a1Name {
-		t.Errorf("Expected %s to be the leader, got %s", a1Name, leader)
-	}
+	go a2.Run(args2)
 
 	// Send a shutdown request
 	shutdownCh <- struct{}{}
 	a1.candidate.Stop()
 
 	// Wait until test2 steps as leader
-	time.Sleep(4 * time.Second)
+rewatch:
+	kv2, err := watchOrDie(t, client, "dkron/leader")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(kv2.Value) == 0 || string(kv2.Value) == a1Name {
+		goto rewatch
+	}
+	assert.Equal(t, a2Name, string(kv2.Value))
+}
 
-	kv, _ = client.Get("dkron/leader")
-	leader = string(kv.Value)
-	log.Printf("%s is the current leader", leader)
-	if leader != a2Name {
-		t.Errorf("Expected %s to be the leader, got %s", a2Name, leader)
+func watchOrDie(t *testing.T, client store.Store, key string) (*store.KVPair, error) {
+	for {
+		resultCh, err := client.Watch(key, nil)
+		if err != nil {
+			return nil, err
+		}
+
+		_, more := <-resultCh
+		if more == false {
+			// The channel is closed, recreate the watch
+			continue
+		}
+		// If the channel worked, read the actual value
+		kv := <-resultCh
+		t.Logf("Value for key %s: %s", key, string(kv.Value))
+		return kv, nil
 	}
 }
 
