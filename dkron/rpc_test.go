@@ -6,6 +6,7 @@ import (
 
 	"github.com/hashicorp/serf/testutil"
 	"github.com/mitchellh/cli"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestRPCExecutionDone(t *testing.T) {
@@ -36,15 +37,12 @@ func TestRPCExecutionDone(t *testing.T) {
 		"-log-level", logLevel,
 	}
 
-	resultCh := make(chan int)
-	go func() {
-		resultCh <- a.Run(args)
-	}()
+	go a.Run(args)
 	time.Sleep(2 * time.Second)
 
 	testJob := &Job{
 		Name:     "test",
-		Schedule: "@every 2s",
+		Schedule: "@every 1m",
 		Command:  "/bin/false",
 		Disabled: true,
 	}
@@ -70,13 +68,8 @@ func TestRPCExecutionDone(t *testing.T) {
 	rc.callExecutionDone(testExecution)
 	execs, _ := store.GetExecutions("test")
 
-	if len(execs) == 0 {
-		t.Fatal("executions result is empty")
-	}
-
-	if string(execs[0].Output) != string(testExecution.Output) {
-		t.Fatalf("error on retrieved excution expected: %s got: %s", testExecution.Output, execs[0].Output)
-	}
+	assert.Len(t, execs, 1)
+	assert.Equal(t, string(testExecution.Output), string(execs[0].Output))
 
 	// Test store execution on a deleted job
 	store.DeleteJob(testJob.Name)
