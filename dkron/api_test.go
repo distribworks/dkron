@@ -93,7 +93,7 @@ func TestAPIJobCreateUpdateParentJob_SameParent(t *testing.T) {
 
 	jsonStr := []byte(`{
 		"name": "test_job",
-		"schedule": "@every 2s",
+		"schedule": "@every 1m",
 		"command": "date",
 		"owner": "mec",
 		"owner_email":
@@ -122,7 +122,7 @@ func TestAPIJobCreateUpdateParentJob_NoParent(t *testing.T) {
 
 	jsonStr := []byte(`{
 		"name": "test_job",
-		"schedule": "@every 2s",
+		"schedule": "@every 1m",
 		"command": "date",
 		"owner": "mec",
 		"owner_email":
