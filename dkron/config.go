@@ -84,7 +84,7 @@ func NewConfig(args []string, agent *AgentCommand) *Config {
 	cmdFlags.Usage = func() { agent.Ui.Output(agent.Help()) }
 
 	cmdFlags.Bool("server", false, "start dkron server")
-	cmdFlags.String("node", hostname, "[Deprecated use node_name]")
+	cmdFlags.String("node", hostname, "[Deprecated use node-name]")
 	cmdFlags.String("node-name", hostname, "node name")
 	cmdFlags.String("bind", fmt.Sprintf("0.0.0.0:%d", DefaultBindPort), "[Deprecated use bind-addr]")
 	cmdFlags.String("bind-addr", fmt.Sprintf("0.0.0.0:%d", DefaultBindPort), "address to bind listeners to")
@@ -146,7 +146,7 @@ func ReadConfig(agent *AgentCommand) *Config {
 		logrus.WithError(err).Info("No valid config found: Applying default values.")
 	}
 
-	tags, err := UnmarshalTags(viper.GetStringSlice("tags"))
+	tags, err := UnmarshalTags(viper.GetStringSlice("tag"))
 	if err != nil {
 		log.Fatal(err)
 	}
