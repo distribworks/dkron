@@ -1,6 +1,12 @@
-## 0.9.6
+## 0.9.6 (2017-11-14)
 
 - Migrate from glide to dep
+- Fix params precedence, cli params on top
+- More robust test suite
+- Gin logging to common logger
+- Better systemd script
+- Don't panic or fatal when sending notification
+- Serf upgrade
 
 ## 0.9.5 (2017-09-12)
 
