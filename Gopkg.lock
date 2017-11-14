@@ -190,8 +190,7 @@
 [[projects]]
   name = "github.com/hashicorp/serf"
   packages = ["coordinate","serf","testutil"]
-  revision = "0df3e3df1703f838243a7f3f12bf0b88566ade5a"
-  version = "v0.7.0"
+  version = "v0.8.1"
 
 [[projects]]
   branch = "master"
