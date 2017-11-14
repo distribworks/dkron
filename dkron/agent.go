@@ -66,8 +66,8 @@ Usage: dkron agent [options]
 
 Options:
 
-  -bind=0.0.0.0:8946              Address to bind network listeners to.
-  -advertise=bind_addr            Address used to advertise to other nodes in the cluster. By default, the bind address is advertised.
+  -bind-addr=0.0.0.0:8946         Address to bind network listeners to.
+  -advertise-addr=bind_addr       Address used to advertise to other nodes in the cluster. By default, the bind address is advertised.
   -http-addr=0.0.0.0:8080         Address to bind the UI web server to. Only used when server.
   -discover=cluster               A cluster name used to discovery peers. On
                                   networks that support multicast, this can be used to have

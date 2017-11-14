@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/Sirupsen/logrus"
@@ -81,81 +82,60 @@ func NewConfig(args []string, agent *AgentCommand) *Config {
 
 	cmdFlags := flag.NewFlagSet("server", flag.ContinueOnError)
 	cmdFlags.Usage = func() { agent.Ui.Output(agent.Help()) }
-	cmdFlags.String("node", hostname, "node name")
-	viper.SetDefault("node_name", cmdFlags.Lookup("node").Value)
-	cmdFlags.String("bind", fmt.Sprintf("0.0.0.0:%d", DefaultBindPort), "address to bind listeners to")
-	viper.SetDefault("bind_addr", cmdFlags.Lookup("bind").Value)
-	cmdFlags.String("advertise", "", "address to advertise to other nodes")
-	viper.SetDefault("advertise_addr", cmdFlags.Lookup("advertise").Value)
+
+	cmdFlags.Bool("server", false, "start dkron server")
+	cmdFlags.String("node", hostname, "[Deprecated use node-name]")
+	cmdFlags.String("node-name", hostname, "node name")
+	cmdFlags.String("bind", fmt.Sprintf("0.0.0.0:%d", DefaultBindPort), "[Deprecated use bind-addr]")
+	cmdFlags.String("bind-addr", fmt.Sprintf("0.0.0.0:%d", DefaultBindPort), "address to bind listeners to")
+	cmdFlags.String("advertise", "", "[Deprecated use advertise-addr]")
+	cmdFlags.String("advertise-addr", "", "address to advertise to other nodes")
 	cmdFlags.String("http-addr", ":8080", "HTTP address")
-	viper.SetDefault("http_addr", cmdFlags.Lookup("http-addr").Value)
 	cmdFlags.String("discover", "dkron", "mDNS discovery name")
-	viper.SetDefault("discover", cmdFlags.Lookup("discover").Value)
 	cmdFlags.String("backend", "etcd", "store backend")
-	viper.SetDefault("backend", cmdFlags.Lookup("backend").Value)
 	cmdFlags.String("backend-machine", "127.0.0.1:2379", "store backend machines addresses")
-	viper.SetDefault("backend_machine", cmdFlags.Lookup("backend-machine").Value)
 	cmdFlags.String("profile", "lan", "timing profile to use (lan, wan, local)")
-	viper.SetDefault("profile", cmdFlags.Lookup("profile").Value)
-	viper.SetDefault("server", cmdFlags.Bool("server", false, "start dkron server"))
-	var startJoin []string
-	cmdFlags.Var((*AppendSliceValue)(&startJoin), "join", "address of agent to join on startup")
+	var join []string
+	cmdFlags.Var((*AppendSliceValue)(&join), "join", "address of agent to join on startup")
 	var tag []string
 	cmdFlags.Var((*AppendSliceValue)(&tag), "tag", "tag pair, specified as key=value")
 	cmdFlags.String("keyspace", "dkron", "key namespace to use")
-	viper.SetDefault("keyspace", cmdFlags.Lookup("keyspace").Value)
 	cmdFlags.String("encrypt", "", "encryption key")
-	viper.SetDefault("encrypt", cmdFlags.Lookup("encrypt").Value)
-
 	cmdFlags.String("log-level", "info", "Log level (debug, info, warn, error, fatal, panic), defaults to info")
-	viper.SetDefault("log_level", cmdFlags.Lookup("log-level").Value)
-
-	viper.SetDefault("rpc_port", cmdFlags.Int("rpc-port", 6868, "RPC port"))
-	viper.SetDefault("advertise_rpc_port", cmdFlags.Int("advertise-rpc-port", 0, "advertise RPC port"))
+	cmdFlags.Int("rpc-port", 6868, "RPC port")
+	cmdFlags.Int("advertise-rpc-port", 0, "advertise RPC port")
 
 	// Notifications
 	cmdFlags.String("mail-host", "", "notification mail server host")
-	viper.SetDefault("mail_host", cmdFlags.Lookup("mail-host").Value)
 	cmdFlags.String("mail-port", "", "port to use for the mail server")
-	viper.SetDefault("mail_port", cmdFlags.Lookup("mail-port").Value)
 	cmdFlags.String("mail-username", "", "username for the mail server")
-	viper.SetDefault("mail_username", cmdFlags.Lookup("mail-username").Value)
 	cmdFlags.String("mail-password", "", "password of the mail server")
-	viper.SetDefault("mail_password", cmdFlags.Lookup("mail-password").Value)
 	cmdFlags.String("mail-from", "", "notification emails from address")
-	viper.SetDefault("mail_from", cmdFlags.Lookup("mail-from").Value)
 	cmdFlags.String("mail-payload", "", "notification mail payload")
-	viper.SetDefault("mail_payload", cmdFlags.Lookup("mail-payload").Value)
 	cmdFlags.String("mail-subject-prefix", "[Dkron]", "notification mail subject prefix")
-	viper.SetDefault("mail_subject_prefix", cmdFlags.Lookup("mail-subject-prefix").Value)
 
 	cmdFlags.String("webhook-url", "", "notification webhook url")
-	viper.SetDefault("webhook_url", cmdFlags.Lookup("webhook-url").Value)
 	cmdFlags.String("webhook-payload", "", "notification webhook payload")
-	viper.SetDefault("webhook_payload", cmdFlags.Lookup("webhook-payload").Value)
 	webhookHeaders := &AppendSliceValue{}
 	cmdFlags.Var(webhookHeaders, "webhook-header", "notification webhook additional header")
 
 	cmdFlags.String("dog-statsd-addr", "", "DataDog Agent address")
-	viper.SetDefault("dog_statsd_addr", cmdFlags.Lookup("dog-statsd-addr").Value)
 	var dogStatsdTags []string
 	cmdFlags.Var((*AppendSliceValue)(&dogStatsdTags), "dog-statsd-tags", "Datadog tags, specified as key:value")
 	cmdFlags.String("statsd-addr", "", "Statsd Address")
-	viper.SetDefault("statsd_addr", cmdFlags.Lookup("statsd-addr").Value)
 
 	if err := cmdFlags.Parse(args); err != nil {
 		log.Fatal(err)
 	}
 
-	// Set array params defaults
-	ut, err := UnmarshalTags(tag)
-	if err != nil {
-		log.Fatal(err)
-	}
-	viper.SetDefault("tags", ut)
-	viper.SetDefault("join", startJoin)
-	viper.SetDefault("webhook_headers", webhookHeaders)
-	viper.SetDefault("dog_statsd_tags", dogStatsdTags)
+	cmdFlags.VisitAll(func(f *flag.Flag) {
+		v := strings.Replace(f.Name, "-", "_", -1)
+		if f.Value.String() != f.DefValue {
+			viper.Set(v, f.Value.String())
+		} else {
+			viper.SetDefault(v, f.Value.String())
+		}
+	})
 
 	return ReadConfig(agent)
 }
@@ -166,7 +146,11 @@ func ReadConfig(agent *AgentCommand) *Config {
 		logrus.WithError(err).Info("No valid config found: Applying default values.")
 	}
 
-	tags := viper.GetStringMapString("tags")
+	tags, err := UnmarshalTags(viper.GetStringSlice("tag"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	server := viper.GetBool("server")
 	nodeName := viper.GetString("node_name")
 
