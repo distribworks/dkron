@@ -6,11 +6,13 @@ import (
 
 	"github.com/hashicorp/serf/testutil"
 	"github.com/mitchellh/cli"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestRPCExecutionDone(t *testing.T) {
 	store := NewStore("etcd", []string{etcdAddr}, nil, "dkron")
+	viper.Reset()
 
 	// Cleanup everything
 	err := store.Client.DeleteTree("dkron")
@@ -31,7 +33,7 @@ func TestRPCExecutionDone(t *testing.T) {
 
 	args := []string{
 		"-bind-addr", aAddr,
-		"-advertise-addr", aAddr,
+		"-backend-machine", etcdAddr,
 		"-node-name", "test1",
 		"-server",
 		"-keyspace", "dkron",
