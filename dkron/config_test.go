@@ -20,6 +20,7 @@ func TestReadConfigTags(t *testing.T) {
 		ShutdownCh: shutdownCh,
 	}
 
+	viper.Reset()
 	viper.SetConfigType("json")
 	var jsonConfig = []byte(`{
 		"tags": {
@@ -28,6 +29,7 @@ func TestReadConfigTags(t *testing.T) {
 	}`)
 	viper.ReadConfig(bytes.NewBuffer(jsonConfig))
 	config := ReadConfig(a)
+	t.Log(config.Tags)
 	assert.Equal(t, "bar", config.Tags["foo"])
 
 	viper.Set("tag", []string{"monthy=python"})
