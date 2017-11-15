@@ -32,7 +32,7 @@ func TestReadConfigTags(t *testing.T) {
 
 	viper.Set("tag", []string{"monthy=python"})
 	config = ReadConfig(a)
-	assert.NotContains(t, "foo", config.Tags)
-	assert.Contains(t, "monthy", config.Tags)
+	assert.NotContains(t, config.Tags, "foo")
+	assert.Contains(t, config.Tags, "monthy")
 	assert.Equal(t, "python", config.Tags["monthy"])
 }
