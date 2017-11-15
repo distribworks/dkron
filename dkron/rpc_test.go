@@ -33,7 +33,7 @@ func TestRPCExecutionDone(t *testing.T) {
 
 	args := []string{
 		"-bind-addr", aAddr,
-		//"-advertise-addr", aAddr,
+		"-backend-machine", etcdAddr,
 		"-node-name", "test1",
 		"-server",
 		"-keyspace", "dkron",
