@@ -140,15 +140,23 @@ func NewConfig(args []string, agent *AgentCommand) *Config {
 	return ReadConfig(agent)
 }
 
+// ReadConfig from file and create the actual config object.
 func ReadConfig(agent *AgentCommand) *Config {
 	err := viper.ReadInConfig() // Find and read the config file
 	if err != nil {             // Handle errors reading the config file
 		logrus.WithError(err).Info("No valid config found: Applying default values.")
 	}
 
-	tags, err := UnmarshalTags(viper.GetStringSlice("tag"))
-	if err != nil {
-		log.Fatal(err)
+	cliTags := viper.GetStringSlice("tag")
+	var tags map[string]string
+
+	if len(cliTags) > 0 {
+		tags, err = UnmarshalTags(cliTags)
+		if err != nil {
+			logrus.Fatal("config: Error unmarshaling cli tags")
+		}
+	} else {
+		tags = viper.GetStringMapString("tags")
 	}
 
 	server := viper.GetBool("server")
