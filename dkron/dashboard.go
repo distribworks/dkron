@@ -142,7 +142,7 @@ func createMyRender() multitemplate.Render {
 	return r
 }
 
-//go:generate go-bindata -prefix "../" -pkg dkron -ignore=.*\.md -ignore=\.?bower\.json -ignore=\.gitignore -ignore=Makefile -ignore=examples -ignore=tutorial -ignore=tests -ignore=rickshaw\/src -o bindata.go ../static/... ../templates
+//go:generate go-bindata -prefix "../" -pkg dkron -ignore=scss -ignore=.*\.md -ignore=\.?bower\.json -ignore=\.gitignore -ignore=Makefile -ignore=examples -ignore=tutorial -ignore=tests -ignore=rickshaw\/src -o bindata.go ../static/... ../templates
 func servePublic(c *gin.Context) {
 	path := c.Request.URL.Path
 
@@ -203,7 +203,7 @@ func funcMap() template.FuncMap {
 			j, _ := json.MarshalIndent(job, "", "\t")
 			return string(j)
 		},
-		"html": func(value []byte) string {
+		"toString": func(value []byte) string {
 			return string(template.HTML(value))
 		},
 		// Now unicode compliant
