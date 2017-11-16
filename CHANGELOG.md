@@ -7,6 +7,7 @@
 - Better systemd script
 - Don't panic or fatal when sending notification
 - Serf upgrade
+- Fix templating breaking change on Go 1.9 upgrade
 
 ## 0.9.5 (2017-09-12)
 
