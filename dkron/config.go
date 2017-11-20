@@ -84,7 +84,7 @@ func NewConfig(args []string, agent *AgentCommand) *Config {
 	cmdFlags.Usage = func() { agent.Ui.Output(agent.Help()) }
 
 	cmdFlags.Bool("server", false, "start dkron server")
-	cmdFlags.String("node", hostname, "[Deprecated use node_name]")
+	cmdFlags.String("node", hostname, "[Deprecated use node-name]")
 	cmdFlags.String("node-name", hostname, "node name")
 	cmdFlags.String("bind", fmt.Sprintf("0.0.0.0:%d", DefaultBindPort), "[Deprecated use bind-addr]")
 	cmdFlags.String("bind-addr", fmt.Sprintf("0.0.0.0:%d", DefaultBindPort), "address to bind listeners to")
@@ -95,8 +95,8 @@ func NewConfig(args []string, agent *AgentCommand) *Config {
 	cmdFlags.String("backend", "etcd", "store backend")
 	cmdFlags.String("backend-machine", "127.0.0.1:2379", "store backend machines addresses")
 	cmdFlags.String("profile", "lan", "timing profile to use (lan, wan, local)")
-	var startJoin []string
-	cmdFlags.Var((*AppendSliceValue)(&startJoin), "join", "address of agent to join on startup")
+	var join []string
+	cmdFlags.Var((*AppendSliceValue)(&join), "join", "address of agent to join on startup")
 	var tag []string
 	cmdFlags.Var((*AppendSliceValue)(&tag), "tag", "tag pair, specified as key=value")
 	cmdFlags.String("keyspace", "dkron", "key namespace to use")
@@ -140,15 +140,23 @@ func NewConfig(args []string, agent *AgentCommand) *Config {
 	return ReadConfig(agent)
 }
 
+// ReadConfig from file and create the actual config object.
 func ReadConfig(agent *AgentCommand) *Config {
 	err := viper.ReadInConfig() // Find and read the config file
 	if err != nil {             // Handle errors reading the config file
 		logrus.WithError(err).Info("No valid config found: Applying default values.")
 	}
 
-	tags, err := UnmarshalTags(viper.GetStringSlice("tags"))
-	if err != nil {
-		log.Fatal(err)
+	cliTags := viper.GetStringSlice("tag")
+	var tags map[string]string
+
+	if len(cliTags) > 0 {
+		tags, err = UnmarshalTags(cliTags)
+		if err != nil {
+			logrus.Fatal("config: Error unmarshaling cli tags")
+		}
+	} else {
+		tags = viper.GetStringMapString("tags")
 	}
 
 	server := viper.GetBool("server")

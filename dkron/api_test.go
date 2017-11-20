@@ -24,9 +24,9 @@ func setupAPITest(t *testing.T) (chan<- struct{}, <-chan int) {
 	}
 
 	args := []string{
-		"-bind", testutil.GetBindAddr().String(),
+		"-bind-addr", testutil.GetBindAddr().String(),
 		"-http-addr", "127.0.0.1:8090",
-		"-node", "test",
+		"-node-name", "test",
 		"-server",
 		"-log-level", logLevel,
 	}
@@ -50,7 +50,7 @@ func setupAPITest(t *testing.T) (chan<- struct{}, <-chan int) {
 func TestAPIJobCreateUpdate(t *testing.T) {
 	shutdownCh, _ := setupAPITest(t)
 
-	jsonStr := []byte(`{"name": "test_job", "schedule": "@every 2s", "command": "date", "owner": "mec", "owner_email": "foo@bar.com", "disabled": true}`)
+	jsonStr := []byte(`{"name": "test_job", "schedule": "@every 1m", "command": "date", "owner": "mec", "owner_email": "foo@bar.com", "disabled": true}`)
 
 	resp, err := http.Post("http://localhost:8090/v1/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
 	if err != nil {
@@ -65,7 +65,7 @@ func TestAPIJobCreateUpdate(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	jsonStr1 := []byte(`{"name": "test_job", "schedule": "@every 2s", "command": "test", "disabled": false}`)
+	jsonStr1 := []byte(`{"name": "test_job", "schedule": "@every 1m", "command": "test", "disabled": false}`)
 	resp, err = http.Post("http://localhost:8090/v1/jobs", "encoding/json", bytes.NewBuffer(jsonStr1))
 	if err != nil {
 		t.Fatal(err)
@@ -93,7 +93,7 @@ func TestAPIJobCreateUpdateParentJob_SameParent(t *testing.T) {
 
 	jsonStr := []byte(`{
 		"name": "test_job",
-		"schedule": "@every 2s",
+		"schedule": "@every 1m",
 		"command": "date",
 		"owner": "mec",
 		"owner_email":
@@ -110,8 +110,8 @@ func TestAPIJobCreateUpdateParentJob_SameParent(t *testing.T) {
 	resp.Body.Close()
 
 	assert.Equal(t, 422, resp.StatusCode)
-	errJson, err := json.Marshal(ErrSameParent.Error())
-	assert.Contains(t, string(errJson)+"\n", string(body))
+	errJSON, err := json.Marshal(ErrSameParent.Error())
+	assert.Contains(t, string(errJSON)+"\n", string(body))
 
 	// Send a shutdown request
 	shutdownCh <- struct{}{}
@@ -122,7 +122,7 @@ func TestAPIJobCreateUpdateParentJob_NoParent(t *testing.T) {
 
 	jsonStr := []byte(`{
 		"name": "test_job",
-		"schedule": "@every 2s",
+		"schedule": "@every 1m",
 		"command": "date",
 		"owner": "mec",
 		"owner_email":
@@ -139,8 +139,8 @@ func TestAPIJobCreateUpdateParentJob_NoParent(t *testing.T) {
 	resp.Body.Close()
 
 	assert.Equal(t, 422, resp.StatusCode)
-	errJson, err := json.Marshal(ErrParentJobNotFound.Error())
-	assert.Contains(t, string(errJson)+"\n", string(body))
+	errJSON, err := json.Marshal(ErrParentJobNotFound.Error())
+	assert.Contains(t, string(errJSON)+"\n", string(body))
 
 	// Send a shutdown request
 	shutdownCh <- struct{}{}

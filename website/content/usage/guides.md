@@ -150,7 +150,7 @@ Logging output of each job execution can be modified by using processor plugins.
 
 Processor plugins can be used to redirect the output of a job execution to different targets.
 
-Refer to the [plugins documentation](plugins.md) from more info
+Refer to the [plugins documentation]({{< relref "internal/plugins.md" >}}) from more info
 
 ## Concurrency
 

@@ -6,10 +6,13 @@ import (
 
 	"github.com/hashicorp/serf/testutil"
 	"github.com/mitchellh/cli"
+	"github.com/spf13/viper"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestRPCExecutionDone(t *testing.T) {
 	store := NewStore("etcd", []string{etcdAddr}, nil, "dkron")
+	viper.Reset()
 
 	// Cleanup everything
 	err := store.Client.DeleteTree("dkron")
@@ -30,21 +33,19 @@ func TestRPCExecutionDone(t *testing.T) {
 
 	args := []string{
 		"-bind-addr", aAddr,
+		"-backend-machine", etcdAddr,
 		"-node-name", "test1",
 		"-server",
 		"-keyspace", "dkron",
 		"-log-level", logLevel,
 	}
 
-	resultCh := make(chan int)
-	go func() {
-		resultCh <- a.Run(args)
-	}()
+	go a.Run(args)
 	time.Sleep(2 * time.Second)
 
 	testJob := &Job{
 		Name:     "test",
-		Schedule: "@every 2s",
+		Schedule: "@every 1m",
 		Command:  "/bin/false",
 		Disabled: true,
 	}
@@ -66,21 +67,17 @@ func TestRPCExecutionDone(t *testing.T) {
 	rc := &RPCClient{
 		ServerAddr: a.getRPCAddr(),
 	}
-
 	rc.callExecutionDone(testExecution)
 	execs, _ := store.GetExecutions("test")
 
-	if len(execs) == 0 {
-		t.Fatal("executions result is empty")
-	}
-
-	if string(execs[0].Output) != string(testExecution.Output) {
-		t.Fatalf("error on retrieved excution expected: %s got: %s", testExecution.Output, execs[0].Output)
-	}
+	assert.Len(t, execs, 1)
+	assert.Equal(t, string(testExecution.Output), string(execs[0].Output))
 
 	// Test store execution on a deleted job
 	store.DeleteJob(testJob.Name)
 
 	testExecution.FinishedAt = time.Now()
-	rc.callExecutionDone(testExecution)
+	err = rc.callExecutionDone(testExecution)
+
+	assert.Error(t, err, ErrExecutionDoneForDeletedJob)
 }
