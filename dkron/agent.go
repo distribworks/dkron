@@ -309,16 +309,20 @@ func (a *AgentCommand) Run(args []string) int {
 	expNode.Set(a.config.NodeName)
 
 	if a.config.Server {
-		a.store = NewStore(a.config.Backend, a.config.BackendMachines, a, a.config.Keyspace)
-		a.sched = NewScheduler()
-
-		a.ServeHTTP()
-		listenRPC(a)
-		a.participate()
+		a.StartServer()
 	}
 	go a.eventLoop()
 	a.ready = true
 	return a.handleSignals()
+}
+
+func (a *AgentCommand) StartServer() {
+	a.store = NewStore(a.config.Backend, a.config.BackendMachines, a, a.config.Keyspace)
+	a.sched = NewScheduler()
+
+	a.ServeHTTP()
+	listenRPC(a)
+	a.participate()
 }
 
 // handleSignals blocks until we get an exit-causing signal
