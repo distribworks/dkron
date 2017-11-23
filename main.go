@@ -15,21 +15,8 @@ const (
 )
 
 func main() {
-	// Get the command line args. We shortcut "--version" and "-v" to
-	// just show the version.
-	args := os.Args[1:]
-	for _, arg := range args {
-		if arg == "-v" || arg == "--version" {
-			newArgs := make([]string, len(args)+1)
-			newArgs[0] = "version"
-			copy(newArgs[1:], args)
-			args = newArgs
-			break
-		}
-	}
-
 	c := cli.NewCLI("dkron", VERSION)
-	c.Args = args
+	c.Args = os.Args[1:]
 	c.HelpFunc = cli.BasicHelpFunc("dkron")
 
 	ui := &cli.BasicUi{Writer: os.Stdout}
