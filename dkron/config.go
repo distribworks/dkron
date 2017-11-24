@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"net"
 	"os"
 	"strings"
@@ -76,6 +77,12 @@ func init() {
 // the command line and any file configs
 func NewConfig(args []string, agent *AgentCommand) *Config {
 	cmdFlags := ConfigFlagSet()
+
+	if args[len(args)-1] == "ignore" {
+		args = args[:len(args)-1]
+		cmdFlags.SetOutput(ioutil.Discard)
+	}
+
 	if err := cmdFlags.Parse(args); err != nil {
 		log.Fatal(err)
 	}
