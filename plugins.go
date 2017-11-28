@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"bitbucket.org/kardianos/osext"
+	"github.com/kardianos/osext"
 	"github.com/Sirupsen/logrus"
 	"github.com/hashicorp/go-plugin"
 	"github.com/victorcoder/dkron/dkron"
