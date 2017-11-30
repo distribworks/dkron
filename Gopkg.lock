@@ -190,6 +190,7 @@
 [[projects]]
   name = "github.com/hashicorp/serf"
   packages = ["coordinate","serf","testutil"]
+  revision = "d6574a5bb1226678d7010325fb6c985db20ee458"
   version = "v0.8.1"
 
 [[projects]]
@@ -373,6 +374,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "2bcce33a49a905258a484bed5395a5f0544bba99c7e82d8d41286bfd297d5ac4"
+  inputs-digest = "f1b404a2ffb7c4e37df5fc3c52f836fe8768833a76377318d8aa1eff236e0ce4"
   solver-name = "gps-cdcl"
   solver-version = 1

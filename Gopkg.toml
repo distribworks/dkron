@@ -37,8 +37,8 @@
   name = "github.com/docker/leadership"
 
 [[constraint]]
-  name = "github.com/docker/libkv"
-  version = "0.2.1"
+  name = "github.com/abronan/libkv"
+  revision = "5e4bb288a9a74320bb03f5c18d6bdbab0d8049de"
 
 [[constraint]]
   name = "github.com/gin-contrib/multitemplate"
@@ -58,7 +58,7 @@
 
 [[constraint]]
   name = "github.com/hashicorp/serf"
-  version = "0.7.0"
+  version = "^0.8.0"
 
 [[constraint]]
   name = "github.com/jordan-wright/email"
