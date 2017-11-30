@@ -34,11 +34,10 @@
   name = "github.com/armon/go-metrics"
 
 [[constraint]]
-  name = "github.com/docker/leadership"
+  name = "github.com/abronan/leadership"
 
 [[constraint]]
-  name = "github.com/abronan/libkv"
-  revision = "5e4bb288a9a74320bb03f5c18d6bdbab0d8049de"
+  name = "github.com/abronan/valkeyrie"
 
 [[constraint]]
   name = "github.com/gin-contrib/multitemplate"

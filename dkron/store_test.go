@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	s "github.com/docker/libkv/store"
+	s "github.com/abronan/valkeyrie/store"
 )
 
 func TestStore(t *testing.T) {

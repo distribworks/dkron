@@ -21,6 +21,18 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/abronan/leadership"
+  packages = ["."]
+  revision = "76df1b7fa3841b453d70d7183e8c02a87538c0ee"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/abronan/valkeyrie"
+  packages = [".","store","store/consul","store/etcd/v2","store/zookeeper"]
+  revision = "063d875e3c5fd734fa2aa12fac83829f62acfc70"
+
+[[projects]]
+  branch = "master"
   name = "github.com/armon/circbuf"
   packages = ["."]
   revision = "bbbad097214e2918d8543d5201d12bfd7bca254d"
@@ -62,14 +74,8 @@
   version = "v1.1.0"
 
 [[projects]]
-  name = "github.com/docker/leadership"
-  packages = ["."]
-  revision = "bfc7753dd48af19513b29deec23c364bf0f274eb"
-  version = "v0.1.0"
-
-[[projects]]
   name = "github.com/docker/libkv"
-  packages = [".","store","store/consul","store/etcd","store/zookeeper"]
+  packages = ["store"]
   revision = "aabc039ad04deb721e234f99cd1b4aa28ac71a40"
   version = "v0.2.1"
 
@@ -374,6 +380,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "f1b404a2ffb7c4e37df5fc3c52f836fe8768833a76377318d8aa1eff236e0ce4"
+  inputs-digest = "a149d4138acfbe0b0d25685b174b86773ad89b22f9cdaa32e2513c378c867ff9"
   solver-name = "gps-cdcl"
   solver-version = 1

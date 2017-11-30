@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/docker/libkv"
-	"github.com/docker/libkv/store"
+	"github.com/abronan/valkeyrie"
+	"github.com/abronan/valkeyrie/store"
 	"github.com/hashicorp/serf/testutil"
 	"github.com/mitchellh/cli"
 	"github.com/stretchr/testify/assert"
@@ -84,7 +84,7 @@ func TestAgentCommand_runForElection(t *testing.T) {
 		ShutdownCh: shutdownCh,
 	}
 
-	client, err := libkv.NewStore("etcd", []string{etcdAddr}, &store.Config{})
+	client, err := valkeyrie.NewStore("etcd", []string{etcdAddr}, &store.Config{})
 	if err != nil {
 		panic(err)
 	}
@@ -171,7 +171,7 @@ func watchOrDie(t *testing.T, client store.Store, key string) (*store.KVPair, er
 }
 
 func Test_processFilteredNodes(t *testing.T) {
-	client, err := libkv.NewStore("etcd", []string{etcdAddr}, &store.Config{})
+	client, err := valkeyrie.NewStore("etcd", []string{etcdAddr}, &store.Config{})
 	err = client.DeleteTree("dkron")
 	if err != nil {
 		if err == store.ErrNotReachable {

@@ -16,8 +16,8 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/abronan/leadership"
 	metrics "github.com/armon/go-metrics"
-	"github.com/docker/leadership"
 	"github.com/hashicorp/memberlist"
 	"github.com/hashicorp/serf/serf"
 	"github.com/mitchellh/cli"

@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/libkv/store"
+	"github.com/abronan/valkeyrie/store"
 	gin "github.com/gin-gonic/gin"
 )
 
