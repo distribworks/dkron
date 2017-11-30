@@ -153,7 +153,7 @@ rewatch:
 
 func watchOrDie(t *testing.T, client store.Store, key string) (*store.KVPair, error) {
 	for {
-		resultCh, err := client.Watch(key, nil)
+		resultCh, err := client.Watch(key, nil, nil)
 		if err != nil {
 			return nil, err
 		}
