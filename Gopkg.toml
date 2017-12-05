@@ -21,7 +21,7 @@
 #  version = "2.4.0"
 
 [[constraint]]
-  name = "bitbucket.org/kardianos/osext"
+  name = "github.com/kardianos/osext"
 
 [[constraint]]
   name = "github.com/Sirupsen/logrus"
