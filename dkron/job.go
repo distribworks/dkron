@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/libkv/store"
+	"github.com/abronan/valkeyrie/store"
 )
 
 const (
