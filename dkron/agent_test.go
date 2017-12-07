@@ -155,16 +155,19 @@ func watchOrDie(t *testing.T, client store.Store, key string) (*store.KVPair, er
 	for {
 		resultCh, err := client.Watch(key, nil, nil)
 		if err != nil {
+			if err == store.ErrKeyNotFound {
+				t.Log("not existing")
+				continue
+			}
 			return nil, err
 		}
 
-		_, more := <-resultCh
+		// If the channel worked, read the actual value
+		kv, more := <-resultCh
 		if more == false {
 			// The channel is closed, recreate the watch
 			continue
 		}
-		// If the channel worked, read the actual value
-		kv := <-resultCh
 		t.Logf("Value for key %s: %s", key, string(kv.Value))
 		return kv, nil
 	}
