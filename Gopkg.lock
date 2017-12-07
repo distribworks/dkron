@@ -2,12 +2,6 @@
 
 
 [[projects]]
-  branch = "default"
-  name = "bitbucket.org/kardianos/osext"
-  packages = ["."]
-  revision = "816c96ec6fef6a0cd72c9395d192c4bd0d918753"
-
-[[projects]]
   name = "github.com/DataDog/datadog-go"
   packages = ["statsd"]
   revision = "0ddda6bee21174ef6c4873647cb0d6ec9cba996f"
@@ -72,12 +66,6 @@
   packages = ["spew"]
   revision = "346938d642f2ec3594ed81d874461961cd0faa76"
   version = "v1.1.0"
-
-[[projects]]
-  name = "github.com/docker/libkv"
-  packages = ["store"]
-  revision = "aabc039ad04deb721e234f99cd1b4aa28ac71a40"
-  version = "v0.2.1"
 
 [[projects]]
   name = "github.com/fsnotify/fsnotify"
@@ -210,6 +198,12 @@
   packages = ["."]
   revision = "a62870b0c368c3c29de27027be67d855e308cc37"
   version = "v2.2"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/kardianos/osext"
+  packages = ["."]
+  revision = "ae77be60afb1dcacde03767a8c37337fad28ac14"
 
 [[projects]]
   name = "github.com/magiconair/properties"
@@ -380,6 +374,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "a149d4138acfbe0b0d25685b174b86773ad89b22f9cdaa32e2513c378c867ff9"
+  inputs-digest = "e65fb9bb4f8b8fa49eb9b8280ccc39f19c23e8a05839a5de777b060b4b2db43a"
   solver-name = "gps-cdcl"
   solver-version = 1
