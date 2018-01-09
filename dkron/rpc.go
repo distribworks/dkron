@@ -86,7 +86,7 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 		job.ErrorCount++
 	}
 
-	if err := rpcs.agent.store.SetJob(job); err != nil {
+	if err := rpcs.agent.store.SetJob(job,nil); err != nil {
 		log.Fatal("rpc:", err)
 	}
 

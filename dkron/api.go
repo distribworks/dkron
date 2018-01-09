@@ -126,7 +126,7 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(c *gin.Context) {
 	}
 
 	// Save the job to the store
-	if err = a.store.SetJob(&job); err != nil {
+	if err = a.store.SetJob(&job, ej); err != nil {
 		c.AbortWithError(422, err)
 		return
 	}
