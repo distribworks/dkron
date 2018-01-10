@@ -2,7 +2,7 @@ package dkron
 
 import (
 	"encoding/json"
-
+  "bytes"
 	"github.com/Sirupsen/logrus"
 	"github.com/docker/libkv/store"
 	"github.com/hashicorp/serf/serf"
@@ -50,9 +50,19 @@ func (a *AgentCommand) RunQuery(ex *Execution) {
 		log.Debug("agent: Filtered nodes to run: ", filterNodes)
 		log.Debug("agent: Filtered tags to run: ", job.Tags)
 
+		//serf match regexp but we want only match full tag
+		serfFilterTags := make(map[string]string)
+		for key, val := range filterTags {
+			b := new(bytes.Buffer)
+			b.WriteString("^")
+			b.WriteString(val)
+			b.WriteString("$")
+			serfFilterTags[key] = b.String()
+		}
+
 		params = &serf.QueryParam{
 			FilterNodes: filterNodes,
-			FilterTags:  filterTags,
+			FilterTags:  serfFilterTags,
 			RequestAck:  true,
 		}
 	} else {
