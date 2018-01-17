@@ -57,6 +57,7 @@ type AgentCommand struct {
 	sched     *Scheduler
 	candidate *leadership.Candidate
 	ready     bool
+	httpApi   *Transport
 }
 
 func (a *AgentCommand) Help() string {
@@ -320,7 +321,8 @@ func (a *AgentCommand) StartServer() {
 	a.store = NewStore(a.config.Backend, a.config.BackendMachines, a, a.config.Keyspace)
 	a.sched = NewScheduler()
 
-	a.ServeHTTP()
+	t := NewTransport(a)
+	t.ServeHTTP()
 	listenRPC(a)
 	a.participate()
 }
