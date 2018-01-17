@@ -16,17 +16,17 @@ type Transport interface {
 	ServeHTTP()
 }
 
-type httpApi struct {
+type HTTPTransport struct {
 	agent *AgentCommand
 }
 
 func NewTransport(a *AgentCommand) Transport {
-	return &httpApi{
+	return &HTTPTransport{
 		agent: a,
 	}
 }
 
-func (h *httpApi) ServeHTTP() {
+func (h *HTTPTransport) ServeHTTP() {
 	r := gin.Default()
 	if flag.Lookup("test.v") != nil {
 		gin.SetMode(gin.TestMode)
@@ -47,7 +47,7 @@ func (h *httpApi) ServeHTTP() {
 	go r.Run(h.agent.config.HTTPAddr)
 }
 
-func (h *httpApi) apiRoutes(r *gin.Engine) {
+func (h *HTTPTransport) apiRoutes(r *gin.Engine) {
 	v1 := r.Group("/v1")
 	v1.GET("/", h.indexHandler)
 	v1.GET("/members", h.membersHandler)
@@ -67,7 +67,7 @@ func (h *httpApi) apiRoutes(r *gin.Engine) {
 	jobs.GET("/:job/executions", h.executionsHandler)
 }
 
-func (h *httpApi) metaMiddleware() gin.HandlerFunc {
+func (h *HTTPTransport) metaMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Header("X-Whom", h.agent.config.NodeName)
 		c.Next()
@@ -82,7 +82,7 @@ func renderJSON(c *gin.Context, status int, v interface{}) {
 	}
 }
 
-func (h *httpApi) indexHandler(c *gin.Context) {
+func (h *HTTPTransport) indexHandler(c *gin.Context) {
 	local := h.agent.serf.LocalMember()
 	stats := map[string]map[string]string{
 		"agent": {
@@ -96,7 +96,7 @@ func (h *httpApi) indexHandler(c *gin.Context) {
 	renderJSON(c, http.StatusOK, stats)
 }
 
-func (h *httpApi) jobsHandler(c *gin.Context) {
+func (h *HTTPTransport) jobsHandler(c *gin.Context) {
 	jobs, err := h.agent.store.GetJobs()
 	if err != nil {
 		log.WithError(err).Error("api: Unable to get jobs, store not reachable.")
@@ -105,7 +105,7 @@ func (h *httpApi) jobsHandler(c *gin.Context) {
 	renderJSON(c, http.StatusOK, jobs)
 }
 
-func (h *httpApi) jobGetHandler(c *gin.Context) {
+func (h *HTTPTransport) jobGetHandler(c *gin.Context) {
 	jobName := c.Param("job")
 
 	job, err := h.agent.store.GetJob(jobName)
@@ -119,7 +119,7 @@ func (h *httpApi) jobGetHandler(c *gin.Context) {
 	renderJSON(c, http.StatusOK, job)
 }
 
-func (h *httpApi) jobCreateOrUpdateHandler(c *gin.Context) {
+func (h *HTTPTransport) jobCreateOrUpdateHandler(c *gin.Context) {
 	// Init the Job object with defaults
 	job := Job{
 		Concurrency: ConcurrencyAllow,
@@ -157,7 +157,7 @@ func (h *httpApi) jobCreateOrUpdateHandler(c *gin.Context) {
 	renderJSON(c, http.StatusCreated, job)
 }
 
-func (h *httpApi) jobDeleteHandler(c *gin.Context) {
+func (h *HTTPTransport) jobDeleteHandler(c *gin.Context) {
 	jobName := c.Param("job")
 
 	job, err := h.agent.store.DeleteJob(jobName)
@@ -170,7 +170,7 @@ func (h *httpApi) jobDeleteHandler(c *gin.Context) {
 	renderJSON(c, http.StatusOK, job)
 }
 
-func (h *httpApi) jobRunHandler(c *gin.Context) {
+func (h *HTTPTransport) jobRunHandler(c *gin.Context) {
 	jobName := c.Param("job")
 
 	job, err := h.agent.store.GetJob(jobName)
@@ -187,7 +187,7 @@ func (h *httpApi) jobRunHandler(c *gin.Context) {
 	renderJSON(c, http.StatusOK, job)
 }
 
-func (h *httpApi) executionsHandler(c *gin.Context) {
+func (h *HTTPTransport) executionsHandler(c *gin.Context) {
 	jobName := c.Param("job")
 
 	job, err := h.agent.store.GetJob(jobName)
@@ -209,18 +209,18 @@ func (h *httpApi) executionsHandler(c *gin.Context) {
 	renderJSON(c, http.StatusOK, executions)
 }
 
-func (h *httpApi) membersHandler(c *gin.Context) {
+func (h *HTTPTransport) membersHandler(c *gin.Context) {
 	renderJSON(c, http.StatusOK, h.agent.serf.Members())
 }
 
-func (h *httpApi) leaderHandler(c *gin.Context) {
+func (h *HTTPTransport) leaderHandler(c *gin.Context) {
 	member, err := h.agent.leaderMember()
 	if err == nil {
 		renderJSON(c, http.StatusOK, member)
 	}
 }
 
-func (h *httpApi) leaveHandler(c *gin.Context) {
+func (h *HTTPTransport) leaveHandler(c *gin.Context) {
 	if c.Request.Method == http.MethodGet {
 		log.Warn("/leave GET is deprecated and will be removed, use POST")
 	}
