@@ -17,7 +17,8 @@ type Transport interface {
 }
 
 type HTTPTransport struct {
-	agent *AgentCommand
+	agent  *AgentCommand
+	engine *gin.Engine
 }
 
 func NewTransport(a *AgentCommand) Transport {
@@ -27,28 +28,28 @@ func NewTransport(a *AgentCommand) Transport {
 }
 
 func (h *HTTPTransport) ServeHTTP() {
-	r := gin.Default()
+	h.engine = gin.Default()
 	if flag.Lookup("test.v") != nil {
 		gin.SetMode(gin.TestMode)
 	} else if log.Level >= logrus.InfoLevel {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	h.apiRoutes(r)
-	h.agent.dashboardRoutes(r)
+	h.apiRoutes()
+	h.agent.dashboardRoutes(h.engine)
 
-	r.Use(h.metaMiddleware())
+	h.engine.Use(h.metaMiddleware())
 	//r.GET("/debug/vars", expvar.Handler())
 
 	log.WithFields(logrus.Fields{
 		"address": h.agent.config.HTTPAddr,
 	}).Info("api: Running HTTP server")
 
-	go r.Run(h.agent.config.HTTPAddr)
+	go h.engine.Run(h.agent.config.HTTPAddr)
 }
 
-func (h *HTTPTransport) apiRoutes(r *gin.Engine) {
-	v1 := r.Group("/v1")
+func (h *HTTPTransport) apiRoutes() {
+	v1 := h.engine.Group("/v1")
 	v1.GET("/", h.indexHandler)
 	v1.GET("/members", h.membersHandler)
 	v1.GET("/leader", h.leaderHandler)
