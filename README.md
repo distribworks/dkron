@@ -58,6 +58,9 @@ https://supermarket.chef.io/cookbooks/dkron
 Python Client Library
 https://github.com/oldmantaiter/pydkron
 
+Ruby client
+https://github.com/jobandtalent/dkron-rb
+
 ## Get in touch
 
 - Twitter: [@dkronio](https://twitter.com/dkronio) or [@victorcoder](https://twitter.com/victorcoder)
