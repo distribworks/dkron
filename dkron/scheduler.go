@@ -16,8 +16,17 @@ var (
 	ErrScheduleParse = errors.New("Can't parse job schedule")
 )
 
+type Cron interface {
+	Start()
+	Stop()
+	Schedule(schedule cron.Schedule, cmd cron.Job)
+	Entries() []*cron.Entry
+	AddFunc(spec string, cmd func()) error
+	AddJob(spec string, cmd cron.Job) error
+}
+
 type Scheduler struct {
-	Cron    *cron.Cron
+	Cron    Cron
 	Started bool
 }
 

@@ -1,12 +1,14 @@
 package main
 
 import (
+	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 
-	"bitbucket.org/kardianos/osext"
+	"github.com/kardianos/osext"
 	"github.com/Sirupsen/logrus"
+	hclog "github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"github.com/victorcoder/dkron/dkron"
 	dkplugin "github.com/victorcoder/dkron/plugin"
@@ -65,12 +67,20 @@ func (p *Plugins) DiscoverPlugins() error {
 }
 
 func (p *Plugins) processorFactory(path string) (dkron.ExecutionProcessor, error) {
+	// Create an hclog.Logger
+	logger := hclog.New(&hclog.LoggerOptions{
+		Name:   "plugin",
+		Output: os.Stdout,
+		Level:  hclog.Info,
+	})
+
 	// Build the plugin client configuration and init the plugin
 	var config plugin.ClientConfig
 	config.Cmd = exec.Command(path)
 	config.HandshakeConfig = dkplugin.Handshake
 	config.Managed = true
 	config.Plugins = dkplugin.PluginMap
+	config.Logger = logger
 	client := plugin.NewClient(&config)
 
 	// Request the RPC client so we can get the provider

@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"net"
 	"os"
 	"strings"
@@ -75,13 +76,41 @@ func init() {
 // readConfig is responsible for setup of our configuration using
 // the command line and any file configs
 func NewConfig(args []string, agent *AgentCommand) *Config {
+	cmdFlags := ConfigFlagSet()
+
+	ignore := args[len(args)-1] == "ignore"
+	if ignore {
+		args = args[:len(args)-1]
+		cmdFlags.SetOutput(ioutil.Discard)
+	}
+
+	if err := cmdFlags.Parse(args); err != nil {
+		if ignore {
+			log.WithError(err).Error("agent: Error parsing flags")
+		} else {
+			log.Info("agent: Ignoring flag parse errors")
+		}
+	}
+
+	cmdFlags.VisitAll(func(f *flag.Flag) {
+		v := strings.Replace(f.Name, "-", "_", -1)
+		if f.Value.String() != f.DefValue {
+			viper.Set(v, f.Value.String())
+		} else {
+			viper.SetDefault(v, f.Value.String())
+		}
+	})
+
+	return ReadConfig(agent)
+}
+
+func ConfigFlagSet() *flag.FlagSet {
 	hostname, err := os.Hostname()
 	if err != nil {
 		log.Panic(err)
 	}
 
-	cmdFlags := flag.NewFlagSet("server", flag.ContinueOnError)
-	cmdFlags.Usage = func() { agent.Ui.Output(agent.Help()) }
+	cmdFlags := flag.NewFlagSet("dkron agent [options]", flag.ContinueOnError)
 
 	cmdFlags.Bool("server", false, "start dkron server")
 	cmdFlags.String("node", hostname, "[Deprecated use node-name]")
@@ -124,20 +153,7 @@ func NewConfig(args []string, agent *AgentCommand) *Config {
 	cmdFlags.Var((*AppendSliceValue)(&dogStatsdTags), "dog-statsd-tags", "Datadog tags, specified as key:value")
 	cmdFlags.String("statsd-addr", "", "Statsd Address")
 
-	if err := cmdFlags.Parse(args); err != nil {
-		log.Fatal(err)
-	}
-
-	cmdFlags.VisitAll(func(f *flag.Flag) {
-		v := strings.Replace(f.Name, "-", "_", -1)
-		if f.Value.String() != f.DefValue {
-			viper.Set(v, f.Value.String())
-		} else {
-			viper.SetDefault(v, f.Value.String())
-		}
-	})
-
-	return ReadConfig(agent)
+	return cmdFlags
 }
 
 // ReadConfig from file and create the actual config object.

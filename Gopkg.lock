@@ -2,12 +2,6 @@
 
 
 [[projects]]
-  branch = "default"
-  name = "bitbucket.org/kardianos/osext"
-  packages = ["."]
-  revision = "816c96ec6fef6a0cd72c9395d192c4bd0d918753"
-
-[[projects]]
   name = "github.com/DataDog/datadog-go"
   packages = ["statsd"]
   revision = "0ddda6bee21174ef6c4873647cb0d6ec9cba996f"
@@ -18,6 +12,18 @@
   packages = ["."]
   revision = "f006c2ac4710855cf0f916dd6b77acf6b048dc6e"
   version = "v1.0.3"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/abronan/leadership"
+  packages = ["."]
+  revision = "76df1b7fa3841b453d70d7183e8c02a87538c0ee"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/abronan/valkeyrie"
+  packages = [".","store","store/consul","store/etcd/v2","store/zookeeper"]
+  revision = "063d875e3c5fd734fa2aa12fac83829f62acfc70"
 
 [[projects]]
   branch = "master"
@@ -60,18 +66,6 @@
   packages = ["spew"]
   revision = "346938d642f2ec3594ed81d874461961cd0faa76"
   version = "v1.1.0"
-
-[[projects]]
-  name = "github.com/docker/leadership"
-  packages = ["."]
-  revision = "bfc7753dd48af19513b29deec23c364bf0f274eb"
-  version = "v0.1.0"
-
-[[projects]]
-  name = "github.com/docker/libkv"
-  packages = [".","store","store/consul","store/etcd","store/zookeeper"]
-  revision = "aabc039ad04deb721e234f99cd1b4aa28ac71a40"
-  version = "v0.2.1"
 
 [[projects]]
   name = "github.com/fsnotify/fsnotify"
@@ -190,6 +184,7 @@
 [[projects]]
   name = "github.com/hashicorp/serf"
   packages = ["coordinate","serf","testutil"]
+  revision = "d6574a5bb1226678d7010325fb6c985db20ee458"
   version = "v0.8.1"
 
 [[projects]]
@@ -203,6 +198,12 @@
   packages = ["."]
   revision = "a62870b0c368c3c29de27027be67d855e308cc37"
   version = "v2.2"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/kardianos/osext"
+  packages = ["."]
+  revision = "ae77be60afb1dcacde03767a8c37337fad28ac14"
 
 [[projects]]
   name = "github.com/magiconair/properties"
@@ -373,6 +374,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "2bcce33a49a905258a484bed5395a5f0544bba99c7e82d8d41286bfd297d5ac4"
+  inputs-digest = "e65fb9bb4f8b8fa49eb9b8280ccc39f19c23e8a05839a5de777b060b4b2db43a"
   solver-name = "gps-cdcl"
   solver-version = 1
