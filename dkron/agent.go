@@ -281,6 +281,10 @@ func (a *AgentCommand) setupSerf() *serf.Serf {
 	return serf
 }
 
+func (a *AgentCommand) Config() *Config {
+	return a.config
+}
+
 // UnmarshalTags is a utility function which takes a slice of strings in
 // key=value format and returns them as a tag mapping.
 func UnmarshalTags(tags []string) (map[string]string, error) {
