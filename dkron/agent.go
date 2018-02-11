@@ -49,6 +49,7 @@ type AgentCommand struct {
 	Version          string
 	ShutdownCh       <-chan struct{}
 	ProcessorPlugins map[string]ExecutionProcessor
+	HTTPTransport    Transport
 
 	serf      *serf.Serf
 	config    *Config
@@ -280,6 +281,10 @@ func (a *AgentCommand) setupSerf() *serf.Serf {
 	return serf
 }
 
+func (a *AgentCommand) Config() *Config {
+	return a.config
+}
+
 // UnmarshalTags is a utility function which takes a slice of strings in
 // key=value format and returns them as a tag mapping.
 func UnmarshalTags(tags []string) (map[string]string, error) {
@@ -320,7 +325,10 @@ func (a *AgentCommand) StartServer() {
 	a.store = NewStore(a.config.Backend, a.config.BackendMachines, a, a.config.Keyspace)
 	a.sched = NewScheduler()
 
-	a.ServeHTTP()
+	if a.HTTPTransport == nil {
+		a.HTTPTransport = NewTransport(a)
+	}
+	a.HTTPTransport.ServeHTTP()
 	listenRPC(a)
 	a.participate()
 }

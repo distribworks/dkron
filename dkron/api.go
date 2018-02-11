@@ -12,50 +12,69 @@ import (
 
 const pretty = "pretty"
 
-func (a *AgentCommand) ServeHTTP() {
-	r := gin.Default()
+type Transport interface {
+	ServeHTTP()
+}
+
+type HTTPTransport struct {
+	Engine *gin.Engine
+
+	agent *AgentCommand
+}
+
+func NewTransport(a *AgentCommand) *HTTPTransport {
+	return &HTTPTransport{
+		agent: a,
+	}
+}
+
+func (h *HTTPTransport) ServeHTTP() {
 	if flag.Lookup("test.v") != nil {
 		gin.SetMode(gin.TestMode)
 	} else if log.Level >= logrus.InfoLevel {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	a.apiRoutes(r)
-	a.dashboardRoutes(r)
+	h.Engine = gin.Default()
+	h.Engine.HTMLRender = CreateMyRender()
+	rootPath := h.Engine.Group("/")
 
-	r.Use(a.metaMiddleware())
+	h.ApiRoutes(rootPath)
+	h.agent.DashboardRoutes(rootPath)
+
+	h.Engine.Use(h.MetaMiddleware())
 	//r.GET("/debug/vars", expvar.Handler())
 
 	log.WithFields(logrus.Fields{
-		"address": a.config.HTTPAddr,
+		"address": h.agent.config.HTTPAddr,
 	}).Info("api: Running HTTP server")
 
-	go r.Run(a.config.HTTPAddr)
+	go h.Engine.Run(h.agent.config.HTTPAddr)
 }
 
-func (a *AgentCommand) apiRoutes(r *gin.Engine) {
+func (h *HTTPTransport) ApiRoutes(r *gin.RouterGroup) {
 	v1 := r.Group("/v1")
-	v1.GET("/", a.indexHandler)
-	v1.GET("/members", a.membersHandler)
-	v1.GET("/leader", a.leaderHandler)
-	v1.POST("/leave", a.leaveHandler)
+	v1.GET("/", h.indexHandler)
+	v1.GET("/members", h.membersHandler)
+	v1.GET("/leader", h.leaderHandler)
+	v1.POST("/leave", h.leaveHandler)
 
-	v1.POST("/jobs", a.jobCreateOrUpdateHandler)
-	v1.PATCH("/jobs", a.jobCreateOrUpdateHandler)
+	v1.POST("/jobs", h.jobCreateOrUpdateHandler)
+	v1.PATCH("/jobs", h.jobCreateOrUpdateHandler)
 	// Place fallback routes last
-	v1.GET("/jobs", a.jobsHandler)
+	v1.GET("/jobs", h.jobsHandler)
 
 	jobs := v1.Group("/jobs")
-	jobs.DELETE("/:job", a.jobDeleteHandler)
-	jobs.POST("/:job", a.jobRunHandler)
+	jobs.DELETE("/:job", h.jobDeleteHandler)
+	jobs.POST("/:job", h.jobRunHandler)
 	// Place fallback routes last
-	jobs.GET("/:job", a.jobGetHandler)
-	jobs.GET("/:job/executions", a.executionsHandler)
+	jobs.GET("/:job", h.jobGetHandler)
+	jobs.GET("/:job/executions", h.executionsHandler)
 }
 
-func (a *AgentCommand) metaMiddleware() gin.HandlerFunc {
+func (h *HTTPTransport) MetaMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Header("X-Whom", a.config.NodeName)
+		c.Header("X-Whom", h.agent.config.NodeName)
 		c.Next()
 	}
 }
@@ -68,22 +87,22 @@ func renderJSON(c *gin.Context, status int, v interface{}) {
 	}
 }
 
-func (a *AgentCommand) indexHandler(c *gin.Context) {
-	local := a.serf.LocalMember()
+func (h *HTTPTransport) indexHandler(c *gin.Context) {
+	local := h.agent.serf.LocalMember()
 	stats := map[string]map[string]string{
 		"agent": {
 			"name":    local.Name,
-			"version": a.Version,
-			"backend": a.config.Backend,
+			"version": h.agent.Version,
+			"backend": h.agent.config.Backend,
 		},
-		"serf": a.serf.Stats(),
+		"serf": h.agent.serf.Stats(),
 		"tags": local.Tags,
 	}
 	renderJSON(c, http.StatusOK, stats)
 }
 
-func (a *AgentCommand) jobsHandler(c *gin.Context) {
-	jobs, err := a.store.GetJobs()
+func (h *HTTPTransport) jobsHandler(c *gin.Context) {
+	jobs, err := h.agent.store.GetJobs()
 	if err != nil {
 		log.WithError(err).Error("api: Unable to get jobs, store not reachable.")
 		return
@@ -91,10 +110,10 @@ func (a *AgentCommand) jobsHandler(c *gin.Context) {
 	renderJSON(c, http.StatusOK, jobs)
 }
 
-func (a *AgentCommand) jobGetHandler(c *gin.Context) {
+func (h *HTTPTransport) jobGetHandler(c *gin.Context) {
 	jobName := c.Param("job")
 
-	job, err := a.store.GetJob(jobName)
+	job, err := h.agent.store.GetJob(jobName)
 	if err != nil {
 		log.Error(err)
 	}
@@ -105,7 +124,7 @@ func (a *AgentCommand) jobGetHandler(c *gin.Context) {
 	renderJSON(c, http.StatusOK, job)
 }
 
-func (a *AgentCommand) jobCreateOrUpdateHandler(c *gin.Context) {
+func (h *HTTPTransport) jobCreateOrUpdateHandler(c *gin.Context) {
 	// Init the Job object with defaults
 	job := Job{
 		Concurrency: ConcurrencyAllow,
@@ -113,7 +132,7 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(c *gin.Context) {
 	c.BindJSON(&job)
 
 	// Get if the requested job already exist
-	ej, err := a.store.GetJob(job.Name)
+	ej, err := h.agent.store.GetJob(job.Name)
 	if err != nil && err != store.ErrKeyNotFound {
 		c.AbortWithError(422, err)
 		return
@@ -126,63 +145,63 @@ func (a *AgentCommand) jobCreateOrUpdateHandler(c *gin.Context) {
 	}
 
 	// Save the job to the store
-	if err = a.store.SetJob(&job); err != nil {
+	if err = h.agent.store.SetJob(&job); err != nil {
 		c.AbortWithError(422, err)
 		return
 	}
 
 	// Save the job parent
-	if err = a.store.SetJobDependencyTree(&job, ej); err != nil {
+	if err = h.agent.store.SetJobDependencyTree(&job, ej); err != nil {
 		c.AbortWithError(422, err)
 		return
 	}
 
-	a.schedulerRestartQuery(string(a.store.GetLeader()))
+	h.agent.schedulerRestartQuery(string(h.agent.store.GetLeader()))
 
 	c.Header("Location", fmt.Sprintf("%s/%s", c.Request.RequestURI, job.Name))
 	renderJSON(c, http.StatusCreated, job)
 }
 
-func (a *AgentCommand) jobDeleteHandler(c *gin.Context) {
+func (h *HTTPTransport) jobDeleteHandler(c *gin.Context) {
 	jobName := c.Param("job")
 
-	job, err := a.store.DeleteJob(jobName)
+	job, err := h.agent.store.DeleteJob(jobName)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
 
-	a.schedulerRestartQuery(string(a.store.GetLeader()))
+	h.agent.schedulerRestartQuery(string(h.agent.store.GetLeader()))
 	renderJSON(c, http.StatusOK, job)
 }
 
-func (a *AgentCommand) jobRunHandler(c *gin.Context) {
+func (h *HTTPTransport) jobRunHandler(c *gin.Context) {
 	jobName := c.Param("job")
 
-	job, err := a.store.GetJob(jobName)
+	job, err := h.agent.store.GetJob(jobName)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
 
 	ex := NewExecution(job.Name)
-	a.RunQuery(ex)
+	h.agent.RunQuery(ex)
 
 	c.Header("Location", c.Request.RequestURI)
 	c.Status(http.StatusAccepted)
 	renderJSON(c, http.StatusOK, job)
 }
 
-func (a *AgentCommand) executionsHandler(c *gin.Context) {
+func (h *HTTPTransport) executionsHandler(c *gin.Context) {
 	jobName := c.Param("job")
 
-	job, err := a.store.GetJob(jobName)
+	job, err := h.agent.store.GetJob(jobName)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
 
-	executions, err := a.store.GetExecutions(job.Name)
+	executions, err := h.agent.store.GetExecutions(job.Name)
 	if err != nil {
 		if err == store.ErrKeyNotFound {
 			renderJSON(c, http.StatusOK, &[]Execution{})
@@ -195,22 +214,22 @@ func (a *AgentCommand) executionsHandler(c *gin.Context) {
 	renderJSON(c, http.StatusOK, executions)
 }
 
-func (a *AgentCommand) membersHandler(c *gin.Context) {
-	renderJSON(c, http.StatusOK, a.serf.Members())
+func (h *HTTPTransport) membersHandler(c *gin.Context) {
+	renderJSON(c, http.StatusOK, h.agent.serf.Members())
 }
 
-func (a *AgentCommand) leaderHandler(c *gin.Context) {
-	member, err := a.leaderMember()
+func (h *HTTPTransport) leaderHandler(c *gin.Context) {
+	member, err := h.agent.leaderMember()
 	if err == nil {
 		renderJSON(c, http.StatusOK, member)
 	}
 }
 
-func (a *AgentCommand) leaveHandler(c *gin.Context) {
+func (h *HTTPTransport) leaveHandler(c *gin.Context) {
 	if c.Request.Method == http.MethodGet {
 		log.Warn("/leave GET is deprecated and will be removed, use POST")
 	}
-	if err := a.serf.Leave(); err != nil {
-		renderJSON(c, http.StatusOK, a.listServers())
+	if err := h.agent.serf.Leave(); err != nil {
+		renderJSON(c, http.StatusOK, h.agent.listServers())
 	}
 }
