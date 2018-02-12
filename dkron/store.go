@@ -341,6 +341,11 @@ func (s *Store) SetExecution(execution *Execution) (string, error) {
 
 	err := s.Client.Put(fmt.Sprintf("%s/executions/%s/%s", s.keyspace, execution.JobName, key), exJson, nil)
 	if err != nil {
+		log.WithFields(logrus.Fields{
+			"job":       execution.JobName,
+			"execution": key,
+			"error":     err,
+		}).Debug("store: Failed to set key")
 		return "", err
 	}
 
@@ -349,16 +354,15 @@ func (s *Store) SetExecution(execution *Execution) (string, error) {
 		log.Errorf("store: No executions found for job %s", execution.JobName)
 	}
 
-	// Get and ordered array of all execution groups
-	var byGroup int64arr
-	for _, ex := range execs {
-		byGroup = append(byGroup, ex.Group)
-	}
-	sort.Sort(byGroup)
-
 	// Delete all execution results over the limit, starting from olders
-	if len(byGroup) > MaxExecutions {
-		for i := range byGroup[MaxExecutions:] {
+	if len(execs) > MaxExecutions {
+		//sort the array of all execution groups by StartedAt time
+		sort.Sort(ExecList(execs))
+		for i := 0; i < len(execs)-MaxExecutions; i++ {
+			log.WithFields(logrus.Fields{
+				"job":       execs[i].JobName,
+				"execution": execs[i].Key(),
+			}).Debug("store: to detele key")
 			err := s.Client.Delete(fmt.Sprintf("%s/executions/%s/%s", s.keyspace, execs[i].JobName, execs[i].Key()))
 			if err != nil {
 				log.Errorf("store: Trying to delete overflowed execution %s", execs[i].Key())
