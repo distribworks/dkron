@@ -44,3 +44,17 @@ func NewExecution(jobName string) *Execution {
 func (e *Execution) Key() string {
 	return fmt.Sprintf("%d-%s", e.StartedAt.UnixNano(), e.NodeName)
 }
+
+type ExecList []*Execution
+
+func (el ExecList) Len() int {
+	return len(el)
+}
+
+func (el ExecList) Swap(i, j int) {
+	el[i], el[j] = el[j], el[i]
+}
+
+func (el ExecList) Less(i, j int) bool {
+	return el[i].StartedAt.Before(el[j].StartedAt)
+}
