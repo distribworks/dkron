@@ -3,7 +3,7 @@ package dkron
 import (
 	"testing"
 
-	s "github.com/docker/libkv/store"
+	s "github.com/abronan/valkeyrie/store"
 	"github.com/stretchr/testify/assert"
 )
 

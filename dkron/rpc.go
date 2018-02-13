@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/abronan/valkeyrie/store"
 	metrics "github.com/armon/go-metrics"
-	"github.com/docker/libkv/store"
 	"github.com/hashicorp/serf/serf"
 )
 

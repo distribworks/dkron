@@ -21,7 +21,7 @@
 #  version = "2.4.0"
 
 [[constraint]]
-  name = "bitbucket.org/kardianos/osext"
+  name = "github.com/kardianos/osext"
 
 [[constraint]]
   name = "github.com/Sirupsen/logrus"
@@ -34,11 +34,10 @@
   name = "github.com/armon/go-metrics"
 
 [[constraint]]
-  name = "github.com/docker/leadership"
+  name = "github.com/abronan/leadership"
 
 [[constraint]]
-  name = "github.com/docker/libkv"
-  version = "0.2.1"
+  name = "github.com/abronan/valkeyrie"
 
 [[constraint]]
   name = "github.com/gin-contrib/multitemplate"
@@ -58,7 +57,7 @@
 
 [[constraint]]
   name = "github.com/hashicorp/serf"
-  version = "0.7.0"
+  version = "^0.8.0"
 
 [[constraint]]
   name = "github.com/jordan-wright/email"

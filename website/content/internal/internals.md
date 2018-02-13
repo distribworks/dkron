@@ -2,13 +2,13 @@
 title: Internals
 ---
 
-This document is a WIP, it's intended to describe the reasons that lead to design decissions in Dkron.
+This document is a WIP, it's intended to describe the reasons that lead to design decisions in Dkron.
 
 ## Execution results
 
 Dkron store the result of each job execution in each node.
 
-Every time dkron executes a job it assigns it an execution group, genrating a new uuid and send a serf query to target machines and waits for a response.
+Every time dkron executes a job it assigns it an execution group, generating a new uuid and send a serf query to target machines and waits for a response.
 
 Each target machine that will run the job, then responds with an execution object saying it started to run the job.
 

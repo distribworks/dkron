@@ -1,3 +1,12 @@
+## 0.9.7 (2018-02-12)
+
+- Less verbose plugin logging
+- Update broken osext dep (@ti)
+- Switch from libkv to valkeyrie
+- Refactor for usable core code
+- Fix unsorted execution groups (@firstway)
+- Fix GetLastExecutionGroup (@firstway)
+
 ## 0.9.6 (2017-11-14)
 
 - Migrate from glide to dep

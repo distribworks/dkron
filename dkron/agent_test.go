@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/docker/libkv"
-	"github.com/docker/libkv/store"
+	"github.com/abronan/valkeyrie"
+	"github.com/abronan/valkeyrie/store"
 	"github.com/hashicorp/serf/testutil"
 	"github.com/mitchellh/cli"
 	"github.com/stretchr/testify/assert"
@@ -84,7 +84,7 @@ func TestAgentCommand_runForElection(t *testing.T) {
 		ShutdownCh: shutdownCh,
 	}
 
-	client, err := libkv.NewStore("etcd", []string{etcdAddr}, &store.Config{})
+	client, err := valkeyrie.NewStore("etcd", []string{etcdAddr}, &store.Config{})
 	if err != nil {
 		panic(err)
 	}
@@ -106,7 +106,7 @@ func TestAgentCommand_runForElection(t *testing.T) {
 	go a1.Run(args)
 
 	// Wait for the first agent to start and set itself as leader
-	kv1, err := watchOrDie(t, client, "dkron/leader")
+	kv1, err := watchOrDie(client, "dkron/leader")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -141,37 +141,35 @@ func TestAgentCommand_runForElection(t *testing.T) {
 
 	// Wait until test2 steps as leader
 rewatch:
-	kv2, err := watchOrDie(t, client, "dkron/leader")
+	kv2, err := watchOrDie(client, "dkron/leader")
 	if err != nil {
 		t.Fatal(err)
 	}
 	if len(kv2.Value) == 0 || string(kv2.Value) == a1Name {
 		goto rewatch
 	}
+	t.Logf("%s is the current leader", kv2.Value)
 	assert.Equal(t, a2Name, string(kv2.Value))
 }
 
-func watchOrDie(t *testing.T, client store.Store, key string) (*store.KVPair, error) {
+func watchOrDie(client store.Store, key string) (*store.KVPair, error) {
 	for {
-		resultCh, err := client.Watch(key, nil)
+		resultCh, err := client.Watch(key, nil, nil)
 		if err != nil {
+			if err == store.ErrKeyNotFound {
+				continue
+			}
 			return nil, err
 		}
 
-		_, more := <-resultCh
-		if more == false {
-			// The channel is closed, recreate the watch
-			continue
-		}
 		// If the channel worked, read the actual value
 		kv := <-resultCh
-		t.Logf("Value for key %s: %s", key, string(kv.Value))
 		return kv, nil
 	}
 }
 
 func Test_processFilteredNodes(t *testing.T) {
-	client, err := libkv.NewStore("etcd", []string{etcdAddr}, &store.Config{})
+	client, err := valkeyrie.NewStore("etcd", []string{etcdAddr}, &store.Config{})
 	err = client.DeleteTree("dkron")
 	if err != nil {
 		if err == store.ErrNotReachable {

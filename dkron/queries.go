@@ -4,7 +4,7 @@ import (
 	"encoding/json"
   "bytes"
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/libkv/store"
+	"github.com/abronan/valkeyrie/store"
 	"github.com/hashicorp/serf/serf"
 )
 

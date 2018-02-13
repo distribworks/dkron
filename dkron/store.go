@@ -6,11 +6,11 @@ import (
 	"sort"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/libkv"
-	"github.com/docker/libkv/store"
-	"github.com/docker/libkv/store/consul"
-	"github.com/docker/libkv/store/etcd"
-	"github.com/docker/libkv/store/zookeeper"
+	"github.com/abronan/valkeyrie"
+	"github.com/abronan/valkeyrie/store"
+	"github.com/abronan/valkeyrie/store/consul"
+	etcd "github.com/abronan/valkeyrie/store/etcd/v2"
+	"github.com/abronan/valkeyrie/store/zookeeper"
 	"github.com/victorcoder/dkron/cron"
 )
 
@@ -30,7 +30,7 @@ func init() {
 }
 
 func NewStore(backend string, machines []string, a *AgentCommand, keyspace string) *Store {
-	s, err := libkv.NewStore(store.Backend(backend), machines, nil)
+	s, err := valkeyrie.NewStore(store.Backend(backend), machines, nil)
 	if err != nil {
 		log.Error(err)
 	}
@@ -41,7 +41,7 @@ func NewStore(backend string, machines []string, a *AgentCommand, keyspace strin
 		"keyspace": keyspace,
 	}).Debug("store: Backend config")
 
-	_, err = s.List(keyspace)
+	_, err = s.List(keyspace, nil)
 	if err != store.ErrKeyNotFound && err != nil {
 		log.WithError(err).Fatal("store: Store backend not reachable")
 	}
@@ -186,7 +186,7 @@ func (s *Store) validateJob(job *Job) error {
 
 // GetJobs returns all jobs
 func (s *Store) GetJobs() ([]*Job, error) {
-	res, err := s.Client.List(s.keyspace + "/jobs/")
+	res, err := s.Client.List(s.keyspace+"/jobs/", nil)
 	if err != nil {
 		if err == store.ErrKeyNotFound {
 			log.Debug("store: No jobs found")
@@ -210,7 +210,7 @@ func (s *Store) GetJobs() ([]*Job, error) {
 
 // Get a job
 func (s *Store) GetJob(name string) (*Job, error) {
-	res, err := s.Client.Get(s.keyspace + "/jobs/" + name)
+	res, err := s.Client.Get(s.keyspace+"/jobs/"+name, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -249,7 +249,7 @@ func (s *Store) DeleteJob(name string) (*Job, error) {
 
 func (s *Store) GetExecutions(jobName string) ([]*Execution, error) {
 	prefix := fmt.Sprintf("%s/executions/%s", s.keyspace, jobName)
-	res, err := s.Client.List(prefix)
+	res, err := s.Client.List(prefix, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -275,24 +275,32 @@ func (s *Store) GetExecutions(jobName string) ([]*Execution, error) {
 }
 
 func (s *Store) GetLastExecutionGroup(jobName string) ([]*Execution, error) {
-	res, err := s.Client.List(fmt.Sprintf("%s/executions/%s", s.keyspace, jobName))
+	res, err := s.Client.List(fmt.Sprintf("%s/executions/%s", s.keyspace, jobName), nil)
 	if err != nil {
 		return nil, err
 	}
-	if len(res) == 0{
+	if len(res) == 0 {
 		return []*Execution{}, nil
 	}
 
+	var lastEx Execution
 	var ex Execution
-	err = json.Unmarshal([]byte(res[len(res)-1].Value), &ex)
-	if err != nil {
-		return nil, err
+	// res does not guarantee any order,
+	// so compare them by `StartedAt` time and get the last one
+	for _, node := range res {
+		err := json.Unmarshal([]byte(node.Value), &ex)
+		if err != nil {
+			return nil, err
+		}
+		if ex.StartedAt.After(lastEx.StartedAt) {
+			lastEx = ex
+		}
 	}
-	return s.GetExecutionGroup(&ex)
+	return s.GetExecutionGroup(&lastEx)
 }
 
 func (s *Store) GetExecutionGroup(execution *Execution) ([]*Execution, error) {
-	res, err := s.Client.List(fmt.Sprintf("%s/executions/%s", s.keyspace, execution.JobName))
+	res, err := s.Client.List(fmt.Sprintf("%s/executions/%s", s.keyspace, execution.JobName), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -346,6 +354,11 @@ func (s *Store) SetExecution(execution *Execution) (string, error) {
 
 	err := s.Client.Put(fmt.Sprintf("%s/executions/%s/%s", s.keyspace, execution.JobName, key), exJson, nil)
 	if err != nil {
+		log.WithFields(logrus.Fields{
+			"job":       execution.JobName,
+			"execution": key,
+			"error":     err,
+		}).Debug("store: Failed to set key")
 		return "", err
 	}
 
@@ -354,16 +367,15 @@ func (s *Store) SetExecution(execution *Execution) (string, error) {
 		log.Errorf("store: No executions found for job %s", execution.JobName)
 	}
 
-	// Get and ordered array of all execution groups
-	var byGroup int64arr
-	for _, ex := range execs {
-		byGroup = append(byGroup, ex.Group)
-	}
-	sort.Sort(byGroup)
-
 	// Delete all execution results over the limit, starting from olders
-	if len(byGroup) > MaxExecutions {
-		for i := range byGroup[MaxExecutions:] {
+	if len(execs) > MaxExecutions {
+		//sort the array of all execution groups by StartedAt time
+		sort.Sort(ExecList(execs))
+		for i := 0; i < len(execs)-MaxExecutions; i++ {
+			log.WithFields(logrus.Fields{
+				"job":       execs[i].JobName,
+				"execution": execs[i].Key(),
+			}).Debug("store: to detele key")
 			err := s.Client.Delete(fmt.Sprintf("%s/executions/%s/%s", s.keyspace, execs[i].JobName, execs[i].Key()))
 			if err != nil {
 				log.Errorf("store: Trying to delete overflowed execution %s", execs[i].Key())
@@ -381,7 +393,7 @@ func (s *Store) DeleteExecutions(jobName string) error {
 
 // Retrieve the leader from the store
 func (s *Store) GetLeader() []byte {
-	res, err := s.Client.Get(s.LeaderKey())
+	res, err := s.Client.Get(s.LeaderKey(), nil)
 	if err != nil {
 		if err == store.ErrNotReachable {
 			log.Fatal("store: Store not reachable, be sure you have an existing key-value store running is running and is reachable.")

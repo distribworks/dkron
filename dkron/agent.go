@@ -16,8 +16,8 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/abronan/leadership"
 	metrics "github.com/armon/go-metrics"
-	"github.com/docker/leadership"
 	"github.com/hashicorp/memberlist"
 	"github.com/hashicorp/serf/serf"
 	"github.com/mitchellh/cli"
@@ -49,6 +49,7 @@ type AgentCommand struct {
 	Version          string
 	ShutdownCh       <-chan struct{}
 	ProcessorPlugins map[string]ExecutionProcessor
+	HTTPTransport    Transport
 
 	serf      *serf.Serf
 	config    *Config
@@ -280,6 +281,10 @@ func (a *AgentCommand) setupSerf() *serf.Serf {
 	return serf
 }
 
+func (a *AgentCommand) Config() *Config {
+	return a.config
+}
+
 // UnmarshalTags is a utility function which takes a slice of strings in
 // key=value format and returns them as a tag mapping.
 func UnmarshalTags(tags []string) (map[string]string, error) {
@@ -309,16 +314,23 @@ func (a *AgentCommand) Run(args []string) int {
 	expNode.Set(a.config.NodeName)
 
 	if a.config.Server {
-		a.store = NewStore(a.config.Backend, a.config.BackendMachines, a, a.config.Keyspace)
-		a.sched = NewScheduler()
-
-		a.ServeHTTP()
-		listenRPC(a)
-		a.participate()
+		a.StartServer()
 	}
 	go a.eventLoop()
 	a.ready = true
 	return a.handleSignals()
+}
+
+func (a *AgentCommand) StartServer() {
+	a.store = NewStore(a.config.Backend, a.config.BackendMachines, a, a.config.Keyspace)
+	a.sched = NewScheduler()
+
+	if a.HTTPTransport == nil {
+		a.HTTPTransport = NewTransport(a)
+	}
+	a.HTTPTransport.ServeHTTP()
+	listenRPC(a)
+	a.participate()
 }
 
 // handleSignals blocks until we get an exit-causing signal
