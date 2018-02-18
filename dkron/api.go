@@ -102,7 +102,7 @@ func (h *HTTPTransport) indexHandler(c *gin.Context) {
 }
 
 func (h *HTTPTransport) jobsHandler(c *gin.Context) {
-	jobs, err := h.agent.store.GetJobs()
+	jobs, err := h.agent.Store.GetJobs()
 	if err != nil {
 		log.WithError(err).Error("api: Unable to get jobs, store not reachable.")
 		return
@@ -113,7 +113,7 @@ func (h *HTTPTransport) jobsHandler(c *gin.Context) {
 func (h *HTTPTransport) jobGetHandler(c *gin.Context) {
 	jobName := c.Param("job")
 
-	job, err := h.agent.store.GetJob(jobName)
+	job, err := h.agent.Store.GetJob(jobName)
 	if err != nil {
 		log.Error(err)
 	}
@@ -132,7 +132,7 @@ func (h *HTTPTransport) jobCreateOrUpdateHandler(c *gin.Context) {
 	c.BindJSON(&job)
 
 	// Get if the requested job already exist
-	ej, err := h.agent.store.GetJob(job.Name)
+	ej, err := h.agent.Store.GetJob(job.Name)
 	if err != nil && err != store.ErrKeyNotFound {
 		c.AbortWithError(422, err)
 		return
@@ -145,18 +145,18 @@ func (h *HTTPTransport) jobCreateOrUpdateHandler(c *gin.Context) {
 	}
 
 	// Save the job to the store
-	if err = h.agent.store.SetJob(&job); err != nil {
+	if err = h.agent.Store.SetJob(&job); err != nil {
 		c.AbortWithError(422, err)
 		return
 	}
 
 	// Save the job parent
-	if err = h.agent.store.SetJobDependencyTree(&job, ej); err != nil {
+	if err = h.agent.Store.SetJobDependencyTree(&job, ej); err != nil {
 		c.AbortWithError(422, err)
 		return
 	}
 
-	h.agent.schedulerRestartQuery(string(h.agent.store.GetLeader()))
+	h.agent.schedulerRestartQuery(string(h.agent.Store.GetLeader()))
 
 	c.Header("Location", fmt.Sprintf("%s/%s", c.Request.RequestURI, job.Name))
 	renderJSON(c, http.StatusCreated, job)
@@ -165,20 +165,20 @@ func (h *HTTPTransport) jobCreateOrUpdateHandler(c *gin.Context) {
 func (h *HTTPTransport) jobDeleteHandler(c *gin.Context) {
 	jobName := c.Param("job")
 
-	job, err := h.agent.store.DeleteJob(jobName)
+	job, err := h.agent.Store.DeleteJob(jobName)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
 
-	h.agent.schedulerRestartQuery(string(h.agent.store.GetLeader()))
+	h.agent.schedulerRestartQuery(string(h.agent.Store.GetLeader()))
 	renderJSON(c, http.StatusOK, job)
 }
 
 func (h *HTTPTransport) jobRunHandler(c *gin.Context) {
 	jobName := c.Param("job")
 
-	job, err := h.agent.store.GetJob(jobName)
+	job, err := h.agent.Store.GetJob(jobName)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
@@ -195,13 +195,13 @@ func (h *HTTPTransport) jobRunHandler(c *gin.Context) {
 func (h *HTTPTransport) executionsHandler(c *gin.Context) {
 	jobName := c.Param("job")
 
-	job, err := h.agent.store.GetJob(jobName)
+	job, err := h.agent.Store.GetJob(jobName)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
 
-	executions, err := h.agent.store.GetExecutions(job.Name)
+	executions, err := h.agent.Store.GetExecutions(job.Name)
 	if err != nil {
 		if err == store.ErrKeyNotFound {
 			renderJSON(c, http.StatusOK, &[]Execution{})

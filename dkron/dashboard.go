@@ -67,7 +67,7 @@ func (a *AgentCommand) dashboardIndexHandler(c *gin.Context) {
 }
 
 func (a *AgentCommand) dashboardJobsHandler(c *gin.Context) {
-	jobs, _ := a.store.GetJobs()
+	jobs, _ := a.Store.GetJobs()
 
 	data := struct {
 		Common *commonDashboardData
@@ -83,7 +83,7 @@ func (a *AgentCommand) dashboardJobsHandler(c *gin.Context) {
 func (a *AgentCommand) dashboardExecutionsHandler(c *gin.Context) {
 	job := c.Param("job")
 
-	groups, byGroup, err := a.store.GetGroupedExecutions(job)
+	groups, byGroup, err := a.Store.GetGroupedExecutions(job)
 	if err != nil {
 		log.Error(err)
 	}

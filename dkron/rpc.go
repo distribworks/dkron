@@ -28,7 +28,7 @@ func (rpcs *RPCServer) GetJob(jobName string, job *Job) error {
 		"job": jobName,
 	}).Debug("rpc: Received GetJob")
 
-	j, err := rpcs.agent.store.GetJob(jobName)
+	j, err := rpcs.agent.Store.GetJob(jobName)
 	if err != nil {
 		return err
 	}
@@ -49,7 +49,7 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 	}).Debug("rpc: Received execution done")
 
 	// Load the job from the store
-	job, err := rpcs.agent.store.GetJob(execution.JobName)
+	job, err := rpcs.agent.Store.GetJob(execution.JobName)
 	if err != nil {
 		if err == store.ErrKeyNotFound {
 			log.Warning(ErrExecutionDoneForDeletedJob)
@@ -74,7 +74,7 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 	}
 
 	// Save the execution to store
-	if _, err := rpcs.agent.store.SetExecution(&execution); err != nil {
+	if _, err := rpcs.agent.Store.SetExecution(&execution); err != nil {
 		return err
 	}
 
@@ -86,7 +86,7 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 		job.ErrorCount++
 	}
 
-	if err := rpcs.agent.store.SetJob(job); err != nil {
+	if err := rpcs.agent.Store.SetJob(job); err != nil {
 		log.Fatal("rpc:", err)
 	}
 
@@ -115,7 +115,7 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 		return nil
 	}
 
-	exg, err := rpcs.agent.store.GetExecutionGroup(&execution)
+	exg, err := rpcs.agent.Store.GetExecutionGroup(&execution)
 	if err != nil {
 		log.WithError(err).WithField("group", execution.Group).Error("rpc: Error getting execution group.")
 		return err
@@ -128,7 +128,7 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 	// Check first if there's dependent jobs and then check for the job status to begin executiong dependent jobs on success.
 	if len(job.DependentJobs) > 0 && job.Status() == Success {
 		for _, djn := range job.DependentJobs {
-			dj, err := rpcs.agent.store.GetJob(djn)
+			dj, err := rpcs.agent.Store.GetJob(djn)
 			if err != nil {
 				return err
 			}
