@@ -150,6 +150,7 @@ func (a *AgentCommand) schedulerRestartQuery(leaderName string) {
 // Broadcast a query to get the RPC config of one dkron_server, any that could
 // attend later RPC calls.
 func (a *AgentCommand) queryRPCConfig() ([]byte, error) {
+queryConfigStart:
 	nodeName := a.selectServer().Name
 
 	params := &serf.QueryParam{
@@ -196,6 +197,13 @@ func (a *AgentCommand) queryRPCConfig() ([]byte, error) {
 	log.WithFields(logrus.Fields{
 		"query": QueryRPCConfig,
 	}).Debug("proc: Done receiving acks and responses")
+
+	if rpcAddr == nil {
+		log.WithFields(logrus.Fields{
+			"query": QueryRPCConfig,
+		}).Debug("proc: Failed to receive a config response, retrying")
+		goto queryConfigStart
+	}
 
 	return rpcAddr, nil
 }
