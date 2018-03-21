@@ -95,7 +95,11 @@ func NewConfig(args []string, agent *AgentCommand) *Config {
 	cmdFlags.VisitAll(func(f *flag.Flag) {
 		v := strings.Replace(f.Name, "-", "_", -1)
 		if f.Value.String() != f.DefValue {
-			viper.Set(v, f.Value.String())
+			if sliceValue, ok := f.Value.(*AppendSliceValue); ok {
+				viper.Set(v, ([]string)(*sliceValue))
+			} else {
+				viper.Set(v, f.Value.String())
+			}
 		} else {
 			viper.SetDefault(v, f.Value.String())
 		}
