@@ -284,19 +284,23 @@ func (s *Store) GetLastExecutionGroup(jobName string) ([]*Execution, error) {
 	}
 
 	var lastEx Execution
-	var ex Execution
+	var executions []*Execution
 	// res does not guarantee any order,
 	// so compare them by `StartedAt` time and get the last one
 	for _, node := range res {
+		var ex Execution
 		err := json.Unmarshal([]byte(node.Value), &ex)
 		if err != nil {
 			return nil, err
 		}
 		if ex.StartedAt.After(lastEx.StartedAt) {
 			lastEx = ex
+			executions = []*Execution{&ex}
+		} else if ex.Group == lastEx.Group {
+			executions = append(executions, &ex)
 		}
 	}
-	return s.GetExecutionGroup(&lastEx)
+	return executions, nil
 }
 
 func (s *Store) GetExecutionGroup(execution *Execution) ([]*Execution, error) {
