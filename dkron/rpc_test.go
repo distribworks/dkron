@@ -50,7 +50,7 @@ func TestRPCExecutionDone(t *testing.T) {
 		Disabled: true,
 	}
 
-	if err := store.SetJob(testJob); err != nil {
+	if err := store.SetJob(testJob,nil); err != nil {
 		t.Fatalf("error creating job: %s", err)
 	}
 

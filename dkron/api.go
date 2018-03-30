@@ -145,7 +145,7 @@ func (h *HTTPTransport) jobCreateOrUpdateHandler(c *gin.Context) {
 	}
 
 	// Save the job to the store
-	if err = h.agent.store.SetJob(&job); err != nil {
+	if err = h.agent.store.SetJob(&job, ej); err != nil {
 		c.AbortWithError(422, err)
 		return
 	}
