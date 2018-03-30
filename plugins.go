@@ -6,16 +6,17 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/kardianos/osext"
 	"github.com/Sirupsen/logrus"
 	hclog "github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
+	"github.com/kardianos/osext"
 	"github.com/victorcoder/dkron/dkron"
 	dkplugin "github.com/victorcoder/dkron/plugin"
 )
 
 type Plugins struct {
 	Processors map[string]dkron.ExecutionProcessor
+	Executors  map[string]dkron.Executor
 }
 
 // Discover plugins located on disk
@@ -28,9 +29,16 @@ type Plugins struct {
 // Whichever file is discoverd LAST wins.
 func (p *Plugins) DiscoverPlugins() error {
 	p.Processors = make(map[string]dkron.ExecutionProcessor)
+	p.Executors = make(map[string]dkron.Executor)
 
 	// Look in /etc/dkron/plugins
 	processors, err := plugin.Discover("dkron-processor-*", filepath.Join("/etc", "dkron", "plugins"))
+	if err != nil {
+		return err
+	}
+
+	// Look in /etc/dkron/plugins
+	executors, err := plugin.Discover("dkron-executor-*", filepath.Join("/etc", "dkron", "plugins"))
 	if err != nil {
 		return err
 	}
@@ -42,31 +50,44 @@ func (p *Plugins) DiscoverPlugins() error {
 		logrus.WithError(err).Error("Error loading exe directory")
 	} else {
 		processors, err = plugin.Discover("dkron-processor-*", filepath.Dir(exePath))
+		executors, err = plugin.Discover("dkron-executor-*", filepath.Dir(exePath))
 		if err != nil {
 			return err
 		}
 	}
 
 	for _, file := range processors {
-		// If the filename has a ".", trim up to there
-		// if idx := strings.Index(file, "."); idx >= 0 {
-		// 	file = file[:idx]
-		// }
-
 		// Look for foo-bar-baz. The plugin name is "baz"
 		parts := strings.SplitN(file, "-", 3)
 		if len(parts) != 3 {
 			continue
 		}
 
-		processor, _ := p.processorFactory(file)
-		p.Processors[parts[2]] = processor
+		raw, err := p.pluginFactory(file, dkplugin.ProcessorPluginName)
+		if err != nil {
+			return err
+		}
+		p.Processors[parts[2]] = raw.(dkron.ExecutionProcessor)
+	}
+
+	for _, file := range executors {
+		// Look for foo-bar-baz. The plugin name is "baz"
+		parts := strings.SplitN(file, "-", 3)
+		if len(parts) != 3 {
+			continue
+		}
+
+		raw, err := p.pluginFactory(file, dkplugin.ExecutorPluginName)
+		if err != nil {
+			return err
+		}
+		p.Executors[parts[2]] = raw.(dkron.Executor)
 	}
 
 	return nil
 }
 
-func (p *Plugins) processorFactory(path string) (dkron.ExecutionProcessor, error) {
+func (Plugins) pluginFactory(path string, pluginType string) (interface{}, error) {
 	// Create an hclog.Logger
 	logger := hclog.New(&hclog.LoggerOptions{
 		Name:   "plugin",
@@ -81,6 +102,14 @@ func (p *Plugins) processorFactory(path string) (dkron.ExecutionProcessor, error
 	config.Managed = true
 	config.Plugins = dkplugin.PluginMap
 	config.Logger = logger
+
+	switch pluginType {
+	case dkplugin.ProcessorPluginName:
+		config.AllowedProtocols = []plugin.Protocol{plugin.ProtocolNetRPC}
+	case dkplugin.ExecutorPluginName:
+		config.AllowedProtocols = []plugin.Protocol{plugin.ProtocolGRPC}
+	}
+
 	client := plugin.NewClient(&config)
 
 	// Request the RPC client so we can get the provider
@@ -90,10 +119,10 @@ func (p *Plugins) processorFactory(path string) (dkron.ExecutionProcessor, error
 		return nil, err
 	}
 
-	raw, err := rpcClient.Dispense(dkplugin.ProcessorPluginName)
+	raw, err := rpcClient.Dispense(pluginType)
 	if err != nil {
 		return nil, err
 	}
 
-	return raw.(dkron.ExecutionProcessor), nil
+	return raw, nil
 }
