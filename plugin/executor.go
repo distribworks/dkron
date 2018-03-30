@@ -33,7 +33,7 @@ type ExecutorClient struct {
 	client proto.ExecutorClient
 }
 
-func (m *ExecutorClient) Execute(args *proto.ExecutorArgs) error {
+func (m *ExecutorClient) Execute(args *dkron.ExecutorArgs) error {
 	// This is where the magic conversion to Proto happens
 	a := &proto.ExecutorArgs{
 		Execution: &proto.Execution{},
