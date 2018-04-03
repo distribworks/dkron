@@ -75,7 +75,7 @@ func init() {
 
 // readConfig is responsible for setup of our configuration using
 // the command line and any file configs
-func NewConfig(args []string, agent *AgentCommand) *Config {
+func NewConfig(args []string, version string) *Config {
 	cmdFlags := ConfigFlagSet()
 
 	ignore := args[len(args)-1] == "ignore"
@@ -105,7 +105,7 @@ func NewConfig(args []string, agent *AgentCommand) *Config {
 		}
 	})
 
-	return ReadConfig(agent)
+	return ReadConfig(version)
 }
 
 func ConfigFlagSet() *flag.FlagSet {
@@ -161,7 +161,7 @@ func ConfigFlagSet() *flag.FlagSet {
 }
 
 // ReadConfig from file and create the actual config object.
-func ReadConfig(agent *AgentCommand) *Config {
+func ReadConfig(version string) *Config {
 	err := viper.ReadInConfig() // Find and read the config file
 	if err != nil {             // Handle errors reading the config file
 		logrus.WithError(err).Info("No valid config found: Applying default values.")
@@ -185,7 +185,7 @@ func ReadConfig(agent *AgentCommand) *Config {
 	if server {
 		tags["dkron_server"] = "true"
 	}
-	tags["dkron_version"] = agent.Version
+	tags["dkron_version"] = version
 
 	InitLogger(viper.GetString("log_level"), nodeName)
 
