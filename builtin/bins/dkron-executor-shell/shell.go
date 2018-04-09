@@ -1,8 +1,6 @@
 package main
 
 import (
-	"errors"
-
 	"github.com/victorcoder/dkron/dkron"
 )
 
@@ -14,6 +12,6 @@ type Shell struct {
 }
 
 // Process method of the plugin
-func (s *Shell) Execute(args *dkron.ExecutorArgs) error {
-	return errors.New("Foo bar")
+func (s *Shell) Execute(args *dkron.ExecuteRequest) ([]byte, error) {
+	return []byte("Response from plugin"), nil
 }

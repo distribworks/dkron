@@ -90,6 +90,12 @@ type Job struct {
 
 	// Concurrency policy for this job (allow, forbid)
 	Concurrency string `json:"concurrency"`
+
+	// Executor plugin to be used in this job
+	Executor string
+
+	// Executor args
+	ExecutorConfig ExecutorPluginConfig
 }
 
 // Run the job

@@ -31,7 +31,7 @@ func main() {
 
 	// Make sure we clean up any managed plugins at the end of this
 
-	//protoc -I proto/ proto/executor.proto --go_out=plugins=grpc:dkron/
+	//protoc -I proto/ proto/executor.proto --go_out=plugins=grpc:proto/
 
 	c.Commands = map[string]cli.CommandFactory{
 		"agent": func() (cli.Command, error) {

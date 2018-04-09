@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/go-plugin"
 	"github.com/victorcoder/dkron/dkron"
-	"github.com/victorcoder/dkron/proto"
 )
 
 // This is the implementation of plugin.Plugin so we can serve/consume this.
@@ -19,29 +18,24 @@ type ExecutorPlugin struct {
 }
 
 func (p *ExecutorPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
-	proto.RegisterExecutorServer(s, ExecutorServer{Impl: p.Executor})
+	dkron.RegisterExecutorServer(s, ExecutorServer{Impl: p.Executor})
 	return nil
 }
 
 func (p *ExecutorPlugin) GRPCClient(ctx context.Context, broker *plugin.GRPCBroker, c *grpc.ClientConn) (interface{}, error) {
-	return &ExecutorClient{client: proto.NewExecutorClient(c)}, nil
+	return &ExecutorClient{client: dkron.NewExecutorClient(c)}, nil
 }
 
 // Here is the gRPC client that GRPCClient talks to.
 type ExecutorClient struct {
 	// This is the real implementation
-	client proto.ExecutorClient
+	client dkron.ExecutorClient
 }
 
-func (m *ExecutorClient) Execute(args *dkron.ExecutorArgs) error {
+func (m *ExecutorClient) Execute(args *dkron.ExecuteRequest) ([]byte, error) {
 	// This is where the magic conversion to Proto happens
-	a := &proto.ExecutorArgs{
-		Execution: &proto.Execution{},
-	}
-	_, err := m.client.Execute(context.Background(), &proto.ExecuteRequest{
-		ExecutorArgs: a,
-	})
-	return err
+	out, err := m.client.Execute(context.Background(), args)
+	return out.Output, err
 }
 
 // Here is the gRPC server that GRPCClient talks to.
@@ -50,11 +44,8 @@ type ExecutorServer struct {
 	Impl dkron.Executor
 }
 
-func (m ExecutorServer) Execute(ctx context.Context, req *proto.ExecuteRequest) (*proto.ExecuteResponse, error) {
-	// This is where the magic conversion to native dkron happens
-	args := &dkron.ExecutorArgs{
-		Execution: dkron.Execution{},
-	}
-	err := m.Impl.Execute(args)
-	return &proto.ExecuteResponse{err.Error()}, err
+// Execute is where the magic conversion to native dkron happens
+func (m ExecutorServer) Execute(ctx context.Context, req *dkron.ExecuteRequest) (*dkron.ExecuteResponse, error) {
+	res, err := m.Impl.Execute(req)
+	return &dkron.ExecuteResponse{Output: res}, err
 }

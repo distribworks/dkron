@@ -1,12 +1,12 @@
 package dkron
 
-// Execution processor plugins must implement this interface
+// ExecutionProcessor plugins must implement this interface
 type ExecutionProcessor interface {
 	// Main plugin method, will be called when an execution is done.
 	Process(args *ExecutionProcessorArgs) Execution
 }
 
-// Arguments for calling an execution processor
+// ExecutionProcessorArgs Arguments for calling an execution processor
 type ExecutionProcessorArgs struct {
 	// The execution to pass to the processor
 	Execution Execution
@@ -14,5 +14,5 @@ type ExecutionProcessorArgs struct {
 	Config PluginConfig
 }
 
-// Represents a plgin config data structure
+// PluginConfig Represents a plugin config data structure
 type PluginConfig map[string]interface{}
