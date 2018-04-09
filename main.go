@@ -39,6 +39,7 @@ func main() {
 				Ui:               ui,
 				Version:          VERSION,
 				ProcessorPlugins: plugins.Processors,
+				ExecutorPlugins:  plugins.Executors,
 			}, nil
 		},
 		"keygen": func() (cli.Command, error) {

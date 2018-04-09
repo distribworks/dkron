@@ -26,33 +26,51 @@ const (
 func (a *AgentCommand) invokeJob(job *Job, execution *Execution) error {
 	output, _ := circbuf.NewBuffer(maxBufSize)
 
-	cmd := buildCmd(job)
-	cmd.Stderr = output
-	cmd.Stdout = output
-
-	// Start a timer to warn about slow handlers
-	slowTimer := time.AfterFunc(2*time.Hour, func() {
-		log.Warnf("proc: Script '%s' slow, execution exceeding %v", job.Command, 2*time.Hour)
-	})
-
-	err := cmd.Start()
-
-	// Warn if buffer is overritten
-	if output.TotalWritten() > output.Size() {
-		log.Warnf("proc: Script '%s' generated %d bytes of output, truncated to %d", job.Command, output.TotalWritten(), output.Size())
-	}
-
 	var success bool
-	err = cmd.Wait()
-	slowTimer.Stop()
-	log.WithFields(logrus.Fields{
-		"output": output,
-	}).Debug("proc: Command output")
-	if err != nil {
-		log.WithError(err).Error("proc: command error output")
-		success = false
+
+	// Check if job executor is set
+	if executor, ok := a.ExecutorPlugins[job.Executor]; ok {
+		out, err := executor.Execute(&ExecuteRequest{
+			JobName: job.Name,
+			Config:  job.ExecutorConfig,
+		})
+		if err != nil {
+			log.WithError(err).Error("invoke: command error output")
+			success = false
+		} else {
+			success = true
+		}
+
+		output.Write(out)
 	} else {
-		success = true
+		cmd := buildCmd(job)
+		cmd.Stderr = output
+		cmd.Stdout = output
+
+		// Start a timer to warn about slow handlers
+		slowTimer := time.AfterFunc(2*time.Hour, func() {
+			log.Warnf("invoke: Script '%s' slow, execution exceeding %v", job.Command, 2*time.Hour)
+		})
+
+		err := cmd.Start()
+
+		// Warn if buffer is overritten
+		if output.TotalWritten() > output.Size() {
+			log.Warnf("invoke: Script '%s' generated %d bytes of output, truncated to %d", job.Command, output.TotalWritten(), output.Size())
+		}
+
+		err = cmd.Wait()
+		slowTimer.Stop()
+		log.WithFields(logrus.Fields{
+			"output": output,
+		}).Debug("invoke: Command output")
+		if err != nil {
+			log.WithError(err).Error("invoke: command error output")
+			success = false
+		} else {
+			success = true
+		}
+
 	}
 
 	execution.FinishedAt = time.Now()
@@ -91,7 +109,7 @@ func buildCmd(job *Job) (cmd *exec.Cmd) {
 	} else {
 		args, err := shellwords.Parse(job.Command)
 		if err != nil {
-			log.WithError(err).Fatal("proc: Error parsing command arguments")
+			log.WithError(err).Fatal("invoke: Error parsing command arguments")
 		}
 		cmd = exec.Command(args[0], args[1:]...)
 	}

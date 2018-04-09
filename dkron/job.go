@@ -92,10 +92,10 @@ type Job struct {
 	Concurrency string `json:"concurrency"`
 
 	// Executor plugin to be used in this job
-	Executor string
+	Executor string `json:"executor"`
 
 	// Executor args
-	ExecutorConfig ExecutorPluginConfig
+	ExecutorConfig ExecutorPluginConfig `json:"executor_config"`
 }
 
 // Run the job

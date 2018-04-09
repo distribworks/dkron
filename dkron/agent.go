@@ -49,6 +49,7 @@ type AgentCommand struct {
 	Version          string
 	ShutdownCh       <-chan struct{}
 	ProcessorPlugins map[string]ExecutionProcessor
+	ExecutorPlugins  map[string]Executor
 	HTTPTransport    Transport
 	Store            *Store
 
