@@ -35,7 +35,7 @@ func (a *AgentCommand) invokeJob(job *Job, execution *Execution) error {
 			Config:  job.ExecutorConfig,
 		})
 		if err != nil {
-			log.WithError(err).Error("invoke: command error output")
+			log.WithError(err).WithField("job", job.Name).WithField("plugin", executor).Error("invoke: command error output")
 			success = false
 		} else {
 			success = true
@@ -70,7 +70,6 @@ func (a *AgentCommand) invokeJob(job *Job, execution *Execution) error {
 		} else {
 			success = true
 		}
-
 	}
 
 	execution.FinishedAt = time.Now()
