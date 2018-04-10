@@ -1,8 +1,9 @@
 package dkron
 
 import (
+	"bytes"
 	"encoding/json"
-  "bytes"
+
 	"github.com/Sirupsen/logrus"
 	"github.com/abronan/valkeyrie/store"
 	"github.com/hashicorp/serf/serf"

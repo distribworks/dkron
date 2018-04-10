@@ -132,7 +132,7 @@ func (s *Store) SetJobDependencyTree(job *Job, previousJob *Job) error {
 		defer pj.Unlock()
 
 		pj.DependentJobs = append(pj.DependentJobs, job.Name)
-		if err := s.SetJob(pj,nil); err != nil {
+		if err := s.SetJob(pj, nil); err != nil {
 			return err
 		}
 	}
@@ -154,7 +154,7 @@ func (s *Store) SetJobDependencyTree(job *Job, previousJob *Job) error {
 			}
 		}
 		pj.DependentJobs = append(pj.DependentJobs[:ndx], pj.DependentJobs[ndx+1:]...)
-		if err := s.SetJob(pj,nil); err != nil {
+		if err := s.SetJob(pj, nil); err != nil {
 			return err
 		}
 	}
@@ -169,7 +169,7 @@ func (s *Store) SetJobDependencyTree(job *Job, previousJob *Job) error {
 		defer pj.Unlock()
 
 		pj.DependentJobs = append(pj.DependentJobs, job.Name)
-		if err := s.SetJob(pj,nil); err != nil {
+		if err := s.SetJob(pj, nil); err != nil {
 			return err
 		}
 	}
