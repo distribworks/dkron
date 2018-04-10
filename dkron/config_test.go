@@ -37,4 +37,8 @@ func TestReadConfigTags(t *testing.T) {
 	assert.NotContains(t, config.Tags, "foo")
 	assert.Contains(t, config.Tags, "monthy")
 	assert.Equal(t, "python", config.Tags["monthy"])
+
+	config = NewConfig([]string{"-tag", "t1=v1", "-tag", "t2=v2"}, a)
+	assert.Equal(t, "v1", config.Tags["t1"])
+	assert.Equal(t, "v2", config.Tags["t2"])
 }
