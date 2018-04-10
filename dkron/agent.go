@@ -300,7 +300,7 @@ func UnmarshalTags(tags []string) (map[string]string, error) {
 }
 
 func (a *AgentCommand) Run(args []string) int {
-	a.config = NewConfig(args, a)
+	a.config = NewConfig(args, a.Version)
 	if a.serf = a.setupSerf(); a.serf == nil {
 		log.Fatal("agent: Can not setup serf")
 	}
@@ -393,7 +393,7 @@ WAIT:
 // handleReload is invoked when we should reload our configs, e.g. SIGHUP
 func (a *AgentCommand) handleReload() {
 	a.Ui.Output("Reloading configuration...")
-	newConf := ReadConfig(a)
+	newConf := ReadConfig(a.Version)
 	if newConf == nil {
 		a.Ui.Error(fmt.Sprintf("Failed to reload configs"))
 		return
