@@ -5,9 +5,10 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"strconv"
+	"strings"
 	"time"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/armon/circbuf"
 	"github.com/hashicorp/serf/serf"
 	"github.com/mattn/go-shellwords"
@@ -28,48 +29,35 @@ func (a *AgentCommand) invokeJob(job *Job, execution *Execution) error {
 
 	var success bool
 
-	// Check if job executor is set
-	if executor, ok := a.ExecutorPlugins[job.Executor]; ok {
+	jex := job.Executor
+	exc := job.ExecutorConfig
+	if jex == "" {
+		jex = "shell"
+		exc = map[string]string{
+			"command": job.Command,
+			"shell":   strconv.FormatBool(job.Shell),
+			"env":     strings.Join(job.EnvironmentVariables, ","),
+		}
+	}
+
+	// Check if executor is exists
+	if executor, ok := a.ExecutorPlugins[jex]; ok {
+		log.WithField("plugin", jex).Debug("invoke: calling executor plugin")
 		out, err := executor.Execute(&ExecuteRequest{
 			JobName: job.Name,
-			Config:  job.ExecutorConfig,
+			Config:  exc,
 		})
 		if err != nil {
 			log.WithError(err).WithField("job", job.Name).WithField("plugin", executor).Error("invoke: command error output")
 			success = false
+			output.Write([]byte(err.Error()))
 		} else {
 			success = true
 		}
 
 		output.Write(out)
 	} else {
-		cmd := buildCmd(job)
-		cmd.Stderr = output
-		cmd.Stdout = output
-
-		// Start a timer to warn about slow handlers
-		slowTimer := time.AfterFunc(2*time.Hour, func() {
-			log.Warnf("invoke: Script '%s' slow, execution exceeding %v", job.Command, 2*time.Hour)
-		})
-
-		err := cmd.Start()
-
-		// Warn if buffer is overritten
-		if output.TotalWritten() > output.Size() {
-			log.Warnf("invoke: Script '%s' generated %d bytes of output, truncated to %d", job.Command, output.TotalWritten(), output.Size())
-		}
-
-		err = cmd.Wait()
-		slowTimer.Stop()
-		log.WithFields(logrus.Fields{
-			"output": output,
-		}).Debug("invoke: Command output")
-		if err != nil {
-			log.WithError(err).Error("invoke: command error output")
-			success = false
-		} else {
-			success = true
-		}
+		log.Errorf("invoke: Specified executor %s is not present", executor)
 	}
 
 	execution.FinishedAt = time.Now()

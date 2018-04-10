@@ -1,13 +1,11 @@
 package main
 
 import (
-	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 
 	"github.com/Sirupsen/logrus"
-	hclog "github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"github.com/kardianos/osext"
 	"github.com/victorcoder/dkron/dkron"
@@ -89,11 +87,11 @@ func (p *Plugins) DiscoverPlugins() error {
 
 func (Plugins) pluginFactory(path string, pluginType string) (interface{}, error) {
 	// Create an hclog.Logger
-	logger := hclog.New(&hclog.LoggerOptions{
-		Name:   "plugin",
-		Output: os.Stdout,
-		Level:  hclog.Info,
-	})
+	// logger := hclog.New(&hclog.LoggerOptions{
+	// 	Name:   "plugin",
+	// 	Output: os.Stdout,
+	// 	Level:  hclog.Info,
+	// })
 
 	// Build the plugin client configuration and init the plugin
 	var config plugin.ClientConfig
@@ -101,7 +99,7 @@ func (Plugins) pluginFactory(path string, pluginType string) (interface{}, error
 	config.HandshakeConfig = dkplugin.Handshake
 	config.Managed = true
 	config.Plugins = dkplugin.PluginMap
-	config.Logger = logger
+	//config.Logger = logger
 
 	switch pluginType {
 	case dkplugin.ProcessorPluginName:

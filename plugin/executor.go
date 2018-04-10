@@ -44,8 +44,11 @@ type ExecutorServer struct {
 	Impl dkron.Executor
 }
 
-// Execute is where the magic conversion to native dkron happens
+// Execute is where the magic happens
 func (m ExecutorServer) Execute(ctx context.Context, req *dkron.ExecuteRequest) (*dkron.ExecuteResponse, error) {
-	res, err := m.Impl.Execute(req)
-	return &dkron.ExecuteResponse{Output: res}, err
+	out, err := m.Impl.Execute(req)
+	if err != nil {
+		out = []byte("executor error: " + err.Error())
+	}
+	return &dkron.ExecuteResponse{Output: out}, nil
 }
