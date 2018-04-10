@@ -1,41 +1,7 @@
 ---
-title: Guides
+title: Cron spec
 toc: true
 ---
-
-## Target nodes spec
-
-You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run.
-
-### Examples:
-
-Target all nodes with a tag:
-
-```
-{
-    "name": "job_name",
-    "command": "/bin/true",
-    "schedule": "@every 2m",
-    "tags": {
-        "role": "web"
-    }
-}
-```
-
-Target only two nodes of a group of nodes with a tag:
-
-```
-{
-    "name": "job_name",
-    "command": "/bin/true",
-    "schedule": "@every 2m",
-    "tags": {
-        "role": "web:2"
-    }
-}
-```
-
-Dkron will try to run the job in the amount of nodes indicated by that count having that tag.
 
 ## CRON Expression Format
 
@@ -135,28 +101,3 @@ provided by the Go time package (http://www.golang.org/pkg/time).
 
 Be aware that jobs scheduled during daylight-savings leap-ahead transitions will
 not be run!
-
-## Job chaining
-
-You can set some jobs to run after other job is executed. To setup a job that will be executed after any other given job, just set the `parent_job` property when saving the new job.
-
-The dependent job will be executed after the main job finished a successful execution.
-
-Child jobs schedule property will be ignored if it's present.
-
-## Logging output
-
-Logging output of each job execution can be modified by using processor plugins.
-
-Processor plugins can be used to redirect the output of a job execution to different targets.
-
-Refer to the [plugins documentation]({{< relref "internal/plugins.md" >}}) from more info
-
-## Concurrency
-
-Jobs can be configured to allow overlapping executions or forbid them. 
-
-Concurrency property accepts two option: 
-
-* **allow** (default): Allow concurrent job executions.
-* **forbid**: If the job is already running don't send the execution, it will skip the executions until the next schedule.
