@@ -4,8 +4,9 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"fmt"
-	"github.com/mitchellh/cli"
 	"strings"
+
+	"github.com/mitchellh/cli"
 )
 
 // KeygenCommand is a Command implementation that generates an encryption
@@ -14,6 +15,7 @@ type KeygenCommand struct {
 	Ui cli.Ui
 }
 
+// Run is the main entrypoint for the keygen command
 func (c *KeygenCommand) Run(_ []string) int {
 	key := make([]byte, 16)
 	n, err := rand.Reader.Read(key)
@@ -30,10 +32,12 @@ func (c *KeygenCommand) Run(_ []string) int {
 	return 0
 }
 
+// Synopsis returns the purpose fo the KeygenCommand for the CLI help text.
 func (c *KeygenCommand) Synopsis() string {
 	return "Generates a new encryption key"
 }
 
+// Help returns the usage text for the CLI.
 func (c *KeygenCommand) Help() string {
 	helpText := `
 Usage: dkron keygen
