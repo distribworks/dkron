@@ -1,8 +1,9 @@
-package dkron
+package cmd
 
 import (
 	"bytes"
 	"fmt"
+
 	"github.com/hashicorp/serf/serf"
 	"github.com/mitchellh/cli"
 )

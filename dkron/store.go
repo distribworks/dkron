@@ -34,7 +34,7 @@ type Storage interface {
 
 type Store struct {
 	Client   store.Store
-	agent    *AgentCommand
+	agent    *Agent
 	keyspace string
 	backend  string
 }
@@ -45,7 +45,7 @@ func init() {
 	zookeeper.Register()
 }
 
-func NewStore(backend string, machines []string, a *AgentCommand, keyspace string, config *store.Config) *Store {
+func NewStore(backend string, machines []string, a *Agent, keyspace string, config *store.Config) *Store {
 	s, err := valkeyrie.NewStore(store.Backend(backend), machines, config)
 	if err != nil {
 		log.Error(err)

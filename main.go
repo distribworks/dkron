@@ -8,7 +8,7 @@ import (
 
 	"github.com/hashicorp/go-plugin"
 	"github.com/mitchellh/cli"
-	"github.com/victorcoder/dkron/dkron"
+	"github.com/victorcoder/dkron/cmd"
 )
 
 const (
@@ -35,7 +35,7 @@ func main() {
 
 	c.Commands = map[string]cli.CommandFactory{
 		"agent": func() (cli.Command, error) {
-			return &dkron.AgentCommand{
+			return &cmd.AgentCommand{
 				Ui:               ui,
 				Version:          VERSION,
 				ProcessorPlugins: plugins.Processors,
@@ -43,12 +43,12 @@ func main() {
 			}, nil
 		},
 		"keygen": func() (cli.Command, error) {
-			return &dkron.KeygenCommand{
+			return &cmd.KeygenCommand{
 				Ui: ui,
 			}, nil
 		},
 		"version": func() (cli.Command, error) {
-			return &dkron.VersionCommand{
+			return &cmd.VersionCommand{
 				Version: VERSION,
 				Ui:      ui,
 			}, nil

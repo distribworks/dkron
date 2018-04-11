@@ -106,7 +106,7 @@ func NewConfig(args []string, version string) *Config {
 		}
 	})
 
-	return readConfig(version)
+	return ReadConfig(version)
 }
 
 // configFlagSet creates all of our configuration flags.
@@ -163,7 +163,7 @@ func configFlagSet() *flag.FlagSet {
 }
 
 // readConfig from file and create the actual config object.
-func readConfig(version string) *Config {
+func ReadConfig(version string) *Config {
 	err := viper.ReadInConfig() // Find and read the config file
 	if err != nil {             // Handle errors reading the config file
 		logrus.WithError(err).Info("No valid config found: Applying default values.")

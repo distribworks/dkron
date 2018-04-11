@@ -8,7 +8,7 @@ import (
 	"github.com/armon/go-metrics/datadog"
 )
 
-func initMetrics(a *AgentCommand) int {
+func initMetrics(a *Agent) error {
 	// Setup the inmem sink and signal handler
 	inm := metrics.NewInmemSink(10*time.Second, time.Minute)
 	metrics.DefaultInmemSignal(inm)
@@ -19,8 +19,7 @@ func initMetrics(a *AgentCommand) int {
 	if a.config.StatsdAddr != "" {
 		sink, err := metrics.NewStatsdSink(a.config.StatsdAddr)
 		if err != nil {
-			a.Ui.Error(fmt.Sprintf("Failed to start statsd sink. Got: %s", err))
-			return 1
+			return fmt.Errorf("Failed to start statsd sink. Got: %s", err)
 		}
 		fanout = append(fanout, sink)
 	}
@@ -35,8 +34,7 @@ func initMetrics(a *AgentCommand) int {
 
 		sink, err := datadog.NewDogStatsdSink(a.config.DogStatsdAddr, a.config.NodeName)
 		if err != nil {
-			a.Ui.Error(fmt.Sprintf("Failed to start DogStatsd sink. Got: %s", err))
-			return 1
+			return fmt.Errorf("Failed to start DogStatsd sink. Got: %s", err)
 		}
 		sink.SetTags(tags)
 		fanout = append(fanout, sink)
@@ -50,5 +48,5 @@ func initMetrics(a *AgentCommand) int {
 		metrics.NewGlobal(metrics.DefaultConfig("dkron"), inm)
 	}
 
-	return 0
+	return nil
 }

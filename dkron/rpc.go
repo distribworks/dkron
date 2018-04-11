@@ -19,7 +19,7 @@ var (
 )
 
 type RPCServer struct {
-	agent *AgentCommand
+	agent *Agent
 }
 
 func (rpcs *RPCServer) GetJob(jobName string, job *Job) error {
@@ -144,7 +144,7 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 
 var workaroundRPCHTTPMux = 0
 
-func listenRPC(a *AgentCommand) {
+func listenRPC(a *Agent) {
 	r := &RPCServer{
 		agent: a,
 	}

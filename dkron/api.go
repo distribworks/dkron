@@ -21,11 +21,11 @@ type Transport interface {
 type HTTPTransport struct {
 	Engine *gin.Engine
 
-	agent *AgentCommand
+	agent *Agent
 }
 
 // NewTransport creates an HTTPTransport with a bound agent.
-func NewTransport(a *AgentCommand) *HTTPTransport {
+func NewTransport(a *Agent) *HTTPTransport {
 	return &HTTPTransport{
 		agent: a,
 	}

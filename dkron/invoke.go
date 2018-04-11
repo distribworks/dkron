@@ -24,7 +24,7 @@ const (
 )
 
 // invokeJob will execute the given job. Depending on the event.
-func (a *AgentCommand) invokeJob(job *Job, execution *Execution) error {
+func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 	output, _ := circbuf.NewBuffer(maxBufSize)
 
 	var success bool
@@ -73,7 +73,7 @@ func (a *AgentCommand) invokeJob(job *Job, execution *Execution) error {
 	return rc.callExecutionDone(execution)
 }
 
-func (a *AgentCommand) selectServer() serf.Member {
+func (a *Agent) selectServer() serf.Member {
 	servers := a.listServers()
 	server := servers[rand.Intn(len(servers))]
 

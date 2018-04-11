@@ -83,7 +83,7 @@ type Job struct {
 	Tags map[string]string `json:"tags"`
 
 	// Pointer to the calling agent.
-	Agent *AgentCommand `json:"-"`
+	Agent *Agent `json:"-"`
 
 	// Number of times to retry a job that failed an execution.
 	Retries uint `json:"retries"`
