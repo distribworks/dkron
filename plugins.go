@@ -86,20 +86,12 @@ func (p *Plugins) DiscoverPlugins() error {
 }
 
 func (Plugins) pluginFactory(path string, pluginType string) (interface{}, error) {
-	// Create an hclog.Logger
-	// logger := hclog.New(&hclog.LoggerOptions{
-	// 	Name:   "plugin",
-	// 	Output: os.Stdout,
-	// 	Level:  hclog.Info,
-	// })
-
 	// Build the plugin client configuration and init the plugin
 	var config plugin.ClientConfig
 	config.Cmd = exec.Command(path)
 	config.HandshakeConfig = dkplugin.Handshake
 	config.Managed = true
 	config.Plugins = dkplugin.PluginMap
-	//config.Logger = logger
 
 	switch pluginType {
 	case dkplugin.ProcessorPluginName:

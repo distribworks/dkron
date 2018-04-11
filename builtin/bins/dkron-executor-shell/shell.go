@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"runtime"
@@ -9,7 +9,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/armon/circbuf"
 	"github.com/mattn/go-shellwords"
 	"github.com/victorcoder/dkron/dkron"
@@ -49,16 +48,13 @@ func (s *Shell) Execute(args *dkron.ExecuteRequest) ([]byte, error) {
 	cmd.Stderr = output
 	cmd.Stdout = output
 
-	fmt.Println("**************************************************")
-	fmt.Println("**************************************************")
-	fmt.Println("**************************************************")
 	// Start a timer to warn about slow handlers
 	slowTimer := time.AfterFunc(2*time.Hour, func() {
-		logrus.Warnf("shell: Script '%s' slow, execution exceeding %v", command, 2*time.Hour)
+		log.Printf("shell: Script '%s' slow, execution exceeding %v", command, 2*time.Hour)
 	})
 	defer slowTimer.Stop()
 
-	logrus.Debugf("shell: going to run %s", command)
+	log.Printf("shell: going to run %s", command)
 	err = cmd.Start()
 	if err != nil {
 		return nil, err
@@ -66,7 +62,7 @@ func (s *Shell) Execute(args *dkron.ExecuteRequest) ([]byte, error) {
 
 	// Warn if buffer is overritten
 	if output.TotalWritten() > output.Size() {
-		logrus.Warnf("shell: Script '%s' generated %d bytes of output, truncated to %d", command, output.TotalWritten(), output.Size())
+		log.Printf("shell: Script '%s' generated %d bytes of output, truncated to %d", command, output.TotalWritten(), output.Size())
 	}
 
 	err = cmd.Wait()
@@ -74,9 +70,7 @@ func (s *Shell) Execute(args *dkron.ExecuteRequest) ([]byte, error) {
 		return nil, err
 	}
 
-	logrus.WithFields(logrus.Fields{
-		"output": output,
-	}).Debug("shell: Command output")
+	log.Printf("shell: Command output %s", output)
 
 	return output.Bytes(), nil
 }
