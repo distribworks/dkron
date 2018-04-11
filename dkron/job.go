@@ -103,6 +103,12 @@ type Job struct {
 
 	// Concurrency policy for this job (allow, forbid)
 	Concurrency string `json:"concurrency"`
+
+	// Executor plugin to be used in this job
+	Executor string `json:"executor"`
+
+	// Executor args
+	ExecutorConfig ExecutorPluginConfig `json:"executor_config"`
 }
 
 // Run the job
@@ -140,7 +146,7 @@ func (j *Job) Status() int {
 		return -1
 	}
 
-	execs, _ := j.Agent.store.GetLastExecutionGroup(j.Name)
+	execs, _ := j.Agent.Store.GetLastExecutionGroup(j.Name)
 	success := 0
 	failed := 0
 	for _, ex := range execs {
@@ -184,7 +190,7 @@ func (j *Job) GetParent() (*Job, error) {
 		return nil, ErrNoParent
 	}
 
-	parentJob, err := j.Agent.store.GetJob(j.ParentJob)
+	parentJob, err := j.Agent.Store.GetJob(j.ParentJob)
 	if err != nil {
 		if err == store.ErrKeyNotFound {
 			return nil, ErrParentJobNotFound
@@ -203,9 +209,9 @@ func (j *Job) Lock() error {
 		return ErrNoAgent
 	}
 
-	lockKey := fmt.Sprintf("%s/job_locks/%s", j.Agent.store.keyspace, j.Name)
+	lockKey := fmt.Sprintf("%s/job_locks/%s", j.Agent.Store.keyspace, j.Name)
 	// TODO: LockOptions empty is a temporary fix until https://github.com/docker/libkv/pull/99 is fixed
-	l, err := j.Agent.store.Client.NewLock(lockKey, &store.LockOptions{RenewLock: make(chan (struct{}))})
+	l, err := j.Agent.Store.Client.NewLock(lockKey, &store.LockOptions{RenewLock: make(chan (struct{}))})
 	if err != nil {
 		return err
 	}

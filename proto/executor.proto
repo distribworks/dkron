@@ -1,0 +1,17 @@
+// protoc -I proto/ proto/executor.proto --go_out=plugins=grpc:dkron/
+syntax = "proto3";
+
+package dkron;
+
+message ExecuteRequest {
+  string job_name = 1;
+  map<string, string> config = 2;
+}
+
+message ExecuteResponse {
+    bytes output = 1;
+}
+
+service Executor {
+    rpc Execute (ExecuteRequest) returns (ExecuteResponse);
+}

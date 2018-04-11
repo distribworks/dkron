@@ -1,8 +1,9 @@
 package dkron
 
 import (
+	"bytes"
 	"encoding/json"
-  "bytes"
+
 	"github.com/Sirupsen/logrus"
 	"github.com/abronan/valkeyrie/store"
 	"github.com/hashicorp/serf/serf"
@@ -24,7 +25,7 @@ type RunQueryParam struct {
 func (a *AgentCommand) RunQuery(ex *Execution) {
 	var params *serf.QueryParam
 
-	job, err := a.store.GetJob(ex.JobName)
+	job, err := a.Store.GetJob(ex.JobName)
 
 	if err != nil {
 		//Job can be removed and the QuerySchedulerRestart not yet received.

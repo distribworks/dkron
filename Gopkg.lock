@@ -143,7 +143,7 @@
   branch = "master"
   name = "github.com/hashicorp/go-plugin"
   packages = ["."]
-  revision = "3e6d191694b5a3a2b99755f31b47fa209e4bcd09"
+  revision = "baa83ead6ff956b3f99bcd609ae3499c028e019e"
 
 [[projects]]
   branch = "master"
@@ -251,6 +251,12 @@
   name = "github.com/mitchellh/mapstructure"
   packages = ["."]
   revision = "06020f85339e21b2478f756a78e295255ffa4d6a"
+
+[[projects]]
+  name = "github.com/oklog/run"
+  packages = ["."]
+  revision = "4dadeb3030eda0273a12382bb2348ffc7c9d1a39"
+  version = "v1.0.0"
 
 [[projects]]
   name = "github.com/pelletier/go-toml"

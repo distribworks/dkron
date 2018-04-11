@@ -49,11 +49,12 @@ type AgentCommand struct {
 	Version          string
 	ShutdownCh       <-chan struct{}
 	ProcessorPlugins map[string]ExecutionProcessor
+	ExecutorPlugins  map[string]Executor
 	HTTPTransport    Transport
+	Store            *Store
 
 	serf      *serf.Serf
 	config    *Config
-	store     *Store
 	eventCh   chan serf.Event
 	sched     *Scheduler
 	candidate *leadership.Candidate
@@ -320,16 +321,18 @@ func (a *AgentCommand) Run(args []string) int {
 	expNode.Set(a.config.NodeName)
 
 	if a.config.Server {
-		a.startServer()
+		a.StartServer()
 	}
 	go a.eventLoop()
 	a.ready = true
 	return a.handleSignals()
 }
 
-// startServer handles all necessary startup functions for a server agent
-func (a *AgentCommand) startServer() {
-	a.store = NewStore(a.config.Backend, a.config.BackendMachines, a, a.config.Keyspace)
+func (a *AgentCommand) StartServer() {
+	if a.Store == nil {
+		a.Store = NewStore(a.config.Backend, a.config.BackendMachines, a, a.config.Keyspace, nil)
+	}
+
 	a.sched = NewScheduler()
 
 	if a.HTTPTransport == nil {
@@ -418,7 +421,7 @@ func (a *AgentCommand) Synopsis() string {
 }
 
 func (a *AgentCommand) participate() {
-	a.candidate = leadership.NewCandidate(a.store.Client, a.store.LeaderKey(), a.config.NodeName, defaultLeaderTTL)
+	a.candidate = leadership.NewCandidate(a.Store.Client, a.Store.LeaderKey(), a.config.NodeName, defaultLeaderTTL)
 
 	go func() {
 		for {
@@ -462,7 +465,7 @@ func (a *AgentCommand) runForElection() {
 
 // Utility method to get leader nodename
 func (a *AgentCommand) leaderMember() (*serf.Member, error) {
-	leaderName := a.store.GetLeader()
+	leaderName := a.Store.GetLeader()
 	for _, member := range a.serf.Members() {
 		if member.Name == string(leaderName) {
 			return &member, nil
@@ -582,7 +585,7 @@ func (a *AgentCommand) eventLoop() {
 // Start or restart scheduler
 func (a *AgentCommand) schedule() {
 	log.Debug("agent: Restarting scheduler")
-	jobs, err := a.store.GetJobs()
+	jobs, err := a.Store.GetJobs()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -648,7 +651,7 @@ func (a *AgentCommand) setExecution(payload []byte) *Execution {
 	}
 
 	// Save the new execution to store
-	if _, err := a.store.SetExecution(&ex); err != nil {
+	if _, err := a.Store.SetExecution(&ex); err != nil {
 		log.Fatal(err)
 	}
 

@@ -3,6 +3,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/hashicorp/go-plugin"
@@ -22,9 +23,15 @@ func main() {
 	ui := &cli.BasicUi{Writer: os.Stdout}
 
 	plugins := &Plugins{}
-	plugins.DiscoverPlugins()
+	if err := plugins.DiscoverPlugins(); err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println(plugins.Executors)
 
 	// Make sure we clean up any managed plugins at the end of this
+
+	//protoc -I proto/ proto/executor.proto --go_out=plugins=grpc:proto/
 
 	c.Commands = map[string]cli.CommandFactory{
 		"agent": func() (cli.Command, error) {
@@ -32,6 +39,7 @@ func main() {
 				Ui:               ui,
 				Version:          VERSION,
 				ProcessorPlugins: plugins.Processors,
+				ExecutorPlugins:  plugins.Executors,
 			}, nil
 		},
 		"keygen": func() (cli.Command, error) {
