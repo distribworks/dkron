@@ -8,7 +8,7 @@ import (
 )
 
 func TestJobGetParent(t *testing.T) {
-	store := NewStore("etcd", []string{etcdAddr}, nil, "dkron-test")
+	store := NewStore("etcd", []string{etcdAddr}, nil, "dkron-test", nil)
 	a := &AgentCommand{
 		store: store,
 	}

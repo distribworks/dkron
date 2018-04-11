@@ -11,7 +11,7 @@ import (
 )
 
 func TestRPCExecutionDone(t *testing.T) {
-	store := NewStore("etcd", []string{etcdAddr}, nil, "dkron")
+	store := NewStore("etcd", []string{etcdAddr}, nil, "dkron", nil)
 	viper.Reset()
 
 	// Cleanup everything
@@ -50,7 +50,7 @@ func TestRPCExecutionDone(t *testing.T) {
 		Disabled: true,
 	}
 
-	if err := store.SetJob(testJob,nil); err != nil {
+	if err := store.SetJob(testJob, nil); err != nil {
 		t.Fatalf("error creating job: %s", err)
 	}
 

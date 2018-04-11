@@ -8,7 +8,7 @@ import (
 )
 
 func TestStore(t *testing.T) {
-	store := NewStore("etcd", []string{etcdAddr}, nil, "dkron-test")
+	store := NewStore("etcd", []string{etcdAddr}, nil, "dkron-test", nil)
 
 	// Cleanup everything
 	err := store.Client.DeleteTree("dkron-test")
@@ -31,7 +31,7 @@ func TestStore(t *testing.T) {
 		t.Fatal("jobs empty, expecting empty slice")
 	}
 
-	if err := store.SetJob(testJob,nil); err != nil {
+	if err := store.SetJob(testJob, nil); err != nil {
 		t.Fatalf("error creating job: %s", err)
 	}
 
