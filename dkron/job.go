@@ -11,24 +11,37 @@ import (
 )
 
 const (
+	// Success is status of a job whose last run was a success.
 	Success = iota
+	// Running is status of a job whose last run has not finished.
 	Running
+	// Failed is status of a job whose last run was not successful on any nodes.
 	Failed
+	// PartialyFailed is status of a job whose last run was successful on only some nodes.
 	PartialyFailed
 
-	ConcurrencyAllow  = "allow"
+	// ConcurrencyAllow allows a job to execute concurrency.
+	ConcurrencyAllow = "allow"
+	// ConcurrencyForbid forbids a job from executing concurrency.
 	ConcurrencyForbid = "forbid"
 )
 
 var (
+	// ErrParentJobNotFound is returned when the parent job is not found.
 	ErrParentJobNotFound = errors.New("Specified parent job not found")
-	ErrNoAgent           = errors.New("No agent defined")
-	ErrSameParent        = errors.New("The job can not have itself as parent")
-	ErrNoParent          = errors.New("The job doens't have a parent job set")
-	ErrNoCommand         = errors.New("Unespecified command for job")
-	ErrWrongConcurrency  = errors.New("Wrong concurrency policy value, use: allow/forbid")
+	// ErrNoAgent is returned when the job's agent is nil.
+	ErrNoAgent = errors.New("No agent defined")
+	// ErrSameParent is returned when the job's parent is itself.
+	ErrSameParent = errors.New("The job can not have itself as parent")
+	// ErrNoParent is returned when the job has no parent.
+	ErrNoParent = errors.New("The job doens't have a parent job set")
+	// ErrNoCommand is returned when attempting to store a job that has no command.
+	ErrNoCommand = errors.New("Unespecified command for job")
+	// ErrWrongConcurrency is returned when Concurrency is set to a non existing setting.
+	ErrWrongConcurrency = errors.New("Wrong concurrency policy value, use: allow/forbid")
 )
 
+// Job descibes a scheduled Job.
 type Job struct {
 	// Job name. Must be unique, acts as the id.
 	Name string `json:"name"`
@@ -126,8 +139,7 @@ func (j *Job) String() string {
 	return fmt.Sprintf("\"Job: %s, scheduled at: %s, tags:%v\"", j.Name, j.Schedule, j.Tags)
 }
 
-// Return the status of a job
-// Wherever it's running, succeded or failed
+// Status returns the status of a job whether it's running, succeded or failed
 func (j *Job) Status() int {
 	// Maybe we are testing
 	if j.Agent == nil {
@@ -163,7 +175,7 @@ func (j *Job) Status() int {
 	return status
 }
 
-// Get the parent job of a job
+// GetParent returns the parent job of a job
 func (j *Job) GetParent() (*Job, error) {
 	// Maybe we are testing
 	if j.Agent == nil {
@@ -182,9 +194,9 @@ func (j *Job) GetParent() (*Job, error) {
 	if err != nil {
 		if err == store.ErrKeyNotFound {
 			return nil, ErrParentJobNotFound
-		} else {
-			return nil, err
 		}
+		return nil, err
+
 	}
 
 	return parentJob, nil

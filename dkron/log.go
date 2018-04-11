@@ -7,6 +7,7 @@ import (
 
 var log = logrus.NewEntry(logrus.New())
 
+// InitLogger creates the logger instance
 func InitLogger(logLevel string, node string) {
 	formattedLogger := logrus.New()
 	formattedLogger.Formatter = &logrus.TextFormatter{FullTimestamp: true}

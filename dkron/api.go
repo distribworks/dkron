@@ -12,16 +12,19 @@ import (
 
 const pretty = "pretty"
 
+// Transport is the interface that wraps the ServeHTTP method.
 type Transport interface {
 	ServeHTTP()
 }
 
+// HTTPTransport stores pointers to an agent and a gin Engine.
 type HTTPTransport struct {
 	Engine *gin.Engine
 
 	agent *AgentCommand
 }
 
+// NewTransport creates an HTTPTransport with a bound agent.
 func NewTransport(a *AgentCommand) *HTTPTransport {
 	return &HTTPTransport{
 		agent: a,
@@ -36,11 +39,11 @@ func (h *HTTPTransport) ServeHTTP() {
 	}
 
 	h.Engine = gin.Default()
-	h.Engine.HTMLRender = CreateMyRender()
+	h.Engine.HTMLRender = createMyRender()
 	rootPath := h.Engine.Group("/")
 
-	h.ApiRoutes(rootPath)
-	h.agent.DashboardRoutes(rootPath)
+	h.apiRoutes(rootPath)
+	h.agent.dashboardRoutes(rootPath)
 
 	h.Engine.Use(h.MetaMiddleware())
 	//r.GET("/debug/vars", expvar.Handler())
@@ -52,7 +55,8 @@ func (h *HTTPTransport) ServeHTTP() {
 	go h.Engine.Run(h.agent.config.HTTPAddr)
 }
 
-func (h *HTTPTransport) ApiRoutes(r *gin.RouterGroup) {
+// apiRoutes registers the api routes on the gin RouterGroup.
+func (h *HTTPTransport) apiRoutes(r *gin.RouterGroup) {
 	v1 := r.Group("/v1")
 	v1.GET("/", h.indexHandler)
 	v1.GET("/members", h.membersHandler)
@@ -72,6 +76,7 @@ func (h *HTTPTransport) ApiRoutes(r *gin.RouterGroup) {
 	jobs.GET("/:job/executions", h.executionsHandler)
 }
 
+// MetaMiddleware adds middleware to the gin Context.
 func (h *HTTPTransport) MetaMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Header("X-Whom", h.agent.config.NodeName)
@@ -206,10 +211,10 @@ func (h *HTTPTransport) executionsHandler(c *gin.Context) {
 		if err == store.ErrKeyNotFound {
 			renderJSON(c, http.StatusOK, &[]Execution{})
 			return
-		} else {
-			log.Error(err)
-			return
 		}
+		log.Error(err)
+		return
+
 	}
 	renderJSON(c, http.StatusOK, executions)
 }

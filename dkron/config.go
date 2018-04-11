@@ -14,6 +14,7 @@ import (
 	"github.com/spf13/viper"
 )
 
+// Config stores all configuration options for the dkron package.
 type Config struct {
 	NodeName              string
 	BindAddr              string
@@ -61,7 +62,7 @@ type Config struct {
 	StatsdAddr    string
 }
 
-// This is the default port that we use for Serf communication
+// DefaultBindPort is the default port that dkron will use for Serf communication
 const DefaultBindPort int = 8946
 
 func init() {
@@ -73,10 +74,10 @@ func init() {
 	viper.AutomaticEnv()
 }
 
-// readConfig is responsible for setup of our configuration using
-// the command line and any file configs
-func NewConfig(args []string, agent *AgentCommand) *Config {
-	cmdFlags := ConfigFlagSet()
+// NewConfig creates a Config object and will set up the dkron configuration using
+// the command line and any file configs.
+func NewConfig(args []string, version string) *Config {
+	cmdFlags := configFlagSet()
 
 	ignore := args[len(args)-1] == "ignore"
 	if ignore {
@@ -105,10 +106,11 @@ func NewConfig(args []string, agent *AgentCommand) *Config {
 		}
 	})
 
-	return ReadConfig(agent)
+	return readConfig(version)
 }
 
-func ConfigFlagSet() *flag.FlagSet {
+// configFlagSet creates all of our configuration flags.
+func configFlagSet() *flag.FlagSet {
 	hostname, err := os.Hostname()
 	if err != nil {
 		log.Panic(err)
@@ -160,8 +162,8 @@ func ConfigFlagSet() *flag.FlagSet {
 	return cmdFlags
 }
 
-// ReadConfig from file and create the actual config object.
-func ReadConfig(agent *AgentCommand) *Config {
+// readConfig from file and create the actual config object.
+func readConfig(version string) *Config {
 	err := viper.ReadInConfig() // Find and read the config file
 	if err != nil {             // Handle errors reading the config file
 		logrus.WithError(err).Info("No valid config found: Applying default values.")
@@ -185,7 +187,7 @@ func ReadConfig(agent *AgentCommand) *Config {
 	if server {
 		tags["dkron_server"] = "true"
 	}
-	tags["dkron_version"] = agent.Version
+	tags["dkron_version"] = version
 
 	InitLogger(viper.GetString("log_level"), nodeName)
 
@@ -249,7 +251,7 @@ START:
 	return addr.IP.String(), addr.Port, nil
 }
 
-// Networkinterface is used to get the associated network
+// NetworkInterface is used to get the associated network
 // interface from the configured value
 func (c *Config) NetworkInterface() (*net.Interface, error) {
 	if c.Interface == "" {

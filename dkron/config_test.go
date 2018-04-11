@@ -6,19 +6,9 @@ import (
 
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
-
-	"github.com/mitchellh/cli"
 )
 
 func TestReadConfigTags(t *testing.T) {
-	shutdownCh := make(chan struct{})
-	defer close(shutdownCh)
-
-	ui := new(cli.MockUi)
-	a := &AgentCommand{
-		Ui:         ui,
-		ShutdownCh: shutdownCh,
-	}
 
 	viper.Reset()
 	viper.SetConfigType("json")
@@ -28,17 +18,17 @@ func TestReadConfigTags(t *testing.T) {
 		}
 	}`)
 	viper.ReadConfig(bytes.NewBuffer(jsonConfig))
-	config := ReadConfig(a)
+	config := readConfig("0.1.0")
 	t.Log(config.Tags)
 	assert.Equal(t, "bar", config.Tags["foo"])
 
 	viper.Set("tag", []string{"monthy=python"})
-	config = ReadConfig(a)
+	config = readConfig("0.1.0")
 	assert.NotContains(t, config.Tags, "foo")
 	assert.Contains(t, config.Tags, "monthy")
 	assert.Equal(t, "python", config.Tags["monthy"])
 
-	config = NewConfig([]string{"-tag", "t1=v1", "-tag", "t2=v2"}, a)
+	config = NewConfig([]string{"-tag", "t1=v1", "-tag", "t2=v2"}, "0.1.0")
 	assert.Equal(t, "v1", config.Tags["t1"])
 	assert.Equal(t, "v2", config.Tags["t2"])
 }

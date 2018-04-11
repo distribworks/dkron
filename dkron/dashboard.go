@@ -48,7 +48,8 @@ func newCommonDashboardData(a *AgentCommand, nodeName, path string) *commonDashb
 	}
 }
 
-func (a *AgentCommand) DashboardRoutes(r *gin.RouterGroup) {
+// dashboardRoutes registers dashboard specific routes on the gin RouterGroup.
+func (a *AgentCommand) dashboardRoutes(r *gin.RouterGroup) {
 	r.GET("/static/*asset", servePublic)
 
 	dashboard := r.Group("/" + dashboardPathPrefix)
@@ -113,7 +114,7 @@ func mustLoadTemplate(path string) []byte {
 	return tmpl
 }
 
-func CreateMyRender() multitemplate.Render {
+func createMyRender() multitemplate.Render {
 	r := multitemplate.New()
 
 	status := mustLoadTemplate(tmplPath + "/status.html.tmpl")

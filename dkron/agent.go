@@ -33,7 +33,7 @@ const (
 var (
 	expNode = expvar.NewString("node")
 
-	// Error thrown on obtained leader from store is not found in member list
+	// ErrLeaderNotFound is returned when obtained leader from store is not found in member list
 	ErrLeaderNotFound = errors.New("No member leader found in member list")
 
 	defaultLeaderTTL = 20 * time.Second
@@ -61,6 +61,7 @@ type AgentCommand struct {
 	ready     bool
 }
 
+// Help returns agent command usage to the CLI.
 func (a *AgentCommand) Help() string {
 	helpText := `
 Usage: dkron agent [options]
@@ -282,6 +283,7 @@ func (a *AgentCommand) setupSerf() *serf.Serf {
 	return serf
 }
 
+// Config returns the agent's config.
 func (a *AgentCommand) Config() *Config {
 	return a.config
 }
@@ -300,8 +302,12 @@ func UnmarshalTags(tags []string) (map[string]string, error) {
 	return result, nil
 }
 
+// Run will execute the main functions of the agent command.
+// This includes the main eventloop and starting the server if enabled.
+//
+// The returned value is the exit code.
 func (a *AgentCommand) Run(args []string) int {
-	a.config = NewConfig(args, a)
+	a.config = NewConfig(args, a.Version)
 	if a.serf = a.setupSerf(); a.serf == nil {
 		log.Fatal("agent: Can not setup serf")
 	}
@@ -397,19 +403,19 @@ WAIT:
 // handleReload is invoked when we should reload our configs, e.g. SIGHUP
 func (a *AgentCommand) handleReload() {
 	a.Ui.Output("Reloading configuration...")
-	newConf := ReadConfig(a)
+	newConf := readConfig(a.Version)
 	if newConf == nil {
 		a.Ui.Error(fmt.Sprintf("Failed to reload configs"))
 		return
-	} else {
-		a.config = newConf
 	}
+	a.config = newConf
 
 	// Reset serf tags
 	a.serf.SetTags(a.config.Tags)
 	//Config reloading will also reload Notification settings
 }
 
+// Synopsis returns the purpose of the command for the CLI
 func (a *AgentCommand) Synopsis() string {
 	return "Run dkron"
 }
@@ -481,6 +487,8 @@ func (a *AgentCommand) listServers() []serf.Member {
 	return members
 }
 
+// GetBindIP returns the IP address that the agent is bound to.
+// This could be different than the originally configured address.
 func (a *AgentCommand) GetBindIP() (string, error) {
 	bindIP, _, err := a.config.AddrParts(a.config.BindAddr)
 	return bindIP, err
@@ -549,8 +557,8 @@ func (a *AgentCommand) eventLoop() {
 						}
 					}()
 
-					exJson, _ := json.Marshal(ex)
-					query.Respond(exJson)
+					exJSON, _ := json.Marshal(ex)
+					query.Respond(exJSON)
 				}
 
 				if query.Name == QueryRPCConfig && a.config.Server {
@@ -587,8 +595,7 @@ func (a *AgentCommand) schedule() {
 // Join asks the Serf instance to join. See the Serf.Join function.
 func (a *AgentCommand) join(addrs []string, replay bool) (n int, err error) {
 	log.Infof("agent: joining: %v replay: %v", addrs, replay)
-	ignoreOld := !replay
-	n, err = a.serf.Join(addrs, ignoreOld)
+	n, err = a.serf.Join(addrs, !replay)
 	if n > 0 {
 		log.Infof("agent: joined: %d nodes", n)
 	}
@@ -655,7 +662,7 @@ func (a *AgentCommand) setExecution(payload []byte) *Execution {
 // of the current member.
 // in marathon, it would return the host's IP and advertise RPC port
 func (a *AgentCommand) getRPCAddr() string {
-	bindIp := a.serf.LocalMember().Addr
+	bindIP := a.serf.LocalMember().Addr
 
-	return fmt.Sprintf("%s:%d", bindIp, a.config.AdvertiseRPCPort)
+	return fmt.Sprintf("%s:%d", bindIP, a.config.AdvertiseRPCPort)
 }
