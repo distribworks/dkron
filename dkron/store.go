@@ -66,11 +66,9 @@ func NewStore(backend string, machines []string, a *Agent, keyspace string, conf
 }
 
 // Store a job
-func (s *Store) SetJob(job *Job, previousJob *Job) error {
+func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
 	//Existing job that has children, let's keep it's children
-	if previousJob != nil && len(previousJob.DependentJobs) != 0 {
-		job.DependentJobs = previousJob.DependentJobs
-	}
+
 	// Sanitize the job name
 	job.Name = generateSlug(job.Name)
 	jobKey := fmt.Sprintf("%s/jobs/%s", s.keyspace, job.Name)
@@ -88,6 +86,8 @@ func (s *Store) SetJob(job *Job, previousJob *Job) error {
 		return err
 	}
 	if ej != nil {
+		ej.Lock()
+		ej.Unlock()
 		// When the job runs, these status vars are updated
 		// otherwise use the ones that are stored
 		if ej.LastError.After(job.LastError) {
@@ -102,6 +102,9 @@ func (s *Store) SetJob(job *Job, previousJob *Job) error {
 		if ej.ErrorCount > job.ErrorCount {
 			job.ErrorCount = ej.ErrorCount
 		}
+		if len(ej.DependentJobs) != 0 && copyDependentJobs {
+			job.DependentJobs = ej.DependentJobs
+		}
 	}
 
 	jobJSON, _ := json.Marshal(job)
@@ -115,6 +118,54 @@ func (s *Store) SetJob(job *Job, previousJob *Job) error {
 		return err
 	}
 
+	if ej != nil {
+		// Existing job that doesn't have parent job set and it's being set
+		if ej.ParentJob == "" && job.ParentJob != "" {
+			pj, err := job.GetParent()
+			if err != nil {
+				return err
+			}
+
+			pj.DependentJobs = append(pj.DependentJobs, job.Name)
+			if err := s.SetJob(pj, false); err != nil {
+				return err
+			}
+		}
+
+		// Existing job that has parent job set and it's being removed
+		if ej.ParentJob != "" && job.ParentJob == "" {
+			pj, err := ej.GetParent()
+			if err != nil {
+				return err
+			}
+
+			ndx := 0
+			for i, djn := range pj.DependentJobs {
+				if djn == job.Name {
+					ndx = i
+					break
+				}
+			}
+			pj.DependentJobs = append(pj.DependentJobs[:ndx], pj.DependentJobs[ndx+1:]...)
+			if err := s.SetJob(pj, false); err != nil {
+				return err
+			}
+		}
+	}
+
+	// New job that has parent job set
+	if ej == nil && job.ParentJob != "" {
+		pj, err := job.GetParent()
+		if err != nil {
+			return err
+		}
+
+		pj.DependentJobs = append(pj.DependentJobs, job.Name)
+		if err := s.SetJob(pj, false); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -125,64 +176,6 @@ func (s *Store) AtomicJobPut(job *Job, prevJobKVPair *store.KVPair) (bool, error
 	ok, _, err := s.Client.AtomicPut(jobKey, jobJSON, prevJobKVPair, nil)
 
 	return ok, err
-}
-
-// Set the depencency tree for a job given the job and the previous version
-// of the Job or nil if it's new.
-func (s *Store) SetJobDependencyTree(job *Job, previousJob *Job) error {
-	// Existing job that doesn't have parent job set and it's being set
-	if previousJob != nil && previousJob.ParentJob == "" && job.ParentJob != "" {
-		pj, err := job.GetParent()
-		if err != nil {
-			return err
-		}
-		pj.Lock()
-		defer pj.Unlock()
-
-		pj.DependentJobs = append(pj.DependentJobs, job.Name)
-		if err := s.SetJob(pj, nil); err != nil {
-			return err
-		}
-	}
-
-	// Existing job that has parent job set and it's being removed
-	if previousJob != nil && previousJob.ParentJob != "" && job.ParentJob == "" {
-		pj, err := previousJob.GetParent()
-		if err != nil {
-			return err
-		}
-		pj.Lock()
-		defer pj.Unlock()
-
-		ndx := 0
-		for i, djn := range pj.DependentJobs {
-			if djn == job.Name {
-				ndx = i
-				break
-			}
-		}
-		pj.DependentJobs = append(pj.DependentJobs[:ndx], pj.DependentJobs[ndx+1:]...)
-		if err := s.SetJob(pj, nil); err != nil {
-			return err
-		}
-	}
-
-	// New job that has parent job set
-	if previousJob == nil && job.ParentJob != "" {
-		pj, err := job.GetParent()
-		if err != nil {
-			return err
-		}
-		pj.Lock()
-		defer pj.Unlock()
-
-		pj.DependentJobs = append(pj.DependentJobs, job.Name)
-		if err := s.SetJob(pj, nil); err != nil {
-			return err
-		}
-	}
-
-	return nil
 }
 
 func (s *Store) validateJob(job *Job) error {

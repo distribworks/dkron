@@ -16,7 +16,7 @@ func TestJobGetParent(t *testing.T) {
 
 	// Cleanup everything
 	err := store.Client.DeleteTree("dkron-test")
-	if err != s.ErrKeyNotFound {
+	if err != nil && err != s.ErrKeyNotFound {
 		t.Logf("error cleaning up: %s", err)
 	}
 
@@ -26,7 +26,7 @@ func TestJobGetParent(t *testing.T) {
 		Schedule: "@every 2s",
 	}
 
-	if err := store.SetJob(parentTestJob, nil); err != nil {
+	if err := store.SetJob(parentTestJob, true); err != nil {
 		t.Fatalf("error creating job: %s", err)
 	}
 
@@ -36,10 +36,7 @@ func TestJobGetParent(t *testing.T) {
 		ParentJob: "parent_test",
 	}
 
-	err = store.SetJob(dependentTestJob, nil)
-	assert.NoError(t, err)
-
-	err = store.SetJobDependencyTree(dependentTestJob, nil)
+	err = store.SetJob(dependentTestJob, true)
 	assert.NoError(t, err)
 
 	parentTestJob, err = dependentTestJob.GetParent()
@@ -51,14 +48,9 @@ func TestJobGetParent(t *testing.T) {
 	assert.Equal(t, parentTestJob, ptj)
 
 	// Remove the parent job
-	ej, _ := store.GetJob(dependentTestJob.Name)
-
 	dependentTestJob.ParentJob = ""
 	dependentTestJob.Schedule = "@every 2m"
-	err = store.SetJob(dependentTestJob, nil)
-	assert.NoError(t, err)
-
-	err = store.SetJobDependencyTree(dependentTestJob, ej)
+	err = store.SetJob(dependentTestJob, true)
 	assert.NoError(t, err)
 
 	dtj, _ := store.GetJob(dependentTestJob.Name)

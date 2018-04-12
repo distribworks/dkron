@@ -31,7 +31,7 @@ func TestStore(t *testing.T) {
 	}
 	assert.NotNil(t, jobs, "jobs nil, expecting empty slice")
 
-	if err := s.SetJob(testJob, nil); err != nil {
+	if err := s.SetJob(testJob, true); err != nil {
 		t.Fatalf("error creating job: %s", err)
 	}
 

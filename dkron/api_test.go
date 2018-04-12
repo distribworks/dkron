@@ -19,6 +19,7 @@ func setupAPITest(t *testing.T) (a *Agent) {
 		"-node-name", "test",
 		"-server",
 		"-log-level", logLevel,
+		"-keyspace", "dkron-test",
 	}
 
 	c := NewConfig(args)
@@ -32,6 +33,9 @@ func setupAPITest(t *testing.T) (a *Agent) {
 		time.Sleep(10 * time.Millisecond)
 	}
 	time.Sleep(1 * time.Second)
+
+	// clean up the keyspace to ensure clean runs
+	a.Store.Client.DeleteTree("dkron-test")
 
 	return
 }
