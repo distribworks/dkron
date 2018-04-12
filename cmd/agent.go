@@ -9,8 +9,7 @@ import (
 	"time"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/abronan/leadership"
-	"github.com/hashicorp/serf/serf"
+	"github.com/hashicorp/go-plugin"
 	"github.com/mitchellh/cli"
 	"github.com/victorcoder/dkron/dkron"
 )
@@ -22,20 +21,11 @@ const (
 
 // AgentCommand run dkron agent
 type AgentCommand struct {
-	Ui               cli.Ui
-	Version          string
-	ShutdownCh       <-chan struct{}
-	ProcessorPlugins map[string]dkron.ExecutionProcessor
-	ExecutorPlugins  map[string]dkron.Executor
-	HTTPTransport    dkron.Transport
-	Store            *dkron.Store
+	Ui         cli.Ui
+	ShutdownCh <-chan struct{}
 
-	serf      *serf.Serf
-	config    *dkron.Config
-	eventCh   chan serf.Event
-	sched     *dkron.Scheduler
-	candidate *leadership.Candidate
-	ready     bool
+	config *dkron.Config
+	agent  *dkron.Agent
 }
 
 // Help returns agent command usage to the CLI.
@@ -100,13 +90,26 @@ func (a *AgentCommand) Synopsis() string {
 // This includes the main eventloop and starting the server if enabled.
 //
 // The returned value is the exit code.
+// protoc -I proto/ proto/executor.proto --go_out=plugins=grpc:proto/
 func (a *AgentCommand) Run(args []string) int {
-	config := dkron.NewConfig(args, a.Version)
-	_, err := dkron.Create(config)
+	// Make sure we clean up any managed plugins at the end of this
+	p := &Plugins{}
+	if err := p.DiscoverPlugins(); err != nil {
+		log.Fatal(err)
+	}
+	plugins := &dkron.Plugins{
+		Processors: p.Processors,
+		Executors:  p.Executors,
+	}
+
+	config := dkron.NewConfig(args)
+
+	agent, err := dkron.Create(config, plugins)
 	if err != nil {
 		a.Ui.Error(err.Error())
 		return 1
 	}
+	a.agent = agent
 
 	return a.handleSignals()
 }
@@ -149,7 +152,8 @@ WAIT:
 	a.Ui.Output("Gracefully shutting down agent...")
 	log.Info("agent: Gracefully shutting down agent...")
 	go func() {
-		if err := a.serf.Leave(); err != nil {
+		plugin.CleanupClients()
+		if err := a.agent.Leave(); err != nil {
 			a.Ui.Error(fmt.Sprintf("Error: %s", err))
 			log.Error(fmt.Sprintf("Error: %s", err))
 			return
@@ -171,7 +175,7 @@ WAIT:
 // handleReload is invoked when we should reload our configs, e.g. SIGHUP
 func (a *AgentCommand) handleReload() {
 	a.Ui.Output("Reloading configuration...")
-	newConf := dkron.ReadConfig(a.Version)
+	newConf := dkron.ReadConfig()
 	if newConf == nil {
 		a.Ui.Error(fmt.Sprintf("Failed to reload configs"))
 		return
@@ -179,6 +183,9 @@ func (a *AgentCommand) handleReload() {
 	a.config = newConf
 
 	// Reset serf tags
-	a.serf.SetTags(a.config.Tags)
+	if err := a.agent.SetTags(a.config.Tags); err != nil {
+		a.Ui.Error(fmt.Sprintf("Failed to reload tags %v", a.config.Tags))
+		return
+	}
 	//Config reloading will also reload Notification settings
 }

@@ -37,7 +37,7 @@ func newCommonDashboardData(a *Agent, nodeName, path string) *commonDashboardDat
 	}
 
 	return &commonDashboardData{
-		Version:    a.Version,
+		Version:    Version,
 		LeaderName: leaderName,
 		MemberName: nodeName,
 		Backend:    a.config.Backend,

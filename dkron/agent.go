@@ -33,7 +33,6 @@ var (
 )
 
 type Agent struct {
-	Version          string
 	ProcessorPlugins map[string]ExecutionProcessor
 	ExecutorPlugins  map[string]Executor
 	HTTPTransport    Transport
@@ -51,9 +50,16 @@ type Agent struct {
 // of a processor.
 type ProcessorFactory func() (ExecutionProcessor, error)
 
-func Create(config *Config) (*Agent, error) {
+type Plugins struct {
+	Processors map[string]ExecutionProcessor
+	Executors  map[string]Executor
+}
+
+func Create(config *Config, plugins *Plugins) (*Agent, error) {
 	a := &Agent{
-		config: config,
+		config:           config,
+		ProcessorPlugins: plugins.Processors,
+		ExecutorPlugins:  plugins.Executors,
 	}
 
 	s, err := a.setupSerf()
@@ -516,4 +522,12 @@ func (a *Agent) getRPCAddr() string {
 	bindIP := a.serf.LocalMember().Addr
 
 	return fmt.Sprintf("%s:%d", bindIP, a.config.AdvertiseRPCPort)
+}
+
+func (a *Agent) Leave() error {
+	return a.serf.Leave()
+}
+
+func (a *Agent) SetTags(tags map[string]string) error {
+	return a.serf.SetTags(tags)
 }

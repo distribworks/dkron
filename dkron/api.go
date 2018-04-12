@@ -97,7 +97,7 @@ func (h *HTTPTransport) indexHandler(c *gin.Context) {
 	stats := map[string]map[string]string{
 		"agent": {
 			"name":    local.Name,
-			"version": h.agent.Version,
+			"version": Version,
 			"backend": h.agent.config.Backend,
 		},
 		"serf": h.agent.serf.Stats(),
