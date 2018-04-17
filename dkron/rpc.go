@@ -71,6 +71,7 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 	for k, v := range job.Processors {
 		log.WithField("plugin", k).Debug("rpc: Processing execution with plugin")
 		if processor, ok := rpcs.agent.ProcessorPlugins[k]; ok {
+			v["reporting_node"] = rpcs.agent.config.NodeName
 			e := processor.Process(&ExecutionProcessorArgs{Execution: origExec, Config: v})
 			execution = e
 		}
