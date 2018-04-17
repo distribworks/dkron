@@ -21,11 +21,11 @@ type Transport interface {
 type HTTPTransport struct {
 	Engine *gin.Engine
 
-	agent *AgentCommand
+	agent *Agent
 }
 
 // NewTransport creates an HTTPTransport with a bound agent.
-func NewTransport(a *AgentCommand) *HTTPTransport {
+func NewTransport(a *Agent) *HTTPTransport {
 	return &HTTPTransport{
 		agent: a,
 	}
@@ -39,11 +39,11 @@ func (h *HTTPTransport) ServeHTTP() {
 	}
 
 	h.Engine = gin.Default()
-	h.Engine.HTMLRender = createMyRender()
+	h.Engine.HTMLRender = CreateMyRender()
 	rootPath := h.Engine.Group("/")
 
-	h.apiRoutes(rootPath)
-	h.agent.dashboardRoutes(rootPath)
+	h.ApiRoutes(rootPath)
+	h.agent.DashboardRoutes(rootPath)
 
 	h.Engine.Use(h.MetaMiddleware())
 	//r.GET("/debug/vars", expvar.Handler())
@@ -56,7 +56,7 @@ func (h *HTTPTransport) ServeHTTP() {
 }
 
 // apiRoutes registers the api routes on the gin RouterGroup.
-func (h *HTTPTransport) apiRoutes(r *gin.RouterGroup) {
+func (h *HTTPTransport) ApiRoutes(r *gin.RouterGroup) {
 	v1 := r.Group("/v1")
 	v1.GET("/", h.indexHandler)
 	v1.GET("/members", h.membersHandler)
@@ -97,7 +97,7 @@ func (h *HTTPTransport) indexHandler(c *gin.Context) {
 	stats := map[string]map[string]string{
 		"agent": {
 			"name":    local.Name,
-			"version": h.agent.Version,
+			"version": Version,
 			"backend": h.agent.config.Backend,
 		},
 		"serf": h.agent.serf.Stats(),
