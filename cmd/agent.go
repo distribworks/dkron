@@ -104,8 +104,8 @@ func (a *AgentCommand) Run(args []string) int {
 
 	config := dkron.NewConfig(args)
 
-	agent, err := dkron.Create(config, plugins)
-	if err != nil {
+	agent := dkron.NewAgent(config, plugins)
+	if err := agent.Start(); err != nil {
 		a.Ui.Error(err.Error())
 		return 1
 	}

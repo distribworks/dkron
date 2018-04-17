@@ -55,19 +55,24 @@ type Plugins struct {
 	Executors  map[string]Executor
 }
 
-func Create(config *Config, plugins *Plugins) (*Agent, error) {
-	a := &Agent{
-		config:           config,
-		ProcessorPlugins: plugins.Processors,
-		ExecutorPlugins:  plugins.Executors,
+func NewAgent(config *Config, plugins *Plugins) *Agent {
+	a := &Agent{config: config}
+
+	if plugins != nil {
+		a.ProcessorPlugins = plugins.Processors
+		a.ExecutorPlugins = plugins.Executors
 	}
 
+	return a
+}
+
+func (a *Agent) Start() error {
 	s, err := a.setupSerf()
 	if err != nil {
-		return nil, fmt.Errorf("agent: Can not setup serf, %s", err)
+		return fmt.Errorf("agent: Can not setup serf, %s", err)
 	}
 	a.serf = s
-	a.join(config.StartJoin, true)
+	a.join(a.config.StartJoin, true)
 
 	if err := initMetrics(a); err != nil {
 		log.Fatal("agent: Can not setup metrics")
@@ -76,13 +81,13 @@ func Create(config *Config, plugins *Plugins) (*Agent, error) {
 	// Expose the node name
 	expNode.Set(a.config.NodeName)
 
-	if config.Server {
+	if a.config.Server {
 		a.StartServer()
 	}
 	go a.eventLoop()
 	a.ready = true
 
-	return a, nil
+	return nil
 }
 
 // setupSerf is used to create the agent we use
