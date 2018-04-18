@@ -22,7 +22,13 @@
 [[projects]]
   branch = "master"
   name = "github.com/abronan/valkeyrie"
-  packages = [".","store","store/consul","store/etcd/v2","store/zookeeper"]
+  packages = [
+    ".",
+    "store",
+    "store/consul",
+    "store/etcd/v2",
+    "store/zookeeper"
+  ]
   revision = "063d875e3c5fd734fa2aa12fac83829f62acfc70"
 
 [[projects]]
@@ -34,7 +40,10 @@
 [[projects]]
   branch = "master"
   name = "github.com/armon/go-metrics"
-  packages = [".","datadog"]
+  packages = [
+    ".",
+    "datadog"
+  ]
   revision = "9a4b6e10bed6220a1665955aa2b75afc91eb10b3"
 
 [[projects]]
@@ -51,7 +60,13 @@
 
 [[projects]]
   name = "github.com/coreos/etcd"
-  packages = ["client","pkg/pathutil","pkg/srv","pkg/types","version"]
+  packages = [
+    "client",
+    "pkg/pathutil",
+    "pkg/srv",
+    "pkg/types",
+    "version"
+  ]
   revision = "f1d7dd87da3e8feab4aaf675b8e29c6a5ed5f58b"
   version = "v3.2.9"
 
@@ -87,14 +102,24 @@
 
 [[projects]]
   name = "github.com/gin-gonic/gin"
-  packages = [".","binding","render"]
+  packages = [
+    ".",
+    "binding",
+    "render"
+  ]
   revision = "d459835d2b077e44f7c9b453505ee29881d5d12d"
   version = "v1.2"
 
 [[projects]]
   branch = "master"
   name = "github.com/golang/protobuf"
-  packages = ["proto","ptypes","ptypes/any","ptypes/duration","ptypes/timestamp"]
+  packages = [
+    "proto",
+    "ptypes",
+    "ptypes/any",
+    "ptypes/duration",
+    "ptypes/timestamp"
+  ]
   revision = "130e6b02ab059e7b717a096f397c5b60111cae74"
 
 [[projects]]
@@ -172,18 +197,33 @@
 [[projects]]
   branch = "master"
   name = "github.com/hashicorp/hcl"
-  packages = [".","hcl/ast","hcl/parser","hcl/scanner","hcl/strconv","hcl/token","json/parser","json/scanner","json/token"]
+  packages = [
+    ".",
+    "hcl/ast",
+    "hcl/parser",
+    "hcl/printer",
+    "hcl/scanner",
+    "hcl/strconv",
+    "hcl/token",
+    "json/parser",
+    "json/scanner",
+    "json/token"
+  ]
   revision = "23c074d0eceb2b8a5bfdbb271ab780cde70f05a8"
 
 [[projects]]
+  branch = "master"
   name = "github.com/hashicorp/memberlist"
   packages = ["."]
-  revision = "ce8abaa0c60c2d6bee7219f5ddf500e0a1457b28"
-  version = "v0.1.0"
+  revision = "2288bf30e9c8d7b5f6549bf62e07120d72fd4b6c"
 
 [[projects]]
   name = "github.com/hashicorp/serf"
-  packages = ["coordinate","serf","testutil"]
+  packages = [
+    "coordinate",
+    "serf",
+    "testutil"
+  ]
   revision = "d6574a5bb1226678d7010325fb6c985db20ee458"
   version = "v0.8.1"
 
@@ -196,8 +236,8 @@
 [[projects]]
   name = "github.com/jordan-wright/email"
   packages = ["."]
-  revision = "a62870b0c368c3c29de27027be67d855e308cc37"
-  version = "v2.2"
+  revision = "94ae17dedda217a49e3b47d68f1b54b3c946e16b"
+  version = "v3.0"
 
 [[projects]]
   branch = "master"
@@ -225,7 +265,10 @@
 [[projects]]
   branch = "master"
   name = "github.com/miekg/dns"
-  packages = [".","internal/socket"]
+  packages = [
+    ".",
+    "internal/socket"
+  ]
   revision = "b02ebddc7f2b55c5bb78aead3121c2e5cfc715d7"
 
 [[projects]]
@@ -273,7 +316,12 @@
 [[projects]]
   branch = "master"
   name = "github.com/posener/complete"
-  packages = [".","cmd","cmd/install","match"]
+  packages = [
+    ".",
+    "cmd",
+    "cmd/install",
+    "match"
+  ]
   revision = "88e59760adaddb8276c9b15511302890690e2dae"
 
 [[projects]]
@@ -291,7 +339,10 @@
 [[projects]]
   branch = "master"
   name = "github.com/spf13/afero"
-  packages = [".","mem"]
+  packages = [
+    ".",
+    "mem"
+  ]
   revision = "e67d870304c4bca21331b02f414f970df13aa694"
 
 [[projects]]
@@ -315,14 +366,14 @@
 [[projects]]
   name = "github.com/spf13/viper"
   packages = ["."]
-  revision = "25b30aa063fc18e48662b86996252eabdcf2f0c7"
-  version = "v1.0.0"
+  revision = "b5e8006cbee93ec955a89ab31e0e3ce3204f3736"
+  version = "v1.0.2"
 
 [[projects]]
   name = "github.com/stretchr/testify"
   packages = ["assert"]
-  revision = "69483b4bd14f5845b5a1e55bca19e954e827f1d0"
-  version = "v1.1.4"
+  revision = "12b6f73e6084dad08a7c6e575284b177ecafbc71"
+  version = "v1.2.1"
 
 [[projects]]
   name = "github.com/ugorji/go"
@@ -338,19 +389,45 @@
 [[projects]]
   branch = "master"
   name = "golang.org/x/net"
-  packages = ["context","http2","http2/hpack","idna","internal/timeseries","lex/httplex","trace"]
+  packages = [
+    "context",
+    "http2",
+    "http2/hpack",
+    "idna",
+    "internal/timeseries",
+    "lex/httplex",
+    "trace"
+  ]
   revision = "1087133bc4af3073e18add999345c6ae75918503"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
-  packages = ["unix","windows"]
+  packages = [
+    "unix",
+    "windows"
+  ]
   revision = "8dbc5d05d6edcc104950cc299a1ce6641235bc86"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/text"
-  packages = ["collate","collate/build","internal/colltab","internal/gen","internal/tag","internal/triegen","internal/ucd","language","secure/bidirule","transform","unicode/bidi","unicode/cldr","unicode/norm","unicode/rangetable"]
+  packages = [
+    "collate",
+    "collate/build",
+    "internal/colltab",
+    "internal/gen",
+    "internal/tag",
+    "internal/triegen",
+    "internal/ucd",
+    "language",
+    "secure/bidirule",
+    "transform",
+    "unicode/bidi",
+    "unicode/cldr",
+    "unicode/norm",
+    "unicode/rangetable"
+  ]
   revision = "c01e4764d870b77f8abe5096ee19ad20d80e8075"
 
 [[projects]]
@@ -361,7 +438,27 @@
 
 [[projects]]
   name = "google.golang.org/grpc"
-  packages = [".","balancer","codes","connectivity","credentials","grpclb/grpc_lb_v1/messages","grpclog","health","health/grpc_health_v1","internal","keepalive","metadata","naming","peer","resolver","stats","status","tap","transport"]
+  packages = [
+    ".",
+    "balancer",
+    "codes",
+    "connectivity",
+    "credentials",
+    "grpclb/grpc_lb_v1/messages",
+    "grpclog",
+    "health",
+    "health/grpc_health_v1",
+    "internal",
+    "keepalive",
+    "metadata",
+    "naming",
+    "peer",
+    "resolver",
+    "stats",
+    "status",
+    "tap",
+    "transport"
+  ]
   revision = "f7bf885db0b7479a537ec317c6e48ce53145f3db"
   version = "v1.7.0"
 
@@ -380,6 +477,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "e65fb9bb4f8b8fa49eb9b8280ccc39f19c23e8a05839a5de777b060b4b2db43a"
+  inputs-digest = "f8be537631e515e6f046ce0f573c287aec8ab8631ac0b54cc018fadabab129d3"
   solver-name = "gps-cdcl"
   solver-version = 1
