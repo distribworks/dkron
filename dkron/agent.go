@@ -90,6 +90,16 @@ func (a *Agent) Start() error {
 	return nil
 }
 
+func (a *Agent) Stop() error {
+	a.candidate.Stop()
+
+	if err := a.serf.Leave(); err != nil {
+		return err
+	}
+	
+	return nil
+}
+
 // setupSerf is used to create the agent we use
 func (a *Agent) setupSerf() (*serf.Serf, error) {
 	config := a.config
