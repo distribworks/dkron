@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/hashicorp/serf/testutil"
-	"github.com/mitchellh/cli"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
@@ -20,15 +19,6 @@ func TestRPCExecutionDone(t *testing.T) {
 		t.Logf("error cleaning up: %s", err)
 	}
 
-	shutdownCh := make(chan struct{})
-	defer close(shutdownCh)
-
-	ui := new(cli.MockUi)
-	a := &AgentCommand{
-		Ui:         ui,
-		ShutdownCh: shutdownCh,
-	}
-
 	aAddr := testutil.GetBindAddr().String()
 
 	args := []string{
@@ -40,7 +30,10 @@ func TestRPCExecutionDone(t *testing.T) {
 		"-log-level", logLevel,
 	}
 
-	go a.Run(args)
+	c := NewConfig(args)
+	a := NewAgent(c, nil)
+	a.Start()
+
 	time.Sleep(2 * time.Second)
 
 	testJob := &Job{
