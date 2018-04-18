@@ -28,7 +28,7 @@ func TestNotifier_callExecutionWebhook(t *testing.T) {
 
 func TestNotifier_sendExecutionEmail(t *testing.T) {
 	c := &Config{
-		MailHost:          "mailtrap.io",
+		MailHost:          "smtp.mailtrap.io",
 		MailPort:          2525,
 		MailUsername:      "45326e3b115066bbb",
 		MailPassword:      "7f496ed2b06688",
@@ -37,7 +37,7 @@ func TestNotifier_sendExecutionEmail(t *testing.T) {
 	}
 
 	job := &Job{
-		OwnerEmail: "victorcoder@gmail.com",
+		OwnerEmail: "cron@job.com",
 	}
 
 	ex1 := &Execution{
