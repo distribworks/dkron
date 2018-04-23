@@ -96,7 +96,7 @@ func (a *Agent) Stop() error {
 	if err := a.serf.Leave(); err != nil {
 		return err
 	}
-	
+
 	return nil
 }
 
