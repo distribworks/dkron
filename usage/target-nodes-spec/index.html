@@ -7,7 +7,7 @@
     <meta name="description" content="">
 
 
-    <title>Dkron vs. Other Software :: Dkron - Distributed job scheduling system</title>
+    <title>Target nodes spec :: Dkron - Distributed job scheduling system</title>
     <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
     <link href="/css/nucleus.css" rel="stylesheet">
     <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -31,7 +31,7 @@
     
 
   </head>
-  <body class="" data-url="/dkron_vs_other_software/">
+  <body class="" data-url="/usage/target-nodes-spec/">
     <nav id="sidebar" class="">
   <div id="header-wrapper">
     <div id="header">
@@ -125,7 +125,7 @@
 
 
 <li data-nav-id="/usage/" class="dd-item 
-
+parent
 
 
 ">
@@ -133,7 +133,7 @@
     <span>Usage</span>
 
     
-    <i class="fa fa-angle-right fa-lg category-icon"></i>
+    <i class="fa fa-angle-down fa-lg category-icon"></i>
     
     
     
@@ -197,7 +197,7 @@
         
          
           <li data-nav-id="/usage/target-nodes-spec/" class="dd-item
-         
+         active
           ">
             <a href="/usage/target-nodes-spec/">
             <span>Target nodes spec</span> 
@@ -371,7 +371,12 @@
 
 
 
- <a href='/'>Dkron - Distributed job scheduling system</a> > Dkron vs. Other Software
+
+
+
+ <a href='/'>Dkron - Distributed job scheduling system</a> > <a href='/usage/'>Usage</a> > Target nodes spec
+
+ 
 
  
 
@@ -384,8 +389,10 @@
 <ul>
 <li>
 <ul>
-<li><a href="#dkron-vs-chronos">Dkron vs. Chronos</a></li>
-<li><a href="#dkron-vs-rundeck">Dkron vs. Rundeck</a></li>
+<li><a href="#target-nodes-spec">Target nodes spec</a>
+<ul>
+<li><a href="#examples">Examples:</a></li>
+</ul></li>
 </ul></li>
 </ul>
 </nav>
@@ -397,7 +404,7 @@
         
         <div id="body-inner">
           
-            <h1>Dkron vs. Other Software</h1>
+            <h1>Target nodes spec</h1>
           
 
 
@@ -405,28 +412,37 @@
 
 
 
-<h2 id="dkron-vs-chronos">Dkron vs. Chronos</h2>
+<h2 id="target-nodes-spec">Target nodes spec</h2>
 
-<p>Airbnb&rsquo;s Chronos is a job scheduler that is similar to dkron, it&rsquo;s distributed and fault tolerant thanks to the use of Zookeeper and Apache Mesos.</p>
+<p>You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run.</p>
 
-<p>If you don&rsquo;t have/want to run a Mesos cluster and deal with the not easy configuration and maintenance of Zookeeper and you want something lighter, Dkron could help you.</p>
+<h3 id="examples">Examples:</h3>
 
-<h2 id="dkron-vs-rundeck">Dkron vs. Rundeck</h2>
+<p>Target all nodes with a tag:</p>
 
-<p>Rundeck is a popular and mature platform to automate operations and schedule jobs.</p>
+<pre><code>{
+    &quot;name&quot;: &quot;job_name&quot;,
+    &quot;command&quot;: &quot;/bin/true&quot;,
+    &quot;schedule&quot;: &quot;@every 2m&quot;,
+    &quot;tags&quot;: {
+        &quot;role&quot;: &quot;web&quot;
+    }
+}
+</code></pre>
 
-<p>It has cool features:</p>
+<p>Target only two nodes of a group of nodes with a tag:</p>
 
-<ul>
-<li>Agentless</li>
-<li>Permissions and auditing</li>
-</ul>
+<pre><code>{
+    &quot;name&quot;: &quot;job_name&quot;,
+    &quot;command&quot;: &quot;/bin/true&quot;,
+    &quot;schedule&quot;: &quot;@every 2m&quot;,
+    &quot;tags&quot;: {
+        &quot;role&quot;: &quot;web:2&quot;
+    }
+}
+</code></pre>
 
-<p>It&rsquo;s written in Java and it&rsquo;s not trivial to setup right.</p>
-
-<p>It uses a central database to store job execution results and configuration data, that makes it vulnerable to failures, and you need to care yourself of providing an HA environement for the database, and that&rsquo;s not an easy task to do with the Rundeck&rsquo;s supported databases.</p>
-
-<p>Dkron lacks some of it&rsquo;s features but it&rsquo;s lightweight and fault-tolerant out-of-the-box.</p>
+<p>Dkron will try to run the job in the amount of nodes indicated by that count having that tag.</p>
 
 
 <footer class=" footline" >
@@ -497,6 +513,7 @@
             
                 
                     
+                    
                 
                 
                 
@@ -504,6 +521,9 @@
             
             
                 
+                    
+                        
+                        
                     
                 
                 
@@ -608,6 +628,7 @@
             
                 
                     
+                    
                 
                 
                 
@@ -619,6 +640,9 @@
             
             
                 
+                    
+                        
+                        
                     
                 
                 
@@ -645,8 +669,10 @@
 
 
         
+            <a class="nav nav-prev" href="/usage/integration/" title="Integration"> <i class="fa fa-chevron-left"></i></a>
         
-            <a class="nav nav-next" href="/basics/" title="Basics" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+        
+            <a class="nav nav-next" href="/internal/" title="Internals" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
         
     </div>
 

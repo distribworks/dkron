@@ -7,7 +7,7 @@
     <meta name="description" content="">
 
 
-    <title>Dkron vs. Other Software :: Dkron - Distributed job scheduling system</title>
+    <title>Plugins :: Dkron - Distributed job scheduling system</title>
     <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
     <link href="/css/nucleus.css" rel="stylesheet">
     <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -31,7 +31,7 @@
     
 
   </head>
-  <body class="" data-url="/dkron_vs_other_software/">
+  <body class="" data-url="/usage/plugins/">
     <nav id="sidebar" class="">
   <div id="header-wrapper">
     <div id="header">
@@ -125,7 +125,7 @@
 
 
 <li data-nav-id="/usage/" class="dd-item 
-
+parent
 
 
 ">
@@ -133,7 +133,7 @@
     <span>Usage</span>
 
     
-    <i class="fa fa-angle-right fa-lg category-icon"></i>
+    <i class="fa fa-angle-down fa-lg category-icon"></i>
     
     
     
@@ -212,15 +212,15 @@
 
 
 <li data-nav-id="/usage/plugins/" class="dd-item 
-
-
+parent
+active
 
 ">
   <a href="/usage/plugins/">
     <span>Plugins</span>
 
     
-    <i class="fa fa-angle-right fa-lg category-icon"></i>
+    <i class="fa fa-angle-down fa-lg category-icon"></i>
     
     
     
@@ -371,7 +371,12 @@
 
 
 
- <a href='/'>Dkron - Distributed job scheduling system</a> > Dkron vs. Other Software
+
+
+
+ <a href='/'>Dkron - Distributed job scheduling system</a> > <a href='/usage/'>Usage</a> > Plugins
+
+ 
 
  
 
@@ -384,8 +389,9 @@
 <ul>
 <li>
 <ul>
-<li><a href="#dkron-vs-chronos">Dkron vs. Chronos</a></li>
-<li><a href="#dkron-vs-rundeck">Dkron vs. Rundeck</a></li>
+<li><a href="#intro">Intro</a></li>
+<li><a href="#how-it-works">How it Works</a></li>
+<li><a href="#installing-a-plugin">Installing a Plugin</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -397,7 +403,7 @@
         
         <div id="body-inner">
           
-            <h1>Dkron vs. Other Software</h1>
+            <h1>Plugins</h1>
           
 
 
@@ -405,33 +411,96 @@
 
 
 
-<h2 id="dkron-vs-chronos">Dkron vs. Chronos</h2>
+<h2 id="intro">Intro</h2>
 
-<p>Airbnb&rsquo;s Chronos is a job scheduler that is similar to dkron, it&rsquo;s distributed and fault tolerant thanks to the use of Zookeeper and Apache Mesos.</p>
+<p>Plugins in Dkron allow you to add funcionality that integrates with the workflow of the job execution in Dkron. It&rsquo;s a powerful system that allows you to extend and adapt Dkron to your special needs.</p>
 
-<p>If you don&rsquo;t have/want to run a Mesos cluster and deal with the not easy configuration and maintenance of Zookeeper and you want something lighter, Dkron could help you.</p>
+<p>This page documents the basics of how the plugin system in Dkron works, and how to setup a basic development environment for plugin development if you&rsquo;re writing a Dkron plugin.</p>
 
-<h2 id="dkron-vs-rundeck">Dkron vs. Rundeck</h2>
+<h2 id="how-it-works">How it Works</h2>
 
-<p>Rundeck is a popular and mature platform to automate operations and schedule jobs.</p>
+<p>Dkron execution execution processors are provided via plugins. Each plugin exposes functionality for modifying the execution. Plugins are executed as a separate process and communicate with the main Dkron binary over an RPC interface.</p>
 
-<p>It has cool features:</p>
+<p>The code within the binaries must adhere to certain interfaces. The network communication and RPC is handled automatically by higher-level libraries. The exact interface to implement is documented in its respective documentation section.</p>
 
-<ul>
-<li>Agentless</li>
-<li>Permissions and auditing</li>
+<h2 id="installing-a-plugin">Installing a Plugin</h2>
+
+<p>Dkron searches for plugins at startup, to install a plugin just drop the binary in one of the following locations:</p>
+
+<ol>
+<li>/etc/dkron/plugins</li>
+<li>Dkron executable directory</li>
+</ol>
+
+
+
+
+
+
+
+
+<ul class="children children-li">
+	
+	
+
+	
+	
+		
+
+<li>
+<a href="/usage/plugins/processors/" >Execution Processors</a>
+</li>
+
+			
+		
+
+		
+			
+
+		
+	
+		
+
+<li>
+<a href="/usage/plugins/executors/" >Executors</a>
+</li>
+
+			
+		
+
+		
+			
+
+		
+	
+		
+
+<li>
+<a href="/usage/plugins/develop/" >Developing plugins</a>
+</li>
+
+			
+		
+
+		
+			
+
+		
+	
+	
 </ul>
 
-<p>It&rsquo;s written in Java and it&rsquo;s not trivial to setup right.</p>
 
-<p>It uses a central database to store job execution results and configuration data, that makes it vulnerable to failures, and you need to care yourself of providing an HA environement for the database, and that&rsquo;s not an easy task to do with the Rundeck&rsquo;s supported databases.</p>
 
-<p>Dkron lacks some of it&rsquo;s features but it&rsquo;s lightweight and fault-tolerant out-of-the-box.</p>
+
+
 
 
 <footer class=" footline" >
 	
 </footer>
+
+
 
 
 
@@ -497,6 +566,7 @@
             
                 
                     
+                    
                 
                 
                 
@@ -504,6 +574,7 @@
             
             
                 
+                    
                     
                 
                 
@@ -515,6 +586,9 @@
             
             
                 
+                    
+                        
+                        
                     
                 
                 
@@ -645,8 +719,10 @@
 
 
         
+            <a class="nav nav-prev" href="/usage/" title="Usage"> <i class="fa fa-chevron-left"></i></a>
         
-            <a class="nav nav-next" href="/basics/" title="Basics" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+        
+            <a class="nav nav-next" href="/usage/plugins/processors/" title="Execution Processors" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
         
     </div>
 
@@ -673,4 +749,3 @@
 
   </body>
 </html>
-

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <meta name="generator" content="Hugo 0.24.1" />
+    <meta name="generator" content="Hugo 0.38.2" />
     <meta name="description" content="">
 
 
@@ -141,22 +141,44 @@ active
     <ul>
         
          
-          <li data-nav-id="/usage/api/" class="dd-item
+          <li data-nav-id="/usage/concurrency/" class="dd-item
          
           ">
-            <a href="/usage/api/">
-            <span>Dkron REST API</span> 
+            <a href="/usage/concurrency/">
+            <span>Concurrency</span> 
             
 
             </a></li>
          
         
          
-          <li data-nav-id="/usage/guides/" class="dd-item
+          <li data-nav-id="/usage/cron-spec/" class="dd-item
          
           ">
-            <a href="/usage/guides/">
-            <span>Guides</span> 
+            <a href="/usage/cron-spec/">
+            <span>Cron spec</span> 
+            
+
+            </a></li>
+         
+        
+         
+          <li data-nav-id="/usage/job-chaining/" class="dd-item
+         
+          ">
+            <a href="/usage/job-chaining/">
+            <span>Cron spec</span> 
+            
+
+            </a></li>
+         
+        
+         
+          <li data-nav-id="/usage/api/" class="dd-item
+         
+          ">
+            <a href="/usage/api/">
+            <span>Dkron REST API</span> 
             
 
             </a></li>
@@ -173,9 +195,78 @@ active
             </a></li>
          
         
+         
+          <li data-nav-id="/usage/target-nodes-spec/" class="dd-item
+         
+          ">
+            <a href="/usage/target-nodes-spec/">
+            <span>Target nodes spec</span> 
+            
+
+            </a></li>
+         
+        
         
 
 
+
+
+<li data-nav-id="/usage/plugins/" class="dd-item 
+
+
+
+">
+  <a href="/usage/plugins/">
+    <span>Plugins</span>
+
+    
+    <i class="fa fa-angle-right fa-lg category-icon"></i>
+    
+    
+    
+  </a>
+    <ul>
+        
+         
+          <li data-nav-id="/usage/plugins/processors/" class="dd-item
+         
+          ">
+            <a href="/usage/plugins/processors/">
+            <span>Execution Processors</span> 
+            
+
+            </a></li>
+         
+        
+         
+          <li data-nav-id="/usage/plugins/executors/" class="dd-item
+         
+          ">
+            <a href="/usage/plugins/executors/">
+            <span>Executors</span> 
+            
+
+            </a></li>
+         
+        
+         
+          <li data-nav-id="/usage/plugins/develop/" class="dd-item
+         
+          ">
+            <a href="/usage/plugins/develop/">
+            <span>Developing plugins</span> 
+            
+
+            </a></li>
+         
+        
+        
+
+
+
+
+    </ul>
+</li>
 
 
     </ul>
@@ -204,17 +295,6 @@ active
           ">
             <a href="/internal/internals/">
             <span>Internals</span> 
-            
-
-            </a></li>
-         
-        
-         
-          <li data-nav-id="/internal/plugins/" class="dd-item
-         
-          ">
-            <a href="/internal/plugins/">
-            <span>Plugins</span> 
             
 
             </a></li>
@@ -337,11 +417,12 @@ active
 	
 	   <article class="post usage">
     <header class="post-header">
-        <h2 class="post-title"><a href="/usage/api/">Dkron REST API</a></h2>
+        <h2 class="post-title"><a href="/usage/concurrency/">Concurrency</a></h2>
     </header>
     <section class="post-excerpt">
-        <p>Overview You can communicate with Dkron using a RESTful JSON API over HTTP. Dkron nodes usually listen on port 8080 for API requests. All examples in this section assume that you&rsquo;ve found a running leader at localhost:8080.
-Dkron implements a RESTful JSON API over HTTP to communicate with software clients. Dkron listens in port 8080 by default. All examples in this section assume that you&rsquo;re using the default port. <a class="read-more" href="/usage/api/">&raquo;</a></p>
+        <p> Concurrency Jobs can be configured to allow overlapping executions or forbid them.
+Concurrency property accepts two option:
+ allow (default): Allow concurrent job executions. forbid: If the job is already running don&rsquo;t send the execution, it will skip the executions until the next schedule.   <a class="read-more" href="/usage/concurrency/">&raquo;</a></p>
     </section>
     <footer class=" footline" >
          
@@ -359,12 +440,56 @@ Dkron implements a RESTful JSON API over HTTP to communicate with software clien
 	
 	   <article class="post usage">
     <header class="post-header">
-        <h2 class="post-title"><a href="/usage/guides/">Guides</a></h2>
+        <h2 class="post-title"><a href="/usage/cron-spec/">Cron spec</a></h2>
     </header>
     <section class="post-excerpt">
-        <p>Target nodes spec You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run.
-Examples: Target all nodes with a tag:
-{ &quot;name&quot;: &quot;job_name&quot;, &quot;command&quot;: &quot;/bin/true&quot;, &quot;schedule&quot;: &quot;@every 2m&quot;, &quot;tags&quot;: { &quot;role&quot;: &quot;web&quot; } }  Target only two nodes of a group of nodes with a tag: <a class="read-more" href="/usage/guides/">&raquo;</a></p>
+        <p>CRON Expression Format A cron expression represents a set of times, using 6 space-separated fields.
+Field name | Mandatory? | Allowed values | Allowed special characters ---------- | ---------- | -------------- | -------------------------- Seconds | Yes | 0-59 | * / , - Minutes | Yes | 0-59 | * / , - Hours | Yes | 0-23 | * / , - Day of month | Yes | 1-31 | * / , - ? <a class="read-more" href="/usage/cron-spec/">&raquo;</a></p>
+    </section>
+    <footer class=" footline" >
+         
+        
+
+        
+        
+
+    </footer>
+</article>
+
+
+
+
+	
+	   <article class="post usage">
+    <header class="post-header">
+        <h2 class="post-title"><a href="/usage/job-chaining/">Cron spec</a></h2>
+    </header>
+    <section class="post-excerpt">
+        <p>Job chaining You can set some jobs to run after other job is executed. To setup a job that will be executed after any other given job, just set the parent_job property when saving the new job.
+The dependent job will be executed after the main job finished a successful execution.
+Child jobs schedule property will be ignored if it&rsquo;s present. <a class="read-more" href="/usage/job-chaining/">&raquo;</a></p>
+    </section>
+    <footer class=" footline" >
+         
+        
+
+        
+        
+
+    </footer>
+</article>
+
+
+
+
+	
+	   <article class="post usage">
+    <header class="post-header">
+        <h2 class="post-title"><a href="/usage/api/">Dkron REST API</a></h2>
+    </header>
+    <section class="post-excerpt">
+        <p>Overview You can communicate with Dkron using a RESTful JSON API over HTTP. Dkron nodes usually listen on port 8080 for API requests. All examples in this section assume that you&rsquo;ve found a running leader at localhost:8080.
+Dkron implements a RESTful JSON API over HTTP to communicate with software clients. Dkron listens in port 8080 by default. All examples in this section assume that you&rsquo;re using the default port. <a class="read-more" href="/usage/api/">&raquo;</a></p>
     </section>
     <footer class=" footline" >
          
@@ -389,6 +514,29 @@ Examples: Target all nodes with a tag:
 Install the following snippet in the node that will run the call to ECS
  Prerequisites The node that will run the call to ECS will need to have installed
  AWS cli jq  Example ecs-run --cluster cron --task-definition cron-taskdef --container-name cron --region us-east-1 --command &quot;rake foo&quot; <a class="read-more" href="/usage/integration/">&raquo;</a></p>
+    </section>
+    <footer class=" footline" >
+         
+        
+
+        
+        
+
+    </footer>
+</article>
+
+
+
+
+	
+	   <article class="post usage">
+    <header class="post-header">
+        <h2 class="post-title"><a href="/usage/target-nodes-spec/">Target nodes spec</a></h2>
+    </header>
+    <section class="post-excerpt">
+        <p>Target nodes spec You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run.
+Examples: Target all nodes with a tag:
+{ &quot;name&quot;: &quot;job_name&quot;, &quot;command&quot;: &quot;/bin/true&quot;, &quot;schedule&quot;: &quot;@every 2m&quot;, &quot;tags&quot;: { &quot;role&quot;: &quot;web&quot; } }  Target only two nodes of a group of nodes with a tag: <a class="read-more" href="/usage/target-nodes-spec/">&raquo;</a></p>
     </section>
     <footer class=" footline" >
          
@@ -482,10 +630,7 @@ Install the following snippet in the node that will run the call to ECS
                 
                 
                 
-            
-        
                     
-                        
             
             
                 
@@ -521,8 +666,22 @@ Install the following snippet in the node that will run the call to ECS
             
         
                     
+                        
+            
+            
                 
                     
+                
+                
+                
+            
+        
+                    
+                
+            
+        
+                    
+                        
             
             
                 
@@ -534,6 +693,62 @@ Install the following snippet in the node that will run the call to ECS
         
                     
                         
+            
+            
+                
+                    
+                
+                
+                
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+                
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+                
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+                
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+                
+            
+        
+                    
+                
+                    
             
             
                 
@@ -566,7 +781,7 @@ Install the following snippet in the node that will run the call to ECS
             <a class="nav nav-prev" href="/basics/configuration/" title="Configuration"> <i class="fa fa-chevron-left"></i></a>
         
         
-            <a class="nav nav-next" href="/usage/api/" title="Dkron REST API" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+            <a class="nav nav-next" href="/usage/plugins/" title="Plugins" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
         
     </div>
 

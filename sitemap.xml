@@ -7,6 +7,18 @@
   </url>
   
   <url>
+    <loc>http://example.org/usage/plugins/processors/</loc>
+  </url>
+  
+  <url>
+    <loc>http://example.org/usage/plugins/executors/</loc>
+  </url>
+  
+  <url>
+    <loc>http://example.org/usage/plugins/develop/</loc>
+  </url>
+  
+  <url>
     <loc>http://example.org/basics/</loc>
     <lastmod>2017-06-30T14:58:54+02:00</lastmod>
   </url>
@@ -27,7 +39,19 @@
   </url>
   
   <url>
+    <loc>http://example.org/usage/concurrency/</loc>
+  </url>
+  
+  <url>
     <loc>http://example.org/basics/configuration/</loc>
+  </url>
+  
+  <url>
+    <loc>http://example.org/usage/cron-spec/</loc>
+  </url>
+  
+  <url>
+    <loc>http://example.org/usage/job-chaining/</loc>
   </url>
   
   <url>
@@ -42,10 +66,6 @@
   
   <url>
     <loc>http://example.org/dkron_vs_other_software/</loc>
-  </url>
-  
-  <url>
-    <loc>http://example.org/usage/guides/</loc>
   </url>
   
   <url>
@@ -66,12 +86,16 @@
   </url>
   
   <url>
-    <loc>http://example.org/internal/plugins/</loc>
+    <loc>http://example.org/usage/plugins/</loc>
   </url>
   
   <url>
     <loc>http://example.org/tags/</loc>
     <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.org/usage/target-nodes-spec/</loc>
   </url>
   
   <url>

@@ -19,9 +19,8 @@
       <guid>http://example.org/basics/getting-started/</guid>
       <description>Welcome to the intro guide to dkron! This will explain how to setup dkron, how easy is to use it, what problems could it help you to solve, etc.
 Introduction Dkron nodes can work in two modes, agents or servers.
-Servers are agents too. You can use servers to run jobs.
-The main distinction is that servers order job executions and can be used to schedule jobs.
-Dkron clusters have a leader, the leader is responsible of executing jobs in the cluster.</description>
+A Dkron agent is a cluster member that can handle job executions, run your scripts and return the resulting output to the server.
+A Dkron server is also a cluster member that send job execution queries to agents or other servers, so servers can execute jobs too.</description>
     </item>
     
     <item>
@@ -31,8 +30,8 @@ Dkron clusters have a leader, the leader is responsible of executing jobs in the
       
       <guid>http://example.org/basics/configuration/</guid>
       <description>Settings for dkron can be specified in three ways: Using a config/dkron.json config file, using env variables starting with DKRON_ or using command line arguments.
-Command line options  -node - Name of the node, must be unique in the cluster. By default this is the hostname of the machine.
- -bind - The address that dkron will bind to for communication with other dkron nodes. By default this is &amp;ldquo;0.</description>
+Command line options  -node-name - Name of the node, must be unique in the cluster. By default this is the hostname of the machine.
+ -bind-addr - The address that dkron will bind to for communication with other dkron nodes. By default this is &amp;ldquo;0.</description>
     </item>
     
   </channel>

@@ -7,7 +7,7 @@
     <meta name="description" content="">
 
 
-    <title>Dkron vs. Other Software :: Dkron - Distributed job scheduling system</title>
+    <title>Cron spec :: Dkron - Distributed job scheduling system</title>
     <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
     <link href="/css/nucleus.css" rel="stylesheet">
     <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -31,7 +31,7 @@
     
 
   </head>
-  <body class="" data-url="/dkron_vs_other_software/">
+  <body class="" data-url="/usage/cron-spec/">
     <nav id="sidebar" class="">
   <div id="header-wrapper">
     <div id="header">
@@ -125,7 +125,7 @@
 
 
 <li data-nav-id="/usage/" class="dd-item 
-
+parent
 
 
 ">
@@ -133,7 +133,7 @@
     <span>Usage</span>
 
     
-    <i class="fa fa-angle-right fa-lg category-icon"></i>
+    <i class="fa fa-angle-down fa-lg category-icon"></i>
     
     
     
@@ -153,7 +153,7 @@
         
          
           <li data-nav-id="/usage/cron-spec/" class="dd-item
-         
+         active
           ">
             <a href="/usage/cron-spec/">
             <span>Cron spec</span> 
@@ -371,7 +371,12 @@
 
 
 
- <a href='/'>Dkron - Distributed job scheduling system</a> > Dkron vs. Other Software
+
+
+
+ <a href='/'>Dkron - Distributed job scheduling system</a> > <a href='/usage/'>Usage</a> > Cron spec
+
+ 
 
  
 
@@ -384,8 +389,13 @@
 <ul>
 <li>
 <ul>
-<li><a href="#dkron-vs-chronos">Dkron vs. Chronos</a></li>
-<li><a href="#dkron-vs-rundeck">Dkron vs. Rundeck</a></li>
+<li><a href="#cron-expression-format">CRON Expression Format</a>
+<ul>
+<li><a href="#predefined-schedules">Predefined schedules</a></li>
+<li><a href="#intervals">Intervals</a></li>
+<li><a href="#fixed-times">Fixed times</a></li>
+<li><a href="#time-zones">Time zones</a></li>
+</ul></li>
 </ul></li>
 </ul>
 </nav>
@@ -397,7 +407,7 @@
         
         <div id="body-inner">
           
-            <h1>Dkron vs. Other Software</h1>
+            <h1>Cron spec</h1>
           
 
 
@@ -405,28 +415,108 @@
 
 
 
-<h2 id="dkron-vs-chronos">Dkron vs. Chronos</h2>
+<h2 id="cron-expression-format">CRON Expression Format</h2>
 
-<p>Airbnb&rsquo;s Chronos is a job scheduler that is similar to dkron, it&rsquo;s distributed and fault tolerant thanks to the use of Zookeeper and Apache Mesos.</p>
+<p>A cron expression represents a set of times, using 6 space-separated fields.</p>
 
-<p>If you don&rsquo;t have/want to run a Mesos cluster and deal with the not easy configuration and maintenance of Zookeeper and you want something lighter, Dkron could help you.</p>
+<pre><code>Field name   | Mandatory? | Allowed values  | Allowed special characters
+----------   | ---------- | --------------  | --------------------------
+Seconds      | Yes        | 0-59            | * / , -
+Minutes      | Yes        | 0-59            | * / , -
+Hours        | Yes        | 0-23            | * / , -
+Day of month | Yes        | 1-31            | * / , - ?
+Month        | Yes        | 1-12 or JAN-DEC | * / , -
+Day of week  | Yes        | 0-6 or SUN-SAT  | * / , - ?
+</code></pre>
 
-<h2 id="dkron-vs-rundeck">Dkron vs. Rundeck</h2>
+<p>Note: Month and Day-of-week field values are case insensitive.  &ldquo;SUN&rdquo;, &ldquo;Sun&rdquo;,
+and &ldquo;sun&rdquo; are equally accepted.</p>
 
-<p>Rundeck is a popular and mature platform to automate operations and schedule jobs.</p>
+<p>Special Characters</p>
 
-<p>It has cool features:</p>
+<p>Asterisk ( * )</p>
 
-<ul>
-<li>Agentless</li>
-<li>Permissions and auditing</li>
-</ul>
+<p>The asterisk indicates that the cron expression will match for all values of the
+field; e.g., using an asterisk in the 5th field (month) would indicate every
+month.</p>
 
-<p>It&rsquo;s written in Java and it&rsquo;s not trivial to setup right.</p>
+<p>Slash ( / )</p>
 
-<p>It uses a central database to store job execution results and configuration data, that makes it vulnerable to failures, and you need to care yourself of providing an HA environement for the database, and that&rsquo;s not an easy task to do with the Rundeck&rsquo;s supported databases.</p>
+<p>Slashes are used to describe increments of ranges. For example 3-<sup>59</sup>&frasl;<sub>15</sub> in the
+1st field (minutes) would indicate the 3rd minute of the hour and every 15
+minutes thereafter. The form &ldquo;*\/&hellip;&rdquo; is equivalent to the form &ldquo;first-last/&hellip;&rdquo;,
+that is, an increment over the largest possible range of the field.  The form
+&ldquo;N/&hellip;&rdquo; is accepted as meaning &ldquo;N-MAX/&hellip;&rdquo;, that is, starting at N, use the
+increment until the end of that specific range.  It does not wrap around.</p>
 
-<p>Dkron lacks some of it&rsquo;s features but it&rsquo;s lightweight and fault-tolerant out-of-the-box.</p>
+<p>Comma ( , )</p>
+
+<p>Commas are used to separate items of a list. For example, using &ldquo;MON,WED,FRI&rdquo; in
+the 5th field (day of week) would mean Mondays, Wednesdays and Fridays.</p>
+
+<p>Hyphen ( - )</p>
+
+<p>Hyphens are used to define ranges. For example, 9-17 would indicate every
+hour between 9am and 5pm inclusive.</p>
+
+<p>Question mark ( ? )</p>
+
+<p>Question mark may be used instead of &lsquo;*&rsquo; for leaving either day-of-month or
+day-of-week blank.</p>
+
+<h3 id="predefined-schedules">Predefined schedules</h3>
+
+<p>You may use one of several pre-defined schedules in place of a cron expression.</p>
+
+<pre><code>Entry                  | Description                                | Equivalent To
+-----                  | -----------                                | -------------
+@yearly (or @annually) | Run once a year, midnight, Jan. 1st        | 0 0 0 1 1 *
+@monthly               | Run once a month, midnight, first of month | 0 0 0 1 * *
+@weekly                | Run once a week, midnight on Sunday        | 0 0 0 * * 0
+@daily (or @midnight)  | Run once a day, midnight                   | 0 0 0 * * *
+@hourly                | Run once an hour, beginning of hour        | 0 0 * * * *
+@minutely              | Run once a minute, beginning of minute     | 0 * * * * *
+</code></pre>
+
+<h3 id="intervals">Intervals</h3>
+
+<p>You may also schedule a job to execute at fixed intervals.  This is supported by
+formatting the cron spec like this:</p>
+
+<pre><code>@every &lt;duration&gt;
+</code></pre>
+
+<p>where &ldquo;duration&rdquo; is a string accepted by time.ParseDuration
+(<a href="http://golang.org/pkg/time/#ParseDuration">http://golang.org/pkg/time/#ParseDuration</a>).</p>
+
+<p>For example, &ldquo;@every 1h30m10s&rdquo; would indicate a schedule that activates every
+1 hour, 30 minutes, 10 seconds.</p>
+
+<p>Note: The interval does not take the job runtime into account.  For example,
+if a job takes 3 minutes to run, and it is scheduled to run every 5 minutes,
+it will have only 2 minutes of idle time between each run.</p>
+
+<h3 id="fixed-times">Fixed times</h3>
+
+<p>You may also want to schedule a job to be executed once. This is supported by
+formatting the cron spec like this:</p>
+
+<pre><code>@at &lt;datetime&gt;
+</code></pre>
+
+<p>Where &ldquo;datetime&rdquo; is a string accepted by time.Parse in RFC3339 format
+(<a href="https://golang.org/pkg/time/#Parse">https://golang.org/pkg/time/#Parse</a>).</p>
+
+<p>For example, &ldquo;@at 2018-01-02T15:04:00Z&rdquo; would run the job on the specified date and time
+assuming UTC timezone.</p>
+
+<h3 id="time-zones">Time zones</h3>
+
+<p>All interpretation and scheduling is done in the machine&rsquo;s local time zone (as
+provided by the Go time package (<a href="http://www.golang.org/pkg/time">http://www.golang.org/pkg/time</a>).</p>
+
+<p>Be aware that jobs scheduled during daylight-savings leap-ahead transitions will
+not be run!</p>
 
 
 <footer class=" footline" >
@@ -497,6 +587,7 @@
             
                 
                     
+                    
                 
                 
                 
@@ -504,6 +595,9 @@
             
             
                 
+                    
+                        
+                        
                     
                 
                 
@@ -564,6 +658,7 @@
             
                 
                     
+                    
                 
                 
                 
@@ -574,6 +669,9 @@
             
             
                 
+                    
+                        
+                        
                     
                 
                 
@@ -645,8 +743,10 @@
 
 
         
+            <a class="nav nav-prev" href="/usage/concurrency/" title="Concurrency"> <i class="fa fa-chevron-left"></i></a>
         
-            <a class="nav nav-next" href="/basics/" title="Basics" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+        
+            <a class="nav nav-next" href="/usage/job-chaining/" title="Cron spec" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
         
     </div>
 

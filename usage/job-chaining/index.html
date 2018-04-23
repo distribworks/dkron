@@ -7,7 +7,7 @@
     <meta name="description" content="">
 
 
-    <title>Dkron vs. Other Software :: Dkron - Distributed job scheduling system</title>
+    <title>Cron spec :: Dkron - Distributed job scheduling system</title>
     <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
     <link href="/css/nucleus.css" rel="stylesheet">
     <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -31,7 +31,7 @@
     
 
   </head>
-  <body class="" data-url="/dkron_vs_other_software/">
+  <body class="" data-url="/usage/job-chaining/">
     <nav id="sidebar" class="">
   <div id="header-wrapper">
     <div id="header">
@@ -125,7 +125,7 @@
 
 
 <li data-nav-id="/usage/" class="dd-item 
-
+parent
 
 
 ">
@@ -133,7 +133,7 @@
     <span>Usage</span>
 
     
-    <i class="fa fa-angle-right fa-lg category-icon"></i>
+    <i class="fa fa-angle-down fa-lg category-icon"></i>
     
     
     
@@ -164,7 +164,7 @@
         
          
           <li data-nav-id="/usage/job-chaining/" class="dd-item
-         
+         active
           ">
             <a href="/usage/job-chaining/">
             <span>Cron spec</span> 
@@ -371,7 +371,12 @@
 
 
 
- <a href='/'>Dkron - Distributed job scheduling system</a> > Dkron vs. Other Software
+
+
+
+ <a href='/'>Dkron - Distributed job scheduling system</a> > <a href='/usage/'>Usage</a> > Cron spec
+
+ 
 
  
 
@@ -384,8 +389,7 @@
 <ul>
 <li>
 <ul>
-<li><a href="#dkron-vs-chronos">Dkron vs. Chronos</a></li>
-<li><a href="#dkron-vs-rundeck">Dkron vs. Rundeck</a></li>
+<li><a href="#job-chaining">Job chaining</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -397,7 +401,7 @@
         
         <div id="body-inner">
           
-            <h1>Dkron vs. Other Software</h1>
+            <h1>Cron spec</h1>
           
 
 
@@ -405,28 +409,13 @@
 
 
 
-<h2 id="dkron-vs-chronos">Dkron vs. Chronos</h2>
+<h2 id="job-chaining">Job chaining</h2>
 
-<p>Airbnb&rsquo;s Chronos is a job scheduler that is similar to dkron, it&rsquo;s distributed and fault tolerant thanks to the use of Zookeeper and Apache Mesos.</p>
+<p>You can set some jobs to run after other job is executed. To setup a job that will be executed after any other given job, just set the <code>parent_job</code> property when saving the new job.</p>
 
-<p>If you don&rsquo;t have/want to run a Mesos cluster and deal with the not easy configuration and maintenance of Zookeeper and you want something lighter, Dkron could help you.</p>
+<p>The dependent job will be executed after the main job finished a successful execution.</p>
 
-<h2 id="dkron-vs-rundeck">Dkron vs. Rundeck</h2>
-
-<p>Rundeck is a popular and mature platform to automate operations and schedule jobs.</p>
-
-<p>It has cool features:</p>
-
-<ul>
-<li>Agentless</li>
-<li>Permissions and auditing</li>
-</ul>
-
-<p>It&rsquo;s written in Java and it&rsquo;s not trivial to setup right.</p>
-
-<p>It uses a central database to store job execution results and configuration data, that makes it vulnerable to failures, and you need to care yourself of providing an HA environement for the database, and that&rsquo;s not an easy task to do with the Rundeck&rsquo;s supported databases.</p>
-
-<p>Dkron lacks some of it&rsquo;s features but it&rsquo;s lightweight and fault-tolerant out-of-the-box.</p>
+<p>Child jobs schedule property will be ignored if it&rsquo;s present.</p>
 
 
 <footer class=" footline" >
@@ -497,6 +486,7 @@
             
                 
                     
+                    
                 
                 
                 
@@ -504,6 +494,9 @@
             
             
                 
+                    
+                        
+                        
                     
                 
                 
@@ -575,6 +568,7 @@
             
                 
                     
+                    
                 
                 
                 
@@ -585,6 +579,9 @@
             
             
                 
+                    
+                        
+                        
                     
                 
                 
@@ -645,8 +642,10 @@
 
 
         
+            <a class="nav nav-prev" href="/usage/cron-spec/" title="Cron spec"> <i class="fa fa-chevron-left"></i></a>
         
-            <a class="nav nav-next" href="/basics/" title="Basics" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+        
+            <a class="nav nav-next" href="/usage/api/" title="Dkron REST API" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
         
     </div>
 

@@ -7,7 +7,7 @@
     <meta name="description" content="">
 
 
-    <title>Dkron vs. Other Software :: Dkron - Distributed job scheduling system</title>
+    <title>Execution Processors :: Dkron - Distributed job scheduling system</title>
     <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
     <link href="/css/nucleus.css" rel="stylesheet">
     <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -31,7 +31,7 @@
     
 
   </head>
-  <body class="" data-url="/dkron_vs_other_software/">
+  <body class="" data-url="/usage/plugins/processors/">
     <nav id="sidebar" class="">
   <div id="header-wrapper">
     <div id="header">
@@ -125,7 +125,7 @@
 
 
 <li data-nav-id="/usage/" class="dd-item 
-
+parent
 
 
 ">
@@ -133,7 +133,7 @@
     <span>Usage</span>
 
     
-    <i class="fa fa-angle-right fa-lg category-icon"></i>
+    <i class="fa fa-angle-down fa-lg category-icon"></i>
     
     
     
@@ -212,7 +212,7 @@
 
 
 <li data-nav-id="/usage/plugins/" class="dd-item 
-
+parent
 
 
 ">
@@ -220,7 +220,7 @@
     <span>Plugins</span>
 
     
-    <i class="fa fa-angle-right fa-lg category-icon"></i>
+    <i class="fa fa-angle-down fa-lg category-icon"></i>
     
     
     
@@ -229,7 +229,7 @@
         
          
           <li data-nav-id="/usage/plugins/processors/" class="dd-item
-         
+         active
           ">
             <a href="/usage/plugins/processors/">
             <span>Execution Processors</span> 
@@ -371,7 +371,17 @@
 
 
 
- <a href='/'>Dkron - Distributed job scheduling system</a> > Dkron vs. Other Software
+
+
+
+
+
+
+ <a href='/'>Dkron - Distributed job scheduling system</a> > <a href='/usage/'>Usage</a> > <a href='/usage/plugins/'>Plugins</a> > Execution Processors
+
+ 
+
+ 
 
  
 
@@ -384,8 +394,12 @@
 <ul>
 <li>
 <ul>
-<li><a href="#dkron-vs-chronos">Dkron vs. Chronos</a></li>
-<li><a href="#dkron-vs-rundeck">Dkron vs. Rundeck</a></li>
+<li><a href="#execution-processors">Execution Processors</a></li>
+<li><a href="#logging-processors">Logging processors</a>
+<ul>
+<li><a href="#built-in-logging-processors">Built-in logging processors</a></li>
+</ul></li>
+<li><a href="#using-processors">Using processors</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -397,7 +411,7 @@
         
         <div id="body-inner">
           
-            <h1>Dkron vs. Other Software</h1>
+            <h1>Execution Processors</h1>
           
 
 
@@ -405,28 +419,57 @@
 
 
 
-<h2 id="dkron-vs-chronos">Dkron vs. Chronos</h2>
+<h2 id="execution-processors">Execution Processors</h2>
 
-<p>Airbnb&rsquo;s Chronos is a job scheduler that is similar to dkron, it&rsquo;s distributed and fault tolerant thanks to the use of Zookeeper and Apache Mesos.</p>
-
-<p>If you don&rsquo;t have/want to run a Mesos cluster and deal with the not easy configuration and maintenance of Zookeeper and you want something lighter, Dkron could help you.</p>
-
-<h2 id="dkron-vs-rundeck">Dkron vs. Rundeck</h2>
-
-<p>Rundeck is a popular and mature platform to automate operations and schedule jobs.</p>
-
-<p>It has cool features:</p>
+<p>Processor plugins are called when an execution response has been received. They are passed the resulting execution data and configuration parameters, this plugins can perform a variety of operations with the execution and it&rsquo;s very flexible and per Job, examples of operations this plugins can do:</p>
 
 <ul>
-<li>Agentless</li>
-<li>Permissions and auditing</li>
+<li>Execution output storage, forwarding or redirection.</li>
+<li>Notification</li>
+<li>Monitoring</li>
 </ul>
 
-<p>It&rsquo;s written in Java and it&rsquo;s not trivial to setup right.</p>
+<p>Currently Dkron provides you with some stock plugins but the list keeps growing. Some of the features previously implemented in the application will be progessively moved to plugins.</p>
 
-<p>It uses a central database to store job execution results and configuration data, that makes it vulnerable to failures, and you need to care yourself of providing an HA environement for the database, and that&rsquo;s not an easy task to do with the Rundeck&rsquo;s supported databases.</p>
+<h2 id="logging-processors">Logging processors</h2>
 
-<p>Dkron lacks some of it&rsquo;s features but it&rsquo;s lightweight and fault-tolerant out-of-the-box.</p>
+<p>Logging output of each job execution can be modified by using processor plugins.</p>
+
+<p>Processor plugins can be used to redirect the output of a job execution to different targets.</p>
+
+<p>Processors are set per job using the <code>processors</code> property. <code>processors</code> is an object of processor plugins to use and it&rsquo;s corresponding configuration. To know what parameters each plugin accepts refer to the plugin documentation.</p>
+
+<h3 id="built-in-logging-processors">Built-in logging processors</h3>
+
+<p>Depending on your needs the execution log can be redirected using the following plugins:</p>
+
+<ol>
+<li>not specified - Store the output in the key value store (Slow performance, good for testing, default method)</li>
+<li>log - Output the execution log to Dkron stdout (Good performance, needs parsing)</li>
+<li>syslog - Output to the syslog (Good performance, needs parsing)</li>
+<li>files - Output to multiple files (Good performance, needs parsing)</li>
+</ol>
+
+<p>All plugins accepts one configuration option: <code>forward</code> Indicated if the plugin must forward the original execution output. This allows for chaining plugins and sending output to different targets at the same time.</p>
+
+<h2 id="using-processors">Using processors</h2>
+
+<p>For each job you can configure an arbitrary number of plugins.</p>
+
+<pre><code>{
+    &quot;name&quot;: &quot;job_name&quot;,
+    &quot;command&quot;: &quot;/bin/true&quot;,
+    &quot;schedule&quot;: &quot;@every 2m&quot;,
+    &quot;tags&quot;: {
+        &quot;role&quot;: &quot;web&quot;
+    },
+    &quot;processors&quot;: {
+        &quot;files&quot;: {
+            &quot;forward&quot;: true
+        }
+    }
+}
+</code></pre>
 
 
 <footer class=" footline" >
@@ -497,6 +540,7 @@
             
                 
                     
+                    
                 
                 
                 
@@ -504,6 +548,19 @@
             
             
                 
+                    
+                    
+                
+                
+                
+            
+        
+                    
+                        
+            
+            
+                
+                    
                     
                 
                 
@@ -516,16 +573,8 @@
             
                 
                     
-                
-                
-                
-            
-        
-                    
                         
-            
-            
-                
+                        
                     
                 
                 
@@ -645,8 +694,10 @@
 
 
         
+            <a class="nav nav-prev" href="/usage/plugins/" title="Plugins"> <i class="fa fa-chevron-left"></i></a>
         
-            <a class="nav nav-next" href="/basics/" title="Basics" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+        
+            <a class="nav nav-next" href="/usage/plugins/executors/" title="Executors" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
         
     </div>
 

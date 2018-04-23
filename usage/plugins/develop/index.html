@@ -7,7 +7,7 @@
     <meta name="description" content="">
 
 
-    <title>Dkron vs. Other Software :: Dkron - Distributed job scheduling system</title>
+    <title>Developing plugins :: Dkron - Distributed job scheduling system</title>
     <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
     <link href="/css/nucleus.css" rel="stylesheet">
     <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -31,7 +31,7 @@
     
 
   </head>
-  <body class="" data-url="/dkron_vs_other_software/">
+  <body class="" data-url="/usage/plugins/develop/">
     <nav id="sidebar" class="">
   <div id="header-wrapper">
     <div id="header">
@@ -125,7 +125,7 @@
 
 
 <li data-nav-id="/usage/" class="dd-item 
-
+parent
 
 
 ">
@@ -133,7 +133,7 @@
     <span>Usage</span>
 
     
-    <i class="fa fa-angle-right fa-lg category-icon"></i>
+    <i class="fa fa-angle-down fa-lg category-icon"></i>
     
     
     
@@ -212,7 +212,7 @@
 
 
 <li data-nav-id="/usage/plugins/" class="dd-item 
-
+parent
 
 
 ">
@@ -220,7 +220,7 @@
     <span>Plugins</span>
 
     
-    <i class="fa fa-angle-right fa-lg category-icon"></i>
+    <i class="fa fa-angle-down fa-lg category-icon"></i>
     
     
     
@@ -251,7 +251,7 @@
         
          
           <li data-nav-id="/usage/plugins/develop/" class="dd-item
-         
+         active
           ">
             <a href="/usage/plugins/develop/">
             <span>Developing plugins</span> 
@@ -371,7 +371,17 @@
 
 
 
- <a href='/'>Dkron - Distributed job scheduling system</a> > Dkron vs. Other Software
+
+
+
+
+
+
+ <a href='/'>Dkron - Distributed job scheduling system</a> > <a href='/usage/'>Usage</a> > <a href='/usage/plugins/'>Plugins</a> > Developing plugins
+
+ 
+
+ 
 
  
 
@@ -384,8 +394,7 @@
 <ul>
 <li>
 <ul>
-<li><a href="#dkron-vs-chronos">Dkron vs. Chronos</a></li>
-<li><a href="#dkron-vs-rundeck">Dkron vs. Rundeck</a></li>
+<li><a href="#developing-a-plugin">Developing a Plugin</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -397,7 +406,7 @@
         
         <div id="body-inner">
           
-            <h1>Dkron vs. Other Software</h1>
+            <h1>Developing plugins</h1>
           
 
 
@@ -405,28 +414,38 @@
 
 
 
-<h2 id="dkron-vs-chronos">Dkron vs. Chronos</h2>
+<h2 id="developing-a-plugin">Developing a Plugin</h2>
 
-<p>Airbnb&rsquo;s Chronos is a job scheduler that is similar to dkron, it&rsquo;s distributed and fault tolerant thanks to the use of Zookeeper and Apache Mesos.</p>
+<div class="alert 
+alert-warning"
+ 
+role="alert"><strong>Advanced topic!</strong> Plugin development is a highly advanced topic, and is not required knowledge for day-to-day usage. If you don&rsquo;t plan on writing any plugins, we recommend not reading the following section of the documentation.</div>
 
-<p>If you don&rsquo;t have/want to run a Mesos cluster and deal with the not easy configuration and maintenance of Zookeeper and you want something lighter, Dkron could help you.</p>
 
-<h2 id="dkron-vs-rundeck">Dkron vs. Rundeck</h2>
+<p>Developing a plugin is simple. The only knowledge necessary to write a plugin is basic command-line skills and basic knowledge of the Go programming language.</p>
 
-<p>Rundeck is a popular and mature platform to automate operations and schedule jobs.</p>
+<p>Note: A common pitfall is not properly setting up a <code>$GOPATH</code>. This can lead to strange errors. You can read more about this here to familiarize yourself.</p>
 
-<p>It has cool features:</p>
+<p>Create a new Go project somewhere in your <code>$GOPATH</code>. If you&rsquo;re a GitHub user, we recommend creating the project in the directory <code>$GOPATH/src/github.com/USERNAME/dkron-NAME-TYPE</code>, where <code>USERNAME</code> is your GitHub username and <code>NAME</code> is the name of the plugin you&rsquo;re developing. This structure is what Go expects and simplifies things down the road.</p>
 
-<ul>
-<li>Agentless</li>
-<li>Permissions and auditing</li>
-</ul>
+<p>With the directory made, create a main.go file. This project will be a binary so the package is &ldquo;main&rdquo;:</p>
 
-<p>It&rsquo;s written in Java and it&rsquo;s not trivial to setup right.</p>
+<pre><code>package main
 
-<p>It uses a central database to store job execution results and configuration data, that makes it vulnerable to failures, and you need to care yourself of providing an HA environement for the database, and that&rsquo;s not an easy task to do with the Rundeck&rsquo;s supported databases.</p>
+import (
+	&quot;github.com/victorcoder/dkron/plugin&quot;
+)
 
-<p>Dkron lacks some of it&rsquo;s features but it&rsquo;s lightweight and fault-tolerant out-of-the-box.</p>
+func main() {
+	plugin.Serve(&amp;plugin.ServeOpts{
+		Processor: new(MyPlugin),
+	})
+}
+</code></pre>
+
+<p>And that&rsquo;s basically it! You&rsquo;ll have to change the argument given to plugin.Serve to be your actual plugin, but that is the only change you&rsquo;ll have to make. The argument should be a structure implementing one of the plugin interfaces (depending on what sort of plugin you&rsquo;re creating).</p>
+
+<p>Dkron plugins must follow a very specific naming convention of <code>dkron-TYPE-NAME</code>. For example, <code>dkron-processor-files</code>, which tells Dkron that the plugin is a processor that can be referenced as &ldquo;files&rdquo;.</p>
 
 
 <footer class=" footline" >
@@ -497,6 +516,7 @@
             
                 
                     
+                    
                 
                 
                 
@@ -504,6 +524,21 @@
             
             
                 
+                    
+                    
+                
+                
+                
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
                     
                 
                 
@@ -527,16 +562,6 @@
             
                 
                     
-                
-                
-                
-            
-        
-                    
-                        
-            
-            
-                
                     
                 
                 
@@ -552,6 +577,9 @@
             
             
                 
+                    
+                        
+                        
                     
                 
                 
@@ -645,8 +673,10 @@
 
 
         
+            <a class="nav nav-prev" href="/usage/plugins/executors/" title="Executors"> <i class="fa fa-chevron-left"></i></a>
         
-            <a class="nav nav-next" href="/basics/" title="Basics" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+        
+            <a class="nav nav-next" href="/usage/concurrency/" title="Concurrency" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
         
     </div>
 
