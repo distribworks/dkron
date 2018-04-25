@@ -210,7 +210,7 @@ func TestStore_GetLastExecutionGroup(t *testing.T) {
 }
 
 func createTestStore() *Store {
-	return NewStore("etcd", []string{etcdAddr}, nil, "dkron-test")
+	return NewStore("etcd", []string{etcdAddr}, nil, "dkron-test", nil)
 }
 
 func cleanTestKVSpace(s *Store) error {
