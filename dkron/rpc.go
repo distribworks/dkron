@@ -19,7 +19,7 @@ var (
 )
 
 type RPCServer struct {
-	agent *AgentCommand
+	agent *Agent
 }
 
 func (rpcs *RPCServer) GetJob(jobName string, job *Job) error {
@@ -28,15 +28,18 @@ func (rpcs *RPCServer) GetJob(jobName string, job *Job) error {
 		"job": jobName,
 	}).Debug("rpc: Received GetJob")
 
-	j, err := rpcs.agent.store.GetJob(jobName)
+	j, err := rpcs.agent.Store.GetJob(jobName)
 	if err != nil {
 		return err
 	}
 
 	// Copy the data structure
+	job.Name = j.Name
 	job.Shell = j.Shell
 	job.EnvironmentVariables = j.EnvironmentVariables
 	job.Command = j.Command
+	job.Executor = j.Executor
+	job.ExecutorConfig = j.ExecutorConfig
 
 	return nil
 }
@@ -49,7 +52,7 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 	}).Debug("rpc: Received execution done")
 
 	// Load the job from the store
-	job, err := rpcs.agent.store.GetJob(execution.JobName)
+	job, err := rpcs.agent.Store.GetJob(execution.JobName)
 	if err != nil {
 		if err == store.ErrKeyNotFound {
 			log.Warning(ErrExecutionDoneForDeletedJob)
@@ -68,13 +71,14 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 	for k, v := range job.Processors {
 		log.WithField("plugin", k).Debug("rpc: Processing execution with plugin")
 		if processor, ok := rpcs.agent.ProcessorPlugins[k]; ok {
+			v["reporting_node"] = rpcs.agent.config.NodeName
 			e := processor.Process(&ExecutionProcessorArgs{Execution: origExec, Config: v})
 			execution = e
 		}
 	}
 
 	// Save the execution to store
-	if _, err := rpcs.agent.store.SetExecution(&execution); err != nil {
+	if _, err := rpcs.agent.Store.SetExecution(&execution); err != nil {
 		return err
 	}
 
@@ -86,7 +90,7 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 		job.ErrorCount++
 	}
 
-	if err := rpcs.agent.store.SetJob(job,nil); err != nil {
+	if err := rpcs.agent.Store.SetJob(job, nil); err != nil {
 		log.Fatal("rpc:", err)
 	}
 
@@ -115,7 +119,7 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 		return nil
 	}
 
-	exg, err := rpcs.agent.store.GetExecutionGroup(&execution)
+	exg, err := rpcs.agent.Store.GetExecutionGroup(&execution)
 	if err != nil {
 		log.WithError(err).WithField("group", execution.Group).Error("rpc: Error getting execution group.")
 		return err
@@ -128,7 +132,7 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 	// Check first if there's dependent jobs and then check for the job status to begin executiong dependent jobs on success.
 	if len(job.DependentJobs) > 0 && job.Status() == Success {
 		for _, djn := range job.DependentJobs {
-			dj, err := rpcs.agent.store.GetJob(djn)
+			dj, err := rpcs.agent.Store.GetJob(djn)
 			if err != nil {
 				return err
 			}
@@ -141,7 +145,7 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 
 var workaroundRPCHTTPMux = 0
 
-func listenRPC(a *AgentCommand) {
+func listenRPC(a *Agent) {
 	r := &RPCServer{
 		agent: a,
 	}

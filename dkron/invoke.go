@@ -5,9 +5,10 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"strconv"
+	"strings"
 	"time"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/armon/circbuf"
 	"github.com/hashicorp/serf/serf"
 	"github.com/mattn/go-shellwords"
@@ -23,36 +24,40 @@ const (
 )
 
 // invokeJob will execute the given job. Depending on the event.
-func (a *AgentCommand) invokeJob(job *Job, execution *Execution) error {
+func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 	output, _ := circbuf.NewBuffer(maxBufSize)
 
-	cmd := buildCmd(job)
-	cmd.Stderr = output
-	cmd.Stdout = output
+	var success bool
 
-	// Start a timer to warn about slow handlers
-	slowTimer := time.AfterFunc(2*time.Hour, func() {
-		log.Warnf("proc: Script '%s' slow, execution exceeding %v", job.Command, 2*time.Hour)
-	})
-
-	err := cmd.Start()
-
-	// Warn if buffer is overritten
-	if output.TotalWritten() > output.Size() {
-		log.Warnf("proc: Script '%s' generated %d bytes of output, truncated to %d", job.Command, output.TotalWritten(), output.Size())
+	jex := job.Executor
+	exc := job.ExecutorConfig
+	if jex == "" {
+		jex = "shell"
+		exc = map[string]string{
+			"command": job.Command,
+			"shell":   strconv.FormatBool(job.Shell),
+			"env":     strings.Join(job.EnvironmentVariables, ","),
+		}
 	}
 
-	var success bool
-	err = cmd.Wait()
-	slowTimer.Stop()
-	log.WithFields(logrus.Fields{
-		"output": output,
-	}).Debug("proc: Command output")
-	if err != nil {
-		log.WithError(err).Error("proc: command error output")
-		success = false
+	// Check if executor is exists
+	if executor, ok := a.ExecutorPlugins[jex]; ok {
+		log.WithField("plugin", jex).Debug("invoke: calling executor plugin")
+		out, err := executor.Execute(&ExecuteRequest{
+			JobName: job.Name,
+			Config:  exc,
+		})
+		if err != nil {
+			log.WithError(err).WithField("job", job.Name).WithField("plugin", executor).Error("invoke: command error output")
+			success = false
+			output.Write([]byte(err.Error()))
+		} else {
+			success = true
+		}
+
+		output.Write(out)
 	} else {
-		success = true
+		log.Errorf("invoke: Specified executor %s is not present", executor)
 	}
 
 	execution.FinishedAt = time.Now()
@@ -68,7 +73,7 @@ func (a *AgentCommand) invokeJob(job *Job, execution *Execution) error {
 	return rc.callExecutionDone(execution)
 }
 
-func (a *AgentCommand) selectServer() serf.Member {
+func (a *Agent) selectServer() serf.Member {
 	servers := a.listServers()
 	server := servers[rand.Intn(len(servers))]
 
@@ -91,7 +96,7 @@ func buildCmd(job *Job) (cmd *exec.Cmd) {
 	} else {
 		args, err := shellwords.Parse(job.Command)
 		if err != nil {
-			log.WithError(err).Fatal("proc: Error parsing command arguments")
+			log.WithError(err).Fatal("invoke: Error parsing command arguments")
 		}
 		cmd = exec.Command(args[0], args[1:]...)
 	}

@@ -9,20 +9,10 @@ import (
 	"time"
 
 	"github.com/hashicorp/serf/testutil"
-	"github.com/mitchellh/cli"
 	"github.com/stretchr/testify/assert"
 )
 
-func setupAPITest(t *testing.T) (chan<- struct{}, <-chan int) {
-	shutdownCh := make(chan struct{})
-	// defer close(shutdownCh)
-
-	ui := new(cli.MockUi)
-	a := &AgentCommand{
-		Ui:         ui,
-		ShutdownCh: shutdownCh,
-	}
-
+func setupAPITest(t *testing.T) (a *Agent) {
 	args := []string{
 		"-bind-addr", testutil.GetBindAddr().String(),
 		"-http-addr", "127.0.0.1:8090",
@@ -31,10 +21,9 @@ func setupAPITest(t *testing.T) (chan<- struct{}, <-chan int) {
 		"-log-level", logLevel,
 	}
 
-	resultCh := make(chan int)
-	go func() {
-		resultCh <- a.Run(args)
-	}()
+	c := NewConfig(args)
+	a = NewAgent(c, nil)
+	a.Start()
 
 	for {
 		if a.ready {
@@ -44,11 +33,11 @@ func setupAPITest(t *testing.T) (chan<- struct{}, <-chan int) {
 	}
 	time.Sleep(1 * time.Second)
 
-	return shutdownCh, resultCh
+	return
 }
 
 func TestAPIJobCreateUpdate(t *testing.T) {
-	shutdownCh, _ := setupAPITest(t)
+	a := setupAPITest(t)
 
 	jsonStr := []byte(`{"name": "test_job", "schedule": "@every 1m", "command": "date", "owner": "mec", "owner_email": "foo@bar.com", "disabled": true}`)
 
@@ -85,11 +74,11 @@ func TestAPIJobCreateUpdate(t *testing.T) {
 	assert.Equal(t, "test", overwriteJob.Command)
 
 	// Send a shutdown request
-	shutdownCh <- struct{}{}
+	a.Stop()
 }
 
 func TestAPIJobCreateUpdateParentJob_SameParent(t *testing.T) {
-	shutdownCh, _ := setupAPITest(t)
+	a := setupAPITest(t)
 
 	jsonStr := []byte(`{
 		"name": "test_job",
@@ -114,11 +103,11 @@ func TestAPIJobCreateUpdateParentJob_SameParent(t *testing.T) {
 	assert.Contains(t, string(errJSON)+"\n", string(body))
 
 	// Send a shutdown request
-	shutdownCh <- struct{}{}
+	a.Stop()
 }
 
 func TestAPIJobCreateUpdateParentJob_NoParent(t *testing.T) {
-	shutdownCh, _ := setupAPITest(t)
+	a := setupAPITest(t)
 
 	jsonStr := []byte(`{
 		"name": "test_job",
@@ -143,5 +132,5 @@ func TestAPIJobCreateUpdateParentJob_NoParent(t *testing.T) {
 	assert.Contains(t, string(errJSON)+"\n", string(body))
 
 	// Send a shutdown request
-	shutdownCh <- struct{}{}
+	a.Stop()
 }

@@ -5,28 +5,18 @@ import (
 	"time"
 
 	"github.com/hashicorp/serf/testutil"
-	"github.com/mitchellh/cli"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestRPCExecutionDone(t *testing.T) {
-	store := NewStore("etcd", []string{etcdAddr}, nil, "dkron")
+	store := NewStore("etcd", []string{etcdAddr}, nil, "dkron", nil)
 	viper.Reset()
 
 	// Cleanup everything
 	err := store.Client.DeleteTree("dkron")
 	if err != nil {
 		t.Logf("error cleaning up: %s", err)
-	}
-
-	shutdownCh := make(chan struct{})
-	defer close(shutdownCh)
-
-	ui := new(cli.MockUi)
-	a := &AgentCommand{
-		Ui:         ui,
-		ShutdownCh: shutdownCh,
 	}
 
 	aAddr := testutil.GetBindAddr().String()
@@ -40,7 +30,10 @@ func TestRPCExecutionDone(t *testing.T) {
 		"-log-level", logLevel,
 	}
 
-	go a.Run(args)
+	c := NewConfig(args)
+	a := NewAgent(c, nil)
+	a.Start()
+
 	time.Sleep(2 * time.Second)
 
 	testJob := &Job{
@@ -50,7 +43,7 @@ func TestRPCExecutionDone(t *testing.T) {
 		Disabled: true,
 	}
 
-	if err := store.SetJob(testJob,nil); err != nil {
+	if err := store.SetJob(testJob, nil); err != nil {
 		t.Fatalf("error creating job: %s", err)
 	}
 

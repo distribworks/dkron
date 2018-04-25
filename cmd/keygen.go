@@ -1,4 +1,4 @@
-package dkron
+package cmd
 
 import (
 	"crypto/rand"

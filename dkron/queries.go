@@ -1,8 +1,9 @@
 package dkron
 
 import (
+	"bytes"
 	"encoding/json"
-  "bytes"
+
 	"github.com/Sirupsen/logrus"
 	"github.com/abronan/valkeyrie/store"
 	"github.com/hashicorp/serf/serf"
@@ -21,10 +22,10 @@ type RunQueryParam struct {
 
 // Send a serf run query to the cluster, this is used to ask a node or nodes
 // to run a Job.
-func (a *AgentCommand) RunQuery(ex *Execution) {
+func (a *Agent) RunQuery(ex *Execution) {
 	var params *serf.QueryParam
 
-	job, err := a.store.GetJob(ex.JobName)
+	job, err := a.Store.GetJob(ex.JobName)
 
 	if err != nil {
 		//Job can be removed and the QuerySchedulerRestart not yet received.
@@ -122,7 +123,7 @@ func (a *AgentCommand) RunQuery(ex *Execution) {
 
 // Broadcast a SchedulerRestartQuery to the cluster, only server members
 // will attend to this. Forces a scheduler restart and reload all jobs.
-func (a *AgentCommand) schedulerRestartQuery(leaderName string) {
+func (a *Agent) schedulerRestartQuery(leaderName string) {
 	params := &serf.QueryParam{
 		FilterNodes: []string{leaderName},
 		RequestAck:  true,
@@ -159,7 +160,7 @@ func (a *AgentCommand) schedulerRestartQuery(leaderName string) {
 
 // Broadcast a query to get the RPC config of one dkron_server, any that could
 // attend later RPC calls.
-func (a *AgentCommand) queryRPCConfig() ([]byte, error) {
+func (a *Agent) queryRPCConfig() ([]byte, error) {
 	nodeName := a.selectServer().Name
 
 	params := &serf.QueryParam{

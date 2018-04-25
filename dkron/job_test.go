@@ -8,9 +8,9 @@ import (
 )
 
 func TestJobGetParent(t *testing.T) {
-	store := NewStore("etcd", []string{etcdAddr}, nil, "dkron-test")
-	a := &AgentCommand{
-		store: store,
+	store := NewStore("etcd", []string{etcdAddr}, nil, "dkron-test", nil)
+	a := &Agent{
+		Store: store,
 	}
 	store.agent = a
 
@@ -26,7 +26,7 @@ func TestJobGetParent(t *testing.T) {
 		Schedule: "@every 2s",
 	}
 
-	if err := store.SetJob(parentTestJob,nil); err != nil {
+	if err := store.SetJob(parentTestJob, nil); err != nil {
 		t.Fatalf("error creating job: %s", err)
 	}
 
@@ -36,7 +36,7 @@ func TestJobGetParent(t *testing.T) {
 		ParentJob: "parent_test",
 	}
 
-	err = store.SetJob(dependentTestJob,nil)
+	err = store.SetJob(dependentTestJob, nil)
 	assert.NoError(t, err)
 
 	err = store.SetJobDependencyTree(dependentTestJob, nil)
@@ -55,7 +55,7 @@ func TestJobGetParent(t *testing.T) {
 
 	dependentTestJob.ParentJob = ""
 	dependentTestJob.Schedule = "@every 2m"
-	err = store.SetJob(dependentTestJob,nil)
+	err = store.SetJob(dependentTestJob, nil)
 	assert.NoError(t, err)
 
 	err = store.SetJobDependencyTree(dependentTestJob, ej)

@@ -16,9 +16,25 @@ import (
 
 const MaxExecutions = 100
 
+type Storage interface {
+	SetJob(job *Job) error
+	SetJobDependencyTree(job *Job, previousJob *Job) error
+	GetJobs() ([]*Job, error)
+	GetJob(name string) (*Job, error)
+	DeleteJob(name string) (*Job, error)
+	GetExecutions(jobName string) ([]*Execution, error)
+	GetLastExecutionGroup(jobName string) ([]*Execution, error)
+	GetExecutionGroup(execution *Execution) ([]*Execution, error)
+	GetGroupedExecutions(jobName string) (map[int64][]*Execution, []int64, error)
+	SetExecution(execution *Execution) (string, error)
+	DeleteExecutions(jobName string) error
+	GetLeader() []byte
+	LeaderKey() string
+}
+
 type Store struct {
 	Client   store.Store
-	agent    *AgentCommand
+	agent    *Agent
 	keyspace string
 	backend  string
 }
@@ -29,8 +45,8 @@ func init() {
 	zookeeper.Register()
 }
 
-func NewStore(backend string, machines []string, a *AgentCommand, keyspace string) *Store {
-	s, err := valkeyrie.NewStore(store.Backend(backend), machines, nil)
+func NewStore(backend string, machines []string, a *Agent, keyspace string, config *store.Config) *Store {
+	s, err := valkeyrie.NewStore(store.Backend(backend), machines, config)
 	if err != nil {
 		log.Error(err)
 	}
@@ -116,7 +132,7 @@ func (s *Store) SetJobDependencyTree(job *Job, previousJob *Job) error {
 		defer pj.Unlock()
 
 		pj.DependentJobs = append(pj.DependentJobs, job.Name)
-		if err := s.SetJob(pj,nil); err != nil {
+		if err := s.SetJob(pj, nil); err != nil {
 			return err
 		}
 	}
@@ -138,7 +154,7 @@ func (s *Store) SetJobDependencyTree(job *Job, previousJob *Job) error {
 			}
 		}
 		pj.DependentJobs = append(pj.DependentJobs[:ndx], pj.DependentJobs[ndx+1:]...)
-		if err := s.SetJob(pj,nil); err != nil {
+		if err := s.SetJob(pj, nil); err != nil {
 			return err
 		}
 	}
@@ -153,7 +169,7 @@ func (s *Store) SetJobDependencyTree(job *Job, previousJob *Job) error {
 		defer pj.Unlock()
 
 		pj.DependentJobs = append(pj.DependentJobs, job.Name)
-		if err := s.SetJob(pj,nil); err != nil {
+		if err := s.SetJob(pj, nil); err != nil {
 			return err
 		}
 	}
@@ -171,10 +187,6 @@ func (s *Store) validateJob(job *Job) error {
 		if _, err := cron.Parse(job.Schedule); err != nil {
 			return fmt.Errorf("%s: %s", ErrScheduleParse.Error(), err)
 		}
-	}
-
-	if job.Command == "" {
-		return ErrNoCommand
 	}
 
 	if job.Concurrency != ConcurrencyAllow && job.Concurrency != ConcurrencyForbid && job.Concurrency != "" {

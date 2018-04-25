@@ -10,7 +10,7 @@ import (
 )
 
 func TestStore(t *testing.T) {
-	s := NewStore("etcd", []string{etcdAddr}, nil, "dkron-test")
+	s := NewStore("etcd", []string{etcdAddr}, nil, "dkron-test", nil)
 
 	// Cleanup everything
 	if err := cleanTestKVSpace(s); err != nil {

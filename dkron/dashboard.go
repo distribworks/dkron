@@ -29,7 +29,7 @@ type commonDashboardData struct {
 	Keyspace   string
 }
 
-func newCommonDashboardData(a *AgentCommand, nodeName, path string) *commonDashboardData {
+func newCommonDashboardData(a *Agent, nodeName, path string) *commonDashboardData {
 	leaderName := ""
 	l, err := a.leaderMember()
 	if err == nil {
@@ -37,7 +37,7 @@ func newCommonDashboardData(a *AgentCommand, nodeName, path string) *commonDashb
 	}
 
 	return &commonDashboardData{
-		Version:    a.Version,
+		Version:    Version,
 		LeaderName: leaderName,
 		MemberName: nodeName,
 		Backend:    a.config.Backend,
@@ -49,7 +49,7 @@ func newCommonDashboardData(a *AgentCommand, nodeName, path string) *commonDashb
 }
 
 // dashboardRoutes registers dashboard specific routes on the gin RouterGroup.
-func (a *AgentCommand) dashboardRoutes(r *gin.RouterGroup) {
+func (a *Agent) DashboardRoutes(r *gin.RouterGroup) {
 	r.GET("/static/*asset", servePublic)
 
 	dashboard := r.Group("/" + dashboardPathPrefix)
@@ -58,7 +58,7 @@ func (a *AgentCommand) dashboardRoutes(r *gin.RouterGroup) {
 	dashboard.GET("/jobs/:job/executions", a.dashboardExecutionsHandler)
 }
 
-func (a *AgentCommand) dashboardIndexHandler(c *gin.Context) {
+func (a *Agent) dashboardIndexHandler(c *gin.Context) {
 	data := struct {
 		Common *commonDashboardData
 	}{
@@ -67,8 +67,8 @@ func (a *AgentCommand) dashboardIndexHandler(c *gin.Context) {
 	c.HTML(http.StatusOK, "index", data)
 }
 
-func (a *AgentCommand) dashboardJobsHandler(c *gin.Context) {
-	jobs, _ := a.store.GetJobs()
+func (a *Agent) dashboardJobsHandler(c *gin.Context) {
+	jobs, _ := a.Store.GetJobs()
 
 	data := struct {
 		Common *commonDashboardData
@@ -81,10 +81,10 @@ func (a *AgentCommand) dashboardJobsHandler(c *gin.Context) {
 	c.HTML(http.StatusOK, "jobs", data)
 }
 
-func (a *AgentCommand) dashboardExecutionsHandler(c *gin.Context) {
+func (a *Agent) dashboardExecutionsHandler(c *gin.Context) {
 	job := c.Param("job")
 
-	groups, byGroup, err := a.store.GetGroupedExecutions(job)
+	groups, byGroup, err := a.Store.GetGroupedExecutions(job)
 	if err != nil {
 		log.Error(err)
 	}
@@ -114,7 +114,7 @@ func mustLoadTemplate(path string) []byte {
 	return tmpl
 }
 
-func createMyRender() multitemplate.Render {
+func CreateMyRender() multitemplate.Render {
 	r := multitemplate.New()
 
 	status := mustLoadTemplate(tmplPath + "/status.html.tmpl")

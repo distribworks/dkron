@@ -18,17 +18,17 @@ func TestReadConfigTags(t *testing.T) {
 		}
 	}`)
 	viper.ReadConfig(bytes.NewBuffer(jsonConfig))
-	config := readConfig("0.1.0")
+	config := ReadConfig()
 	t.Log(config.Tags)
 	assert.Equal(t, "bar", config.Tags["foo"])
 
 	viper.Set("tag", []string{"monthy=python"})
-	config = readConfig("0.1.0")
+	config = ReadConfig()
 	assert.NotContains(t, config.Tags, "foo")
 	assert.Contains(t, config.Tags, "monthy")
 	assert.Equal(t, "python", config.Tags["monthy"])
 
-	config = NewConfig([]string{"-tag", "t1=v1", "-tag", "t2=v2"}, "0.1.0")
+	config = NewConfig([]string{"-tag", "t1=v1", "-tag", "t2=v2"})
 	assert.Equal(t, "v1", config.Tags["t1"])
 	assert.Equal(t, "v2", config.Tags["t2"])
 }

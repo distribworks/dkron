@@ -9,6 +9,7 @@ import (
 // from the plugin server.
 const (
 	ProcessorPluginName = "processor"
+	ExecutorPluginName  = "executor"
 )
 
 // Handshake is the HandshakeConfig used to configure clients and servers.
@@ -21,6 +22,7 @@ var Handshake = plugin.HandshakeConfig{
 // ServeOpts are the configurations to serve a plugin.
 type ServeOpts struct {
 	Processor dkron.ExecutionProcessor
+	Executor  dkron.Executor
 }
 
 // Serve serves a plugin. This function never returns and should be the final
