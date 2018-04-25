@@ -27,6 +27,7 @@
     "store",
     "store/consul",
     "store/etcd/v2",
+    "store/redis",
     "store/zookeeper"
   ]
   revision = "063d875e3c5fd734fa2aa12fac83829f62acfc70"
@@ -469,6 +470,19 @@
   version = "v8.18.2"
 
 [[projects]]
+  name = "gopkg.in/redis.v5"
+  packages = [
+    ".",
+    "internal",
+    "internal/consistenthash",
+    "internal/hashtag",
+    "internal/pool",
+    "internal/proto"
+  ]
+  revision = "a16aeec10ff407b1e7be6dd35797ccf5426ef0f0"
+  version = "v5.2.9"
+
+[[projects]]
   branch = "v2"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
@@ -477,6 +491,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "f8be537631e515e6f046ce0f573c287aec8ab8631ac0b54cc018fadabab129d3"
+  inputs-digest = "a69a3d58c63953044edececa1b7759634c5372ca6aac280a48b88ae732820d9b"
   solver-name = "gps-cdcl"
   solver-version = 1

@@ -24,12 +24,18 @@ services:
       - "2181"
     hostname: node1
 
+  redis:
+    image: redis
+    ports:
+      - "6379"
+
   dkron:
     build: .
     depends_on:
       - consul
       - etcd
       - zk
+      - redis
     ports:
       - "8080"
       - "8946"
@@ -43,3 +49,5 @@ services:
     # command: scripts/entrypoint.sh agent -server -backend=etcd -backend-machine=etcd:2379 -join=dkron:8946 -log-level=debug
     # Uncomment to use zk
     # command: scripts/entrypoint.sh agent -server -backend=zk -backend-machine=zk:2181 -join=dkron:8946 -log-level=debug
+    # Uncomment to use redis
+    # command: scripts/entrypoint.sh agent -server -backend=redis -backend-machine=redis:6379 -join=dkron:8946 -log-level=debug

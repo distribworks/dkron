@@ -52,8 +52,8 @@ Options:
                                   key/value tag pairs to the given node.
   -keyspace=dkron                 The keyspace to use. A prefix under all data is stored
                                   for this instance.
-  -backend=[etcd|consul|zk]       Backend storage to use, etcd, consul or zookeeper. The default
-                                  is etcd.
+  -backend=[etcd|consul|zk|redis] Backend storage to use, etcd, consul, zk (zookeeper) or redis.
+                                  The default is etcd.
   -backend-machine=127.0.0.1:2379 Backend storage servers addresses to connect to. This flag can be
                                   specified multiple times.
   -encrypt                        Key for encrypting network traffic.
