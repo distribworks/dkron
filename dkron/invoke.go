@@ -64,7 +64,7 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 	execution.Success = success
 	execution.Output = output.Bytes()
 
-	rpcServer, err := a.queryRPCConfig()
+	rpcServer, err := a.getServerRPCAddresFromTags()
 	if err != nil {
 		return err
 	}
@@ -78,6 +78,15 @@ func (a *Agent) selectServer() serf.Member {
 	server := servers[rand.Intn(len(servers))]
 
 	return server
+}
+
+func (a *Agent) getServerRPCAddresFromTags() (string, error) {
+	s := a.selectServer()
+
+	if addr, ok := s.Tags["dkron_rpc_addr"]; ok {
+		return addr, nil
+	}
+	return "", ErrNoRPCAddress
 }
 
 // Determine the shell invocation based on OS
