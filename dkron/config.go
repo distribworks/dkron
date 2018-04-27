@@ -4,7 +4,6 @@ import (
 	"encoding/base64"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"net"
 	"os"
 	"strings"
@@ -78,12 +77,6 @@ func init() {
 // the command line and any file configs.
 func NewConfig(args []string, version string) *Config {
 	cmdFlags := configFlagSet()
-
-	ignore := args[len(args)-1] == "ignore"
-	if ignore {
-		args = args[:len(args)-1]
-		cmdFlags.SetOutput(ioutil.Discard)
-	}
 
 	if err := cmdFlags.Parse(args); err != nil {
 		if ignore {

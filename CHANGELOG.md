@@ -1,3 +1,7 @@
+## 0.9.8 (2018-04-27)
+
+- Fix broken release 0.9.7
+
 ## 0.9.7 (2018-02-12)
 
 - Less verbose plugin logging
