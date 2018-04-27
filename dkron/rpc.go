@@ -51,8 +51,9 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 		"job":   execution.JobName,
 	}).Debug("rpc: Received execution done")
 
+retry:
 	// Load the job from the store
-	job, err := rpcs.agent.Store.GetJob(execution.JobName)
+	job, jkv, err := rpcs.agent.Store.GetJobWithKVPair(execution.JobName)
 	if err != nil {
 		if err == store.ErrKeyNotFound {
 			log.Warning(ErrExecutionDoneForDeletedJob)
@@ -60,10 +61,6 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 		}
 		log.Fatal("rpc:", err)
 		return err
-	}
-	// Lock the job while editing
-	if err = job.Lock(); err != nil {
-		log.Fatal("rpc:", err)
 	}
 
 	// Get the defined output types for the job, and call them
@@ -90,13 +87,13 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 		job.ErrorCount++
 	}
 
-	if err := rpcs.agent.Store.SetJob(job, nil); err != nil {
-		log.Fatal("rpc:", err)
+	ok, err := rpcs.agent.Store.AtomicJobPut(job, jkv)
+	if err != nil && err != store.ErrKeyModified {
+		log.WithError(err).Fatal("rpc: Error in atomic job save")
 	}
-
-	// Release the lock
-	if err = job.Unlock(); err != nil {
-		log.Fatal("rpc:", err)
+	if !ok {
+		log.Debug("rpc: Retrying job update")
+		goto retry
 	}
 
 	reply.From = rpcs.agent.config.NodeName
