@@ -186,6 +186,8 @@ func ReadConfig() *Config {
 
 	if server {
 		tags["dkron_server"] = "true"
+	} else {
+		tags["dkron_server"] = "false"
 	}
 	tags["dkron_version"] = Version
 
