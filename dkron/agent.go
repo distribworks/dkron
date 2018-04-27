@@ -28,6 +28,7 @@ var (
 
 	// ErrLeaderNotFound is returned when obtained leader from store is not found in member list
 	ErrLeaderNotFound = errors.New("No member leader found in member list")
+	ErrNoRPCAddress   = errors.New("No RPC address tag found in server")
 
 	defaultLeaderTTL = 20 * time.Second
 )
@@ -289,6 +290,12 @@ func (a *Agent) StartServer() {
 	}
 	a.HTTPTransport.ServeHTTP()
 	listenRPC(a)
+
+	tags := a.serf.LocalMember().Tags
+	tags["dkron_rpc_addr"] = a.getRPCAddr()
+	if err := a.SetTags(tags); err != nil {
+		log.WithError(err).Fatal("agent: Error setting RPC config tags")
+	}
 	a.participate()
 }
 
