@@ -79,11 +79,7 @@ func NewConfig(args []string, version string) *Config {
 	cmdFlags := configFlagSet()
 
 	if err := cmdFlags.Parse(args); err != nil {
-		if ignore {
-			log.WithError(err).Error("agent: Error parsing flags")
-		} else {
-			log.Info("agent: Ignoring flag parse errors")
-		}
+		log.WithError(err).Error("agent: Error parsing flags")
 	}
 
 	cmdFlags.VisitAll(func(f *flag.Flag) {
