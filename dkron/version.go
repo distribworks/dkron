@@ -1,3 +1,3 @@
 package dkron
 
-var Version = "0.9.7"
+var Version = "0.10.0"
