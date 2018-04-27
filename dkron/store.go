@@ -118,10 +118,18 @@ func (s *Store) SetJob(job *Job, previousJob *Job) error {
 	return nil
 }
 
+func (s *Store) AtomicJobPut(job *Job, prevJobKVPair *store.KVPair) (bool, error) {
+	jobKey := fmt.Sprintf("%s/jobs/%s", s.keyspace, job.Name)
+	jobJSON, _ := json.Marshal(job)
+
+	ok, _, err := s.Client.AtomicPut(jobKey, jobJSON, prevJobKVPair, nil)
+
+	return ok, err
+}
+
 // Set the depencency tree for a job given the job and the previous version
 // of the Job or nil if it's new.
 func (s *Store) SetJobDependencyTree(job *Job, previousJob *Job) error {
-
 	// Existing job that doesn't have parent job set and it's being set
 	if previousJob != nil && previousJob.ParentJob == "" && job.ParentJob != "" {
 		pj, err := job.GetParent()
@@ -222,14 +230,19 @@ func (s *Store) GetJobs() ([]*Job, error) {
 
 // Get a job
 func (s *Store) GetJob(name string) (*Job, error) {
+	job, _, err := s.GetJobWithKVPair(name)
+	return job, err
+}
+
+func (s *Store) GetJobWithKVPair(name string) (*Job, *store.KVPair, error) {
 	res, err := s.Client.Get(s.keyspace+"/jobs/"+name, nil)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	var job Job
 	if err = json.Unmarshal([]byte(res.Value), &job); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	log.WithFields(logrus.Fields{
@@ -237,7 +250,7 @@ func (s *Store) GetJob(name string) (*Job, error) {
 	}).Debug("store: Retrieved job from datastore")
 
 	job.Agent = s.agent
-	return &job, nil
+	return &job, res, nil
 }
 
 func (s *Store) DeleteJob(name string) (*Job, error) {
