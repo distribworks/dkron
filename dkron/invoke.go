@@ -43,7 +43,7 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 	// Check if executor is exists
 	if executor, ok := a.ExecutorPlugins[jex]; ok {
 		log.WithField("plugin", jex).Debug("invoke: calling executor plugin")
-		runningExecutions[execution.Key()] = execution
+		runningExecutions[execution.GetGroup()] = execution
 		out, err := executor.Execute(&ExecuteRequest{
 			JobName: job.Name,
 			Config:  exc,
@@ -70,7 +70,7 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 		return err
 	}
 
-	delete(runningExecutions, execution.Key())
+	delete(runningExecutions, execution.GetGroup())
 	rc := &RPCClient{ServerAddr: string(rpcServer)}
 	return rc.callExecutionDone(execution)
 }
