@@ -18,14 +18,17 @@ const MaxExecutions = 100
 
 type Storage interface {
 	SetJob(job *Job) error
+	AtomicJobPut(job *Job, prevJobKVPair *store.KVPair) (bool, error)
 	SetJobDependencyTree(job *Job, previousJob *Job) error
 	GetJobs() ([]*Job, error)
 	GetJob(name string) (*Job, error)
+	GetJobWithKVPair(name string) (*Job, *store.KVPair, error)
 	DeleteJob(name string) (*Job, error)
 	GetExecutions(jobName string) ([]*Execution, error)
 	GetLastExecutionGroup(jobName string) ([]*Execution, error)
 	GetExecutionGroup(execution *Execution) ([]*Execution, error)
 	GetGroupedExecutions(jobName string) (map[int64][]*Execution, []int64, error)
+	GetCurrentExecutions(nodeName string) ([]*Execution, error)
 	SetExecution(execution *Execution) (string, error)
 	DeleteExecutions(jobName string) error
 	GetLeader() []byte
@@ -279,24 +282,7 @@ func (s *Store) GetExecutions(jobName string) ([]*Execution, error) {
 		return nil, err
 	}
 
-	var executions []*Execution
-
-	for _, node := range res {
-		if store.Backend(s.backend) != store.ZK {
-			path := store.SplitKey(node.Key)
-			dir := path[len(path)-2]
-			if dir != jobName {
-				continue
-			}
-		}
-		var execution Execution
-		err := json.Unmarshal([]byte(node.Value), &execution)
-		if err != nil {
-			return nil, err
-		}
-		executions = append(executions, &execution)
-	}
-	return executions, nil
+	return s.unmarshalExecutions(res, jobName)
 }
 
 func (s *Store) GetLastExecutionGroup(jobName string) ([]*Execution, error) {
@@ -413,6 +399,35 @@ func (s *Store) SetExecution(execution *Execution) (string, error) {
 	}
 
 	return key, nil
+}
+
+func (s *Store) GetCurrentExecutions(nodeName string) ([]*Execution, error) {
+	res, err := s.Client.List(fmt.Sprintf("%s/current_executions/%s", s.keyspace, nodeName), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.unmarshalExecutions(res, nodeName)
+}
+
+func (s *Store) unmarshalExecutions(res []*store.KVPair, stopWord string) ([]*Execution, error) {
+	var executions []*Execution
+	for _, node := range res {
+		if store.Backend(s.backend) != store.ZK {
+			path := store.SplitKey(node.Key)
+			dir := path[len(path)-2]
+			if dir != stopWord {
+				continue
+			}
+		}
+		var execution Execution
+		err := json.Unmarshal([]byte(node.Value), &execution)
+		if err != nil {
+			return nil, err
+		}
+		executions = append(executions, &execution)
+	}
+	return executions, nil
 }
 
 // Removes all executions of a job

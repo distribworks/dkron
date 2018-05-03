@@ -43,6 +43,7 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 	// Check if executor is exists
 	if executor, ok := a.ExecutorPlugins[jex]; ok {
 		log.WithField("plugin", jex).Debug("invoke: calling executor plugin")
+		runningExecutions[execution.GetGroup()] = execution
 		out, err := executor.Execute(&ExecuteRequest{
 			JobName: job.Name,
 			Config:  exc,
@@ -57,7 +58,7 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 
 		output.Write(out)
 	} else {
-		log.Errorf("invoke: Specified executor %s is not present", executor)
+		log.WithField("executor", executor).Error("invoke: Specified executor is not present")
 	}
 
 	execution.FinishedAt = time.Now()
@@ -69,6 +70,7 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 		return err
 	}
 
+	delete(runningExecutions, execution.GetGroup())
 	rc := &RPCClient{ServerAddr: string(rpcServer)}
 	return rc.callExecutionDone(execution)
 }

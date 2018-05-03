@@ -240,6 +240,9 @@ func (j *Job) Unlock() error {
 }
 
 func (j *Job) isRunnable() bool {
+	if j.Concurrency == ConcurrencyForbid {
+		j.Agent.RefreshJobStatus(j.Name)
+	}
 	status := j.Status()
 
 	if status == Running {
