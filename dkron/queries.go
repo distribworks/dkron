@@ -12,7 +12,7 @@ import (
 const (
 	QuerySchedulerRestart = "scheduler:restart"
 	QueryRunJob           = "run:job"
-	QueryRPCConfig        = "rpc:config"
+	QueryExecutionDone    = "execution:done"
 )
 
 type RunQueryParam struct {
@@ -156,4 +156,52 @@ func (a *Agent) schedulerRestartQuery(leaderName string) {
 		}
 	}
 	log.WithField("query", QuerySchedulerRestart).Debug("agent: Done receiving acks and responses")
+}
+
+// Broadcast a ExecutionDone to the cluster.
+func (a *Agent) executionDoneQuery(nodes []string, group string) map[string]string {
+	params := &serf.QueryParam{
+		FilterNodes: nodes,
+		RequestAck:  true,
+	}
+
+	log.WithFields(logrus.Fields{
+		"query":   QueryExecutionDone,
+		"members": nodes,
+	}).Debug("agent: Sending query")
+
+	qr, err := a.serf.Query(QueryExecutionDone, []byte(group), params)
+	if err != nil {
+		log.WithError(err).Fatal("agent: Error sending the execution done query")
+	}
+	defer qr.Close()
+
+	statuses := make(map[string]string)
+	ackCh := qr.AckCh()
+	respCh := qr.ResponseCh()
+
+	for !qr.Finished() {
+		select {
+		case ack, ok := <-ackCh:
+			if ok {
+				log.WithFields(logrus.Fields{
+					"from": ack,
+				}).Debug("agent: Received ack")
+			}
+		case resp, ok := <-respCh:
+			if ok {
+				log.WithFields(logrus.Fields{
+					"from":    resp.From,
+					"payload": string(resp.Payload),
+				}).Debug("agent: Received response")
+
+				statuses[resp.From] = string(resp.Payload)
+			}
+		}
+	}
+	log.WithField("query", QueryExecutionDone).Debug("agent: Done receiving acks and responses")
+
+	// In case the query finishes by deadline without receiving a response from the node
+	// set the execution as finished, maybe the node is gone by now.
+	return statuses
 }
