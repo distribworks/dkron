@@ -47,11 +47,16 @@ func (p *Plugins) DiscoverPlugins() error {
 	if err != nil {
 		logrus.WithError(err).Error("Error loading exe directory")
 	} else {
-		processors, err = plugin.Discover("dkron-processor-*", filepath.Dir(exePath))
-		executors, err = plugin.Discover("dkron-executor-*", filepath.Dir(exePath))
+		p, err := plugin.Discover("dkron-processor-*", filepath.Dir(exePath))
 		if err != nil {
 			return err
 		}
+		processors = append(processors, p...)
+		e, err := plugin.Discover("dkron-executor-*", filepath.Dir(exePath))
+		if err != nil {
+			return err
+		}
+		executors = append(executors, e...)
 	}
 
 	for _, file := range processors {
