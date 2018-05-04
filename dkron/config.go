@@ -4,7 +4,6 @@ import (
 	"encoding/base64"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"net"
 	"os"
 	"strings"
@@ -79,18 +78,8 @@ func init() {
 func NewConfig(args []string) *Config {
 	cmdFlags := ConfigFlagSet()
 
-	ignore := args[len(args)-1] == "ignore"
-	if ignore {
-		args = args[:len(args)-1]
-		cmdFlags.SetOutput(ioutil.Discard)
-	}
-
 	if err := cmdFlags.Parse(args); err != nil {
-		if ignore {
-			log.WithError(err).Error("agent: Error parsing flags")
-		} else {
-			log.Info("agent: Ignoring flag parse errors")
-		}
+		log.WithError(err).Error("agent: Error parsing flags")
 	}
 
 	cmdFlags.VisitAll(func(f *flag.Flag) {
