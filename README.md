@@ -22,7 +22,11 @@ Currently Dkron is under heavy development but approaching production quality, i
 
 Said that, I encourage you to try it, it's very easy to use, see how it works for you and report any bugs [creating an issue](https://github.com/victorcoder/dkron/issues) in the github project.
 
-## Quick start
+## Documentation
+
+Full, comprehensive documentation is viewable on the [Dkron website](http://dkron.io)
+
+## Development Quick start
 
 The best way to test and develop dkron is using docker, you will need [Docker](https://www.docker.com/) installed before proceding.
 
@@ -46,9 +50,13 @@ Check the port mapping using `docker-compose ps` and use the browser to navigate
 
 To add jobs to the system read the API docs.
 
-## Documentation
+## Frontend development
 
-Full, comprehensive documentation is viewable on the [Dkron website](http://dkron.io)
+Dkron dashboard is built using a combinations of golang templates and AngularJS code.
+
+To start developing the dashboard enter the `static` directory and run `npm install` to get the frontend dependencies.
+
+Change code in JS files or in templates, then run `make gen` to generate `bindata.go` file. This is a method of embedding resources in Go applications.
 
 ### Resources
 
@@ -71,3 +79,4 @@ https://github.com/jobandtalent/dkron-rb
 This project is possible thanks to the Support of Jobandtalent
 
 ![](https://upload.wikimedia.org/wikipedia/en/d/db/Jobandtalent_logo.jpg)
+
