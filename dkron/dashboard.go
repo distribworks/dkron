@@ -138,7 +138,7 @@ func CreateMyRender() multitemplate.Render {
 	return r
 }
 
-//go:generate go-bindata -prefix "../" -pkg dkron -ignore=scss -ignore=.*\.md -ignore=\.?bower\.json -ignore=\.gitignore -ignore=Makefile -ignore=examples -ignore=tutorial -ignore=tests -ignore=rickshaw\/src -o bindata.go ../static/... ../templates
+//go:generate go-bindata -prefix "../" -pkg dkron -ignore=scss -ignore=.*\.md -ignore=\.?package\.json -ignore=\.?package-lock\.json -ignore=\.gitignore -ignore=Makefile -ignore=examples -ignore=tutorial -ignore=tests -ignore=rickshaw\/src -o bindata.go ../static/... ../templates
 func servePublic(c *gin.Context) {
 	path := c.Request.URL.Path
 

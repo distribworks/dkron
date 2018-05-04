@@ -1,0 +1,10 @@
+*.log
+*swp
+yarn-error.log
+yarn.lock
+
+# Dependency directories
+node_modules
+
+# Coverage directory used by tools like istanbul
+coverage
