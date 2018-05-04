@@ -144,27 +144,8 @@ func (h *HTTPTransport) jobCreateOrUpdateHandler(c *gin.Context) {
 	}
 	c.BindJSON(&job)
 
-	// Get if the requested job already exist
-	ej, err := h.agent.Store.GetJob(job.Name)
-	if err != nil && err != store.ErrKeyNotFound {
-		c.AbortWithError(422, err)
-		return
-	}
-
-	// If it's an existing job, lock it
-	if ej != nil {
-		ej.Lock()
-		defer ej.Unlock()
-	}
-
 	// Save the job to the store
-	if err = h.agent.Store.SetJob(&job, ej); err != nil {
-		c.AbortWithError(422, err)
-		return
-	}
-
-	// Save the job parent
-	if err = h.agent.Store.SetJobDependencyTree(&job, ej); err != nil {
+	if err := h.agent.Store.SetJob(&job, true); err != nil {
 		c.AbortWithError(422, err)
 		return
 	}
