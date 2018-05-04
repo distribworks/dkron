@@ -244,7 +244,7 @@ func (h *HTTPTransport) jobToggleHandler(c *gin.Context) {
 	}
 
 	job.Disabled = !job.Disabled
-	if err := h.agent.Store.SetJob(job, nil); err != nil {
+	if err := h.agent.Store.SetJob(job, false); err != nil {
 		c.AbortWithError(http.StatusPreconditionFailed, err)
 		return
 	}
