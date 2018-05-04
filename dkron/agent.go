@@ -192,7 +192,7 @@ func (a *Agent) setupSerf() (*serf.Serf, error) {
 			return nil, fmt.Errorf("Invalid advertise address: %s", err)
 		}
 	}
-	//Ues the value of "RPCPort" if AdvertiseRPCPort has not been set
+	//Use the value of "RPCPort" if AdvertiseRPCPort has not been set
 	if config.AdvertiseRPCPort <= 0 {
 		config.AdvertiseRPCPort = config.RPCPort
 	}
@@ -293,9 +293,7 @@ func (a *Agent) StartServer() {
 	a.HTTPTransport.ServeHTTP()
 	listenRPC(a)
 
-	tags := a.serf.LocalMember().Tags
-	tags["dkron_rpc_addr"] = a.getRPCAddr()
-	if err := a.SetTags(tags); err != nil {
+	if err := a.SetTags(a.config.Tags); err != nil {
 		log.WithError(err).Fatal("agent: Error setting RPC config tags")
 	}
 	a.participate()
@@ -559,6 +557,9 @@ func (a *Agent) Leave() error {
 }
 
 func (a *Agent) SetTags(tags map[string]string) error {
+	if a.config.Server {
+		tags["dkron_rpc_addr"] = a.getRPCAddr()
+	}
 	return a.serf.SetTags(tags)
 }
 
