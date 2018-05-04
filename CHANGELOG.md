@@ -1,3 +1,19 @@
+## 0.10.0
+
+### Bug fixes
+
+- Fix RPCconfig query missing address (#336 and related)
+- Fix concurrency issue due to race condition on lock jobs (#299)
+- Fix execution done missing on restart blocking concurrency forbid jobs (#349)
+- Fix plugin load paths (#275)
+- Fix RPC address lost on reload config (#262)
+
+### Features
+
+- Replace bower with npm
+- Executor plugins
+- Toggle job from UI
+
 ## 0.9.8 (2018-04-27)
 
 - Fix broken release 0.9.7
