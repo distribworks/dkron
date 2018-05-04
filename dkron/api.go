@@ -77,6 +77,8 @@ func (h *HTTPTransport) ApiRoutes(r *gin.RouterGroup) {
 	jobs := v1.Group("/jobs")
 	jobs.DELETE("/:job", h.jobDeleteHandler)
 	jobs.POST("/:job", h.jobRunHandler)
+	jobs.POST("/:job/toggle", h.jobToggleHandler)
+
 	// Place fallback routes last
 	jobs.GET("/:job", h.jobGetHandler)
 	jobs.GET("/:job/executions", h.executionsHandler)
@@ -249,4 +251,24 @@ func (h *HTTPTransport) leaveHandler(c *gin.Context) {
 	if err := h.agent.serf.Leave(); err != nil {
 		renderJSON(c, http.StatusOK, h.agent.listServers())
 	}
+}
+
+func (h *HTTPTransport) jobToggleHandler(c *gin.Context) {
+	jobName := c.Param("job")
+
+	job, err := h.agent.Store.GetJob(jobName)
+	if err != nil {
+		c.AbortWithError(http.StatusNotFound, err)
+		return
+	}
+
+	job.Disabled = !job.Disabled
+	if err := h.agent.Store.SetJob(job, nil); err != nil {
+		c.AbortWithError(http.StatusPreconditionFailed, err)
+		return
+	}
+
+	c.Header("Location", c.Request.RequestURI)
+	c.Status(http.StatusAccepted)
+	renderJSON(c, http.StatusOK, job)
 }

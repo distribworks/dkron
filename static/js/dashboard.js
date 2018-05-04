@@ -36,6 +36,22 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
     });
   };
 
+  $scope.toggleJob = function(jobName) {
+    var response = $http.post(DKRON_API_PATH + '/jobs/' + jobName + '/toggle');
+    response.success(function(data, status, headers, config) {
+      $('#message').html('<div class="alert alert-success fade in">Successfully toggled job ' + jobName + '</div>');
+
+      $(".alert-success").delay(hideDelay).slideUp(200, function(){
+        $(".alert").alert('close');
+        window.location.reload();
+      });
+    });
+
+    response.error(function(data, status, headers, config) {
+      $('#message').html('<div class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Error toggle job ' + jobName + '</div>');
+    });
+  }
+
   var updateView = function() {
     var response = $http.get(DKRON_API_PATH + '/jobs');
     response.success(function(data, status, headers, config) {

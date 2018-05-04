@@ -29,6 +29,8 @@
           <a href="#" ng-click="runJob('{{ $job.Name }}')" ng-show="!running_{{ $i }}" title="Run"><i class="fa fa-cogs fa-1x" aria-hidden="true"></i></a>
           <a href="#"><i class="fa fa-cog fa-spin fa-1x fa-fw" ng-show="running_{{ $i }}"></i></a>
           &nbsp;
+          <a href="#" ng-click="toggleJob('{{ $job.Name }}')" ng-show="!running_{{ $i }}" title="Toggle"><i class="fa fa-power-off fa-1x" aria-hidden="true"></i></a>
+          &nbsp;
           <a href="#" data-toggle="modal" data-target="#{{ $i }}-modal-delete" ng-show="!deleting_{{ $i }}" title="Delete"><i class="fa fa-trash-o fa-1x" aria-hidden="true"></i></a>
           <a href=""><i class="fa fa-spinner fa-spin fa-1x fa-fw" ng-show="deleting_{{ $i }}"></i></a>
         </td>
