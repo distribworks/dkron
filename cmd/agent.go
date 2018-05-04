@@ -90,7 +90,7 @@ func (a *AgentCommand) Synopsis() string {
 // This includes the main eventloop and starting the server if enabled.
 //
 // The returned value is the exit code.
-// protoc -I proto/ proto/executor.proto --go_out=plugins=grpc:proto/
+// protoc -I proto/ proto/executor.proto --go_out=plugins=grpc:dkron/
 func (a *AgentCommand) Run(args []string) int {
 	// Make sure we clean up any managed plugins at the end of this
 	p := &Plugins{}
