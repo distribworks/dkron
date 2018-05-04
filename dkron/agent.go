@@ -10,6 +10,7 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/Sirupsen/logrus"
@@ -32,7 +33,7 @@ var (
 
 	defaultLeaderTTL = 20 * time.Second
 
-	runningExecutions = make(map[string]*Execution)
+	runningExecutions sync.Map
 )
 
 type Agent struct {
@@ -449,7 +450,7 @@ func (a *Agent) eventLoop() {
 
 					// Find if the indicated execution is done processing
 					var err error
-					if _, ok := runningExecutions[string(query.Payload)]; ok {
+					if _, ok := runningExecutions.Load(string(query.Payload)); ok {
 						err = query.Respond([]byte("false"))
 					} else {
 						err = query.Respond([]byte("true"))
