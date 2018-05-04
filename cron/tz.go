@@ -11,7 +11,7 @@ type timezoneAwareSchedule struct {
 }
 
 func (schedule *timezoneAwareSchedule) Next(t time.Time) time.Time {
-	return schedule.underlingSchedule.Next(t.In(schedule.targetedTimezone))
+	return schedule.underlyingSchedule.Next(t.In(schedule.targetedTimezone))
 }
 
 // Wrap a schedule inside a timezoneAwareSchedule.  timezone string
