@@ -213,7 +213,6 @@ dkron.controller('IndexCtrl', function ($scope, $http, $interval, $element) {
     }
     $scope.success_count = success_count;
 
-
     gdata.push({x: gdata[gdata.length - 1].x + 1, y: diff})
 
     $scope.series[0] = {
