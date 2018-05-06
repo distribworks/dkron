@@ -35,7 +35,10 @@ type ExecutorClient struct {
 func (m *ExecutorClient) Execute(args *dkron.ExecuteRequest) ([]byte, error) {
 	// This is where the magic conversion to Proto happens
 	out, err := m.client.Execute(context.Background(), args)
-	return out.Output, err
+	if err != nil {
+		return nil, err
+	}
+	return out.Output, nil
 }
 
 // Here is the gRPC server that GRPCClient talks to.
@@ -47,8 +50,5 @@ type ExecutorServer struct {
 // Execute is where the magic happens
 func (m ExecutorServer) Execute(ctx context.Context, req *dkron.ExecuteRequest) (*dkron.ExecuteResponse, error) {
 	out, err := m.Impl.Execute(req)
-	if err != nil {
-		out = []byte("executor error: " + err.Error())
-	}
-	return &dkron.ExecuteResponse{Output: out}, nil
+	return &dkron.ExecuteResponse{Output: out}, err
 }
