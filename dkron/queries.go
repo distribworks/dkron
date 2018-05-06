@@ -3,6 +3,7 @@ package dkron
 import (
 	"bytes"
 	"encoding/json"
+	"time"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/abronan/valkeyrie/store"
@@ -13,7 +14,11 @@ const (
 	QuerySchedulerRestart = "scheduler:restart"
 	QueryRunJob           = "run:job"
 	QueryExecutionDone    = "execution:done"
+
+	rescheduleTime = 2 * time.Second
 )
+
+var rescheduleThrotle *time.Timer
 
 type RunQueryParam struct {
 	Execution *Execution `json:"execution"`
@@ -119,6 +124,18 @@ func (a *Agent) RunQuery(ex *Execution) {
 	log.WithFields(logrus.Fields{
 		"query": QueryRunJob,
 	}).Debug("agent: Done receiving acks and responses")
+}
+
+// SchedulerRestart Dispatch a SchedulerRestartQuery to the cluster but
+// after a timeout to actually throtle subsequent calls
+func (a *Agent) SchedulerRestart() {
+	if rescheduleThrotle == nil {
+		rescheduleThrotle = time.AfterFunc(rescheduleTime, func() {
+			a.schedulerRestartQuery(string(a.Store.GetLeader()))
+		})
+	} else {
+		rescheduleThrotle.Reset(rescheduleTime)
+	}
 }
 
 // Broadcast a SchedulerRestartQuery to the cluster, only server members

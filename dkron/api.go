@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/abronan/valkeyrie/store"
@@ -12,11 +11,8 @@ import (
 )
 
 const (
-	pretty         = "pretty"
-	rescheduleTime = 2 * time.Second
+	pretty = "pretty"
 )
-
-var rescheduleThrotle *time.Timer
 
 // Transport is the interface that wraps the ServeHTTP method.
 type Transport interface {
@@ -150,13 +146,7 @@ func (h *HTTPTransport) jobCreateOrUpdateHandler(c *gin.Context) {
 		return
 	}
 
-	if rescheduleThrotle == nil {
-		rescheduleThrotle = time.AfterFunc(rescheduleTime, func() {
-			h.agent.schedulerRestartQuery(string(h.agent.Store.GetLeader()))
-		})
-	} else {
-		rescheduleThrotle.Reset(rescheduleTime)
-	}
+	h.agent.SchedulerRestart()
 
 	c.Header("Location", fmt.Sprintf("%s/%s", c.Request.RequestURI, job.Name))
 	renderJSON(c, http.StatusCreated, job)
@@ -171,7 +161,7 @@ func (h *HTTPTransport) jobDeleteHandler(c *gin.Context) {
 		return
 	}
 
-	h.agent.schedulerRestartQuery(string(h.agent.Store.GetLeader()))
+	h.agent.SchedulerRestart()
 	renderJSON(c, http.StatusOK, job)
 }
 
@@ -249,6 +239,7 @@ func (h *HTTPTransport) jobToggleHandler(c *gin.Context) {
 		return
 	}
 
+	h.agent.SchedulerRestart()
 	c.Header("Location", c.Request.RequestURI)
 	c.Status(http.StatusAccepted)
 	renderJSON(c, http.StatusOK, job)
