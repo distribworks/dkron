@@ -112,7 +112,7 @@ dkron.controller('IndexCtrl', function ($scope, $http, $interval, $element) {
 
   $scope.series = [{
       name: 'Success count',
-      color: 'darkgreen',
+      color: 'green',
       data: [{x: 0, y: 0}]
   },{
       name: 'Error count',
@@ -133,10 +133,10 @@ dkron.controller('IndexCtrl', function ($scope, $http, $interval, $element) {
         highlight: true
       },
       yAxis: {
-        tickFormat: 'formatKMBT'
+        tickFormat: Rickshaw.Fixtures.Number.formatKMBT
       },
       xAxis: {
-        tickFormat: 'formatKMBT',
+        tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
         timeUnit: 'hour'
       }
   };
