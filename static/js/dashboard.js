@@ -82,17 +82,15 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
   };
 
   $scope.range = function(size, start, end) {
-      var ret = [];        
-      console.log(size, start, end);
-                    
+      var ret = [];
+
       if (size < end) {
           end = size;
           start = size-$scope.gap;
       }
       for (var i = start; i < end; i++) {
           ret.push(i);
-      }        
-      console.log(ret);        
+      }
       return ret;
   };
 
