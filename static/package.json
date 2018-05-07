@@ -11,7 +11,8 @@
     "angular-mocks": "^1.4.14",
     "angular-resource": "^1.4.14",
     "angular-rickshaw": "^0.1.1",
-    "angular-route": "^1.4.14"
+    "angular-route": "^1.4.14",
+    "bootstrap": "^3.3.7"
   },
   "devDependencies": {},
   "scripts": {
