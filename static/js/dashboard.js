@@ -67,6 +67,58 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
     });
   }
 
+  // calculate page in place
+  $scope.groupToPages = function () {
+    $scope.gap = Math.round($scope.jobs.length / $scope.itemsPerPage);
+    $scope.pagedItems = [];
+    
+    for (var i = 0; i < $scope.jobs.length; i++) {
+        if (i % $scope.itemsPerPage === 0) {
+            $scope.pagedItems[Math.floor(i / $scope.itemsPerPage)] = [ $scope.jobs[i] ];
+        } else {
+            $scope.pagedItems[Math.floor(i / $scope.itemsPerPage)].push($scope.jobs[i]);
+        }
+    }
+  };
+
+  $scope.range = function(size, start, end) {
+      var ret = [];        
+      console.log(size, start, end);
+                    
+      if (size < end) {
+          end = size;
+          start = size-$scope.gap;
+      }
+      for (var i = start; i < end; i++) {
+          ret.push(i);
+      }        
+      console.log(ret);        
+      return ret;
+  };
+
+  $scope.prevPage = function() {
+      if ($scope.currentPage > 0) {
+          $scope.currentPage--;
+      }
+  };
+
+  $scope.nextPage = function() {
+      if ($scope.currentPage < $scope.pagedItems.length - 1) {
+          $scope.currentPage++;
+      }
+  };
+
+  $scope.setPage = function() {
+      $scope.currentPage = this.n;
+  };
+
+  // init
+  $scope.gap = 0;
+  $scope.groupedItems = [];
+  $scope.itemsPerPage = 15;
+  $scope.pagedItems = [];
+  $scope.currentPage = 0;
+  
   $scope.success_count = 0;
   $scope.error_count = 0;
   $scope.failed_jobs = 0;
@@ -77,8 +129,12 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
     var success_count = 0;
     var error_count = 0;
     $scope.jobs = data;
+
     $scope.failed_jobs = 0;
     $scope.successful_jobs = 0;
+
+    // functions have been describe process the data for display
+    $scope.groupToPages();
 
     for(i=0; i < data.length; i++) {
       success_count = success_count + data[i].success_count;
@@ -94,10 +150,6 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
     $scope.success_count = success_count;
     $scope.error_count = error_count;
   }
-
-  $interval(function() {
-    updateView();
-  }, 2000);
 
   updateView();
   hljs.initHighlightingOnLoad();

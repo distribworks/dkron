@@ -68,14 +68,10 @@ func (a *Agent) dashboardIndexHandler(c *gin.Context) {
 }
 
 func (a *Agent) dashboardJobsHandler(c *gin.Context) {
-	jobs, _ := a.Store.GetJobs()
-
 	data := struct {
 		Common *commonDashboardData
-		Jobs   []*Job
 	}{
 		Common: newCommonDashboardData(a, a.config.NodeName, "../../"),
-		Jobs:   jobs,
 	}
 
 	c.HTML(http.StatusOK, "jobs", data)
