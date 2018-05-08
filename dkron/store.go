@@ -21,8 +21,8 @@ type Storage interface {
 	AtomicJobPut(job *Job, prevJobKVPair *store.KVPair) (bool, error)
 	SetJobDependencyTree(job *Job, previousJob *Job) error
 	GetJobs() ([]*Job, error)
-	GetJob(name string) (*Job, error)
-	GetJobWithKVPair(name string) (*Job, *store.KVPair, error)
+	GetJob(name string, options *JobOptions) (*Job, error)
+	GetJobWithKVPair(name string, options *JobOptions) (*Job, *store.KVPair, error)
 	DeleteJob(name string) (*Job, error)
 	GetExecutions(jobName string) ([]*Execution, error)
 	GetLastExecutionGroup(jobName string) ([]*Execution, error)
@@ -40,6 +40,10 @@ type Store struct {
 	agent    *Agent
 	keyspace string
 	backend  string
+}
+
+type JobOptions struct {
+	ComputeStatus bool
 }
 
 func init() {
@@ -84,7 +88,7 @@ func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
 	}
 
 	// Get if the requested job already exist
-	ej, err := s.GetJob(job.Name)
+	ej, err := s.GetJob(job.Name, nil)
 	if err != nil && err != store.ErrKeyNotFound {
 		return err
 	}
@@ -201,7 +205,7 @@ func (s *Store) validateJob(job *Job) error {
 }
 
 // GetJobs returns all jobs
-func (s *Store) GetJobs() ([]*Job, error) {
+func (s *Store) GetJobs(options *JobOptions) ([]*Job, error) {
 	res, err := s.Client.List(s.keyspace+"/jobs/", nil)
 	if err != nil {
 		if err == store.ErrKeyNotFound {
@@ -219,18 +223,21 @@ func (s *Store) GetJobs() ([]*Job, error) {
 			return nil, err
 		}
 		job.Agent = s.agent
+		if options != nil && options.ComputeStatus {
+			job.Status = job.GetStatus()
+		}
 		jobs = append(jobs, &job)
 	}
 	return jobs, nil
 }
 
 // Get a job
-func (s *Store) GetJob(name string) (*Job, error) {
-	job, _, err := s.GetJobWithKVPair(name)
+func (s *Store) GetJob(name string, options *JobOptions) (*Job, error) {
+	job, _, err := s.GetJobWithKVPair(name, options)
 	return job, err
 }
 
-func (s *Store) GetJobWithKVPair(name string) (*Job, *store.KVPair, error) {
+func (s *Store) GetJobWithKVPair(name string, options *JobOptions) (*Job, *store.KVPair, error) {
 	res, err := s.Client.Get(s.keyspace+"/jobs/"+name, nil)
 	if err != nil {
 		return nil, nil, err
@@ -246,11 +253,15 @@ func (s *Store) GetJobWithKVPair(name string) (*Job, *store.KVPair, error) {
 	}).Debug("store: Retrieved job from datastore")
 
 	job.Agent = s.agent
+	if options != nil && options.ComputeStatus {
+		job.Status = job.GetStatus()
+	}
+
 	return &job, res, nil
 }
 
 func (s *Store) DeleteJob(name string) (*Job, error) {
-	job, err := s.GetJob(name)
+	job, err := s.GetJob(name, nil)
 	if err != nil {
 		return nil, err
 	}

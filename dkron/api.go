@@ -111,7 +111,7 @@ func (h *HTTPTransport) indexHandler(c *gin.Context) {
 }
 
 func (h *HTTPTransport) jobsHandler(c *gin.Context) {
-	jobs, err := h.agent.Store.GetJobs()
+	jobs, err := h.agent.Store.GetJobs(&JobOptions{ComputeStatus: true})
 	if err != nil {
 		log.WithError(err).Error("api: Unable to get jobs, store not reachable.")
 		return
@@ -122,7 +122,7 @@ func (h *HTTPTransport) jobsHandler(c *gin.Context) {
 func (h *HTTPTransport) jobGetHandler(c *gin.Context) {
 	jobName := c.Param("job")
 
-	job, err := h.agent.Store.GetJob(jobName)
+	job, err := h.agent.Store.GetJob(jobName, &JobOptions{ComputeStatus: true})
 	if err != nil {
 		log.Error(err)
 	}
@@ -168,7 +168,7 @@ func (h *HTTPTransport) jobDeleteHandler(c *gin.Context) {
 func (h *HTTPTransport) jobRunHandler(c *gin.Context) {
 	jobName := c.Param("job")
 
-	job, err := h.agent.Store.GetJob(jobName)
+	job, err := h.agent.Store.GetJob(jobName, nil)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
@@ -185,7 +185,7 @@ func (h *HTTPTransport) jobRunHandler(c *gin.Context) {
 func (h *HTTPTransport) executionsHandler(c *gin.Context) {
 	jobName := c.Param("job")
 
-	job, err := h.agent.Store.GetJob(jobName)
+	job, err := h.agent.Store.GetJob(jobName, nil)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
@@ -227,7 +227,7 @@ func (h *HTTPTransport) leaveHandler(c *gin.Context) {
 func (h *HTTPTransport) jobToggleHandler(c *gin.Context) {
 	jobName := c.Param("job")
 
-	job, err := h.agent.Store.GetJob(jobName)
+	job, err := h.agent.Store.GetJob(jobName, nil)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
