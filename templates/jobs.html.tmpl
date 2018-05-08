@@ -47,18 +47,18 @@
         <td ng-bind="job.success_count"></td>
         <td ng-bind="job.error_count"></td>
         <td>
-            <i ng-if="job.disabled == true" class="fa fa-circle text-muted"></i>
-            <i ng-if="job.disabled != true" ng-class="'text-' + (job.status | friendlyStatus)" class="fa fa-circle"></i>
+            <i ng-if="job.disabled == true" class="glyphicon glyphicon-ban-circle text-muted"></i>
+            <i ng-if="job.disabled != true" ng-class="job.status | friendlyStatus" class="glyphicon"></i>
         </td>
         <td>
-          <a href="#" data-toggle="modal" data-target="#{{`{{ $index }}`}}-modal" title="View"><i class="fa fa-eye fa-1x" aria-hidden="true"></i></a>
+          <a href="#" data-toggle="modal" data-target="#{{`{{ $index }}`}}-modal" title="View"><i class="glyphicon glyphicon-eye-open" aria-hidden="true"></i></a>
           &nbsp;
-          <a href="#" ng-click="runJob(job.name)" ng-show="!running_{{`{{ $index }}`}}" title="Run"><i class="fa fa-cogs fa-1x" aria-hidden="true"></i></a>
+          <a href="#" ng-click="runJob(job.name)" ng-show="!running_{{`{{ $index }}`}}" title="Run"><i class="glyphicon glyphicon-play" aria-hidden="true"></i></a>
           <a href="#"><i class="fa fa-cog fa-spin fa-1x fa-fw" ng-show="running_{{`{{ $index }}`}}"></i></a>
           &nbsp;
-          <a href="#" ng-click="toggleJob(job.name)" ng-show="!running_{{`{{ $index }}`}}" title="Toggle"><i class="fa fa-power-off fa-1x" aria-hidden="true"></i></a>
+          <a href="#" ng-click="toggleJob(job.name)" ng-show="!running_{{`{{ $index }}`}}" title="Toggle"><i class="glyphicon glyphicon-pause" aria-hidden="true"></i></a>
           &nbsp;
-          <a href="#" data-toggle="modal" data-target="#{{`{{ $index }}`}}-modal-delete" ng-show="!deleting_{{`{{ $index }}`}}" title="Delete"><i class="fa fa-trash-o fa-1x" aria-hidden="true"></i></a>
+          <a href="#" data-toggle="modal" data-target="#{{`{{ $index }}`}}-modal-delete" ng-show="!deleting_{{`{{ $index }}`}}" title="Delete"><i class="glyphicon glyphicon-trash" aria-hidden="true"></i></a>
           <a href=""><i class="fa fa-spinner fa-spin fa-1x fa-fw" ng-show="deleting_{{`{{ $index }}`}}"></i></a>
         </td>
       </tr>

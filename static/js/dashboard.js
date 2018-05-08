@@ -3,12 +3,14 @@ var dkron = angular.module('dkron', ['angular-rickshaw']);
 dkron.filter('friendlyStatus', function() {
   var friendlyStatusFilter = function(input) {
     switch(input) {
+      case 'success':
+        return 'text-success glyphicon-ok-sign'
       case 'failed':
-        return 'danger'
+        return 'text-danger glyphicon-remove-sign'
       case 'partially_failed':
-        return 'warning'
+        return 'text-warning glyphicon-exclamation-sign'
       case 'running':
-        return ''
+        return 'glyphicon-play-circle'
       }
     return input;
   };
