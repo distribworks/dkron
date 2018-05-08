@@ -30,7 +30,7 @@ type RunQueryParam struct {
 func (a *Agent) RunQuery(ex *Execution) {
 	var params *serf.QueryParam
 
-	job, err := a.Store.GetJob(ex.JobName)
+	job, err := a.Store.GetJob(ex.JobName, nil)
 
 	if err != nil {
 		//Job can be removed and the QuerySchedulerRestart not yet received.

@@ -48,7 +48,7 @@
         <td ng-bind="job.error_count"></td>
         <td>
             <i ng-if="job.disabled == true" class="fa fa-circle text-muted"></i>
-            <i ng-if="job.disabled != true" class="fa fa-circle text-success"></i>
+            <i ng-if="job.disabled != true" ng-class="'text-' + (job.status | friendlyStatus)" class="fa fa-circle"></i>
         </td>
         <td>
           <a href="#" data-toggle="modal" data-target="#{{`{{ $index }}`}}-modal" title="View"><i class="fa fa-eye fa-1x" aria-hidden="true"></i></a>

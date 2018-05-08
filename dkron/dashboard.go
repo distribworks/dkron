@@ -1,7 +1,6 @@
 package dkron
 
 import (
-	"encoding/json"
 	"fmt"
 	"html/template"
 	"net/http"
@@ -176,25 +175,6 @@ func servePublic(c *gin.Context) {
 
 func funcMap() template.FuncMap {
 	funcs := template.FuncMap{
-		"executionStatus": func(job *Job) string {
-			status := job.Status()
-			switch status {
-			case Success:
-				return "success"
-			case Failed:
-				return "danger"
-			case PartialyFailed:
-				return "warning"
-			case Running:
-				return ""
-			}
-
-			return ""
-		},
-		"jobJson": func(job *Job) string {
-			j, _ := json.MarshalIndent(job, "", "\t")
-			return string(j)
-		},
 		"toString": func(value []byte) string {
 			return string(template.HTML(value))
 		},

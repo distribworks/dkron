@@ -471,7 +471,7 @@ func (a *Agent) eventLoop() {
 // Start or restart scheduler
 func (a *Agent) schedule() {
 	log.Debug("agent: Restarting scheduler")
-	jobs, err := a.Store.GetJobs()
+	jobs, err := a.Store.GetJobs(nil)
 	if err != nil {
 		log.Fatal(err)
 	}

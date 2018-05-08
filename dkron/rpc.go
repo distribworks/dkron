@@ -28,7 +28,7 @@ func (rpcs *RPCServer) GetJob(jobName string, job *Job) error {
 		"job": jobName,
 	}).Debug("rpc: Received GetJob")
 
-	j, err := rpcs.agent.Store.GetJob(jobName)
+	j, err := rpcs.agent.Store.GetJob(jobName, nil)
 	if err != nil {
 		return err
 	}
@@ -53,7 +53,9 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 
 retry:
 	// Load the job from the store
-	job, jkv, err := rpcs.agent.Store.GetJobWithKVPair(execution.JobName)
+	job, jkv, err := rpcs.agent.Store.GetJobWithKVPair(execution.JobName, &JobOptions{
+		ComputeStatus: true,
+	})
 	if err != nil {
 		if err == store.ErrKeyNotFound {
 			log.Warning(ErrExecutionDoneForDeletedJob)
@@ -127,9 +129,9 @@ retry:
 
 	// Jobs that have dependent jobs are a bit more expensive because we need to call the Status() method for every execution.
 	// Check first if there's dependent jobs and then check for the job status to begin executiong dependent jobs on success.
-	if len(job.DependentJobs) > 0 && job.Status() == Success {
+	if len(job.DependentJobs) > 0 && job.Status == StatusSuccess {
 		for _, djn := range job.DependentJobs {
-			dj, err := rpcs.agent.Store.GetJob(djn)
+			dj, err := rpcs.agent.Store.GetJob(djn, nil)
 			if err != nil {
 				return err
 			}

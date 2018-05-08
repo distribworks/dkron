@@ -1,4 +1,20 @@
 var dkron = angular.module('dkron', ['angular-rickshaw']);
+
+dkron.filter('friendlyStatus', function() {
+  var friendlyStatusFilter = function(input) {
+    switch(input) {
+      case 'failed':
+        return 'danger'
+      case 'partially_failed':
+        return 'warning'
+      case 'running':
+        return ''
+      }
+    return input;
+  };
+  return friendlyStatusFilter;
+});
+
 dkron.constant('hideDelay', 2000);
 
 dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
