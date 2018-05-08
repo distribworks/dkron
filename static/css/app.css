@@ -163,6 +163,7 @@ h1, h2, h3, h4, h5, h6 {
   padding: 0;
 }
 .navbar-default .navbar-nav > li a {
+  color: #FFF;
   padding: 0;
   line-height: 1em;
   font-family: "Lato", "Open-Sans", Sans-serif;
@@ -170,6 +171,7 @@ h1, h2, h3, h4, h5, h6 {
   text-transform: uppercase;
 }
 .navbar-default .navbar-nav > li a:hover {
+  color: #9d9d9d;
   background: none;
 }
 .navbar-default .navbar-nav a {
