@@ -53,14 +53,14 @@ func TestJobGetParent(t *testing.T) {
 	err = store.SetJob(dependentTestJob, true)
 	assert.NoError(t, err)
 
-	dtj, _ := store.GetJob(dependentTestJob.Name)
+	dtj, _ := store.GetJob(dependentTestJob.Name, nil)
 	assert.NoError(t, err)
 	assert.Equal(t, "", dtj.ParentJob)
 
 	ptj, err = dtj.GetParent()
 	assert.EqualError(t, ErrNoParent, err.Error())
 
-	ptj, err = store.GetJob(parentTestJob.Name)
+	ptj, err = store.GetJob(parentTestJob.Name, nil)
 	assert.NoError(t, err)
 	assert.Equal(t, []string{}, ptj.DependentJobs)
 }

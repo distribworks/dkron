@@ -25,7 +25,7 @@ func TestStore(t *testing.T) {
 	}
 
 	// Check that we still get an empty job list
-	jobs, err := s.GetJobs()
+	jobs, err := s.GetJobs(nil)
 	if err != nil {
 		t.Fatalf("error getting jobs: %s", err)
 	}
@@ -35,7 +35,7 @@ func TestStore(t *testing.T) {
 		t.Fatalf("error creating job: %s", err)
 	}
 
-	jobs, err = s.GetJobs()
+	jobs, err = s.GetJobs(nil)
 	if err != nil {
 		t.Fatalf("error getting jobs: %s", err)
 	}
