@@ -8,11 +8,17 @@
 - Fix plugin load paths (#275)
 - Fix RPC address lost on reload config (#262)
 
-### Features
+### Features and code improvements
 
+- Slightly improve processing of last execution group (@sysadmind)
+- Move dkron command to it's own package
+- Refactor scheduler restart
 - Replace bower with npm
-- Executor plugins
+- Executor plugins based on GRPC
 - Toggle job from UI
+- Search Job by name and pagination in the UI
+- UI refactor with new bootstrap version and replace fontawesome with glyphicons
+- Compute job status and return the value from the API providing the user with more info
 
 ## 0.9.8 (2018-04-27)
 
