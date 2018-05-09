@@ -241,6 +241,5 @@ func (h *HTTPTransport) jobToggleHandler(c *gin.Context) {
 
 	h.agent.SchedulerRestart()
 	c.Header("Location", c.Request.RequestURI)
-	c.Status(http.StatusAccepted)
 	renderJSON(c, http.StatusOK, job)
 }
