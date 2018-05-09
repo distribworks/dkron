@@ -23,14 +23,10 @@ const (
 	maxBufSize = 256000
 )
 
-// FilesOutput plugin that saves each execution log
-// in it's own file in the file system.
-type Shell struct {
-	Param1 string
-	Param2 bool
-}
+// Shell plugin runs shell commands when Execute method is called.
+type Shell struct{}
 
-// Process method of the plugin
+// Execute method of the plugin
 func (s *Shell) Execute(args *dkron.ExecuteRequest) ([]byte, error) {
 	output, _ := circbuf.NewBuffer(maxBufSize)
 
