@@ -1,14 +1,13 @@
 package dkron
 
 import (
-	"encoding/json"
 	"fmt"
 	"html/template"
 	"net/http"
 	"strings"
 
 	"github.com/gin-contrib/multitemplate"
-	"gopkg.in/gin-gonic/gin.v1"
+	"github.com/gin-gonic/gin"
 )
 
 const (
@@ -29,7 +28,7 @@ type commonDashboardData struct {
 	Keyspace   string
 }
 
-func newCommonDashboardData(a *AgentCommand, nodeName, path string) *commonDashboardData {
+func newCommonDashboardData(a *Agent, nodeName, path string) *commonDashboardData {
 	leaderName := ""
 	l, err := a.leaderMember()
 	if err == nil {
@@ -37,7 +36,7 @@ func newCommonDashboardData(a *AgentCommand, nodeName, path string) *commonDashb
 	}
 
 	return &commonDashboardData{
-		Version:    a.Version,
+		Version:    Version,
 		LeaderName: leaderName,
 		MemberName: nodeName,
 		Backend:    a.config.Backend,
@@ -48,12 +47,8 @@ func newCommonDashboardData(a *AgentCommand, nodeName, path string) *commonDashb
 	}
 }
 
-func (a *AgentCommand) dashboardRoutes(r *gin.Engine) {
-	r.HTMLRender = createMyRender()
-
-	r.NoRoute(func(c *gin.Context) {
-		c.Redirect(http.StatusMovedPermanently, "/dashboard")
-	})
+// dashboardRoutes registers dashboard specific routes on the gin RouterGroup.
+func (a *Agent) DashboardRoutes(r *gin.RouterGroup) {
 	r.GET("/static/*asset", servePublic)
 
 	dashboard := r.Group("/" + dashboardPathPrefix)
@@ -62,7 +57,7 @@ func (a *AgentCommand) dashboardRoutes(r *gin.Engine) {
 	dashboard.GET("/jobs/:job/executions", a.dashboardExecutionsHandler)
 }
 
-func (a *AgentCommand) dashboardIndexHandler(c *gin.Context) {
+func (a *Agent) dashboardIndexHandler(c *gin.Context) {
 	data := struct {
 		Common *commonDashboardData
 	}{
@@ -71,24 +66,20 @@ func (a *AgentCommand) dashboardIndexHandler(c *gin.Context) {
 	c.HTML(http.StatusOK, "index", data)
 }
 
-func (a *AgentCommand) dashboardJobsHandler(c *gin.Context) {
-	jobs, _ := a.store.GetJobs()
-
+func (a *Agent) dashboardJobsHandler(c *gin.Context) {
 	data := struct {
 		Common *commonDashboardData
-		Jobs   []*Job
 	}{
 		Common: newCommonDashboardData(a, a.config.NodeName, "../../"),
-		Jobs:   jobs,
 	}
 
 	c.HTML(http.StatusOK, "jobs", data)
 }
 
-func (a *AgentCommand) dashboardExecutionsHandler(c *gin.Context) {
+func (a *Agent) dashboardExecutionsHandler(c *gin.Context) {
 	job := c.Param("job")
 
-	groups, byGroup, err := a.store.GetGroupedExecutions(job)
+	groups, byGroup, err := a.Store.GetGroupedExecutions(job)
 	if err != nil {
 		log.Error(err)
 	}
@@ -118,7 +109,7 @@ func mustLoadTemplate(path string) []byte {
 	return tmpl
 }
 
-func createMyRender() multitemplate.Render {
+func CreateMyRender() multitemplate.Render {
 	r := multitemplate.New()
 
 	status := mustLoadTemplate(tmplPath + "/status.html.tmpl")
@@ -142,7 +133,7 @@ func createMyRender() multitemplate.Render {
 	return r
 }
 
-//go:generate go-bindata -prefix "../" -pkg dkron -ignore=.*\.md -ignore=\.?bower\.json -ignore=\.gitignore -ignore=Makefile -ignore=examples -ignore=tutorial -ignore=tests -ignore=rickshaw\/src -o bindata.go ../static/... ../templates
+//go:generate go-bindata -prefix "../" -pkg dkron -ignore=scss -ignore=.*\.md -ignore=\.?package\.json -ignore=\.?package-lock\.json -ignore=\.gitignore -ignore=Makefile -ignore=examples -ignore=tutorial -ignore=tests -ignore=rickshaw\/src -o bindata.go ../static/... ../templates
 func servePublic(c *gin.Context) {
 	path := c.Request.URL.Path
 
@@ -184,26 +175,7 @@ func servePublic(c *gin.Context) {
 
 func funcMap() template.FuncMap {
 	funcs := template.FuncMap{
-		"executionStatus": func(job *Job) string {
-			status := job.Status()
-			switch status {
-			case Success:
-				return "success"
-			case Failed:
-				return "danger"
-			case PartialyFailed:
-				return "warning"
-			case Running:
-				return ""
-			}
-
-			return ""
-		},
-		"jobJson": func(job *Job) string {
-			j, _ := json.MarshalIndent(job, "", "\t")
-			return string(j)
-		},
-		"html": func(value []byte) string {
+		"toString": func(value []byte) string {
 			return string(template.HTML(value))
 		},
 		// Now unicode compliant

@@ -7,28 +7,42 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/libkv/store"
+	"github.com/abronan/valkeyrie/store"
 )
 
 const (
-	Success = iota
-	Running
-	Failed
-	PartialyFailed
+	StatusNotSet = ""
+	// Success is status of a job whose last run was a success.
+	StatusSuccess = "success"
+	// Running is status of a job whose last run has not finished.
+	StatusRunning = "running"
+	// Failed is status of a job whose last run was not successful on any nodes.
+	StatusFailed = "failed"
+	// PartialyFailed is status of a job whose last run was successful on only some nodes.
+	StatusPartialyFailed = "partially_failed"
 
-	ConcurrencyAllow  = "allow"
+	// ConcurrencyAllow allows a job to execute concurrency.
+	ConcurrencyAllow = "allow"
+	// ConcurrencyForbid forbids a job from executing concurrency.
 	ConcurrencyForbid = "forbid"
 )
 
 var (
+	// ErrParentJobNotFound is returned when the parent job is not found.
 	ErrParentJobNotFound = errors.New("Specified parent job not found")
-	ErrNoAgent           = errors.New("No agent defined")
-	ErrSameParent        = errors.New("The job can not have itself as parent")
-	ErrNoParent          = errors.New("The job doens't have a parent job set")
-	ErrNoCommand         = errors.New("Unespecified command for job")
-	ErrWrongConcurrency  = errors.New("Wrong concurrency policy value, use: allow/forbid")
+	// ErrNoAgent is returned when the job's agent is nil.
+	ErrNoAgent = errors.New("No agent defined")
+	// ErrSameParent is returned when the job's parent is itself.
+	ErrSameParent = errors.New("The job can not have itself as parent")
+	// ErrNoParent is returned when the job has no parent.
+	ErrNoParent = errors.New("The job doens't have a parent job set")
+	// ErrNoCommand is returned when attempting to store a job that has no command.
+	ErrNoCommand = errors.New("Unespecified command for job")
+	// ErrWrongConcurrency is returned when Concurrency is set to a non existing setting.
+	ErrWrongConcurrency = errors.New("Wrong concurrency policy value, use: allow/forbid")
 )
 
+// Job descibes a scheduled Job.
 type Job struct {
 	// Job name. Must be unique, acts as the id.
 	Name string `json:"name"`
@@ -45,6 +59,9 @@ type Job struct {
 
 	// Command to run. Must be a shell command to execute.
 	Command string `json:"command"`
+
+	// Extra environment variable to give to the command to execute.
+	EnvironmentVariables []string `json:"environment_variables"`
 
 	// Owner of the job.
 	Owner string `json:"owner"`
@@ -71,7 +88,7 @@ type Job struct {
 	Tags map[string]string `json:"tags"`
 
 	// Pointer to the calling agent.
-	Agent *AgentCommand `json:"-"`
+	Agent *Agent `json:"-"`
 
 	// Number of times to retry a job that failed an execution.
 	Retries uint `json:"retries"`
@@ -91,6 +108,15 @@ type Job struct {
 
 	// Concurrency policy for this job (allow, forbid)
 	Concurrency string `json:"concurrency"`
+
+	// Executor plugin to be used in this job
+	Executor string `json:"executor"`
+
+	// Executor args
+	ExecutorConfig ExecutorPluginConfig `json:"executor_config"`
+
+	// Computed job status
+	Status string `json:"status"`
 }
 
 // Run the job
@@ -121,24 +147,23 @@ func (j *Job) String() string {
 	return fmt.Sprintf("\"Job: %s, scheduled at: %s, tags:%v\"", j.Name, j.Schedule, j.Tags)
 }
 
-// Return the status of a job
-// Wherever it's running, succeded or failed
-func (j *Job) Status() int {
+// Status returns the status of a job whether it's running, succeded or failed
+func (j *Job) GetStatus() string {
 	// Maybe we are testing
 	if j.Agent == nil {
-		return -1
+		return StatusNotSet
 	}
 
-	execs, _ := j.Agent.store.GetLastExecutionGroup(j.Name)
+	execs, _ := j.Agent.Store.GetLastExecutionGroup(j.Name)
 	success := 0
 	failed := 0
 	for _, ex := range execs {
 		if ex.FinishedAt.IsZero() {
-			return Running
+			return StatusRunning
 		}
 	}
 
-	var status int
+	var status string
 	for _, ex := range execs {
 		if ex.Success {
 			success = success + 1
@@ -148,17 +173,17 @@ func (j *Job) Status() int {
 	}
 
 	if failed == 0 {
-		status = Success
+		status = StatusSuccess
 	} else if failed > 0 && success == 0 {
-		status = Failed
+		status = StatusFailed
 	} else if failed > 0 && success > 0 {
-		status = PartialyFailed
+		status = StatusPartialyFailed
 	}
 
 	return status
 }
 
-// Get the parent job of a job
+// GetParent returns the parent job of a job
 func (j *Job) GetParent() (*Job, error) {
 	// Maybe we are testing
 	if j.Agent == nil {
@@ -173,13 +198,13 @@ func (j *Job) GetParent() (*Job, error) {
 		return nil, ErrNoParent
 	}
 
-	parentJob, err := j.Agent.store.GetJob(j.ParentJob)
+	parentJob, err := j.Agent.Store.GetJob(j.ParentJob, nil)
 	if err != nil {
 		if err == store.ErrKeyNotFound {
 			return nil, ErrParentJobNotFound
-		} else {
-			return nil, err
 		}
+		return nil, err
+
 	}
 
 	return parentJob, nil
@@ -192,9 +217,9 @@ func (j *Job) Lock() error {
 		return ErrNoAgent
 	}
 
-	lockKey := fmt.Sprintf("%s/job_locks/%s", j.Agent.store.keyspace, j.Name)
+	lockKey := fmt.Sprintf("%s/job_locks/%s", j.Agent.Store.keyspace, j.Name)
 	// TODO: LockOptions empty is a temporary fix until https://github.com/docker/libkv/pull/99 is fixed
-	l, err := j.Agent.store.Client.NewLock(lockKey, &store.LockOptions{RenewLock: make(chan (struct{}))})
+	l, err := j.Agent.Store.Client.NewLock(lockKey, &store.LockOptions{RenewLock: make(chan (struct{}))})
 	if err != nil {
 		return err
 	}
@@ -223,16 +248,21 @@ func (j *Job) Unlock() error {
 }
 
 func (j *Job) isRunnable() bool {
-	status := j.Status()
+	if j.Concurrency == ConcurrencyForbid {
+		j.Agent.RefreshJobStatus(j.Name)
+	}
+	if j.Status == StatusNotSet {
+		j.Status = j.GetStatus()
+	}
 
-	if status == Running {
+	if j.Status == StatusRunning {
 		if j.Concurrency == ConcurrencyAllow {
 			return true
 		} else if j.Concurrency == ConcurrencyForbid {
 			log.WithFields(logrus.Fields{
 				"job":         j.Name,
 				"concurrency": j.Concurrency,
-				"job_status":  status,
+				"job_status":  j.Status,
 			}).Debug("scheduler: Skipping execution")
 			return false
 		}

@@ -2,9 +2,11 @@ package dkron
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 )
 
+// Execution type holds all of the details of a specific Execution.
 type Execution struct {
 	// Name of the job this executions refers to.
 	JobName string `json:"job_name,omitempty"`
@@ -31,7 +33,7 @@ type Execution struct {
 	Attempt uint `json:"attempt,omitempty"`
 }
 
-// Init a new execution
+// NewExecution creates a new execution.
 func NewExecution(jobName string) *Execution {
 	return &Execution{
 		JobName: jobName,
@@ -40,7 +42,27 @@ func NewExecution(jobName string) *Execution {
 	}
 }
 
-// Used to enerate the execution Id
+// Key wil generate the execution Id for an execution.
 func (e *Execution) Key() string {
 	return fmt.Sprintf("%d-%s", e.StartedAt.UnixNano(), e.NodeName)
+}
+
+func (e *Execution) GetGroup() string {
+	return strconv.FormatInt(e.Group, 10)
+}
+
+// ExecList stores a slice of Executions.
+// This slice can be sorted to provide a time ordered slice of Executions.
+type ExecList []*Execution
+
+func (el ExecList) Len() int {
+	return len(el)
+}
+
+func (el ExecList) Swap(i, j int) {
+	el[i], el[j] = el[j], el[i]
+}
+
+func (el ExecList) Less(i, j int) bool {
+	return el[i].StartedAt.Before(el[j].StartedAt)
 }

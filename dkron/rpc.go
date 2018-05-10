@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/abronan/valkeyrie/store"
 	metrics "github.com/armon/go-metrics"
-	"github.com/docker/libkv/store"
 	"github.com/hashicorp/serf/serf"
 )
 
@@ -19,7 +19,7 @@ var (
 )
 
 type RPCServer struct {
-	agent *AgentCommand
+	agent *Agent
 }
 
 func (rpcs *RPCServer) GetJob(jobName string, job *Job) error {
@@ -28,14 +28,18 @@ func (rpcs *RPCServer) GetJob(jobName string, job *Job) error {
 		"job": jobName,
 	}).Debug("rpc: Received GetJob")
 
-	j, err := rpcs.agent.store.GetJob(jobName)
+	j, err := rpcs.agent.Store.GetJob(jobName, nil)
 	if err != nil {
 		return err
 	}
 
 	// Copy the data structure
+	job.Name = j.Name
 	job.Shell = j.Shell
+	job.EnvironmentVariables = j.EnvironmentVariables
 	job.Command = j.Command
+	job.Executor = j.Executor
+	job.ExecutorConfig = j.ExecutorConfig
 
 	return nil
 }
@@ -47,8 +51,11 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 		"job":   execution.JobName,
 	}).Debug("rpc: Received execution done")
 
+retry:
 	// Load the job from the store
-	job, err := rpcs.agent.store.GetJob(execution.JobName)
+	job, jkv, err := rpcs.agent.Store.GetJobWithKVPair(execution.JobName, &JobOptions{
+		ComputeStatus: true,
+	})
 	if err != nil {
 		if err == store.ErrKeyNotFound {
 			log.Warning(ErrExecutionDoneForDeletedJob)
@@ -57,23 +64,20 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 		log.Fatal("rpc:", err)
 		return err
 	}
-	// Lock the job while editing
-	if err = job.Lock(); err != nil {
-		log.Fatal("rpc:", err)
-	}
 
 	// Get the defined output types for the job, and call them
 	origExec := execution
 	for k, v := range job.Processors {
 		log.WithField("plugin", k).Debug("rpc: Processing execution with plugin")
 		if processor, ok := rpcs.agent.ProcessorPlugins[k]; ok {
+			v["reporting_node"] = rpcs.agent.config.NodeName
 			e := processor.Process(&ExecutionProcessorArgs{Execution: origExec, Config: v})
 			execution = e
 		}
 	}
 
 	// Save the execution to store
-	if _, err := rpcs.agent.store.SetExecution(&execution); err != nil {
+	if _, err := rpcs.agent.Store.SetExecution(&execution); err != nil {
 		return err
 	}
 
@@ -85,13 +89,13 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 		job.ErrorCount++
 	}
 
-	if err := rpcs.agent.store.SetJob(job); err != nil {
-		log.Fatal("rpc:", err)
+	ok, err := rpcs.agent.Store.AtomicJobPut(job, jkv)
+	if err != nil && err != store.ErrKeyModified {
+		log.WithError(err).Fatal("rpc: Error in atomic job save")
 	}
-
-	// Release the lock
-	if err = job.Unlock(); err != nil {
-		log.Fatal("rpc:", err)
+	if !ok {
+		log.Debug("rpc: Retrying job update")
+		goto retry
 	}
 
 	reply.From = rpcs.agent.config.NodeName
@@ -114,7 +118,7 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 		return nil
 	}
 
-	exg, err := rpcs.agent.store.GetExecutionGroup(&execution)
+	exg, err := rpcs.agent.Store.GetExecutionGroup(&execution)
 	if err != nil {
 		log.WithError(err).WithField("group", execution.Group).Error("rpc: Error getting execution group.")
 		return err
@@ -125,9 +129,9 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 
 	// Jobs that have dependent jobs are a bit more expensive because we need to call the Status() method for every execution.
 	// Check first if there's dependent jobs and then check for the job status to begin executiong dependent jobs on success.
-	if len(job.DependentJobs) > 0 && job.Status() == Success {
+	if len(job.DependentJobs) > 0 && job.Status == StatusSuccess {
 		for _, djn := range job.DependentJobs {
-			dj, err := rpcs.agent.store.GetJob(djn)
+			dj, err := rpcs.agent.Store.GetJob(djn, nil)
 			if err != nil {
 				return err
 			}
@@ -140,7 +144,7 @@ func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeRespon
 
 var workaroundRPCHTTPMux = 0
 
-func listenRPC(a *AgentCommand) {
+func listenRPC(a *Agent) {
 	r := &RPCServer{
 		agent: a,
 	}

@@ -23,7 +23,7 @@
       <td>{{ $ex.FinishedAt }}</td>
       <td>{{ $ex.NodeName }}</td>
       <td>
-        <a href="#" data-toggle="modal" data-target="#{{ $ex.JobName }}-{{ $gk }}-{{ $ek }}-modal">{{ $ex.Output | html | truncate }}...</a>
+        <a href="#" data-toggle="modal" data-target="#{{ $ex.JobName }}-{{ $gk }}-{{ $ek }}-modal">{{ $ex.Output | toString | truncate }}...</a>
       </td>
       <td>{{ $ex.Success }}</td>
     </tr>
@@ -37,7 +37,7 @@
             <h4 class="modal-title" id="myModalLabel">View output for {{ $ex.JobName }}</h4>
           </div>
           <div class="modal-body">
-            <pre>{{ $ex.Output | html }}</pre>
+            <pre>{{ $ex.Output | toString }}</pre>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

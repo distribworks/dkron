@@ -3,20 +3,20 @@ package dkron
 import (
 	"testing"
 
-	s "github.com/docker/libkv/store"
+	s "github.com/abronan/valkeyrie/store"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestJobGetParent(t *testing.T) {
-	store := NewStore("etcd", []string{etcdAddr}, nil, "dkron-test")
-	a := &AgentCommand{
-		store: store,
+	store := NewStore("etcd", []string{etcdAddr}, nil, "dkron-test", nil)
+	a := &Agent{
+		Store: store,
 	}
 	store.agent = a
 
 	// Cleanup everything
 	err := store.Client.DeleteTree("dkron-test")
-	if err != s.ErrKeyNotFound {
+	if err != nil && err != s.ErrKeyNotFound {
 		t.Logf("error cleaning up: %s", err)
 	}
 
@@ -26,7 +26,7 @@ func TestJobGetParent(t *testing.T) {
 		Schedule: "@every 2s",
 	}
 
-	if err := store.SetJob(parentTestJob); err != nil {
+	if err := store.SetJob(parentTestJob, true); err != nil {
 		t.Fatalf("error creating job: %s", err)
 	}
 
@@ -36,10 +36,7 @@ func TestJobGetParent(t *testing.T) {
 		ParentJob: "parent_test",
 	}
 
-	err = store.SetJob(dependentTestJob)
-	assert.NoError(t, err)
-
-	err = store.SetJobDependencyTree(dependentTestJob, nil)
+	err = store.SetJob(dependentTestJob, true)
 	assert.NoError(t, err)
 
 	parentTestJob, err = dependentTestJob.GetParent()
@@ -51,24 +48,19 @@ func TestJobGetParent(t *testing.T) {
 	assert.Equal(t, parentTestJob, ptj)
 
 	// Remove the parent job
-	ej, _ := store.GetJob(dependentTestJob.Name)
-
 	dependentTestJob.ParentJob = ""
 	dependentTestJob.Schedule = "@every 2m"
-	err = store.SetJob(dependentTestJob)
+	err = store.SetJob(dependentTestJob, true)
 	assert.NoError(t, err)
 
-	err = store.SetJobDependencyTree(dependentTestJob, ej)
-	assert.NoError(t, err)
-
-	dtj, _ := store.GetJob(dependentTestJob.Name)
+	dtj, _ := store.GetJob(dependentTestJob.Name, nil)
 	assert.NoError(t, err)
 	assert.Equal(t, "", dtj.ParentJob)
 
 	ptj, err = dtj.GetParent()
 	assert.EqualError(t, ErrNoParent, err.Error())
 
-	ptj, err = store.GetJob(parentTestJob.Name)
+	ptj, err = store.GetJob(parentTestJob.Name, nil)
 	assert.NoError(t, err)
 	assert.Equal(t, []string{}, ptj.DependentJobs)
 }

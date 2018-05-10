@@ -10,6 +10,7 @@ func (s *AppendSliceValue) String() string {
 	return strings.Join(*s, ",")
 }
 
+// Set allows setting a flag value with multiple values in a slice.
 func (s *AppendSliceValue) Set(value string) error {
 	if *s == nil {
 		*s = make([]string, 0, 1)

@@ -5,15 +5,16 @@ import (
 	"testing"
 	"time"
 
-	"github.com/docker/libkv"
-	"github.com/docker/libkv/store"
+	"github.com/abronan/valkeyrie"
+	"github.com/abronan/valkeyrie/store"
 	"github.com/hashicorp/serf/testutil"
-	"github.com/mitchellh/cli"
 	"github.com/stretchr/testify/assert"
 )
 
-var logLevel = "error"
-var etcdAddr = getEnvWithDefault()
+var (
+	logLevel = "error"
+	etcdAddr = getEnvWithDefault()
+)
 
 func getEnvWithDefault() string {
 	ea := os.Getenv("DKRON_BACKEND_MACHINE")
@@ -21,52 +22,6 @@ func getEnvWithDefault() string {
 		return "127.0.0.1:2379"
 	}
 	return ea
-}
-
-func TestAgentCommand_implements(t *testing.T) {
-	var _ cli.Command = new(AgentCommand)
-}
-
-func TestAgentCommandRun(t *testing.T) {
-	shutdownCh := make(chan struct{})
-	defer close(shutdownCh)
-
-	ui := new(cli.MockUi)
-	a := &AgentCommand{
-		Ui:         ui,
-		ShutdownCh: shutdownCh,
-	}
-
-	args := []string{
-		"-bind", testutil.GetBindAddr().String(),
-		"-log-level", logLevel,
-	}
-
-	resultCh := make(chan int)
-	go func() {
-		resultCh <- a.Run(args)
-	}()
-
-	time.Sleep(2 * time.Second)
-
-	// Verify it runs "forever"
-	select {
-	case <-resultCh:
-		t.Fatalf("ended too soon, err: %s", ui.ErrorWriter.String())
-	case <-time.After(50 * time.Millisecond):
-	}
-
-	// Send a shutdown request
-	shutdownCh <- struct{}{}
-
-	select {
-	case code := <-resultCh:
-		if code != 0 {
-			t.Fatalf("bad code: %d", code)
-		}
-	case <-time.After(50 * time.Millisecond):
-		t.Fatalf("timeout")
-	}
 }
 
 func TestAgentCommand_runForElection(t *testing.T) {
@@ -80,13 +35,7 @@ func TestAgentCommand_runForElection(t *testing.T) {
 	// Override leader TTL
 	defaultLeaderTTL = 2 * time.Second
 
-	ui := new(cli.MockUi)
-	a1 := &AgentCommand{
-		Ui:         ui,
-		ShutdownCh: shutdownCh,
-	}
-
-	client, err := libkv.NewStore("etcd", []string{etcdAddr}, &store.Config{})
+	client, err := valkeyrie.NewStore("etcd", []string{etcdAddr}, &store.Config{})
 	if err != nil {
 		panic(err)
 	}
@@ -98,78 +47,73 @@ func TestAgentCommand_runForElection(t *testing.T) {
 	}
 
 	args := []string{
-		"-bind", a1Addr,
+		"-bind-addr", a1Addr,
 		"-join", a2Addr,
-		"-node", a1Name,
+		"-node-name", a1Name,
 		"-server",
 		"-log-level", logLevel,
 	}
 
-	resultCh := make(chan int)
-	go func() {
-		resultCh <- a1.Run(args)
-	}()
+	c := NewConfig(args)
+	a1 := NewAgent(c, nil)
+	a1.Start()
 
 	// Wait for the first agent to start and set itself as leader
-	time.Sleep(2 * time.Second)
+	kv1, err := watchOrDie(client, "dkron/leader")
+	if err != nil {
+		t.Fatal(err)
+	}
+	leaderA1 := string(kv1.Value)
+	t.Logf("%s is the current leader", leaderA1)
+	assert.Equal(t, a1Name, leaderA1)
 
 	// Start another agent
-	shutdownCh2 := make(chan struct{})
-	defer close(shutdownCh2)
-
-	ui2 := new(cli.MockUi)
-	a2 := &AgentCommand{
-		Ui:         ui2,
-		ShutdownCh: shutdownCh2,
-	}
-	defer func() { shutdownCh2 <- struct{}{} }()
-
 	args2 := []string{
-		"-bind", a2Addr,
+		"-bind-addr", a2Addr,
 		"-join", a1Addr + ":8946",
-		"-node", a2Name,
+		"-node-name", a2Name,
 		"-server",
 		"-log-level", logLevel,
 	}
 
-	resultCh2 := make(chan int)
-	go func() {
-		resultCh2 <- a2.Run(args2)
-	}()
-
-	kv, _ := client.Get("dkron/leader")
-	leader := string(kv.Value)
-	log.Printf("%s is the current leader", leader)
-	if leader != a1Name {
-		t.Errorf("Expected %s to be the leader, got %s", a1Name, leader)
-	}
+	c = NewConfig(args2)
+	a2 := NewAgent(c, nil)
+	a2.Start()
 
 	// Send a shutdown request
-	shutdownCh <- struct{}{}
 	a1.candidate.Stop()
 
 	// Wait until test2 steps as leader
-	time.Sleep(4 * time.Second)
+rewatch:
+	kv2, err := watchOrDie(client, "dkron/leader")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(kv2.Value) == 0 || string(kv2.Value) == a1Name {
+		goto rewatch
+	}
+	t.Logf("%s is the current leader", kv2.Value)
+	assert.Equal(t, a2Name, string(kv2.Value))
+}
 
-	kv, _ = client.Get("dkron/leader")
-	leader = string(kv.Value)
-	log.Printf("%s is the current leader", leader)
-	if leader != a2Name {
-		t.Errorf("Expected %s to be the leader, got %s", a2Name, leader)
+func watchOrDie(client store.Store, key string) (*store.KVPair, error) {
+	for {
+		resultCh, err := client.Watch(key, nil, nil)
+		if err != nil {
+			if err == store.ErrKeyNotFound {
+				continue
+			}
+			return nil, err
+		}
+
+		// If the channel worked, read the actual value
+		kv := <-resultCh
+		return kv, nil
 	}
 }
 
 func Test_processFilteredNodes(t *testing.T) {
-	shutdownCh := make(chan struct{})
-	defer close(shutdownCh)
-
-	ui := new(cli.MockUi)
-	a := &AgentCommand{
-		Ui:         ui,
-		ShutdownCh: shutdownCh,
-	}
-
-	client, err := libkv.NewStore("etcd", []string{etcdAddr}, &store.Config{})
+	client, err := valkeyrie.NewStore("etcd", []string{etcdAddr}, &store.Config{})
 	err = client.DeleteTree("dkron")
 	if err != nil {
 		if err == store.ErrNotReachable {
@@ -181,43 +125,35 @@ func Test_processFilteredNodes(t *testing.T) {
 	a2Addr := testutil.GetBindAddr().String()
 
 	args := []string{
-		"-bind", a1Addr,
+		"-bind-addr", a1Addr,
 		"-join", a2Addr,
-		"-node", "test1",
+		"-node-name", "test1",
 		"-server",
 		"-tag", "role=test",
 		"-log-level", logLevel,
 	}
 
-	resultCh := make(chan int)
-	go func() {
-		resultCh <- a.Run(args)
-	}()
+	c := NewConfig(args)
+	a1 := NewAgent(c, nil)
+	a1.Start()
 
 	time.Sleep(2 * time.Second)
+
 	// Start another agent
-	shutdownCh2 := make(chan struct{})
-	defer close(shutdownCh2)
-
-	ui2 := new(cli.MockUi)
-	a2 := &AgentCommand{
-		Ui:         ui2,
-		ShutdownCh: shutdownCh2,
-	}
-
 	args2 := []string{
-		"-bind", a2Addr,
+		"-bind-addr", a2Addr,
 		"-join", a1Addr,
-		"-node", "test2",
+		"-node-name", "test2",
 		"-server",
 		"-tag", "role=test",
 		"-log-level", logLevel,
 	}
 
-	resultCh2 := make(chan int)
-	go func() {
-		resultCh2 <- a2.Run(args2)
-	}()
+	c = NewConfig(args2)
+	a2 := NewAgent(c, nil)
+	a2.Start()
+
+	time.Sleep(2 * time.Second)
 
 	job := &Job{
 		Name: "test_job_1",
@@ -227,8 +163,7 @@ func Test_processFilteredNodes(t *testing.T) {
 		},
 	}
 
-	time.Sleep(2 * time.Second)
-	nodes, tags, err := a.processFilteredNodes(job)
+	nodes, tags, err := a1.processFilteredNodes(job)
 
 	assert.Contains(t, nodes, "test1")
 	assert.Contains(t, nodes, "test2")
@@ -237,8 +172,8 @@ func Test_processFilteredNodes(t *testing.T) {
 	assert.Equal(t, job.Tags["foo"], "bar:1")
 
 	// Send a shutdown request
-	shutdownCh <- struct{}{}
-	shutdownCh2 <- struct{}{}
+	a1.Stop()
+	a2.Stop()
 }
 
 func Test_UnmarshalTags(t *testing.T) {
@@ -262,83 +197,60 @@ func Test_UnmarshalTags(t *testing.T) {
 }
 
 func TestEncrypt(t *testing.T) {
-	shutdownCh := make(chan struct{})
-	defer close(shutdownCh)
-
-	ui := new(cli.MockUi)
-	a := &AgentCommand{
-		Ui:         ui,
-		ShutdownCh: shutdownCh,
-	}
-
 	args := []string{
-		"-bind", testutil.GetBindAddr().String(),
-		"-node", "test1",
+		"-bind-addr", testutil.GetBindAddr().String(),
+		"-node-name", "test1",
 		"-server",
 		"-tag", "role=test",
 		"-encrypt", "kPpdjphiipNSsjd4QHWbkA==",
 		"-log-level", logLevel,
 	}
 
-	go a.Run(args)
+	c := NewConfig(args)
+	a := NewAgent(c, nil)
+	a.Start()
+
 	time.Sleep(2 * time.Second)
 
 	assert.True(t, a.serf.EncryptionEnabled())
-	shutdownCh <- struct{}{}
+	a.Stop()
 }
 
 func Test_getRPCAddr(t *testing.T) {
-	shutdownCh := make(chan struct{})
-	defer close(shutdownCh)
-
-	ui := new(cli.MockUi)
-	a := &AgentCommand{
-		Ui:         ui,
-		ShutdownCh: shutdownCh,
-	}
-
 	a1Addr := testutil.GetBindAddr()
 
 	args := []string{
-		"-bind", a1Addr.String() + ":5000",
-		"-node", "test1",
+		"-bind-addr", a1Addr.String() + ":5000",
+		"-node-name", "test1",
 		"-server",
 		"-tag", "role=test",
 		"-log-level", logLevel,
 	}
 
-	go a.Run(args)
+	c := NewConfig(args)
+	a := NewAgent(c, nil)
+	a.Start()
+
 	time.Sleep(2 * time.Second)
 
 	getRPCAddr := a.getRPCAddr()
 	exRPCAddr := a1Addr.String() + ":6868"
 
 	assert.Equal(t, exRPCAddr, getRPCAddr)
-
-	shutdownCh <- struct{}{}
+	a.Stop()
 }
 
 func TestAgentConfig(t *testing.T) {
-	shutdownCh := make(chan struct{})
-	defer close(shutdownCh)
-
-	ui := new(cli.MockUi)
-	a := &AgentCommand{
-		Ui:         ui,
-		ShutdownCh: shutdownCh,
-	}
-
 	advAddr := testutil.GetBindAddr().String()
 	args := []string{
-		"-bind", testutil.GetBindAddr().String(),
-		"-advertise", advAddr,
+		"-bind-addr", testutil.GetBindAddr().String(),
+		"-advertise-addr", advAddr,
 		"-log-level", logLevel,
 	}
 
-	resultCh := make(chan int)
-	go func() {
-		resultCh <- a.Run(args)
-	}()
+	c := NewConfig(args)
+	a := NewAgent(c, nil)
+	a.Start()
 
 	time.Sleep(2 * time.Second)
 
@@ -347,14 +259,5 @@ func TestAgentConfig(t *testing.T) {
 	assert.Equal(t, advAddr, a.config.AdvertiseAddr)
 
 	// Send a shutdown request
-	shutdownCh <- struct{}{}
-
-	select {
-	case code := <-resultCh:
-		if code != 0 {
-			t.Fatalf("bad code: %d", code)
-		}
-	case <-time.After(100 * time.Millisecond):
-		t.Fatalf("timeout")
-	}
+	a.Stop()
 }

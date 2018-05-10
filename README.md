@@ -22,17 +22,21 @@ Currently Dkron is under heavy development but approaching production quality, i
 
 Said that, I encourage you to try it, it's very easy to use, see how it works for you and report any bugs [creating an issue](https://github.com/victorcoder/dkron/issues) in the github project.
 
-## Quick start
+## Documentation
 
-The best way to test and develop dkron is using docker, you will need [Docker Toolbox](https://www.docker.com/docker-toolbox) installed before proceding.
+Full, comprehensive documentation is viewable on the [Dkron website](http://dkron.io)
+
+## Development Quick start
+
+The best way to test and develop dkron is using docker, you will need [Docker](https://www.docker.com/) installed before proceding.
 
 Clone the repository.
 
-Install glide, follow instructions here https://glide.sh/
+Install dep, follow instructions here https://github.com/golang/dep#setup
 
 Download dependencies:
 
-`glide install`
+`dep ensure`
 
 Next, run the included Docker Compose config:
 
@@ -46,9 +50,13 @@ Check the port mapping using `docker-compose ps` and use the browser to navigate
 
 To add jobs to the system read the API docs.
 
-## Documentation
+## Frontend development
 
-Full, comprehensive documentation is viewable on the [Dkron website](http://dkron.io)
+Dkron dashboard is built using a combinations of golang templates and AngularJS code.
+
+To start developing the dashboard enter the `static` directory and run `npm install` to get the frontend dependencies.
+
+Change code in JS files or in templates, then run `make gen` to generate `bindata.go` file. This is a method of embedding resources in Go applications.
 
 ### Resources
 
@@ -57,6 +65,9 @@ https://supermarket.chef.io/cookbooks/dkron
 
 Python Client Library
 https://github.com/oldmantaiter/pydkron
+
+Ruby client
+https://github.com/jobandtalent/dkron-rb
 
 ## Get in touch
 
@@ -68,3 +79,4 @@ https://github.com/oldmantaiter/pydkron
 This project is possible thanks to the Support of Jobandtalent
 
 ![](https://upload.wikimedia.org/wikipedia/en/d/db/Jobandtalent_logo.jpg)
+

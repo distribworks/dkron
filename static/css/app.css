@@ -9,6 +9,7 @@ html {
 body {
   font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
   padding-top: 90px;
+  background-color: #eee;
 }
 
 section[role="main"] {
@@ -32,6 +33,31 @@ h6[id]:before {
 h1, h2, h3, h4, h5, h6 {
   font-family: "Lato", "Open-Sans", Sans-serif;
   margin-bottom: 1em;
+}
+
+.status-success {
+  color: #2cbe4e;
+}
+
+.status-danger {
+  color: #cb2431;
+}
+
+.status-running {
+  color: #20a5a8;
+}
+
+.status-warning {
+  color: #dbab09;
+}
+
+.status-disabled {
+  color: #777;
+}
+
+ul.status li strong {
+  font-size: 1.5em;
+  color: #9d9d9d;
 }
 
 /* First level of nav */
@@ -163,6 +189,7 @@ h1, h2, h3, h4, h5, h6 {
   padding: 0;
 }
 .navbar-default .navbar-nav > li a {
+  color: #FFF;
   padding: 0;
   line-height: 1em;
   font-family: "Lato", "Open-Sans", Sans-serif;
@@ -170,6 +197,7 @@ h1, h2, h3, h4, h5, h6 {
   text-transform: uppercase;
 }
 .navbar-default .navbar-nav > li a:hover {
+  color: #9d9d9d;
   background: none;
 }
 .navbar-default .navbar-nav a {

@@ -1,3 +1,62 @@
+## 0.10.0
+
+### Bug fixes
+
+- Fix RPCconfig query missing address (#336 and related)
+- Fix concurrency issue due to race condition on lock jobs (#299)
+- Fix execution done missing on restart blocking concurrency forbid jobs (#349)
+- Fix plugin load paths (#275)
+- Fix RPC address lost on reload config (#262)
+
+### Features and code improvements
+
+- Slightly improve processing of last execution group (@sysadmind)
+- Move dkron command to it's own package
+- Refactor scheduler restart
+- Replace bower with npm
+- Executor plugins based on GRPC
+- Toggle job from UI
+- Search Job by name and pagination in the UI
+- UI refactor with new bootstrap version and replace fontawesome with glyphicons
+- Compute job status and return the value from the API providing the user with more info
+
+## 0.9.8 (2018-04-27)
+
+- Fix broken release 0.9.7
+
+## 0.9.7 (2018-02-12)
+
+- Less verbose plugin logging
+- Update broken osext dep (@ti)
+- Switch from libkv to valkeyrie
+- Refactor for usable core code
+- Fix unsorted execution groups (@firstway)
+- Fix GetLastExecutionGroup (@firstway)
+
+## 0.9.6 (2017-11-14)
+
+- Migrate from glide to dep
+- Fix params precedence, cli params on top
+- More robust test suite
+- Gin logging to common logger
+- Better systemd script
+- Don't panic or fatal when sending notification
+- Serf upgrade
+- Fix templating breaking change on Go 1.9 upgrade
+
+## 0.9.5 (2017-09-12)
+
+Features
+
+- New docs website using hugo
+
+Bug fixes:
+
+- Clean up clients upon an exit signal (@danielhan)
+- Fix #280 (@didiecrunch)
+- Upgrade several dependencies
+- Fix static assets relative path
+
 ## 0.9.4 (2017-06-07)
 
 - Fix mistakes in API docs
