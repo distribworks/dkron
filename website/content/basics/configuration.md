@@ -18,7 +18,7 @@ Settings for dkron can be specified in three ways: Using a `config/dkron.json` c
 
 * `-http-addr` - The address where the web UI will be binded. By default `:8080`
 
-* `-backend` - Backend storage to use, etcd, consul or zk (zookeeper). The default is etcd.
+* `-backend` - Backend storage to use, etcd, consul, zk (zookeeper) or redis. The default is etcd.
 
 * `-backend-machine` - Backend storage servers addresses to connect to. This flag can be specified multiple times. By default `127.0.0.1:2379`
 

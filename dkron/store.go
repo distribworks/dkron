@@ -9,7 +9,8 @@ import (
 	"github.com/abronan/valkeyrie"
 	"github.com/abronan/valkeyrie/store"
 	"github.com/abronan/valkeyrie/store/consul"
-	etcd "github.com/abronan/valkeyrie/store/etcd/v2"
+	"github.com/abronan/valkeyrie/store/etcd/v2"
+	"github.com/abronan/valkeyrie/store/redis"
 	"github.com/abronan/valkeyrie/store/zookeeper"
 	"github.com/victorcoder/dkron/cron"
 )
@@ -50,6 +51,7 @@ func init() {
 	etcd.Register()
 	consul.Register()
 	zookeeper.Register()
+	redis.Register()
 }
 
 func NewStore(backend string, machines []string, a *Agent, keyspace string, config *store.Config) *Store {
