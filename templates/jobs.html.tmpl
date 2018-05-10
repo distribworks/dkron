@@ -51,8 +51,7 @@
         <td ng-bind="job.error_count"></td>
         <td ng-bind="(job.last_success > job.last_error ? job.last_success : job.last_error) | date:'yyyy-MM-dd HH:mm:ss Z'"></td>
         <td>
-            <i ng-if="job.disabled == true" class="glyphicon glyphicon-ban-circle text-muted"></i>
-            <i ng-if="job.disabled != true" ng-class="job.status | friendlyStatus" class="glyphicon"></i>
+            <i ng-class="job | statusClass" class="glyphicon"></i>
         </td>
         <td>
           <a href="#" data-toggle="modal" data-target="#{{`{{ $index }}`}}-modal" title="View"><i class="glyphicon glyphicon-eye-open" aria-hidden="true"></i></a>

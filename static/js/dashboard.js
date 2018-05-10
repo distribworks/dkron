@@ -1,16 +1,19 @@
 var dkron = angular.module('dkron', ['angular-rickshaw']);
 
-dkron.filter('friendlyStatus', function() {
-  var friendlyStatusFilter = function(input) {
-    switch(input) {
+dkron.filter('statusClass', function() {
+  var friendlyStatusFilter = function(job) {
+    if (job.disabled) {
+      return 'text-muted glyphicon-ban-circle'
+    }
+    switch(job.status) {
       case 'success':
-        return 'text-success glyphicon-ok-sign'
+        return 'status-success glyphicon-ok-sign'
       case 'failed':
-        return 'text-danger glyphicon-remove-sign'
+        return 'status-danger glyphicon-remove-sign'
       case 'partially_failed':
-        return 'text-warning glyphicon-exclamation-sign'
+        return 'status-warning glyphicon-exclamation-sign'
       case 'running':
-        return 'glyphicon-play-circle'
+        return 'status-running glyphicon-play-circle'
       }
     return input;
   };

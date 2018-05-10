@@ -5,18 +5,18 @@
 <div class="row">
   <div class="panel panel-default">
     <div class="panel-body status-panel">
-      <ul class="list-inline">
+      <ul class="list-inline status">
         <li class="text-center col-md-2">
-          <strong ng-bind="jobs.length" style="bold"></strong>
+          <strong ng-bind="jobs.length"></strong>
           <p><small>Total Jobs</small>
         </li>
         <li class="text-center col-md-2">
           <strong ng-bind="successful_jobs"></strong>
-          <p><small class="text-success">Successful Jobs</small>
+          <p><small class="status-success">Successful Jobs</small>
         </li>
         <li class="text-center col-md-2">
           <strong ng-bind="failed_jobs"></strong>
-          <p><small class="text-danger">Failed Jobs</small>
+          <p><small class="status-danger">Failed Jobs</small>
         </li>
         <li class="text-center col-md-2">
           <strong ng-bind="success_count"></strong>
