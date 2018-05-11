@@ -6,7 +6,7 @@ import (
 
 // Schedule wrapper with time zone awarness
 type timezoneAwareSchedule struct {
-	underlingSchedule Schedule
+	underlyingSchedule Schedule
 	targetedTimezone  *time.Location
 }
 
