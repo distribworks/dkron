@@ -51,7 +51,7 @@ func (s *Scheduler) Start(jobs []*Job) {
 		metrics.EmitKey([]string{"scheduler", "job", "add", job.Name}, 1)
 
 		if job.Timezone != "" {
-			s.Cron.AddTimezonSensitiveJob(job.Schedule, job.Timezone, job)
+			s.Cron.AddTimezoneSensitiveJob(job.Schedule, job.Timezone, job)
 		} else {
 			s.Cron.AddJob(job.Schedule, job)
 		}
