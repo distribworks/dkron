@@ -23,7 +23,7 @@ type Cron interface {
 	Entries() []*cron.Entry
 	AddFunc(spec string, cmd func()) error
 	AddJob(spec string, cmd cron.Job) error
-	AddTimezoneSensitiveJob(spec, timezone string, cmd Job) error
+	AddTimezoneSensitiveJob(spec, timezone string, cmd cron.Job) error
 }
 
 type Scheduler struct {
