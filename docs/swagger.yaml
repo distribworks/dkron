@@ -212,6 +212,10 @@ definitions:
         type: string
         description: "Cron expression for the job."
         readOnly: false
+	  timezone:
+        type: string
+        description: "Timezone where the job will be executed.  By default and when field is set to empty string, the job will run in local time.
+        readOnly: false
       command:
         type: string
         description: "Command to run."

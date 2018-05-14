@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"sort"
+	"time"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/abronan/valkeyrie"
@@ -178,6 +179,14 @@ func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
 	return nil
 }
 
+func (s *Store) validateTimeZone(timezone string) error {
+	if timezone == "" {
+		return nil
+	}
+	_, err := time.LoadLocation(timezone)
+	return err
+}
+
 func (s *Store) AtomicJobPut(job *Job, prevJobKVPair *store.KVPair) (bool, error) {
 	jobKey := fmt.Sprintf("%s/jobs/%s", s.keyspace, job.Name)
 	jobJSON, _ := json.Marshal(job)
@@ -201,6 +210,9 @@ func (s *Store) validateJob(job *Job) error {
 
 	if job.Concurrency != ConcurrencyAllow && job.Concurrency != ConcurrencyForbid && job.Concurrency != "" {
 		return ErrWrongConcurrency
+	}
+	if err := s.validateTimeZone(job.Timezone); err != nil {
+		return err
 	}
 
 	return nil

@@ -167,7 +167,8 @@ json :
   "processors" : {
     "string" : "string"
   },
-  "concurrency" : "allow"
+  "concurrency" : "allow",
+  "timezone": "string"
 }
 ```
 
@@ -198,7 +199,8 @@ json :
   "processors" : {
     "string" : "string"
   },
-  "concurrency" : "allow"
+  "concurrency" : "allow",
+  "timezone": "string"
 }
 ```
 
@@ -263,7 +265,8 @@ json :
   "processors" : {
     "string" : "string"
   },
-  "concurrency" : "allow"
+  "concurrency" : "allow",
+  "timezone": "string"
 }
 ```
 
@@ -328,7 +331,8 @@ json :
   "processors" : {
     "string" : "string"
   },
-  "concurrency" : "allow"
+  "concurrency" : "allow",
+  "timezone": "string"
 }
 ```
 
@@ -393,7 +397,8 @@ json :
   "processors" : {
     "string" : "string"
   },
-  "concurrency" : "allow"
+  "concurrency" : "allow",
+  "timezone": "string"
 }
 ```
 
@@ -585,6 +590,7 @@ A Job represents a scheduled task to execute.
 |**name**  <br>*required*|Name for the job.  <br>**Example** : `"string"`|string|
 |**schedule**  <br>*required*|Cron expression for the job.  <br>**Example** : `"string"`|string|
 |**command**  <br>*required*|Command to run.  <br>**Example** : `"string"`|string|
+|**timezone**  <br>*optional*|Timezone where the schedule will be executed. <br>**Example** : `"Europe/Paris"`|string|
 |**shell**  <br>*optional*|Use shell to run the command  <br>**Example** : `true`|boolean|
 |**owner**  <br>*optional*|Owner of the job  <br>**Example** : `"string"`|string|
 |**owner_email**  <br>*optional*|Email of the owner  <br>**Example** : `"string"`|string|
