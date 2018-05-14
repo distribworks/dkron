@@ -1,3 +1,30 @@
+## 0.10.0 (2018-04-27)
+
+### Bug fixes
+
+- Fix RPCconfig query missing address (#336 and related)
+- Fix concurrency issue due to race condition on lock jobs (#299)
+- Fix execution done missing on restart blocking concurrency forbid jobs (#349)
+- Fix plugin load paths (#275)
+- Fix RPC address lost on reload config (#262)
+
+### Features and code improvements
+
+- Slightly improve processing of last execution group (@sysadmind)
+- Improve job dependencies handling (@sysadmind)
+- Move dkron command to it's own package
+- Milliseconds range API job create or update
+- Refactor scheduler restart
+- Replace bower with npm
+- Executor plugins based on GRPC
+- Toggle job from UI
+- Search Job by name and pagination in the UI
+- Add redis as storage backend (@digitalcrab)
+- UI refactor with new bootstrap version and replace fontawesome with glyphicons
+- Compute job status and return the value from the API providing the user with more info
+- Timezone aware scheduling (@didiercrunch)
+
+
 ## 0.9.8 (2018-04-27)
 
 - Fix broken release 0.9.7

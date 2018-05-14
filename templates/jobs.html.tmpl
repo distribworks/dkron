@@ -2,47 +2,81 @@
 <div class="container content" ng-controller="JobListCtrl">
   {{template "status" .}}
   <div class="row">
+    <form>
+        <div class="form-group">
+          <div class="input-group">
+            <div class="input-group-addon"><i class="fa fa-search"></i></div>
+            <input type="text" class="form-control" placeholder="Filter" ng-model="searchJob">
+          </div>      
+        </div>
+    </form>
     <table class="table table-striped">
+      <thead>
       <tr>
         <th>Job</th>
-        <th>Success count</th>
-        <th>Error count</th>
+        <th>Schedule</th>
+        <th>Success</th>
+        <th>Error</th>
+        <th>Last execution</th>
         <th>Status</th>
         <th>Actions</th>
       </tr>
-      {{ range $i, $job := .Jobs }}
-      <tr>
-
-        <td><a href="jobs/{{$job.Name}}/executions">{{ $job.Name }}</a></td>
-        <td>{{ $job.SuccessCount }}</td>
-        <td>{{ $job.ErrorCount }}</td>
+    </thead>
+    <tfoot>
+        <td colspan="7">
+            <div class="pull-right">
+                <ul class="pagination">
+                    <li ng-class="{disabled: currentPage == 0}">
+                        <a href ng-click="prevPage()">« Prev</a>
+                    </li>
+                
+                    <li ng-repeat="n in range(pagedItems.length, currentPage, currentPage + gap) "
+                        ng-class="{active: n == currentPage}"
+                        ng-click="setPage()">
+                        <a href ng-bind="n + 1"></a>
+                    </li>
+                 
+                    <li ng-class="{disabled: (currentPage) == pagedItems.length - 1}">
+                        <a href ng-click="nextPage()">Next »</a>
+                    </li>
+                </ul>
+            </div>
+        </td>
+    </tfoot>
+      <tbody>
+      <tr ng-repeat="job in pagedItems[currentPage] | filter:searchJob">
+        <td><a ng-href="jobs/{{`{{ job.name }}`}}/executions" ng-bind="job.name"></a></td>
+        <td ng-bind="job.schedule"></td>
+        <td ng-bind="job.success_count"></td>
+        <td ng-bind="job.error_count"></td>
+        <td ng-bind="(job.last_success > job.last_error ? job.last_success : job.last_error) | date:'yyyy-MM-dd HH:mm:ss Z'"></td>
         <td>
-          {{if $job.Disabled }}
-            <i class="fa fa-circle text-muted"></i>
-          {{ else }}
-            <i class="fa fa-circle text-{{ executionStatus $job }}"></i>
-          {{end}}
+            <i ng-class="job | statusClass" class="glyphicon"></i>
         </td>
         <td>
-          <a href="#" data-toggle="modal" data-target="#{{ $i }}-modal" title="View"><i class="fa fa-eye fa-1x" aria-hidden="true"></i></a>
+          <a href="#" data-toggle="modal" data-target="#{{`{{ $index }}`}}-modal" title="View"><i class="glyphicon glyphicon-eye-open" aria-hidden="true"></i></a>
           &nbsp;
-          <a href="#" ng-click="runJob('{{ $job.Name }}')" ng-show="!running_{{ $i }}" title="Run"><i class="fa fa-cogs fa-1x" aria-hidden="true"></i></a>
-          <a href="#"><i class="fa fa-cog fa-spin fa-1x fa-fw" ng-show="running_{{ $i }}"></i></a>
+          <a href="#" ng-click="runJob(job.name)" ng-show="!running_{{`{{ $index }}`}}" title="Run"><i class="glyphicon glyphicon-play" aria-hidden="true"></i></a>
+          <a href="#"><i class="fa fa-cog fa-spin fa-1x fa-fw" ng-show="running_{{`{{ $index }}`}}"></i></a>
           &nbsp;
-          <a href="#" data-toggle="modal" data-target="#{{ $i }}-modal-delete" ng-show="!deleting_{{ $i }}" title="Delete"><i class="fa fa-trash-o fa-1x" aria-hidden="true"></i></a>
-          <a href=""><i class="fa fa-spinner fa-spin fa-1x fa-fw" ng-show="deleting_{{ $i }}"></i></a>
+          <a href="#" ng-click="toggleJob(job.name)" ng-show="!running_{{`{{ $index }}`}}" title="Toggle"><i class="glyphicon glyphicon-pause" aria-hidden="true"></i></a>
+          &nbsp;
+          <a href="#" data-toggle="modal" data-target="#{{`{{ $index }}`}}-modal-delete" ng-show="!deleting_{{`{{ $index }}`}}" title="Delete"><i class="glyphicon glyphicon-trash" aria-hidden="true"></i></a>
+          <a href=""><i class="fa fa-spinner fa-spin fa-1x fa-fw" ng-show="deleting_{{`{{ $index }}`}}"></i></a>
         </td>
       </tr>
+      </tbody>
+    </table>
 
-      <!-- Modal Delete -->
-      <div class="modal fade" id="{{ $i }}-modal-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <!-- Modal Delete -->
+    <div ng-repeat="job in jobs" class="modal fade" id="{{`{{ $index }}`}}-modal-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-body">
               Are you sure?
             </div>
             <div class="modal-footer">
-              <button class="btn btn-default" ng-click="deleteJob('{{ $job.Name }}')" value="Delete" data-dismiss="modal">Confirm</button>
+              <button class="btn btn-default" ng-click="deleteJob(job.name)" value="Delete" data-dismiss="modal">Confirm</button>
               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
           </div>
@@ -50,15 +84,15 @@
       </div>
 
       <!-- Modal -->
-      <div class="modal fade" id="{{ $i }}-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div ng-repeat="job in jobs" class="modal fade" id="{{`{{ $index }}`}}-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-              <h4 class="modal-title" id="myModalLabel">View {{ $job.Name }}</h4>
+              <h4 class="modal-title" id="myModalLabel" ng-bind="'View ' + job.name"></h4>
             </div>
             <div class="modal-body">
-              <pre><code class="hljs json">{{ $job | jobJson }}</code></pre>
+              <pre><code class="hljs json" ng-bind="job | json"></code></pre>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -66,8 +100,7 @@
           </div>
         </div>
       </div>
-      {{ end }}
-    </table>
+
   </div>
 </div>
 {{end}}

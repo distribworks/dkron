@@ -7,12 +7,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net"
-	"os"
-	"os/signal"
 	"runtime"
 	"strconv"
 	"strings"
-	"syscall"
+	"sync"
 	"time"
 
 	"github.com/Sirupsen/logrus"
@@ -20,13 +18,9 @@ import (
 	metrics "github.com/armon/go-metrics"
 	"github.com/hashicorp/memberlist"
 	"github.com/hashicorp/serf/serf"
-	"github.com/mitchellh/cli"
 )
 
 const (
-	// gracefulTimeout controls how long we wait before forcefully terminating
-	gracefulTimeout = 3 * time.Second
-
 	defaultRecoverTime = 10 * time.Second
 )
 
@@ -35,104 +29,98 @@ var (
 
 	// ErrLeaderNotFound is returned when obtained leader from store is not found in member list
 	ErrLeaderNotFound = errors.New("No member leader found in member list")
+	ErrNoRPCAddress   = errors.New("No RPC address tag found in server")
 
 	defaultLeaderTTL = 20 * time.Second
+
+	runningExecutions sync.Map
 )
 
-// ProcessorFactory is a function type that creates a new instance
-// of a processor.
-type ProcessorFactory func() (ExecutionProcessor, error)
-
-// AgentCommand run server
-type AgentCommand struct {
-	Ui               cli.Ui
-	Version          string
-	ShutdownCh       <-chan struct{}
+type Agent struct {
 	ProcessorPlugins map[string]ExecutionProcessor
+	ExecutorPlugins  map[string]Executor
 	HTTPTransport    Transport
+	Store            *Store
 
 	serf      *serf.Serf
 	config    *Config
-	store     *Store
 	eventCh   chan serf.Event
 	sched     *Scheduler
 	candidate *leadership.Candidate
 	ready     bool
 }
 
-// Help returns agent command usage to the CLI.
-func (a *AgentCommand) Help() string {
-	helpText := `
-Usage: dkron agent [options]
-	Run dkron agent
+// ProcessorFactory is a function type that creates a new instance
+// of a processor.
+type ProcessorFactory func() (ExecutionProcessor, error)
 
-Options:
+type Plugins struct {
+	Processors map[string]ExecutionProcessor
+	Executors  map[string]Executor
+}
 
-  -bind-addr=0.0.0.0:8946         Address to bind network listeners to.
-  -advertise-addr=bind_addr       Address used to advertise to other nodes in the cluster. By default, the bind address is advertised.
-  -http-addr=0.0.0.0:8080         Address to bind the UI web server to. Only used when server.
-  -discover=cluster               A cluster name used to discovery peers. On
-                                  networks that support multicast, this can be used to have
-                                  peers join each other without an explicit join.
-  -join=addr                      An initial agent to join with. This flag can be
-                                  specified multiple times.
-  -node=hostname                  Name of this node. Must be unique in the cluster
-  -profile=[lan|wan|local]        Profile is used to control the timing profiles used.
-                                  The default if not provided is lan.
-  -server=false                   This node is running in server mode.
-  -tag key=value                  Tag can be specified multiple times to attach multiple
-                                  key/value tag pairs to the given node.
-  -keyspace=dkron                 The keyspace to use. A prefix under all data is stored
-                                  for this instance.
-  -backend=[etcd|consul|zk]       Backend storage to use, etcd, consul or zookeeper. The default
-                                  is etcd.
-  -backend-machine=127.0.0.1:2379 Backend storage servers addresses to connect to. This flag can be
-                                  specified multiple times.
-  -encrypt                        Key for encrypting network traffic.
-                                  Must be a base64-encoded 16-byte key.
-  -rpc-port=6868                  RPC Port used to communicate with clients. Only used when server.
-                                  The RPC IP Address will be the same as the bind address.
-  -advertise-rpc-port             Use the value of -rpc-port by default
+func NewAgent(config *Config, plugins *Plugins) *Agent {
+	a := &Agent{config: config}
 
-  -mail-host                      Mail server host address to use for notifications.
-  -mail-port                      Mail server port.
-  -mail-username                  Mail server username used for authentication.
-  -mail-password                  Mail server password to use.
-  -mail-from                      From email address to use.
+	if plugins != nil {
+		a.ProcessorPlugins = plugins.Processors
+		a.ExecutorPlugins = plugins.Executors
+	}
 
-  -webhook-url                    Webhook url to call for notifications.
-  -webhook-payload                Body of the POST request to send on webhook call.
-  -webhook-header                 Headers to use when calling the webhook URL. Can be specified multiple times.
+	return a
+}
 
-  -log-level=info                 Log level (debug, info, warn, error, fatal, panic). Default to info.
+func (a *Agent) Start() error {
+	s, err := a.setupSerf()
+	if err != nil {
+		return fmt.Errorf("agent: Can not setup serf, %s", err)
+	}
+	a.serf = s
+	a.join(a.config.StartJoin, true)
 
-  -dog-statsd-addr                DataDog Agent address
-  -dog-statsd-tags                Datadog tags, specified as key:value
-  -statsd-addr                    Statsd Address
-`
-	return strings.TrimSpace(helpText)
+	if err := initMetrics(a); err != nil {
+		log.Fatal("agent: Can not setup metrics")
+	}
+
+	// Expose the node name
+	expNode.Set(a.config.NodeName)
+
+	if a.config.Server {
+		a.StartServer()
+	}
+	go a.eventLoop()
+	a.ready = true
+
+	return nil
+}
+
+func (a *Agent) Stop() error {
+	a.candidate.Stop()
+
+	if err := a.serf.Leave(); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // setupSerf is used to create the agent we use
-func (a *AgentCommand) setupSerf() *serf.Serf {
+func (a *Agent) setupSerf() (*serf.Serf, error) {
 	config := a.config
 
 	bindIP, bindPort, err := config.AddrParts(config.BindAddr)
 	if err != nil {
-		a.Ui.Error(fmt.Sprintf("Invalid bind address: %s", err))
-		return nil
+		return nil, fmt.Errorf("Invalid bind address: %s", err)
 	}
 
 	// Check if we have an interface
 	if iface, _ := config.NetworkInterface(); iface != nil {
 		addrs, err := iface.Addrs()
 		if err != nil {
-			a.Ui.Error(fmt.Sprintf("Failed to get interface addresses: %s", err))
-			return nil
+			return nil, fmt.Errorf("Failed to get interface addresses: %s", err)
 		}
 		if len(addrs) == 0 {
-			a.Ui.Error(fmt.Sprintf("Interface '%s' has no addresses", config.Interface))
-			return nil
+			return nil, fmt.Errorf("Interface '%s' has no addresses", config.Interface)
 		}
 
 		// If there is no bind IP, pick an address
@@ -163,8 +151,7 @@ func (a *AgentCommand) setupSerf() *serf.Serf {
 				// Found an IP
 				found = true
 				bindIP = addrIP.String()
-				a.Ui.Output(fmt.Sprintf("Using interface '%s' address '%s'",
-					config.Interface, bindIP))
+				log.Infof("Using interface '%s' address '%s'", config.Interface, bindIP)
 
 				// Update the configuration
 				bindAddr := &net.TCPAddr{
@@ -175,8 +162,7 @@ func (a *AgentCommand) setupSerf() *serf.Serf {
 				break
 			}
 			if !found {
-				a.Ui.Error(fmt.Sprintf("Failed to find usable address for interface '%s'", config.Interface))
-				return nil
+				return nil, fmt.Errorf("Failed to find usable address for interface '%s'", config.Interface)
 			}
 
 		} else {
@@ -193,9 +179,8 @@ func (a *AgentCommand) setupSerf() *serf.Serf {
 				}
 			}
 			if !found {
-				a.Ui.Error(fmt.Sprintf("Interface '%s' has no '%s' address",
-					config.Interface, bindIP))
-				return nil
+				return nil, fmt.Errorf("Interface '%s' has no '%s' address",
+					config.Interface, bindIP)
 			}
 		}
 	}
@@ -205,19 +190,17 @@ func (a *AgentCommand) setupSerf() *serf.Serf {
 	if config.AdvertiseAddr != "" {
 		advertiseIP, advertisePort, err = config.AddrParts(config.AdvertiseAddr)
 		if err != nil {
-			a.Ui.Error(fmt.Sprintf("Invalid advertise address: %s", err))
-			return nil
+			return nil, fmt.Errorf("Invalid advertise address: %s", err)
 		}
 	}
-	//Ues the value of "RPCPort" if AdvertiseRPCPort has not been set
+	//Use the value of "RPCPort" if AdvertiseRPCPort has not been set
 	if config.AdvertiseRPCPort <= 0 {
 		config.AdvertiseRPCPort = config.RPCPort
 	}
 
 	encryptKey, err := config.EncryptBytes()
 	if err != nil {
-		a.Ui.Error(fmt.Sprintf("Invalid encryption key: %s", err))
-		return nil
+		return nil, fmt.Errorf("Invalid encryption key: %s", err)
 	}
 
 	serfConfig := serf.DefaultConfig()
@@ -229,8 +212,7 @@ func (a *AgentCommand) setupSerf() *serf.Serf {
 	case "local":
 		serfConfig.MemberlistConfig = memberlist.DefaultLocalConfig()
 	default:
-		a.Ui.Error(fmt.Sprintf("Unknown profile: %s", config.Profile))
-		return nil
+		return nil, fmt.Errorf("Unknown profile: %s", config.Profile)
 	}
 
 	serfConfig.MemberlistConfig.BindAddr = bindIP
@@ -265,7 +247,6 @@ func (a *AgentCommand) setupSerf() *serf.Serf {
 	serfConfig.EventCh = a.eventCh
 
 	// Start Serf
-	a.Ui.Output("Starting Dkron agent...")
 	log.Info("agent: Dkron agent starting")
 
 	serfConfig.LogOutput = ioutil.Discard
@@ -274,16 +255,15 @@ func (a *AgentCommand) setupSerf() *serf.Serf {
 	// Create serf first
 	serf, err := serf.Create(serfConfig)
 	if err != nil {
-		a.Ui.Error(err.Error())
 		log.Error(err)
-		return nil
+		return nil, err
 	}
 
-	return serf
+	return serf, nil
 }
 
 // Config returns the agent's config.
-func (a *AgentCommand) Config() *Config {
+func (a *Agent) Config() *Config {
 	return a.config
 }
 
@@ -301,35 +281,11 @@ func UnmarshalTags(tags []string) (map[string]string, error) {
 	return result, nil
 }
 
-// Run will execute the main functions of the agent command.
-// This includes the main eventloop and starting the server if enabled.
-//
-// The returned value is the exit code.
-func (a *AgentCommand) Run(args []string) int {
-	a.config = NewConfig(args, a.Version)
-	if a.serf = a.setupSerf(); a.serf == nil {
-		log.Fatal("agent: Can not setup serf")
-	}
-	a.join(a.config.StartJoin, true)
-
-	if i := initMetrics(a); i != 0 {
-		return i
+func (a *Agent) StartServer() {
+	if a.Store == nil {
+		a.Store = NewStore(a.config.Backend, a.config.BackendMachines, a, a.config.Keyspace, nil)
 	}
 
-	// Expose the node name
-	expNode.Set(a.config.NodeName)
-
-	if a.config.Server {
-		a.startServer()
-	}
-	go a.eventLoop()
-	a.ready = true
-	return a.handleSignals()
-}
-
-// startServer handles all necessary startup functions for a server agent
-func (a *AgentCommand) startServer() {
-	a.store = NewStore(a.config.Backend, a.config.BackendMachines, a, a.config.Keyspace)
 	a.sched = NewScheduler()
 
 	if a.HTTPTransport == nil {
@@ -337,88 +293,15 @@ func (a *AgentCommand) startServer() {
 	}
 	a.HTTPTransport.ServeHTTP()
 	listenRPC(a)
+
+	if err := a.SetTags(a.config.Tags); err != nil {
+		log.WithError(err).Fatal("agent: Error setting RPC config tags")
+	}
 	a.participate()
 }
 
-// handleSignals blocks until we get an exit-causing signal
-func (a *AgentCommand) handleSignals() int {
-	signalCh := make(chan os.Signal, 4)
-	signal.Notify(signalCh, os.Interrupt, syscall.SIGTERM, syscall.SIGHUP)
-
-WAIT:
-	// Wait for a signal
-	var sig os.Signal
-	select {
-	case s := <-signalCh:
-		sig = s
-	case <-a.ShutdownCh:
-		sig = os.Interrupt
-	}
-	a.Ui.Output(fmt.Sprintf("Caught signal: %v", sig))
-
-	// Check if this is a SIGHUP
-	if sig == syscall.SIGHUP {
-		a.handleReload()
-		goto WAIT
-	}
-
-	// Check if we should do a graceful leave
-	graceful := false
-	if sig == syscall.SIGTERM || sig == os.Interrupt {
-		graceful = true
-	}
-
-	// Fail fast if not doing a graceful leave
-	if !graceful {
-		return 1
-	}
-
-	// Attempt a graceful leave
-	gracefulCh := make(chan struct{})
-	a.Ui.Output("Gracefully shutting down agent...")
-	log.Info("agent: Gracefully shutting down agent...")
-	go func() {
-		if err := a.serf.Leave(); err != nil {
-			a.Ui.Error(fmt.Sprintf("Error: %s", err))
-			log.Error(fmt.Sprintf("Error: %s", err))
-			return
-		}
-		close(gracefulCh)
-	}()
-
-	// Wait for leave or another signal
-	select {
-	case <-signalCh:
-		return 1
-	case <-time.After(gracefulTimeout):
-		return 1
-	case <-gracefulCh:
-		return 0
-	}
-}
-
-// handleReload is invoked when we should reload our configs, e.g. SIGHUP
-func (a *AgentCommand) handleReload() {
-	a.Ui.Output("Reloading configuration...")
-	newConf := readConfig(a.Version)
-	if newConf == nil {
-		a.Ui.Error(fmt.Sprintf("Failed to reload configs"))
-		return
-	}
-	a.config = newConf
-
-	// Reset serf tags
-	a.serf.SetTags(a.config.Tags)
-	//Config reloading will also reload Notification settings
-}
-
-// Synopsis returns the purpose of the command for the CLI
-func (a *AgentCommand) Synopsis() string {
-	return "Run dkron"
-}
-
-func (a *AgentCommand) participate() {
-	a.candidate = leadership.NewCandidate(a.store.Client, a.store.LeaderKey(), a.config.NodeName, defaultLeaderTTL)
+func (a *Agent) participate() {
+	a.candidate = leadership.NewCandidate(a.Store.Client, a.Store.LeaderKey(), a.config.NodeName, defaultLeaderTTL)
 
 	go func() {
 		for {
@@ -430,7 +313,7 @@ func (a *AgentCommand) participate() {
 }
 
 // Leader election routine
-func (a *AgentCommand) runForElection() {
+func (a *Agent) runForElection() {
 	log.Info("agent: Running for election")
 	defer metrics.MeasureSince([]string{"agent", "runForElection"}, time.Now())
 	electedCh, errCh := a.candidate.RunForElection()
@@ -461,8 +344,8 @@ func (a *AgentCommand) runForElection() {
 }
 
 // Utility method to get leader nodename
-func (a *AgentCommand) leaderMember() (*serf.Member, error) {
-	leaderName := a.store.GetLeader()
+func (a *Agent) leaderMember() (*serf.Member, error) {
+	leaderName := a.Store.GetLeader()
 	for _, member := range a.serf.Members() {
 		if member.Name == string(leaderName) {
 			return &member, nil
@@ -471,7 +354,7 @@ func (a *AgentCommand) leaderMember() (*serf.Member, error) {
 	return nil, ErrLeaderNotFound
 }
 
-func (a *AgentCommand) listServers() []serf.Member {
+func (a *Agent) listServers() []serf.Member {
 	members := []serf.Member{}
 
 	for _, member := range a.serf.Members() {
@@ -486,13 +369,13 @@ func (a *AgentCommand) listServers() []serf.Member {
 
 // GetBindIP returns the IP address that the agent is bound to.
 // This could be different than the originally configured address.
-func (a *AgentCommand) GetBindIP() (string, error) {
+func (a *Agent) GetBindIP() (string, error) {
 	bindIP, _, err := a.config.AddrParts(a.config.BindAddr)
 	return bindIP, err
 }
 
 // Listens to events from Serf and handle the event.
-func (a *AgentCommand) eventLoop() {
+func (a *Agent) eventLoop() {
 	serfShutdownCh := a.serf.ShutdownCh()
 	log.Info("agent: Listen for events")
 	for {
@@ -504,8 +387,8 @@ func (a *AgentCommand) eventLoop() {
 			metrics.IncrCounter([]string{"agent", "event_received", e.String()}, 1)
 
 			// Log all member events
-			if failed, ok := e.(serf.MemberEvent); ok {
-				for _, member := range failed.Members {
+			if me, ok := e.(serf.MemberEvent); ok {
+				for _, member := range me.Members {
 					log.WithFields(logrus.Fields{
 						"node":   a.config.NodeName,
 						"member": member.Name,
@@ -558,14 +441,20 @@ func (a *AgentCommand) eventLoop() {
 					query.Respond(exJSON)
 				}
 
-				if query.Name == QueryRPCConfig && a.config.Server {
+				if query.Name == QueryExecutionDone {
 					log.WithFields(logrus.Fields{
 						"query":   query.Name,
 						"payload": string(query.Payload),
 						"at":      query.LTime,
-					}).Debug("agent: RPC Config requested")
+					}).Debug("agent: Execution done requested")
 
-					err := query.Respond([]byte(a.getRPCAddr()))
+					// Find if the indicated execution is done processing
+					var err error
+					if _, ok := runningExecutions.Load(string(query.Payload)); ok {
+						err = query.Respond([]byte("false"))
+					} else {
+						err = query.Respond([]byte("true"))
+					}
 					if err != nil {
 						log.WithError(err).Error("agent: query.Respond")
 					}
@@ -580,9 +469,9 @@ func (a *AgentCommand) eventLoop() {
 }
 
 // Start or restart scheduler
-func (a *AgentCommand) schedule() {
+func (a *Agent) schedule() {
 	log.Debug("agent: Restarting scheduler")
-	jobs, err := a.store.GetJobs()
+	jobs, err := a.Store.GetJobs(nil)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -590,7 +479,7 @@ func (a *AgentCommand) schedule() {
 }
 
 // Join asks the Serf instance to join. See the Serf.Join function.
-func (a *AgentCommand) join(addrs []string, replay bool) (n int, err error) {
+func (a *Agent) join(addrs []string, replay bool) (n int, err error) {
 	log.Infof("agent: joining: %v replay: %v", addrs, replay)
 	n, err = a.serf.Join(addrs, !replay)
 	if n > 0 {
@@ -602,7 +491,7 @@ func (a *AgentCommand) join(addrs []string, replay bool) (n int, err error) {
 	return
 }
 
-func (a *AgentCommand) processFilteredNodes(job *Job) ([]string, map[string]string, error) {
+func (a *Agent) processFilteredNodes(job *Job) ([]string, map[string]string, error) {
 	var nodes []string
 	tags := make(map[string]string)
 
@@ -641,14 +530,14 @@ func (a *AgentCommand) processFilteredNodes(job *Job) ([]string, map[string]stri
 	return nodes, tags, nil
 }
 
-func (a *AgentCommand) setExecution(payload []byte) *Execution {
+func (a *Agent) setExecution(payload []byte) *Execution {
 	var ex Execution
 	if err := json.Unmarshal(payload, &ex); err != nil {
 		log.Fatal(err)
 	}
 
 	// Save the new execution to store
-	if _, err := a.store.SetExecution(&ex); err != nil {
+	if _, err := a.Store.SetExecution(&ex); err != nil {
 		log.Fatal(err)
 	}
 
@@ -658,8 +547,52 @@ func (a *AgentCommand) setExecution(payload []byte) *Execution {
 // This function is called when a client request the RPCAddress
 // of the current member.
 // in marathon, it would return the host's IP and advertise RPC port
-func (a *AgentCommand) getRPCAddr() string {
+func (a *Agent) getRPCAddr() string {
 	bindIP := a.serf.LocalMember().Addr
 
 	return fmt.Sprintf("%s:%d", bindIP, a.config.AdvertiseRPCPort)
+}
+
+func (a *Agent) Leave() error {
+	return a.serf.Leave()
+}
+
+func (a *Agent) SetTags(tags map[string]string) error {
+	if a.config.Server {
+		tags["dkron_rpc_addr"] = a.getRPCAddr()
+	}
+	return a.serf.SetTags(tags)
+}
+
+// RefreshJobStatus asks the nodes their progress on an execution
+func (a *Agent) RefreshJobStatus(jobName string) {
+	var group string
+
+	execs, _ := a.Store.GetLastExecutionGroup(jobName)
+	nodes := []string{}
+
+	for _, ex := range execs {
+		log.WithFields(logrus.Fields{
+			"member":        ex.NodeName,
+			"execution_key": ex.Key(),
+		}).Debug("agent: Asking member for pending execution")
+
+		nodes = append(nodes, ex.NodeName)
+		group = strconv.FormatInt(ex.Group, 10)
+	}
+
+	statuses := a.executionDoneQuery(nodes, group)
+
+	for _, ex := range execs {
+		if s, ok := statuses[ex.NodeName]; ok {
+			done, _ := strconv.ParseBool(s)
+			if done {
+				ex.FinishedAt = time.Now()
+				a.Store.SetExecution(ex)
+			}
+		} else {
+			ex.FinishedAt = time.Now()
+			a.Store.SetExecution(ex)
+		}
+	}
 }

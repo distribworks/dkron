@@ -97,6 +97,22 @@ func (c *Cron) AddJob(spec string, cmd Job) error {
 	return nil
 }
 
+// AddTimezonSensitiveJob adds a Job to the Cron that will be executed in
+// respect to a particular timezone on the given schedule.
+func (c *Cron) AddTimezoneSensitiveJob(spec, timezone string, cmd Job) error {
+	schedule, err := Parse(spec)
+	if err != nil {
+		return err
+	}
+	tzSchedule, err := wrapSchedulerInTimezone(schedule, timezone)
+	if err != nil {
+		return err
+	}
+
+	c.Schedule(tzSchedule, cmd)
+	return nil
+}
+
 // Schedule adds a Job to the Cron to be run on the given schedule.
 func (c *Cron) Schedule(schedule Schedule, cmd Job) {
 	entry := &Entry{

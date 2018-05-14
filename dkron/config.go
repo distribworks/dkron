@@ -75,8 +75,8 @@ func init() {
 
 // NewConfig creates a Config object and will set up the dkron configuration using
 // the command line and any file configs.
-func NewConfig(args []string, version string) *Config {
-	cmdFlags := configFlagSet()
+func NewConfig(args []string) *Config {
+	cmdFlags := ConfigFlagSet()
 
 	if err := cmdFlags.Parse(args); err != nil {
 		log.WithError(err).Error("agent: Error parsing flags")
@@ -95,11 +95,11 @@ func NewConfig(args []string, version string) *Config {
 		}
 	})
 
-	return readConfig(version)
+	return ReadConfig()
 }
 
 // configFlagSet creates all of our configuration flags.
-func configFlagSet() *flag.FlagSet {
+func ConfigFlagSet() *flag.FlagSet {
 	hostname, err := os.Hostname()
 	if err != nil {
 		log.Panic(err)
@@ -152,7 +152,7 @@ func configFlagSet() *flag.FlagSet {
 }
 
 // readConfig from file and create the actual config object.
-func readConfig(version string) *Config {
+func ReadConfig() *Config {
 	err := viper.ReadInConfig() // Find and read the config file
 	if err != nil {             // Handle errors reading the config file
 		logrus.WithError(err).Info("No valid config found: Applying default values.")
@@ -175,8 +175,10 @@ func readConfig(version string) *Config {
 
 	if server {
 		tags["dkron_server"] = "true"
+	} else {
+		tags["dkron_server"] = "false"
 	}
-	tags["dkron_version"] = version
+	tags["dkron_version"] = Version
 
 	InitLogger(viper.GetString("log_level"), nodeName)
 

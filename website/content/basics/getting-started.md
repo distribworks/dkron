@@ -9,13 +9,15 @@ Welcome to the intro guide to dkron! This will explain how to setup dkron, how e
 
 Dkron nodes can work in two modes, agents or servers.
 
-Servers are agents too. You can use servers to run jobs.
+A Dkron agent is a cluster member that can handle job executions, run your scripts and return the resulting output to the server.
 
-The main distinction is that servers order job executions and can be used to schedule jobs.
+A Dkron server is also a cluster member that send job execution queries to agents or other servers, so servers can execute jobs too.
 
-Dkron clusters have a leader, the leader is responsible of executing jobs in the cluster.
+The main distinction is that servers order job executions, can be used to schedule jobs, handles data storage and participate on leader election.
 
-Any Dkron agent or server acts as a cluster member and it's available to run scheduled tasks.
+Dkron clusters have a leader, the leader is responsible of starting job execution queries in the cluster.
+
+Any Dkron agent or server acts as a cluster member and it's available to run scheduled jobs.
 
 You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run. This gives an unprecedented level of flexibility in runnig jobs across a cluster of any size and with any combination of machines you need.
 

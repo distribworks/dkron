@@ -7,4 +7,4 @@ services:
 
 script:
   - docker-compose run dkron dep ensure -v
-  - scripts/test.sh
+  - scripts/test

@@ -11,6 +11,7 @@ downloads/
 vendor/
 main
 /dkron-processor-*
+/dkron-executor-*
 *.log
 .glide
 config/

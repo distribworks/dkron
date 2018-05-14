@@ -1,0 +1,32 @@
+{
+  "name": "dkron",
+  "version": "1.0.0",
+  "description": "Website: http://dkron.io/",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "dependencies": {
+    "angular": "^1.4.0",
+    "angular-mocks": "^1.4.14",
+    "angular-resource": "^1.4.14",
+    "angular-rickshaw": "^0.1.1",
+    "angular-route": "^1.4.14",
+    "bootstrap": "^3.3.7",
+    "jquery": "^2.1.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/victorcoder/dkron.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/victorcoder/dkron/issues"
+  },
+  "homepage": "https://github.com/victorcoder/dkron#readme"
+}

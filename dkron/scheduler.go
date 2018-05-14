@@ -23,6 +23,7 @@ type Cron interface {
 	Entries() []*cron.Entry
 	AddFunc(spec string, cmd func()) error
 	AddJob(spec string, cmd cron.Job) error
+	AddTimezoneSensitiveJob(spec, timezone string, cmd cron.Job) error
 }
 
 type Scheduler struct {
@@ -50,7 +51,11 @@ func (s *Scheduler) Start(jobs []*Job) {
 		cronInspect.Set(job.Name, job)
 		metrics.EmitKey([]string{"scheduler", "job", "add", job.Name}, 1)
 
-		s.Cron.AddJob(job.Schedule, job)
+		if job.Timezone != "" {
+			s.Cron.AddTimezoneSensitiveJob(job.Schedule, job.Timezone, job)
+		} else {
+			s.Cron.AddJob(job.Schedule, job)
+		}
 	}
 	s.Cron.Start()
 	s.Started = true

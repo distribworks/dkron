@@ -1,4 +1,25 @@
 var dkron = angular.module('dkron', ['angular-rickshaw']);
+
+dkron.filter('statusClass', function() {
+  var friendlyStatusFilter = function(job) {
+    if (job.disabled) {
+      return 'text-muted glyphicon-ban-circle'
+    }
+    switch(job.status) {
+      case 'success':
+        return 'status-success glyphicon-ok-sign'
+      case 'failed':
+        return 'status-danger glyphicon-remove-sign'
+      case 'partially_failed':
+        return 'status-warning glyphicon-exclamation-sign'
+      case 'running':
+        return 'status-running glyphicon-play-circle'
+      }
+    return input;
+  };
+  return friendlyStatusFilter;
+});
+
 dkron.constant('hideDelay', 2000);
 
 dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
@@ -36,6 +57,22 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
     });
   };
 
+  $scope.toggleJob = function(jobName) {
+    var response = $http.post(DKRON_API_PATH + '/jobs/' + jobName + '/toggle');
+    response.success(function(data, status, headers, config) {
+      $('#message').html('<div class="alert alert-success fade in">Successfully toggled job ' + jobName + '</div>');
+
+      $(".alert-success").delay(hideDelay).slideUp(200, function(){
+        $(".alert").alert('close');
+        window.location.reload();
+      });
+    });
+
+    response.error(function(data, status, headers, config) {
+      $('#message').html('<div class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Error toggle job ' + jobName + '</div>');
+    });
+  }
+
   var updateView = function() {
     var response = $http.get(DKRON_API_PATH + '/jobs');
     response.success(function(data, status, headers, config) {
@@ -51,6 +88,56 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
     });
   }
 
+  // calculate page in place
+  $scope.groupToPages = function () {
+    $scope.gap = Math.round($scope.jobs.length / $scope.itemsPerPage);
+    $scope.pagedItems = [];
+    
+    for (var i = 0; i < $scope.jobs.length; i++) {
+        if (i % $scope.itemsPerPage === 0) {
+            $scope.pagedItems[Math.floor(i / $scope.itemsPerPage)] = [ $scope.jobs[i] ];
+        } else {
+            $scope.pagedItems[Math.floor(i / $scope.itemsPerPage)].push($scope.jobs[i]);
+        }
+    }
+  };
+
+  $scope.range = function(size, start, end) {
+      var ret = [];
+
+      if (size < end) {
+          end = size;
+          start = size-$scope.gap;
+      }
+      for (var i = start; i < end; i++) {
+          ret.push(i);
+      }
+      return ret;
+  };
+
+  $scope.prevPage = function() {
+      if ($scope.currentPage > 0) {
+          $scope.currentPage--;
+      }
+  };
+
+  $scope.nextPage = function() {
+      if ($scope.currentPage < $scope.pagedItems.length - 1) {
+          $scope.currentPage++;
+      }
+  };
+
+  $scope.setPage = function() {
+      $scope.currentPage = this.n;
+  };
+
+  // init
+  $scope.gap = 0;
+  $scope.groupedItems = [];
+  $scope.itemsPerPage = 15;
+  $scope.pagedItems = [];
+  $scope.currentPage = 0;
+  
   $scope.success_count = 0;
   $scope.error_count = 0;
   $scope.failed_jobs = 0;
@@ -61,8 +148,12 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
     var success_count = 0;
     var error_count = 0;
     $scope.jobs = data;
+
     $scope.failed_jobs = 0;
     $scope.successful_jobs = 0;
+
+    // functions have been describe process the data for display
+    $scope.groupToPages();
 
     for(i=0; i < data.length; i++) {
       success_count = success_count + data[i].success_count;
@@ -79,10 +170,6 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
     $scope.error_count = error_count;
   }
 
-  $interval(function() {
-    updateView();
-  }, 2000);
-
   updateView();
   hljs.initHighlightingOnLoad();
 
@@ -96,7 +183,7 @@ dkron.controller('IndexCtrl', function ($scope, $http, $interval, $element) {
 
   $scope.series = [{
       name: 'Success count',
-      color: 'darkgreen',
+      color: 'green',
       data: [{x: 0, y: 0}]
   },{
       name: 'Error count',
@@ -117,10 +204,10 @@ dkron.controller('IndexCtrl', function ($scope, $http, $interval, $element) {
         highlight: true
       },
       yAxis: {
-        tickFormat: 'formatKMBT'
+        tickFormat: Rickshaw.Fixtures.Number.formatKMBT
       },
       xAxis: {
-        tickFormat: 'formatKMBT',
+        tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
         timeUnit: 'hour'
       }
   };
@@ -196,7 +283,6 @@ dkron.controller('IndexCtrl', function ($scope, $http, $interval, $element) {
       diff = success_count - $scope.success_count;
     }
     $scope.success_count = success_count;
-
 
     gdata.push({x: gdata[gdata.length - 1].x + 1, y: diff})
 
