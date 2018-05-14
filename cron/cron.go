@@ -99,7 +99,7 @@ func (c *Cron) AddJob(spec string, cmd Job) error {
 
 // AddTimezonSensitiveJob adds a Job to the Cron that will be executed in
 // respect to a particular timezone on the given schedule.
-func (c *Cron) AddTimezonSensitiveJob(spec, timezone string, cmd Job) error {
+func (c *Cron) AddTimezoneSensitiveJob(spec, timezone string, cmd Job) error {
 	schedule, err := Parse(spec)
 	if err != nil {
 		return err
