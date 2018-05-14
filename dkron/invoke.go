@@ -38,6 +38,9 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 			"shell":   strconv.FormatBool(job.Shell),
 			"env":     strings.Join(job.EnvironmentVariables, ","),
 		}
+		log.Warning("invoke: Deprecation waring! fields command, " +
+			"shell and environment_variables params are deprecated and will be removed in future versions. " +
+			"Consider migrating the job definition to the shell executor plugin")
 	}
 
 	// Check if executor is exists
