@@ -410,6 +410,14 @@ parent
 
 <h2 id="executors">Executors</h2>
 
+<p>Executors plugins are the main mechanism of execution in Dkron. They implement different &ldquo;types&rdquo; of jobs in the sense that they que perform the most diverse actions on the target nodes.</p>
+
+<p>For example, the built-in <code>shell</code> executor, will run the indicated command in the target node.</p>
+
+<p>New plugins will be added, or you can create new ones, to perform different tasks, as HTTP requests, Docker runs, anything that you can imagine.</p>
+
+<p>Refer to the API documentation for <a href="https://dkron.io/usage/api/#executor-shell">params accepted by the <code>shell</code> executor</a>.</p>
+
 
 <footer class=" footline" >
 	
