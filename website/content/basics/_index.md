@@ -11,7 +11,7 @@ Welcome to the Dkron documentation! This is the reference guide on how to use Dk
 
 ## What is Dkron
 
-Dkron it's distributed system to run scheduled jobs against a server or a group of servers of any size. One of the machines is the leader and the others will be followers. If the leader fails or becomes unreachable, any other one will take over and reschedule all jobs to keep the system healthy.
+Dkron is a distributed system to run scheduled jobs against a server or a group of servers of any size. One of the machines is the leader and the others will be followers. If the leader fails or becomes unreachable, any other one will take over and reschedule all jobs to keep the system healthy.
 
 In case the old leader becomes alive again, it'll become a follower.
 
