@@ -7,7 +7,7 @@
     <meta name="description" content="">
 
 
-    <title>Dkron REST API :: Dkron - Distributed job scheduling system</title>
+    <title>API :: Dkron - Distributed job scheduling system</title>
     <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
     <link href="/css/nucleus.css" rel="stylesheet">
     <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -141,6 +141,17 @@ parent
     <ul>
         
          
+          <li data-nav-id="/usage/api/" class="dd-item
+         active
+          ">
+            <a href="/usage/api/">
+            <span>API</span> 
+            
+
+            </a></li>
+         
+        
+         
           <li data-nav-id="/usage/concurrency/" class="dd-item
          
           ">
@@ -163,33 +174,22 @@ parent
          
         
          
-          <li data-nav-id="/usage/job-chaining/" class="dd-item
-         
-          ">
-            <a href="/usage/job-chaining/">
-            <span>Cron spec</span> 
-            
-
-            </a></li>
-         
-        
-         
-          <li data-nav-id="/usage/api/" class="dd-item
-         active
-          ">
-            <a href="/usage/api/">
-            <span>Dkron REST API</span> 
-            
-
-            </a></li>
-         
-        
-         
           <li data-nav-id="/usage/integration/" class="dd-item
          
           ">
             <a href="/usage/integration/">
             <span>Integration</span> 
+            
+
+            </a></li>
+         
+        
+         
+          <li data-nav-id="/usage/job-chaining/" class="dd-item
+         
+          ">
+            <a href="/usage/job-chaining/">
+            <span>Job chaining</span> 
             
 
             </a></li>
@@ -319,12 +319,6 @@ parent
                     
                 </li>
             
-                <li class="" role="">
-                    
-                    <a href="/test-infra"><i class='fa fa-camera'></i> Test infra</a>
-                    
-                </li>
-            
         </section>    
         
         
@@ -374,7 +368,7 @@ parent
 
 
 
- <a href='/'>Dkron - Distributed job scheduling system</a> > <a href='/usage/'>Usage</a> > Dkron REST API
+ <a href='/'>Dkron - Distributed job scheduling system</a> > <a href='/usage/'>Usage</a> > API
 
  
 
@@ -387,7 +381,7 @@ parent
     <div class="wrapper">
 <nav id="TableOfContents">
 <ul>
-<li>
+<li><a href="#dkron-rest-api">Dkron REST API</a>
 <ul>
 <li><a href="#overview">Overview</a>
 <ul>
@@ -551,6 +545,12 @@ parent
 <li><a href="#job">job</a></li>
 <li><a href="#member">member</a></li>
 <li><a href="#execution">execution</a></li>
+<li><a href="#processors">processors</a></li>
+<li><a href="#processor-files">processor_files</a></li>
+<li><a href="#processor-log">processor_log</a></li>
+<li><a href="#processor-syslog">processor_syslog</a></li>
+<li><a href="#executor-config">executor_config</a></li>
+<li><a href="#executor-shell">executor_shell</a></li>
 </ul></li>
 </ul></li>
 </ul>
@@ -563,13 +563,15 @@ parent
         
         <div id="body-inner">
           
-            <h1>Dkron REST API</h1>
+            <h1>API</h1>
           
 
 
 
 
 
+
+<h1 id="dkron-rest-api">Dkron REST API</h1>
 
 <p><a name="overview"></a></p>
 
@@ -583,7 +585,7 @@ parent
 
 <h3 id="version-information">Version information</h3>
 
-<p><em>Version</em> : 0.9.5</p>
+<p><em>Version</em> : 0.10.0</p>
 
 <h3 id="uri-scheme">URI scheme</h3>
 
@@ -774,8 +776,7 @@ parent
 {
   &quot;name&quot; : &quot;string&quot;,
   &quot;schedule&quot; : &quot;string&quot;,
-  &quot;command&quot; : &quot;string&quot;,
-  &quot;shell&quot; : true,
+  &quot;timezone&quot; : &quot;string&quot;,
   &quot;owner&quot; : &quot;string&quot;,
   &quot;owner_email&quot; : &quot;string&quot;,
   &quot;success_count&quot; : 0,
@@ -789,10 +790,10 @@ parent
   &quot;retries&quot; : 2,
   &quot;parent_job&quot; : &quot;parent_job&quot;,
   &quot;dependent_jobs&quot; : [ &quot;string&quot; ],
-  &quot;processors&quot; : {
-    &quot;string&quot; : &quot;string&quot;
-  },
-  &quot;concurrency&quot; : &quot;allow&quot;
+  &quot;processors&quot; : { },
+  &quot;concurrency&quot; : &quot;allow&quot;,
+  &quot;executor&quot; : &quot;string&quot;,
+  &quot;executor_config&quot; : { }
 }
 </code></pre>
 
@@ -804,8 +805,7 @@ parent
 {
   &quot;name&quot; : &quot;string&quot;,
   &quot;schedule&quot; : &quot;string&quot;,
-  &quot;command&quot; : &quot;string&quot;,
-  &quot;shell&quot; : true,
+  &quot;timezone&quot; : &quot;string&quot;,
   &quot;owner&quot; : &quot;string&quot;,
   &quot;owner_email&quot; : &quot;string&quot;,
   &quot;success_count&quot; : 0,
@@ -819,10 +819,10 @@ parent
   &quot;retries&quot; : 2,
   &quot;parent_job&quot; : &quot;parent_job&quot;,
   &quot;dependent_jobs&quot; : [ &quot;string&quot; ],
-  &quot;processors&quot; : {
-    &quot;string&quot; : &quot;string&quot;
-  },
-  &quot;concurrency&quot; : &quot;allow&quot;
+  &quot;processors&quot; : { },
+  &quot;concurrency&quot; : &quot;allow&quot;,
+  &quot;executor&quot; : &quot;string&quot;,
+  &quot;executor_config&quot; : { }
 }
 </code></pre>
 
@@ -897,8 +897,7 @@ parent
 {
   &quot;name&quot; : &quot;string&quot;,
   &quot;schedule&quot; : &quot;string&quot;,
-  &quot;command&quot; : &quot;string&quot;,
-  &quot;shell&quot; : true,
+  &quot;timezone&quot; : &quot;string&quot;,
   &quot;owner&quot; : &quot;string&quot;,
   &quot;owner_email&quot; : &quot;string&quot;,
   &quot;success_count&quot; : 0,
@@ -912,10 +911,10 @@ parent
   &quot;retries&quot; : 2,
   &quot;parent_job&quot; : &quot;parent_job&quot;,
   &quot;dependent_jobs&quot; : [ &quot;string&quot; ],
-  &quot;processors&quot; : {
-    &quot;string&quot; : &quot;string&quot;
-  },
-  &quot;concurrency&quot; : &quot;allow&quot;
+  &quot;processors&quot; : { },
+  &quot;concurrency&quot; : &quot;allow&quot;,
+  &quot;executor&quot; : &quot;string&quot;,
+  &quot;executor_config&quot; : { }
 }
 </code></pre>
 
@@ -990,8 +989,7 @@ parent
 {
   &quot;name&quot; : &quot;string&quot;,
   &quot;schedule&quot; : &quot;string&quot;,
-  &quot;command&quot; : &quot;string&quot;,
-  &quot;shell&quot; : true,
+  &quot;timezone&quot; : &quot;string&quot;,
   &quot;owner&quot; : &quot;string&quot;,
   &quot;owner_email&quot; : &quot;string&quot;,
   &quot;success_count&quot; : 0,
@@ -1005,10 +1003,10 @@ parent
   &quot;retries&quot; : 2,
   &quot;parent_job&quot; : &quot;parent_job&quot;,
   &quot;dependent_jobs&quot; : [ &quot;string&quot; ],
-  &quot;processors&quot; : {
-    &quot;string&quot; : &quot;string&quot;
-  },
-  &quot;concurrency&quot; : &quot;allow&quot;
+  &quot;processors&quot; : { },
+  &quot;concurrency&quot; : &quot;allow&quot;,
+  &quot;executor&quot; : &quot;string&quot;,
+  &quot;executor_config&quot; : { }
 }
 </code></pre>
 
@@ -1083,8 +1081,7 @@ parent
 {
   &quot;name&quot; : &quot;string&quot;,
   &quot;schedule&quot; : &quot;string&quot;,
-  &quot;command&quot; : &quot;string&quot;,
-  &quot;shell&quot; : true,
+  &quot;timezone&quot; : &quot;string&quot;,
   &quot;owner&quot; : &quot;string&quot;,
   &quot;owner_email&quot; : &quot;string&quot;,
   &quot;success_count&quot; : 0,
@@ -1098,10 +1095,10 @@ parent
   &quot;retries&quot; : 2,
   &quot;parent_job&quot; : &quot;parent_job&quot;,
   &quot;dependent_jobs&quot; : [ &quot;string&quot; ],
-  &quot;processors&quot; : {
-    &quot;string&quot; : &quot;string&quot;
-  },
-  &quot;concurrency&quot; : &quot;allow&quot;
+  &quot;processors&quot; : { },
+  &quot;concurrency&quot; : &quot;allow&quot;,
+  &quot;executor&quot; : &quot;string&quot;,
+  &quot;executor_config&quot; : { }
 }
 </code></pre>
 
@@ -1378,15 +1375,9 @@ parent
 </tr>
 
 <tr>
-<td><strong>command</strong>  <br><em>required</em></td>
-<td>Command to run.  <br><strong>Example</strong> : <code>&quot;string&quot;</code></td>
+<td><strong>timezone</strong>  <br><em>optional</em></td>
+<td>Timezone where the job will be executed. By default and when field is set to empty string, the job will run in local time.  <br><strong>Example</strong> : <code>&quot;string&quot;</code></td>
 <td>string</td>
-</tr>
-
-<tr>
-<td><strong>shell</strong>  <br><em>optional</em></td>
-<td>Use shell to run the command  <br><strong>Example</strong> : <code>true</code></td>
-<td>boolean</td>
 </tr>
 
 <tr>
@@ -1457,14 +1448,26 @@ parent
 
 <tr>
 <td><strong>processors</strong>  <br><em>optional</em></td>
-<td>Processor plugins used to process executions results of this job  <br><strong>Example</strong> : <code>{&lt;br&gt;  &quot;string&quot; : &quot;string&quot;&lt;br&gt;}</code></td>
-<td>&lt; string, string &gt; map</td>
+<td><strong>Example</strong> : <code>&quot;[processors](#processors)&quot;</code></td>
+<td><a href="#processors">processors</a></td>
 </tr>
 
 <tr>
 <td><strong>concurrency</strong>  <br><em>optional</em></td>
 <td>Concurrency policy for the job allow/forbid  <br><strong>Example</strong> : <code>&quot;allow&quot;</code></td>
 <td>string</td>
+</tr>
+
+<tr>
+<td><strong>executor</strong>  <br><em>optional</em></td>
+<td>Executor plugin used to run the job  <br><strong>Example</strong> : <code>&quot;string&quot;</code></td>
+<td>string</td>
+</tr>
+
+<tr>
+<td><strong>executor_config</strong>  <br><em>optional</em></td>
+<td><strong>Example</strong> : <code>&quot;[executor_config](#executor_config)&quot;</code></td>
+<td><a href="#executor_config">executor_config</a></td>
 </tr>
 </tbody>
 </table>
@@ -1607,6 +1610,136 @@ parent
 </tbody>
 </table>
 
+<p><a name="processors"></a></p>
+
+<h3 id="processors">processors</h3>
+
+<p>Processor plugins used to process executions results of this job</p>
+
+<p><em>Type</em> : &lt; string, &lt; string, string &gt; map &gt; map</p>
+
+<p><a name="processor_files"></a></p>
+
+<h3 id="processor-files">processor_files</h3>
+
+<p>Files processor save execution output to disk files.</p>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Schema</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><strong>forward</strong>  <br><em>optional</em></td>
+<td>Forward the output to the next processor  <br><strong>Example</strong> : <code>true</code></td>
+<td>boolean</td>
+</tr>
+
+<tr>
+<td><strong>log_dir</strong>  <br><em>optional</em></td>
+<td><strong>Example</strong> : <code>&quot;string&quot;</code></td>
+<td>string</td>
+</tr>
+</tbody>
+</table>
+
+<p><a name="processor_log"></a></p>
+
+<h3 id="processor-log">processor_log</h3>
+
+<p>Log processor saves executions output to the dkron log</p>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Schema</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><strong>forward</strong>  <br><em>optional</em></td>
+<td>Forward the output to the next processor  <br><strong>Example</strong> : <code>true</code></td>
+<td>boolean</td>
+</tr>
+</tbody>
+</table>
+
+<p><a name="processor_syslog"></a></p>
+
+<h3 id="processor-syslog">processor_syslog</h3>
+
+<p>Syslog processor route execution output to syslog</p>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Schema</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><strong>forward</strong>  <br><em>optional</em></td>
+<td>Forward the output to the next processor  <br><strong>Example</strong> : <code>true</code></td>
+<td>boolean</td>
+</tr>
+</tbody>
+</table>
+
+<p><a name="executor_config"></a></p>
+
+<h3 id="executor-config">executor_config</h3>
+
+<p>Executor plugin parameters</p>
+
+<p><em>Type</em> : &lt; string, string &gt; map</p>
+
+<p><a name="executor_shell"></a></p>
+
+<h3 id="executor-shell">executor_shell</h3>
+
+<p>Shell executor runs a command in shell</p>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Schema</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><strong>command</strong>  <br><em>optional</em></td>
+<td>Command to run  <br><strong>Example</strong> : <code>&quot;string&quot;</code></td>
+<td>string</td>
+</tr>
+
+<tr>
+<td><strong>env</strong>  <br><em>optional</em></td>
+<td>Comma separated environment variables pair  <br><strong>Example</strong> : <code>&quot;FOO=bar&quot;</code></td>
+<td>string</td>
+</tr>
+
+<tr>
+<td><strong>shell</strong>  <br><em>optional</em></td>
+<td><strong>Example</strong> : <code>true</code></td>
+<td>boolean</td>
+</tr>
+</tbody>
+</table>
+
 
 <footer class=" footline" >
 	
@@ -1736,6 +1869,21 @@ parent
             
                 
                     
+                    
+                
+                
+                
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
                 
                 
                 
@@ -1768,21 +1916,6 @@ parent
             
             
                 
-                    
-                    
-                
-                
-                
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                        
-                        
                     
                 
                 
@@ -1832,10 +1965,10 @@ parent
 
 
         
-            <a class="nav nav-prev" href="/usage/job-chaining/" title="Cron spec"> <i class="fa fa-chevron-left"></i></a>
+            <a class="nav nav-prev" href="/usage/plugins/develop/" title="Developing plugins"> <i class="fa fa-chevron-left"></i></a>
         
         
-            <a class="nav nav-next" href="/usage/integration/" title="Integration" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+            <a class="nav nav-next" href="/usage/concurrency/" title="Concurrency" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
         
     </div>
 

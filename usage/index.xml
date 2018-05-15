@@ -12,6 +12,17 @@
     
     
     <item>
+      <title>API</title>
+      <link>http://example.org/usage/api/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/usage/api/</guid>
+      <description>Dkron REST API 
+Overview You can communicate with Dkron using a RESTful JSON API over HTTP. Dkron nodes usually listen on port 8080 for API requests. All examples in this section assume that you&amp;rsquo;ve found a running leader at localhost:8080.
+Dkron implements a RESTful JSON API over HTTP to communicate with software clients. Dkron listens in port 8080 by default. All examples in this section assume that you&amp;rsquo;re using the default port.</description>
+    </item>
+    
+    <item>
       <title>Concurrency</title>
       <link>http://example.org/usage/concurrency/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -33,27 +44,6 @@ Field name | Mandatory? | Allowed values | Allowed special characters ----------
     </item>
     
     <item>
-      <title>Cron spec</title>
-      <link>http://example.org/usage/job-chaining/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>http://example.org/usage/job-chaining/</guid>
-      <description>Job chaining You can set some jobs to run after other job is executed. To setup a job that will be executed after any other given job, just set the parent_job property when saving the new job.
-The dependent job will be executed after the main job finished a successful execution.
-Child jobs schedule property will be ignored if it&amp;rsquo;s present.</description>
-    </item>
-    
-    <item>
-      <title>Dkron REST API</title>
-      <link>http://example.org/usage/api/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>http://example.org/usage/api/</guid>
-      <description>Overview You can communicate with Dkron using a RESTful JSON API over HTTP. Dkron nodes usually listen on port 8080 for API requests. All examples in this section assume that you&amp;rsquo;ve found a running leader at localhost:8080.
-Dkron implements a RESTful JSON API over HTTP to communicate with software clients. Dkron listens in port 8080 by default. All examples in this section assume that you&amp;rsquo;re using the default port.</description>
-    </item>
-    
-    <item>
       <title>Integration</title>
       <link>http://example.org/usage/integration/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -63,6 +53,17 @@ Dkron implements a RESTful JSON API over HTTP to communicate with software clien
 Install the following snippet in the node that will run the call to ECS
  Prerequisites The node that will run the call to ECS will need to have installed
  AWS cli jq  Example ecs-run --cluster cron --task-definition cron-taskdef --container-name cron --region us-east-1 --command &amp;quot;rake foo&amp;quot;</description>
+    </item>
+    
+    <item>
+      <title>Job chaining</title>
+      <link>http://example.org/usage/job-chaining/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/usage/job-chaining/</guid>
+      <description>Job chaining You can set some jobs to run after other job is executed. To setup a job that will be executed after any other given job, just set the parent_job property when saving the new job.
+The dependent job will be executed after the main job finished a successful execution.
+Child jobs schedule property will be ignored if it&amp;rsquo;s present.</description>
     </item>
     
     <item>

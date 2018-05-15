@@ -34,6 +34,14 @@
   </url>
   
   <url>
+    <loc>http://example.org/commercial-faq/</loc>
+  </url>
+  
+  <url>
+    <loc>http://example.org/usage/api/</loc>
+  </url>
+  
+  <url>
     <loc>http://example.org/categories/</loc>
     <priority>0</priority>
   </url>
@@ -51,17 +59,9 @@
   </url>
   
   <url>
-    <loc>http://example.org/usage/job-chaining/</loc>
-  </url>
-  
-  <url>
     <loc>http://example.org/</loc>
     <lastmod>2017-04-24T18:36:24+02:00</lastmod>
     <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://example.org/usage/api/</loc>
   </url>
   
   <url>
@@ -82,6 +82,10 @@
   </url>
   
   <url>
+    <loc>http://example.org/usage/job-chaining/</loc>
+  </url>
+  
+  <url>
     <loc>http://example.org/license/</loc>
   </url>
   
@@ -96,10 +100,6 @@
   
   <url>
     <loc>http://example.org/usage/target-nodes-spec/</loc>
-  </url>
-  
-  <url>
-    <loc>http://example.org/test-infra/</loc>
   </url>
   
 </urlset>
