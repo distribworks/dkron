@@ -1,5 +1,5 @@
 ---
-title: Cron spec
+title: Job chaining
 ---
 
 ## Job chaining
