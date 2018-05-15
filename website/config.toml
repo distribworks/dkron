@@ -26,8 +26,3 @@ name = "<i class='fa fa-github'></i> Github repo"
 identifier = "ds"
 url = "https://github.com/victorcoder/dkron"
 weight = 1
-
-[[menu.shortcuts]]
-name = "<i class='fa fa-camera'></i> Test infra"
-url = "/test-infra"
-weight = 11
