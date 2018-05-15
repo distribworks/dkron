@@ -506,11 +506,19 @@ assuming UTC timezone.</p>
 
 <h3 id="time-zones">Time zones</h3>
 
+<p>Dkron is able to schedule jobs in time zones, if you specify the <code>timezone</code> parameter in a
+job definition.</p>
+
+<p>If the time zone is not specified, the following rules apply:</p>
+
 <p>All interpretation and scheduling is done in the machine&rsquo;s local time zone (as
 provided by the Go time package (<a href="http://www.golang.org/pkg/time">http://www.golang.org/pkg/time</a>).</p>
 
 <p>Be aware that jobs scheduled during daylight-savings leap-ahead transitions will
 not be run!</p>
+
+<p>If you specify <code>timezone</code> the job will be schduled taking into account daylight-savings
+and leap-ahead transitions, running the job in the actual time in the specified time zone.</p>
 
 
 <footer class=" footline" >
