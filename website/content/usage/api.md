@@ -1,7 +1,9 @@
 ---
-title: Dkron REST API
-toc: true
+  title: API
 ---
+
+# Dkron REST API
+
 
 <a name="overview"></a>
 ## Overview
@@ -13,7 +15,7 @@ Default API responses are unformatted JSON add the `pretty=true` param to format
 
 
 ### Version information
-*Version* : 0.9.5
+*Version* : 0.10.0
 
 
 ### URI scheme
@@ -149,8 +151,7 @@ json :
 {
   "name" : "string",
   "schedule" : "string",
-  "command" : "string",
-  "shell" : true,
+  "timezone" : "string",
   "owner" : "string",
   "owner_email" : "string",
   "success_count" : 0,
@@ -164,11 +165,10 @@ json :
   "retries" : 2,
   "parent_job" : "parent_job",
   "dependent_jobs" : [ "string" ],
-  "processors" : {
-    "string" : "string"
-  },
+  "processors" : { },
   "concurrency" : "allow",
-  "timezone": "string"
+  "executor" : "string",
+  "executor_config" : { }
 }
 ```
 
@@ -181,8 +181,7 @@ json :
 {
   "name" : "string",
   "schedule" : "string",
-  "command" : "string",
-  "shell" : true,
+  "timezone" : "string",
   "owner" : "string",
   "owner_email" : "string",
   "success_count" : 0,
@@ -196,11 +195,10 @@ json :
   "retries" : 2,
   "parent_job" : "parent_job",
   "dependent_jobs" : [ "string" ],
-  "processors" : {
-    "string" : "string"
-  },
+  "processors" : { },
   "concurrency" : "allow",
-  "timezone": "string"
+  "executor" : "string",
+  "executor_config" : { }
 }
 ```
 
@@ -247,8 +245,7 @@ json :
 {
   "name" : "string",
   "schedule" : "string",
-  "command" : "string",
-  "shell" : true,
+  "timezone" : "string",
   "owner" : "string",
   "owner_email" : "string",
   "success_count" : 0,
@@ -262,11 +259,10 @@ json :
   "retries" : 2,
   "parent_job" : "parent_job",
   "dependent_jobs" : [ "string" ],
-  "processors" : {
-    "string" : "string"
-  },
+  "processors" : { },
   "concurrency" : "allow",
-  "timezone": "string"
+  "executor" : "string",
+  "executor_config" : { }
 }
 ```
 
@@ -313,8 +309,7 @@ json :
 {
   "name" : "string",
   "schedule" : "string",
-  "command" : "string",
-  "shell" : true,
+  "timezone" : "string",
   "owner" : "string",
   "owner_email" : "string",
   "success_count" : 0,
@@ -328,11 +323,10 @@ json :
   "retries" : 2,
   "parent_job" : "parent_job",
   "dependent_jobs" : [ "string" ],
-  "processors" : {
-    "string" : "string"
-  },
+  "processors" : { },
   "concurrency" : "allow",
-  "timezone": "string"
+  "executor" : "string",
+  "executor_config" : { }
 }
 ```
 
@@ -379,8 +373,7 @@ json :
 {
   "name" : "string",
   "schedule" : "string",
-  "command" : "string",
-  "shell" : true,
+  "timezone" : "string",
   "owner" : "string",
   "owner_email" : "string",
   "success_count" : 0,
@@ -394,11 +387,10 @@ json :
   "retries" : 2,
   "parent_job" : "parent_job",
   "dependent_jobs" : [ "string" ],
-  "processors" : {
-    "string" : "string"
-  },
+  "processors" : { },
   "concurrency" : "allow",
-  "timezone": "string"
+  "executor" : "string",
+  "executor_config" : { }
 }
 ```
 
@@ -589,9 +581,7 @@ A Job represents a scheduled task to execute.
 |---|---|---|
 |**name**  <br>*required*|Name for the job.  <br>**Example** : `"string"`|string|
 |**schedule**  <br>*required*|Cron expression for the job.  <br>**Example** : `"string"`|string|
-|**command**  <br>*required*|Command to run.  <br>**Example** : `"string"`|string|
-|**timezone**  <br>*optional*|Timezone where the schedule will be executed. <br>**Example** : `"Europe/Paris"`|string|
-|**shell**  <br>*optional*|Use shell to run the command  <br>**Example** : `true`|boolean|
+|**timezone**  <br>*optional*|Timezone where the job will be executed. By default and when field is set to empty string, the job will run in local time.  <br>**Example** : `"string"`|string|
 |**owner**  <br>*optional*|Owner of the job  <br>**Example** : `"string"`|string|
 |**owner_email**  <br>*optional*|Email of the owner  <br>**Example** : `"string"`|string|
 |**success_count**  <br>*optional*  <br>*read-only*|Number of successful executions  <br>**Example** : `0`|integer|
@@ -603,8 +593,10 @@ A Job represents a scheduled task to execute.
 |**retries**  <br>*optional*|Number of times to retry a failed job execution  <br>**Example** : `2`|integer|
 |**parent_job**  <br>*optional*|The name/id of the job that will trigger the execution of this job  <br>**Example** : `"parent_job"`|string|
 |**dependent_jobs**  <br>*optional*|Array containing the jobs that depends on this one  <br>**Example** : `[ "string" ]`|< string > array|
-|**processors**  <br>*optional*|Processor plugins used to process executions results of this job  <br>**Example** : `{<br>  "string" : "string"<br>}`|< string, string > map|
+|**processors**  <br>*optional*|**Example** : `"[processors](#processors)"`|[processors](#processors)|
 |**concurrency**  <br>*optional*|Concurrency policy for the job allow/forbid  <br>**Example** : `"allow"`|string|
+|**executor**  <br>*optional*|Executor plugin used to run the job  <br>**Example** : `"string"`|string|
+|**executor_config**  <br>*optional*|**Example** : `"[executor_config](#executor_config)"`|[executor_config](#executor_config)|
 
 
 <a name="member"></a>
@@ -640,6 +632,63 @@ An execution represents a timed job run.
 |**success**  <br>*optional*|the execution run successfuly  <br>**Example** : `true`|boolean|
 |**output**  <br>*optional*|partial output of the command execution  <br>**Example** : `"string"`|string|
 |**node_name**  <br>*optional*|name of the node that executed the command  <br>**Example** : `"string"`|string|
+
+
+<a name="processors"></a>
+### processors
+Processor plugins used to process executions results of this job
+
+*Type* : < string, < string, string > map > map
+
+
+<a name="processor_files"></a>
+### processor_files
+Files processor save execution output to disk files.
+
+
+|Name|Description|Schema|
+|---|---|---|
+|**forward**  <br>*optional*|Forward the output to the next processor  <br>**Example** : `true`|boolean|
+|**log_dir**  <br>*optional*|**Example** : `"string"`|string|
+
+
+<a name="processor_log"></a>
+### processor_log
+Log processor saves executions output to the dkron log
+
+
+|Name|Description|Schema|
+|---|---|---|
+|**forward**  <br>*optional*|Forward the output to the next processor  <br>**Example** : `true`|boolean|
+
+
+<a name="processor_syslog"></a>
+### processor_syslog
+Syslog processor route execution output to syslog
+
+
+|Name|Description|Schema|
+|---|---|---|
+|**forward**  <br>*optional*|Forward the output to the next processor  <br>**Example** : `true`|boolean|
+
+
+<a name="executor_config"></a>
+### executor_config
+Executor plugin parameters
+
+*Type* : < string, string > map
+
+
+<a name="executor_shell"></a>
+### executor_shell
+Shell executor runs a command in shell
+
+
+|Name|Description|Schema|
+|---|---|---|
+|**command**  <br>*optional*|Command to run  <br>**Example** : `"string"`|string|
+|**env**  <br>*optional*|Comma separated environment variables pair  <br>**Example** : `"FOO=bar"`|string|
+|**shell**  <br>*optional*|**Example** : `true`|boolean|
 
 
 

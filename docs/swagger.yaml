@@ -8,7 +8,7 @@ produces:
 schemes:
   - http
 info:
-  version: "0.9.5"
+  version: 0.10.0
   title: Dkron REST API
   description: |
     You can communicate with Dkron using a RESTful JSON API over HTTP. Dkron nodes usually listen on port `8080` for API requests. All examples in this section assume that you've found a running leader at `localhost:8080`.
@@ -212,24 +212,9 @@ definitions:
         type: string
         description: "Cron expression for the job."
         readOnly: false
-	  timezone:
+      timezone:
         type: string
-        description: "Timezone where the job will be executed.  By default and when field is set to empty string, the job will run in local time.
-        readOnly: false
-      command:
-        type: string
-        description: "Command to run."
-        readOnly: false
-      environment_variables:
-        type: array
-        items:
-          type: string
-          description: "String representing a environment variable, in the form 'key=value'."
-        description: "Extra environment variables to be passed to the process."
-        readOnly: false
-      shell:
-        type: boolean
-        description: "Use shell to run the command"
+        description: "Timezone where the job will be executed. By default and when field is set to empty string, the job will run in local time."
         readOnly: false
       owner:
         type: string
@@ -286,15 +271,19 @@ definitions:
         example: ['dependent_job']
         readOnly: true
       processors:
-        type: object
-        description: "Processor plugins used to process executions results of this job"
-        additionalProperties:
-          type: string
+        $ref: '#/definitions/processors'
         readOnly: false
       concurrency:
         type: string
         description: "Concurrency policy for the job allow/forbid"
         example: "allow"
+        readOnly: false
+      executor:
+        type: string
+        description: "Executor plugin used to run the job"
+        readOnly: false
+      executor_config:
+        $ref: '#/definitions/executor_config'
         readOnly: false
   member:
     type: object
@@ -359,3 +348,57 @@ definitions:
       node_name:
         type: string
         description: "name of the node that executed the command"
+  
+  processors:
+    type: object
+    description: Processor plugins used to process executions results of this job
+    additionalProperties:
+      type: object
+      additionalProperties:
+        type: string
+  
+  processor_files:
+    type: object
+    description: Files processor save execution output to disk files.
+    properties:
+      forward:
+        description: Forward the output to the next processor
+        type: boolean
+      log_dir:
+        type: string
+  
+  processor_log:
+    type: object
+    description: Log processor saves executions output to the dkron log
+    properties:
+      forward:
+        description: Forward the output to the next processor
+        type: boolean
+  
+  processor_syslog:
+    type: object
+    description: Syslog processor route execution output to syslog
+    properties:
+      forward:
+        description: Forward the output to the next processor
+        type: boolean
+  
+  executor_config:
+    type: object
+    description: Executor plugin parameters
+    additionalProperties:
+      type: string
+      
+  executor_shell:
+    type: object
+    description: Shell executor runs a command in shell
+    properties:
+      command:
+        description: Command to run
+        type: string
+      env:
+        description: Comma separated environment variables pair
+        example: FOO=bar
+        type: string
+      shell:
+        type: boolean
