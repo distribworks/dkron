@@ -69,7 +69,7 @@
     </table>
 
     <!-- Modal Delete -->
-    <div ng-repeat="job in jobs" class="modal fade" id="{{`{{ $index }}`}}-modal-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div ng-repeat="job in pagedItems[currentPage] | filter:searchJob" class="modal fade" id="{{`{{ $index }}`}}-modal-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-body">
@@ -84,7 +84,7 @@
       </div>
 
       <!-- Modal -->
-      <div ng-repeat="job in jobs" class="modal fade" id="{{`{{ $index }}`}}-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div ng-repeat="job in pagedItems[currentPage] | filter:searchJob" class="modal fade" id="{{`{{ $index }}`}}-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
