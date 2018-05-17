@@ -1,3 +1,9 @@
+## 0.10.1 (2018-05-17)
+
+### Bug fixes
+
+- Fix dashboard job view/delete modals
+
 ## 0.10.0 (2018-05-14)
 
 ### Bug fixes
