@@ -141,7 +141,7 @@ func (h *HTTPTransport) jobCreateOrUpdateHandler(c *gin.Context) {
 
 	// Parse values from JSON
 	if err := c.BindJSON(&job); err != nil {
-		c.Writer.WriteString(err.Error())
+		c.Writer.WriteString("Incorrect or unexpected parameters")
 		log.Error(err)
 		return
 	}
