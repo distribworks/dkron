@@ -69,6 +69,9 @@ https://github.com/oldmantaiter/pydkron
 Ruby client
 https://github.com/jobandtalent/dkron-rb
 
+PHP client
+https://github.com/gromo/dkron-php-adapter
+
 ## Get in touch
 
 - Twitter: [@dkronio](https://twitter.com/dkronio) or [@victorcoder](https://twitter.com/victorcoder)
