@@ -67,12 +67,15 @@ func NewStore(backend string, machines []string, a *Agent, keyspace string, conf
 		"keyspace": keyspace,
 	}).Debug("store: Backend config")
 
-	_, err = s.List(keyspace, nil)
-	if err != store.ErrKeyNotFound && err != nil {
-		log.WithError(err).Fatal("store: Store backend not reachable")
-	}
-
 	return &Store{Client: s, agent: a, keyspace: keyspace, backend: backend}
+}
+
+func (s *Store) Healthy() error {
+	_, err := s.Client.List(s.keyspace, nil)
+	if err != store.ErrKeyNotFound && err != nil {
+		return err
+	}
+	return nil
 }
 
 // Store a job
