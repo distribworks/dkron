@@ -61,7 +61,7 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 
 		output.Write(out)
 	} else {
-		log.WithField("executor", executor).Error("invoke: Specified executor is not present")
+		log.WithField("executor", jex).Error("invoke: Specified executor is not present")
 	}
 
 	execution.FinishedAt = time.Now()

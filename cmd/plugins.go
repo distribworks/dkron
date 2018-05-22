@@ -60,9 +60,9 @@ func (p *Plugins) DiscoverPlugins() error {
 	}
 
 	for _, file := range processors {
-		// Look for foo-bar-baz. The plugin name is "baz"
-		parts := strings.SplitN(file, "-", 3)
-		if len(parts) != 3 {
+
+		pluginName, ok := getPluginName(file)
+		if !ok {
 			continue
 		}
 
@@ -70,13 +70,13 @@ func (p *Plugins) DiscoverPlugins() error {
 		if err != nil {
 			return err
 		}
-		p.Processors[parts[2]] = raw.(dkron.ExecutionProcessor)
+		p.Processors[pluginName] = raw.(dkron.ExecutionProcessor)
 	}
 
 	for _, file := range executors {
-		// Look for foo-bar-baz. The plugin name is "baz"
-		parts := strings.SplitN(file, "-", 3)
-		if len(parts) != 3 {
+
+		pluginName, ok := getPluginName(file)
+		if !ok {
 			continue
 		}
 
@@ -84,10 +84,22 @@ func (p *Plugins) DiscoverPlugins() error {
 		if err != nil {
 			return err
 		}
-		p.Executors[parts[2]] = raw.(dkron.Executor)
+		p.Executors[pluginName] = raw.(dkron.Executor)
 	}
 
 	return nil
+}
+
+func getPluginName(file string) (string, bool) {
+	// Look for foo-bar-baz. The plugin name is "baz"
+	parts := strings.SplitN(file, "-", 3)
+	if len(parts) != 3 {
+		return "", false
+	}
+
+	// This cleans off the .exe for windows plugins
+	name := strings.TrimRight(parts[2], ".exe")
+	return name, true
 }
 
 func (Plugins) pluginFactory(path string, pluginType string) (interface{}, error) {
