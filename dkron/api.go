@@ -138,7 +138,13 @@ func (h *HTTPTransport) jobCreateOrUpdateHandler(c *gin.Context) {
 	job := Job{
 		Concurrency: ConcurrencyAllow,
 	}
-	c.BindJSON(&job)
+
+	// Parse values from JSON
+	if err := c.BindJSON(&job); err != nil {
+		c.Writer.WriteString("Incorrect or unexpected parameters")
+		log.Error(err)
+		return
+	}
 
 	// Save the job to the store
 	if err := h.agent.Store.SetJob(&job, true); err != nil {
