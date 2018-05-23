@@ -574,7 +574,15 @@ func (a *Agent) RefreshJobStatus(jobName string) {
 	execs, _ := a.Store.GetLastExecutionGroup(jobName)
 	nodes := []string{}
 
+	unfinishedExecutions := []*Execution{}
 	for _, ex := range execs {
+		if ex.FinishedAt.IsZero() {
+			unfinishedExecutions = append(unfinishedExecutions, ex)
+		}
+	}
+
+	for _, ex := range unfinishedExecutions {
+		// Ignore executions that we know are finished
 		log.WithFields(logrus.Fields{
 			"member":        ex.NodeName,
 			"execution_key": ex.Key(),
@@ -586,7 +594,7 @@ func (a *Agent) RefreshJobStatus(jobName string) {
 
 	statuses := a.executionDoneQuery(nodes, group)
 
-	for _, ex := range execs {
+	for _, ex := range unfinishedExecutions {
 		if s, ok := statuses[ex.NodeName]; ok {
 			done, _ := strconv.ParseBool(s)
 			if done {
