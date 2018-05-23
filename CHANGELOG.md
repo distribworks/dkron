@@ -1,3 +1,13 @@
+## 0.10.2 (2018-05-23)
+
+### Bug fixes
+
+- Fix status check
+- Remove unnecessary updates of job finish times (@sysadmind)
+- Reflect store status in API
+- Fix windows plugins (@sysadmind)
+- Stop Job update on JSON parse error in API (@gromo)
+
 ## 0.10.1 (2018-05-17)
 
 ### Bug fixes
