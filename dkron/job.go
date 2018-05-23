@@ -251,18 +251,16 @@ func (j *Job) isRunnable() bool {
 	if j.Concurrency == ConcurrencyForbid {
 		j.Agent.RefreshJobStatus(j.Name)
 	}
-	if j.Status == StatusNotSet {
-		j.Status = j.GetStatus()
-	}
+	status := j.GetStatus()
 
-	if j.Status == StatusRunning {
+	if status == StatusRunning {
 		if j.Concurrency == ConcurrencyAllow {
 			return true
 		} else if j.Concurrency == ConcurrencyForbid {
 			log.WithFields(logrus.Fields{
 				"job":         j.Name,
 				"concurrency": j.Concurrency,
-				"job_status":  j.Status,
+				"job_status":  status,
 			}).Debug("scheduler: Skipping execution")
 			return false
 		}
