@@ -3,6 +3,7 @@ package dkron
 import (
 	"errors"
 	"expvar"
+	"time"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/armon/go-metrics"
@@ -19,11 +20,11 @@ var (
 type Cron interface {
 	Start()
 	Stop()
-	Schedule(schedule cron.Schedule, cmd cron.Job)
+	Schedule(schedule cron.Schedule, cmd cron.Job, lastRun time.Time)
 	Entries() []*cron.Entry
-	AddFunc(spec string, cmd func()) error
-	AddJob(spec string, cmd cron.Job) error
-	AddTimezoneSensitiveJob(spec, timezone string, cmd cron.Job) error
+	AddFunc(spec string, cmd func(), lastRun time.Time) error
+	AddJob(spec string, cmd cron.Job, lastRun time.Time) error
+	AddTimezoneSensitiveJob(spec, timezone string, cmd cron.Job, lastRun time.Time) error
 }
 
 type Scheduler struct {
@@ -51,10 +52,15 @@ func (s *Scheduler) Start(jobs []*Job) {
 		cronInspect.Set(job.Name, job)
 		metrics.EmitKey([]string{"scheduler", "job", "add", job.Name}, 1)
 
+		lastRun := job.LastError
+		if job.LastSuccess.After(job.LastError) {
+			lastRun = job.LastSuccess
+		}
+
 		if job.Timezone != "" {
-			s.Cron.AddTimezoneSensitiveJob(job.Schedule, job.Timezone, job)
+			s.Cron.AddTimezoneSensitiveJob(job.Schedule, job.Timezone, job, lastRun)
 		} else {
-			s.Cron.AddJob(job.Schedule, job)
+			s.Cron.AddJob(job.Schedule, job, lastRun)
 		}
 	}
 	s.Cron.Start()

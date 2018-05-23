@@ -83,23 +83,23 @@ type FuncJob func()
 func (f FuncJob) Run() { f() }
 
 // AddFunc adds a func to the Cron to be run on the given schedule.
-func (c *Cron) AddFunc(spec string, cmd func()) error {
-	return c.AddJob(spec, FuncJob(cmd))
+func (c *Cron) AddFunc(spec string, cmd func(), lastRun time.Time) error {
+	return c.AddJob(spec, FuncJob(cmd), lastRun)
 }
 
 // AddJob adds a Job to the Cron to be run on the given schedule.
-func (c *Cron) AddJob(spec string, cmd Job) error {
+func (c *Cron) AddJob(spec string, cmd Job, lastRun time.Time) error {
 	schedule, err := Parse(spec)
 	if err != nil {
 		return err
 	}
-	c.Schedule(schedule, cmd)
+	c.Schedule(schedule, cmd, lastRun)
 	return nil
 }
 
 // AddTimezonSensitiveJob adds a Job to the Cron that will be executed in
 // respect to a particular timezone on the given schedule.
-func (c *Cron) AddTimezoneSensitiveJob(spec, timezone string, cmd Job) error {
+func (c *Cron) AddTimezoneSensitiveJob(spec, timezone string, cmd Job, lastRun time.Time) error {
 	schedule, err := Parse(spec)
 	if err != nil {
 		return err
@@ -109,15 +109,16 @@ func (c *Cron) AddTimezoneSensitiveJob(spec, timezone string, cmd Job) error {
 		return err
 	}
 
-	c.Schedule(tzSchedule, cmd)
+	c.Schedule(tzSchedule, cmd, lastRun)
 	return nil
 }
 
 // Schedule adds a Job to the Cron to be run on the given schedule.
-func (c *Cron) Schedule(schedule Schedule, cmd Job) {
+func (c *Cron) Schedule(schedule Schedule, cmd Job, lastRun time.Time) {
 	entry := &Entry{
 		Schedule: schedule,
 		Job:      cmd,
+		Prev:     lastRun,
 	}
 	if !c.running {
 		c.entries = append(c.entries, entry)
@@ -149,7 +150,7 @@ func (c *Cron) run() {
 	// Figure out the next activation times for each entry.
 	now := time.Now().Local()
 	for _, entry := range c.entries {
-		entry.Next = entry.Schedule.Next(now)
+		entry.Next = entry.Schedule.Next(entry.Prev)
 	}
 
 	for {
@@ -174,13 +175,13 @@ func (c *Cron) run() {
 				}
 				go e.Job.Run()
 				e.Prev = e.Next
-				e.Next = e.Schedule.Next(effective)
+				e.Next = e.Schedule.Next(time.Now().Local())
 			}
 			continue
 
 		case newEntry := <-c.add:
 			c.entries = append(c.entries, newEntry)
-			newEntry.Next = newEntry.Schedule.Next(now)
+			newEntry.Next = newEntry.Schedule.Next(newEntry.Prev)
 
 		case <-c.snapshot:
 			c.snapshot <- c.entrySnapshot()
