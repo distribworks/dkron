@@ -445,17 +445,21 @@ func (a *Agent) eventLoop() {
 				}
 
 				if query.Name == QueryExecutionDone {
+					group := string(query.Payload)
+
 					log.WithFields(logrus.Fields{
 						"query":   query.Name,
-						"payload": string(query.Payload),
+						"payload": group,
 						"at":      query.LTime,
 					}).Debug("agent: Execution done requested")
 
 					// Find if the indicated execution is done processing
 					var err error
-					if _, ok := runningExecutions.Load(string(query.Payload)); ok {
+					if _, ok := runningExecutions.Load(group); ok {
+						log.WithField("group", group).Debug("agent: Execution is still running")
 						err = query.Respond([]byte("false"))
 					} else {
+						log.WithField("group", group).Debug("agent: Execution is not running")
 						err = query.Respond([]byte("true"))
 					}
 					if err != nil {
