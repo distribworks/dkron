@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"os/exec"
+	"path"
 	"path/filepath"
 	"strings"
 
@@ -92,7 +93,8 @@ func (p *Plugins) DiscoverPlugins() error {
 
 func getPluginName(file string) (string, bool) {
 	// Look for foo-bar-baz. The plugin name is "baz"
-	parts := strings.SplitN(file, "-", 3)
+	base := path.Base(file)
+	parts := strings.SplitN(base, "-", 3)
 	if len(parts) != 3 {
 		return "", false
 	}
