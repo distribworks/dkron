@@ -15,7 +15,8 @@ import (
 )
 
 var (
-	ErrExecutionDoneForDeletedJob = errors.New("rpc: Received execution done for a deleted job.")
+	ErrExecutionDoneForDeletedJob = errors.New("rpc: Received execution done for a deleted job")
+	ErrRPCDialing                 = errors.New("rpc: Error dialing, verify the network connection to the server")
 )
 
 type RPCServer struct {
@@ -221,8 +222,8 @@ func (rpcc *RPCClient) GetJob(jobName string) (*Job, error) {
 		log.WithFields(logrus.Fields{
 			"err":         err,
 			"server_addr": rpcc.ServerAddr,
-		}).Error("rpc: error dialing.")
-		return nil, err
+		}).Error("rpc: Error dialing")
+		return nil, ErrRPCDialing
 	}
 	defer client.Close()
 
