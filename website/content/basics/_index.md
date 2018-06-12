@@ -29,6 +29,7 @@ Dkron runs on Linux, OSX and Windows. It can be used to run scheduled commands o
 
 Dkron uses the efficient and lightweight [gossip protocol](https://www.serfdom.io/docs/internals/gossip.html) underneath to communicate with nodes. Failure notification and task handling are run efficiently across an entire cluster of any size.
 
+## Web UI
 <center class="hidden-xs">
 ![](/img/screenshot1.png)
 </center>
