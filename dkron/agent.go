@@ -424,9 +424,25 @@ func (a *Agent) eventLoop() {
 					}).Info("agent: Starting job")
 
 					rpcc := RPCClient{ServerAddr: rqp.RPCAddr}
+
+					// There are two error types to handle here:
+					// Key not found when the job is removed from store
+					// Dial tcp error
+					// In case of deleted job or other error, we should report and break the flow.
+					// On dial error we should retry with a limit.
+					i := 0
+				RetryGetJob:
 					job, err := rpcc.GetJob(rqp.Execution.JobName)
 					if err != nil {
+						if err == ErrRPCDialing {
+							if i < 10 {
+								i++
+								goto RetryGetJob
+							}
+							log.WithError(err).Fatal("agent: A working RPC connection to a Dkron server must exists.")
+						}
 						log.WithError(err).Error("agent: Error on rpc.GetJob call")
+						continue
 					}
 					log.WithField("command", job.Command).Debug("agent: GetJob by RPC")
 
