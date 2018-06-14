@@ -1,4 +1,61 @@
-all: test
+BIN_NAME := dkron
+DEP_VERSION=0.4.1
+VERSION := 0.10.3
+PKGNAME := dkron
+LICENSE := LGPL 3.0
+VENDOR=
+URL := https://dkron.io
+RELEASE := 0
+OS := $(shell uname | tr '[:upper:]' '[:lower:]')
+ARCH := amd64
+PLUGINS=$(wildcard builtin/bins/dkron-*)
+BINS=$(wildcard build/*/dkron-*)
+DESC := Distributed, fault tolerant job scheduling system
+MAINTAINER := Victor Castell <victor@distrib.works>
+DOCKER_WDIR := /tmp/fpm
+DOCKER_FPM := devopsfaith/fpm
+
+PLATFORMS := darwin/amd64 linux/amd64 linux/arm windows/amd64
+TEMP = $(subst /, ,$@)
+GOOS = $(word 1, $(TEMP))
+GOARCH = $(word 2, $(TEMP))
+ifeq ($(GOOS),windows)
+	ext=.exe
+else
+	ext=
+endif
+
+LDFLAGS=-ldflags="-X github.com/victorcoder/dkron/dkron.Version=${VERSION}"
+
+FPM_OPTS=-s dir -v $(VERSION) -n $(PKGNAME) \
+  --license "$(LICENSE)" \
+  --vendor "$(VENDOR)" \
+  --maintainer "$(MAINTAINER)" \
+  --architecture $(ARCH) \
+  --url "$(URL)" \
+  --description  "$(DESC)" \
+	--config-files etc/ \
+  --verbose
+
+DEB_OPTS=
+RPM_OPTS= #--rpm-sign
+
+default: build
+
+all: clean build_all
+
+release: build_all dep rpm
+
+$(PLATFORMS):
+	$(foreach p,$(PLUGINS),$(shell GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o build/$(GOOS)_$(GOARCH)/$(shell basename $(p))$(ext) ./$(p)))
+	GOOS=$(GOOS) GOARCH=$(GOARCH) go build ${LDFLAGS} -o build/$(GOOS)_$(GOARCH)/${BIN_NAME}$(ext) .
+
+.PHONY: build
+build:
+	$(foreach p,$(PLUGINS),$(shell go build -o $(shell basename $(p)) ./$(p)))
+	go build ${LDFLAGS} -o main .
+
+build_all: $(PLATFORMS)
 
 doc:
 	cd website; hugo -d ../public
@@ -14,6 +71,51 @@ gen:
 test:
 	@bash --norc -i ./scripts/test.sh
 
-release:
-	@$(MAKE) doc
-	@goxc -tasks+=publish-github
+builder/skel/%/etc/dkron/dkron.yml: builder/files/dkron.yml
+	mkdir -p "$(dir $@)"
+	cp $< "$@"
+
+builder/skel/%/lib/systemd/system/dkron.service: builder/files/dkron.service
+	mkdir -p "$(dir $@)"
+	cp builder/files/dkron.service "$@"
+
+builder/skel/%/usr/bin: build_all
+	mkdir -p $@
+	cp build/linux_amd64/* $@
+
+tgz: builder/skel/tgz/usr/bin
+tgz: builder/skel/tgz/etc/dkron/dkron.yml
+tgz: builder/skel/tgz/etc/init.d/dkron
+	tar zcvf dkron_${VERSION}_${OS}_${ARCH}.tar.gz -C builder/skel/tgz/ .
+
+.PHONY: deb
+deb: builder/skel/deb/usr/bin
+deb: builder/skel/deb/etc/dkron/dkron.yml
+	docker run --rm -it -v "${PWD}:${DOCKER_WDIR}" -w ${DOCKER_WDIR} ${DOCKER_FPM}:deb -t deb ${DEB_OPTS} \
+		--iteration ${RELEASE} \
+		--deb-systemd builder/files/dkron.service \
+		--chdir builder/skel/$@ \
+		${FPM_OPTS}
+	docker build --build-arg debfile=dkron_${VERSION}-${RELEASE}_amd64.deb -f tests/deb/Dockerfile -t test_dkron_${VERSION}_deb .
+
+.PHONY: rpm
+rpm: builder/skel/rpm/usr/bin
+rpm: builder/skel/rpm/usr/lib/systemd/system/dkron.service
+rpm: builder/skel/rpm/etc/dkron/dkron.yml
+	docker run --rm -it -v "${PWD}/rpmmacros:/root/.rpmmacros" \
+		-v "${PWD}:${DOCKER_WDIR}" -w ${DOCKER_WDIR} ${DOCKER_FPM}:rpm -t rpm ${RPM_OPTS} \
+		--iteration ${RELEASE} \
+		-C builder/skel/$@ \
+		${FPM_OPTS}
+	docker build --build-arg rpmfile=dkron-${VERSION}-${RELEASE}.x86_64.rpm -f tests/rpm/Dockerfile -t test_dkron_${VERSION}_rpm .
+
+.PHONY: clean
+clean:
+	rm -f main
+	rm -f dkron-*
+	rm -rf build/*
+	rm -rf builder/skel/*
+	rm -f *.deb
+	rm -f *.rpm
+	rm -f *.tar.gz
+	rm -rf tmp

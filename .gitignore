@@ -13,6 +13,9 @@ main
 /dkron-processor-*
 /dkron-executor-*
 *.log
-.glide
 config/
-.idea/
+*.deb
+*.rpm
+build/
+builder/skel/
+!builder/skel/.keep
