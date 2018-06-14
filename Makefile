@@ -70,8 +70,8 @@ builder/skel/%: build_all
 	cp README.md LICENSE builder/files/dkron.yml $(wildcard build/$*)/* $@
 
 .PHONY: tgz
-tgz: builder/skel/windows_amd64
-	tar zcvf dkron_${VERSION}_$(shell basename $<).tar.gz -C $< .
+tgz: $(addprefix builder/skel/,${PLATFORMS})
+	$(foreach p,$(PLATFORMS),$(shell tar zcvf dkron_${VERSION}_${p}.tar.gz -C $< .))
 
 .PHONY: deb
 deb: builder/skel/deb/usr/bin
