@@ -15,15 +15,11 @@ MAINTAINER := Victor Castell <victor@distrib.works>
 DOCKER_WDIR := /tmp/fpm
 DOCKER_FPM := devopsfaith/fpm
 
-PLATFORMS := darwin/amd64 linux/amd64 linux/arm windows/amd64
-TEMP = $(subst /, ,$@)
+PLATFORMS := darwin_amd64 linux_amd64 linux_arm windows_amd64
+TEMP = $(subst _, ,$@)
 GOOS = $(word 1, $(TEMP))
 GOARCH = $(word 2, $(TEMP))
-ifeq ($(GOOS),windows)
-	ext=.exe
-else
-	ext=
-endif
+TARS := $(foreach t,$(PLATFORMS),builder/skel/$(t))
 
 LDFLAGS=-ldflags="-X github.com/victorcoder/dkron/dkron.Version=${VERSION}"
 
@@ -45,31 +41,17 @@ default: build
 all: clean build_all
 
 release: build_all dep rpm
-
-$(PLATFORMS):
-	$(foreach p,$(PLUGINS),$(shell GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o build/$(GOOS)_$(GOARCH)/$(shell basename $(p))$(ext) ./$(p)))
-	GOOS=$(GOOS) GOARCH=$(GOARCH) go build ${LDFLAGS} -o build/$(GOOS)_$(GOARCH)/${BIN_NAME}$(ext) .
-
+	
 .PHONY: build
 build:
 	$(foreach p,$(PLUGINS),$(shell go build -o $(shell basename $(p)) ./$(p)))
 	go build ${LDFLAGS} -o main .
 
 build_all: $(PLATFORMS)
-
-doc:
-	cd website; hugo -d ../public
-	ghp-import -p public
-
-apidoc:
-	java -jar ~/bin/swagger2markup-cli-1.2.0.jar convert -i website/content/swagger.yaml -f website/content/usage/api -c docs/config.properties
-
-gen:
-	go generate ./dkron
-	go fmt ./dkron/bindata.go
-
-test:
-	@bash --norc -i ./scripts/test.sh
+$(PLATFORMS):
+	$(eval ext := $(if $(filter $(GOOS),windows),.exe))
+	$(foreach p,$(PLUGINS),$(shell GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o build/$(GOOS)_$(GOARCH)/$(shell basename $(p))$(ext) ./$(p)))
+	GOOS=$(GOOS) GOARCH=$(GOARCH) go build ${LDFLAGS} -o build/$(GOOS)_$(GOARCH)/${BIN_NAME}$(ext) .
 
 builder/skel/%/etc/dkron/dkron.yml: builder/files/dkron.yml
 	mkdir -p "$(dir $@)"
@@ -83,10 +65,13 @@ builder/skel/%/usr/bin: build_all
 	mkdir -p $@
 	cp build/linux_amd64/* $@
 
-tgz: builder/skel/tgz/usr/bin
-tgz: builder/skel/tgz/etc/dkron/dkron.yml
-tgz: builder/skel/tgz/etc/init.d/dkron
-	tar zcvf dkron_${VERSION}_${OS}_${ARCH}.tar.gz -C builder/skel/tgz/ .
+builder/skel/%: build_all
+	mkdir -p $@
+	cp README.md LICENSE builder/files/dkron.yml $(wildcard build/$*)/* $@
+
+.PHONY: tgz
+tgz: builder/skel/windows_amd64
+	tar zcvf dkron_${VERSION}_$(shell basename $<).tar.gz -C $< .
 
 .PHONY: deb
 deb: builder/skel/deb/usr/bin
@@ -119,3 +104,17 @@ clean:
 	rm -f *.rpm
 	rm -f *.tar.gz
 	rm -rf tmp
+
+doc:
+	cd website; hugo -d ../public
+	ghp-import -p public
+
+apidoc:
+	java -jar ~/bin/swagger2markup-cli-1.2.0.jar convert -i website/content/swagger.yaml -f website/content/usage/api -c docs/config.properties
+
+gen:
+	go generate ./dkron
+	go fmt ./dkron/bindata.go
+
+test:
+	@bash --norc -i ./scripts/test.sh
