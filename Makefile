@@ -38,9 +38,9 @@ RPM_OPTS= #--rpm-sign
 
 default: build
 
-all: clean build_all
+all: clean release
 
-release: build_all dep rpm
+release: dep rpm tgz
 	
 .PHONY: build
 build:
@@ -71,7 +71,7 @@ builder/skel/%: build_all
 
 .PHONY: tgz
 tgz: $(addprefix builder/skel/,${PLATFORMS})
-	$(foreach p,$(PLATFORMS),$(shell tar zcvf dkron_${VERSION}_${p}.tar.gz -C $< .))
+	$(foreach p,$(PLATFORMS),$(shell tar zcvf dkron_${VERSION}_${p}.tar.gz -C builder/skel/${p} .))
 
 .PHONY: deb
 deb: builder/skel/deb/usr/bin
@@ -105,6 +105,7 @@ clean:
 	rm -f *.tar.gz
 	rm -rf tmp
 
+.PHONY: doc apidoc gen test
 doc:
 	cd website; hugo -d ../public
 	ghp-import -p public
