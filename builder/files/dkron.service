@@ -1,5 +1,7 @@
 [Unit]
 Description=Dkron Agent
+Documentation=https://dkron.io
+After=network.target
 
 [Service]
 User=root
