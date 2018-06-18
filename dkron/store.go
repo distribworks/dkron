@@ -399,7 +399,9 @@ func (s *Store) SetExecution(execution *Execution) (string, error) {
 
 	execs, err := s.GetExecutions(execution.JobName)
 	if err != nil {
-		log.Errorf("store: No executions found for job %s", execution.JobName)
+		log.WithError(err).
+			WithField("job", execution.JobName).
+			Error("store: Error no executions found for job")
 	}
 
 	// Delete all execution results over the limit, starting from olders
@@ -413,7 +415,9 @@ func (s *Store) SetExecution(execution *Execution) (string, error) {
 			}).Debug("store: to detele key")
 			err := s.Client.Delete(fmt.Sprintf("%s/executions/%s/%s", s.keyspace, execs[i].JobName, execs[i].Key()))
 			if err != nil {
-				log.Errorf("store: Trying to delete overflowed execution %s", execs[i].Key())
+				log.WithError(err).
+					WithField("execution", execs[i].Key()).
+					Error("store: Error trying to delete overflowed execution")
 			}
 		}
 	}
