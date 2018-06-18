@@ -40,7 +40,7 @@ default: build
 
 all: clean release
 
-release: rpm tgz
+release: deb rpm tgz
 	
 .PHONY: build
 build:
