@@ -38,9 +38,8 @@ RPM_OPTS= #--rpm-sign
 
 default: build
 
-all: clean release
-
-release: deb rpm tgz
+.PHONY: release
+release: github fury
 	
 .PHONY: build
 build:
@@ -94,9 +93,11 @@ rpm: builder/skel/rpm/etc/dkron/dkron.yml
 		${FPM_OPTS}
 	docker build --build-arg rpmfile=dkron-${VERSION}-${RELEASE}.x86_64.rpm -f tests/rpm/Dockerfile -t test_dkron_${VERSION}_rpm .
 
-PKGS := $(wildcard *.tar.gz) $(wildcard *.deb) $(wildcard *.rpm)
-.PHONY: ghrelease $(PKGS) github
-ghrelease:
+LINUX_PKGS := $(wildcard *.deb) $(wildcard *.rpm)
+PKGS := $(wildcard *.tar.gz) $(LINUX_PKGS)
+
+.PHONY: ghrelease $(PKGS) github $(LINUX_PKGS) fury
+ghrelease: deb rpm tgz
 	github-release release \
 		--user victorcoder \
 		--repo dkron \
@@ -113,6 +114,10 @@ $(PKGS): ghrelease
 			--file $@
 
 github: $(PKGS)
+
+fury: $(LINUX_PKGS)
+$(LINUX_PKGS): deb rpm
+	fury push $@
 
 .PHONY: clean
 clean:
