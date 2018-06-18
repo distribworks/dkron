@@ -129,13 +129,14 @@ retry:
 	Notification(rpcs.agent.config, &execution, exg, job).Send()
 
 	// Jobs that have dependent jobs are a bit more expensive because we need to call the Status() method for every execution.
-	// Check first if there's dependent jobs and then check for the job status to begin executiong dependent jobs on success.
-	if len(job.DependentJobs) > 0 && job.Status == StatusSuccess {
+	// Check first if there's dependent jobs and then check for the job status to begin execution dependent jobs on success.
+	if len(job.DependentJobs) > 0 && job.GetStatus() == StatusSuccess {
 		for _, djn := range job.DependentJobs {
 			dj, err := rpcs.agent.Store.GetJob(djn, nil)
 			if err != nil {
 				return err
 			}
+			log.WithField("job", djn).Debug("rpc: Running dependent job")
 			dj.Run()
 		}
 	}
