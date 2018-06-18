@@ -37,9 +37,6 @@ DEB_OPTS=
 RPM_OPTS= #--rpm-sign
 
 default: build
-
-.PHONY: release
-release: github fury
 	
 .PHONY: build
 build:
@@ -96,7 +93,7 @@ rpm: builder/skel/rpm/etc/dkron/dkron.yml
 LINUX_PKGS := $(wildcard *.deb) $(wildcard *.rpm)
 PKGS := $(wildcard *.tar.gz) $(LINUX_PKGS)
 
-.PHONY: ghrelease $(PKGS) github $(LINUX_PKGS) fury
+.PHONY: ghrelease github fury
 ghrelease: deb rpm tgz
 	github-release release \
 		--user victorcoder \
@@ -105,6 +102,7 @@ ghrelease: deb rpm tgz
 		--name "${VERSION}" \
 		--description "See: https://github.com/victorcoder/dkron/blob/master/CHANGELOG.md" \
 
+github: $(PKGS)
 $(PKGS): ghrelease
 		github-release upload \
 			--user victorcoder \
@@ -113,11 +111,12 @@ $(PKGS): ghrelease
 			--tag v${VERSION} \
 			--file $@
 
-github: $(PKGS)
-
 fury: $(LINUX_PKGS)
 $(LINUX_PKGS): deb rpm
 	fury push $@
+
+.PHONY: release
+release: ghrelease github fury
 
 .PHONY: clean
 clean:
