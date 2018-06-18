@@ -40,7 +40,7 @@ default: build
 
 all: clean release
 
-release: dep rpm tgz
+release: rpm tgz
 	
 .PHONY: build
 build:
@@ -93,6 +93,26 @@ rpm: builder/skel/rpm/etc/dkron/dkron.yml
 		-C builder/skel/$@ \
 		${FPM_OPTS}
 	docker build --build-arg rpmfile=dkron-${VERSION}-${RELEASE}.x86_64.rpm -f tests/rpm/Dockerfile -t test_dkron_${VERSION}_rpm .
+
+PKGS := $(wildcard *.tar.gz) $(wildcard *.deb) $(wildcard *.rpm)
+.PHONY: ghrelease $(PKGS) github
+ghrelease:
+	github-release release \
+		--user victorcoder \
+		--repo dkron \
+		--tag v${VERSION} \
+		--name "v${VERSION}" \
+		--description "See: https://github.com/victorcoder/dkron/blob/master/CHANGELOG.md" \
+
+$(PKGS): ghrelease
+		github-release upload \
+			--user victorcoder \
+			--repo dkron \
+			--name $@ \
+			--tag v${VERSION} \
+			--file $@
+
+github: $(PKGS)
 
 .PHONY: clean
 clean:
