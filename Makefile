@@ -101,7 +101,7 @@ ghrelease:
 		--user victorcoder \
 		--repo dkron \
 		--tag v${VERSION} \
-		--name "v${VERSION}" \
+		--name "${VERSION}" \
 		--description "See: https://github.com/victorcoder/dkron/blob/master/CHANGELOG.md" \
 
 $(PKGS): ghrelease
