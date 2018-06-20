@@ -7,7 +7,7 @@ icon: "<b>1. </b>"
 
 ## Dkron - Distributed, fault tolerant job scheduling system
 
-Welcome to the Dkron documentation! This is the reference guide on how to use Dkron. If you want a getting started guide refer to the [getting started guide](docs/getting-started).
+Welcome to the Dkron documentation! This is the reference guide on how to use Dkron. If you want a getting started guide refer to the [getting started guide](getting-started).
 
 ## What is Dkron
 
@@ -29,6 +29,7 @@ Dkron runs on Linux, OSX and Windows. It can be used to run scheduled commands o
 
 Dkron uses the efficient and lightweight [gossip protocol](https://www.serfdom.io/docs/internals/gossip.html) underneath to communicate with nodes. Failure notification and task handling are run efficiently across an entire cluster of any size.
 
+## Web UI
 <center class="hidden-xs">
 ![](/img/screenshot1.png)
 </center>

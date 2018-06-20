@@ -1,3 +1,7 @@
+---
+title: Commercial FAQ
+---
+
 ### What is Dkron Pro?
 
 Dkron Pro is a flavor of Dkron which add more functionality and provide additional support options for customers.
@@ -57,8 +61,8 @@ Dkron Pro is credit card only, no exceptions.
 
 ## Contact Info
 
-```
 Distributed Works
+
 All billing/support inquiries: support@distrib.works
+
 Phone: not available
-```
