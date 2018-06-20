@@ -7,15 +7,15 @@ header:after {
 }
 
 header .logo {
-    margin-left: 40px;
-
+  margin-left: 40px;
 }
 
 header .logo img {
-    margin-right: 0;
-    height: inherit;
-    vertical-align: text-top;
+  margin-right: 0;
+  height: inherit;
+  vertical-align: text-top;
 }
+
 .brand {
   margin: 10px;
   line-height: 0;
