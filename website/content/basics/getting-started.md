@@ -37,7 +37,7 @@ It can use etcd, Consul or Zookeeper as data stores. To install any of this syst
 
 ### Recommended method
 
-APT repository: `deb [trusted=yes] https://apt.fury.io/victorcoder/ /`
+APT repository: `deb [trusted=yes] https://repo.distrib.works/ /`
 
 Unstable release: `sudo apt-get install dkron-unstable`
 Stable release: `sudo apt-get install dkron`
@@ -56,7 +56,7 @@ By default Dkron uses the following ports:
 
 - `8946` for communicating between agents
 - `8080` for HTTP for the API and Dashboard
-- `6868` for RPC comunication between clients.
+- `6868` for RPC comunication between agents.
 
 **Be sure you have opened this ports (or the ones that you configured) in your firewall or AWS security groups.**
 
@@ -65,5 +65,5 @@ By default dkron will try to use a local etcd server running in the same machine
 To start a Dkron server instance just run:
 
 ```
-dkron agent -server
+dkron agent --server
 ```

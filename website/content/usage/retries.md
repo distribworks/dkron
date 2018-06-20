@@ -8,9 +8,13 @@ Jobs can be configured to retry in case of failure.
 
 ```json
 {
-  ...
-  retries: 2,
-  ...
+  "name": "job1",
+  "schedule": "@every 10s",
+  "executor": "shell",
+  "executor_config": {
+    "command": "echo \"Hello from parent\""
+  },
+  "retries": 5
 }
 ```
 

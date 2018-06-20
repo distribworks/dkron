@@ -7,7 +7,7 @@ icon: "<b>1. </b>"
 
 ## Dkron - Distributed, fault tolerant job scheduling system
 
-Welcome to the Dkron documentation! This is the reference guide on how to use Dkron. If you want a getting started guide refer to the [getting started guide](docs/getting-started).
+Welcome to the Dkron documentation! This is the reference guide on how to use Dkron. If you want a getting started guide refer to the [getting started guide](getting-started).
 
 ## What is Dkron
 

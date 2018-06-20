@@ -6,10 +6,10 @@ Dkron has the ability to send metrics to Statsd for dashboards and historical re
 
 ## Configuration
 
-```
-...
-  "dog_statsd_addr": "localhost:8125",
-...
+Add this in your yaml config file
+
+```yaml
+dog_statsd_addr: "localhost:8125"
 ```
 
 ## Metrics
