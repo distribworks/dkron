@@ -1,24 +1,21 @@
-baseURL = "http://example.org/"
+baseURL = "/"
 languageCode = "en-us"
 title = "Dkron - Distributed job scheduling system"
 theme = "docdock"
 MetaDataFormat = "yaml"
 
 [params]
-  # Prefix URL to edit current page. Useful to give opportunity to people to create merge request for your doc.
-  # See the config.toml file from this documentation site to have an example.
-  editURL = ""
-  # Author of the site, will be used in meta information
-  author = ""
-  # Description of the site, will be used in meta information
-  description = ""
-  # Shows a checkmark for visited pages on the menu. Default to false
-  showVisitedLinks = false
-  # Automatically generates prev and next arrows
-  autoNav = false
-  # Activate search. Don't forget to generate the JSON index file (go check get started page)
-  search = true
-  themeVariant = "dark"
+editURL = "https://github.com/victorcoder/dkron/edit/master/website/content/"
+showVisitedLinks = true # default is false
+themeStyle = "flex" # "original" or "flex" # default "flex"
+themeVariant = "" # choose theme variant "green", "gold" , "gray", "blue" (default)
+ordersectionsby = "weight" # ordersectionsby = "title"
+disableHomeIcon = false # default is false
+disableSearch = false # default is false
+disableNavChevron = false # set true to hide next/prev chevron, default is false
+highlightClientSide = false # set true to use highlight.pack.js instead of the default hugo chroma highlighter
+menushortcutsnewtab = false # set true to open shortcuts links to a new tab/window
+enableGitInfo = true
 
 [[menu.shortcuts]]
 pre = "<h3>More</h3>"
@@ -26,3 +23,16 @@ name = "<i class='fa fa-github'></i> Github repo"
 identifier = "ds"
 url = "https://github.com/victorcoder/dkron"
 weight = 1
+
+[[menu.shortcuts]]
+name = "<i class='fa fa-cloud-download'></i> <label>Download</label>"
+url = "https://github.com/victorcoder/dkron/releases"
+weight = 11
+
+[[menu.shortcuts]]
+name = "<i class='fa fa-bullhorn'></i> <label>License</label>"
+url = "/license"
+weight = 30
+
+[outputs]
+home = [ "HTML", "RSS", "JSON"]

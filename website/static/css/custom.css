@@ -1,0 +1,34 @@
+header {
+  height: 5.0rem;
+}
+
+header:after {
+  background: none;
+}
+
+header .logo {
+  margin-left: 40px;
+}
+
+header .logo img {
+  margin-right: 0;
+  height: inherit;
+  vertical-align: text-top;
+}
+
+.brand {
+  margin: 10px;
+  line-height: 0;
+  margin-left: 5px;
+  font-size: 26px;
+  font-family: 'Lato', sans-serif;
+  font-weight: lighter;
+}
+.brand a {
+  color: #FFF;
+  text-decoration: none;
+}
+.brand img {
+  width: 30px;
+  height: 30px;
+}

@@ -1,0 +1,4 @@
+
+[submodule "website/themes/docdock"]
+	path = website/themes/docdock
+	url = https://github.com/vjeantet/hugo-theme-docdock.git

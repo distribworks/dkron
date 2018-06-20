@@ -3,9 +3,8 @@ html {
 }
 
 body {
-  font-family:"Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-family:$font-headlines;
   padding-top:90px;
-  background-color: #eee;
 }
 
 section[role="main"] {

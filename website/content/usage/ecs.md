@@ -1,5 +1,5 @@
 ---
-title: Integration
+title: Use with AWS ECS
 ---
 
 ## Use with Amazon ECS
