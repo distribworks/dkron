@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Usage on Dkron - Distributed job scheduling system</title>
-    <link>http://example.org/usage/</link>
+    <link>/usage/</link>
     <description>Recent content in Usage on Dkron - Distributed job scheduling system</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Fri, 30 Jun 2017 14:58:54 +0200</lastBuildDate>
     
-	<atom:link href="http://example.org/usage/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/usage/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>API</title>
-      <link>http://example.org/usage/api/</link>
+      <link>/usage/api/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://example.org/usage/api/</guid>
+      <guid>/usage/api/</guid>
       <description>Dkron REST API 
 Overview You can communicate with Dkron using a RESTful JSON API over HTTP. Dkron nodes usually listen on port 8080 for API requests. All examples in this section assume that you&amp;rsquo;ve found a running leader at localhost:8080.
 Dkron implements a RESTful JSON API over HTTP to communicate with software clients. Dkron listens in port 8080 by default. All examples in this section assume that you&amp;rsquo;re using the default port.</description>
@@ -24,57 +24,80 @@ Dkron implements a RESTful JSON API over HTTP to communicate with software clien
     
     <item>
       <title>Concurrency</title>
-      <link>http://example.org/usage/concurrency/</link>
+      <link>/usage/concurrency/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://example.org/usage/concurrency/</guid>
+      <guid>/usage/concurrency/</guid>
       <description> Concurrency Jobs can be configured to allow overlapping executions or forbid them.
 Concurrency property accepts two option:
- allow (default): Allow concurrent job executions. forbid: If the job is already running don&amp;rsquo;t send the execution, it will skip the executions until the next schedule.  </description>
+ allow (default): Allow concurrent job executions. forbid: If the job is already running don&amp;rsquo;t send the execution, it will skip the executions until the next schedule.  Example:
+{ &amp;quot;name&amp;quot;: &amp;quot;job1&amp;quot;, &amp;quot;schedule&amp;quot;: &amp;quot;@every 10s&amp;quot;, &amp;quot;executor&amp;quot;: &amp;quot;shell&amp;quot;, &amp;quot;executor_config&amp;quot;: { &amp;quot;command&amp;quot;: &amp;quot;echo \&amp;quot;Hello from parent\&amp;quot;&amp;quot; }, &amp;quot;concurrency&amp;quot;: &amp;quot;forbid&amp;quot; }  </description>
     </item>
     
     <item>
       <title>Cron spec</title>
-      <link>http://example.org/usage/cron-spec/</link>
+      <link>/usage/cron-spec/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://example.org/usage/cron-spec/</guid>
+      <guid>/usage/cron-spec/</guid>
       <description>CRON Expression Format A cron expression represents a set of times, using 6 space-separated fields.
 Field name | Mandatory? | Allowed values | Allowed special characters ---------- | ---------- | -------------- | -------------------------- Seconds | Yes | 0-59 | * / , - Minutes | Yes | 0-59 | * / , - Hours | Yes | 0-23 | * / , - Day of month | Yes | 1-31 | * / , - ?</description>
     </item>
     
     <item>
-      <title>Integration</title>
-      <link>http://example.org/usage/integration/</link>
+      <title>Job chaining</title>
+      <link>/usage/chaining/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://example.org/usage/integration/</guid>
-      <description>Use with Amazon ECS To use Dkron to schedule jobs that run in containers, a wrapper ECS script is needed.
-Install the following snippet in the node that will run the call to ECS
- Prerequisites The node that will run the call to ECS will need to have installed
- AWS cli jq  Example ecs-run --cluster cron --task-definition cron-taskdef --container-name cron --region us-east-1 --command &amp;quot;rake foo&amp;quot;</description>
+      <guid>/usage/chaining/</guid>
+      <description>Job chaining You can set some jobs to run after other job is executed. To setup a job that will be executed after any other given job, just set the parent_job property when saving the new job.
+The dependent job will be executed after the main job finished a successful execution.
+Child jobs schedule property will be ignored if it&amp;rsquo;s present.
+Take into account that parent jobs must be created before any child job.</description>
     </item>
     
     <item>
-      <title>Job chaining</title>
-      <link>http://example.org/usage/job-chaining/</link>
+      <title>Job retries</title>
+      <link>/usage/retries/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://example.org/usage/job-chaining/</guid>
-      <description>Job chaining You can set some jobs to run after other job is executed. To setup a job that will be executed after any other given job, just set the parent_job property when saving the new job.
-The dependent job will be executed after the main job finished a successful execution.
-Child jobs schedule property will be ignored if it&amp;rsquo;s present.</description>
+      <guid>/usage/retries/</guid>
+      <description>Jobs can be configured to retry in case of failure.
+Configuration { &amp;quot;name&amp;quot;: &amp;quot;job1&amp;quot;, &amp;quot;schedule&amp;quot;: &amp;quot;@every 10s&amp;quot;, &amp;quot;executor&amp;quot;: &amp;quot;shell&amp;quot;, &amp;quot;executor_config&amp;quot;: { &amp;quot;command&amp;quot;: &amp;quot;echo \&amp;quot;Hello from parent\&amp;quot;&amp;quot; }, &amp;quot;retries&amp;quot;: 5 }  In case of failure to run the job in one node, it will try to run the job again in that node until the retries count reaches the limit.</description>
+    </item>
+    
+    <item>
+      <title>Metrics</title>
+      <link>/usage/metrics/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/usage/metrics/</guid>
+      <description>Dkron has the ability to send metrics to Statsd for dashboards and historical reporting. It sends job processing metrics and golang, serf metrics too.
+Configuration Add this in your yaml config file
+dog_statsd_addr: &amp;quot;localhost:8125&amp;quot;  Metrics  dkron.agent.event_received.query_execution_done dkron.agent.event_received.query_run_job dkron.memberlist.gossip dkron.memberlist.probeNode dkron.memberlist.pushPullNode dkron.memberlist.tcp.accept dkron.memberlist.tcp.connect dkron.memberlist.tcp.sent dkron.memberlist.udp.received dkron.memberlist.udp.sent dkron.rpc.call_execution_done dkron.rpc.call_get_job dkron.rpc.execution_done dkron.rpc.get_job dkron.runtime.alloc_bytes dkron.runtime.free_count dkron.runtime.gc_pause_ns dkron.runtime.heap_objects dkron.runtime.malloc_count dkron.runtime.num_goroutines dkron.runtime.sys_bytes dkron.runtime.total_gc_pause_ns dkron.runtime.total_gc_runs dkron.serf.coordinate.adjustment_ms dkron.serf.msgs.received dkron.serf.msgs.sent dkron.serf.queries dkron.serf.queries.execution_done dkron.serf.queries.run_job dkron.serf.query_acks dkron.serf.query_responses dkron.serf.queue.Event dkron.</description>
     </item>
     
     <item>
       <title>Target nodes spec</title>
-      <link>http://example.org/usage/target-nodes-spec/</link>
+      <link>/usage/target-nodes-spec/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://example.org/usage/target-nodes-spec/</guid>
+      <guid>/usage/target-nodes-spec/</guid>
       <description>Target nodes spec You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run.
 Examples: Target all nodes with a tag:
 { &amp;quot;name&amp;quot;: &amp;quot;job_name&amp;quot;, &amp;quot;command&amp;quot;: &amp;quot;/bin/true&amp;quot;, &amp;quot;schedule&amp;quot;: &amp;quot;@every 2m&amp;quot;, &amp;quot;tags&amp;quot;: { &amp;quot;role&amp;quot;: &amp;quot;web&amp;quot; } }  Target only two nodes of a group of nodes with a tag:</description>
+    </item>
+    
+    <item>
+      <title>Use with AWS ECS</title>
+      <link>/usage/ecs/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/usage/ecs/</guid>
+      <description>Use with Amazon ECS To use Dkron to schedule jobs that run in containers, a wrapper ECS script is needed.
+Install the following snippet in the node that will run the call to ECS
+ Prerequisites The node that will run the call to ECS will need to have installed
+ AWS cli jq  Example ecs-run --cluster cron --task-definition cron-taskdef --container-name cron --region us-east-1 --command &amp;quot;rake foo&amp;quot;</description>
     </item>
     
   </channel>

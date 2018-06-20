@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Basics on Dkron - Distributed job scheduling system</title>
-    <link>http://example.org/basics/</link>
+    <link>/basics/</link>
     <description>Recent content in Basics on Dkron - Distributed job scheduling system</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Fri, 30 Jun 2017 14:58:54 +0200</lastBuildDate>
     
-	<atom:link href="http://example.org/basics/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/basics/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Getting started</title>
-      <link>http://example.org/basics/getting-started/</link>
+      <link>/basics/getting-started/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://example.org/basics/getting-started/</guid>
+      <guid>/basics/getting-started/</guid>
       <description>Welcome to the intro guide to dkron! This will explain how to setup dkron, how easy is to use it, what problems could it help you to solve, etc.
 Introduction Dkron nodes can work in two modes, agents or servers.
 A Dkron agent is a cluster member that can handle job executions, run your scripts and return the resulting output to the server.
@@ -25,13 +25,13 @@ A Dkron server is also a cluster member that send job execution queries to agent
     
     <item>
       <title>Configuration</title>
-      <link>http://example.org/basics/configuration/</link>
+      <link>/basics/configuration/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://example.org/basics/configuration/</guid>
+      <guid>/basics/configuration/</guid>
       <description>Settings for dkron can be specified in three ways: Using a config/dkron.json config file, using env variables starting with DKRON_ or using command line arguments.
-Command line options  -node-name - Name of the node, must be unique in the cluster. By default this is the hostname of the machine.
- -bind-addr - The address that dkron will bind to for communication with other dkron nodes. By default this is &amp;ldquo;0.</description>
+Command line options  --node-name - Name of the node, must be unique in the cluster. By default this is the hostname of the machine.
+ --bind-addr - The address that dkron will bind to for communication with other dkron nodes. By default this is &amp;ldquo;0.</description>
     </item>
     
   </channel>

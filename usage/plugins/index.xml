@@ -2,41 +2,41 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Plugins on Dkron - Distributed job scheduling system</title>
-    <link>http://example.org/usage/plugins/</link>
+    <link>/usage/plugins/</link>
     <description>Recent content in Plugins on Dkron - Distributed job scheduling system</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     
-	<atom:link href="http://example.org/usage/plugins/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/usage/plugins/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Execution Processors</title>
-      <link>http://example.org/usage/plugins/processors/</link>
+      <link>/usage/plugins/processors/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://example.org/usage/plugins/processors/</guid>
+      <guid>/usage/plugins/processors/</guid>
       <description>Execution Processors Processor plugins are called when an execution response has been received. They are passed the resulting execution data and configuration parameters, this plugins can perform a variety of operations with the execution and it&amp;rsquo;s very flexible and per Job, examples of operations this plugins can do:
- Execution output storage, forwarding or redirection. Notification Monitoring  Currently Dkron provides you with some stock plugins but the list keeps growing.</description>
+ Execution output storage, forwarding or redirection. Notification Monitoring  For example, Processor plugins can be used to redirect the output of a job execution to different targets.</description>
     </item>
     
     <item>
       <title>Executors</title>
-      <link>http://example.org/usage/plugins/executors/</link>
+      <link>/usage/plugins/executors/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://example.org/usage/plugins/executors/</guid>
-      <description>Executors Executors plugins are the main mechanism of execution in Dkron. They implement different &amp;ldquo;types&amp;rdquo; of jobs in the sense that they que perform the most diverse actions on the target nodes.
+      <guid>/usage/plugins/executors/</guid>
+      <description>Executors Executors plugins are the main mechanism of execution in Dkron. They implement different &amp;ldquo;types&amp;rdquo; of jobs in the sense that they can perform the most diverse actions on the target nodes.
 For example, the built-in shell executor, will run the indicated command in the target node.
 New plugins will be added, or you can create new ones, to perform different tasks, as HTTP requests, Docker runs, anything that you can imagine.</description>
     </item>
     
     <item>
       <title>Developing plugins</title>
-      <link>http://example.org/usage/plugins/develop/</link>
+      <link>/usage/plugins/develop/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://example.org/usage/plugins/develop/</guid>
+      <guid>/usage/plugins/develop/</guid>
       <description>Developing a Plugin Advanced topic! Plugin development is a highly advanced topic, and is not required knowledge for day-to-day usage. If you don&amp;rsquo;t plan on writing any plugins, we recommend not reading the following section of the documentation. Developing a plugin is simple. The only knowledge necessary to write a plugin is basic command-line skills and basic knowledge of the Go programming language.
 Note: A common pitfall is not properly setting up a $GOPATH.</description>
     </item>

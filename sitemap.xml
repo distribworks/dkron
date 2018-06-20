@@ -3,103 +3,150 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>http://example.org/basics/getting-started/</loc>
+    <loc>/basics/getting-started/</loc>
   </url>
   
   <url>
-    <loc>http://example.org/usage/plugins/processors/</loc>
+    <loc>/usage/plugins/processors/</loc>
   </url>
   
   <url>
-    <loc>http://example.org/usage/plugins/executors/</loc>
+    <loc>/usage/plugins/executors/</loc>
   </url>
   
   <url>
-    <loc>http://example.org/usage/plugins/develop/</loc>
+    <loc>/usage/plugins/develop/</loc>
   </url>
   
   <url>
-    <loc>http://example.org/basics/</loc>
+    <loc>/basics/</loc>
     <lastmod>2017-06-30T14:58:54+02:00</lastmod>
   </url>
   
   <url>
-    <loc>http://example.org/usage/</loc>
+    <loc>/usage/</loc>
     <lastmod>2017-06-30T14:58:54+02:00</lastmod>
   </url>
   
   <url>
-    <loc>http://example.org/_header/</loc>
+    <loc>/_header/</loc>
     <lastmod>2017-04-24T18:36:24+02:00</lastmod>
   </url>
   
   <url>
-    <loc>http://example.org/commercial-faq/</loc>
+    <loc>/_footer/</loc>
   </url>
   
   <url>
-    <loc>http://example.org/usage/api/</loc>
+    <loc>/usage/api/</loc>
   </url>
   
   <url>
-    <loc>http://example.org/categories/</loc>
+    <loc>/pro/auth/</loc>
+  </url>
+  
+  <url>
+    <loc>/categories/</loc>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://example.org/usage/concurrency/</loc>
+    <loc>/commercial-faq/</loc>
   </url>
   
   <url>
-    <loc>http://example.org/basics/configuration/</loc>
+    <loc>/commercial-support/</loc>
   </url>
   
   <url>
-    <loc>http://example.org/usage/cron-spec/</loc>
+    <loc>/usage/concurrency/</loc>
   </url>
   
   <url>
-    <loc>http://example.org/</loc>
+    <loc>/basics/configuration/</loc>
+  </url>
+  
+  <url>
+    <loc>/usage/cron-spec/</loc>
+  </url>
+  
+  <url>
+    <loc>/</loc>
     <lastmod>2017-04-24T18:36:24+02:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://example.org/dkron_vs_other_software/</loc>
+    <loc>/pro/</loc>
   </url>
   
   <url>
-    <loc>http://example.org/usage/integration/</loc>
+    <loc>/products/pro/</loc>
   </url>
   
   <url>
-    <loc>http://example.org/internal/</loc>
+    <loc>/dkron_vs_other_software/</loc>
+  </url>
+  
+  <url>
+    <loc>/pro/docker/</loc>
+  </url>
+  
+  <url>
+    <loc>/pro/elasticsearch/</loc>
+  </url>
+  
+  <url>
+    <loc>/pro/email/</loc>
+  </url>
+  
+  <url>
+    <loc>/pro/storage/</loc>
+  </url>
+  
+  <url>
+    <loc>/pro/encryption/</loc>
+  </url>
+  
+  <url>
+    <loc>/internal/</loc>
+  </url>
+  
+  <url>
+    <loc>/usage/chaining/</loc>
+  </url>
+  
+  <url>
+    <loc>/usage/retries/</loc>
+  </url>
+  
+  <url>
+    <loc>/license/</loc>
+  </url>
+  
+  <url>
+    <loc>/usage/metrics/</loc>
+  </url>
+  
+  <url>
+    <loc>/usage/plugins/</loc>
+  </url>
+  
+  <url>
+    <loc>/products/</loc>
+  </url>
+  
+  <url>
+    <loc>/tags/</loc>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://example.org/internal/internals/</loc>
+    <loc>/usage/target-nodes-spec/</loc>
   </url>
   
   <url>
-    <loc>http://example.org/usage/job-chaining/</loc>
-  </url>
-  
-  <url>
-    <loc>http://example.org/license/</loc>
-  </url>
-  
-  <url>
-    <loc>http://example.org/usage/plugins/</loc>
-  </url>
-  
-  <url>
-    <loc>http://example.org/tags/</loc>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://example.org/usage/target-nodes-spec/</loc>
+    <loc>/usage/ecs/</loc>
   </url>
   
 </urlset>

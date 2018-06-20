@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Dkron Pro on Dkron - Distributed job scheduling system</title>
+    <link>/pro/</link>
+    <description>Recent content in Dkron Pro on Dkron - Distributed job scheduling system</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    
+	<atom:link href="/pro/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Authorization</title>
+      <link>/pro/auth/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/pro/auth/</guid>
+      <description>Dkron Pro has the ability to be configured to use HTTP basic auth.
+Set this parameters in your dkron config file:
+username: foo password: bar  This will enable auth on the WebUI and for the API.</description>
+    </item>
+    
+    <item>
+      <title>Docker executor</title>
+      <link>/pro/docker/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/pro/docker/</guid>
+      <description> Docker executor can run docker jobs
+Configuration To run a docker job create a job config with the following executor:
+Example:
+&amp;quot;executor&amp;quot;: &amp;quot;docker&amp;quot;, &amp;quot;executor_config&amp;quot;: { &amp;quot;image&amp;quot;: &amp;quot;alpine&amp;quot;, //docker image to use &amp;quot;volumes&amp;quot;: &amp;quot;/logs:/var/log/&amp;quot;, //comma separated list of volume mappings &amp;quot;command&amp;quot;: &amp;quot;echo \&amp;quot;Hello from dkron\&amp;quot;&amp;quot;, //command to pass to run on container &amp;quot;env&amp;quot;: &amp;quot;ENVIRONMENT=variable&amp;quot; //environment variables to pass to the container }  </description>
+    </item>
+    
+    <item>
+      <title>Elasticsearch processor</title>
+      <link>/pro/elasticsearch/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/pro/elasticsearch/</guid>
+      <description> The Elasticsearch processor can fordward execution logs to an ES cluster.
+Configuration &amp;quot;processors&amp;quot;: { &amp;quot;elasticsearch&amp;quot;: { &amp;quot;url&amp;quot;: &amp;quot;http://localhost:9200&amp;quot;, //comma separated list of Elasticsearch hosts urls (default: http://localhost:9200) &amp;quot;index&amp;quot;: &amp;quot;dkron_logs&amp;quot;, //desired index name (default: dkron_logs) &amp;quot;forward&amp;quot;: &amp;quot;false&amp;quot; //forward logs to the next processor (default: false) } }  </description>
+    </item>
+    
+    <item>
+      <title>Email processor</title>
+      <link>/pro/email/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/pro/email/</guid>
+      <description>If you need special email notification rules for a job, use the Email processor.
+Example:
+&amp;quot;processors&amp;quot;: { &amp;quot;email&amp;quot;: { &amp;quot;host&amp;quot;: &amp;quot;mail.google.com&amp;quot;, &amp;quot;username&amp;quot;: &amp;quot;foo&amp;quot;, &amp;quot;password&amp;quot;: &amp;quot;bar&amp;quot;, &amp;quot;emails&amp;quot;: &amp;quot;team@example.com&amp;quot;, &amp;quot;from&amp;quot;: &amp;quot;cron@example.com&amp;quot;, &amp;quot;subject_prefix&amp;quot;: &amp;quot;[Dkron]&amp;quot; } }  </description>
+    </item>
+    
+    <item>
+      <title>Embedded storage</title>
+      <link>/pro/storage/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/pro/storage/</guid>
+      <description>Dkron Pro has an embedded distributed KV store engine based on etcd. This works out of the box on each node dkron server is started.
+This ensures a dead easy install and setup, basically run dkron and you will have a full working node and at the same time provides you with a fully tested well supported store for its use with dkron.
+Configuration The embedded etcd instance configuration can be tunned using the standard etcd config yaml file located in config/etcd.</description>
+    </item>
+    
+    <item>
+      <title>Encryption</title>
+      <link>/pro/encryption/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/pro/encryption/</guid>
+      <description>SSL encryption is used for communicating dkron pro and the embedded store, and between storage nodes itself. Also client auth is enabled, so only dkron pro clients can talk to the embedded store. This means that no other software running on your local network will be able to talk to dkron&amp;rsquo;s etcd server.
+This ensures that no unexpected usage of the Dkron&amp;rsquo;s store will happen, unless it is another Dkron pro instance.</description>
+    </item>
+    
+  </channel>
+</rss>

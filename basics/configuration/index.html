@@ -1,334 +1,261 @@
 <!DOCTYPE html>
-<html lang="en" class="js csstransforms3d">
+<html>
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <meta name="generator" content="Hugo 0.38.2" />
-    <meta name="description" content="">
-
-
-    <title>Configuration :: Dkron - Distributed job scheduling system</title>
-    <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
-    <link href="/css/nucleus.css" rel="stylesheet">
-    <link href="/css/font-awesome.min.css" rel="stylesheet">
-    <link href="/css/hybrid.css" rel="stylesheet">
-    <link href="/css/featherlight.min.css" rel="stylesheet">
-    <link href="/css/horsey.css" rel="stylesheet">
-    <link href="/css/theme.css" rel="stylesheet">
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <script src="/js/jquery-2.x.min.js"></script>
-    <style type="text/css">
-      :root #header + #content > #left > #rlblock_left {
-        display:none !important;
-      }
-    </style>
-
+    <title>Dkron - Distributed job scheduling system</title>
     
-    <link href="/css/theme-dark.css" rel="stylesheet">
-    
-    
+      <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="generator" content="Hugo 0.38.2" />
+<title>Configuration :: Dkron - Distributed job scheduling system</title>
+<link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
+<link href="/css/font-awesome.min.css" rel="stylesheet">
+<link href="/css/nucleus.css" rel="stylesheet">
+<link href="/theme-flex/style.css" rel="stylesheet">
 
-    
-
-  </head>
-  <body class="" data-url="/basics/configuration/">
-    <nav id="sidebar" class="">
-  <div id="header-wrapper">
-    <div id="header">
-       
-	<div class="brand">
-  <a class="logo" href="."><img src="/img/dkron-badge-bw.png"/> Dkron</a>
-</div>
- 
-
-
-    </div>
-    
-        <div class="searchbox">
-    <label for="search-by"><i class="fa fa-search"></i></label>
-    <input data-search-input id="search-by" type="text" placeholder="Search...">
-    <span data-search-clear=""><i class="fa fa-close"></i></span>
-</div>
-<script type="text/javascript" src="/js/lunr.min.js"></script>
-<script type="text/javascript" src="/js/horsey.js"></script>
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<script src="/js/jquery-2.x.min.js"></script>
 <script type="text/javascript">
-    var baseurl = "http:\/\/example.org\/";
+      var baseurl = "\/";
 </script>
-<script type="text/javascript" src="/js/search.js"></script>
+<link rel="stylesheet" href="/css/custom.css">
+
 
     
+  </head>
+  <body data-url="/basics/configuration/">
+    
+      <header>
+  <div class="logo">
+    
+	
+  
+    <div class="brand">
+  <a class="logo" href="/"><img src="/img/dkron-badge-bw.png"/> Dkron</a>
+</div>
+
+  
+
   </div>
-
-
-
-
-
-<div class="highlightable">
-    <ul class="topics">
-        
-        
-            <li data-nav-id="/" class="dd-item">
-            <a href="/"><i class="fa fa-fw fa-home"></i></a>
+  <div class="burger"><a href="javascript:void(0);" style="font-size:15px;">&#9776;</a></div>
+    <nav class="shortcuts">
+            <li class="" role="">
+                <a href="https://github.com/victorcoder/dkron"  rel="noopener">
+                  <i class='fa fa-github'></i> Github repo
+                </a>
             </li>
-        
-
-        
-
-
-
-
-<li data-nav-id="/basics/" class="dd-item 
-parent
-
-
-">
-  <a href="/basics/">
-    <span>Basics</span>
-
-    
-    <i class="fa fa-angle-down fa-lg category-icon"></i>
-    
-    
-    
-  </a>
-    <ul>
-        
-         
-          <li data-nav-id="/basics/getting-started/" class="dd-item
-         
-          ">
-            <a href="/basics/getting-started/">
-            <span>Getting started</span> 
-            
-
-            </a></li>
-         
-        
-         
-          <li data-nav-id="/basics/configuration/" class="dd-item
-         active
-          ">
-            <a href="/basics/configuration/">
-            <span>Configuration</span> 
-            
-
-            </a></li>
-         
-        
-        
-
-
-
-
-    </ul>
-</li>
-
-
-<li data-nav-id="/usage/" class="dd-item 
-
-
-
-">
-  <a href="/usage/">
-    <span>Usage</span>
-
-    
-    <i class="fa fa-angle-right fa-lg category-icon"></i>
-    
-    
-    
-  </a>
-    <ul>
-        
-         
-          <li data-nav-id="/usage/api/" class="dd-item
-         
-          ">
-            <a href="/usage/api/">
-            <span>API</span> 
-            
-
-            </a></li>
-         
-        
-         
-          <li data-nav-id="/usage/concurrency/" class="dd-item
-         
-          ">
-            <a href="/usage/concurrency/">
-            <span>Concurrency</span> 
-            
-
-            </a></li>
-         
-        
-         
-          <li data-nav-id="/usage/cron-spec/" class="dd-item
-         
-          ">
-            <a href="/usage/cron-spec/">
-            <span>Cron spec</span> 
-            
-
-            </a></li>
-         
-        
-         
-          <li data-nav-id="/usage/integration/" class="dd-item
-         
-          ">
-            <a href="/usage/integration/">
-            <span>Integration</span> 
-            
-
-            </a></li>
-         
-        
-         
-          <li data-nav-id="/usage/job-chaining/" class="dd-item
-         
-          ">
-            <a href="/usage/job-chaining/">
-            <span>Job chaining</span> 
-            
-
-            </a></li>
-         
-        
-         
-          <li data-nav-id="/usage/target-nodes-spec/" class="dd-item
-         
-          ">
-            <a href="/usage/target-nodes-spec/">
-            <span>Target nodes spec</span> 
-            
-
-            </a></li>
-         
-        
-        
-
-
-
-
-<li data-nav-id="/usage/plugins/" class="dd-item 
-
-
-
-">
-  <a href="/usage/plugins/">
-    <span>Plugins</span>
-
-    
-    <i class="fa fa-angle-right fa-lg category-icon"></i>
-    
-    
-    
-  </a>
-    <ul>
-        
-         
-          <li data-nav-id="/usage/plugins/processors/" class="dd-item
-         
-          ">
-            <a href="/usage/plugins/processors/">
-            <span>Execution Processors</span> 
-            
-
-            </a></li>
-         
-        
-         
-          <li data-nav-id="/usage/plugins/executors/" class="dd-item
-         
-          ">
-            <a href="/usage/plugins/executors/">
-            <span>Executors</span> 
-            
-
-            </a></li>
-         
-        
-         
-          <li data-nav-id="/usage/plugins/develop/" class="dd-item
-         
-          ">
-            <a href="/usage/plugins/develop/">
-            <span>Developing plugins</span> 
-            
-
-            </a></li>
-         
-        
-        
-
-
-
-
-    </ul>
-</li>
-
-
-    </ul>
-</li>
-
-
-<li data-nav-id="/internal/" class="dd-item 
-
-
-
-">
-  <a href="/internal/">
-    <span>Internals</span>
-
-    
-    <i class="fa fa-angle-right fa-lg category-icon"></i>
-    
-    
-    
-  </a>
-    <ul>
-        
-         
-          <li data-nav-id="/internal/internals/" class="dd-item
-         
-          ">
-            <a href="/internal/internals/">
-            <span>Internals</span> 
-            
-
-            </a></li>
-         
-        
-        
+            <li class="" role="">
+                <a href="https://github.com/victorcoder/dkron/releases"  rel="noopener">
+                  <i class='fa fa-cloud-download'></i> <label>Download</label>
+                </a>
+            </li>
+            <li class="" role="">
+                <a href="/license"  rel="noopener">
+                  <i class='fa fa-bullhorn'></i> <label>License</label>
+                </a>
+            </li>
+    </nav>
+</header>
+<article>
+  <aside>
+    <ul class="menu">
+          <li data-nav-id="/" class="dd-item">
+          <a href="/">
+            <i class="fa fa-fw fa-home"></i>
+          </a>
+          </li>
+    <li data-nav-id="/basics/" class="dd-item parent haschildren
+        ">
+      <div>
+      <a href="/basics/">Basics</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/basics/getting-started/" class="dd-item">
+        <div>
+          <a href="/basics/getting-started/">
+            Getting started
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/basics/configuration/" class="dd-item active">
+        <div>
+          <a href="/basics/configuration/">
+            Configuration
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/usage/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/usage/">Usage</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/usage/api/" class="dd-item">
+        <div>
+          <a href="/usage/api/">
+            API
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/concurrency/" class="dd-item">
+        <div>
+          <a href="/usage/concurrency/">
+            Concurrency
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/cron-spec/" class="dd-item">
+        <div>
+          <a href="/usage/cron-spec/">
+            Cron spec
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/chaining/" class="dd-item">
+        <div>
+          <a href="/usage/chaining/">
+            Job chaining
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/retries/" class="dd-item">
+        <div>
+          <a href="/usage/retries/">
+            Job retries
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/metrics/" class="dd-item">
+        <div>
+          <a href="/usage/metrics/">
+            Metrics
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+    <li data-nav-id="/usage/plugins/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/usage/plugins/">Plugins</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/usage/plugins/processors/" class="dd-item">
+        <div>
+          <a href="/usage/plugins/processors/">
+            Execution Processors
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/plugins/executors/" class="dd-item">
+        <div>
+          <a href="/usage/plugins/executors/">
+            Executors
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/plugins/develop/" class="dd-item">
+        <div>
+          <a href="/usage/plugins/develop/">
+            Developing plugins
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+      <li data-nav-id="/usage/target-nodes-spec/" class="dd-item">
+        <div>
+          <a href="/usage/target-nodes-spec/">
+            Target nodes spec
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/ecs/" class="dd-item">
+        <div>
+          <a href="/usage/ecs/">
+            Use with AWS ECS
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/pro/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/pro/">Dkron Pro</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/pro/auth/" class="dd-item">
+        <div>
+          <a href="/pro/auth/">
+            Authorization
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/docker/" class="dd-item">
+        <div>
+          <a href="/pro/docker/">
+            Docker executor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/elasticsearch/" class="dd-item">
+        <div>
+          <a href="/pro/elasticsearch/">
+            Elasticsearch processor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/email/" class="dd-item">
+        <div>
+          <a href="/pro/email/">
+            Email processor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/storage/" class="dd-item">
+        <div>
+          <a href="/pro/storage/">
+            Embedded storage
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/encryption/" class="dd-item">
+        <div>
+          <a href="/pro/encryption/">
+            Encryption
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/internal/" class="dd-item
+        ">
+      <div>
+      <a href="/internal/">Internals</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+    </li>
+    <li data-nav-id="/products/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/products/">Products</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/products/pro/" class="dd-item">
+        <div>
+          <a href="/products/pro/">
+            Dkron Pro
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
 
 
 
 
     </ul>
-</li>
-
-
-
-        
-        <section id="shortcuts">
-            
-                <li class="" role="">
-                    <h3>More</h3>
-                    <a href="https://github.com/victorcoder/dkron"><i class='fa fa-github'></i> Github repo</a>
-                    
-                </li>
-            
-        </section>    
-        
-        
-
-        
-    </ul>
-    
-     
-    <section id="footer">
-      <center>
+    <section><center>
 
 <a class="github-button" href="https://github.com/victorcoder/dkron" data-icon="octicon-star" data-show-count="true" aria-label="Star victorcoder/dkron on GitHub">Star</a>
 
@@ -340,400 +267,184 @@ parent
 <script async defer src="https://buttons.github.io/buttons.js"></script>
 
     </section>
-  </div>
-</nav>
+  </aside>
+  <section class="page">
+    
+    <div class="nav-select">
+      <center>Navigation : 
+        <select onchange="javascript:location.href = this.value;">
+          
+    <option value="/basics/" >
+   Basics</option> 
+      <option value="/basics/getting-started/" >- Getting started</option>
+      <option value="/basics/configuration/"  selected>- Configuration</option>
+  
+    <option value="/usage/" >
+   Usage</option>
+    <option value="/pro/" >
+   Dkron Pro</option>
+    <option value="/internal/" >
+   Internals</option>
+    <option value="/products/" >
+   Products</option>
 
 
 
-        <section id="body">
-        <div id="overlay"></div>
-        <div class="padding highlightable">
-        
-          <div id="top-bar">
-            
-
-            <div id="breadcrumbs" itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
-                <span id="sidebar-toggle-span">
-                  <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
-                    <i class="fa fa-bars"></i>
-                  </a>
-                </span>
-                <span id="toc-menu"><i class="fa fa-list-alt"></i></span>
-                <span class="links">
-                
-
-
-
-
-
-
-
- <a href='/'>Dkron - Distributed job scheduling system</a> > <a href='/basics/'>Basics</a> > Configuration
-
- 
-
- 
-
-   
-                </span>
-            </div>
-            <div class="progress">
-    <div class="wrapper">
-<nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#command-line-options">Command line options</a></li>
-</ul></li>
-<li><a href="#example">Example</a></li>
-</ul>
-</nav>
+        </select>
+      </center>
     </div>
-</div>
-
-          </div>
-        
-        
-        <div id="body-inner">
+      <div>
+        <div class="searchbox">
+          <input data-search-input id="search-by" type="text" placeholder="Search...">
+        </div>
+        <script type="text/javascript" src="/js/lunr.min.js"></script>
+        <script type="text/javascript" src="/js/auto-complete.js"></script>
+        <link href="/css/auto-complete.css" rel="stylesheet">
+        <script type="text/javascript">
           
-            <h1>Configuration</h1>
+              var baseurl = "\/";
           
+        </script>
+        <script type="text/javascript" src="/js/search.js"></script>
+      </div>
+    
 
-
-
-
-
+    <h1>Configuration</h1>
+    
+    
+    
+    
 
 <p>Settings for dkron can be specified in three ways: Using a <code>config/dkron.json</code> config file, using env variables starting with <code>DKRON_</code> or using command line arguments.</p>
 
 <h2 id="command-line-options">Command line options</h2>
 
 <ul>
-<li><p><code>-node-name</code> - Name of the node, must be unique in the cluster. By default this is the hostname of the machine.</p></li>
+<li><p><code>--node-name</code> - Name of the node, must be unique in the cluster. By default this is the hostname of the machine.</p></li>
 
-<li><p><code>-bind-addr</code> - The address that dkron will bind to for communication with other dkron nodes. By default this is &ldquo;0.0.0.0:8946&rdquo;. dkron nodes may have different ports. If a join is specified without a port, we default to locally configured port. dkron uses both TCP and UDP and use the same port for both, so if you have any firewalls be sure to allow both protocols. If this configuration value is changed and no port is specified, the default of &ldquo;8946&rdquo; will be used.</p></li>
+<li><p><code>--bind-addr</code> - The address that dkron will bind to for communication with other dkron nodes. By default this is &ldquo;0.0.0.0:8946&rdquo;. dkron nodes may have different ports. If a join is specified without a port, we default to locally configured port. dkron uses both TCP and UDP and use the same port for both, so if you have any firewalls be sure to allow both protocols. If this configuration value is changed and no port is specified, the default of &ldquo;8946&rdquo; will be used.</p></li>
 
-<li><p><code>-join</code> - Address of another agent to join upon starting up. This can be specified multiple times to specify multiple agents to join. If Dkron is unable to join with any of the specified addresses, agent startup will fail. By default, the agent won&rsquo;t join any nodes when it starts up.</p></li>
+<li><p><code>--join</code> - Address of another agent to join upon starting up. This can be specified multiple times to specify multiple agents to join. If Dkron is unable to join with any of the specified addresses, agent startup will fail. By default, the agent won&rsquo;t join any nodes when it starts up.</p></li>
 
-<li><p><code>-advertise-addr</code> - The advertise flag is used to change the address that we advertise to other nodes in the cluster. By default, the bind address is advertised. However, in some cases (specifically NAT traversal), there may be a routable address that cannot be bound to. This flag enables gossiping a different address to support this. If this address is not routable, the node will be in a constant flapping state, as other nodes will treat the non-routability as a failure.</p></li>
+<li><p><code>--advertise-addr</code> - The advertise flag is used to change the address that we advertise to other nodes in the cluster. By default, the bind address is advertised. However, in some cases (specifically NAT traversal), there may be a routable address that cannot be bound to. This flag enables gossiping a different address to support this. If this address is not routable, the node will be in a constant flapping state, as other nodes will treat the non-routability as a failure.</p></li>
 
-<li><p><code>-http-addr</code> - The address where the web UI will be binded. By default <code>:8080</code></p></li>
+<li><p><code>--http-addr</code> - The address where the web UI will be binded. By default <code>:8080</code></p></li>
 
-<li><p><code>-backend</code> - Backend storage to use, etcd, consul, zk (zookeeper) or redis. The default is etcd.</p></li>
+<li><p><code>--backend</code> - Backend storage to use, etcd, consul, zk (zookeeper) or redis. The default is etcd.</p></li>
 
-<li><p><code>-backend-machine</code> - Backend storage servers addresses to connect to. This flag can be specified multiple times. By default <code>127.0.0.1:2379</code></p></li>
+<li><p><code>--backend-machine</code> - Backend storage servers addresses to connect to. This flag can be specified multiple times. By default <code>127.0.0.1:2379</code></p></li>
 
-<li><p><code>-tag</code> - The tag flag is used to associate a new key/value pair with the agent. The tags are gossiped and can be used to provide additional information such as roles, ports, and configuration values to other nodes. Multiple tags can be specified per agent. There is a byte size limit for the maximum number of tags, but in practice dozens of tags may be used. Tags can be changed during a config reload.</p></li>
+<li><p><code>--tag</code> - The tag flag is used to associate a new key/value pair with the agent. The tags are gossiped and can be used to provide additional information such as roles, ports, and configuration values to other nodes. Multiple tags can be specified per agent. There is a byte size limit for the maximum number of tags, but in practice dozens of tags may be used. Tags can be changed during a config reload.</p></li>
 
-<li><p><code>-server</code> - If this agent is a dkron server, just need to be present. Absent by default.</p></li>
+<li><p><code>--server</code> - If this agent is a dkron server, just need to be present. Absent by default.</p></li>
 
-<li><p><code>-keyspace</code> - Keyspace to use for the store. Allows to run different instances using the same storage cluster. <code>dkron</code> by default.</p></li>
+<li><p><code>--keyspace</code> - Keyspace to use for the store. Allows to run different instances using the same storage cluster. <code>dkron</code> by default.</p></li>
 
-<li><p><code>-encrypt</code> - Key for encrypting network traffic. Must be a base64-encoded 16-byte key.</p></li>
+<li><p><code>--encrypt</code> - Key for encrypting network traffic. Must be a base64-encoded 16-byte key.</p></li>
 
-<li><p><code>-mail-host</code> - Mail server host address to use for notifications.</p></li>
+<li><p><code>--mail-host</code> - Mail server host address to use for notifications.</p></li>
 
-<li><p><code>-mail-port</code> - Mail server port.</p></li>
+<li><p><code>--mail-port</code> - Mail server port.</p></li>
 
-<li><p><code>-mail-username</code> - Mail server username used for authentication.</p></li>
+<li><p><code>--mail-username</code> - Mail server username used for authentication.</p></li>
 
-<li><p><code>-mail-password</code> - Mail server password to use.</p></li>
+<li><p><code>--mail-password</code> - Mail server password to use.</p></li>
 
-<li><p><code>-mail-from</code> - From email address to use.</p></li>
+<li><p><code>--mail-from</code> - From email address to use.</p></li>
 
-<li><p><code>-webhook-url</code> - Webhook url to call for notifications.</p></li>
+<li><p><code>--webhook-url</code> - Webhook url to call for notifications.</p></li>
 
-<li><p><code>-webhook-payload</code> - Body of the POST request to send on webhook call.</p></li>
+<li><p><code>--webhook-payload</code> - Body of the POST request to send on webhook call.</p></li>
 
-<li><p><code>-webhook-header</code> - Headers to use when calling the webhook URL. Can be specified multiple times.</p></li>
+<li><p><code>--webhook-header</code> - Headers to use when calling the webhook URL. Can be specified multiple times.</p></li>
 
-<li><p><code>-log-level</code> - Set the log level (debug, info, warn, error, fatal, panic). Defaults to &ldquo;info&rdquo;</p></li>
+<li><p><code>--log-level</code> - Set the log level (debug, info, warn, error, fatal, panic). Defaults to &ldquo;info&rdquo;</p></li>
 
-<li><p><code>-rpc-port</code> - The port that Dkron will use to bind for the agent&rsquo;s RPC server, defaults to <code>6868</code>. The RPC address will be the bind address.</p></li>
+<li><p><code>--rpc-port</code> - The port that Dkron will use to bind for the agent&rsquo;s RPC server, defaults to <code>6868</code>. The RPC address will be the bind address.</p></li>
 </ul>
 
-<h1 id="example">Example</h1>
+<h1 id="config-file-example">Config file example</h1>
 
-<pre><code class="language-json"># Dkron example configuration file
-{
-  &quot;backend&quot;: &quot;etcd&quot;,
-  &quot;backend_machine&quot;: &quot;127.0.0.1:2379&quot;,
-  &quot;advertise_addr&quot;: &quot;192.168.50.1&quot;,
-  &quot;server&quot;: false,
-  &quot;debug&quot;: false,
-  &quot;tags&quot;: {
-    &quot;role&quot;: &quot;web&quot;,
-    &quot;datacenter&quot;: &quot;east&quot;
-  },
-  &quot;keyspace&quot;: &quot;dkron&quot;,
-  &quot;encrypt&quot;: &quot;a-valid-key-generated-with-dkron-keygen&quot;,
-  &quot;join&quot;: [
-    &quot;10.0.0.1&quot;,
-    &quot;10.0.0.2&quot;,
-    &quot;10.0.0.3&quot;
-  ],
-  &quot;webhook_url&quot;: &quot;https://hooks.slack.com/services/XXXXXX/XXXXXXX/XXXXXXXXXXXXXXXXXXXX&quot;,
-  &quot;webhook_payload&quot;: &quot;payload={\&quot;text\&quot;: \&quot;{{.Report}}\&quot;, \&quot;channel\&quot;: \&quot;#foo\&quot;}&quot;,
-  &quot;webhook_headers&quot;: &quot;Content-Type:application/x-www-form-urlencoded&quot;,
-  &quot;mail_host&quot;: &quot;email-smtp.eu-west-1.amazonaws.com&quot;,
-  &quot;mail_port&quot;: 25,
-  &quot;mail_username&quot;: &quot;mailuser&quot;,
-  &quot;mail_password&quot;: &quot;mailpassword&quot;,
-  &quot;mail_from&quot;: &quot;cron@example.com&quot;,
-  &quot;mail_subject_prefix&quot;: &quot;[Dkron]&quot;
-}
+<pre><code class="language-yaml"># Dkron example configuration file
+# backend: etcd
+# backend_machine: 127.0.0.1:2379
+# server: false
+# log_level: debug
+# tags:
+#   role: web
+#   datacenter: east
+# keyspace: dkron
+# encrypt: a-valid-key-generated-with-dkron-keygen
+# join:
+#   - 10.0.0.1
+#   - 10.0.0.2
+#   - 10.0.0.3
+# webhook_url: https://hooks.slack.com/services/XXXXXX/XXXXXXX/XXXXXXXXXXXXXXXXXXXX
+# webhook_payload: &quot;payload={\&quot;text\&quot;: \&quot;{{.Report}}\&quot;, \&quot;channel\&quot;: \&quot;#foo\&quot;}&quot;
+# webhook_headers: Content-Type:application/x-www-form-urlencoded
+# mail_host: email-smtp.eu-west-1.amazonaws.com
+# mail_port: 25
+# mail_username&quot;: mailuser
+# mail_password&quot;: mailpassword
+# mail_from&quot;: cron@example.com
+# mail_subject_prefix: [Dkron]
 </code></pre>
 
 
-<footer class=" footline" >
-	
+    
+    
+        <div class="chevrons">
+    <div id="navigation">
+<a class="nav nav-prev" href="/basics/getting-started/" title="Getting started"> <i class="fa fa-chevron-left"></i><label>Getting started</label></a>
+    <a class="nav nav-next" href="/usage/" title="Usage" style="margin-right: 0px;"><label>Usage</label><i class="fa fa-chevron-right"></i></a></div>
+  </div>
+
+  </section>
+</article>
+
+<footer>
+
+<div class="footline">
+    
+
+    
+
+  
+
+    <div class="github-link">
+      <a href="https://github.com/victorcoder/dkron/edit/master/website/content/basics/configuration.md" target="blank"><i class="fa fa-code-fork"></i>
+        Improve this page</a>
+    </div>
+  </div>
+
+
+	<div>
+
+
+  
+    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - victor@distrib.works</p>
+
+  
+
+
+
+	</div>
 </footer>
 
+<script src="/js/clipboard.min.js"></script>
+
+<link href="/css/featherlight.min.css" rel="stylesheet">
+<script src="/js/featherlight.min.js"></script>
 
 
-      </div>
-    </div>
 
-    
- 
-    
-
-    <div id="navigation">
-        
-        
-        
-        
-            
-            
-                
-                    
-                    
-                
-                
-                
-                    
-            
-            
-                
-                    
-                    
-                
-                
-                
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                        
-                        
-                    
-                
-                
-                
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                    
-                
-                
-                
-            
-        
-                    
-                
-                    
-            
-            
-                
-                    
-                        
-                        
-                    
-                
-                
-                
-                    
-            
-            
-                
-                    
-                
-                
-                
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-                
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-                
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-                
-            
-        
-                    
-                
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-                
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-                
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-                
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-                
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-                
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-                
-            
-        
-                    
-                
-                    
-            
-            
-                
-                    
-                
-                
-                
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-                
-            
-        
-                    
-                
-            
-        
-        
-        
-
-
-        
-            <a class="nav nav-prev" href="/basics/getting-started/" title="Getting started"> <i class="fa fa-chevron-left"></i></a>
-        
-        
-            <a class="nav nav-next" href="/usage/" title="Usage" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
-        
-    </div>
-
-    </section>
-    <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
-      <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
-    </div>
-    <script src="/js/clipboard.min.js"></script>
-    <script src="/js/featherlight.min.js"></script>
-    <script src="/js/html5shiv-printshiv.min.js"></script>
-    <script src="/js/highlight.pack.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom.71422.js"></script>
-    <script src="/js/learn.js"></script>
-    <script src="/js/hugo-learn.js"></script>
-
-    
-    <link href="/mermaid/mermaid.css" type="text/css" rel="stylesheet"/>
-    <script src="/mermaid/mermaid.js"></script>
-    <script>mermaid.initialize({startOnLoad:true});</script>
-    
+<script src="/theme-flex/script.js"></script>
 
     
 
+    
+    
+
+    
   </body>
 </html>
-

@@ -18,7 +18,7 @@
 }( this, function( marked ) {
 
 	var DEFAULT_SLIDE_SEPARATOR = '^\r?\n---\r?\n$',
-		DEFAULT_NOTES_SEPARATOR = 'note:',
+		DEFAULT_NOTES_SEPARATOR = 'notes?:',
 		DEFAULT_ELEMENT_ATTRIBUTES_SEPARATOR = '\\\.element\\\s*?(.+?)$',
 		DEFAULT_SLIDE_ATTRIBUTES_SEPARATOR = '\\\.slide:\\\s*?(\\\S.+?)$';
 
@@ -31,7 +31,8 @@
 	 */
 	function getMarkdownFromSlide( section ) {
 
-		var template = section.querySelector( 'script' );
+		// look for a <script> or <textarea data-template> wrapper
+		var template = section.querySelector( '[data-template]' ) || section.querySelector( 'script' );
 
 		// strip leading whitespace so it isn't evaluated as code
 		var text = ( template || section ).textContent;
