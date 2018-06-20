@@ -3,7 +3,7 @@ DEP_VERSION=0.4.1
 VERSION := 0.10.3
 PKGNAME := dkron
 LICENSE := LGPL 3.0
-VENDOR=
+VENDOR := Distributed Works
 URL := https://dkron.io
 RELEASE := 0
 OS := $(shell uname | tr '[:upper:]' '[:lower:]')
@@ -77,7 +77,7 @@ deb: builder/skel/deb/etc/dkron/dkron.yml
 		--deb-systemd builder/files/dkron.service \
 		--chdir builder/skel/$@ \
 		${FPM_OPTS}
-	docker build --build-arg debfile=dkron_${VERSION}-${RELEASE}_amd64.deb -f tests/deb/Dockerfile -t test_dkron_${VERSION}_deb .
+	docker build --build-arg debfile=${PKGNAME}_${VERSION}-${RELEASE}_amd64.deb -f tests/deb/Dockerfile -t test_${PKGNAME}_${VERSION}_deb .
 
 .PHONY: rpm
 rpm: builder/skel/rpm/usr/bin
@@ -88,13 +88,13 @@ rpm: builder/skel/rpm/etc/dkron/dkron.yml
 		--iteration ${RELEASE} \
 		-C builder/skel/$@ \
 		${FPM_OPTS}
-	docker build --build-arg rpmfile=dkron-${VERSION}-${RELEASE}.x86_64.rpm -f tests/rpm/Dockerfile -t test_dkron_${VERSION}_rpm .
+	docker build --build-arg rpmfile=${PKGNAME}-${VERSION}-${RELEASE}.x86_64.rpm -f tests/rpm/Dockerfile -t test_${PKGNAME}_${VERSION}_rpm .
 
 LINUX_PKGS := $(wildcard *.deb) $(wildcard *.rpm)
-PKGS := $(wildcard *.tar.gz) $(LINUX_PKGS)
+PKGS := $(wildcard *.tar.gz)
 
 .PHONY: ghrelease github fury
-ghrelease: deb rpm tgz
+ghrelease:
 	github-release release \
 		--user victorcoder \
 		--repo dkron \
@@ -102,21 +102,29 @@ ghrelease: deb rpm tgz
 		--name "${VERSION}" \
 		--description "See: https://github.com/victorcoder/dkron/blob/master/CHANGELOG.md" \
 
+.PHONY: $(PKGS)
 github: $(PKGS)
 $(PKGS): ghrelease
-		github-release upload \
-			--user victorcoder \
-			--repo dkron \
-			--name $@ \
-			--tag v${VERSION} \
-			--file $@
+	github-release upload \
+		--user victorcoder \
+		--repo dkron \
+		--name $@ \
+		--tag v${VERSION} \
+		--file $@
 
+.PHONY: $(LINUX_PKGS)
 fury: $(LINUX_PKGS)
-$(LINUX_PKGS): deb rpm
+$(LINUX_PKGS): github
+	github-release upload \
+		--user victorcoder \
+		--repo dkron \
+		--name $@ \
+		--tag v${VERSION} \
+		--file $@
 	fury push $@
 
 .PHONY: release
-release: ghrelease github fury
+release: clean deb rpm tgz fury
 
 .PHONY: clean
 clean:
