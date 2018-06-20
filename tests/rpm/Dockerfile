@@ -1,4 +1,4 @@
-FROM centos:6
+FROM centos:7
 
 ARG rpmfile
 ADD $rpmfile /
