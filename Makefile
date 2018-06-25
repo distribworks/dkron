@@ -15,7 +15,7 @@ MAINTAINER := Victor Castell <victor@distrib.works>
 DOCKER_WDIR := /tmp/fpm
 DOCKER_FPM := devopsfaith/fpm
 
-PLATFORMS := darwin_amd64 linux_amd64 linux_arm windows_amd64
+PLATFORMS := darwin_amd64 linux_amd64 linux_arm64 windows_amd64
 TEMP = $(subst _, ,$@)
 GOOS = $(word 1, $(TEMP))
 GOARCH = $(word 2, $(TEMP))
