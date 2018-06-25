@@ -424,15 +424,14 @@ footer[role="contentinfo"] p {
 .page-home #products {
   width: 100%;
   margin: 0 auto;
-  padding: 0 50px;
 }
 .page-home #products .comparison-chart {
   display: block;
   height: 100%;
   width: 100%;
-  max-width: 1700px;
+  max-width: 800px;
   margin: 0 auto;
-  padding: 10px 200px 20px;
+  padding: 10px 20px 20px;
   z-index: 1;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
   color: #999999;

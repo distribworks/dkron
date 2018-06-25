@@ -329,9 +329,7 @@
 
 <span><card>
 		<a href="/usage/api/" >API</a></card>
-<p>Dkron REST API 
-Overview You can communicate with Dkron using a RESTful JSON API over HTTP. Dkron nodes usually listen on port 8080 for API requests. All examples in this section assume that you&rsquo;ve found a running leader at localhost:8080.
-Dkron implements a RESTful JSON API over HTTP to communicate with software clients. Dkron listens in port 8080 by default. All examples in this section assume that you&rsquo;re using the default port.</p>
+<p></p>
 </span>
 
 <span><card>
@@ -350,30 +348,22 @@ Field name | Mandatory? | Allowed values | Allowed special characters ----------
 
 <span><card>
 		<a href="/usage/chaining/" >Job chaining</a></card>
-<p>Job chaining You can set some jobs to run after other job is executed. To setup a job that will be executed after any other given job, just set the parent_job property when saving the new job.
-The dependent job will be executed after the main job finished a successful execution.
-Child jobs schedule property will be ignored if it&rsquo;s present.
-Take into account that parent jobs must be created before any child job.</p>
+<p></p>
 </span>
 
 <span><card>
 		<a href="/usage/retries/" >Job retries</a></card>
-<p>Jobs can be configured to retry in case of failure.
-Configuration { &quot;name&quot;: &quot;job1&quot;, &quot;schedule&quot;: &quot;@every 10s&quot;, &quot;executor&quot;: &quot;shell&quot;, &quot;executor_config&quot;: { &quot;command&quot;: &quot;echo \&quot;Hello from parent\&quot;&quot; }, &quot;retries&quot;: 5 }  In case of failure to run the job in one node, it will try to run the job again in that node until the retries count reaches the limit.</p>
+<p></p>
 </span>
 
 <span><card>
 		<a href="/usage/metrics/" >Metrics</a></card>
-<p>Dkron has the ability to send metrics to Statsd for dashboards and historical reporting. It sends job processing metrics and golang, serf metrics too.
-Configuration Add this in your yaml config file
-dog_statsd_addr: &quot;localhost:8125&quot;  Metrics  dkron.agent.event_received.query_execution_done dkron.agent.event_received.query_run_job dkron.memberlist.gossip dkron.memberlist.probeNode dkron.memberlist.pushPullNode dkron.memberlist.tcp.accept dkron.memberlist.tcp.connect dkron.memberlist.tcp.sent dkron.memberlist.udp.received dkron.memberlist.udp.sent dkron.rpc.call_execution_done dkron.rpc.call_get_job dkron.rpc.execution_done dkron.rpc.get_job dkron.runtime.alloc_bytes dkron.runtime.free_count dkron.runtime.gc_pause_ns dkron.runtime.heap_objects dkron.runtime.malloc_count dkron.runtime.num_goroutines dkron.runtime.sys_bytes dkron.runtime.total_gc_pause_ns dkron.runtime.total_gc_runs dkron.serf.coordinate.adjustment_ms dkron.serf.msgs.received dkron.serf.msgs.sent dkron.serf.queries dkron.serf.queries.execution_done dkron.serf.queries.run_job dkron.serf.query_acks dkron.serf.query_responses dkron.serf.queue.Event dkron.</p>
+<p></p>
 </span>
 
 <span><card>
 		<a href="/usage/plugins/" >Plugins</a></card>
-<p>Intro Plugins in Dkron allow you to add funcionality that integrates with the workflow of the job execution in Dkron. It&rsquo;s a powerful system that allows you to extend and adapt Dkron to your special needs.
-This page documents the basics of how the plugin system in Dkron works, and how to setup a basic development environment for plugin development if you&rsquo;re writing a Dkron plugin.
-How it Works Dkron execution execution processors are provided via plugins.</p>
+<p></p>
 </span>
 
 <span><card>
@@ -397,17 +387,12 @@ Note: A common pitfall is not properly setting up a $GOPATH.</p>
 
 <span><card>
 		<a href="/usage/target-nodes-spec/" >Target nodes spec</a></card>
-<p>Target nodes spec You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run.
-Examples: Target all nodes with a tag:
-{ &quot;name&quot;: &quot;job_name&quot;, &quot;command&quot;: &quot;/bin/true&quot;, &quot;schedule&quot;: &quot;@every 2m&quot;, &quot;tags&quot;: { &quot;role&quot;: &quot;web&quot; } }  Target only two nodes of a group of nodes with a tag:</p>
+<p></p>
 </span>
 
 <span><card>
 		<a href="/usage/ecs/" >Use with AWS ECS</a></card>
-<p>Use with Amazon ECS To use Dkron to schedule jobs that run in containers, a wrapper ECS script is needed.
-Install the following snippet in the node that will run the call to ECS
- Prerequisites The node that will run the call to ECS will need to have installed
- AWS cli jq  Example ecs-run --cluster cron --task-definition cron-taskdef --container-name cron --region us-east-1 --command &quot;rake foo&quot;</p>
+<p></p>
 </span>
 </ul>
 
