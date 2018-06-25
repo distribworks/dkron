@@ -37,7 +37,7 @@ It can use etcd, Consul or Zookeeper as data stores. To install any of this syst
 
 ### Recommended method
 
-APT repository: `deb [trusted=yes] https://repo.distrib.works/ /`
+APT repository: `deb [trusted=yes] https://apt.fury.io/victorcoder/ /`
 
 Unstable release: `sudo apt-get install dkron-unstable`
 Stable release: `sudo apt-get install dkron`
