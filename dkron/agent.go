@@ -41,6 +41,7 @@ type Agent struct {
 	ExecutorPlugins  map[string]Executor
 	HTTPTransport    Transport
 	Store            *Store
+	RPCServer        RPCServer
 
 	serf      *serf.Serf
 	config    *Config
@@ -295,7 +296,13 @@ func (a *Agent) StartServer() {
 		a.HTTPTransport = NewTransport(a)
 	}
 	a.HTTPTransport.ServeHTTP()
-	listenRPC(a)
+
+	if a.RPCServer == nil {
+		a.RPCServer = NewRPCServe(a)
+	}
+	if err := a.RPCServer.Serve(); err != nil {
+		log.WithError(err).Fatal("agent: RPC server failed to start")
+	}
 
 	if err := a.SetTags(a.config.Tags); err != nil {
 		log.WithError(err).Fatal("agent: Error setting RPC config tags")

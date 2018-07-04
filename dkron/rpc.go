@@ -19,11 +19,26 @@ var (
 	ErrRPCDialing                 = errors.New("rpc: Error dialing, verify the network connection to the server")
 )
 
-type RPCServer struct {
+// RPCServer interface for RPC methods
+type RPCServer interface {
+	Serve() error
+	GetJob(jobName string, job *Job) error
+	ExecutionDone(execution Execution, reply *serf.NodeResponse) error
+}
+
+// RPCServe will server RPC methods
+type RPCServe struct {
 	agent *Agent
 }
 
-func (rpcs *RPCServer) GetJob(jobName string, job *Job) error {
+// NewRPCServe creates and returns an instance of an RPCServer implementation
+func NewRPCServe(agent *Agent) RPCServer {
+	return &RPCServe{
+		agent: agent,
+	}
+}
+
+func (rpcs *RPCServe) GetJob(jobName string, job *Job) error {
 	defer metrics.MeasureSince([]string{"rpc", "get_job"}, time.Now())
 	log.WithFields(logrus.Fields{
 		"job": jobName,
@@ -45,7 +60,7 @@ func (rpcs *RPCServer) GetJob(jobName string, job *Job) error {
 	return nil
 }
 
-func (rpcs *RPCServer) ExecutionDone(execution Execution, reply *serf.NodeResponse) error {
+func (rpcs *RPCServe) ExecutionDone(execution Execution, reply *serf.NodeResponse) error {
 	defer metrics.MeasureSince([]string{"rpc", "execution_done"}, time.Now())
 	log.WithFields(logrus.Fields{
 		"group": execution.Group,
@@ -146,21 +161,19 @@ retry:
 
 var workaroundRPCHTTPMux = 0
 
-func listenRPC(a *Agent) {
-	r := &RPCServer{
-		agent: a,
-	}
-
-	bindIp, err := a.GetBindIP()
+func (rpcs *RPCServe) Serve() error {
+	bindIp, err := rpcs.agent.GetBindIP()
 	if err != nil {
-		log.Fatal("rpc:", err)
+		return err
 	}
-	RPCAddr := fmt.Sprintf("%s:%d", bindIp, a.config.RPCPort)
+	RPCAddr := fmt.Sprintf("%s:%d", bindIp, rpcs.agent.config.RPCPort)
 	log.WithFields(logrus.Fields{
 		"rpc_addr": RPCAddr,
 	}).Debug("rpc: Registering RPC server")
 
-	rpc.Register(r)
+	if err := rpc.Register(rpcs); err != nil {
+		return err
+	}
 
 	// ===== workaround ==========
 	// This is needed mainly for testing
@@ -178,11 +191,13 @@ func listenRPC(a *Agent) {
 	// workaround
 	http.DefaultServeMux = oldMux
 
-	l, e := net.Listen("tcp", RPCAddr)
-	if e != nil {
-		log.Fatal("rpc:", e)
+	l, err := net.Listen("tcp", RPCAddr)
+	if err != nil {
+		return err
 	}
 	go http.Serve(l, nil)
+
+	return nil
 }
 
 type RPCClient struct {
