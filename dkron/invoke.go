@@ -74,7 +74,7 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 	}
 
 	runningExecutions.Delete(execution.GetGroup())
-	rc := &RPCClient{ServerAddr: string(rpcServer)}
+	rc := &gRPCClient{ServerAddr: string(rpcServer)}
 	return rc.callExecutionDone(execution)
 }
 

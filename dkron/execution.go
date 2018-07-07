@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strconv"
 	"time"
+
+	"github.com/victorcoder/dkron/proto"
 )
 
 // Execution type holds all of the details of a specific Execution.
@@ -39,6 +41,29 @@ func NewExecution(jobName string) *Execution {
 		JobName: jobName,
 		Group:   time.Now().UnixNano(),
 		Attempt: 1,
+	}
+}
+
+// NewExecutionFromProto maps a proto.ExecutionDoneRequest to an Execution object
+func NewExecutionFromProto(edr *proto.ExecutionDoneRequest) *Execution {
+	return &Execution{
+		JobName:  edr.JobName,
+		Success:  edr.Success,
+		Output:   edr.Output,
+		NodeName: edr.NodeName,
+		Group:    edr.Group,
+		Attempt:  uint(edr.Attempt),
+	}
+}
+
+func (e *Execution) ToProto() *proto.ExecutionDoneRequest {
+	return &proto.ExecutionDoneRequest{
+		JobName:  e.JobName,
+		Success:  e.Success,
+		Output:   e.Output,
+		NodeName: e.NodeName,
+		Group:    e.Group,
+		Attempt:  uint32(e.Attempt),
 	}
 }
 

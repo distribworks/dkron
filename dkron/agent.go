@@ -297,11 +297,16 @@ func (a *Agent) StartServer() {
 	}
 	a.HTTPTransport.ServeHTTP()
 
-	if a.RPCServer == nil {
-		a.RPCServer = NewRPCServe(a)
-	}
-	if err := a.RPCServer.Serve(); err != nil {
-		log.WithError(err).Fatal("agent: RPC server failed to start")
+	// if a.RPCServer == nil {
+	// 	a.RPCServer = NewRPCServe(a)
+	// }
+	// if err := a.RPCServer.Serve(); err != nil {
+	// 	log.WithError(err).Fatal("agent: RPC server failed to start")
+	// }
+
+	g := &GRPCServer{agent: a}
+	if err := g.Serve(); err != nil {
+		log.WithError(err).Fatal("agent: GRPC server failed to start")
 	}
 
 	if err := a.SetTags(a.config.Tags); err != nil {
@@ -430,7 +435,7 @@ func (a *Agent) eventLoop() {
 						"job": rqp.Execution.JobName,
 					}).Info("agent: Starting job")
 
-					rpcc := RPCClient{ServerAddr: rqp.RPCAddr}
+					grpcc := gRPCClient{ServerAddr: rqp.RPCAddr}
 
 					// There are two error types to handle here:
 					// Key not found when the job is removed from store
@@ -439,7 +444,7 @@ func (a *Agent) eventLoop() {
 					// On dial error we should retry with a limit.
 					i := 0
 				RetryGetJob:
-					job, err := rpcc.GetJob(rqp.Execution.JobName)
+					job, err := grpcc.callGetJob(rqp.Execution.JobName)
 					if err != nil {
 						if err == ErrRPCDialing {
 							if i < 10 {
