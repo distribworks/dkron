@@ -8,6 +8,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/abronan/valkeyrie/store"
+	"github.com/victorcoder/dkron/proto"
 )
 
 const (
@@ -117,6 +118,30 @@ type Job struct {
 
 	// Computed job status
 	Status string `json:"status"`
+}
+
+func NewJobFromProto(in *proto.GetJobResponse) *Job {
+	return &Job{
+		Name:                 in.Name,
+		Timezone:             in.Timezone,
+		Schedule:             in.Schedule,
+		Shell:                in.Shell,
+		Command:              in.Command,
+		EnvironmentVariables: in.EnvironmentVariables,
+		Owner:                in.Owner,
+		OwnerEmail:           in.OwnerEmail,
+		SuccessCount:         int(in.SuccessCount),
+		ErrorCount:           int(in.ErrorCount),
+		Disabled:             in.Disabled,
+		Tags:                 in.Tags,
+		Retries:              uint(in.Retries),
+		DependentJobs:        in.DependentJobs,
+		ParentJob:            in.ParentJob,
+		Concurrency:          in.Concurrency,
+		Executor:             in.Executor,
+		ExecutorConfig:       in.ExecutorConfig,
+		Status:               in.Status,
+	}
 }
 
 // Run the job

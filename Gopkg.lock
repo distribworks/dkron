@@ -112,7 +112,6 @@
   version = "v1.2"
 
 [[projects]]
-  branch = "master"
   name = "github.com/golang/protobuf"
   packages = [
     "proto",
@@ -121,7 +120,8 @@
     "ptypes/duration",
     "ptypes/timestamp"
   ]
-  revision = "130e6b02ab059e7b717a096f397c5b60111cae74"
+  revision = "b4deda0973fb4c70b50d226b1af49f3da59f5265"
+  version = "v1.1.0"
 
 [[projects]]
   name = "github.com/hashicorp/consul"
@@ -442,26 +442,34 @@
   packages = [
     ".",
     "balancer",
+    "balancer/base",
+    "balancer/roundrobin",
     "codes",
     "connectivity",
     "credentials",
-    "grpclb/grpc_lb_v1/messages",
+    "encoding",
+    "encoding/proto",
     "grpclog",
     "health",
     "health/grpc_health_v1",
     "internal",
+    "internal/backoff",
+    "internal/channelz",
+    "internal/grpcrand",
     "keepalive",
     "metadata",
     "naming",
     "peer",
     "resolver",
+    "resolver/dns",
+    "resolver/passthrough",
     "stats",
     "status",
     "tap",
     "transport"
   ]
-  revision = "f7bf885db0b7479a537ec317c6e48ce53145f3db"
-  version = "v1.7.0"
+  revision = "168a6198bcb0ef175f7dacec0b8691fc141dc9b8"
+  version = "v1.13.0"
 
 [[projects]]
   name = "gopkg.in/go-playground/validator.v8"
@@ -491,6 +499,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "a69a3d58c63953044edececa1b7759634c5372ca6aac280a48b88ae732820d9b"
+  inputs-digest = "b8fb644afb2886c1d2b2d84d7f301340254112a6571d28ec22adbacf560c4e74"
   solver-name = "gps-cdcl"
   solver-version = 1

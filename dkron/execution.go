@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"strconv"
 	"time"
+
+	"github.com/golang/protobuf/ptypes"
+	"github.com/victorcoder/dkron/proto"
 )
 
 // Execution type holds all of the details of a specific Execution.
@@ -39,6 +42,37 @@ func NewExecution(jobName string) *Execution {
 		JobName: jobName,
 		Group:   time.Now().UnixNano(),
 		Attempt: 1,
+	}
+}
+
+// NewExecutionFromProto maps a proto.ExecutionDoneRequest to an Execution object
+func NewExecutionFromProto(edr *proto.ExecutionDoneRequest) *Execution {
+	startedAt, _ := ptypes.Timestamp(edr.GetStartedAt())
+	finishedAt, _ := ptypes.Timestamp(edr.GetFinishedAt())
+	return &Execution{
+		JobName:    edr.JobName,
+		Success:    edr.Success,
+		Output:     edr.Output,
+		NodeName:   edr.NodeName,
+		Group:      edr.Group,
+		Attempt:    uint(edr.Attempt),
+		StartedAt:  startedAt,
+		FinishedAt: finishedAt,
+	}
+}
+
+func (e *Execution) ToProto() *proto.ExecutionDoneRequest {
+	startedAt, _ := ptypes.TimestampProto(e.StartedAt)
+	finishedAt, _ := ptypes.TimestampProto(e.FinishedAt)
+	return &proto.ExecutionDoneRequest{
+		JobName:    e.JobName,
+		Success:    e.Success,
+		Output:     e.Output,
+		NodeName:   e.NodeName,
+		Group:      e.Group,
+		Attempt:    uint32(e.Attempt),
+		StartedAt:  startedAt,
+		FinishedAt: finishedAt,
 	}
 }
 

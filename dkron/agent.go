@@ -41,7 +41,7 @@ type Agent struct {
 	ExecutorPlugins  map[string]Executor
 	HTTPTransport    Transport
 	Store            *Store
-	RPCServer        RPCServer
+	GRPCServer       GRPCServer
 
 	serf      *serf.Serf
 	config    *Config
@@ -297,10 +297,10 @@ func (a *Agent) StartServer() {
 	}
 	a.HTTPTransport.ServeHTTP()
 
-	if a.RPCServer == nil {
-		a.RPCServer = NewRPCServe(a)
+	if a.GRPCServer == nil {
+		a.GRPCServer = &gRPCServer{agent: a}
 	}
-	if err := a.RPCServer.Serve(); err != nil {
+	if err := a.GRPCServer.Serve(); err != nil {
 		log.WithError(err).Fatal("agent: RPC server failed to start")
 	}
 
@@ -430,7 +430,7 @@ func (a *Agent) eventLoop() {
 						"job": rqp.Execution.JobName,
 					}).Info("agent: Starting job")
 
-					rpcc := RPCClient{ServerAddr: rqp.RPCAddr}
+					grpcc := gRPCClient{ServerAddr: rqp.RPCAddr}
 
 					// There are two error types to handle here:
 					// Key not found when the job is removed from store
@@ -439,7 +439,7 @@ func (a *Agent) eventLoop() {
 					// On dial error we should retry with a limit.
 					i := 0
 				RetryGetJob:
-					job, err := rpcc.GetJob(rqp.Execution.JobName)
+					job, err := grpcc.callGetJob(rqp.Execution.JobName)
 					if err != nil {
 						if err == ErrRPCDialing {
 							if i < 10 {

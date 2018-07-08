@@ -11,3 +11,6 @@ etcd.*
 build/
 builder/skel/
 !builder/skel/.keep
+website
+dkron-*
+main

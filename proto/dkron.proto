@@ -1,0 +1,53 @@
+// protoc -I proto/ proto/dkron.proto --go_out=plugins=grpc:dkron/grpc/
+syntax = "proto3";
+
+package proto;
+
+import "google/protobuf/timestamp.proto";
+
+message GetJobRequest {
+  string job_name = 1;
+}
+
+message GetJobResponse {
+  string name = 1;
+  string timezone = 2;
+  string schedule = 3;
+  bool shell = 4;
+  string command = 5;
+  repeated string environment_variables = 6;
+  string owner = 7;
+  string owner_email = 8;
+  int32 success_count = 9;
+  int32 error_count = 10;
+  bool disabled = 11;
+  map<string, string> tags = 12;
+  uint32 retries = 13;
+  repeated string dependent_jobs = 14;
+  string parent_job = 15;
+  string concurrency = 16;
+  string executor = 17;
+  map<string, string> executor_config = 18;
+  string status = 19;
+}
+
+message ExecutionDoneRequest {
+	string job_name = 1;
+	bool success = 2;
+	bytes output = 3;
+	string node_name = 4;
+	int64 group = 5;
+  uint32 attempt = 6;
+  google.protobuf.Timestamp started_at = 7;
+  google.protobuf.Timestamp finished_at = 8;
+}
+
+message ExecutionDoneResponse {
+  string from = 1;
+  bytes payload = 2;
+}
+
+service Dkron {
+  rpc GetJob (GetJobRequest) returns (GetJobResponse);
+  rpc ExecutionDone (ExecutionDoneRequest) returns (ExecutionDoneResponse);
+}

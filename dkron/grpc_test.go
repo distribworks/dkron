@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestRPCExecutionDone(t *testing.T) {
+func TestGRPCExecutionDone(t *testing.T) {
 	store := NewStore("etcd", []string{etcdAddr}, nil, "dkron", nil)
 	viper.Reset()
 
@@ -57,7 +57,7 @@ func TestRPCExecutionDone(t *testing.T) {
 		Output:     []byte("type"),
 	}
 
-	rc := &RPCClient{
+	rc := &gRPCClient{
 		ServerAddr: a.getRPCAddr(),
 	}
 	rc.callExecutionDone(testExecution)
