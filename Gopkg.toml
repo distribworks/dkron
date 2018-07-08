@@ -95,3 +95,11 @@
 [[override]]
   name = "github.com/ugorji/go"
   revision = "f1f1a805ed361a0e078bb537e4ea78cd37dcf065"
+
+[[constraint]]
+  name = "google.golang.org/grpc"
+  version = "^1.13.0"
+
+[[constraint]]
+  name = "github.com/golang/protobuf"
+  version = "^1.1.0"
