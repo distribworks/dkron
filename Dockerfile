@@ -10,6 +10,6 @@ RUN mkdir -p /go/src/github.com/victorcoder/dkron
 WORKDIR /go/src/github.com/victorcoder/dkron
 
 COPY . ./
-RUN dep ensure -v -no-vendor
-RUN go build *.go
-CMD ["/gopath/src/github.com/victorcoder/dkron/main"]
+RUN dep ensure -v
+RUN go install ./...
+CMD ["dkron"]
