@@ -1,6 +1,7 @@
 package dkron
 
 import (
+	"errors"
 	"fmt"
 	"net"
 	"time"
@@ -13,11 +14,21 @@ import (
 	"google.golang.org/grpc"
 )
 
-type GRPCServer struct {
+var (
+	ErrExecutionDoneForDeletedJob = errors.New("rpc: Received execution done for a deleted job")
+	ErrRPCDialing                 = errors.New("rpc: Error dialing, verify the network connection to the server")
+)
+
+type GRPCServer interface {
+	proto.DkronServer
+	Serve() error
+}
+
+type gRPCServer struct {
 	agent *Agent
 }
 
-func (grpcs *GRPCServer) Serve() error {
+func (grpcs *gRPCServer) Serve() error {
 	bindIp, err := grpcs.agent.GetBindIP()
 	if err != nil {
 		return err
@@ -39,7 +50,7 @@ func (grpcs *GRPCServer) Serve() error {
 	return nil
 }
 
-func (grpcs *GRPCServer) GetJob(ctx context.Context, getJobReq *proto.GetJobRequest) (*proto.GetJobResponse, error) {
+func (grpcs *gRPCServer) GetJob(ctx context.Context, getJobReq *proto.GetJobRequest) (*proto.GetJobResponse, error) {
 	defer metrics.MeasureSince([]string{"grpc", "get_job"}, time.Now())
 	log.WithFields(logrus.Fields{
 		"job": getJobReq.JobName,
@@ -63,7 +74,7 @@ func (grpcs *GRPCServer) GetJob(ctx context.Context, getJobReq *proto.GetJobRequ
 	return gjr, nil
 }
 
-func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.ExecutionDoneRequest) (*proto.ExecutionDoneResponse, error) {
+func (grpcs *gRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.ExecutionDoneRequest) (*proto.ExecutionDoneResponse, error) {
 	defer metrics.MeasureSince([]string{"grpc", "execution_done"}, time.Now())
 	log.WithFields(logrus.Fields{
 		"group": execDoneReq.Group,

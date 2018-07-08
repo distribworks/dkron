@@ -41,7 +41,7 @@ type Agent struct {
 	ExecutorPlugins  map[string]Executor
 	HTTPTransport    Transport
 	Store            *Store
-	RPCServer        RPCServer
+	GRPCServer       GRPCServer
 
 	serf      *serf.Serf
 	config    *Config
@@ -297,16 +297,11 @@ func (a *Agent) StartServer() {
 	}
 	a.HTTPTransport.ServeHTTP()
 
-	// if a.RPCServer == nil {
-	// 	a.RPCServer = NewRPCServe(a)
-	// }
-	// if err := a.RPCServer.Serve(); err != nil {
-	// 	log.WithError(err).Fatal("agent: RPC server failed to start")
-	// }
-
-	g := &GRPCServer{agent: a}
-	if err := g.Serve(); err != nil {
-		log.WithError(err).Fatal("agent: GRPC server failed to start")
+	if a.GRPCServer == nil {
+		a.GRPCServer = &gRPCServer{agent: a}
+	}
+	if err := a.GRPCServer.Serve(); err != nil {
+		log.WithError(err).Fatal("agent: RPC server failed to start")
 	}
 
 	if err := a.SetTags(a.config.Tags); err != nil {
