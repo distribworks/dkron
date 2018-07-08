@@ -3,6 +3,8 @@ syntax = "proto3";
 
 package proto;
 
+import "google/protobuf/timestamp.proto";
+
 message GetJobRequest {
   string job_name = 1;
 }
@@ -35,7 +37,9 @@ message ExecutionDoneRequest {
 	bytes output = 3;
 	string node_name = 4;
 	int64 group = 5;
-	uint32 attempt = 6;
+  uint32 attempt = 6;
+  google.protobuf.Timestamp started_at = 7;
+  google.protobuf.Timestamp finished_at = 8;
 }
 
 message ExecutionDoneResponse {
