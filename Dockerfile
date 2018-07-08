@@ -14,6 +14,6 @@ ENV PATH $PATH:/usr/local/go/bin:$GOPATH/bin
 #COPY Gopkg.* ./
 
 COPY . ./
-RUN dep ensure
+RUN dep ensure -v -no-vendor
 RUN go build *.go
 CMD ["/gopath/src/github.com/victorcoder/dkron/main"]
