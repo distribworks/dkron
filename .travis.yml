@@ -6,5 +6,4 @@ services:
   - docker
 
 script:
-  - docker-compose run dkron dep ensure -v
   - scripts/test

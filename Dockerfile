@@ -6,12 +6,8 @@ EXPOSE 8080 8946
 RUN wget https://github.com/golang/dep/releases/download/v0.4.1/dep-linux-amd64 -O /usr/local/bin/dep && \
     chmod +x /usr/local/bin/dep
 
-WORKDIR /gopath/src/github.com/victorcoder/dkron
-
-ENV GOPATH /gopath
-ENV PATH $PATH:/usr/local/go/bin:$GOPATH/bin
-
-#COPY Gopkg.* ./
+RUN mkdir -p /go/src/github.com/victorcoder/dkron
+WORKDIR /go/src/github.com/victorcoder/dkron
 
 COPY . ./
 RUN dep ensure -v -no-vendor
