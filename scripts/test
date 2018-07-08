@@ -5,5 +5,5 @@ NOVENDOR=$(go list ./...)
 docker build -t dkron .
 docker run dkron scripts/validate-gofmt
 docker run dkron go vet $NOVENDOR
-docker run -p "2379" quay.io/coreos/etcd etcd -name=dkron1 -advertise-client-urls http://etcd:2379 -listen-client-urls http://0.0.0.0:2379
+docker run -d -p "2379" quay.io/coreos/etcd etcd -name=dkron1 -advertise-client-urls http://etcd:2379 -listen-client-urls http://0.0.0.0:2379
 docker run -e DKRON_BACKEND_MACHINE=etcd:2379 dkron go test -v $NOVENDOR $1
