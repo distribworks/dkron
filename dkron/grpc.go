@@ -19,16 +19,23 @@ var (
 	ErrRPCDialing                 = errors.New("rpc: Error dialing, verify the network connection to the server")
 )
 
-type GRPCServer interface {
+type DkronGRPCServer interface {
 	proto.DkronServer
 	Serve() error
 }
 
-type gRPCServer struct {
+type GRPCServer struct {
 	agent *Agent
 }
 
-func (grpcs *gRPCServer) Serve() error {
+// NewRPCServe creates and returns an instance of an RPCServer implementation
+func NewGRPCServer(agent *Agent) DkronGRPCServer {
+	return &GRPCServer{
+		agent: agent,
+	}
+}
+
+func (grpcs *GRPCServer) Serve() error {
 	bindIp, err := grpcs.agent.GetBindIP()
 	if err != nil {
 		return err
@@ -50,7 +57,7 @@ func (grpcs *gRPCServer) Serve() error {
 	return nil
 }
 
-func (grpcs *gRPCServer) GetJob(ctx context.Context, getJobReq *proto.GetJobRequest) (*proto.GetJobResponse, error) {
+func (grpcs *GRPCServer) GetJob(ctx context.Context, getJobReq *proto.GetJobRequest) (*proto.GetJobResponse, error) {
 	defer metrics.MeasureSince([]string{"grpc", "get_job"}, time.Now())
 	log.WithFields(logrus.Fields{
 		"job": getJobReq.JobName,
@@ -74,7 +81,7 @@ func (grpcs *gRPCServer) GetJob(ctx context.Context, getJobReq *proto.GetJobRequ
 	return gjr, nil
 }
 
-func (grpcs *gRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.ExecutionDoneRequest) (*proto.ExecutionDoneResponse, error) {
+func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.ExecutionDoneRequest) (*proto.ExecutionDoneResponse, error) {
 	defer metrics.MeasureSince([]string{"grpc", "execution_done"}, time.Now())
 	log.WithFields(logrus.Fields{
 		"group": execDoneReq.Group,
@@ -176,23 +183,34 @@ retry:
 	return execDoneResp, nil
 }
 
-type gRPCClient struct {
-	//Addres of the server to call
-	ServerAddr string
+type DkronGRPCClient interface {
+	Connect(string) (*grpc.ClientConn, error)
+	CallExecutionDone(string, *Execution) error
+	CallGetJob(string, string) (*Job, error)
 }
 
-func (grpcc *gRPCClient) callExecutionDone(execution *Execution) error {
+type GRPCClient struct {
+}
+
+func (grpcc *GRPCClient) Connect(addr string) (*grpc.ClientConn, error) {
+	// Initiate a connection with the server
+	conn, err := grpc.Dial(addr, grpc.WithInsecure())
+	if err != nil {
+		return nil, err
+	}
+	return conn, nil
+}
+
+func (grpcc *GRPCClient) CallExecutionDone(addr string, execution *Execution) error {
 	defer metrics.MeasureSince([]string{"grpc", "call_execution_done"}, time.Now())
 	var conn *grpc.ClientConn
 
-	// Initiate a connection with the server
-	conn, err := grpc.Dial(grpcc.ServerAddr, grpc.WithInsecure())
+	conn, err := grpcc.Connect(addr)
 	if err != nil {
 		log.WithFields(logrus.Fields{
 			"err":         err,
-			"server_addr": grpcc.ServerAddr,
+			"server_addr": addr,
 		}).Error("grpc: error dialing.")
-		return err
 	}
 	defer conn.Close()
 
@@ -209,18 +227,17 @@ func (grpcc *gRPCClient) callExecutionDone(execution *Execution) error {
 	return nil
 }
 
-func (grpcc *gRPCClient) callGetJob(jobName string) (*Job, error) {
+func (grpcc *GRPCClient) CallGetJob(addr, jobName string) (*Job, error) {
 	defer metrics.MeasureSince([]string{"grpc", "call_get_job"}, time.Now())
 	var conn *grpc.ClientConn
 
 	// Initiate a connection with the server
-	conn, err := grpc.Dial(grpcc.ServerAddr, grpc.WithInsecure())
+	conn, err := grpcc.Connect(addr)
 	if err != nil {
 		log.WithFields(logrus.Fields{
 			"err":         err,
-			"server_addr": grpcc.ServerAddr,
+			"server_addr": addr,
 		}).Error("grpc: error dialing.")
-		return nil, err
 	}
 	defer conn.Close()
 
