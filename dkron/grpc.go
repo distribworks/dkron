@@ -190,11 +190,19 @@ type DkronGRPCClient interface {
 }
 
 type GRPCClient struct {
+	dialOpt grpc.DialOption
+}
+
+func NewGRPCClient(dialOpt grpc.DialOption) DkronGRPCClient {
+	if dialOpt == nil {
+		dialOpt = grpc.WithInsecure()
+	}
+	return &GRPCClient{dialOpt: dialOpt}
 }
 
 func (grpcc *GRPCClient) Connect(addr string) (*grpc.ClientConn, error) {
 	// Initiate a connection with the server
-	conn, err := grpc.Dial(addr, grpc.WithInsecure())
+	conn, err := grpc.Dial(addr, grpcc.dialOpt)
 	if err != nil {
 		return nil, err
 	}
