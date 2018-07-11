@@ -39,6 +39,7 @@ type Config struct {
 	UIDir                 string
 	RPCPort               int
 	AdvertiseRPCPort      int
+	LogLevel              string
 
 	MailHost          string
 	MailPort          uint16
@@ -199,6 +200,7 @@ func ReadConfig() *Config {
 		UIDir:            viper.GetString("ui_dir"),
 		RPCPort:          viper.GetInt("rpc_port"),
 		AdvertiseRPCPort: viper.GetInt("advertise_rpc_port"),
+		LogLevel:         viper.GetString("log_level"),
 
 		MailHost:          viper.GetString("mail_host"),
 		MailPort:          uint16(viper.GetInt("mail_port")),
