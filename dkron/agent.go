@@ -306,7 +306,7 @@ func (a *Agent) StartServer() {
 	}
 
 	if a.GRPCClient == nil {
-		a.GRPCClient = &GRPCClient{}
+		a.GRPCClient = NewGRPCClient(nil)
 	}
 
 	if err := a.SetTags(a.config.Tags); err != nil {
