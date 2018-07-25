@@ -45,6 +45,7 @@ type Store struct {
 
 type JobOptions struct {
 	ComputeStatus bool
+	Tags          map[string]string `json:"tags"`
 }
 
 func init() {
@@ -222,6 +223,7 @@ func (s *Store) validateJob(job *Job) error {
 
 // GetJobs returns all jobs
 func (s *Store) GetJobs(options *JobOptions) ([]*Job, error) {
+
 	res, err := s.Client.List(s.keyspace+"/jobs/", nil)
 	if err != nil {
 		if err == store.ErrKeyNotFound {
@@ -242,6 +244,26 @@ func (s *Store) GetJobs(options *JobOptions) ([]*Job, error) {
 		if options != nil && options.ComputeStatus {
 			job.Status = job.GetStatus()
 		}
+
+		// Filter jobs based on tags
+		if options != nil {
+			if len(options.Tags) > 0 {
+
+				addJob := true
+
+				for k, v := range options.Tags {
+					if w, ok := job.Tags[k]; !ok || v != w {
+						addJob = false
+						break
+					}
+				}
+
+				if !addJob {
+					continue
+				}
+			}
+		}
+
 		jobs = append(jobs, &job)
 	}
 	return jobs, nil
