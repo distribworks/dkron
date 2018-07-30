@@ -1,3 +1,13 @@
+## 0.10.4 (2018-07-30)
+
+- Replace RPC with gRPC
+- Fix compose files (@kevynhale)
+
+## 0.10.3 (2018-06-20)
+
+- Replace goxc with makefile
+- Pro docs
+
 ## 0.10.2 (2018-05-23)
 
 ### Bug fixes

@@ -1,6 +1,6 @@
 BIN_NAME := dkron
 DEP_VERSION=0.4.1
-VERSION := 0.10.3
+VERSION := 0.10.4
 PKGNAME := dkron
 LICENSE := LGPL 3.0
 VENDOR := Distributed Works
