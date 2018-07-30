@@ -14,6 +14,7 @@ DESC := Distributed, fault tolerant job scheduling system
 MAINTAINER := Victor Castell <victor@distrib.works>
 DOCKER_WDIR := /tmp/fpm
 DOCKER_FPM := devopsfaith/fpm
+SHA256SUMS := ${PKGNAME}_${VERSION}_SHA256SUMS
 
 PLATFORMS := darwin_amd64 linux_amd64 linux_arm64 windows_amd64
 TEMP = $(subst _, ,$@)
@@ -68,6 +69,7 @@ builder/skel/%: build_all
 .PHONY: tgz
 tgz: $(addprefix builder/skel/,${PLATFORMS})
 	$(foreach p,$(PLATFORMS),$(shell tar zcvf dkron_${VERSION}_${p}.tar.gz -C builder/skel/${p} .))
+	$(foreach p,$(PLATFORMS),$(shell shasum -a 256 dkron_${VERSION}_${p}.tar.gz >> ${SHA256SUMS}))
 
 .PHONY: deb
 deb: builder/skel/deb/usr/bin
@@ -77,7 +79,8 @@ deb: builder/skel/deb/etc/dkron/dkron.yml
 		--deb-systemd builder/files/dkron.service \
 		--chdir builder/skel/$@ \
 		${FPM_OPTS}
-	docker build --build-arg debfile=${PKGNAME}_${VERSION}-${RELEASE}_amd64.deb -f tests/deb/Dockerfile -t test_${PKGNAME}_${VERSION}_deb .
+	shasum -a 256 ${PKGNAME}_${VERSION}-${RELEASE}_amd64.deb >> ${SHA256SUMS}
+	# docker build --build-arg debfile=${PKGNAME}_${VERSION}-${RELEASE}_amd64.deb -f tests/deb/Dockerfile -t test_${PKGNAME}_${VERSION}_deb .
 
 .PHONY: rpm
 rpm: builder/skel/rpm/usr/bin
@@ -88,12 +91,13 @@ rpm: builder/skel/rpm/etc/dkron/dkron.yml
 		--iteration ${RELEASE} \
 		-C builder/skel/$@ \
 		${FPM_OPTS}
-	docker build --build-arg rpmfile=${PKGNAME}-${VERSION}-${RELEASE}.x86_64.rpm -f tests/rpm/Dockerfile -t test_${PKGNAME}_${VERSION}_rpm .
+	shasum -a 256 ${PKGNAME}-${VERSION}-${RELEASE}.x86_64.rpm >> ${PKGNAME}_${VERSION}_SHA256SUMS
+	# docker build --build-arg rpmfile=${PKGNAME}-${VERSION}-${RELEASE}.x86_64.rpm -f tests/rpm/Dockerfile -t test_${PKGNAME}_${VERSION}_rpm .
 
 LINUX_PKGS := $(wildcard *.deb) $(wildcard *.rpm)
 PKGS := $(wildcard *.tar.gz)
 
-.PHONY: ghrelease github fury
+.PHONY: ghrelease
 ghrelease:
 	github-release release \
 		--user victorcoder \
@@ -102,9 +106,18 @@ ghrelease:
 		--name "${VERSION}" \
 		--description "See: https://github.com/victorcoder/dkron/blob/master/CHANGELOG.md" \
 
-.PHONY: $(PKGS)
+.PHONY: github-checksum
+github-checksum: ghrelease
+	github-release upload \
+		--user victorcoder \
+		--repo dkron \
+		--name ${SHA256SUMS} \
+		--tag v${VERSION} \
+		--file ${SHA256SUMS}
+
+.PHONY: github $(PKGS)
 github: $(PKGS)
-$(PKGS): ghrelease
+$(PKGS): github-checksum
 	github-release upload \
 		--user victorcoder \
 		--repo dkron \
@@ -112,7 +125,7 @@ $(PKGS): ghrelease
 		--tag v${VERSION} \
 		--file $@
 
-.PHONY: $(LINUX_PKGS)
+.PHONY: fury $(LINUX_PKGS)
 fury: $(LINUX_PKGS)
 $(LINUX_PKGS): github
 	github-release upload \
@@ -129,6 +142,7 @@ release: clean deb rpm tgz fury
 .PHONY: clean
 clean:
 	rm -f main
+	rm -f *_SHA256SUMS
 	rm -f dkron-*
 	rm -rf build/*
 	rm -rf builder/skel/*
