@@ -13,7 +13,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"github.com/abronan/leadership"
 	metrics "github.com/armon/go-metrics"
 	"github.com/hashicorp/memberlist"

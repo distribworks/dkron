@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/Sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"github.com/abronan/valkeyrie/store"
 	gin "github.com/gin-gonic/gin"
 )
