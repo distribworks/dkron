@@ -7,6 +7,9 @@
           <div class="input-group">
             <div class="input-group-addon"><i class="fa fa-search"></i></div>
             <input type="text" class="form-control" placeholder="Filter" ng-model="searchJob">
+            <div class="input-group-addon">
+              <a href="#" data-toggle="modal" data-target="#jobTemplateModal" title="New"><i class="glyphicon glyphicon-plus" aria-hidden="true"></i></a>
+            </div>
           </div>      
         </div>
     </form>
@@ -54,7 +57,7 @@
             <i ng-class="job | statusClass" class="glyphicon"></i>
         </td>
         <td>
-          <a href="#" data-toggle="modal" data-target="#{{`{{ $index }}`}}-modal" title="View"><i class="glyphicon glyphicon-eye-open" aria-hidden="true"></i></a>
+          <a href="#" data-toggle="modal" data-target="#{{`{{ $index }}`}}-modal"  title="View"><i class="glyphicon glyphicon-eye-open" aria-hidden="true"></i></a>
           &nbsp;
           <a href="#" ng-click="runJob(job.name)" ng-show="!running_{{`{{ $index }}`}}" title="Run"><i class="glyphicon glyphicon-play" aria-hidden="true"></i></a>
           <a href="#"><i class="fa fa-cog fa-spin fa-1x fa-fw" ng-show="running_{{`{{ $index }}`}}"></i></a>
@@ -91,11 +94,31 @@
               <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
               <h4 class="modal-title" id="myModalLabel" ng-bind="'View ' + job.name"></h4>
             </div>
-            <div class="modal-body">
-              <pre><code class="hljs json" ng-bind="job | json"></code></pre>
+            <div class="modal-body" contenteditable="true">
+              <pre><code class="hljs json" ng-bind="job | json" id="{{`{{ job.name }}`}}"></code></pre>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button class="btn btn-default" ng-click="updateJob(job)" value="update" data-dismiss="modal">Update</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!--Job Template Modal -->
+      <div  class="modal fade" id="jobTemplateModal" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="myModalLabel" ng-bind="'Create'"></h4>
+            </div>
+            <div class="modal-body" contenteditable="true">
+              <pre><code class="hljs json" ng-bind="jobTemplate | json" id="{{`{{ jobTemplateId }}`}}"></code></pre>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button class="btn btn-default" ng-click="createJob(jobTemplate)" value="Create" data-dismiss="modal">Create</button>
             </div>
           </div>
         </div>
