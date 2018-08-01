@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/Sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"github.com/hashicorp/go-plugin"
 	"github.com/kardianos/osext"
 	"github.com/victorcoder/dkron/dkron"
