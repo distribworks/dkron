@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/spf13/viper"
 )
 
@@ -42,7 +43,7 @@ type Config struct {
 	LogLevel              string
 
 	MailHost          string
-	MailPort          uint16
+	MailPort          uint16 `mapstructure:"mail_port"`
 	MailUsername      string
 	MailPassword      string
 	MailFrom          string
@@ -182,6 +183,11 @@ func ReadConfig() *Config {
 	tags["dkron_version"] = Version
 
 	InitLogger(viper.GetString("log_level"), nodeName)
+
+	c := &Config{}
+	viper.Unmarshal(c)
+	spew.Dump(c)
+	log.Fatal()
 
 	return &Config{
 		NodeName:         nodeName,
