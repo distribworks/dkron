@@ -6,7 +6,7 @@ import (
 	"net"
 	"time"
 
-	"github.com/Sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"github.com/abronan/valkeyrie/store"
 	metrics "github.com/armon/go-metrics"
 	"github.com/victorcoder/dkron/proto"

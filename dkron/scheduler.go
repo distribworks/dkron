@@ -4,7 +4,7 @@ import (
 	"errors"
 	"expvar"
 
-	"github.com/Sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"github.com/armon/go-metrics"
 	"github.com/victorcoder/dkron/cron"
 )
