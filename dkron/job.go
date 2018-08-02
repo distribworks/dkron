@@ -6,8 +6,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/sirupsen/logrus"
 	"github.com/abronan/valkeyrie/store"
+	"github.com/sirupsen/logrus"
 	"github.com/victorcoder/dkron/proto"
 )
 

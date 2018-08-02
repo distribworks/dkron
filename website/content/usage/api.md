@@ -82,6 +82,14 @@ json :
 List jobs.
 
 
+#### Parameters
+
+|Type|Name|Description|Schema|
+|---|---|---|---|
+|**query**|**tags**  <br>*optional*|Filter jobs by tags. Works as a logical and.|< string, string > map|
+
+
+
 #### Responses
 
 |HTTP Code|Description|Schema|
@@ -98,7 +106,7 @@ List jobs.
 
 ##### Request path
 ```
-/jobs
+/jobs?tags[foo]=val1&tags[bar]=val2
 ```
 
 

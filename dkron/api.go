@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/sirupsen/logrus"
 	"github.com/abronan/valkeyrie/store"
-	gin "github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -122,7 +122,9 @@ func (h *HTTPTransport) indexHandler(c *gin.Context) {
 }
 
 func (h *HTTPTransport) jobsHandler(c *gin.Context) {
-	jobs, err := h.agent.Store.GetJobs(&JobOptions{ComputeStatus: true})
+	jobTags := c.QueryMap("tags")
+
+	jobs, err := h.agent.Store.GetJobs(&JobOptions{ComputeStatus: true, Tags: jobTags})
 	if err != nil {
 		log.WithError(err).Error("api: Unable to get jobs, store not reachable.")
 		return
