@@ -122,7 +122,22 @@ func (h *HTTPTransport) indexHandler(c *gin.Context) {
 }
 
 func (h *HTTPTransport) jobsHandler(c *gin.Context) {
-	jobs, err := h.agent.Store.GetJobs(&JobOptions{ComputeStatus: true})
+	// Init the Job object with defaults
+	jobOptions := JobOptions{
+		ComputeStatus: true,
+	}
+
+	// Only parse values if there is a body.
+	// If there is not a body, retrieve all jobs.
+	if c.Request.ContentLength > 0 {
+		if err := c.BindJSON(&jobOptions); err != nil {
+			c.Writer.WriteString("Incorrect or unexpected parameters")
+			log.Error(err)
+			return
+		}
+	}
+
+	jobs, err := h.agent.Store.GetJobs(&jobOptions)
 	if err != nil {
 		log.WithError(err).Error("api: Unable to get jobs, store not reachable.")
 		return
