@@ -9,7 +9,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -96,7 +95,7 @@ func NewConfig(args []string) *Config {
 		}
 	})
 
-	return ReadConfig()
+	return &Config{}
 }
 
 // configFlagSet creates all of our configuration flags.
@@ -150,79 +149,6 @@ func ConfigFlagSet() *flag.FlagSet {
 	cmdFlags.String("statsd-addr", "", "Statsd Address")
 
 	return cmdFlags
-}
-
-// readConfig from file and create the actual config object.
-func ReadConfig() *Config {
-	err := viper.ReadInConfig() // Find and read the config file
-	if err != nil {             // Handle errors reading the config file
-		logrus.WithError(err).Info("No valid config found: Applying default values.")
-	}
-
-	cliTags := viper.GetStringSlice("tag")
-	var tags map[string]string
-
-	if len(cliTags) > 0 {
-		tags, err = UnmarshalTags(cliTags)
-		if err != nil {
-			logrus.Fatal("config: Error unmarshaling cli tags")
-		}
-	} else {
-		tags = viper.GetStringMapString("tags")
-	}
-
-	server := viper.GetBool("server")
-	nodeName := viper.GetString("node_name")
-
-	if server {
-		tags["dkron_server"] = "true"
-	} else {
-		tags["dkron_server"] = "false"
-	}
-	tags["dkron_version"] = Version
-
-	InitLogger(viper.GetString("log_level"), nodeName)
-
-	c := &Config{}
-	viper.Unmarshal(c)
-	spew.Dump(c)
-	log.Fatal()
-
-	return &Config{
-		NodeName:         nodeName,
-		BindAddr:         viper.GetString("bind_addr"),
-		AdvertiseAddr:    viper.GetString("advertise_addr"),
-		HTTPAddr:         viper.GetString("http_addr"),
-		Discover:         viper.GetString("discover"),
-		Backend:          viper.GetString("backend"),
-		BackendMachines:  viper.GetStringSlice("backend_machine"),
-		Server:           server,
-		Profile:          viper.GetString("profile"),
-		StartJoin:        viper.GetStringSlice("join"),
-		Tags:             tags,
-		Keyspace:         viper.GetString("keyspace"),
-		EncryptKey:       viper.GetString("encrypt"),
-		UIDir:            viper.GetString("ui_dir"),
-		RPCPort:          viper.GetInt("rpc_port"),
-		AdvertiseRPCPort: viper.GetInt("advertise_rpc_port"),
-		LogLevel:         viper.GetString("log_level"),
-
-		MailHost:          viper.GetString("mail_host"),
-		MailPort:          uint16(viper.GetInt("mail_port")),
-		MailUsername:      viper.GetString("mail_username"),
-		MailPassword:      viper.GetString("mail_password"),
-		MailFrom:          viper.GetString("mail_from"),
-		MailPayload:       viper.GetString("mail_payload"),
-		MailSubjectPrefix: viper.GetString("mail_subject_prefix"),
-
-		WebhookURL:     viper.GetString("webhook_url"),
-		WebhookPayload: viper.GetString("webhook_payload"),
-		WebhookHeaders: viper.GetStringSlice("webhook_headers"),
-
-		DogStatsdAddr: viper.GetString("dog_statsd_addr"),
-		DogStatsdTags: viper.GetStringSlice("dog_statsd_tags"),
-		StatsdAddr:    viper.GetString("statsd_addr"),
-	}
 }
 
 // AddrParts returns the parts of the BindAddr that should be

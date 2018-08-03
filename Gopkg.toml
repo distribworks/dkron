@@ -84,6 +84,10 @@
   name = "github.com/spf13/viper"
   version = "^1.0.2"
 
+[[override]]
+  name = "github.com/spf13/pflag"
+  branch = "master"
+
 [[constraint]]
   name = "github.com/stretchr/testify"
   version = "^1.2.1"

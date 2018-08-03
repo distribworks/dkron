@@ -13,11 +13,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/sirupsen/logrus"
 	"github.com/abronan/leadership"
 	metrics "github.com/armon/go-metrics"
 	"github.com/hashicorp/memberlist"
 	"github.com/hashicorp/serf/serf"
+	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -269,18 +269,9 @@ func (a *Agent) Config() *Config {
 	return a.config
 }
 
-// UnmarshalTags is a utility function which takes a slice of strings in
-// key=value format and returns them as a tag mapping.
-func UnmarshalTags(tags []string) (map[string]string, error) {
-	result := make(map[string]string)
-	for _, tag := range tags {
-		parts := strings.SplitN(tag, "=", 2)
-		if len(parts) != 2 || len(parts[0]) == 0 {
-			return nil, fmt.Errorf("Invalid tag: '%s'", tag)
-		}
-		result[parts[0]] = parts[1]
-	}
-	return result, nil
+// Config returns the agent's config.
+func (a *Agent) SetConfig(c *Config) {
+	a.config = c
 }
 
 func (a *Agent) StartServer() {
