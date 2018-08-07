@@ -1,4 +1,4 @@
-var dkron = angular.module('dkron', ['angular-rickshaw']);
+var dkron = angular.module('dkron', ['angular-rickshaw', 'ui.codemirror']);
 
 dkron.filter('statusClass', function() {
   var friendlyStatusFilter = function(job) {
@@ -23,7 +23,10 @@ dkron.filter('statusClass', function() {
 dkron.constant('hideDelay', 2000);
 
 dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
-  $scope.jobTemplateId = "job_template"
+  // pretty json func
+  $scope.toJson = function (str) {
+    return angular.toJson(str, true);
+  }
   $scope.jobTemplate = {
     name: "child_job",
     schedule: "",
@@ -44,6 +47,15 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
       command: ""
     }
   }
+  $scope.jobTemplateJson = $scope.toJson($scope.jobTemplate);
+
+  $scope.editorOptions = {
+    lineWrapping : true,
+    autoCloseBrackets: true,
+    autoRefresh:true,
+    height:"auto",
+		mode: "application/json",
+	};
 
   $scope.runJob = function(jobName) {
     $scope["running_" + jobName] = true;
@@ -62,10 +74,9 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
     });
   };
 
-  $scope.createJob = function() {
-    jsonJob = document.getElementById($scope.jobTemplateId).innerHTML;
+  $scope.createJob = function(jobTemplateJson) {
     try {
-      job = angular.fromJson(jsonJob);
+      job = angular.fromJson(jobTemplateJson);
     } catch (err) {
       window.alert('Json Format Error');
       return
@@ -86,10 +97,9 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
     });
   };
 
-  $scope.updateJob = function(job) {
-    jsonJob = document.getElementById(job.name).innerHTML;
+  $scope.updateJob = function(jobJson) {
     try {
-      job = angular.fromJson(jsonJob);
+      job = angular.fromJson(jobJson);
     } catch (err) {
       window.alert('Json Format Error');
       return

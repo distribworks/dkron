@@ -94,12 +94,12 @@
               <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
               <h4 class="modal-title" id="myModalLabel" ng-bind="'View ' + job.name"></h4>
             </div>
-            <div class="modal-body" contenteditable="true">
-              <pre><code class="hljs json" ng-bind="job | json" id="{{`{{ job.name }}`}}"></code></pre>
+            <div class="modal-body" ng-init="jobJson=toJson(job)">
+              <textarea ui-codemirror ui-codemirror-opts="editorOptions" ng-model="jobJson"></textarea>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-              <button class="btn btn-default" ng-click="updateJob(job)" value="update" data-dismiss="modal">Update</button>
+              <button class="btn btn-default" ng-click="updateJob(jobJson)" value="update" data-dismiss="modal">Update</button>
             </div>
           </div>
         </div>
@@ -113,12 +113,12 @@
               <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
               <h4 class="modal-title" id="myModalLabel" ng-bind="'Create'"></h4>
             </div>
-            <div class="modal-body" contenteditable="true">
-              <pre><code class="hljs json" ng-bind="jobTemplate | json" id="{{`{{ jobTemplateId }}`}}"></code></pre>
+            <div class="modal-body">
+              <textarea ui-codemirror ui-codemirror-opts="editorOptions" ng-model="jobTemplateJson"></textarea>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-              <button class="btn btn-default" ng-click="createJob(jobTemplate)" value="Create" data-dismiss="modal">Create</button>
+              <button class="btn btn-default" ng-click="createJob(jobTemplateJson)" value="Create" data-dismiss="modal">Create</button>
             </div>
           </div>
         </div>
