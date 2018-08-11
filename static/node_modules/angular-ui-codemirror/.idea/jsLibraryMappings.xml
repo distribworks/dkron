@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JavaScriptLibraryMappings">
+    <file url="file://$PROJECT_DIR$/src/ui-codemirror.js" libraries="{angularjs-DefinitelyTyped}" />
+    <file url="file://$PROJECT_DIR$/test/codemirror.spec.js" libraries="{jasmine-DefinitelyTyped}" />
+  </component>
+</project>

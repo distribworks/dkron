@@ -1,0 +1,29 @@
+{
+  "bitwise": true,
+  "camelcase": false,
+  "curly": true,
+  "eqeqeq": true,
+  "freeze": true,
+  "globalstrict": true,
+  "immed": true,
+  "latedef": false,
+  "newcap": true,
+  "noarg": true,
+  "noempty": true,
+  "quotmark": "single",
+  "undef": true,
+  "unused": true,
+  "maxdepth": 4,
+  "maxcomplexity": 8,
+
+  "eqnull": false,
+  "esnext": true,
+
+  "browser": true,
+  "jasmine": true,
+  "validthis": true,
+
+  "globals": {
+    "angular": true
+  }
+}

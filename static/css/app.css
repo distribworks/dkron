@@ -285,6 +285,11 @@ ul.status li strong {
   opacity: .7;
 }
 
+.CodeMirror {
+  border: 2px solid #eee;
+  height: auto !important;
+}
+
 .tooltip-inner {
   text-align: left;
   max-width: 450px;
