@@ -73,7 +73,6 @@ func initConfig() {
 		}
 	} else {
 		tags = viper.GetStringMapString("tags")
-		fmt.Println(tags)
 	}
 	tags["dkron_server"] = strconv.FormatBool(config.Server)
 	tags["dkron_version"] = dkron.Version

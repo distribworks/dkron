@@ -105,8 +105,6 @@ func ConfigFlagSet() *flag.FlagSet {
 	cmdFlags.StringSlice("dog-statsd-tags", []string{}, "Datadog tags, specified as key:value")
 	cmdFlags.String("statsd-addr", "", "Statsd Address")
 
-	cmdFlags.StringToString("tags", map[string]string{}, "fufifa")
-
 	return cmdFlags
 }
 
