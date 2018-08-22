@@ -32,12 +32,6 @@ The best way to test and develop dkron is using docker, you will need [Docker](h
 
 Clone the repository.
 
-Install dep, follow instructions here https://github.com/golang/dep#setup
-
-Download dependencies:
-
-`dep ensure`
-
 Next, run the included Docker Compose config:
 
 `docker-compose up`
