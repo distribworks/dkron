@@ -3,12 +3,11 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 	"github.com/victorcoder/dkron/dkron"
 )
@@ -37,22 +36,32 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	dkronCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is /etc/dkron/dkron.yml)")
+	dkronCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file path")
 }
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	viper.SetConfigName("dkron")        // name of config file (without extension)
-	viper.AddConfigPath("/etc/dkron")   // call multiple times to add many search paths
-	viper.AddConfigPath("$HOME/.dkron") // call multiple times to add many search paths
-	viper.AddConfigPath("./config")     // call multiple times to add many search paths
-	viper.SetEnvPrefix("dkron")         // will be uppercased automatically
-	viper.AutomaticEnv()
+	if cfgFile != "" {
+		// Use config file from the flag.
+		viper.SetConfigFile(cfgFile)
+	} else {
+		viper.SetConfigName("dkron")        // name of config file (without extension)
+		viper.AddConfigPath("/etc/dkron")   // call multiple times to add many search paths
+		viper.AddConfigPath("$HOME/.dkron") // call multiple times to add many search paths
+		viper.AddConfigPath("./config")     // call multiple times to add many search paths
+	}
+
+	viper.SetEnvPrefix("dkron")
+	replacer := strings.NewReplacer("-", "_")
+	viper.SetEnvKeyReplacer(replacer)
+	viper.AutomaticEnv() // read in environment variables that match
 
 	err := viper.ReadInConfig() // Find and read the config file
 	if err != nil {             // Handle errors reading the config file
 		logrus.WithError(err).Info("No valid config found: Applying default values.")
 	}
+
+	viper.Unmarshal(config)
 
 	cliTags := viper.GetStringSlice("tag")
 	var tags map[string]string
@@ -64,32 +73,14 @@ func initConfig() {
 		}
 	} else {
 		tags = viper.GetStringMapString("tags")
+		fmt.Println(tags)
 	}
-
-	server := viper.GetBool("server")
-	nodeName := viper.GetString("node_name")
-
-	if server {
-		tags["dkron_server"] = "true"
-	} else {
-		tags["dkron_server"] = "false"
-	}
+	tags["dkron_server"] = strconv.FormatBool(config.Server)
 	tags["dkron_version"] = dkron.Version
 
-	dkron.InitLogger(viper.GetString("log_level"), nodeName)
+	config.Tags = tags
 
-	dkronCmd.Flags().VisitAll(func(f *pflag.Flag) {
-		fmt.Println(f.Value.String())
-		v := strings.Replace(f.Name, "-", "_", -1)
-		if f.Value.String() != f.DefValue {
-			viper.Set(v, f.Value.String())
-		} else {
-			viper.SetDefault(v, f.Value.String())
-		}
-	})
-
-	viper.Unmarshal(config)
-	spew.Dump(config)
+	dkron.InitLogger(viper.GetString("log_level"), config.NodeName)
 }
 
 // unmarshalTags is a utility function which takes a slice of strings in

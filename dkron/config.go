@@ -2,101 +2,64 @@ package dkron
 
 import (
 	"encoding/base64"
-	"flag"
 	"fmt"
 	"net"
 	"os"
-	"strings"
 	"time"
 
-	"github.com/spf13/viper"
+	flag "github.com/spf13/pflag"
 )
 
 // Config stores all configuration options for the dkron package.
 type Config struct {
-	NodeName              string
-	BindAddr              string
-	HTTPAddr              string
+	NodeName              string `mapstructure:"node-name"`
+	BindAddr              string `mapstructure:"bind-addr"`
+	HTTPAddr              string `mapstructure:"http-addr"`
 	Discover              string
 	Backend               string
-	BackendMachines       []string
+	BackendMachines       []string `mapstructure:"backend-machine"`
 	Profile               string
 	Interface             string
-	AdvertiseAddr         string
+	AdvertiseAddr         string `mapstructure:"advertise-addr"`
 	Tags                  map[string]string
-	SnapshotPath          string
-	ReconnectInterval     time.Duration
-	ReconnectTimeout      time.Duration
-	TombstoneTimeout      time.Duration
-	DisableNameResolution bool
-	KeyringFile           string
-	RejoinAfterLeave      bool
+	SnapshotPath          string        `mapstructure:"snapshot-path"`
+	ReconnectInterval     time.Duration `mapstructure:"reconnect-interval"`
+	ReconnectTimeout      time.Duration `mapstructure:"reconnect-timeout"`
+	TombstoneTimeout      time.Duration `mapstructure:"tombstone-timeout"`
+	DisableNameResolution bool          `mapstructure:"disable-name-resolution"`
+	KeyringFile           string        `mapstructure:"keyring-file"`
+	RejoinAfterLeave      bool          `mapstructure:"rejoin-after-leave"`
 	Server                bool
-	EncryptKey            string
-	StartJoin             AppendSliceValue
+	EncryptKey            string           `mapstructure:"encrypt-key"`
+	StartJoin             AppendSliceValue `mapstructure:"start-join"`
 	Keyspace              string
-	UIDir                 string
-	RPCPort               int
-	AdvertiseRPCPort      int
-	LogLevel              string
+	RPCPort               int    `mapstructure:"rpc-port"`
+	AdvertiseRPCPort      int    `mapstructure:"advertise-rpc-port"`
+	LogLevel              string `mapstructure:"log-level"`
 
-	MailHost          string
-	MailPort          uint16 `mapstructure:"mail_port"`
-	MailUsername      string
-	MailPassword      string
-	MailFrom          string
-	MailPayload       string
-	MailSubjectPrefix string
+	MailHost          string `mapstructure:"mail-host"`
+	MailPort          uint16 `mapstructure:"mail-port"`
+	MailUsername      string `mapstructure:"mail-username"`
+	MailPassword      string `mapstructure:"mail-password"`
+	MailFrom          string `mapstructure:"mail-from"`
+	MailPayload       string `mapstructure:"mail-payload"`
+	MailSubjectPrefix string `mapstructure:"mail-subject-prefix"`
 
-	WebhookURL     string
-	WebhookPayload string
-	WebhookHeaders []string
+	WebhookURL     string   `mapstructure:"webhook-url"`
+	WebhookPayload string   `mapstructure:"webhook-payload"`
+	WebhookHeaders []string `mapstructure:"webhook-headers"`
 
 	// DogStatsdAddr is the address of a dogstatsd instance. If provided,
 	// metrics will be sent to that instance
-	DogStatsdAddr string
+	DogStatsdAddr string `mapstructure:"dog-statsd-addr"`
 	// DogStatsdTags are the global tags that should be sent with each packet to dogstatsd
 	// It is a list of strings, where each string looks like "my_tag_name:my_tag_value"
-	DogStatsdTags []string
-	StatsdAddr    string
+	DogStatsdTags []string `mapstructure:"dog-statsd-tags"`
+	StatsdAddr    string   `mapstructure:"statsd-addr"`
 }
 
 // DefaultBindPort is the default port that dkron will use for Serf communication
 const DefaultBindPort int = 8946
-
-func init() {
-	viper.SetConfigName("dkron")        // name of config file (without extension)
-	viper.AddConfigPath("/etc/dkron")   // call multiple times to add many search paths
-	viper.AddConfigPath("$HOME/.dkron") // call multiple times to add many search paths
-	viper.AddConfigPath("./config")     // call multiple times to add many search paths
-	viper.SetEnvPrefix("dkron")         // will be uppercased automatically
-	viper.AutomaticEnv()
-}
-
-// NewConfig creates a Config object and will set up the dkron configuration using
-// the command line and any file configs.
-func NewConfig(args []string) *Config {
-	cmdFlags := ConfigFlagSet()
-
-	if err := cmdFlags.Parse(args); err != nil {
-		log.WithError(err).Error("agent: Error parsing flags")
-	}
-
-	cmdFlags.VisitAll(func(f *flag.Flag) {
-		v := strings.Replace(f.Name, "-", "_", -1)
-		if f.Value.String() != f.DefValue {
-			if sliceValue, ok := f.Value.(*AppendSliceValue); ok {
-				viper.Set(v, ([]string)(*sliceValue))
-			} else {
-				viper.Set(v, f.Value.String())
-			}
-		} else {
-			viper.SetDefault(v, f.Value.String())
-		}
-	})
-
-	return &Config{}
-}
 
 // configFlagSet creates all of our configuration flags.
 func ConfigFlagSet() *flag.FlagSet {
@@ -105,24 +68,20 @@ func ConfigFlagSet() *flag.FlagSet {
 		log.Panic(err)
 	}
 
-	cmdFlags := flag.NewFlagSet("dkron agent [options]", flag.ContinueOnError)
+	cmdFlags := flag.NewFlagSet("agent flagset", flag.ContinueOnError)
 
 	cmdFlags.Bool("server", false, "start dkron server")
-	cmdFlags.String("node", hostname, "[Deprecated use node-name]")
 	cmdFlags.String("node-name", hostname, "node name")
 	cmdFlags.String("bind", fmt.Sprintf("0.0.0.0:%d", DefaultBindPort), "[Deprecated use bind-addr]")
 	cmdFlags.String("bind-addr", fmt.Sprintf("0.0.0.0:%d", DefaultBindPort), "address to bind listeners to")
-	cmdFlags.String("advertise", "", "[Deprecated use advertise-addr]")
 	cmdFlags.String("advertise-addr", "", "address to advertise to other nodes")
 	cmdFlags.String("http-addr", ":8080", "HTTP address")
 	cmdFlags.String("discover", "dkron", "mDNS discovery name")
 	cmdFlags.String("backend", "etcd", "store backend")
-	cmdFlags.String("backend-machine", "127.0.0.1:2379", "store backend machines addresses")
+	cmdFlags.StringSlice("backend-machine", []string{"127.0.0.1:2379"}, "store backend machines addresses")
 	cmdFlags.String("profile", "lan", "timing profile to use (lan, wan, local)")
-	var join []string
-	cmdFlags.Var((*AppendSliceValue)(&join), "join", "address of agent to join on startup")
-	var tag []string
-	cmdFlags.Var((*AppendSliceValue)(&tag), "tag", "tag pair, specified as key=value")
+	cmdFlags.StringSlice("join", []string{}, "address of agent to join on startup")
+	cmdFlags.StringSlice("tag", []string{}, "tag pair, specified as key=value")
 	cmdFlags.String("keyspace", "dkron", "key namespace to use")
 	cmdFlags.String("encrypt", "", "encryption key")
 	cmdFlags.String("log-level", "info", "Log level (debug, info, warn, error, fatal, panic), defaults to info")
@@ -140,13 +99,13 @@ func ConfigFlagSet() *flag.FlagSet {
 
 	cmdFlags.String("webhook-url", "", "notification webhook url")
 	cmdFlags.String("webhook-payload", "", "notification webhook payload")
-	webhookHeaders := &AppendSliceValue{}
-	cmdFlags.Var(webhookHeaders, "webhook-header", "notification webhook additional header")
+	cmdFlags.StringSlice("webhook-header", []string{}, "notification webhook additional header")
 
 	cmdFlags.String("dog-statsd-addr", "", "DataDog Agent address")
-	var dogStatsdTags []string
-	cmdFlags.Var((*AppendSliceValue)(&dogStatsdTags), "dog-statsd-tags", "Datadog tags, specified as key:value")
+	cmdFlags.StringSlice("dog-statsd-tags", []string{}, "Datadog tags, specified as key:value")
 	cmdFlags.String("statsd-addr", "", "Statsd Address")
+
+	cmdFlags.StringToString("tags", map[string]string{}, "fufifa")
 
 	return cmdFlags
 }
