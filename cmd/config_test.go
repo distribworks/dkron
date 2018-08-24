@@ -12,17 +12,19 @@ import (
 func TestReadConfigTags(t *testing.T) {
 	viper.Reset()
 	viper.SetConfigType("yaml")
-	var jsonConfig = []byte(`
-	tags:
-		- foo: bar
-	`)
-	viper.ReadConfig(bytes.NewBuffer(jsonConfig))
-	config := &dkron.Config{}
+	var yamlConfig = []byte(`
+tags:
+  - foo: bar
+`)
+	if err := viper.ReadConfig(bytes.NewBuffer(yamlConfig)); err != nil {
+		t.Fatal(err)
+	}
+	config := dkron.DefaultConfig()
 	viper.Unmarshal(config)
-	t.Log(config.Tags)
 	assert.Equal(t, "bar", config.Tags["foo"])
 
-	viper.Set("tag", []string{"monthy=python"})
+	config = dkron.DefaultConfig()
+	viper.Set("tags", map[string]string{"monthy": "python"})
 	viper.Unmarshal(config)
 	assert.NotContains(t, config.Tags, "foo")
 	assert.Contains(t, config.Tags, "monthy")
