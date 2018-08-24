@@ -30,8 +30,8 @@ type Config struct {
 	KeyringFile           string        `mapstructure:"keyring-file"`
 	RejoinAfterLeave      bool          `mapstructure:"rejoin-after-leave"`
 	Server                bool
-	EncryptKey            string           `mapstructure:"encrypt-key"`
-	StartJoin             AppendSliceValue `mapstructure:"start-join"`
+	EncryptKey            string   `mapstructure:"encrypt-key"`
+	StartJoin             []string `mapstructure:"start-join"`
 	Keyspace              string
 	RPCPort               int    `mapstructure:"rpc-port"`
 	AdvertiseRPCPort      int    `mapstructure:"advertise-rpc-port"`
@@ -61,31 +61,47 @@ type Config struct {
 // DefaultBindPort is the default port that dkron will use for Serf communication
 const DefaultBindPort int = 8946
 
-// configFlagSet creates all of our configuration flags.
-func ConfigFlagSet() *flag.FlagSet {
+func DefaultConfig() *Config {
 	hostname, err := os.Hostname()
 	if err != nil {
 		log.Panic(err)
 	}
 
+	return &Config{
+		NodeName:          hostname,
+		BindAddr:          fmt.Sprintf("0.0.0.0:%d", DefaultBindPort),
+		HTTPAddr:          ":8080",
+		Discover:          "dkron",
+		Backend:           "etcd",
+		BackendMachines:   []string{"127.0.0.1:2379"},
+		Profile:           "lan",
+		Keyspace:          "dkron",
+		LogLevel:          "info",
+		RPCPort:           6868,
+		MailSubjectPrefix: "[Dkron]",
+	}
+}
+
+// configFlagSet creates all of our configuration flags.
+func ConfigFlagSet() *flag.FlagSet {
+	c := DefaultConfig()
 	cmdFlags := flag.NewFlagSet("agent flagset", flag.ContinueOnError)
 
 	cmdFlags.Bool("server", false, "start dkron server")
-	cmdFlags.String("node-name", hostname, "node name")
-	cmdFlags.String("bind", fmt.Sprintf("0.0.0.0:%d", DefaultBindPort), "[Deprecated use bind-addr]")
-	cmdFlags.String("bind-addr", fmt.Sprintf("0.0.0.0:%d", DefaultBindPort), "address to bind listeners to")
+	cmdFlags.String("node-name", c.NodeName, "node name")
+	cmdFlags.String("bind-addr", c.BindAddr, "address to bind listeners to")
 	cmdFlags.String("advertise-addr", "", "address to advertise to other nodes")
-	cmdFlags.String("http-addr", ":8080", "HTTP address")
-	cmdFlags.String("discover", "dkron", "mDNS discovery name")
-	cmdFlags.String("backend", "etcd", "store backend")
-	cmdFlags.StringSlice("backend-machine", []string{"127.0.0.1:2379"}, "store backend machines addresses")
-	cmdFlags.String("profile", "lan", "timing profile to use (lan, wan, local)")
+	cmdFlags.String("http-addr", c.HTTPAddr, "HTTP address")
+	cmdFlags.String("discover", c.Discover, "mDNS discovery name")
+	cmdFlags.String("backend", c.Backend, "store backend")
+	cmdFlags.StringSlice("backend-machine", c.BackendMachines, "store backend machines addresses")
+	cmdFlags.String("profile", c.Profile, "timing profile to use (lan, wan, local)")
 	cmdFlags.StringSlice("join", []string{}, "address of agent to join on startup")
 	cmdFlags.StringSlice("tag", []string{}, "tag pair, specified as key=value")
-	cmdFlags.String("keyspace", "dkron", "key namespace to use")
+	cmdFlags.String("keyspace", c.Keyspace, "key namespace to use")
 	cmdFlags.String("encrypt", "", "encryption key")
-	cmdFlags.String("log-level", "info", "Log level (debug, info, warn, error, fatal, panic), defaults to info")
-	cmdFlags.Int("rpc-port", 6868, "RPC port")
+	cmdFlags.String("log-level", c.LogLevel, "Log level (debug, info, warn, error, fatal, panic), defaults to info")
+	cmdFlags.Int("rpc-port", c.RPCPort, "RPC port")
 	cmdFlags.Int("advertise-rpc-port", 0, "advertise RPC port")
 
 	// Notifications
@@ -95,7 +111,7 @@ func ConfigFlagSet() *flag.FlagSet {
 	cmdFlags.String("mail-password", "", "password of the mail server")
 	cmdFlags.String("mail-from", "", "notification emails from address")
 	cmdFlags.String("mail-payload", "", "notification mail payload")
-	cmdFlags.String("mail-subject-prefix", "[Dkron]", "notification mail subject prefix")
+	cmdFlags.String("mail-subject-prefix", c.MailSubjectPrefix, "notification mail subject prefix")
 
 	cmdFlags.String("webhook-url", "", "notification webhook url")
 	cmdFlags.String("webhook-payload", "", "notification webhook payload")

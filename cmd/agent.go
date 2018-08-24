@@ -34,29 +34,7 @@ It also runs a web UI.`,
 	// The returned value is the exit code.
 	// protoc -I proto/ proto/executor.proto --go_out=plugins=grpc:dkron/
 	RunE: func(cmd *cobra.Command, args []string) error {
-		legacyConfig()
-
-		// Make sure we clean up any managed plugins at the end of this
-		p := &Plugins{}
-		if err := p.DiscoverPlugins(); err != nil {
-			log.Fatal(err)
-		}
-		plugins := &dkron.Plugins{
-			Processors: p.Processors,
-			Executors:  p.Executors,
-		}
-
-		agent = dkron.NewAgent(config, plugins)
-		if err := agent.Start(); err != nil {
-			return err
-		}
-
-		exit := handleSignals()
-		if exit != 0 {
-			return fmt.Errorf("Exit status: %d", exit)
-		}
-
-		return nil
+		return agentRun(args...)
 	},
 }
 
@@ -65,6 +43,32 @@ func init() {
 
 	agentCmd.Flags().AddFlagSet(dkron.ConfigFlagSet())
 	viper.BindPFlags(agentCmd.Flags())
+}
+
+func agentRun(args ...string) error {
+	legacyConfig()
+
+	// Make sure we clean up any managed plugins at the end of this
+	p := &Plugins{}
+	if err := p.DiscoverPlugins(); err != nil {
+		log.Fatal(err)
+	}
+	plugins := &dkron.Plugins{
+		Processors: p.Processors,
+		Executors:  p.Executors,
+	}
+
+	agent = dkron.NewAgent(config, plugins)
+	if err := agent.Start(); err != nil {
+		return err
+	}
+
+	exit := handleSignals()
+	if exit != 0 {
+		return fmt.Errorf("Exit status: %d", exit)
+	}
+
+	return nil
 }
 
 // handleSignals blocks until we get an exit-causing signal

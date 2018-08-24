@@ -21,16 +21,14 @@ func TestGRPCExecutionDone(t *testing.T) {
 
 	aAddr := testutil.GetBindAddr().String()
 
-	args := []string{
-		"-bind-addr", aAddr,
-		"-backend-machine", etcdAddr,
-		"-node-name", "test1",
-		"-server",
-		"-keyspace", "dkron",
-		"-log-level", logLevel,
-	}
+	c := DefaultConfig()
+	c.BindAddr = aAddr
+	c.BackendMachines = []string{etcdAddr}
+	c.NodeName = "test1"
+	c.Server = true
+	c.LogLevel = logLevel
+	c.Keyspace = "dkron"
 
-	c := NewConfig(args)
 	a := NewAgent(c, nil)
 	a.Start()
 

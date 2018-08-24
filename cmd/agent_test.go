@@ -3,10 +3,6 @@ package cmd
 import (
 	"os"
 	"testing"
-	"time"
-
-	"github.com/hashicorp/serf/testutil"
-	"github.com/mitchellh/cli"
 )
 
 var (
@@ -22,44 +18,22 @@ func getEnvWithDefault() string {
 	return ea
 }
 
-func TestAgentCommandRun(t *testing.T) {
-	shutdownCh := make(chan struct{})
-	defer close(shutdownCh)
-
-	ui := new(cli.MockUi)
-	a := &AgentCommand{
-		Ui:         ui,
-		ShutdownCh: shutdownCh,
+func Test_unmarshalTags(t *testing.T) {
+	tagPairs := []string{
+		"tag1=val1",
+		"tag2=val2",
 	}
 
-	args := []string{
-		"-bind-addr", testutil.GetBindAddr().String(),
-		"-log-level", logLevel,
+	tags, err := unmarshalTags(tagPairs)
+
+	if err != nil {
+		t.Fatalf("err: %s", err)
 	}
 
-	resultCh := make(chan int)
-	go func() {
-		resultCh <- a.Run(args)
-	}()
-
-	time.Sleep(2 * time.Second)
-
-	// Verify it runs "forever"
-	select {
-	case <-resultCh:
-		t.Fatalf("ended too soon, err: %s", ui.ErrorWriter.String())
-	case <-time.After(50 * time.Millisecond):
+	if v, ok := tags["tag1"]; !ok || v != "val1" {
+		t.Fatalf("bad: %v", tags)
 	}
-
-	// Send a shutdown request
-	shutdownCh <- struct{}{}
-
-	select {
-	case code := <-resultCh:
-		if code != 0 {
-			t.Fatalf("bad code: %d", code)
-		}
-	case <-time.After(50 * time.Millisecond):
-		t.Fatalf("timeout")
+	if v, ok := tags["tag2"]; !ok || v != "val2" {
+		t.Fatalf("bad: %v", tags)
 	}
 }
