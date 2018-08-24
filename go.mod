@@ -99,7 +99,6 @@ require (
 	github.com/mattn/go-runewidth v0.0.3 // indirect
 	github.com/mattn/go-shellwords v0.0.0-20160315040826-525bedee691b
 	github.com/miekg/dns v0.0.0-20171018123232-b02ebddc7f2b // indirect
-	github.com/mitchellh/cli v0.0.0-20170908181043-65fcae5817c8
 	github.com/mitchellh/copystructure v0.0.0-20170525013902-d23ffcb85de3 // indirect
 	github.com/mitchellh/go-homedir v0.0.0-20161203194507-b8bc1bf76747 // indirect
 	github.com/mitchellh/go-testing-interface v0.0.0-20171004221916-a61a99592b77 // indirect
