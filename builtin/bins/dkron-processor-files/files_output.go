@@ -42,7 +42,7 @@ func (l *FilesOutput) parseConfig(config dkron.PluginConfig) {
 	forward, ok := config["forward"].(bool)
 	if ok {
 		l.forward = forward
-		log.Infof("Forwarding set to: %s", forward)
+		log.Infof("Forwarding set to: %t", forward)
 	} else {
 		l.forward = false
 		log.WithField("param", "forward").Warning("Incorrect format or param not found.")

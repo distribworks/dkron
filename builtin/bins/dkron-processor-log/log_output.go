@@ -24,7 +24,7 @@ func (l *LogOutput) parseConfig(config dkron.PluginConfig) {
 	forward, ok := config["forward"].(bool)
 	if ok {
 		l.forward = forward
-		log.Infof("Forwarding set to: %s", forward)
+		log.Infof("Forwarding set to: %t", forward)
 	} else {
 		log.Error("Incorrect format in forward param")
 	}
