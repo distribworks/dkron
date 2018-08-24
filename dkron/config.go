@@ -20,15 +20,15 @@ type Config struct {
 	BackendMachines       []string `mapstructure:"backend-machine"`
 	Profile               string
 	Interface             string
-	AdvertiseAddr         string `mapstructure:"advertise-addr"`
-	Tags                  map[string]string
-	SnapshotPath          string        `mapstructure:"snapshot-path"`
-	ReconnectInterval     time.Duration `mapstructure:"reconnect-interval"`
-	ReconnectTimeout      time.Duration `mapstructure:"reconnect-timeout"`
-	TombstoneTimeout      time.Duration `mapstructure:"tombstone-timeout"`
-	DisableNameResolution bool          `mapstructure:"disable-name-resolution"`
-	KeyringFile           string        `mapstructure:"keyring-file"`
-	RejoinAfterLeave      bool          `mapstructure:"rejoin-after-leave"`
+	AdvertiseAddr         string            `mapstructure:"advertise-addr"`
+	Tags                  map[string]string `mapstructure:"tags"`
+	SnapshotPath          string            `mapstructure:"snapshot-path"`
+	ReconnectInterval     time.Duration     `mapstructure:"reconnect-interval"`
+	ReconnectTimeout      time.Duration     `mapstructure:"reconnect-timeout"`
+	TombstoneTimeout      time.Duration     `mapstructure:"tombstone-timeout"`
+	DisableNameResolution bool              `mapstructure:"disable-name-resolution"`
+	KeyringFile           string            `mapstructure:"keyring-file"`
+	RejoinAfterLeave      bool              `mapstructure:"rejoin-after-leave"`
 	Server                bool
 	EncryptKey            string   `mapstructure:"encrypt-key"`
 	StartJoin             []string `mapstructure:"start-join"`
