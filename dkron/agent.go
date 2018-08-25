@@ -97,7 +97,9 @@ func (a *Agent) Start() error {
 }
 
 func (a *Agent) Stop() error {
-	a.candidate.Stop()
+	if a.config.Server {
+		a.candidate.Stop()
+	}
 
 	if err := a.serf.Leave(); err != nil {
 		return err
