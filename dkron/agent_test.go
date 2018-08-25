@@ -81,7 +81,7 @@ func TestAgentCommand_runForElection(t *testing.T) {
 	a2.Start()
 
 	// Send a shutdown request
-	a1.candidate.Stop()
+	a1.Stop()
 
 	// Wait until test2 steps as leader
 rewatch:
@@ -94,6 +94,7 @@ rewatch:
 	}
 	t.Logf("%s is the current leader", kv2.Value)
 	assert.Equal(t, a2Name, string(kv2.Value))
+	a2.Stop()
 }
 
 func watchOrDie(client store.Store, key string) (*store.KVPair, error) {
@@ -127,7 +128,7 @@ func Test_processFilteredNodes(t *testing.T) {
 	c := DefaultConfig()
 	c.BindAddr = a1Addr
 	c.StartJoin = []string{a2Addr}
-	c.NodeName = "a1Name"
+	c.NodeName = "test1"
 	c.Server = true
 	c.LogLevel = logLevel
 	c.BackendMachines = []string{os.Getenv("DKRON_BACKEND_MACHINE")}
@@ -141,7 +142,7 @@ func Test_processFilteredNodes(t *testing.T) {
 	c = DefaultConfig()
 	c.BindAddr = a2Addr
 	c.StartJoin = []string{a1Addr + ":8946"}
-	c.NodeName = "a2Name"
+	c.NodeName = "test2"
 	c.Server = true
 	c.LogLevel = logLevel
 	c.BackendMachines = []string{os.Getenv("DKRON_BACKEND_MACHINE")}
