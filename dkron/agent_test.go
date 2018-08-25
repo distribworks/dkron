@@ -52,6 +52,7 @@ func TestAgentCommand_runForElection(t *testing.T) {
 	c.NodeName = a1Name
 	c.Server = true
 	c.LogLevel = logLevel
+	c.BackendMachines = []string{os.Getenv("DKRON_BACKEND_MACHINE")}
 
 	a1 := NewAgent(c, nil)
 	if err := a1.Start(); err != nil {
@@ -74,6 +75,7 @@ func TestAgentCommand_runForElection(t *testing.T) {
 	c.NodeName = a2Name
 	c.Server = true
 	c.LogLevel = logLevel
+	c.BackendMachines = []string{os.Getenv("DKRON_BACKEND_MACHINE")}
 
 	a2 := NewAgent(c, nil)
 	a2.Start()
@@ -128,6 +130,7 @@ func Test_processFilteredNodes(t *testing.T) {
 	c.NodeName = "a1Name"
 	c.Server = true
 	c.LogLevel = logLevel
+	c.BackendMachines = []string{os.Getenv("DKRON_BACKEND_MACHINE")}
 
 	a1 := NewAgent(c, nil)
 	a1.Start()
@@ -141,6 +144,7 @@ func Test_processFilteredNodes(t *testing.T) {
 	c.NodeName = "a2Name"
 	c.Server = true
 	c.LogLevel = logLevel
+	c.BackendMachines = []string{os.Getenv("DKRON_BACKEND_MACHINE")}
 
 	a2 := NewAgent(c, nil)
 	a2.Start()
@@ -176,6 +180,7 @@ func TestEncrypt(t *testing.T) {
 	c.Tags = map[string]string{"role": "test"}
 	c.EncryptKey = "kPpdjphiipNSsjd4QHWbkA=="
 	c.LogLevel = logLevel
+	c.BackendMachines = []string{os.Getenv("DKRON_BACKEND_MACHINE")}
 
 	a := NewAgent(c, nil)
 	a.Start()
@@ -195,6 +200,7 @@ func Test_getRPCAddr(t *testing.T) {
 	c.Server = true
 	c.Tags = map[string]string{"role": "test"}
 	c.LogLevel = logLevel
+	c.BackendMachines = []string{os.Getenv("DKRON_BACKEND_MACHINE")}
 
 	a := NewAgent(c, nil)
 	a.Start()
@@ -225,6 +231,5 @@ func TestAgentConfig(t *testing.T) {
 	assert.NotEmpty(t, a.config.AdvertiseAddr)
 	assert.Equal(t, advAddr, a.config.AdvertiseAddr)
 
-	// Send a shutdown request
 	a.Stop()
 }

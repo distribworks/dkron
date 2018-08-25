@@ -1,6 +1,7 @@
 package dkron
 
 import (
+	"os"
 	"testing"
 	"time"
 
@@ -28,6 +29,7 @@ func TestGRPCExecutionDone(t *testing.T) {
 	c.Server = true
 	c.LogLevel = logLevel
 	c.Keyspace = "dkron"
+	c.BackendMachines = []string{os.Getenv("DKRON_BACKEND_MACHINE")}
 
 	a := NewAgent(c, nil)
 	a.Start()

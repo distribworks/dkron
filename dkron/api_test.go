@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"testing"
 	"time"
 
@@ -20,6 +21,7 @@ func setupAPITest(t *testing.T) (a *Agent) {
 	c.Server = true
 	c.LogLevel = logLevel
 	c.Keyspace = "dkron-test"
+	c.BackendMachines = []string{os.Getenv("DKRON_BACKEND_MACHINE")}
 
 	a = NewAgent(c, nil)
 	a.Start()
