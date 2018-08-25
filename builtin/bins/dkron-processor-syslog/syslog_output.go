@@ -1,8 +1,8 @@
 package main
 
 import (
-	log "github.com/sirupsen/logrus"
 	"github.com/hashicorp/go-syslog"
+	log "github.com/sirupsen/logrus"
 	"github.com/victorcoder/dkron/dkron"
 )
 
@@ -30,7 +30,7 @@ func (l *SyslogOutput) parseConfig(config dkron.PluginConfig) {
 	forward, ok := config["forward"].(bool)
 	if ok {
 		l.forward = forward
-		log.Infof("Forwarding set to: %s", forward)
+		log.Infof("Forwarding set to: %t", forward)
 	} else {
 		log.Error("Incorrect format in forward param")
 	}

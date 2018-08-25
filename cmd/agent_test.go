@@ -1,12 +1,13 @@
 package cmd
 
 import (
+	"bytes"
 	"os"
 	"testing"
-	"time"
 
-	"github.com/hashicorp/serf/testutil"
-	"github.com/mitchellh/cli"
+	"github.com/spf13/viper"
+	"github.com/stretchr/testify/assert"
+	"github.com/victorcoder/dkron/dkron"
 )
 
 var (
@@ -22,44 +23,48 @@ func getEnvWithDefault() string {
 	return ea
 }
 
-func TestAgentCommandRun(t *testing.T) {
-	shutdownCh := make(chan struct{})
-	defer close(shutdownCh)
-
-	ui := new(cli.MockUi)
-	a := &AgentCommand{
-		Ui:         ui,
-		ShutdownCh: shutdownCh,
+func Test_unmarshalTags(t *testing.T) {
+	tagPairs := []string{
+		"tag1=val1",
+		"tag2=val2",
 	}
 
-	args := []string{
-		"-bind-addr", testutil.GetBindAddr().String(),
-		"-log-level", logLevel,
+	tags, err := unmarshalTags(tagPairs)
+
+	if err != nil {
+		t.Fatalf("err: %s", err)
 	}
 
-	resultCh := make(chan int)
-	go func() {
-		resultCh <- a.Run(args)
-	}()
-
-	time.Sleep(2 * time.Second)
-
-	// Verify it runs "forever"
-	select {
-	case <-resultCh:
-		t.Fatalf("ended too soon, err: %s", ui.ErrorWriter.String())
-	case <-time.After(50 * time.Millisecond):
+	if v, ok := tags["tag1"]; !ok || v != "val1" {
+		t.Fatalf("bad: %v", tags)
 	}
-
-	// Send a shutdown request
-	shutdownCh <- struct{}{}
-
-	select {
-	case code := <-resultCh:
-		if code != 0 {
-			t.Fatalf("bad code: %d", code)
-		}
-	case <-time.After(50 * time.Millisecond):
-		t.Fatalf("timeout")
+	if v, ok := tags["tag2"]; !ok || v != "val2" {
+		t.Fatalf("bad: %v", tags)
 	}
+}
+
+func TestReadConfigTags(t *testing.T) {
+	viper.Reset()
+	viper.SetConfigType("yaml")
+	var yamlConfig = []byte(`
+tags:
+  - foo: bar
+`)
+	if err := viper.ReadConfig(bytes.NewBuffer(yamlConfig)); err != nil {
+		t.Fatal(err)
+	}
+	config := dkron.DefaultConfig()
+	viper.Unmarshal(config)
+	assert.Equal(t, "bar", config.Tags["foo"])
+
+	config = dkron.DefaultConfig()
+	viper.Set("tags", map[string]string{"monthy": "python"})
+	viper.Unmarshal(config)
+	assert.NotContains(t, config.Tags, "foo")
+	assert.Contains(t, config.Tags, "monthy")
+	assert.Equal(t, "python", config.Tags["monthy"])
+
+	config = &dkron.Config{Tags: map[string]string{"t1": "v1", "t2": "v2"}}
+	assert.Equal(t, "v1", config.Tags["t1"])
+	assert.Equal(t, "v2", config.Tags["t2"])
 }

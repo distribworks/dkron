@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"testing"
 	"time"
 
@@ -13,16 +14,15 @@ import (
 )
 
 func setupAPITest(t *testing.T) (a *Agent) {
-	args := []string{
-		"-bind-addr", testutil.GetBindAddr().String(),
-		"-http-addr", "127.0.0.1:8090",
-		"-node-name", "test",
-		"-server",
-		"-log-level", logLevel,
-		"-keyspace", "dkron-test",
-	}
+	c := DefaultConfig()
+	c.BindAddr = testutil.GetBindAddr().String()
+	c.HTTPAddr = "127.0.0.1:8090"
+	c.NodeName = "test"
+	c.Server = true
+	c.LogLevel = logLevel
+	c.Keyspace = "dkron-test"
+	c.BackendMachines = []string{os.Getenv("DKRON_BACKEND_MACHINE")}
 
-	c := NewConfig(args)
 	a = NewAgent(c, nil)
 	a.Start()
 

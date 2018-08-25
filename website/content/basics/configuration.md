@@ -55,9 +55,9 @@ Settings for dkron can be specified in three ways: Using a `config/dkron.json` c
 ```yaml
 # Dkron example configuration file
 # backend: etcd
-# backend_machine: 127.0.0.1:2379
+# backend-machine: 127.0.0.1:2379
 # server: false
-# log_level: debug
+# log-level: debug
 # tags:
 #   role: web
 #   datacenter: east
@@ -67,13 +67,13 @@ Settings for dkron can be specified in three ways: Using a `config/dkron.json` c
 #   - 10.0.0.1
 #   - 10.0.0.2
 #   - 10.0.0.3
-# webhook_url: https://hooks.slack.com/services/XXXXXX/XXXXXXX/XXXXXXXXXXXXXXXXXXXX
-# webhook_payload: "payload={\"text\": \"{{.Report}}\", \"channel\": \"#foo\"}"
-# webhook_headers: Content-Type:application/x-www-form-urlencoded
-# mail_host: email-smtp.eu-west-1.amazonaws.com
-# mail_port: 25
-# mail_username": mailuser
-# mail_password": mailpassword
-# mail_from": cron@example.com
-# mail_subject_prefix: [Dkron]
+# webhook-url: https://hooks.slack.com/services/XXXXXX/XXXXXXX/XXXXXXXXXXXXXXXXXXXX
+# webhook-payload: "payload={\"text\": \"{{.Report}}\", \"channel\": \"#foo\"}"
+# webhook-headers: Content-Type:application/x-www-form-urlencoded
+# mail-host: email-smtp.eu-west-1.amazonaws.com
+# mail-port: 25
+# mail-username": mailuser
+# mail-password": mailpassword
+# mail-from": cron@example.com
+# mail-subject_prefix: [Dkron]
 ```

@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	logLevel = "error"
+	logLevel = "debug"
 	etcdAddr = getEnvWithDefault()
 )
 
@@ -46,17 +46,18 @@ func TestAgentCommand_runForElection(t *testing.T) {
 		}
 	}
 
-	args := []string{
-		"-bind-addr", a1Addr,
-		"-join", a2Addr,
-		"-node-name", a1Name,
-		"-server",
-		"-log-level", logLevel,
-	}
+	c := DefaultConfig()
+	c.BindAddr = a1Addr
+	c.StartJoin = []string{a2Addr}
+	c.NodeName = a1Name
+	c.Server = true
+	c.LogLevel = logLevel
+	c.BackendMachines = []string{os.Getenv("DKRON_BACKEND_MACHINE")}
 
-	c := NewConfig(args)
 	a1 := NewAgent(c, nil)
-	a1.Start()
+	if err := a1.Start(); err != nil {
+		t.Fatal(err)
+	}
 
 	// Wait for the first agent to start and set itself as leader
 	kv1, err := watchOrDie(client, "dkron/leader")
@@ -68,20 +69,19 @@ func TestAgentCommand_runForElection(t *testing.T) {
 	assert.Equal(t, a1Name, leaderA1)
 
 	// Start another agent
-	args2 := []string{
-		"-bind-addr", a2Addr,
-		"-join", a1Addr + ":8946",
-		"-node-name", a2Name,
-		"-server",
-		"-log-level", logLevel,
-	}
+	c = DefaultConfig()
+	c.BindAddr = a2Addr
+	c.StartJoin = []string{a1Addr + ":8946"}
+	c.NodeName = a2Name
+	c.Server = true
+	c.LogLevel = logLevel
+	c.BackendMachines = []string{os.Getenv("DKRON_BACKEND_MACHINE")}
 
-	c = NewConfig(args2)
 	a2 := NewAgent(c, nil)
 	a2.Start()
 
 	// Send a shutdown request
-	a1.candidate.Stop()
+	a1.Stop()
 
 	// Wait until test2 steps as leader
 rewatch:
@@ -94,6 +94,7 @@ rewatch:
 	}
 	t.Logf("%s is the current leader", kv2.Value)
 	assert.Equal(t, a2Name, string(kv2.Value))
+	a2.Stop()
 }
 
 func watchOrDie(client store.Store, key string) (*store.KVPair, error) {
@@ -124,32 +125,30 @@ func Test_processFilteredNodes(t *testing.T) {
 	a1Addr := testutil.GetBindAddr().String()
 	a2Addr := testutil.GetBindAddr().String()
 
-	args := []string{
-		"-bind-addr", a1Addr,
-		"-join", a2Addr,
-		"-node-name", "test1",
-		"-server",
-		"-tag", "role=test",
-		"-log-level", logLevel,
-	}
+	c := DefaultConfig()
+	c.BindAddr = a1Addr
+	c.StartJoin = []string{a2Addr}
+	c.NodeName = "test1"
+	c.Server = true
+	c.LogLevel = logLevel
+	c.Tags = map[string]string{"role": "test"}
+	c.BackendMachines = []string{os.Getenv("DKRON_BACKEND_MACHINE")}
 
-	c := NewConfig(args)
 	a1 := NewAgent(c, nil)
 	a1.Start()
 
 	time.Sleep(2 * time.Second)
 
 	// Start another agent
-	args2 := []string{
-		"-bind-addr", a2Addr,
-		"-join", a1Addr,
-		"-node-name", "test2",
-		"-server",
-		"-tag", "role=test",
-		"-log-level", logLevel,
-	}
+	c = DefaultConfig()
+	c.BindAddr = a2Addr
+	c.StartJoin = []string{a1Addr + ":8946"}
+	c.NodeName = "test2"
+	c.Server = true
+	c.LogLevel = logLevel
+	c.Tags = map[string]string{"role": "test"}
+	c.BackendMachines = []string{os.Getenv("DKRON_BACKEND_MACHINE")}
 
-	c = NewConfig(args2)
 	a2 := NewAgent(c, nil)
 	a2.Start()
 
@@ -171,42 +170,20 @@ func Test_processFilteredNodes(t *testing.T) {
 	assert.Equal(t, job.Tags["role"], "test:2")
 	assert.Equal(t, job.Tags["foo"], "bar:1")
 
-	// Send a shutdown request
 	a1.Stop()
 	a2.Stop()
 }
 
-func Test_UnmarshalTags(t *testing.T) {
-	tagPairs := []string{
-		"tag1=val1",
-		"tag2=val2",
-	}
-
-	tags, err := UnmarshalTags(tagPairs)
-
-	if err != nil {
-		t.Fatalf("err: %s", err)
-	}
-
-	if v, ok := tags["tag1"]; !ok || v != "val1" {
-		t.Fatalf("bad: %v", tags)
-	}
-	if v, ok := tags["tag2"]; !ok || v != "val2" {
-		t.Fatalf("bad: %v", tags)
-	}
-}
-
 func TestEncrypt(t *testing.T) {
-	args := []string{
-		"-bind-addr", testutil.GetBindAddr().String(),
-		"-node-name", "test1",
-		"-server",
-		"-tag", "role=test",
-		"-encrypt", "kPpdjphiipNSsjd4QHWbkA==",
-		"-log-level", logLevel,
-	}
+	c := DefaultConfig()
+	c.BindAddr = testutil.GetBindAddr().String()
+	c.NodeName = "test1"
+	c.Server = true
+	c.Tags = map[string]string{"role": "test"}
+	c.EncryptKey = "kPpdjphiipNSsjd4QHWbkA=="
+	c.LogLevel = logLevel
+	c.BackendMachines = []string{os.Getenv("DKRON_BACKEND_MACHINE")}
 
-	c := NewConfig(args)
 	a := NewAgent(c, nil)
 	a.Start()
 
@@ -219,15 +196,14 @@ func TestEncrypt(t *testing.T) {
 func Test_getRPCAddr(t *testing.T) {
 	a1Addr := testutil.GetBindAddr()
 
-	args := []string{
-		"-bind-addr", a1Addr.String() + ":5000",
-		"-node-name", "test1",
-		"-server",
-		"-tag", "role=test",
-		"-log-level", logLevel,
-	}
+	c := DefaultConfig()
+	c.BindAddr = a1Addr.String() + ":5000"
+	c.NodeName = "test1"
+	c.Server = true
+	c.Tags = map[string]string{"role": "test"}
+	c.LogLevel = logLevel
+	c.BackendMachines = []string{os.Getenv("DKRON_BACKEND_MACHINE")}
 
-	c := NewConfig(args)
 	a := NewAgent(c, nil)
 	a.Start()
 
@@ -242,13 +218,12 @@ func Test_getRPCAddr(t *testing.T) {
 
 func TestAgentConfig(t *testing.T) {
 	advAddr := testutil.GetBindAddr().String()
-	args := []string{
-		"-bind-addr", testutil.GetBindAddr().String(),
-		"-advertise-addr", advAddr,
-		"-log-level", logLevel,
-	}
 
-	c := NewConfig(args)
+	c := DefaultConfig()
+	c.BindAddr = testutil.GetBindAddr().String()
+	c.AdvertiseAddr = advAddr
+	c.LogLevel = logLevel
+
 	a := NewAgent(c, nil)
 	a.Start()
 
@@ -258,6 +233,5 @@ func TestAgentConfig(t *testing.T) {
 	assert.NotEmpty(t, a.config.AdvertiseAddr)
 	assert.Equal(t, advAddr, a.config.AdvertiseAddr)
 
-	// Send a shutdown request
 	a.Stop()
 }

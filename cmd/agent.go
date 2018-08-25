@@ -4,94 +4,50 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
-	"strings"
 	"syscall"
 	"time"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/hashicorp/go-plugin"
-	"github.com/mitchellh/cli"
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"github.com/victorcoder/dkron/dkron"
 )
+
+var ShutdownCh chan (struct{})
+var agent *dkron.Agent
 
 const (
 	// gracefulTimeout controls how long we wait before forcefully terminating
 	gracefulTimeout = 3 * time.Second
 )
 
-// AgentCommand run dkron agent
-type AgentCommand struct {
-	Ui         cli.Ui
-	ShutdownCh <-chan struct{}
-
-	config *dkron.Config
-	agent  *dkron.Agent
+// agentCmd represents the agent command
+var agentCmd = &cobra.Command{
+	Use:   "agent",
+	Short: "Start a dkron agent",
+	Long: `Start a dkron agent that schedule jobs, listen for executions and run executors.
+It also runs a web UI.`,
+	// Run will execute the main functions of the agent command.
+	// This includes the main eventloop and starting the server if enabled.
+	//
+	// The returned value is the exit code.
+	// protoc -I proto/ proto/executor.proto --go_out=plugins=grpc:dkron/
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return agentRun(args...)
+	},
 }
 
-// Help returns agent command usage to the CLI.
-func (a *AgentCommand) Help() string {
-	helpText := `
-Usage: dkron agent [options]
-	Run dkron agent
+func init() {
+	dkronCmd.AddCommand(agentCmd)
 
-Options:
-
-  -bind-addr=0.0.0.0:8946         Address to bind network listeners to.
-  -advertise-addr=bind_addr       Address used to advertise to other nodes in the cluster. By default, the bind address is advertised.
-  -http-addr=0.0.0.0:8080         Address to bind the UI web server to. Only used when server.
-  -discover=cluster               A cluster name used to discovery peers. On
-                                  networks that support multicast, this can be used to have
-                                  peers join each other without an explicit join.
-  -join=addr                      An initial agent to join with. This flag can be
-                                  specified multiple times.
-  -node=hostname                  Name of this node. Must be unique in the cluster
-  -profile=[lan|wan|local]        Profile is used to control the timing profiles used.
-                                  The default if not provided is lan.
-  -server=false                   This node is running in server mode.
-  -tag key=value                  Tag can be specified multiple times to attach multiple
-                                  key/value tag pairs to the given node.
-  -keyspace=dkron                 The keyspace to use. A prefix under all data is stored
-                                  for this instance.
-  -backend=[etcd|consul|zk|redis] Backend storage to use, etcd, consul, zk (zookeeper) or redis.
-                                  The default is etcd.
-  -backend-machine=127.0.0.1:2379 Backend storage servers addresses to connect to. This flag can be
-                                  specified multiple times.
-  -encrypt                        Key for encrypting network traffic.
-                                  Must be a base64-encoded 16-byte key.
-  -rpc-port=6868                  RPC Port used to communicate with clients. Only used when server.
-                                  The RPC IP Address will be the same as the bind address.
-  -advertise-rpc-port             Use the value of -rpc-port by default
-
-  -mail-host                      Mail server host address to use for notifications.
-  -mail-port                      Mail server port.
-  -mail-username                  Mail server username used for authentication.
-  -mail-password                  Mail server password to use.
-  -mail-from                      From email address to use.
-
-  -webhook-url                    Webhook url to call for notifications.
-  -webhook-payload                Body of the POST request to send on webhook call.
-  -webhook-header                 Headers to use when calling the webhook URL. Can be specified multiple times.
-
-  -log-level=info                 Log level (debug, info, warn, error, fatal, panic). Default to info.
-
-  -dog-statsd-addr                DataDog Agent address
-  -dog-statsd-tags                Datadog tags, specified as key:value
-  -statsd-addr                    Statsd Address
-`
-	return strings.TrimSpace(helpText)
+	agentCmd.Flags().AddFlagSet(dkron.ConfigFlagSet())
+	viper.BindPFlags(agentCmd.Flags())
 }
 
-// Synopsis returns the purpose of the command for the CLI
-func (a *AgentCommand) Synopsis() string {
-	return "Run dkron"
-}
+func agentRun(args ...string) error {
+	legacyConfig()
 
-// Run will execute the main functions of the agent command.
-// This includes the main eventloop and starting the server if enabled.
-//
-// The returned value is the exit code.
-// protoc -I proto/ proto/executor.proto --go_out=plugins=grpc:dkron/
-func (a *AgentCommand) Run(args []string) int {
 	// Make sure we clean up any managed plugins at the end of this
 	p := &Plugins{}
 	if err := p.DiscoverPlugins(); err != nil {
@@ -102,20 +58,21 @@ func (a *AgentCommand) Run(args []string) int {
 		Executors:  p.Executors,
 	}
 
-	config := dkron.NewConfig(args)
-
-	agent := dkron.NewAgent(config, plugins)
+	agent = dkron.NewAgent(config, plugins)
 	if err := agent.Start(); err != nil {
-		a.Ui.Error(err.Error())
-		return 1
+		return err
 	}
-	a.agent = agent
 
-	return a.handleSignals()
+	exit := handleSignals()
+	if exit != 0 {
+		return fmt.Errorf("Exit status: %d", exit)
+	}
+
+	return nil
 }
 
 // handleSignals blocks until we get an exit-causing signal
-func (a *AgentCommand) handleSignals() int {
+func handleSignals() int {
 	signalCh := make(chan os.Signal, 4)
 	signal.Notify(signalCh, os.Interrupt, syscall.SIGTERM, syscall.SIGHUP)
 
@@ -125,14 +82,14 @@ WAIT:
 	select {
 	case s := <-signalCh:
 		sig = s
-	case <-a.ShutdownCh:
+	case <-ShutdownCh:
 		sig = os.Interrupt
 	}
-	a.Ui.Output(fmt.Sprintf("Caught signal: %v", sig))
+	fmt.Printf("Caught signal: %v", sig)
 
 	// Check if this is a SIGHUP
 	if sig == syscall.SIGHUP {
-		a.handleReload()
+		handleReload()
 		goto WAIT
 	}
 
@@ -149,12 +106,11 @@ WAIT:
 
 	// Attempt a graceful leave
 	gracefulCh := make(chan struct{})
-	a.Ui.Output("Gracefully shutting down agent...")
 	log.Info("agent: Gracefully shutting down agent...")
 	go func() {
 		plugin.CleanupClients()
-		if err := a.agent.Leave(); err != nil {
-			a.Ui.Error(fmt.Sprintf("Error: %s", err))
+		if err := agent.Leave(); err != nil {
+			fmt.Printf("Error: %s", err)
 			log.Error(fmt.Sprintf("Error: %s", err))
 			return
 		}
@@ -173,19 +129,198 @@ WAIT:
 }
 
 // handleReload is invoked when we should reload our configs, e.g. SIGHUP
-func (a *AgentCommand) handleReload() {
-	a.Ui.Output("Reloading configuration...")
-	newConf := dkron.ReadConfig()
-	if newConf == nil {
-		a.Ui.Error(fmt.Sprintf("Failed to reload configs"))
-		return
-	}
-	a.config = newConf
+func handleReload() {
+	fmt.Println("Reloading configuration...")
+	initConfig()
 
 	// Reset serf tags
-	if err := a.agent.SetTags(a.config.Tags); err != nil {
-		a.Ui.Error(fmt.Sprintf("Failed to reload tags %v", a.config.Tags))
+	if err := agent.SetTags(agent.Config().Tags); err != nil {
+		fmt.Printf("Failed to reload tags %v", agent.Config().Tags)
 		return
 	}
 	//Config reloading will also reload Notification settings
+}
+
+// Suport legacy config files for some time
+func legacyConfig() {
+	s := viper.GetString("node_name")
+	if s != "" && viper.GetString("node-name") == "" {
+		log.WithField("param", "node_name").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
+		config.NodeName = s
+	}
+
+	s = viper.GetString("bind_addr")
+	if s != "" && viper.GetString("bind-addr") == "" {
+		log.WithField("param", "bind_addr").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
+		config.BindAddr = s
+	}
+
+	s = viper.GetString("http_addr")
+	if s != "" && viper.GetString("http-addr") == "" {
+		log.WithField("param", "http_addr").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
+		config.HTTPAddr = s
+	}
+
+	ss := viper.GetStringSlice("backend_machine")
+	if ss != nil && viper.GetStringSlice("backend_machine") == nil {
+		log.WithField("param", "backend_machine").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
+		config.BackendMachines = ss
+	}
+
+	s = viper.GetString("advertise_addr")
+	if s != "" && viper.GetString("advertise-addr") == "" {
+		log.WithField("param", "advertise_addr").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
+		config.AdvertiseAddr = s
+	}
+
+	s = viper.GetString("snapshot_path")
+	if s != "" && viper.GetString("snapshot-path") == "" {
+		log.WithField("param", "snapshot_path").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
+		config.SnapshotPath = s
+	}
+
+	d := viper.GetDuration("reconnect_interval")
+	if d != 0 && viper.GetDuration("reconnect-interval") == 0 {
+		log.WithField("param", "reconnect_interval").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
+		config.ReconnectInterval = d
+	}
+
+	d = viper.GetDuration("reconnect_timeout")
+	if d != 0 && viper.GetDuration("reconnect-timeout") == 0 {
+		log.WithField("param", "reconnect_timeout").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
+		config.ReconnectTimeout = d
+	}
+
+	d = viper.GetDuration("tombstone_timeout")
+	if d != 0 && viper.GetDuration("tombstone-timeout") == 0 {
+		log.WithField("param", "tombstone_timeout").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
+		config.TombstoneTimeout = d
+	}
+
+	b := viper.GetBool("disable_name_resolution")
+	if b != false && viper.GetBool("disable-name-resolution") == false {
+		log.WithField("param", "disable_name_resolution").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
+		config.DisableNameResolution = b
+	}
+
+	s = viper.GetString("keyring_file")
+	if s != "" && viper.GetString("keyring-file") == "" {
+		log.WithField("param", "keyring_file").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
+		config.KeyringFile = s
+	}
+
+	b = viper.GetBool("rejoin_after_leave")
+	if b != false && viper.GetBool("rejoin-after-leave") == false {
+		log.WithField("param", "rejoin_after_leave").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
+		config.RejoinAfterLeave = b
+	}
+
+	s = viper.GetString("encrypt_key")
+	if s != "" && viper.GetString("encrypt-key") == "" {
+		log.WithField("param", "encrypt_key").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
+		config.EncryptKey = s
+	}
+
+	ss = viper.GetStringSlice("start_join")
+	if ss != nil && viper.GetStringSlice("start-join") == nil {
+		log.WithField("param", "start_join").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
+		config.StartJoin = ss
+	}
+
+	i := viper.GetInt("rpc_port")
+	if i != 0 && viper.GetInt("rpc-port") == 0 {
+		log.WithField("param", "rpc_port").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
+		config.RPCPort = i
+	}
+
+	i = viper.GetInt("advertise_rpc_port")
+	if i != 0 && viper.GetInt("advertise-rpc-port") == 0 {
+		log.WithField("param", "advertise_rpc_port").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
+		config.AdvertiseRPCPort = i
+	}
+
+	s = viper.GetString("log_level")
+	if s != "" && viper.GetString("log-level") == "" {
+		log.WithField("param", "log_level").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
+		config.LogLevel = s
+	}
+
+	s = viper.GetString("mail_host")
+	if s != "" && viper.GetString("mail-host") == "" {
+		log.WithField("param", "mail_host").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
+		config.MailHost = s
+	}
+
+	i = viper.GetInt("mail_port")
+	if i != 0 && viper.GetInt("mail-port") == 0 {
+		log.WithField("param", "mail_port").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
+		config.MailPort = uint16(i)
+	}
+
+	s = viper.GetString("mail_username")
+	if s != "" && viper.GetString("mail-username") == "" {
+		log.WithField("param", "mail_username").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
+		config.MailUsername = s
+	}
+
+	s = viper.GetString("mail_password")
+	if s != "" && viper.GetString("mail-password") == "" {
+		log.WithField("param", "mail_password").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
+		config.MailPassword = s
+	}
+
+	s = viper.GetString("mail_from")
+	if s != "" && viper.GetString("mail-from") == "" {
+		log.WithField("param", "mail_from").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
+		config.MailFrom = s
+	}
+
+	s = viper.GetString("mail_payload")
+	if s != "" && viper.GetString("mail-payload") == "" {
+		log.WithField("param", "mail_payload").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
+		config.MailPayload = s
+	}
+
+	s = viper.GetString("mail_subject_prefix")
+	if s != "" && viper.GetString("mail-subject-prefix") == "" {
+		log.WithField("param", "mail_subject_prefix").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
+		config.MailSubjectPrefix = s
+	}
+
+	s = viper.GetString("webhook_url")
+	if s != "" && viper.GetString("webhook-url") == "" {
+		log.WithField("param", "webhook_url").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
+		config.WebhookURL = s
+	}
+
+	s = viper.GetString("webhook_payload")
+	if s != "" && viper.GetString("webhook-payload") == "" {
+		log.WithField("param", "webhook_payload").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
+		config.WebhookPayload = s
+	}
+
+	ss = viper.GetStringSlice("webhook_headers")
+	if ss != nil && viper.GetStringSlice("webhook-headers") == nil {
+		log.WithField("param", "webhook_headers").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
+		config.WebhookHeaders = ss
+	}
+
+	s = viper.GetString("dog_statsd_addr")
+	if s != "" && viper.GetString("dog-statsd-addr") == "" {
+		log.WithField("param", "dog_statsd_add").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
+		config.DogStatsdAddr = s
+	}
+
+	ss = viper.GetStringSlice("dog_statsd_tags")
+	if ss != nil && viper.GetStringSlice("dog-statsd-tags") == nil {
+		log.WithField("param", "dog_statsd_tags").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
+		config.DogStatsdTags = ss
+	}
+
+	s = viper.GetString("statsd_addr")
+	if s != "" && viper.GetString("statsd-addr") == "" {
+		log.WithField("param", "statsd_addr").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
+		config.StatsdAddr = s
+	}
+
 }
