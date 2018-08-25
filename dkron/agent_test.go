@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	logLevel = "error"
+	logLevel = "debug"
 	etcdAddr = getEnvWithDefault()
 )
 
@@ -131,7 +131,8 @@ func Test_processFilteredNodes(t *testing.T) {
 	c.NodeName = "test1"
 	c.Server = true
 	c.LogLevel = logLevel
-	c.BackendMachines = []string{os.Getenv("DKRON_BACKEND_MACHINE")}
+	c.Tags = map[string]string{"role": "test"}
+	//c.BackendMachines = []string{os.Getenv("DKRON_BACKEND_MACHINE")}
 
 	a1 := NewAgent(c, nil)
 	a1.Start()
@@ -145,7 +146,8 @@ func Test_processFilteredNodes(t *testing.T) {
 	c.NodeName = "test2"
 	c.Server = true
 	c.LogLevel = logLevel
-	c.BackendMachines = []string{os.Getenv("DKRON_BACKEND_MACHINE")}
+	c.Tags = map[string]string{"role": "test"}
+	//c.BackendMachines = []string{os.Getenv("DKRON_BACKEND_MACHINE")}
 
 	a2 := NewAgent(c, nil)
 	a2.Start()
