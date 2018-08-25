@@ -15,7 +15,6 @@ type Config struct {
 	NodeName              string `mapstructure:"node-name"`
 	BindAddr              string `mapstructure:"bind-addr"`
 	HTTPAddr              string `mapstructure:"http-addr"`
-	Discover              string
 	Backend               string
 	BackendMachines       []string `mapstructure:"backend-machine"`
 	Profile               string
@@ -73,7 +72,6 @@ func DefaultConfig() *Config {
 		NodeName:          hostname,
 		BindAddr:          fmt.Sprintf("0.0.0.0:%d", DefaultBindPort),
 		HTTPAddr:          ":8080",
-		Discover:          "dkron",
 		Backend:           "etcd",
 		BackendMachines:   []string{"127.0.0.1:2379"},
 		Profile:           "lan",
@@ -95,7 +93,6 @@ func ConfigFlagSet() *flag.FlagSet {
 	cmdFlags.String("bind-addr", c.BindAddr, "Address to bind network listeners to.")
 	cmdFlags.String("advertise-addr", "", "Address used to advertise to other nodes in the cluster. By default, the bind address is advertised.")
 	cmdFlags.String("http-addr", c.HTTPAddr, "Address to bind the UI web server to. Only used when server.")
-	cmdFlags.String("discover", c.Discover, "A cluster name used to discovery peers. On networks that support multicast, this can be used to have peers join each other without an explicit join.")
 	cmdFlags.String("backend", c.Backend, "store backend")
 	cmdFlags.StringSlice("backend-machine", c.BackendMachines, "store backend machines addresses")
 	cmdFlags.String("profile", c.Profile, "Profile is used to control the timing profiles used. The default if not provided is lan.")
