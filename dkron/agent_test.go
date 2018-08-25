@@ -132,7 +132,7 @@ func Test_processFilteredNodes(t *testing.T) {
 	c.Server = true
 	c.LogLevel = logLevel
 	c.Tags = map[string]string{"role": "test"}
-	//c.BackendMachines = []string{os.Getenv("DKRON_BACKEND_MACHINE")}
+	c.BackendMachines = []string{os.Getenv("DKRON_BACKEND_MACHINE")}
 
 	a1 := NewAgent(c, nil)
 	a1.Start()
@@ -147,7 +147,7 @@ func Test_processFilteredNodes(t *testing.T) {
 	c.Server = true
 	c.LogLevel = logLevel
 	c.Tags = map[string]string{"role": "test"}
-	//c.BackendMachines = []string{os.Getenv("DKRON_BACKEND_MACHINE")}
+	c.BackendMachines = []string{os.Getenv("DKRON_BACKEND_MACHINE")}
 
 	a2 := NewAgent(c, nil)
 	a2.Start()
