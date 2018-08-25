@@ -168,7 +168,6 @@ func Test_processFilteredNodes(t *testing.T) {
 	assert.Equal(t, job.Tags["role"], "test:2")
 	assert.Equal(t, job.Tags["foo"], "bar:1")
 
-	// Send a shutdown request
 	a1.Stop()
 	a2.Stop()
 }
