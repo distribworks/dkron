@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	logLevel = "debug"
+	logLevel = "error"
 	etcdAddr = getEnvWithDefault()
 )
 
