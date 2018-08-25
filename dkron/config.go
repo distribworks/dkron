@@ -67,6 +67,8 @@ func DefaultConfig() *Config {
 		log.Panic(err)
 	}
 
+	tags := map[string]string{"dkron_version": Version}
+
 	return &Config{
 		NodeName:          hostname,
 		BindAddr:          fmt.Sprintf("0.0.0.0:%d", DefaultBindPort),
@@ -79,6 +81,7 @@ func DefaultConfig() *Config {
 		LogLevel:          "info",
 		RPCPort:           6868,
 		MailSubjectPrefix: "[Dkron]",
+		Tags:              tags,
 	}
 }
 
