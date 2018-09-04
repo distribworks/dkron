@@ -42,7 +42,7 @@ require (
 	github.com/gin-contrib/multitemplate v0.0.0-20170922032617-bbc6daf6024b
 	github.com/gin-contrib/sse v0.0.0-20170109093832-22d885f9ecc7 // indirect
 	github.com/gin-gonic/autotls v0.0.0-20180426091246-be87bd5ef97b // indirect
-	github.com/gin-gonic/gin v0.0.0-20170702092826-d459835d2b07
+	github.com/gin-gonic/gin v1.3.0
 	github.com/gogo/protobuf v1.1.1 // indirect
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b // indirect
 	github.com/golang/groupcache v0.0.0-20180513044358-24b0969c4cb7 // indirect
@@ -88,6 +88,7 @@ require (
 	github.com/jonboulle/clockwork v0.1.0 // indirect
 	github.com/jordan-wright/email v0.0.0-20180115032944-94ae17dedda2
 	github.com/joyent/triton-go v0.0.0-20180628001255-830d2b111e62 // indirect
+	github.com/json-iterator/go v1.1.5 // indirect
 	github.com/kardianos/osext v0.0.0-20170510131534-ae77be60afb1
 	github.com/kr/fs v0.1.0 // indirect
 	github.com/kr/pretty v0.1.0 // indirect
@@ -105,6 +106,8 @@ require (
 	github.com/mitchellh/go-wordwrap v0.0.0-20150314170334-ad45545899c7 // indirect
 	github.com/mitchellh/mapstructure v0.0.0-20171017171808-06020f85339e // indirect
 	github.com/mitchellh/reflectwalk v0.0.0-20170726202117-63d60e9d0dbc // indirect
+	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
+	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/nicolai86/scaleway-sdk v1.11.1 // indirect
 	github.com/oklog/run v1.0.0 // indirect
 	github.com/olekukonko/tablewriter v0.0.0-20180506121414-d4647c9c7a84 // indirect

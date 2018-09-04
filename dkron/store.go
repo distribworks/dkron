@@ -6,13 +6,13 @@ import (
 	"sort"
 	"time"
 
-	"github.com/sirupsen/logrus"
 	"github.com/abronan/valkeyrie"
 	"github.com/abronan/valkeyrie/store"
 	"github.com/abronan/valkeyrie/store/consul"
 	"github.com/abronan/valkeyrie/store/etcd/v2"
 	"github.com/abronan/valkeyrie/store/redis"
 	"github.com/abronan/valkeyrie/store/zookeeper"
+	"github.com/sirupsen/logrus"
 	"github.com/victorcoder/dkron/cron"
 )
 
@@ -45,6 +45,7 @@ type Store struct {
 
 type JobOptions struct {
 	ComputeStatus bool
+	Tags          map[string]string `json:"tags"`
 }
 
 func init() {
@@ -220,6 +221,29 @@ func (s *Store) validateJob(job *Job) error {
 	return nil
 }
 
+func (s *Store) jobHasTags(job *Job, tags map[string]string) bool {
+	if job == nil || job.Tags == nil || len(job.Tags) == 0 {
+		return false
+	}
+
+	res := true
+	for k, v := range tags {
+		var found bool
+
+		if val, ok := job.Tags[k]; ok && v == val {
+			found = true
+		}
+
+		res = res && found
+
+		if !res {
+			break
+		}
+	}
+
+	return res
+}
+
 // GetJobs returns all jobs
 func (s *Store) GetJobs(options *JobOptions) ([]*Job, error) {
 	res, err := s.Client.List(s.keyspace+"/jobs/", nil)
@@ -239,8 +263,13 @@ func (s *Store) GetJobs(options *JobOptions) ([]*Job, error) {
 			return nil, err
 		}
 		job.Agent = s.agent
-		if options != nil && options.ComputeStatus {
-			job.Status = job.GetStatus()
+		if options != nil {
+			if options.Tags != nil && len(options.Tags) > 0 && !s.jobHasTags(&job, options.Tags) {
+				continue
+			}
+			if options.ComputeStatus {
+				job.Status = job.GetStatus()
+			}
 		}
 		jobs = append(jobs, &job)
 	}
