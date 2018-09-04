@@ -19,3 +19,4 @@ config/
 build/
 builder/skel/
 !builder/skel/.keep
+dist

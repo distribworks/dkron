@@ -1,0 +1,115 @@
+# This is an example goreleaser.yaml file with some sane defaults.
+# Make sure to check the documentation at http://goreleaser.com
+builds:
+  - main: ./builtin/bins/dkron-executor-http/
+    binary: dkron-executor-http
+    goos:
+      - freebsd
+      - windows
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+
+  - main: ./builtin/bins/dkron-executor-shell/
+    binary: dkron-executor-shell
+    goos:
+      - freebsd
+      - windows
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+
+  - main: ./builtin/bins/dkron-processor-files/
+    binary: dkron-processor-files
+    goos:
+      - freebsd
+      - windows
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+
+  - main: ./builtin/bins/dkron-processor-log/
+    binary: dkron-processor-log
+    goos:
+      - freebsd
+      - windows
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+
+  - main: ./builtin/bins/dkron-processor-syslog/
+    binary: dkron-processor-syslog
+    goos:
+      - freebsd
+      - windows
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+
+  - main: .
+    binary: dkron
+    goos:
+      - freebsd
+      - windows
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w -X main.build={{.Version}}
+
+nfpm:
+  vendor: Distributed Works
+  homepage: https://dkron.io
+  maintainer: Victor Castell <victor@distrib.works>
+  description: Distributed, fault tolerant job scheduling system
+  license: LGPL 3.0
+
+  formats:
+    - deb
+    - rpm
+
+  # Override default /usr/local/bin destination for binaries
+  bindir: /usr/bin
+
+  empty_folders:
+    - /var/log/dkron
+
+  #files:
+  #  "builder/files/": "/etc/init.d"
+  #  "path/**/glob": "/var/foo/glob"
+  config_files:
+    "builder/files/*.yml": "/etc/dkron/dkron.yml"
+
+  overrides:
+    rpm:
+      replacements:
+        amd64: x86_64
+
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ .Tag }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+    - '^docs:'
+    - '^test:'
+
+puts:
+  - name: deb
+    mode: binary
+    target: curl -F package=@dist/{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}.deb https://push.fury.io/victorcoder/
+
