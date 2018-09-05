@@ -90,6 +90,15 @@ func (a *Agent) Start() error {
 	if a.config.Server {
 		a.StartServer()
 	}
+
+	if a.GRPCClient == nil {
+		a.GRPCClient = NewGRPCClient(nil)
+	}
+
+	if err := a.SetTags(a.config.Tags); err != nil {
+		log.WithError(err).Fatal("agent: Error setting RPC config tags")
+	}
+
 	go a.eventLoop()
 	a.ready = true
 
@@ -298,13 +307,6 @@ func (a *Agent) StartServer() {
 		log.WithError(err).Fatal("agent: RPC server failed to start")
 	}
 
-	if a.GRPCClient == nil {
-		a.GRPCClient = NewGRPCClient(nil)
-	}
-
-	if err := a.SetTags(a.config.Tags); err != nil {
-		log.WithError(err).Fatal("agent: Error setting RPC config tags")
-	}
 	a.participate()
 }
 
