@@ -97,8 +97,6 @@ nfpm:
       replacements:
         amd64: x86_64
 
-checksum:
-  name_template: 'checksums.txt'
 snapshot:
   name_template: "{{ .Tag }}-next"
 changelog:
@@ -107,9 +105,3 @@ changelog:
     exclude:
     - '^docs:'
     - '^test:'
-
-puts:
-  - name: deb
-    mode: binary
-    target: curl -F package=@dist/{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}.deb https://push.fury.io/victorcoder/
-
