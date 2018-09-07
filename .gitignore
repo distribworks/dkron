@@ -14,8 +14,4 @@ main
 /dkron-executor-*
 *.log
 config/
-*.deb
-*.rpm
-build/
-builder/skel/
-!builder/skel/.keep
+dist
