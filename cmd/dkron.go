@@ -79,7 +79,7 @@ func initConfig() {
 
 	config.Tags = tags
 
-	dkron.InitLogger(viper.GetString("log_level"), config.NodeName)
+	dkron.InitLogger(viper.GetString("log-level"), config.NodeName)
 }
 
 // unmarshalTags is a utility function which takes a slice of strings in
