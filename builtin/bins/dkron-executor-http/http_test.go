@@ -12,7 +12,7 @@ func TestExecute(t *testing.T) {
 		JobName: "testJob",
 		Config: map[string]string{
 			"method":     "GET",
-			"url":        "https://webhook.site/2a570753-499b-4c08-a8d5-d20f9b625ea8",
+			"url":        "https://httpbin.org/get",
 			"expectCode": "200",
 			"debug":      "true",
 		},
@@ -31,7 +31,7 @@ func TestExecutePost(t *testing.T) {
 		JobName: "testJob",
 		Config: map[string]string{
 			"method":     "POST",
-			"url":        "https://webhook.site/2a570753-499b-4c08-a8d5-d20f9b625ea8",
+			"url":        "https://httpbin.org/post",
 			"body":       "{\"hello\":11}",
 			"headers":    "[\"Content-Type:application/json\"]",
 			"expectCode": "200",
