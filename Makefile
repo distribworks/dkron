@@ -29,4 +29,4 @@ gen:
 	go fmt ./dkron/bindata.go
 
 test:
-	@bash --norc -i ./scripts/test.sh
+	@bash --norc -i ./scripts/test
