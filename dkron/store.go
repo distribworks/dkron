@@ -414,16 +414,50 @@ func (s *Store) SetExecution(execution *Execution) (string, error) {
 	log.WithFields(logrus.Fields{
 		"job":       execution.JobName,
 		"execution": key,
+		"from":      execution.NodeName,
 	}).Debug("store: Setting key")
 
-	err := s.Client.Put(fmt.Sprintf("%s/executions/%s/%s", s.keyspace, execution.JobName, key), exJson, nil)
-	if err != nil {
-		log.WithFields(logrus.Fields{
-			"job":       execution.JobName,
-			"execution": key,
-			"error":     err,
-		}).Debug("store: Failed to set key")
+retry:
+	drop := false
+	clientKey := fmt.Sprintf("%s/executions/%s/%s", s.keyspace, execution.JobName, key)
+	res, err := s.Client.Get(clientKey, nil)
+	if err != nil && err != store.ErrKeyNotFound {
 		return "", err
+	}
+	if err == nil && res != nil {
+		var exists Execution
+		err := json.Unmarshal([]byte(res.Value), &exists)
+		if err != nil {
+			return "", err
+		}
+		if execution.FinishedAt.Before(exists.FinishedAt) {
+			drop = true
+			log.WithFields(logrus.Fields{
+				"job":       execution.JobName,
+				"execution": key,
+				"from":      execution.NodeName,
+			}).Warn("store: Dropping earlier execution")
+		}
+	}
+
+	if !drop {
+		ok, _, err := s.Client.AtomicPut(clientKey, exJson, res, nil)
+		if err != nil && err != store.ErrKeyModified {
+			log.WithFields(logrus.Fields{
+				"job":       execution.JobName,
+				"execution": key,
+				"error":     err,
+			}).Debug("store: Failed to set key")
+			return "", err
+		}
+		if !ok {
+			log.WithFields(logrus.Fields{
+				"job":       execution.JobName,
+				"execution": key,
+				"from":      execution.NodeName,
+			}).Debug("store: Retrying execution update")
+			goto retry
+		}
 	}
 
 	execs, err := s.GetExecutions(execution.JobName)
