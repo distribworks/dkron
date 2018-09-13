@@ -1,5 +1,4 @@
-# This is an example goreleaser.yaml file with some sane defaults.
-# Make sure to check the documentation at http://goreleaser.com
+project_name: dkron
 builds:
   - main: ./builtin/bins/dkron-executor-http/
     binary: dkron-executor-http
@@ -90,7 +89,8 @@ nfpm:
   #  "builder/files/": "/etc/init.d"
   #  "path/**/glob": "/var/foo/glob"
   config_files:
-    "builder/files/*.yml": "/etc/dkron/dkron.yml"
+    "builder/files/dkron.yml": "/etc/dkron/dkron.yml"
+    "builder/files/dkron.service": "/lib/systemd/system/dkron.service"
 
   overrides:
     rpm:
