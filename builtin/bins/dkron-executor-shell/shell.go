@@ -4,11 +4,9 @@ import (
 	"log"
 	"os"
 	"os/exec"
-	"os/user"
 	"runtime"
 	"strconv"
 	"strings"
-	"syscall"
 	"time"
 
 	"github.com/armon/circbuf"
@@ -38,9 +36,13 @@ func (s *Shell) Execute(args *dkron.ExecuteRequest) ([]byte, error) {
 	}
 	command := args.Config["command"]
 	env := strings.Split(args.Config["env"], ",")
-	su, _ := args.Config["su"]
+	cwd, _ := args.Config["cwd"]
 
-	cmd, err := buildCmd(command, shell, env, su)
+	cmd, err := buildCmd(command, shell, env, cwd)
+	if err != nil {
+		return nil, err
+	}
+	err = setCmdAttr(cmd, args.Config)
 	if err != nil {
 		return nil, err
 	}
@@ -65,17 +67,19 @@ func (s *Shell) Execute(args *dkron.ExecuteRequest) ([]byte, error) {
 	}
 
 	err = cmd.Wait()
+
+	// Always log output
+	log.Printf("shell: Command output %s", output)
+
 	if err != nil {
 		return nil, err
 	}
-
-	log.Printf("shell: Command output %s", output)
 
 	return output.Bytes(), nil
 }
 
 // Determine the shell invocation based on OS
-func buildCmd(command string, useShell bool, env []string, su string) (cmd *exec.Cmd, err error) {
+func buildCmd(command string, useShell bool, env []string, cwd string) (cmd *exec.Cmd, err error) {
 	var shell, flag string
 
 	if useShell {
@@ -97,29 +101,6 @@ func buildCmd(command string, useShell bool, env []string, su string) (cmd *exec
 	if env != nil {
 		cmd.Env = append(os.Environ(), env...)
 	}
-	if su != "" && runtime.GOOS != windows {
-		var uid, gid int
-		parts := strings.Split(su, ":")
-		u, err := user.Lookup(parts[0])
-		if err != nil {
-			return nil, err
-		}
-		uid, _ = strconv.Atoi(u.Uid)
-		if len(parts) > 1 {
-			g, err := user.LookupGroup(parts[1])
-			if err != nil {
-				return nil, err
-			}
-			gid, _ = strconv.Atoi(g.Gid)
-		} else {
-			gid, _ = strconv.Atoi(u.Gid)
-		}
-		cmd.SysProcAttr = &syscall.SysProcAttr{}
-		cmd.SysProcAttr.Credential = &syscall.Credential{
-			Uid: uint32(uid),
-			Gid: uint32(gid),
-		}
-	}
-
+	cmd.Dir = cwd
 	return
 }
