@@ -144,25 +144,25 @@ func handleReload() {
 // Suport legacy config files for some time
 func legacyConfig() {
 	s := viper.GetString("node_name")
-	if s != "" && viper.GetString("node-name") == "" {
+	if s != "" {
 		log.WithField("param", "node_name").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
 		config.NodeName = s
 	}
 
 	s = viper.GetString("bind_addr")
-	if s != "" && viper.GetString("bind-addr") == "" {
+	if s != "" {
 		log.WithField("param", "bind_addr").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
 		config.BindAddr = s
 	}
 
 	s = viper.GetString("http_addr")
-	if s != "" && viper.GetString("http-addr") == "" {
+	if s != "" {
 		log.WithField("param", "http_addr").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
 		config.HTTPAddr = s
 	}
 
 	ss := viper.GetStringSlice("backend_machine")
-	if ss != nil && viper.GetStringSlice("backend_machine") == nil {
+	if ss != nil {
 		log.WithField("param", "backend_machine").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
 		config.BackendMachines = ss
 	}
@@ -228,7 +228,7 @@ func legacyConfig() {
 	}
 
 	i := viper.GetInt("rpc_port")
-	if i != 0 && viper.GetInt("rpc-port") == 0 {
+	if i != 0 {
 		log.WithField("param", "rpc_port").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
 		config.RPCPort = i
 	}
@@ -240,7 +240,7 @@ func legacyConfig() {
 	}
 
 	s = viper.GetString("log_level")
-	if s != "" && viper.GetString("log-level") == "" {
+	if s != "" {
 		log.WithField("param", "log_level").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
 		config.LogLevel = s
 	}
@@ -282,7 +282,7 @@ func legacyConfig() {
 	}
 
 	s = viper.GetString("mail_subject_prefix")
-	if s != "" && viper.GetString("mail-subject-prefix") == "" {
+	if s != "" {
 		log.WithField("param", "mail_subject_prefix").Warn("Deprecation warning: Config param name is deprecated and will be removed in future versions.")
 		config.MailSubjectPrefix = s
 	}
