@@ -30,7 +30,7 @@ type Config struct {
 	RejoinAfterLeave      bool              `mapstructure:"rejoin-after-leave"`
 	Server                bool
 	EncryptKey            string   `mapstructure:"encrypt-key"`
-	StartJoin             []string `mapstructure:"start-join"`
+	StartJoin             []string `mapstructure:"join"`
 	Keyspace              string
 	RPCPort               int    `mapstructure:"rpc-port"`
 	AdvertiseRPCPort      int    `mapstructure:"advertise-rpc-port"`
