@@ -14,7 +14,7 @@ var versionCmd = &cobra.Command{
 	Short: "Show version",
 	Long:  `Show the version`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("Dkron v%s\n", dkron.Version)
+		fmt.Printf("Dkron %s\n", dkron.Version)
 		fmt.Printf("Agent Protocol: %d (Understands back to: %d)\n",
 			serf.ProtocolVersionMax, serf.ProtocolVersionMin)
 	},
