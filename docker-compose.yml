@@ -47,6 +47,8 @@ services:
     command: scripts/run agent --server --backend=consul --backend-machine=consul:8500 --join=dkron:8946 --log-level=debug
     # Uncomment to use etcd
     # command: scripts/run agent --server --backend=etcd --backend-machine=etcd:2379 --join=dkron:8946 --log-level=debug
+    # Uncomment to use etcdv3
+    # command: scripts/run agent --server --backend=etcdv3 --backend-machine=etcd:2379 --join=dkron:8946 --log-level=debug
     # Uncomment to use zk
     # command: scripts/run agent --server --backend=zk --backend-machine=zk:2181 --join=dkron:8946 --log-level=debug
     # Uncomment to use redis

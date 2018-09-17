@@ -75,7 +75,7 @@ require (
 	golang.org/x/text v0.0.0-20171013141220-c01e4764d870 // indirect
 	google.golang.org/appengine v1.1.0 // indirect
 	google.golang.org/genproto v0.0.0-20171002232614-f676e0f3ac63 // indirect
-	google.golang.org/grpc v1.13.0
+	google.golang.org/grpc v1.5.0
 	gopkg.in/airbrake/gobrake.v2 v2.0.9 // indirect
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
 	gopkg.in/fsnotify.v1 v1.4.7 // indirect
