@@ -29,7 +29,7 @@ type Config struct {
 	KeyringFile           string            `mapstructure:"keyring-file"`
 	RejoinAfterLeave      bool              `mapstructure:"rejoin-after-leave"`
 	Server                bool
-	EncryptKey            string   `mapstructure:"encrypt-key"`
+	EncryptKey            string   `mapstructure:"encrypt"`
 	StartJoin             []string `mapstructure:"join"`
 	Keyspace              string
 	RPCPort               int    `mapstructure:"rpc-port"`
