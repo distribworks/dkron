@@ -1,13 +1,12 @@
 /* base components */
 /** Font vars **/
 /* Boostrap shitty breakpoints */
-@import url(https://fonts.googleapis.com/css?family=Lato:400,300);
+@import url(https://fonts.googleapis.com/css?family=Montserrat:400,300);
 html {
   font-size: 100%;
 }
 
 body {
-  font-family: "Lato", "Open-Sans", Sans-serif;
   padding-top: 90px;
   background-color: #eee;
 }
@@ -31,7 +30,6 @@ h6[id]:before {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: "Lato", "Open-Sans", Sans-serif;
   margin-bottom: 1em;
 }
 
@@ -192,7 +190,6 @@ ul.status li strong {
   color: #FFF;
   padding: 0;
   line-height: 1em;
-  font-family: "Lato", "Open-Sans", Sans-serif;
   font-size: 0.9em !important;
   text-transform: uppercase;
 }
@@ -315,7 +312,7 @@ footer[role="contentinfo"] p {
 .page-home blockquote {
   text-align: center;
   border: none;
-  font-family: "Lato", "Open-Sans", Sans-serif;
+  font-family: "Montserrat", "Open-Sans", Sans-serif;
   color: #a3c5cd;
   margin: 1.5em auto;
 }
@@ -526,7 +523,7 @@ footer[role="contentinfo"] p {
   margin: 2em .5em 0 .5em;
   font-size: .7em;
   text-transform: uppercase;
-  font-family: "Lato", "Open-Sans", Sans-serif;
+  font-family: "Montserrat", "Open-Sans", Sans-serif;
 }
 #jumbotron-mask #jumbotron .container h2 {
   text-align: center;
