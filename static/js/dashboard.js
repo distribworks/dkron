@@ -28,23 +28,18 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
     return angular.toJson(str, true);
   }
   $scope.jobTemplate = {
-    name: "child_job",
+    name: "job",
     schedule: "",
-    shell: false,
-    command: "",
-    environment_variables: null,
     owner: "",
     owner_email: "",
     disabled: false,
     tags: {},
     retries: 0,
-    dependent_jobs: [],
-    parent_job: "",
     processors: null,
-    concurrency: "forbid",
+    concurrency: "allow",
     executor: "shell",
     executor_config: {
-      command: ""
+      command: "/bin/true"
     }
   }
   $scope.jobTemplateJson = $scope.toJson($scope.jobTemplate);

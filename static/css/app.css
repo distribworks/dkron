@@ -9,6 +9,7 @@ html {
 body {
   font-family: "Lato", "Open-Sans", Sans-serif;
   padding-top: 90px;
+  background-color: #eee;
 }
 
 section[role="main"] {
@@ -283,11 +284,6 @@ ul.status li strong {
   text-decoration: none;
   color: #72A6B2;
   opacity: .7;
-}
-
-.CodeMirror {
-  border: 2px solid #eee;
-  height: auto !important;
 }
 
 .tooltip-inner {
