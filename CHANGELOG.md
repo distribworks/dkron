@@ -1,3 +1,18 @@
+## 0.11.0 (2018-09-24)
+
+- d4c0ab4 1.11 stable not in docker hub yet
+- b2458b1 Add builtin http plugin
+- 51001c3 Add executor shell su option (@tengattack)
+- f71a2d5 Better dockerfile for testing
+- 6dfa50c Better flag help
+- 56bcdf4 Don't depend on michellh/cli
+- 227b322 Filter jobs by tags (@digitalcrab)
+- ad1d651 Fix cluster panic bug (@tengattack)
+- 7aed1d5 Release with goreleaser
+- bb9c9cc Use cobra for flags
+- b13084e Use go modules
+- 4ce0402 add create & update job features (@wd1900)
+
 ## 0.10.4 (2018-07-30)
 
 - Replace RPC with gRPC
