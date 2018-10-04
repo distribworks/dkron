@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html ng-app="dkron">
   <head>
-    <title>Dkron</title>
+    <title>{{ .Common.Name }}</title>
 
     <link rel="stylesheet" href="{{ .Common.AssetsPath }}/node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ .Common.AssetsPath }}/css/app.css">
@@ -53,7 +53,7 @@
 
           <!-- Main title -->
           <div class="brand">
-            <a class="logo" href="{{ .Common.Path }}"><img src="{{ .Common.AssetsPath }}/img/dkron-badge-bw.png"/> Dkron</a>
+            <a class="logo" href="{{ .Common.Path }}"><img src="{{ .Common.AssetsPath }}/img/dkron-badge-bw.png"/> {{ .Common.Name }}</a>
           </div>
         </div>
 
@@ -92,7 +92,7 @@
         <div class="container text-center">
             <ul class="nav">
               <li>
-                <p class="navbar-text">Dkron {{ .Common.Version }}</p>
+                <p class="navbar-text">{{ .Common.Name }} {{ .Common.Version }}</p>
               </li>
               <li>
                 <p class="navbar-text">Member: {{ .Common.MemberName }}</p>
