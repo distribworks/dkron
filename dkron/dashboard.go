@@ -70,7 +70,7 @@ func (a *Agent) dashboardJobsHandler(c *gin.Context) {
 	data := struct {
 		Common *commonDashboardData
 	}{
-		Common: newCommonDashboardData(a, a.config.NodeName, "../../"),
+		Common: newCommonDashboardData(a, a.config.NodeName, "../"),
 	}
 
 	c.HTML(http.StatusOK, "jobs", data)
