@@ -10,6 +10,7 @@ import (
 	"github.com/abronan/valkeyrie/store"
 	"github.com/abronan/valkeyrie/store/consul"
 	"github.com/abronan/valkeyrie/store/etcd/v2"
+	"github.com/abronan/valkeyrie/store/etcd/v3"
 	"github.com/abronan/valkeyrie/store/redis"
 	"github.com/abronan/valkeyrie/store/zookeeper"
 	"github.com/sirupsen/logrus"
@@ -50,6 +51,7 @@ type JobOptions struct {
 
 func init() {
 	etcd.Register()
+	etcdv3.Register()
 	consul.Register()
 	zookeeper.Register()
 	redis.Register()

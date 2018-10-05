@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+
+docker service rm etcd0 etcd1 etcd2
+
+docker service create \
+--name etcd0 \
+--network my-net \
+quay.io/coreos/etcd etcd \
+-name etcd0 \
+-advertise-client-urls http://etcd0:2379,http://127.0.0.1:2379 \
+-listen-client-urls http://0.0.0.0:2379 \
+-initial-advertise-peer-urls http://etcd0:2380 \
+-listen-peer-urls http://0.0.0.0:2380 \
+-initial-cluster-token etcd-cluster-1 \
+-initial-cluster etcd0=http://etcd0:2380,etcd1=http://etcd1:2380,etcd2=http://etcd2:2380 \
+-initial-cluster-state new
+
+sleep 5
+
+docker service create \
+--name etcd1 \
+--network my-net \
+quay.io/coreos/etcd etcd \
+-name etcd1 \
+-advertise-client-urls http://etcd1:2379 \
+-listen-client-urls http://0.0.0.0:2379 \
+-initial-advertise-peer-urls http://etcd1:2380 \
+-listen-peer-urls http://0.0.0.0:2380 \
+-initial-cluster-token etcd-cluster-1 \
+-initial-cluster etcd0=http://etcd0:2380,etcd1=http://etcd1:2380,etcd2=http://etcd2:2380 \
+-initial-cluster-state new
+
+docker service create \
+--name etcd2 \
+--network my-net \
+quay.io/coreos/etcd etcd \
+-name etcd2 \
+-advertise-client-urls http://etcd2:2379 \
+-listen-client-urls http://0.0.0.0:2379 \
+-initial-advertise-peer-urls http://etcd2:2380 \
+-listen-peer-urls http://0.0.0.0:2380 \
+-initial-cluster-token etcd-cluster-1 \
+-initial-cluster etcd0=http://etcd0:2380,etcd1=http://etcd1:2380,etcd2=http://etcd2:2380 \
+-initial-cluster-state new
+
+sleep 40
+
+docker service rm dkron-etcd0 dkron-etcd
+
+docker service create \
+--name dkron-etcd0 \
+--network my-net \
+--publish 8080:8080 \
+--container-label beta="0" \
+dkron/dkron:v0.9.3 \
+agent -server \
+-bind=0.0.0.0:8946 \
+-advertise=dkron-etcd0:8946 \
+-backend=etcdv3 \
+-backend-machine=etcd0:2379 \
+-join=dkron-etcd0:8946 \
+-dog-statsd-addr=dd-agent:8125 \
+-dog-statsd-tags=backend:etcd \
+-log-level=debug
+
+sleep 20
+
+docker service create \
+--name dkron-etcd \
+--network my-net \
+--replicas 5 \
+--publish 8081:8080 \
+--container-label beta="0" \
+dkron/dkron:v0.9.3 \
+agent -server \
+-bind=0.0.0.0:8946 \
+-backend=etcdv3 \
+-backend-machine=etcd0:2379 \
+-join=dkron-etcd0:8946 \
+-dog-statsd-addr=dd-agent:8125 \
+-dog-statsd-tags=backend:etcd \
+-log-level=debug

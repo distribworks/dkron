@@ -149,6 +149,8 @@ google.golang.org/appengine v1.1.0 h1:igQkv0AAhEIvTEpD5LIpAfav2eeVO9HBTjvKHVJPRS
 google.golang.org/appengine v1.1.0/go.mod h1:EbEs0AVv82hx2wNQdGPgUI5lhzA/G0D9YwlJXL52JkM=
 google.golang.org/genproto v0.0.0-20171002232614-f676e0f3ac63 h1:yNBw5bwywOTguAu+h6SkCUaWdEZ7ZXgfiwb2YTN1eQw=
 google.golang.org/genproto v0.0.0-20171002232614-f676e0f3ac63/go.mod h1:JiN7NxoALGmiZfu7CAH4rXhgtRTLTxftemlI0sWmxmc=
+google.golang.org/grpc v1.5.0 h1:Ji47YA6K9qlzSt3Tu0EK38f3YmF/n8AoCx4REzOntu8=
+google.golang.org/grpc v1.5.0/go.mod h1:yo6s7OP7yaDglbqo1J04qKzAhqBH6lvTonzMVmEdcZw=
 google.golang.org/grpc v1.13.0 h1:bHIbVsCwmvbArgCJmLdgOdHFXlKqTOVjbibbS19cXHc=
 google.golang.org/grpc v1.13.0/go.mod h1:yo6s7OP7yaDglbqo1J04qKzAhqBH6lvTonzMVmEdcZw=
 gopkg.in/airbrake/gobrake.v2 v2.0.9 h1:7z2uVWwn7oVeeugY1DtlPAy5H+KYgB1KeKTnqjNatLo=
