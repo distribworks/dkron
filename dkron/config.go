@@ -72,7 +72,7 @@ func DefaultConfig() *Config {
 		NodeName:          hostname,
 		BindAddr:          fmt.Sprintf("0.0.0.0:%d", DefaultBindPort),
 		HTTPAddr:          ":8080",
-		Backend:           "etcd",
+		Backend:           "etcdv3",
 		BackendMachines:   []string{"127.0.0.1:2379"},
 		Profile:           "lan",
 		Keyspace:          "dkron",
