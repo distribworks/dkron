@@ -107,8 +107,3 @@ changelog:
     - '^docs:'
     - '^test:'
     - '^Merge pull request'
-
-dockers:
-  - image: dkron/dkron
-    binary: dkron
-    dockerfile: Dockerfile.hub
