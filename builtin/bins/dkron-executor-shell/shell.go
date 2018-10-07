@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/base64"
 	"log"
 	"os"
 	"os/exec"
@@ -54,6 +55,21 @@ func (s *Shell) Execute(args *dkron.ExecuteRequest) ([]byte, error) {
 		log.Printf("shell: Script '%s' slow, execution exceeding %v", command, 2*time.Hour)
 	})
 	defer slowTimer.Stop()
+
+	stdin, err := cmd.StdinPipe()
+	if err != nil {
+		return nil, err
+	}
+
+	defer stdin.Close()
+
+	payload, err := base64.StdEncoding.DecodeString(args.Config["payload"])
+	if err != nil {
+		return nil, err
+	}
+
+	stdin.Write(payload)
+	stdin.Close()
 
 	log.Printf("shell: going to run %s", command)
 	err = cmd.Start()
