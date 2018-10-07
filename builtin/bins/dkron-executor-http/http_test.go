@@ -19,7 +19,7 @@ func TestExecute(t *testing.T) {
 	}
 	http := &HTTP{}
 	output, err := http.Execute(pa)
-	fmt.Println(string(output))
+	fmt.Println(string(output.Output))
 	fmt.Println(err)
 	if err != nil {
 		t.Fatal(err)
@@ -41,7 +41,7 @@ func TestExecutePost(t *testing.T) {
 	}
 	http := &HTTP{}
 	output, err := http.Execute(pa)
-	fmt.Println(string(output))
+	fmt.Println(string(output.Output))
 	fmt.Println(err)
 	if err != nil {
 		t.Fatal(err)

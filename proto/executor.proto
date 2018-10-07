@@ -10,6 +10,7 @@ message ExecuteRequest {
 
 message ExecuteResponse {
     bytes output = 1;
+    string error = 2;
 }
 
 service Executor {

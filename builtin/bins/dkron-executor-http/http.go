@@ -42,7 +42,17 @@ type HTTP struct {
 //     "expectBody": "",            // Expect response body, support regexp, such as /success/
 //     "debug": "true"              // Debug option, will log everything when this option is not empty
 // }
-func (s *HTTP) Execute(args *dkron.ExecuteRequest) ([]byte, error) {
+func (s *HTTP) Execute(args *dkron.ExecuteRequest) (*dkron.ExecuteResponse, error) {
+	out, err := s.ExecuteImpl(args)
+	resp := &dkron.ExecuteResponse{Output: out}
+	if err != nil {
+		resp.Error = err.Error()
+	}
+	return resp, nil
+}
+
+// ExecuteImpl do http request
+func (s *HTTP) ExecuteImpl(args *dkron.ExecuteRequest) ([]byte, error) {
 	output, _ := circbuf.NewBuffer(maxBufSize)
 	var debug bool
 	if args.Config["debug"] != "" {
