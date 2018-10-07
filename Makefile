@@ -4,6 +4,13 @@ fury: $(LINUX_PKGS)
 $(LINUX_PKGS):
 	fury push $@
 
+.PHONY: goreleaser
+goreleaser:
+	goreleaser --rm-dist
+
+.PHONY: release
+release: clean goreleaser fury
+
 .PHONY: clean
 clean:
 	rm -f main
