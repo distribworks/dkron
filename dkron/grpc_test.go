@@ -11,7 +11,7 @@ import (
 )
 
 func TestGRPCExecutionDone(t *testing.T) {
-	store := NewStore("etcd", []string{etcdAddr}, nil, "dkron", nil)
+	store := NewStore("etcdv3", []string{etcdAddr}, nil, "dkron", nil)
 	viper.Reset()
 
 	// Cleanup everything
