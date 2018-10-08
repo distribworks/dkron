@@ -35,7 +35,7 @@ func TestAgentCommand_runForElection(t *testing.T) {
 	// Override leader TTL
 	defaultLeaderTTL = 2 * time.Second
 
-	client, err := valkeyrie.NewStore("etcd", []string{etcdAddr}, &store.Config{})
+	client, err := valkeyrie.NewStore("etcdv3", []string{etcdAddr}, &store.Config{})
 	if err != nil {
 		panic(err)
 	}
@@ -114,7 +114,7 @@ func watchOrDie(client store.Store, key string) (*store.KVPair, error) {
 }
 
 func Test_processFilteredNodes(t *testing.T) {
-	client, err := valkeyrie.NewStore("etcd", []string{etcdAddr}, &store.Config{})
+	client, err := valkeyrie.NewStore("etcdv3", []string{etcdAddr}, &store.Config{})
 	err = client.DeleteTree("dkron")
 	if err != nil {
 		if err == store.ErrNotReachable {
