@@ -1,8 +1,10 @@
 package dkron
 
 import (
-	"github.com/sirupsen/logrus"
+	"io/ioutil"
+
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 var log = logrus.NewEntry(logrus.New())
@@ -20,5 +22,12 @@ func InitLogger(logLevel string, node string) {
 
 	formattedLogger.Level = level
 	log = logrus.NewEntry(formattedLogger).WithField("node", node)
-	gin.DefaultWriter = log.Writer()
+
+	if level == logrus.DebugLevel {
+		gin.DefaultWriter = log.Writer()
+		gin.SetMode(gin.DebugMode)
+	} else {
+		gin.DefaultWriter = ioutil.Discard
+		gin.SetMode(gin.ReleaseMode)
+	}
 }
