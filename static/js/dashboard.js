@@ -77,7 +77,7 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
       return
     }
     $scope["creating_" + job.name] = true;
-    var response = $http.post(DKRON_API_PATH + '/jobs/', job);
+    var response = $http.post(DKRON_API_PATH + '/jobs', job);
     response.success(function(data, status, headers, config) {
       $('#message').html('<div class="alert alert-success fade in">Success created job ' + job.name + '</div>');
 
@@ -100,7 +100,7 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
       return
     }
     $scope["updating_" + job.name] = true;
-    var response = $http.post(DKRON_API_PATH + '/jobs/', job);
+    var response = $http.post(DKRON_API_PATH + '/jobs', job);
     response.success(function(data, status, headers, config) {
       $('#message').html('<div class="alert alert-success fade in">Success updating job ' + job.name + '</div>');
 
@@ -167,7 +167,7 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
   $scope.groupToPages = function () {
     $scope.gap = Math.round($scope.jobs.length / $scope.itemsPerPage);
     $scope.pagedItems = [];
-    
+
     for (var i = 0; i < $scope.jobs.length; i++) {
         if (i % $scope.itemsPerPage === 0) {
             $scope.pagedItems[Math.floor(i / $scope.itemsPerPage)] = [ $scope.jobs[i] ];
@@ -212,7 +212,7 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
   $scope.itemsPerPage = 15;
   $scope.pagedItems = [];
   $scope.currentPage = 0;
-  
+
   $scope.success_count = 0;
   $scope.error_count = 0;
   $scope.failed_jobs = 0;
