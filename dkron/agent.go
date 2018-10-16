@@ -262,8 +262,13 @@ func (a *Agent) setupSerf() (*serf.Serf, error) {
 	// Start Serf
 	log.Info("agent: Dkron agent starting")
 
-	serfConfig.LogOutput = ioutil.Discard
-	serfConfig.MemberlistConfig.LogOutput = ioutil.Discard
+	if log.Logger.Level == logrus.DebugLevel {
+		serfConfig.LogOutput = log.Logger.Writer()
+		serfConfig.MemberlistConfig.LogOutput = log.Logger.Writer()
+	} else {
+		serfConfig.LogOutput = ioutil.Discard
+		serfConfig.MemberlistConfig.LogOutput = ioutil.Discard
+	}
 
 	// Create serf first
 	serf, err := serf.Create(serfConfig)

@@ -1,7 +1,6 @@
 package dkron
 
 import (
-	"flag"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -35,17 +34,11 @@ func NewTransport(a *Agent) *HTTPTransport {
 }
 
 func (h *HTTPTransport) ServeHTTP() {
-	if flag.Lookup("test.v") != nil {
-		gin.SetMode(gin.TestMode)
-	} else if log.Level >= logrus.InfoLevel {
-		gin.SetMode(gin.ReleaseMode)
-	}
-
 	h.Engine = gin.Default()
 	h.Engine.HTMLRender = CreateMyRender()
 	rootPath := h.Engine.Group("/")
 
-	h.ApiRoutes(rootPath)
+	h.APIRoutes(rootPath)
 	h.agent.DashboardRoutes(rootPath)
 
 	h.Engine.Use(h.MetaMiddleware())
@@ -58,8 +51,8 @@ func (h *HTTPTransport) ServeHTTP() {
 	go h.Engine.Run(h.agent.config.HTTPAddr)
 }
 
-// apiRoutes registers the api routes on the gin RouterGroup.
-func (h *HTTPTransport) ApiRoutes(r *gin.RouterGroup) {
+// APIRoutes registers the api routes on the gin RouterGroup.
+func (h *HTTPTransport) APIRoutes(r *gin.RouterGroup) {
 	v1 := r.Group("/v1")
 	v1.GET("/", h.indexHandler)
 	v1.GET("/members", h.membersHandler)
