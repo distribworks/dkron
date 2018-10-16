@@ -107,3 +107,13 @@ changelog:
     - '^docs:'
     - '^test:'
     - '^Merge pull request'
+
+dockers:
+  - image: dkron/dkron
+    binary: dkron
+    dockerfile: Dockerfile.hub
+    extra_files:
+      - dist/linux_amd64
+    tag_templates:
+      - latest
+      - "{{ .Tag }}"
