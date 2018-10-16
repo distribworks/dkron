@@ -12,7 +12,7 @@ EXPOSE 8080 8946
 ENV SHELL /bin/bash
 WORKDIR /opt/local/dkron
 
-COPY dist/linux_amd64/ .
+COPY linux_amd64/. .
 ENTRYPOINT ["/opt/local/dkron/dkron"]
 
 CMD ["--help"]
