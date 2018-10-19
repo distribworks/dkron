@@ -27,7 +27,7 @@ All the execution responses will be gathered by the scheduler and stored in the 
 
 Dkron relies on the key-value store for data storage, you can run an instance of the distributed store in the same machines as Dkron or connect it to your existing cluster.
 
-It can use etcd, Consul or Zookeeper as data stores. To install any of this systems go to their web site:
+It can use etcd, Consul, or Zookeeper as data stores. To install any one of these systems, go to their web site:
 
 - [etcd](https://coreos.com/etcd/docs/latest/)
 - [Consul](https://consul.io/intro/getting-started/install.html)
