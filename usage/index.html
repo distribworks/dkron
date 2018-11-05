@@ -185,6 +185,13 @@
       <a href="/pro/">Dkron Pro</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
+      <li data-nav-id="/pro/ecs/" class="dd-item">
+        <div>
+          <a href="/pro/ecs/">
+            AWS ECS Executor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/pro/auth/" class="dd-item">
         <div>
           <a href="/pro/auth/">
@@ -387,12 +394,17 @@ Note: A common pitfall is not properly setting up a $GOPATH.</p>
 
 <span><card>
 		<a href="/usage/target-nodes-spec/" >Target nodes spec</a></card>
-<p></p>
+<p>Target nodes spec You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run.
+Examples: Target all nodes with a tag:
+{ &quot;name&quot;: &quot;job_name&quot;, &quot;command&quot;: &quot;/bin/true&quot;, &quot;schedule&quot;: &quot;@every 2m&quot;, &quot;tags&quot;: { &quot;role&quot;: &quot;web&quot; } }  Target only two nodes of a group of nodes with a tag:</p>
 </span>
 
 <span><card>
 		<a href="/usage/ecs/" >Use with AWS ECS</a></card>
-<p></p>
+<p>Use with Amazon ECS To use Dkron to schedule jobs that run in containers, a wrapper ECS script is needed.
+Install the following snippet in the node that will run the call to ECS
+ Prerequisites The node that will run the call to ECS will need to have installed
+ AWS cli jq  Example ecs-run --cluster cron --task-definition cron-taskdef --container-name cron --region us-east-1 --command &quot;rake foo&quot;</p>
 </span>
 </ul>
 

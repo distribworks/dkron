@@ -6,7 +6,7 @@
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="generator" content="Hugo 0.38.2" />
-<title>Getting started :: Dkron - Distributed job scheduling system</title>
+<title>AWS ECS Executor :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
 <link href="/css/nucleus.css" rel="stylesheet">
@@ -22,7 +22,7 @@
 
     
   </head>
-  <body data-url="/basics/getting-started/">
+  <body data-url="/pro/ecs/">
     
       <header>
   <div class="logo">
@@ -63,14 +63,13 @@
             <i class="fa fa-fw fa-home"></i>
           </a>
           </li>
-    <li data-nav-id="/basics/" class="dd-item parent haschildren
+    <li data-nav-id="/basics/" class="dd-item haschildren
         ">
       <div>
-      <a href="/basics/">Basics</a>
-            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/basics/">Basics</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/basics/getting-started/" class="dd-item active">
+      <li data-nav-id="/basics/getting-started/" class="dd-item">
         <div>
           <a href="/basics/getting-started/">
             Getting started
@@ -179,13 +178,14 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/pro/" class="dd-item haschildren
+    <li data-nav-id="/pro/" class="dd-item parent haschildren
         ">
       <div>
-      <a href="/pro/">Dkron Pro</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/pro/">Dkron Pro</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/pro/ecs/" class="dd-item">
+      <li data-nav-id="/pro/ecs/" class="dd-item active">
         <div>
           <a href="/pro/ecs/">
             AWS ECS Executor
@@ -282,14 +282,19 @@
         <select onchange="javascript:location.href = this.value;">
           
     <option value="/basics/" >
-   Basics</option> 
-      <option value="/basics/getting-started/"  selected>- Getting started</option>
-      <option value="/basics/configuration/" >- Configuration</option>
-  
+   Basics</option>
     <option value="/usage/" >
    Usage</option>
     <option value="/pro/" >
-   Dkron Pro</option>
+   Dkron Pro</option> 
+      <option value="/pro/ecs/"  selected>- AWS ECS Executor</option>
+      <option value="/pro/auth/" >- Authorization</option>
+      <option value="/pro/docker/" >- Docker executor</option>
+      <option value="/pro/elasticsearch/" >- Elasticsearch processor</option>
+      <option value="/pro/email/" >- Email processor</option>
+      <option value="/pro/storage/" >- Embedded storage</option>
+      <option value="/pro/encryption/" >- Encryption</option>
+  
     <option value="/internal/" >
    Internals</option>
     <option value="/products/" >
@@ -316,78 +321,76 @@
       </div>
     
 
-    <h1>Getting started</h1>
+    <h1>AWS ECS Executor</h1>
     
     
     
-    
+    <p>The ECS exeutor is capable of launching tasks in ECS clusters, then listen to a stream of CloudWatch Logs and return the output.</p>
 
-<p>Welcome to the intro guide to dkron! This will explain how to setup dkron, how easy is to use it, what problems could it help you to solve, etc.</p>
+<p>To configure a job to be run in ECS you can use either a JSON Task definition template or an already defined task in ECS.</p>
 
-<h2 id="introduction">Introduction</h2>
+<p>To allow the ECS Task runner to run tasks, the machine running Dkron needs to have the appropriate permissions configured in AWS IAM:</p>
 
-<p>Dkron nodes can work in two modes, agents or servers.</p>
+<pre><code class="language-json">{
+    &quot;Version&quot;: &quot;2012-10-17&quot;,
+    &quot;Statement&quot;: [
+        {
+            &quot;Sid&quot;: &quot;Stmt1460720941000&quot;,
+            &quot;Effect&quot;: &quot;Allow&quot;,
+            &quot;Action&quot;: [
+                &quot;ecs:RunTask&quot;,
+                &quot;ecs:DescribeTasks&quot;,
+                &quot;ecs:DescribeTaskDefinition&quot;,
+                &quot;logs:FilterLogEvents&quot;
+            ],
+            &quot;Resource&quot;: [
+                &quot;*&quot;
+            ]
+        }
+    ]
+}
+</code></pre>
 
-<p>A Dkron agent is a cluster member that can handle job executions, run your scripts and return the resulting output to the server.</p>
+<p>Then configure a job to be run with the ECS executor:</p>
 
-<p>A Dkron server is also a cluster member that send job execution queries to agents or other servers, so servers can execute jobs too.</p>
+<p>Example using an existing taskdef</p>
 
-<p>The main distinction is that servers order job executions, can be used to schedule jobs, handles data storage and participate on leader election.</p>
+<pre><code class="language-json">  &quot;executor&quot;: &quot;ecs&quot;,
+  &quot;executor_config&quot;: {
+    &quot;taskdefName&quot;: &quot;mytaskdef-family&quot;,
+    &quot;region&quot;: &quot;eu-west-1&quot;,
+    &quot;cluster&quot;: &quot;default&quot;,
+    &quot;env&quot;: &quot;ENVIRONMENT=variable&quot;,
+    &quot;service&quot;: &quot;mycontainer&quot;,
+    &quot;overrides&quot;: &quot;echo,\&quot;Hello from dkron\&quot;&quot;
+  }
+</code></pre>
 
-<p>Dkron clusters have a leader, the leader is responsible of starting job execution queries in the cluster.</p>
+<p>Example using a provided taskdef</p>
 
-<p>Any Dkron agent or server acts as a cluster member and it&rsquo;s available to run scheduled jobs.</p>
+<pre><code class="language-json">  &quot;executor&quot;: &quot;ecs&quot;,
+  &quot;executor_config&quot;: {
+    &quot;taskdefBody&quot;: &quot;{\&quot;containerDefinitions\&quot;: [{\&quot;essential\&quot;: true,\&quot;image\&quot;: \&quot;hello-world\&quot;,\&quot;memory\&quot;: 100,\&quot;name\&quot;: \&quot;hello-world\&quot;}],\&quot;family\&quot;: \&quot;helloworld\&quot;}&quot;,
+    &quot;region&quot;: &quot;eu-west-1&quot;,
+    &quot;cluster&quot;: &quot;default&quot;,
+    &quot;fargate&quot;: &quot;yes&quot;,
+    &quot;env&quot;: &quot;ENVIRONMENT=variable&quot;,
+  }
+</code></pre>
 
-<p>You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run. This gives an unprecedented level of flexibility in runnig jobs across a cluster of any size and with any combination of machines you need.</p>
+<p>This is the complete list of configuration parameters of the plugin:</p>
 
-<p>All the execution responses will be gathered by the scheduler and stored in the database.</p>
-
-<h2 id="requirements">Requirements</h2>
-
-<p>Dkron relies on the key-value store for data storage, you can run an instance of the distributed store in the same machines as Dkron or connect it to your existing cluster.</p>
-
-<p>It can use etcd, Consul, or Zookeeper as data stores. To install any one of these systems, go to their web site:</p>
-
-<ul>
-<li><a href="https://coreos.com/etcd/docs/latest/">etcd</a></li>
-<li><a href="https://consul.io/intro/getting-started/install.html">Consul</a></li>
-<li><a href="https://zookeeper.apache.org/doc/r3.3.3/zookeeperStarted.html">ZooKeeper</a></li>
-</ul>
-
-<h2 id="installation">Installation</h2>
-
-<h3 id="recommended-method">Recommended method</h3>
-
-<p>APT repository: <code>deb [trusted=yes] https://apt.fury.io/victorcoder/ /</code></p>
-
-<p>Unstable release: <code>sudo apt-get install dkron-unstable</code>
-Stable release: <code>sudo apt-get install dkron</code></p>
-
-<h3 id="other-methods">Other methods</h3>
-
-<p>Simply download the packaged archive for your platform from the <a href="https://github.com/victorcoder/dkron/releases">downloads page</a>, extract the package to a shared location in your drive, like <code>/opt/local</code> and run it from there.</p>
-
-<h2 id="configuration">Configuration</h2>
-
-<p>See the <a href="configuration">configuration section</a>.</p>
-
-<h2 id="usage">Usage</h2>
-
-<p>By default Dkron uses the following ports:</p>
-
-<ul>
-<li><code>8946</code> for communicating between agents</li>
-<li><code>8080</code> for HTTP for the API and Dashboard</li>
-<li><code>6868</code> for RPC comunication between agents.</li>
-</ul>
-
-<p><strong>Be sure you have opened this ports (or the ones that you configured) in your firewall or AWS security groups.</strong></p>
-
-<p>By default dkron will try to use a local etcd server running in the same machine and in the default port. You can specify the store by setting the <code>backend</code> and <code>backend-machines</code> flag in the config file, env variables or as a command line flag.</p>
-
-<p>To start a Dkron server instance just run:</p>
-
-<pre><code>dkron agent --server
+<pre><code>taskdefBody
+taskdefName
+region
+cluster
+logGroup
+fargate
+securityGroup
+subnet
+env
+service
+overrides
 </code></pre>
 
 
@@ -395,8 +398,8 @@ Stable release: <code>sudo apt-get install dkron</code></p>
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-prev" href="/basics/" title="Basics"> <i class="fa fa-chevron-left"></i><label>Basics</label></a>
-    <a class="nav nav-next" href="/basics/configuration/" title="Configuration" style="margin-right: 0px;"><label>Configuration</label><i class="fa fa-chevron-right"></i></a></div>
+<a class="nav nav-prev" href="/pro/" title="Dkron Pro"> <i class="fa fa-chevron-left"></i><label>Dkron Pro</label></a>
+    <a class="nav nav-next" href="/pro/auth/" title="Authorization" style="margin-right: 0px;"><label>Authorization</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>
@@ -412,7 +415,7 @@ Stable release: <code>sudo apt-get install dkron</code></p>
   
 
     <div class="github-link">
-      <a href="https://github.com/victorcoder/dkron/edit/master/website/content/basics/getting-started.md" target="blank"><i class="fa fa-code-fork"></i>
+      <a href="https://github.com/victorcoder/dkron/edit/master/website/content/pro/ecs.md" target="blank"><i class="fa fa-code-fork"></i>
         Improve this page</a>
     </div>
   </div>

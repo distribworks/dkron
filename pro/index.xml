@@ -11,6 +11,17 @@
     
     
     <item>
+      <title>AWS ECS Executor</title>
+      <link>/pro/ecs/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/pro/ecs/</guid>
+      <description>The ECS exeutor is capable of launching tasks in ECS clusters, then listen to a stream of CloudWatch Logs and return the output.
+To configure a job to be run in ECS you can use either a JSON Task definition template or an already defined task in ECS.
+To allow the ECS Task runner to run tasks, the machine running Dkron needs to have the appropriate permissions configured in AWS IAM:</description>
+    </item>
+    
+    <item>
       <title>Authorization</title>
       <link>/pro/auth/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>

@@ -185,6 +185,13 @@
       <a href="/pro/">Dkron Pro</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
+      <li data-nav-id="/pro/ecs/" class="dd-item">
+        <div>
+          <a href="/pro/ecs/">
+            AWS ECS Executor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/pro/auth/" class="dd-item">
         <div>
           <a href="/pro/auth/">
@@ -419,6 +426,28 @@
 
 <p>List jobs.</p>
 
+<h4 id="parameters">Parameters</h4>
+
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Name</th>
+<th>Description</th>
+<th>Schema</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><strong>query</strong></td>
+<td><strong>tags</strong>  <br><em>optional</em></td>
+<td>Filter jobs by tags. Works as a logical and.</td>
+<td>&lt; string, string &gt; map</td>
+</tr>
+</tbody>
+</table>
+
 <h4 id="responses-1">Responses</h4>
 
 <table>
@@ -449,7 +478,7 @@
 
 <h5 id="request-path-1">Request path</h5>
 
-<pre><code>/jobs
+<pre><code>/jobs?tags[foo]=val1&amp;tags[bar]=val2
 </code></pre>
 
 <h4 id="example-http-response-1">Example HTTP response</h4>
@@ -468,7 +497,7 @@
 
 <p>Create or updates a new job.</p>
 
-<h4 id="parameters">Parameters</h4>
+<h4 id="parameters-1">Parameters</h4>
 
 <table>
 <thead>
@@ -587,7 +616,7 @@
 
 <p>Show a job.</p>
 
-<h4 id="parameters-1">Parameters</h4>
+<h4 id="parameters-2">Parameters</h4>
 
 <table>
 <thead>
@@ -679,7 +708,7 @@
 
 <p>Executes a job.</p>
 
-<h4 id="parameters-2">Parameters</h4>
+<h4 id="parameters-3">Parameters</h4>
 
 <table>
 <thead>
@@ -771,7 +800,7 @@
 
 <p>Delete a job.</p>
 
-<h4 id="parameters-3">Parameters</h4>
+<h4 id="parameters-4">Parameters</h4>
 
 <table>
 <thead>
@@ -863,7 +892,7 @@
 
 <p>List executions.</p>
 
-<h4 id="parameters-4">Parameters</h4>
+<h4 id="parameters-5">Parameters</h4>
 
 <table>
 <thead>
