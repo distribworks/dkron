@@ -211,8 +211,9 @@ Configuration &amp;quot;processors&amp;quot;: { &amp;quot;elasticsearch&amp;quot
       
       <guid>/pro/email/</guid>
       <description>If you need special email notification rules for a job, use the Email processor.
+Configuration of the email processor is stored in a file named dkron-processor-email.yml in the same locations as dkron.yml, and should include a list of providers, you could include any number of providers.
 Example:
-&amp;quot;processors&amp;quot;: { &amp;quot;email&amp;quot;: { &amp;quot;host&amp;quot;: &amp;quot;mail.google.com&amp;quot;, &amp;quot;username&amp;quot;: &amp;quot;foo&amp;quot;, &amp;quot;password&amp;quot;: &amp;quot;bar&amp;quot;, &amp;quot;emails&amp;quot;: &amp;quot;team@example.com&amp;quot;, &amp;quot;from&amp;quot;: &amp;quot;cron@example.com&amp;quot;, &amp;quot;subject_prefix&amp;quot;: &amp;quot;[Dkron]&amp;quot; } }  </description>
+provider1: host: smtp.myprovider.com port: 25 username: myusername password: mypassword from: cron@mycompany.com subjectPrefix: &#39;[Staging] &#39;  Then you can configure each job with the following options:</description>
     </item>
     
     <item>

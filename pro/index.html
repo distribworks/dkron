@@ -332,7 +332,9 @@
 
 <span><card>
 		<a href="/pro/ecs/" >AWS ECS Executor</a></card>
-<p></p>
+<p>The ECS exeutor is capable of launching tasks in ECS clusters, then listen to a stream of CloudWatch Logs and return the output.
+To configure a job to be run in ECS you can use either a JSON Task definition template or an already defined task in ECS.
+To allow the ECS Task runner to run tasks, the machine running Dkron needs to have the appropriate permissions configured in AWS IAM:</p>
 </span>
 
 <span><card>
@@ -344,27 +346,37 @@ username: foo password: bar  This will enable auth on the WebUI and for the API.
 
 <span><card>
 		<a href="/pro/docker/" >Docker executor</a></card>
-<p></p>
+<p> Docker executor can run docker jobs
+Configuration To run a docker job create a job config with the following executor:
+Example:
+&quot;executor&quot;: &quot;docker&quot;, &quot;executor_config&quot;: { &quot;image&quot;: &quot;alpine&quot;, //docker image to use &quot;volumes&quot;: &quot;/logs:/var/log/&quot;, //comma separated list of volume mappings &quot;command&quot;: &quot;echo \&quot;Hello from dkron\&quot;&quot;, //command to pass to run on container &quot;env&quot;: &quot;ENVIRONMENT=variable&quot; //environment variables to pass to the container }  </p>
 </span>
 
 <span><card>
 		<a href="/pro/elasticsearch/" >Elasticsearch processor</a></card>
-<p></p>
+<p> The Elasticsearch processor can fordward execution logs to an ES cluster.
+Configuration &quot;processors&quot;: { &quot;elasticsearch&quot;: { &quot;url&quot;: &quot;http://localhost:9200&quot;, //comma separated list of Elasticsearch hosts urls (default: http://localhost:9200) &quot;index&quot;: &quot;dkron_logs&quot;, //desired index name (default: dkron_logs) &quot;forward&quot;: &quot;false&quot; //forward logs to the next processor (default: false) } }  </p>
 </span>
 
 <span><card>
 		<a href="/pro/email/" >Email processor</a></card>
-<p></p>
+<p>If you need special email notification rules for a job, use the Email processor.
+Configuration of the email processor is stored in a file named dkron-processor-email.yml in the same locations as dkron.yml, and should include a list of providers, you could include any number of providers.
+Example:
+provider1: host: smtp.myprovider.com port: 25 username: myusername password: mypassword from: cron@mycompany.com subjectPrefix: '[Staging] '  Then you can configure each job with the following options:</p>
 </span>
 
 <span><card>
 		<a href="/pro/storage/" >Embedded storage</a></card>
-<p></p>
+<p>Dkron Pro has an embedded distributed KV store engine based on etcd. This works out of the box on each node dkron server is started.
+This ensures a dead easy install and setup, basically run dkron and you will have a full working node and at the same time provides you with a fully tested well supported store for its use with dkron.
+Configuration The embedded etcd instance configuration can be tunned using the standard etcd config yaml file located in config/etcd.</p>
 </span>
 
 <span><card>
 		<a href="/pro/encryption/" >Encryption</a></card>
-<p></p>
+<p>SSL encryption is used for communicating dkron pro and the embedded store, and between storage nodes itself. Also client auth is enabled, so only dkron pro clients can talk to the embedded store. This means that no other software running on your local network will be able to talk to dkron&rsquo;s etcd server.
+This ensures that no unexpected usage of the Dkron&rsquo;s store will happen, unless it is another Dkron pro instance.</p>
 </span>
 </ul>
 

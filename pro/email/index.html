@@ -327,19 +327,33 @@
     
     <p>If you need special email notification rules for a job, use the Email processor.</p>
 
+<p>Configuration of the email processor is stored in a file named <code>dkron-processor-email.yml</code> in the same locations as <code>dkron.yml</code>, and should include a list of providers, you could include any number of providers.</p>
+
+<p>Example:</p>
+
+<pre><code class="language-yaml">provider1:
+  host: smtp.myprovider.com
+  port: 25
+  username: myusername
+  password: mypassword
+  from: cron@mycompany.com
+  subjectPrefix: '[Staging] '
+</code></pre>
+
+<p>Then you can configure each job with the following options:</p>
+
 <p>Example:</p>
 
 <pre><code class="language-json">  &quot;processors&quot;: {
     &quot;email&quot;: {
-      &quot;host&quot;: &quot;mail.google.com&quot;,
-      &quot;username&quot;: &quot;foo&quot;,
-      &quot;password&quot;: &quot;bar&quot;,
-      &quot;emails&quot;: &quot;team@example.com&quot;,
-      &quot;from&quot;: &quot;cron@example.com&quot;,
-      &quot;subject_prefix&quot;: &quot;[Dkron]&quot;
+      &quot;provider&quot;: &quot;provider1&quot;,
+      &quot;emails&quot;: &quot;team@mycompany.com, owner@mycompany.com&quot;,
+      &quot;onSuccess&quot;: true
     }
   }
 </code></pre>
+
+<p>By default the email procesor doesn&rsquo;t send emails on job success, you should use the <code>onSuccess</code> parameter like in the previous example.</p>
 
 
     
