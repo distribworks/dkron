@@ -19,6 +19,11 @@
   </url>
   
   <url>
+    <loc>/api/</loc>
+    <lastmod>2017-06-30T14:58:54+02:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/basics/</loc>
     <lastmod>2017-06-30T14:58:54+02:00</lastmod>
   </url>
@@ -35,10 +40,6 @@
   
   <url>
     <loc>/_footer/</loc>
-  </url>
-  
-  <url>
-    <loc>/usage/api/</loc>
   </url>
   
   <url>

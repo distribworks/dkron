@@ -63,6 +63,12 @@
             <i class="fa fa-fw fa-home"></i>
           </a>
           </li>
+    <li data-nav-id="/api/" class="dd-item
+        ">
+      <div>
+      <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+    </li>
     <li data-nav-id="/basics/" class="dd-item haschildren
         ">
       <div>
@@ -92,13 +98,6 @@
             <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/usage/api/" class="dd-item">
-        <div>
-          <a href="/usage/api/">
-            API
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
       <li data-nav-id="/usage/concurrency/" class="dd-item">
         <div>
           <a href="/usage/concurrency/">
@@ -281,11 +280,12 @@
       <center>Navigation : 
         <select onchange="javascript:location.href = this.value;">
           
+    <option value="/api/" >
+   API</option>
     <option value="/basics/" >
    Basics</option>
     <option value="/usage/"  selected>
    Usage</option> 
-      <option value="/usage/api/" >- API</option>
       <option value="/usage/concurrency/" >- Concurrency</option>
       <option value="/usage/cron-spec/" >- Cron spec</option>
       <option value="/usage/chaining/" >- Job chaining</option>
@@ -335,13 +335,6 @@
 <ul class="children children-card">
 
 <span><card>
-		<a href="/usage/api/" >API</a></card>
-<p>Dkron REST API 
-Overview You can communicate with Dkron using a RESTful JSON API over HTTP. Dkron nodes usually listen on port 8080 for API requests. All examples in this section assume that you&rsquo;ve found a running leader at localhost:8080.
-Dkron implements a RESTful JSON API over HTTP to communicate with software clients. Dkron listens in port 8080 by default. All examples in this section assume that you&rsquo;re using the default port.</p>
-</span>
-
-<span><card>
 		<a href="/usage/concurrency/" >Concurrency</a></card>
 <p> Concurrency Jobs can be configured to allow overlapping executions or forbid them.
 Concurrency property accepts two option:
@@ -351,16 +344,12 @@ Concurrency property accepts two option:
 
 <span><card>
 		<a href="/usage/cron-spec/" >Cron spec</a></card>
-<p>CRON Expression Format A cron expression represents a set of times, using 6 space-separated fields.
-Field name | Mandatory? | Allowed values | Allowed special characters ---------- | ---------- | -------------- | -------------------------- Seconds | Yes | 0-59 | * / , - Minutes | Yes | 0-59 | * / , - Hours | Yes | 0-23 | * / , - Day of month | Yes | 1-31 | * / , - ?</p>
+<p></p>
 </span>
 
 <span><card>
 		<a href="/usage/chaining/" >Job chaining</a></card>
-<p>Job chaining You can set some jobs to run after other job is executed. To setup a job that will be executed after any other given job, just set the parent_job property when saving the new job.
-The dependent job will be executed after the main job finished a successful execution.
-Child jobs schedule property will be ignored if it&rsquo;s present.
-Take into account that parent jobs must be created before any child job.</p>
+<p></p>
 </span>
 
 <span><card>
@@ -430,7 +419,7 @@ Install the following snippet in the node that will run the call to ECS
         <div class="chevrons">
     <div id="navigation">
 <a class="nav nav-prev" href="/basics/configuration/" title="Configuration"> <i class="fa fa-chevron-left"></i><label>Configuration</label></a>
-    <a class="nav nav-next" href="/usage/api/" title="API" style="margin-right: 0px;"><label>API</label><i class="fa fa-chevron-right"></i></a></div>
+    <a class="nav nav-next" href="/usage/concurrency/" title="Concurrency" style="margin-right: 0px;"><label>Concurrency</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>

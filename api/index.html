@@ -6,7 +6,7 @@
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="generator" content="Hugo 0.38.2" />
-<title>Email processor :: Dkron - Distributed job scheduling system</title>
+<title>API :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
 <link href="/css/nucleus.css" rel="stylesheet">
@@ -22,7 +22,7 @@
 
     
   </head>
-  <body data-url="/pro/email/">
+  <body data-url="/api/">
     
       <header>
   <div class="logo">
@@ -63,7 +63,7 @@
             <i class="fa fa-fw fa-home"></i>
           </a>
           </li>
-    <li data-nav-id="/api/" class="dd-item
+    <li data-nav-id="/api/" class="dd-item parent active
         ">
       <div>
       <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
@@ -177,11 +177,10 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/pro/" class="dd-item parent haschildren
+    <li data-nav-id="/pro/" class="dd-item haschildren
         ">
       <div>
-      <a href="/pro/">Dkron Pro</a>
-            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/pro/">Dkron Pro</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
       <li data-nav-id="/pro/ecs/" class="dd-item">
@@ -212,7 +211,7 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/pro/email/" class="dd-item active">
+      <li data-nav-id="/pro/email/" class="dd-item">
         <div>
           <a href="/pro/email/">
             Email processor
@@ -280,22 +279,15 @@
       <center>Navigation : 
         <select onchange="javascript:location.href = this.value;">
           
-    <option value="/api/" >
-   API</option>
+    <option value="/api/"  selected>
+   API</option> 
+  
     <option value="/basics/" >
    Basics</option>
     <option value="/usage/" >
    Usage</option>
     <option value="/pro/" >
-   Dkron Pro</option> 
-      <option value="/pro/ecs/" >- AWS ECS Executor</option>
-      <option value="/pro/auth/" >- Authorization</option>
-      <option value="/pro/docker/" >- Docker executor</option>
-      <option value="/pro/elasticsearch/" >- Elasticsearch processor</option>
-      <option value="/pro/email/"  selected>- Email processor</option>
-      <option value="/pro/storage/" >- Embedded storage</option>
-      <option value="/pro/encryption/" >- Encryption</option>
-  
+   Dkron Pro</option>
     <option value="/internal/" >
    Internals</option>
     <option value="/products/" >
@@ -322,47 +314,57 @@
       </div>
     
 
-    <h1>Email processor</h1>
+    <h1>API</h1>
     
     
     
-    <p>If you need special email notification rules for a job, use the Email processor.</p>
 
-<p>Configuration of the email processor is stored in a file named <code>dkron-processor-email.yml</code> in the same locations as <code>dkron.yml</code>, and should include a list of providers, you could include any number of providers.</p>
-
-<p>Example:</p>
-
-<pre><code class="language-yaml">provider1:
-  host: smtp.myprovider.com
-  port: 25
-  username: myusername
-  password: mypassword
-  from: cron@mycompany.com
-  subjectPrefix: '[Staging] '
-</code></pre>
-
-<p>Then you can configure each job with the following options:</p>
-
-<p>Example:</p>
-
-<pre><code class="language-json">  &quot;processors&quot;: {
-    &quot;email&quot;: {
-      &quot;provider&quot;: &quot;provider1&quot;,
-      &quot;emails&quot;: &quot;team@mycompany.com, owner@mycompany.com&quot;,
-      &quot;onSuccess&quot;: true
-    }
+<p><link rel="stylesheet" type="text/css" href="/css/swagger-ui.css">
+<style>
+  body {
+    line-height: 1.7;
   }
-</code></pre>
+  .swagger-ui .info .title small pre {
+    background-color: inherit;
+    padding: inherit;
+  }
+  .swagger-ui .scheme-container { display: none !important; }
+</style></p>
 
-<p>By default the email procesor doesn&rsquo;t send emails on job success, you should use the <code>onSuccess</code> parameter like in the previous example.</p>
+<div id="swagger-ui"></div>
+
+<script src="/js/swagger-ui-bundle.js"> </script>
+<script src="/js/swagger-ui-standalone-preset.js"> </script>
+<script>
+  window.onload = function () {
+    // Begin Swagger UI call region
+    const ui = SwaggerUIBundle({
+      url: "https://dkron.io/swagger.yaml",
+      dom_id: '#swagger-ui',
+      deepLinking: true,
+      presets: [
+        SwaggerUIBundle.presets.apis,
+        SwaggerUIStandalonePreset
+      ],
+      plugins: [
+        SwaggerUIBundle.plugins.DownloadUrl
+      ],
+      layout: "BaseLayout"
+    })
+    // End Swagger UI call region
+
+    window.ui = ui
+  }
+</script>
+
 
 
     
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-prev" href="/pro/elasticsearch/" title="Elasticsearch processor"> <i class="fa fa-chevron-left"></i><label>Elasticsearch processor</label></a>
-    <a class="nav nav-next" href="/pro/storage/" title="Embedded storage" style="margin-right: 0px;"><label>Embedded storage</label><i class="fa fa-chevron-right"></i></a></div>
+<a class="nav nav-prev" href="/" title="Dkron - Distributed job scheduling system"> <i class="fa fa-chevron-left"></i><label>Dkron - Distributed job scheduling system</label></a>
+    <a class="nav nav-next" href="/basics/" title="Basics" style="margin-right: 0px;"><label>Basics</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>
@@ -376,9 +378,13 @@
     
 
   
+    <div class="date">
+        <i class='fa fa-calendar'></i> Last update on 30/06/2017
+    </div>
+    
 
     <div class="github-link">
-      <a href="https://github.com/victorcoder/dkron/edit/master/website/content/pro/email.md" target="blank"><i class="fa fa-code-fork"></i>
+      <a href="https://github.com/victorcoder/dkron/edit/master/website/content/api/_index.md" target="blank"><i class="fa fa-code-fork"></i>
         Improve this page</a>
     </div>
   </div>

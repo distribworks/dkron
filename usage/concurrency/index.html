@@ -63,6 +63,12 @@
             <i class="fa fa-fw fa-home"></i>
           </a>
           </li>
+    <li data-nav-id="/api/" class="dd-item
+        ">
+      <div>
+      <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+    </li>
     <li data-nav-id="/basics/" class="dd-item haschildren
         ">
       <div>
@@ -92,13 +98,6 @@
             <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/usage/api/" class="dd-item">
-        <div>
-          <a href="/usage/api/">
-            API
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
       <li data-nav-id="/usage/concurrency/" class="dd-item active">
         <div>
           <a href="/usage/concurrency/">
@@ -281,11 +280,12 @@
       <center>Navigation : 
         <select onchange="javascript:location.href = this.value;">
           
+    <option value="/api/" >
+   API</option>
     <option value="/basics/" >
    Basics</option>
     <option value="/usage/" >
    Usage</option> 
-      <option value="/usage/api/" >- API</option>
       <option value="/usage/concurrency/"  selected>- Concurrency</option>
       <option value="/usage/cron-spec/" >- Cron spec</option>
       <option value="/usage/chaining/" >- Job chaining</option>
@@ -360,7 +360,7 @@
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-prev" href="/usage/api/" title="API"> <i class="fa fa-chevron-left"></i><label>API</label></a>
+<a class="nav nav-prev" href="/usage/" title="Usage"> <i class="fa fa-chevron-left"></i><label>Usage</label></a>
     <a class="nav nav-next" href="/usage/cron-spec/" title="Cron spec" style="margin-right: 0px;"><label>Cron spec</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 

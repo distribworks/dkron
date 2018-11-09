@@ -12,17 +12,6 @@
     
     
     <item>
-      <title>API</title>
-      <link>/usage/api/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/usage/api/</guid>
-      <description>Dkron REST API 
-Overview You can communicate with Dkron using a RESTful JSON API over HTTP. Dkron nodes usually listen on port 8080 for API requests. All examples in this section assume that you&amp;rsquo;ve found a running leader at localhost:8080.
-Dkron implements a RESTful JSON API over HTTP to communicate with software clients. Dkron listens in port 8080 by default. All examples in this section assume that you&amp;rsquo;re using the default port.</description>
-    </item>
-    
-    <item>
       <title>Concurrency</title>
       <link>/usage/concurrency/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
