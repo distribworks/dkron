@@ -376,6 +376,7 @@
     &quot;cluster&quot;: &quot;default&quot;,
     &quot;fargate&quot;: &quot;yes&quot;,
     &quot;env&quot;: &quot;ENVIRONMENT=variable&quot;,
+    &quot;maxAttempts&quot;: 5000
   }
 </code></pre>
 
@@ -392,6 +393,7 @@ subnet
 env
 service
 overrides
+maxAttempts // Defaults to 2000, with 6s delay between it will wait up to 600s
 </code></pre>
 
 
