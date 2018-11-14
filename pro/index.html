@@ -240,13 +240,6 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/pro/ssl/" class="dd-item">
-        <div>
-          <a href="/pro/ssl/">
-            Using SSL
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
         </ul>
     </li>
     <li data-nav-id="/internal/" class="dd-item
@@ -310,7 +303,6 @@
       <option value="/pro/email/" >- Email processor</option>
       <option value="/pro/storage/" >- Embedded storage</option>
       <option value="/pro/encryption/" >- Encryption</option>
-      <option value="/pro/ssl/" >- Using SSL</option>
   
     <option value="/internal/" >
    Internals</option>
@@ -355,10 +347,10 @@
 
 <h3 id="starting-a-single-node">Starting a single node</h3>
 
-<p>Works out of the box, good for non HA installations</p>
+<p>Works out of the box, good for non HA installations.</p>
 
 <ul>
-<li>System service: If no changes are done to the default config files dkron will start as a service in single mode.</li>
+<li>System service: If no changes are done to the default config files, dkron will start as a service in single mode.</li>
 <li>Command line: Running a single node with default config can be done by running: <code>dkron agent --server</code></li>
 </ul>
 
@@ -384,6 +376,24 @@
 }`
 </code></pre>
 
+<h2 id="configuration">Configuration</h2>
+
+<p>Dkron Pro uses the <a href="/basics/configuration">same parameters</a> as Dkron OSS and add some extra parameters.</p>
+
+<h3 id="command-line-options">Command line options</h3>
+
+<ul>
+<li><code>--etcd-config-file-path</code> - Etcd node config</li>
+<li><code>--username</code> - Authentication username</li>
+<li><code>--password</code> - Authentication password</li>
+<li><code>--cert-file</code> - Path to the client server TLS cert file</li>
+<li><code>--key-file</code> - Path to the client server TLS key file</li>
+<li><code>--client-crl-file</code> - Path to the client certificate revocation list file</li>
+<li><code>--trusted-ca-file</code> - Path to the client server TLS trusted CA cert file</li>
+<li><code>--client-cert-auth</code> - Enable client cert authentication</li>
+<li><code>--auto-tls</code> - Client TLS using generated certificates</li>
+</ul>
+
 
 
 <ul class="children children-card">
@@ -391,65 +401,47 @@
 <span><card>
 		<a href="/pro/ecs/" >AWS ECS Executor</a></card>
 <p>The ECS exeutor is capable of launching tasks in ECS clusters, then listen to a stream of CloudWatch Logs and return the output.
-To configure a job to be run in ECS you can use either a JSON Task definition template or an already defined task in ECS.
+To configure a job to be run in ECS, the executor needs a JSON Task definition template or an already defined task in ECS.
 To allow the ECS Task runner to run tasks, the machine running Dkron needs to have the appropriate permissions configured in AWS IAM:</p>
 </span>
 
 <span><card>
 		<a href="/pro/auth/" >Authorization</a></card>
 <p>Dkron Pro has the ability to be configured to use HTTP basic auth.
-Set this parameters in your dkron config file:
-username: foo password: bar  This will enable auth on the WebUI and for the API.</p>
+Authentication can be set using these parameters in the dkron config file:
+# dkron.yml username: foo password: bar  This will enable auth on the WebUI and for the API.</p>
 </span>
 
 <span><card>
 		<a href="/pro/clustering/" >Clustering</a></card>
-<p>Configure a cluster Run in HA mode, good for companies.
-Configure the peers to join:
-# dkron.yml join: - 10.19.3.9 - 10.19.4.64 - 10.19.7.215  # etcd.conf.yaml # Initial cluster configuration for bootstrapping. initial-cluster: dkron1=https://10.19.3.9:2380,dkron2=https://10.19.4.64:2380,dkron3=https://10.19.7.215:2380  With this configuration Dkron Pro should start in cluster mode with embedded storage.</p>
+<p>Configure a cluster Dkron can run in HA mode, avoiding SPOFs, this mode provides better scalability and better reliability for users that wants a high level of confidence in the cron jobs they need to run.
+To form a cluster, server nodes need to know the address of its peers as in the following example:
+# dkron.yml join: - 10.19.3.9 - 10.19.4.64 - 10.19.7.215  On the other side, the embedded store also needs to know its peers, it needs its own configuration as in the following example:</p>
 </span>
 
 <span><card>
 		<a href="/pro/docker/" >Docker executor</a></card>
-<p> Docker executor can run docker jobs
-Configuration To run a docker job create a job config with the following executor:
-Example:
-&quot;executor&quot;: &quot;docker&quot;, &quot;executor_config&quot;: { &quot;image&quot;: &quot;alpine&quot;, //docker image to use &quot;volumes&quot;: &quot;/logs:/var/log/&quot;, //comma separated list of volume mappings &quot;command&quot;: &quot;echo \&quot;Hello from dkron\&quot;&quot;, //command to pass to run on container &quot;env&quot;: &quot;ENVIRONMENT=variable&quot; //environment variables to pass to the container }  </p>
+<p></p>
 </span>
 
 <span><card>
 		<a href="/pro/elasticsearch/" >Elasticsearch processor</a></card>
-<p> The Elasticsearch processor can fordward execution logs to an ES cluster.
-Configuration &quot;processors&quot;: { &quot;elasticsearch&quot;: { &quot;url&quot;: &quot;http://localhost:9200&quot;, //comma separated list of Elasticsearch hosts urls (default: http://localhost:9200) &quot;index&quot;: &quot;dkron_logs&quot;, //desired index name (default: dkron_logs) &quot;forward&quot;: &quot;false&quot; //forward logs to the next processor (default: false) } }  </p>
+<p></p>
 </span>
 
 <span><card>
 		<a href="/pro/email/" >Email processor</a></card>
-<p>The Email processor provides flexibility to job email notifications.
-Configuration of the email processor is stored in a file named dkron-processor-email.yml in the same locations as dkron.yml, and should include a list of providers, it can include any number of providers.
-Example:
-provider1: host: smtp.myprovider.com port: 25 username: myusername password: mypassword from: cron@mycompany.com subjectPrefix: '[Staging] '  Then configure each job with the following options:
-Example:
-&quot;processors&quot;: { &quot;email&quot;: { &quot;provider&quot;: &quot;provider1&quot;, &quot;emails&quot;: &quot;team@mycompany.</p>
+<p></p>
 </span>
 
 <span><card>
 		<a href="/pro/storage/" >Embedded storage</a></card>
-<p>Dkron Pro has an embedded distributed KV store engine based on etcd. This works out of the box on each node dkron server is started.
-This ensures a dead easy install and setup, basically run dkron and you will have a full working node and at the same time provides you with a fully tested well supported store for its use with dkron.</p>
+<p></p>
 </span>
 
 <span><card>
 		<a href="/pro/encryption/" >Encryption</a></card>
-<p>SSL encryption is used for communicating dkron pro and the embedded store, and between storage nodes itself. Also client auth is enabled, so only dkron pro clients can talk to the embedded store. This means that no other software running on your local network will be able to talk to dkron&rsquo;s etcd server.
-This ensures that no unexpected usage of the Dkron&rsquo;s store will happen, unless it is another Dkron pro instance.</p>
-</span>
-
-<span><card>
-		<a href="/pro/ssl/" >Using SSL</a></card>
-<p>Using SSL By default Dkron Pro runs with automatically generated SSL certificates, this is enough if using it in a trusted environment but to have a better grade of confidence, it is recommended to run Dkron Pro with custom SSL certificates.
-Follow this tutorial to generate autosigned SSL certificates for your instances.
-You don&rsquo;t need a client certificate for Dkron server, just add &ldquo;client auth&rdquo; usage to your server cert.</p>
+<p></p>
 </span>
 </ul>
 

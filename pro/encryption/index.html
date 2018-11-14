@@ -240,13 +240,6 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/pro/ssl/" class="dd-item">
-        <div>
-          <a href="/pro/ssl/">
-            Using SSL
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
         </ul>
     </li>
     <li data-nav-id="/internal/" class="dd-item
@@ -310,7 +303,6 @@
       <option value="/pro/email/" >- Email processor</option>
       <option value="/pro/storage/" >- Embedded storage</option>
       <option value="/pro/encryption/"  selected>- Encryption</option>
-      <option value="/pro/ssl/" >- Using SSL</option>
   
     <option value="/internal/" >
    Internals</option>
@@ -342,11 +334,27 @@
     
     
     
-    <p>SSL encryption is used for communicating dkron pro and the embedded store, and between storage nodes itself. Also client auth is enabled, so only dkron pro clients can talk to the embedded store. This means that no other software running on your local network will be able to talk to dkron&rsquo;s etcd server.</p>
+    <p>SSL encryption is used for communicating dkron pro and the embedded store, and between storage nodes itself. Also if client auth is enabled, only dkron pro clients can talk to the embedded store. This means that no other software running on your local network will be able to talk to dkron&rsquo;s etcd server.</p>
 
 <p>This ensures that no unexpected usage of the Dkron&rsquo;s store will happen, unless it is another Dkron pro instance.</p>
 
 <p>SSL encryption is enabled by default in Dkron Pro and can not be disabled, you don&rsquo;t need to do nothing to use it.</p>
+
+<p>By default Dkron Pro runs with automatically generated SSL certificates, this is enough for using it in a trusted environment but to have a better grade of confidence, it is recommended to run Dkron Pro with custom SSL certificates.</p>
+
+<p>Follow <a href="https://coreos.com/os/docs/latest/generate-self-signed-certificates.html">this tutorial</a> to generate autosigned SSL certificates for your instances.</p>
+
+<div class="notices note" ><p>You don&rsquo;t need a client certificate for Dkron server, just add &ldquo;client auth&rdquo; usage to your server cert.</p>
+</div>
+
+
+<pre><code class="language-yaml"># dkron.yaml
+auto-tls: false # Set to false to use custom certs
+key-file: server-key.pem
+cert-file: server.pem
+trusted-ca-file: ca.pem
+client-cert-auth: true # Enable it to only allow certs signed by the same CA
+</code></pre>
 
 
     
@@ -354,7 +362,7 @@
         <div class="chevrons">
     <div id="navigation">
 <a class="nav nav-prev" href="/pro/storage/" title="Embedded storage"> <i class="fa fa-chevron-left"></i><label>Embedded storage</label></a>
-    <a class="nav nav-next" href="/pro/ssl/" title="Using SSL" style="margin-right: 0px;"><label>Using SSL</label><i class="fa fa-chevron-right"></i></a></div>
+    <a class="nav nav-next" href="/internal/" title="Internals" style="margin-right: 0px;"><label>Internals</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>

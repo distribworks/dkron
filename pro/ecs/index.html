@@ -226,13 +226,6 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/pro/ssl/" class="dd-item">
-        <div>
-          <a href="/pro/ssl/">
-            Using SSL
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
         </ul>
     </li>
     <li data-nav-id="/internal/" class="dd-item
@@ -296,7 +289,6 @@
       <option value="/pro/email/" >- Email processor</option>
       <option value="/pro/storage/" >- Embedded storage</option>
       <option value="/pro/encryption/" >- Encryption</option>
-      <option value="/pro/ssl/" >- Using SSL</option>
   
     <option value="/internal/" >
    Internals</option>
@@ -330,7 +322,7 @@
     
     <p>The ECS exeutor is capable of launching tasks in ECS clusters, then listen to a stream of CloudWatch Logs and return the output.</p>
 
-<p>To configure a job to be run in ECS you can use either a JSON Task definition template or an already defined task in ECS.</p>
+<p>To configure a job to be run in ECS, the executor needs a JSON Task definition template or an already defined task in ECS.</p>
 
 <p>To allow the ECS Task runner to run tasks, the machine running Dkron needs to have the appropriate permissions configured in AWS IAM:</p>
 
@@ -354,7 +346,7 @@
 }
 </code></pre>
 
-<p>Then configure a job to be run with the ECS executor:</p>
+<p>To configure a job to be run with the ECS executor:</p>
 
 <p>Example using an existing taskdef</p>
 

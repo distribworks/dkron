@@ -240,13 +240,6 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/pro/ssl/" class="dd-item">
-        <div>
-          <a href="/pro/ssl/">
-            Using SSL
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
         </ul>
     </li>
     <li data-nav-id="/internal/" class="dd-item
@@ -310,7 +303,6 @@
       <option value="/pro/email/" >- Email processor</option>
       <option value="/pro/storage/" >- Embedded storage</option>
       <option value="/pro/encryption/" >- Encryption</option>
-      <option value="/pro/ssl/" >- Using SSL</option>
   
     <option value="/internal/" >
    Internals</option>
@@ -344,13 +336,13 @@
     
     
 
-<p>Docker executor can run docker jobs</p>
+<p>Docker executor can launch docker based cron jobs using the docker command of the target node.</p>
+
+<p>This executor needs a recent version of docker to be available and configured in the target node.</p>
 
 <h2 id="configuration">Configuration</h2>
 
-<p>To run a docker job create a job config with the following executor:</p>
-
-<p>Example:</p>
+<p>To run a docker job create a job config with the docker executor as in this example:</p>
 
 <pre><code class="language-json">  &quot;executor&quot;: &quot;docker&quot;,
   &quot;executor_config&quot;: {

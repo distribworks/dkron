@@ -240,13 +240,6 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/pro/ssl/" class="dd-item">
-        <div>
-          <a href="/pro/ssl/">
-            Using SSL
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
         </ul>
     </li>
     <li data-nav-id="/internal/" class="dd-item
@@ -310,7 +303,6 @@
       <option value="/pro/email/" >- Email processor</option>
       <option value="/pro/storage/" >- Embedded storage</option>
       <option value="/pro/encryption/" >- Encryption</option>
-      <option value="/pro/ssl/" >- Using SSL</option>
   
     <option value="/internal/" >
    Internals</option>
@@ -344,9 +336,10 @@
     
     <p>Dkron Pro has the ability to be configured to use HTTP basic auth.</p>
 
-<p>Set this parameters in your dkron config file:</p>
+<p>Authentication can be set using these parameters in the dkron config file:</p>
 
-<pre><code class="language-yaml">username: foo
+<pre><code class="language-yaml"># dkron.yml
+username: foo
 password: bar
 </code></pre>
 

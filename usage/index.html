@@ -240,13 +240,6 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/pro/ssl/" class="dd-item">
-        <div>
-          <a href="/pro/ssl/">
-            Using SSL
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
         </ul>
     </li>
     <li data-nav-id="/internal/" class="dd-item
@@ -350,7 +343,10 @@
 
 <span><card>
 		<a href="/usage/concurrency/" >Concurrency</a></card>
-<p></p>
+<p> Concurrency Jobs can be configured to allow overlapping executions or forbid them.
+Concurrency property accepts two option:
+ allow (default): Allow concurrent job executions. forbid: If the job is already running don&rsquo;t send the execution, it will skip the executions until the next schedule.  Example:
+{ &quot;name&quot;: &quot;job1&quot;, &quot;schedule&quot;: &quot;@every 10s&quot;, &quot;executor&quot;: &quot;shell&quot;, &quot;executor_config&quot;: { &quot;command&quot;: &quot;echo \&quot;Hello from parent\&quot;&quot; }, &quot;concurrency&quot;: &quot;forbid&quot; }  </p>
 </span>
 
 <span><card>
@@ -393,7 +389,8 @@ New plugins will be added, or you can create new ones, to perform different task
 
 <span><card>
 		<a href="/usage/plugins/develop/" >Developing plugins</a></card>
-<p></p>
+<p>Developing a Plugin Advanced topic! Plugin development is a highly advanced topic, and is not required knowledge for day-to-day usage. If you don&rsquo;t plan on writing any plugins, we recommend not reading the following section of the documentation. Developing a plugin is simple. The only knowledge necessary to write a plugin is basic command-line skills and basic knowledge of the Go programming language.
+Note: A common pitfall is not properly setting up a $GOPATH.</p>
 </span>
 
 <span><card>

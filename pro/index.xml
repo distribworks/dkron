@@ -17,7 +17,7 @@
       
       <guid>/pro/ecs/</guid>
       <description>The ECS exeutor is capable of launching tasks in ECS clusters, then listen to a stream of CloudWatch Logs and return the output.
-To configure a job to be run in ECS you can use either a JSON Task definition template or an already defined task in ECS.
+To configure a job to be run in ECS, the executor needs a JSON Task definition template or an already defined task in ECS.
 To allow the ECS Task runner to run tasks, the machine running Dkron needs to have the appropriate permissions configured in AWS IAM:</description>
     </item>
     
@@ -28,8 +28,8 @@ To allow the ECS Task runner to run tasks, the machine running Dkron needs to ha
       
       <guid>/pro/auth/</guid>
       <description>Dkron Pro has the ability to be configured to use HTTP basic auth.
-Set this parameters in your dkron config file:
-username: foo password: bar  This will enable auth on the WebUI and for the API.</description>
+Authentication can be set using these parameters in the dkron config file:
+# dkron.yml username: foo password: bar  This will enable auth on the WebUI and for the API.</description>
     </item>
     
     <item>
@@ -38,9 +38,9 @@ username: foo password: bar  This will enable auth on the WebUI and for the API.
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/pro/clustering/</guid>
-      <description>Configure a cluster Run in HA mode, good for companies.
-Configure the peers to join:
-# dkron.yml join: - 10.19.3.9 - 10.19.4.64 - 10.19.7.215  # etcd.conf.yaml # Initial cluster configuration for bootstrapping. initial-cluster: dkron1=https://10.19.3.9:2380,dkron2=https://10.19.4.64:2380,dkron3=https://10.19.7.215:2380  With this configuration Dkron Pro should start in cluster mode with embedded storage.</description>
+      <description>Configure a cluster Dkron can run in HA mode, avoiding SPOFs, this mode provides better scalability and better reliability for users that wants a high level of confidence in the cron jobs they need to run.
+To form a cluster, server nodes need to know the address of its peers as in the following example:
+# dkron.yml join: - 10.19.3.9 - 10.19.4.64 - 10.19.7.215  On the other side, the embedded store also needs to know its peers, it needs its own configuration as in the following example:</description>
     </item>
     
     <item>
@@ -49,9 +49,9 @@ Configure the peers to join:
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/pro/docker/</guid>
-      <description> Docker executor can run docker jobs
-Configuration To run a docker job create a job config with the following executor:
-Example:
+      <description> Docker executor can launch docker based cron jobs using the docker command of the target node.
+This executor needs a recent version of docker to be available and configured in the target node.
+Configuration To run a docker job create a job config with the docker executor as in this example:
 &amp;quot;executor&amp;quot;: &amp;quot;docker&amp;quot;, &amp;quot;executor_config&amp;quot;: { &amp;quot;image&amp;quot;: &amp;quot;alpine&amp;quot;, //docker image to use &amp;quot;volumes&amp;quot;: &amp;quot;/logs:/var/log/&amp;quot;, //comma separated list of volume mappings &amp;quot;command&amp;quot;: &amp;quot;echo \&amp;quot;Hello from dkron\&amp;quot;&amp;quot;, //command to pass to run on container &amp;quot;env&amp;quot;: &amp;quot;ENVIRONMENT=variable&amp;quot; //environment variables to pass to the container }  </description>
     </item>
     
@@ -61,7 +61,8 @@ Example:
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/pro/elasticsearch/</guid>
-      <description> The Elasticsearch processor can fordward execution logs to an ES cluster.
+      <description> The Elasticsearch processor can fordward execution logs to an ES cluster. It need an already available Elasticsearch installation that is visible in the same network of the target node.
+The output logs of the job execution will be stored in the indicated ES instace.
 Configuration &amp;quot;processors&amp;quot;: { &amp;quot;elasticsearch&amp;quot;: { &amp;quot;url&amp;quot;: &amp;quot;http://localhost:9200&amp;quot;, //comma separated list of Elasticsearch hosts urls (default: http://localhost:9200) &amp;quot;index&amp;quot;: &amp;quot;dkron_logs&amp;quot;, //desired index name (default: dkron_logs) &amp;quot;forward&amp;quot;: &amp;quot;false&amp;quot; //forward logs to the next processor (default: false) } }  </description>
     </item>
     
@@ -95,19 +96,8 @@ This ensures a dead easy install and setup, basically run dkron and you will hav
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/pro/encryption/</guid>
-      <description>SSL encryption is used for communicating dkron pro and the embedded store, and between storage nodes itself. Also client auth is enabled, so only dkron pro clients can talk to the embedded store. This means that no other software running on your local network will be able to talk to dkron&amp;rsquo;s etcd server.
+      <description>SSL encryption is used for communicating dkron pro and the embedded store, and between storage nodes itself. Also if client auth is enabled, only dkron pro clients can talk to the embedded store. This means that no other software running on your local network will be able to talk to dkron&amp;rsquo;s etcd server.
 This ensures that no unexpected usage of the Dkron&amp;rsquo;s store will happen, unless it is another Dkron pro instance.</description>
-    </item>
-    
-    <item>
-      <title>Using SSL</title>
-      <link>/pro/ssl/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/pro/ssl/</guid>
-      <description>Using SSL By default Dkron Pro runs with automatically generated SSL certificates, this is enough if using it in a trusted environment but to have a better grade of confidence, it is recommended to run Dkron Pro with custom SSL certificates.
-Follow this tutorial to generate autosigned SSL certificates for your instances.
-You don&amp;rsquo;t need a client certificate for Dkron server, just add &amp;ldquo;client auth&amp;rdquo; usage to your server cert.</description>
     </item>
     
   </channel>
