@@ -4,9 +4,10 @@ title: Authorization
 
 Dkron Pro has the ability to be configured to use HTTP basic auth.
 
-Set this parameters in your dkron config file:
+Authentication can be set using these parameters in the dkron config file:
 
 ```yaml
+# dkron.yml
 username: foo
 password: bar
 ```

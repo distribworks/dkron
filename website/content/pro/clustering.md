@@ -4,9 +4,9 @@ title: Clustering
 
 ## Configure a cluster
 
-Run in HA mode, good for companies.
+Dkron can run in HA mode, avoiding SPOFs, this mode provides better scalability and better reliability for users that wants a high level of confidence in the cron jobs they need to run.
 
-Configure the peers to join:
+To form a cluster, server nodes need to know the address of its peers as in the following example:
 
 ```yaml
 # dkron.yml
@@ -15,6 +15,8 @@ join:
 - 10.19.4.64
 - 10.19.7.215
 ```
+
+On the other side, the embedded store also needs to know its peers, it needs its own configuration as in the following example:
 
 ```yaml
 # etcd.conf.yaml

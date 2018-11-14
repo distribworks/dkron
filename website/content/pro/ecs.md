@@ -4,7 +4,7 @@ title: AWS ECS Executor
 
 The ECS exeutor is capable of launching tasks in ECS clusters, then listen to a stream of CloudWatch Logs and return the output.
 
-To configure a job to be run in ECS you can use either a JSON Task definition template or an already defined task in ECS.
+To configure a job to be run in ECS, the executor needs a JSON Task definition template or an already defined task in ECS.
 
 To allow the ECS Task runner to run tasks, the machine running Dkron needs to have the appropriate permissions configured in AWS IAM:
 
@@ -29,7 +29,7 @@ To allow the ECS Task runner to run tasks, the machine running Dkron needs to ha
 }
 ```
 
-Then configure a job to be run with the ECS executor:
+To configure a job to be run with the ECS executor:
 
 Example using an existing taskdef
 

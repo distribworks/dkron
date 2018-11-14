@@ -48,7 +48,7 @@ Simply download the packaged archive for your platform from the [downloads page]
 
 ## Configuration
 
-See the [configuration section](configuration).
+See the [configuration section](/basics/configuration).
 
 ## Usage
 

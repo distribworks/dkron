@@ -2,13 +2,13 @@
 title: Docker executor
 ---
 
-Docker executor can run docker jobs
+Docker executor can launch docker based cron jobs using the docker command of the target node.
+
+This executor needs a recent version of docker to be available and configured in the target node.
 
 ## Configuration
 
-To run a docker job create a job config with the following executor:
-
-Example:
+To run a docker job create a job config with the docker executor as in this example:
 
 ```json
   "executor": "docker",
