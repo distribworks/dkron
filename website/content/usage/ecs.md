@@ -2,6 +2,10 @@
 title: Use with AWS ECS
 ---
 
+{{% notice note %}}
+[Dkron Pro](/products/pro) comes with a [native ECS executor](/pro/ecs) out of the box.
+{{% /notice %}}
+
 ## Use with Amazon ECS
 
 To use Dkron to schedule jobs that run in containers, a wrapper ECS script is needed.
