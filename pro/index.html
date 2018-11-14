@@ -421,27 +421,39 @@ To form a cluster, server nodes need to know the address of its peers as in the 
 
 <span><card>
 		<a href="/pro/docker/" >Docker executor</a></card>
-<p></p>
+<p> Docker executor can launch docker based cron jobs using the docker command of the target node.
+This executor needs a recent version of docker to be available and configured in the target node.
+Configuration To run a docker job create a job config with the docker executor as in this example:
+&quot;executor&quot;: &quot;docker&quot;, &quot;executor_config&quot;: { &quot;image&quot;: &quot;alpine&quot;, //docker image to use &quot;volumes&quot;: &quot;/logs:/var/log/&quot;, //comma separated list of volume mappings &quot;command&quot;: &quot;echo \&quot;Hello from dkron\&quot;&quot;, //command to pass to run on container &quot;env&quot;: &quot;ENVIRONMENT=variable&quot; //environment variables to pass to the container }  </p>
 </span>
 
 <span><card>
 		<a href="/pro/elasticsearch/" >Elasticsearch processor</a></card>
-<p></p>
+<p> The Elasticsearch processor can fordward execution logs to an ES cluster. It need an already available Elasticsearch installation that is visible in the same network of the target node.
+The output logs of the job execution will be stored in the indicated ES instace.
+Configuration &quot;processors&quot;: { &quot;elasticsearch&quot;: { &quot;url&quot;: &quot;http://localhost:9200&quot;, //comma separated list of Elasticsearch hosts urls (default: http://localhost:9200) &quot;index&quot;: &quot;dkron_logs&quot;, //desired index name (default: dkron_logs) &quot;forward&quot;: &quot;false&quot; //forward logs to the next processor (default: false) } }  </p>
 </span>
 
 <span><card>
 		<a href="/pro/email/" >Email processor</a></card>
-<p></p>
+<p>The Email processor provides flexibility to job email notifications.
+Configuration of the email processor is stored in a file named dkron-processor-email.yml in the same locations as dkron.yml, and should include a list of providers, it can include any number of providers.
+Example:
+provider1: host: smtp.myprovider.com port: 25 username: myusername password: mypassword from: cron@mycompany.com subjectPrefix: '[Staging] '  Then configure each job with the following options:
+Example:
+&quot;processors&quot;: { &quot;email&quot;: { &quot;provider&quot;: &quot;provider1&quot;, &quot;emails&quot;: &quot;team@mycompany.</p>
 </span>
 
 <span><card>
 		<a href="/pro/storage/" >Embedded storage</a></card>
-<p></p>
+<p>Dkron Pro has an embedded distributed KV store engine based on etcd. This works out of the box on each node dkron server is started.
+This ensures a dead easy install and setup, basically run dkron and you will have a full working node and at the same time provides you with a fully tested well supported store for its use with dkron.</p>
 </span>
 
 <span><card>
 		<a href="/pro/encryption/" >Encryption</a></card>
-<p></p>
+<p>SSL encryption is used for communicating dkron pro and the embedded store, and between storage nodes itself. Also if client auth is enabled, only dkron pro clients can talk to the embedded store. This means that no other software running on your local network will be able to talk to dkron&rsquo;s etcd server.
+This ensures that no unexpected usage of the Dkron&rsquo;s store will happen, unless it is another Dkron pro instance.</p>
 </span>
 </ul>
 
