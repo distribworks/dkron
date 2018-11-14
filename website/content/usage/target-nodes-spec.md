@@ -7,6 +7,10 @@ toc: true
 
 You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run.
 
+{{% notice note %}}
+The target node syntax: `[tag-value]:[count]`
+{{% /notice %}}
+
 ### Examples:
 
 Target all nodes with a tag:
