@@ -25,13 +25,14 @@ All the execution responses will be gathered by the scheduler and stored in the 
 
 ## Requirements
 
-Dkron relies on the key-value store for data storage, you can run an instance of the distributed store in the same machines as Dkron or connect it to your existing cluster.
+Dkron relies on the key-value store for data storage, an instance of the distributed store can be run in the same machines as Dkron or connect it to an already existing cluster.
 
-It can use etcd, Consul, or Zookeeper as data stores. To install any one of these systems, go to their web site:
+It is compatible with etcd, Consul, Zookeeper and Redis data stores. For instructions on how to install and configure any one of these systems refer to their official sites:
 
 - [etcd](https://coreos.com/etcd/docs/latest/)
 - [Consul](https://consul.io/intro/getting-started/install.html)
 - [ZooKeeper](https://zookeeper.apache.org/doc/r3.3.3/zookeeperStarted.html)
+- [Redis](https://redis.io/topics/quickstart)
 
 ## Installation
 
@@ -60,9 +61,9 @@ By default Dkron uses the following ports:
 
 **Be sure you have opened this ports (or the ones that you configured) in your firewall or AWS security groups.**
 
-By default dkron will try to use a local etcd server running in the same machine and in the default port. You can specify the store by setting the `backend` and `backend-machines` flag in the config file, env variables or as a command line flag.
+By default dkron will try to use a local etcd server running in the same machine and in the default port. A different store can be specified setting `backend` and `backend-machines` flag in the config file, env variables or as a command line flag.
 
-To start a Dkron server instance just run:
+To start a Dkron server instance:
 
 ```
 dkron agent --server
