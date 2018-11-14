@@ -6,7 +6,7 @@
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="generator" content="Hugo 0.38.2" />
-<title> :: Dkron - Distributed job scheduling system</title>
+<title>Clustering :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
 <link href="/css/nucleus.css" rel="stylesheet">
@@ -22,7 +22,7 @@
 
     
   </head>
-  <body data-url="/_footer/">
+  <body data-url="/pro/clustering/">
     
       <header>
   <div class="logo">
@@ -177,10 +177,11 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/pro/" class="dd-item haschildren
+    <li data-nav-id="/pro/" class="dd-item parent haschildren
         ">
       <div>
-      <a href="/pro/">Dkron Pro</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/pro/">Dkron Pro</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
       <li data-nav-id="/pro/ecs/" class="dd-item">
@@ -197,7 +198,7 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/pro/clustering/" class="dd-item">
+      <li data-nav-id="/pro/clustering/" class="dd-item active">
         <div>
           <a href="/pro/clustering/">
             Clustering
@@ -300,7 +301,17 @@
     <option value="/usage/" >
    Usage</option>
     <option value="/pro/" >
-   Dkron Pro</option>
+   Dkron Pro</option> 
+      <option value="/pro/ecs/" >- AWS ECS Executor</option>
+      <option value="/pro/auth/" >- Authorization</option>
+      <option value="/pro/clustering/"  selected>- Clustering</option>
+      <option value="/pro/docker/" >- Docker executor</option>
+      <option value="/pro/elasticsearch/" >- Elasticsearch processor</option>
+      <option value="/pro/email/" >- Email processor</option>
+      <option value="/pro/storage/" >- Embedded storage</option>
+      <option value="/pro/encryption/" >- Encryption</option>
+      <option value="/pro/ssl/" >- Using SSL</option>
+  
     <option value="/internal/" >
    Internals</option>
     <option value="/products/" >
@@ -327,18 +338,39 @@
       </div>
     
 
-    <h1></h1>
+    <h1>Clustering</h1>
     
     
     
-    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - victor@distrib.works</p>
+    
+
+<h2 id="configure-a-cluster">Configure a cluster</h2>
+
+<p>Run in HA mode, good for companies.</p>
+
+<p>Configure the peers to join:</p>
+
+<pre><code class="language-yaml"># dkron.yml
+join:
+- 10.19.3.9
+- 10.19.4.64
+- 10.19.7.215
+</code></pre>
+
+<pre><code class="language-yaml"># etcd.conf.yaml
+# Initial cluster configuration for bootstrapping.
+initial-cluster: dkron1=https://10.19.3.9:2380,dkron2=https://10.19.4.64:2380,dkron3=https://10.19.7.215:2380
+</code></pre>
+
+<p>With this configuration Dkron Pro should start in cluster mode with embedded storage.</p>
 
 
     
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-next" href="/api/" title="API" style="margin-right: 0px;"><label>API</label><i class="fa fa-chevron-right"></i></a></div>
+<a class="nav nav-prev" href="/pro/auth/" title="Authorization"> <i class="fa fa-chevron-left"></i><label>Authorization</label></a>
+    <a class="nav nav-next" href="/pro/docker/" title="Docker executor" style="margin-right: 0px;"><label>Docker executor</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>
@@ -354,7 +386,7 @@
   
 
     <div class="github-link">
-      <a href="https://github.com/victorcoder/dkron/edit/master/website/content/_footer.md" target="blank"><i class="fa fa-code-fork"></i>
+      <a href="https://github.com/victorcoder/dkron/edit/master/website/content/pro/clustering.md" target="blank"><i class="fa fa-code-fork"></i>
         Improve this page</a>
     </div>
   </div>

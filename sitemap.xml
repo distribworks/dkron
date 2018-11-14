@@ -56,6 +56,10 @@
   </url>
   
   <url>
+    <loc>/pro/clustering/</loc>
+  </url>
+  
+  <url>
     <loc>/commercial-faq/</loc>
   </url>
   
@@ -152,6 +156,10 @@
   
   <url>
     <loc>/usage/ecs/</loc>
+  </url>
+  
+  <url>
+    <loc>/pro/ssl/</loc>
   </url>
   
 </urlset>

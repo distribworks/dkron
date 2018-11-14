@@ -6,7 +6,7 @@
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="generator" content="Hugo 0.38.2" />
-<title> :: Dkron - Distributed job scheduling system</title>
+<title>Using SSL :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
 <link href="/css/nucleus.css" rel="stylesheet">
@@ -22,7 +22,7 @@
 
     
   </head>
-  <body data-url="/_footer/">
+  <body data-url="/pro/ssl/">
     
       <header>
   <div class="logo">
@@ -177,10 +177,11 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/pro/" class="dd-item haschildren
+    <li data-nav-id="/pro/" class="dd-item parent haschildren
         ">
       <div>
-      <a href="/pro/">Dkron Pro</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/pro/">Dkron Pro</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
       <li data-nav-id="/pro/ecs/" class="dd-item">
@@ -239,7 +240,7 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/pro/ssl/" class="dd-item">
+      <li data-nav-id="/pro/ssl/" class="dd-item active">
         <div>
           <a href="/pro/ssl/">
             Using SSL
@@ -300,7 +301,17 @@
     <option value="/usage/" >
    Usage</option>
     <option value="/pro/" >
-   Dkron Pro</option>
+   Dkron Pro</option> 
+      <option value="/pro/ecs/" >- AWS ECS Executor</option>
+      <option value="/pro/auth/" >- Authorization</option>
+      <option value="/pro/clustering/" >- Clustering</option>
+      <option value="/pro/docker/" >- Docker executor</option>
+      <option value="/pro/elasticsearch/" >- Elasticsearch processor</option>
+      <option value="/pro/email/" >- Email processor</option>
+      <option value="/pro/storage/" >- Embedded storage</option>
+      <option value="/pro/encryption/" >- Encryption</option>
+      <option value="/pro/ssl/"  selected>- Using SSL</option>
+  
     <option value="/internal/" >
    Internals</option>
     <option value="/products/" >
@@ -327,18 +338,37 @@
       </div>
     
 
-    <h1></h1>
+    <h1>Using SSL</h1>
     
     
     
-    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - victor@distrib.works</p>
+    
+
+<h3 id="using-ssl">Using SSL</h3>
+
+<p>By default Dkron Pro runs with automatically generated SSL certificates, this is enough if using it in a trusted environment but to have a better grade of confidence, it is recommended to run Dkron Pro with custom SSL certificates.</p>
+
+<p>Follow <a href="https://coreos.com/os/docs/latest/generate-self-signed-certificates.html">this tutorial</a> to generate autosigned SSL certificates for your instances.</p>
+
+<div class="notices note" ><p>You don&rsquo;t need a client certificate for Dkron server, just add &ldquo;client auth&rdquo; usage to your server cert.</p>
+</div>
+
+
+<pre><code class="language-yaml"># dkron.yaml
+auto-tls: false # Set to false to use custom certs
+key-file: server-key.pem
+cert-file: server.pem
+trusted-ca-file: ca.pem
+client-cert-auth: true # Enable it to only allow certs signed by the same CA
+</code></pre>
 
 
     
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-next" href="/api/" title="API" style="margin-right: 0px;"><label>API</label><i class="fa fa-chevron-right"></i></a></div>
+<a class="nav nav-prev" href="/pro/encryption/" title="Encryption"> <i class="fa fa-chevron-left"></i><label>Encryption</label></a>
+    <a class="nav nav-next" href="/internal/" title="Internals" style="margin-right: 0px;"><label>Internals</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>
@@ -354,7 +384,7 @@
   
 
     <div class="github-link">
-      <a href="https://github.com/victorcoder/dkron/edit/master/website/content/_footer.md" target="blank"><i class="fa fa-code-fork"></i>
+      <a href="https://github.com/victorcoder/dkron/edit/master/website/content/pro/ssl.md" target="blank"><i class="fa fa-code-fork"></i>
         Improve this page</a>
     </div>
   </div>

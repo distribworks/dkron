@@ -198,6 +198,13 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
+      <li data-nav-id="/pro/clustering/" class="dd-item">
+        <div>
+          <a href="/pro/clustering/">
+            Clustering
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/pro/docker/" class="dd-item">
         <div>
           <a href="/pro/docker/">
@@ -230,6 +237,13 @@
         <div>
           <a href="/pro/encryption/">
             Encryption
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/ssl/" class="dd-item">
+        <div>
+          <a href="/pro/ssl/">
+            Using SSL
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -336,24 +350,17 @@
 
 <span><card>
 		<a href="/usage/concurrency/" >Concurrency</a></card>
-<p> Concurrency Jobs can be configured to allow overlapping executions or forbid them.
-Concurrency property accepts two option:
- allow (default): Allow concurrent job executions. forbid: If the job is already running don&rsquo;t send the execution, it will skip the executions until the next schedule.  Example:
-{ &quot;name&quot;: &quot;job1&quot;, &quot;schedule&quot;: &quot;@every 10s&quot;, &quot;executor&quot;: &quot;shell&quot;, &quot;executor_config&quot;: { &quot;command&quot;: &quot;echo \&quot;Hello from parent\&quot;&quot; }, &quot;concurrency&quot;: &quot;forbid&quot; }  </p>
+<p></p>
 </span>
 
 <span><card>
 		<a href="/usage/cron-spec/" >Cron spec</a></card>
-<p>CRON Expression Format A cron expression represents a set of times, using 6 space-separated fields.
-Field name | Mandatory? | Allowed values | Allowed special characters ---------- | ---------- | -------------- | -------------------------- Seconds | Yes | 0-59 | * / , - Minutes | Yes | 0-59 | * / , - Hours | Yes | 0-23 | * / , - Day of month | Yes | 1-31 | * / , - ?</p>
+<p></p>
 </span>
 
 <span><card>
 		<a href="/usage/chaining/" >Job chaining</a></card>
-<p>Job chaining You can set some jobs to run after other job is executed. To setup a job that will be executed after any other given job, just set the parent_job property when saving the new job.
-The dependent job will be executed after the main job finished a successful execution.
-Child jobs schedule property will be ignored if it&rsquo;s present.
-Take into account that parent jobs must be created before any child job.</p>
+<p></p>
 </span>
 
 <span><card>
@@ -363,9 +370,7 @@ Take into account that parent jobs must be created before any child job.</p>
 
 <span><card>
 		<a href="/usage/metrics/" >Metrics</a></card>
-<p>Dkron has the ability to send metrics to Statsd for dashboards and historical reporting. It sends job processing metrics and golang, serf metrics too.
-Configuration Add this in your yaml config file
-dog_statsd_addr: &quot;localhost:8125&quot;  Metrics  dkron.agent.event_received.query_execution_done dkron.agent.event_received.query_run_job dkron.memberlist.gossip dkron.memberlist.probeNode dkron.memberlist.pushPullNode dkron.memberlist.tcp.accept dkron.memberlist.tcp.connect dkron.memberlist.tcp.sent dkron.memberlist.udp.received dkron.memberlist.udp.sent dkron.rpc.call_execution_done dkron.rpc.call_get_job dkron.rpc.execution_done dkron.rpc.get_job dkron.runtime.alloc_bytes dkron.runtime.free_count dkron.runtime.gc_pause_ns dkron.runtime.heap_objects dkron.runtime.malloc_count dkron.runtime.num_goroutines dkron.runtime.sys_bytes dkron.runtime.total_gc_pause_ns dkron.runtime.total_gc_runs dkron.serf.coordinate.adjustment_ms dkron.serf.msgs.received dkron.serf.msgs.sent dkron.serf.queries dkron.serf.queries.execution_done dkron.serf.queries.run_job dkron.serf.query_acks dkron.serf.query_responses dkron.serf.queue.Event dkron.</p>
+<p></p>
 </span>
 
 <span><card>
@@ -388,8 +393,7 @@ New plugins will be added, or you can create new ones, to perform different task
 
 <span><card>
 		<a href="/usage/plugins/develop/" >Developing plugins</a></card>
-<p>Developing a Plugin Advanced topic! Plugin development is a highly advanced topic, and is not required knowledge for day-to-day usage. If you don&rsquo;t plan on writing any plugins, we recommend not reading the following section of the documentation. Developing a plugin is simple. The only knowledge necessary to write a plugin is basic command-line skills and basic knowledge of the Go programming language.
-Note: A common pitfall is not properly setting up a $GOPATH.</p>
+<p></p>
 </span>
 
 <span><card>

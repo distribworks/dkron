@@ -198,6 +198,13 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
+      <li data-nav-id="/pro/clustering/" class="dd-item">
+        <div>
+          <a href="/pro/clustering/">
+            Clustering
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/pro/docker/" class="dd-item">
         <div>
           <a href="/pro/docker/">
@@ -230,6 +237,13 @@
         <div>
           <a href="/pro/encryption/">
             Encryption
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/ssl/" class="dd-item">
+        <div>
+          <a href="/pro/ssl/">
+            Using SSL
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -290,11 +304,13 @@
    Dkron Pro</option> 
       <option value="/pro/ecs/" >- AWS ECS Executor</option>
       <option value="/pro/auth/" >- Authorization</option>
+      <option value="/pro/clustering/" >- Clustering</option>
       <option value="/pro/docker/" >- Docker executor</option>
       <option value="/pro/elasticsearch/" >- Elasticsearch processor</option>
       <option value="/pro/email/" >- Email processor</option>
       <option value="/pro/storage/"  selected>- Embedded storage</option>
       <option value="/pro/encryption/" >- Encryption</option>
+      <option value="/pro/ssl/" >- Using SSL</option>
   
     <option value="/internal/" >
    Internals</option>
@@ -326,15 +342,9 @@
     
     
     
-    
-
-<p>Dkron Pro has an embedded distributed KV store engine based on etcd. This works out of the box on each node dkron server is started.</p>
+    <p>Dkron Pro has an embedded distributed KV store engine based on etcd. This works out of the box on each node dkron server is started.</p>
 
 <p>This ensures a dead easy install and setup, basically run dkron and you will have a full working node and at the same time provides you with a fully tested well supported store for its use with dkron.</p>
-
-<h2 id="configuration">Configuration</h2>
-
-<p>The embedded etcd instance configuration can be tunned using the standard etcd config yaml file located in <code>config/etcd.conf.yml</code> but several reserved parameters are autoconfigured by dkron. Refer to the <a href="https://coreos.com/etcd/docs/latest/v2/configuration.html">official etcd documentation</a></p>
 
 
     

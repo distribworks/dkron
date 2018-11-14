@@ -95,6 +95,17 @@ username: foo password: bar  This will enable auth on the WebUI and for the API.
     </item>
     
     <item>
+      <title>Clustering</title>
+      <link>/pro/clustering/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/pro/clustering/</guid>
+      <description>Configure a cluster Run in HA mode, good for companies.
+Configure the peers to join:
+# dkron.yml join: - 10.19.3.9 - 10.19.4.64 - 10.19.7.215  # etcd.conf.yaml # Initial cluster configuration for bootstrapping. initial-cluster: dkron1=https://10.19.3.9:2380,dkron2=https://10.19.4.64:2380,dkron3=https://10.19.7.215:2380  With this configuration Dkron Pro should start in cluster mode with embedded storage.</description>
+    </item>
+    
+    <item>
       <title>Commercial FAQ</title>
       <link>/commercial-faq/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -214,8 +225,7 @@ Example:
       
       <guid>/pro/storage/</guid>
       <description>Dkron Pro has an embedded distributed KV store engine based on etcd. This works out of the box on each node dkron server is started.
-This ensures a dead easy install and setup, basically run dkron and you will have a full working node and at the same time provides you with a fully tested well supported store for its use with dkron.
-Configuration The embedded etcd instance configuration can be tunned using the standard etcd config yaml file located in config/etcd.</description>
+This ensures a dead easy install and setup, basically run dkron and you will have a full working node and at the same time provides you with a fully tested well supported store for its use with dkron.</description>
     </item>
     
     <item>
@@ -292,6 +302,17 @@ Examples: Target all nodes with a tag:
 Install the following snippet in the node that will run the call to ECS
  Prerequisites The node that will run the call to ECS will need to have installed
  AWS cli jq  Example ecs-run --cluster cron --task-definition cron-taskdef --container-name cron --region us-east-1 --command &amp;quot;rake foo&amp;quot;</description>
+    </item>
+    
+    <item>
+      <title>Using SSL</title>
+      <link>/pro/ssl/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/pro/ssl/</guid>
+      <description>Using SSL By default Dkron Pro runs with automatically generated SSL certificates, this is enough if using it in a trusted environment but to have a better grade of confidence, it is recommended to run Dkron Pro with custom SSL certificates.
+Follow this tutorial to generate autosigned SSL certificates for your instances.
+You don&amp;rsquo;t need a client certificate for Dkron server, just add &amp;ldquo;client auth&amp;rdquo; usage to your server cert.</description>
     </item>
     
   </channel>
