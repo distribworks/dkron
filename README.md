@@ -68,8 +68,8 @@ https://github.com/gromo/dkron-php-adapter
 
 ## Get in touch
 
-- Twitter: [@dkronio](https://twitter.com/dkronio) or [@victorcoder](https://twitter.com/victorcoder)
-- Email: victor at victorcastell.com
+- Twitter: [@dkronio](https://twitter.com/distribworks) or [@victorcoder](https://twitter.com/victorcoder)
+- Email: victor at distrib.works
 
 # Sponsor
 
