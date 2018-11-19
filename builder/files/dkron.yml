@@ -1,6 +1,6 @@
 # Dkron example configuration file
 # backend: etcd
-# backend_machine: 127.0.0.1:2379
+# backend-machine: 127.0.0.1:2379
 # server: false
 # log-level: debug
 # tags:
