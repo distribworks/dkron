@@ -101,8 +101,6 @@ func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
 		return err
 	}
 	if ej != nil {
-		ej.Lock()
-		ej.Unlock()
 		// When the job runs, these status vars are updated
 		// otherwise use the ones that are stored
 		if ej.LastError.After(job.LastError) {
