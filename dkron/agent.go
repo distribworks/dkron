@@ -624,6 +624,10 @@ func (a *Agent) RefreshJobStatus(jobName string) {
 
 	statuses := a.executionDoneQuery(nodes, group)
 
+	log.WithFields(logrus.Fields{
+		"statuses": statuses,
+	}).Debug("agent: Received pending executions response")
+
 	for _, ex := range unfinishedExecutions {
 		if s, ok := statuses[ex.NodeName]; ok {
 			done, _ := strconv.ParseBool(s)
