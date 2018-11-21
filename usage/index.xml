@@ -73,7 +73,8 @@ dog_statsd_addr: &amp;quot;localhost:8125&amp;quot;  Metrics  dkron.agent.event_
       
       <guid>/usage/target-nodes-spec/</guid>
       <description>Target nodes spec You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run.
-Examples: Target all nodes with a tag:
+The target node syntax: [tag-value]:[count]
+ Examples: Target all nodes with a tag:
 { &amp;quot;name&amp;quot;: &amp;quot;job_name&amp;quot;, &amp;quot;command&amp;quot;: &amp;quot;/bin/true&amp;quot;, &amp;quot;schedule&amp;quot;: &amp;quot;@every 2m&amp;quot;, &amp;quot;tags&amp;quot;: { &amp;quot;role&amp;quot;: &amp;quot;web&amp;quot; } }  Target only two nodes of a group of nodes with a tag:</description>
     </item>
     

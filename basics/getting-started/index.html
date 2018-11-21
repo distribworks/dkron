@@ -205,6 +205,13 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
+      <li data-nav-id="/pro/commercial-faq/" class="dd-item">
+        <div>
+          <a href="/pro/commercial-faq/">
+            Commercial FAQ
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/pro/docker/" class="dd-item">
         <div>
           <a href="/pro/docker/">
@@ -397,6 +404,30 @@ Stable release: <code>sudo apt-get install dkron</code></p>
 <p>To start a Dkron server instance:</p>
 
 <pre><code>dkron agent --server
+</code></pre>
+
+<p>Time to add the first job:</p>
+
+<div class="notices note" ><p>This job will only run in just one dkron_server node due to the node count in the tag. Refer to the <a href="/usage/target-nodes-spec">target node spec</a> for details.</p>
+</div>
+
+
+<pre><code class="language-bash">curl localhost:8080/v1/jobs -XPOST -d '{
+  &quot;name&quot;: &quot;job1&quot;,
+  &quot;schedule&quot;: &quot;@every 10s&quot;,
+  &quot;timezone&quot;: &quot;Europe/Berlin&quot;,
+  &quot;owner&quot;: &quot;Platform Team&quot;,
+  &quot;owner_email&quot;: &quot;platform@example.com&quot;,
+  &quot;disabled&quot;: false,
+  &quot;tags&quot;: {
+    &quot;dkron_server&quot;: &quot;true:1&quot;
+  },
+  &quot;concurrency&quot;: &quot;allow&quot;,
+  &quot;executor&quot;: &quot;shell&quot;,
+  &quot;executor_config&quot;: {
+    &quot;command&quot;: &quot;date&quot;
+  }
+}`
 </code></pre>
 
 

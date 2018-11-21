@@ -44,6 +44,18 @@ To form a cluster, server nodes need to know the address of its peers as in the 
     </item>
     
     <item>
+      <title>Commercial FAQ</title>
+      <link>/pro/commercial-faq/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/pro/commercial-faq/</guid>
+      <description>What is Dkron Pro? Dkron Pro is a flavor of Dkron which add more functionality and provide additional support options for customers.
+Is there a trial version? There&amp;rsquo;s no free trial but we do offer a 14 day period with full refund if it does not work for you.
+Can I get a discount? I&amp;rsquo;m sure you&amp;rsquo;re very nice but no. Everyone pays the same price.
+What is the license?</description>
+    </item>
+    
+    <item>
       <title>Docker executor</title>
       <link>/pro/docker/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
