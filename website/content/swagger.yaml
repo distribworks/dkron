@@ -34,6 +34,14 @@ paths:
     get:
       description: |
         List jobs.
+       parameters:
+        - in: query
+          name: tags
+          type: array
+          collectionFormat: multi
+          items:
+            type: string
+          description: Filter jobs by tags
       operationId: getJobs
       tags:
         - jobs
