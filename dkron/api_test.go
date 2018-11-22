@@ -21,6 +21,7 @@ func setupAPITest(t *testing.T) (a *Agent) {
 	c.Server = true
 	c.LogLevel = logLevel
 	c.Keyspace = "dkron-test"
+	c.Backend = "etcdv3"
 	c.BackendMachines = []string{os.Getenv("DKRON_BACKEND_MACHINE")}
 
 	a = NewAgent(c, nil)
