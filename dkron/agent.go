@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/abronan/leadership"
+	"github.com/abronan/valkeyrie/store"
 	metrics "github.com/armon/go-metrics"
 	"github.com/hashicorp/memberlist"
 	"github.com/hashicorp/serf/serf"
@@ -292,7 +293,11 @@ func (a *Agent) SetConfig(c *Config) {
 
 func (a *Agent) StartServer() {
 	if a.Store == nil {
-		a.Store = NewStore(a.config.Backend, a.config.BackendMachines, a, a.config.Keyspace, nil)
+		var sConfig *store.Config
+		if a.config.Backend == "boltdb" {
+			sConfig = &store.Config{Bucket: a.config.Keyspace}
+		}
+		a.Store = NewStore(a.config.Backend, a.config.BackendMachines, a, a.config.Keyspace, sConfig)
 		if err := a.Store.Healthy(); err != nil {
 			log.WithError(err).Fatal("store: Store backend not reachable")
 		}
@@ -312,7 +317,11 @@ func (a *Agent) StartServer() {
 		log.WithError(err).Fatal("agent: RPC server failed to start")
 	}
 
-	a.participate()
+	if a.config.Backend != "boltdb" {
+		a.participate()
+	} else {
+		a.schedule()
+	}
 }
 
 func (a *Agent) participate() {

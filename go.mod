@@ -7,9 +7,9 @@ require (
 	github.com/abronan/valkeyrie v0.0.0-20171113095143-063d875e3c5f
 	github.com/armon/circbuf v0.0.0-20150827004946-bbbad097214e
 	github.com/armon/go-metrics v0.0.0-20171002182731-9a4b6e10bed6
+	github.com/coreos/bbolt v1.3.0 // indirect
 	github.com/coreos/etcd v3.2.9+incompatible // indirect
 	github.com/coreos/go-semver v0.2.0 // indirect
-	github.com/davecgh/go-spew v1.1.0 // indirect
 	github.com/fsnotify/fsnotify v1.4.2 // indirect
 	github.com/gin-contrib/multitemplate v0.0.0-20170922032617-bbc6daf6024b
 	github.com/gin-contrib/sse v0.0.0-20170109093832-22d885f9ecc7 // indirect
