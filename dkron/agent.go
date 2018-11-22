@@ -620,8 +620,11 @@ func (a *Agent) RefreshJobStatus(jobName string) {
 
 		nodes = append(nodes, ex.NodeName)
 		group = strconv.FormatInt(ex.Group, 10)
+		log.WithField("group", group).Debug("agent: Pending execution group")
 	}
 
+	// If there is pending executions to finish ask if they are really pending.
+	if len(nodes) > 0 && group != "" {
 	statuses := a.executionDoneQuery(nodes, group)
 
 	log.WithFields(logrus.Fields{
@@ -640,4 +643,5 @@ func (a *Agent) RefreshJobStatus(jobName string) {
 			a.Store.SetExecution(ex)
 		}
 	}
+}
 }
