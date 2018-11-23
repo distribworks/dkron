@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="generator" content="Hugo 0.38.2" />
+<meta name="revised" content="2018-11-23T22:00:26 CET">
 <title>Usage :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -35,6 +35,7 @@
 
   
 
+
   </div>
   <div class="burger"><a href="javascript:void(0);" style="font-size:15px;">&#9776;</a></div>
     <nav class="shortcuts">
@@ -63,18 +64,19 @@
             <i class="fa fa-fw fa-home"></i>
           </a>
           </li>
-    <li data-nav-id="/api/" class="dd-item
-        ">
-      <div>
-      <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-    </li>
     <li data-nav-id="/basics/" class="dd-item haschildren
         ">
       <div>
       <a href="/basics/">Basics</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
+      <li data-nav-id="/basics/installation/" class="dd-item">
+        <div>
+          <a href="/basics/installation/">
+            Installation
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/basics/getting-started/" class="dd-item">
         <div>
           <a href="/basics/getting-started/">
@@ -98,10 +100,10 @@
             <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/usage/concurrency/" class="dd-item">
+      <li data-nav-id="/usage/target-nodes-spec/" class="dd-item">
         <div>
-          <a href="/usage/concurrency/">
-            Concurrency
+          <a href="/usage/target-nodes-spec/">
+            Target nodes spec
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -109,6 +111,27 @@
         <div>
           <a href="/usage/cron-spec/">
             Cron spec
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/clustering/" class="dd-item">
+        <div>
+          <a href="/usage/clustering/">
+            Clustering
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/concurrency/" class="dd-item">
+        <div>
+          <a href="/usage/concurrency/">
+            Concurrency
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/internals/" class="dd-item">
+        <div>
+          <a href="/usage/internals/">
+            Internals
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -162,13 +185,6 @@
     </li>
         </ul>
     </li>
-      <li data-nav-id="/usage/target-nodes-spec/" class="dd-item">
-        <div>
-          <a href="/usage/target-nodes-spec/">
-            Target nodes spec
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
       <li data-nav-id="/usage/ecs/" class="dd-item">
         <div>
           <a href="/usage/ecs/">
@@ -184,6 +200,13 @@
       <a href="/pro/">Dkron Pro</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
+      <li data-nav-id="/pro/quick-start/" class="dd-item">
+        <div>
+          <a href="/pro/quick-start/">
+            Quick start
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/pro/ecs/" class="dd-item">
         <div>
           <a href="/pro/ecs/">
@@ -209,6 +232,20 @@
         <div>
           <a href="/pro/commercial-faq/">
             Commercial FAQ
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/commercial-support/" class="dd-item">
+        <div>
+          <a href="/pro/commercial-support/">
+            Commercial Support
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/configuration/" class="dd-item">
+        <div>
+          <a href="/pro/configuration/">
+            Configuration
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -249,10 +286,10 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/internal/" class="dd-item
+    <li data-nav-id="/operations/" class="dd-item
         ">
       <div>
-      <a href="/internal/">Internals</a><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/operations/">Operations Guide</a><i class="fa fa-circle-thin read-icon"></i>
       </div>
     </li>
     <li data-nav-id="/products/" class="dd-item haschildren
@@ -269,6 +306,34 @@
         </div>
     </li>
         </ul>
+    </li>
+    <li data-nav-id="/intro/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/intro/">Intro</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/intro/dkron_vs_other_software/" class="dd-item">
+        <div>
+          <a href="/intro/dkron_vs_other_software/">
+            Dkron vs. Other Software
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/intro/license/" class="dd-item">
+        <div>
+          <a href="/intro/license/">
+            License
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/api/" class="dd-item
+        ">
+      <div>
+      <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
     </li>
 
 
@@ -294,29 +359,33 @@
       <center>Navigation : 
         <select onchange="javascript:location.href = this.value;">
           
-    <option value="/api/" >
-   API</option>
     <option value="/basics/" >
    Basics</option>
     <option value="/usage/"  selected>
    Usage</option> 
-      <option value="/usage/concurrency/" >- Concurrency</option>
+      <option value="/usage/target-nodes-spec/" >- Target nodes spec</option>
       <option value="/usage/cron-spec/" >- Cron spec</option>
+      <option value="/usage/clustering/" >- Clustering</option>
+      <option value="/usage/concurrency/" >- Concurrency</option>
+      <option value="/usage/internals/" >- Internals</option>
       <option value="/usage/chaining/" >- Job chaining</option>
       <option value="/usage/retries/" >- Job retries</option>
       <option value="/usage/metrics/" >- Metrics</option>
     <option value="/usage/plugins/" >
   - 
    Plugins</option>
-      <option value="/usage/target-nodes-spec/" >- Target nodes spec</option>
       <option value="/usage/ecs/" >- Use with AWS ECS</option>
   
     <option value="/pro/" >
    Dkron Pro</option>
-    <option value="/internal/" >
-   Internals</option>
+    <option value="/operations/" >
+   Operations Guide</option>
     <option value="/products/" >
    Products</option>
+    <option value="/intro/" >
+   Intro</option>
+    <option value="/api/" >
+   API</option>
 
 
 
@@ -349,11 +418,11 @@
 <ul class="children children-card">
 
 <span><card>
-		<a href="/usage/concurrency/" >Concurrency</a></card>
-<p> Concurrency Jobs can be configured to allow overlapping executions or forbid them.
-Concurrency property accepts two option:
- allow (default): Allow concurrent job executions. forbid: If the job is already running don&rsquo;t send the execution, it will skip the executions until the next schedule.  Example:
-{ &quot;name&quot;: &quot;job1&quot;, &quot;schedule&quot;: &quot;@every 10s&quot;, &quot;executor&quot;: &quot;shell&quot;, &quot;executor_config&quot;: { &quot;command&quot;: &quot;echo \&quot;Hello from parent\&quot;&quot; }, &quot;concurrency&quot;: &quot;forbid&quot; }  </p>
+		<a href="/usage/target-nodes-spec/" >Target nodes spec</a></card>
+<p>Target nodes spec You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run.
+The target node syntax: [tag-value]:[count]
+ Examples: Target all nodes with a tag:
+{ &quot;name&quot;: &quot;job_name&quot;, &quot;command&quot;: &quot;/bin/true&quot;, &quot;schedule&quot;: &quot;@every 2m&quot;, &quot;tags&quot;: { &quot;role&quot;: &quot;web&quot; } }  Target only two nodes of a group of nodes with a tag:</p>
 </span>
 
 <span><card>
@@ -363,23 +432,54 @@ Field name | Mandatory? | Allowed values | Allowed special characters ----------
 </span>
 
 <span><card>
+		<a href="/usage/clustering/" >Clustering</a></card>
+<p>Configure a cluster Dkron can run in HA mode, avoiding SPOFs, this mode provides better scalability and better reliability for users that wants a high level of confidence in the cron jobs they need to run.
+To form a cluster, server nodes need to know the address of its peers as in the following example:
+# dkron.yml join: - 10.19.3.9 - 10.19.4.64 - 10.19.7.215 Etcd For a more in detail guide of clustering with etcd follow this guide: https://github.</p>
+</span>
+
+<span><card>
+		<a href="/usage/concurrency/" >Concurrency</a></card>
+<p> Concurrency Jobs can be configured to allow overlapping executions or forbid them.
+Concurrency property accepts two option:
+ allow (default): Allow concurrent job executions. forbid: If the job is already running don&rsquo;t send the execution, it will skip the executions until the next schedule.  Example:
+{ &#34;name&#34;: &#34;job1&#34;, &#34;schedule&#34;: &#34;@every 10s&#34;, &#34;executor&#34;: &#34;shell&#34;, &#34;executor_config&#34;: { &#34;command&#34;: &#34;echo \&#34;Hello from parent\&#34;&#34; }, &#34;concurrency&#34;: &#34;forbid&#34; }</p>
+</span>
+
+<span><card>
+		<a href="/usage/internals/" >Internals</a></card>
+<p>This document is a WIP, it&rsquo;s intended to describe the reasons that lead to design decisions in Dkron.
+Execution results Dkron store the result of each job execution in each node.
+Every time dkron executes a job it assigns it an execution group, generating a new uuid and send a serf query to target machines and waits for a response.
+Each target machine that will run the job, then responds with an execution object saying it started to run the job.</p>
+</span>
+
+<span><card>
 		<a href="/usage/chaining/" >Job chaining</a></card>
-<p></p>
+<p>Job chaining You can set some jobs to run after other job is executed. To setup a job that will be executed after any other given job, just set the parent_job property when saving the new job.
+The dependent job will be executed after the main job finished a successful execution.
+Child jobs schedule property will be ignored if it&rsquo;s present.
+Take into account that parent jobs must be created before any child job.</p>
 </span>
 
 <span><card>
 		<a href="/usage/retries/" >Job retries</a></card>
-<p></p>
+<p>Jobs can be configured to retry in case of failure.
+Configuration { &#34;name&#34;: &#34;job1&#34;, &#34;schedule&#34;: &#34;@every 10s&#34;, &#34;executor&#34;: &#34;shell&#34;, &#34;executor_config&#34;: { &#34;command&#34;: &#34;echo \&#34;Hello from parent\&#34;&#34; }, &#34;retries&#34;: 5 } In case of failure to run the job in one node, it will try to run the job again in that node until the retries count reaches the limit.</p>
 </span>
 
 <span><card>
 		<a href="/usage/metrics/" >Metrics</a></card>
-<p></p>
+<p>Dkron has the ability to send metrics to Statsd for dashboards and historical reporting. It sends job processing metrics and golang, serf metrics too.
+Configuration Add this in your yaml config file
+dog_statsd_addr: &#34;localhost:8125&#34; Metrics  dkron.agent.event_received.query_execution_done dkron.agent.event_received.query_run_job dkron.memberlist.gossip dkron.memberlist.probeNode dkron.memberlist.pushPullNode dkron.memberlist.tcp.accept dkron.memberlist.tcp.connect dkron.memberlist.tcp.sent dkron.memberlist.udp.received dkron.memberlist.udp.sent dkron.rpc.call_execution_done dkron.rpc.call_get_job dkron.rpc.execution_done dkron.rpc.get_job dkron.runtime.alloc_bytes dkron.runtime.free_count dkron.runtime.gc_pause_ns dkron.runtime.heap_objects dkron.runtime.malloc_count dkron.runtime.num_goroutines dkron.runtime.sys_bytes dkron.runtime.total_gc_pause_ns dkron.runtime.total_gc_runs dkron.serf.coordinate.adjustment_ms dkron.serf.msgs.received dkron.serf.msgs.sent dkron.serf.queries dkron.serf.queries.execution_done dkron.serf.queries.run_job dkron.serf.query_acks dkron.serf.query_responses dkron.serf.queue.Event dkron.serf.queue.Intent dkron.</p>
 </span>
 
 <span><card>
 		<a href="/usage/plugins/" >Plugins</a></card>
-<p></p>
+<p>Intro Plugins in Dkron allow you to add funcionality that integrates with the workflow of the job execution in Dkron. It&rsquo;s a powerful system that allows you to extend and adapt Dkron to your special needs.
+This page documents the basics of how the plugin system in Dkron works, and how to setup a basic development environment for plugin development if you&rsquo;re writing a Dkron plugin.
+How it Works Dkron execution execution processors are provided via plugins.</p>
 </span>
 
 <span><card>
@@ -402,13 +502,12 @@ Note: A common pitfall is not properly setting up a $GOPATH.</p>
 </span>
 
 <span><card>
-		<a href="/usage/target-nodes-spec/" >Target nodes spec</a></card>
-<p></p>
-</span>
-
-<span><card>
 		<a href="/usage/ecs/" >Use with AWS ECS</a></card>
-<p></p>
+<p>Dkron Pro comes with a native ECS executor out of the box.
+ Use with Amazon ECS To use Dkron to schedule jobs that run in containers, a wrapper ECS script is needed.
+Install the following snippet in the node that will run the call to ECS
+ Prerequisites The node that will run the call to ECS will need to have installed
+ AWS cli jq  Example ecs-run --cluster cron --task-definition cron-taskdef --container-name cron --region us-east-1 --command &quot;rake foo&quot;</p>
 </span>
 </ul>
 
@@ -424,7 +523,7 @@ Note: A common pitfall is not properly setting up a $GOPATH.</p>
         <div class="chevrons">
     <div id="navigation">
 <a class="nav nav-prev" href="/basics/configuration/" title="Configuration"> <i class="fa fa-chevron-left"></i><label>Configuration</label></a>
-    <a class="nav nav-next" href="/usage/concurrency/" title="Concurrency" style="margin-right: 0px;"><label>Concurrency</label><i class="fa fa-chevron-right"></i></a></div>
+    <a class="nav nav-next" href="/usage/target-nodes-spec/" title="Target nodes spec" style="margin-right: 0px;"><label>Target nodes spec</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>
@@ -437,16 +536,14 @@ Note: A common pitfall is not properly setting up a $GOPATH.</p>
 
     
 
-  
-    <div class="date">
-        <i class='fa fa-calendar'></i> Last update on 30/06/2017
-    </div>
     
 
+    
     <div class="github-link">
       <a href="https://github.com/victorcoder/dkron/edit/master/website/content/usage/_index.md" target="blank"><i class="fa fa-code-fork"></i>
         Improve this page</a>
     </div>
+    
   </div>
 
 
@@ -471,6 +568,7 @@ Note: A common pitfall is not properly setting up a $GOPATH.</p>
 
 
 <script src="/theme-flex/script.js"></script>
+
 
     
 

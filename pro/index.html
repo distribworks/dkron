@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="generator" content="Hugo 0.38.2" />
+<meta name="revised" content="2018-11-23T22:00:26 CET">
 <title>Dkron Pro :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -35,6 +35,7 @@
 
   
 
+
   </div>
   <div class="burger"><a href="javascript:void(0);" style="font-size:15px;">&#9776;</a></div>
     <nav class="shortcuts">
@@ -63,18 +64,19 @@
             <i class="fa fa-fw fa-home"></i>
           </a>
           </li>
-    <li data-nav-id="/api/" class="dd-item
-        ">
-      <div>
-      <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-    </li>
     <li data-nav-id="/basics/" class="dd-item haschildren
         ">
       <div>
       <a href="/basics/">Basics</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
+      <li data-nav-id="/basics/installation/" class="dd-item">
+        <div>
+          <a href="/basics/installation/">
+            Installation
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/basics/getting-started/" class="dd-item">
         <div>
           <a href="/basics/getting-started/">
@@ -97,10 +99,10 @@
       <a href="/usage/">Usage</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/usage/concurrency/" class="dd-item">
+      <li data-nav-id="/usage/target-nodes-spec/" class="dd-item">
         <div>
-          <a href="/usage/concurrency/">
-            Concurrency
+          <a href="/usage/target-nodes-spec/">
+            Target nodes spec
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -108,6 +110,27 @@
         <div>
           <a href="/usage/cron-spec/">
             Cron spec
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/clustering/" class="dd-item">
+        <div>
+          <a href="/usage/clustering/">
+            Clustering
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/concurrency/" class="dd-item">
+        <div>
+          <a href="/usage/concurrency/">
+            Concurrency
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/internals/" class="dd-item">
+        <div>
+          <a href="/usage/internals/">
+            Internals
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -161,13 +184,6 @@
     </li>
         </ul>
     </li>
-      <li data-nav-id="/usage/target-nodes-spec/" class="dd-item">
-        <div>
-          <a href="/usage/target-nodes-spec/">
-            Target nodes spec
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
       <li data-nav-id="/usage/ecs/" class="dd-item">
         <div>
           <a href="/usage/ecs/">
@@ -184,6 +200,13 @@
             <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
+      <li data-nav-id="/pro/quick-start/" class="dd-item">
+        <div>
+          <a href="/pro/quick-start/">
+            Quick start
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/pro/ecs/" class="dd-item">
         <div>
           <a href="/pro/ecs/">
@@ -209,6 +232,20 @@
         <div>
           <a href="/pro/commercial-faq/">
             Commercial FAQ
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/commercial-support/" class="dd-item">
+        <div>
+          <a href="/pro/commercial-support/">
+            Commercial Support
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/configuration/" class="dd-item">
+        <div>
+          <a href="/pro/configuration/">
+            Configuration
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -249,10 +286,10 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/internal/" class="dd-item
+    <li data-nav-id="/operations/" class="dd-item
         ">
       <div>
-      <a href="/internal/">Internals</a><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/operations/">Operations Guide</a><i class="fa fa-circle-thin read-icon"></i>
       </div>
     </li>
     <li data-nav-id="/products/" class="dd-item haschildren
@@ -269,6 +306,34 @@
         </div>
     </li>
         </ul>
+    </li>
+    <li data-nav-id="/intro/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/intro/">Intro</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/intro/dkron_vs_other_software/" class="dd-item">
+        <div>
+          <a href="/intro/dkron_vs_other_software/">
+            Dkron vs. Other Software
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/intro/license/" class="dd-item">
+        <div>
+          <a href="/intro/license/">
+            License
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/api/" class="dd-item
+        ">
+      <div>
+      <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
     </li>
 
 
@@ -294,28 +359,33 @@
       <center>Navigation : 
         <select onchange="javascript:location.href = this.value;">
           
-    <option value="/api/" >
-   API</option>
     <option value="/basics/" >
    Basics</option>
     <option value="/usage/" >
    Usage</option>
     <option value="/pro/"  selected>
    Dkron Pro</option> 
+      <option value="/pro/quick-start/" >- Quick start</option>
       <option value="/pro/ecs/" >- AWS ECS Executor</option>
       <option value="/pro/auth/" >- Authorization</option>
       <option value="/pro/clustering/" >- Clustering</option>
       <option value="/pro/commercial-faq/" >- Commercial FAQ</option>
+      <option value="/pro/commercial-support/" >- Commercial Support</option>
+      <option value="/pro/configuration/" >- Configuration</option>
       <option value="/pro/docker/" >- Docker executor</option>
       <option value="/pro/elasticsearch/" >- Elasticsearch processor</option>
       <option value="/pro/email/" >- Email processor</option>
       <option value="/pro/storage/" >- Embedded storage</option>
       <option value="/pro/encryption/" >- Encryption</option>
   
-    <option value="/internal/" >
-   Internals</option>
+    <option value="/operations/" >
+   Operations Guide</option>
     <option value="/products/" >
    Products</option>
+    <option value="/intro/" >
+   Intro</option>
+    <option value="/api/" >
+   API</option>
 
 
 
@@ -345,129 +415,91 @@
 
 
 
-<h2 id="getting-started">Getting started</h2>
+<ul class="children children-h3">
 
-<p>Dkron Pro provides a backend store out of the box, based on etcd.</p>
+<span><h3>
+		<a href="/pro/quick-start/" >Quick start</a></h3>
+<p>Getting started Dkron Pro provides a clustering backend store out of the box based on etcd.
+To configure the storage a sample etcd.conf.yaml file is provided in /etc/dkron path. Editing the file, allows to configure several options for the embedded store.
+The location of the store configuration can be set in the command line or in the dkron config file /etc/dkron/dkron.yml using etcd-config-file-path parameter.
+Starting a single node Works out of the box, good for non HA installations.</p>
+</span>
 
-<p>To configure the storage a sample <code>etcd.conf.yaml</code> file is provided in <code>/etc/dkron</code> path. Editing the file, allows to configure several options for the embedded store.</p>
-
-<p>The location of the store configuration can be set in the command line or in the dkron config file <code>/etc/dkron/dkron.yml</code> using <code>etcd-config-file-path</code> parameter.</p>
-
-<h3 id="starting-a-single-node">Starting a single node</h3>
-
-<p>Works out of the box, good for non HA installations.</p>
-
-<ul>
-<li>System service: If no changes are done to the default config files, dkron will start as a service in single mode.</li>
-<li>Command line: Running a single node with default config can be done by running: <code>dkron agent --server</code></li>
-</ul>
-
-<p>Check your server is working: <code>curl localhost:8080/v1</code></p>
-
-<p>Simple as that, now it is time to add some jobs:</p>
-
-<pre><code class="language-bash">curl localhost:8080/v1/jobs -XPOST -d '{
-  &quot;name&quot;: &quot;job1&quot;,
-  &quot;schedule&quot;: &quot;@every 10s&quot;,
-  &quot;timezone&quot;: &quot;Europe/Berlin&quot;,
-  &quot;owner&quot;: &quot;Platform Team&quot;,
-  &quot;owner_email&quot;: &quot;platform@example.com&quot;,
-  &quot;disabled&quot;: false,
-  &quot;tags&quot;: {
-    &quot;dkron_server&quot;: &quot;true&quot;
-  },
-  &quot;concurrency&quot;: &quot;allow&quot;,
-  &quot;executor&quot;: &quot;shell&quot;,
-  &quot;executor_config&quot;: {
-    &quot;command&quot;: &quot;date&quot;
-  }
-}`
-</code></pre>
-
-<h2 id="configuration">Configuration</h2>
-
-<p>Dkron Pro uses the <a href="/basics/configuration">same parameters</a> as Dkron OSS and add some extra parameters.</p>
-
-<h3 id="command-line-options">Command line options</h3>
-
-<ul>
-<li><code>--etcd-config-file-path</code> - Etcd node config</li>
-<li><code>--username</code> - Authentication username</li>
-<li><code>--password</code> - Authentication password</li>
-<li><code>--cert-file</code> - Path to the client server TLS cert file</li>
-<li><code>--key-file</code> - Path to the client server TLS key file</li>
-<li><code>--client-crl-file</code> - Path to the client certificate revocation list file</li>
-<li><code>--trusted-ca-file</code> - Path to the client server TLS trusted CA cert file</li>
-<li><code>--client-cert-auth</code> - Enable client cert authentication</li>
-<li><code>--auto-tls</code> - Client TLS using generated certificates</li>
-</ul>
-
-
-
-<ul class="children children-card">
-
-<span><card>
-		<a href="/pro/ecs/" >AWS ECS Executor</a></card>
+<span><h3>
+		<a href="/pro/ecs/" >AWS ECS Executor</a></h3>
 <p>The ECS exeutor is capable of launching tasks in ECS clusters, then listen to a stream of CloudWatch Logs and return the output.
 To configure a job to be run in ECS, the executor needs a JSON Task definition template or an already defined task in ECS.
 To allow the ECS Task runner to run tasks, the machine running Dkron needs to have the appropriate permissions configured in AWS IAM:</p>
 </span>
 
-<span><card>
-		<a href="/pro/auth/" >Authorization</a></card>
+<span><h3>
+		<a href="/pro/auth/" >Authorization</a></h3>
 <p>Dkron Pro has the ability to be configured to use HTTP basic auth.
 Authentication can be set using these parameters in the dkron config file:
-# dkron.yml username: foo password: bar  This will enable auth on the WebUI and for the API.</p>
+# dkron.yml username: foo password: bar This will enable auth on the WebUI and for the API.</p>
 </span>
 
-<span><card>
-		<a href="/pro/clustering/" >Clustering</a></card>
-<p>Configure a cluster Dkron can run in HA mode, avoiding SPOFs, this mode provides better scalability and better reliability for users that wants a high level of confidence in the cron jobs they need to run.
-To form a cluster, server nodes need to know the address of its peers as in the following example:
-# dkron.yml join: - 10.19.3.9 - 10.19.4.64 - 10.19.7.215  On the other side, the embedded store also needs to know its peers, it needs its own configuration as in the following example:</p>
+<span><h3>
+		<a href="/pro/clustering/" >Clustering</a></h3>
+<p>Configure a cluster First follow the Dkron clustering guide then you can continue with this guide.
+The embedded store also needs to know its peers, it needs its own configuration as in the following example:
+# etcd.conf.yaml # Initial cluster configuration for bootstrapping. initial-cluster: dkron1=https://10.19.3.9:2380,dkron2=https://10.19.4.64:2380,dkron3=https://10.19.7.215:2380 With this configuration Dkron Pro should start in cluster mode with embedded storage.
+For a more in detail guide of clustering with etcd follow this guide: https://github.</p>
 </span>
 
-<span><card>
-		<a href="/pro/commercial-faq/" >Commercial FAQ</a></card>
+<span><h3>
+		<a href="/pro/commercial-faq/" >Commercial FAQ</a></h3>
 <p>What is Dkron Pro? Dkron Pro is a flavor of Dkron which add more functionality and provide additional support options for customers.
 Is there a trial version? There&rsquo;s no free trial but we do offer a 14 day period with full refund if it does not work for you.
 Can I get a discount? I&rsquo;m sure you&rsquo;re very nice but no. Everyone pays the same price.
 What is the license?</p>
 </span>
 
-<span><card>
-		<a href="/pro/docker/" >Docker executor</a></card>
+<span><h3>
+		<a href="/pro/commercial-support/" >Commercial Support</a></h3>
+<p>Dkron offers only community support. Dkro Pro offers priority support via email.
+Priority Support Covers 1 incident per quarter, with a max response time of 2 working days. Scope is limited to Dkron and Dkron Pro features and APIs, not the application or infrastructure. For support, email support AT distrib.works. Please email using the same domain as the original license email or explain your connection to the licensed company.</p>
+</span>
+
+<span><h3>
+		<a href="/pro/configuration/" >Configuration</a></h3>
+<p> Configuration Dkron Pro uses the same parameters as Dkron OSS and add some extra parameters.
+Command line options  --etcd-config-file-path - Etcd node config --username - Authentication username --password - Authentication password --cert-file - Path to the client server TLS cert file --key-file - Path to the client server TLS key file --client-crl-file - Path to the client certificate revocation list file --trusted-ca-file - Path to the client server TLS trusted CA cert file --client-cert-auth - Enable client cert authentication --auto-tls - Client TLS using generated certificates  </p>
+</span>
+
+<span><h3>
+		<a href="/pro/docker/" >Docker executor</a></h3>
 <p> Docker executor can launch docker based cron jobs using the docker command of the target node.
 This executor needs a recent version of docker to be available and configured in the target node.
 Configuration To run a docker job create a job config with the docker executor as in this example:
-&quot;executor&quot;: &quot;docker&quot;, &quot;executor_config&quot;: { &quot;image&quot;: &quot;alpine&quot;, //docker image to use &quot;volumes&quot;: &quot;/logs:/var/log/&quot;, //comma separated list of volume mappings &quot;command&quot;: &quot;echo \&quot;Hello from dkron\&quot;&quot;, //command to pass to run on container &quot;env&quot;: &quot;ENVIRONMENT=variable&quot; //environment variables to pass to the container }  </p>
+&#34;executor&#34;: &#34;docker&#34;, &#34;executor_config&#34;: { &#34;image&#34;: &#34;alpine&#34;, //docker image to use &#34;volumes&#34;: &#34;/logs:/var/log/&#34;, //comma separated list of volume mappings &#34;command&#34;: &#34;echo \&#34;Hello from dkron\&#34;&#34;, //command to pass to run on container &#34;env&#34;: &#34;ENVIRONMENT=variable&#34; //environment variables to pass to the container }</p>
 </span>
 
-<span><card>
-		<a href="/pro/elasticsearch/" >Elasticsearch processor</a></card>
+<span><h3>
+		<a href="/pro/elasticsearch/" >Elasticsearch processor</a></h3>
 <p> The Elasticsearch processor can fordward execution logs to an ES cluster. It need an already available Elasticsearch installation that is visible in the same network of the target node.
 The output logs of the job execution will be stored in the indicated ES instace.
-Configuration &quot;processors&quot;: { &quot;elasticsearch&quot;: { &quot;url&quot;: &quot;http://localhost:9200&quot;, //comma separated list of Elasticsearch hosts urls (default: http://localhost:9200) &quot;index&quot;: &quot;dkron_logs&quot;, //desired index name (default: dkron_logs) &quot;forward&quot;: &quot;false&quot; //forward logs to the next processor (default: false) } }  </p>
+Configuration &#34;processors&#34;: { &#34;elasticsearch&#34;: { &#34;url&#34;: &#34;http://localhost:9200&#34;, //comma separated list of Elasticsearch hosts urls (default: http://localhost:9200) &#34;index&#34;: &#34;dkron_logs&#34;, //desired index name (default: dkron_logs) &#34;forward&#34;: &#34;false&#34; //forward logs to the next processor (default: false) } }</p>
 </span>
 
-<span><card>
-		<a href="/pro/email/" >Email processor</a></card>
+<span><h3>
+		<a href="/pro/email/" >Email processor</a></h3>
 <p>The Email processor provides flexibility to job email notifications.
 Configuration of the email processor is stored in a file named dkron-processor-email.yml in the same locations as dkron.yml, and should include a list of providers, it can include any number of providers.
 Example:
-provider1: host: smtp.myprovider.com port: 25 username: myusername password: mypassword from: cron@mycompany.com subjectPrefix: '[Staging] '  Then configure each job with the following options:
+provider1: host: smtp.myprovider.com port: 25 username: myusername password: mypassword from: cron@mycompany.com subjectPrefix: &#39;[Staging] &#39; Then configure each job with the following options:
 Example:
-&quot;processors&quot;: { &quot;email&quot;: { &quot;provider&quot;: &quot;provider1&quot;, &quot;emails&quot;: &quot;team@mycompany.</p>
+&#34;processors&#34;: { &#34;email&#34;: { &#34;provider&#34;: &#34;provider1&#34;, &#34;emails&#34;: &#34;team@mycompany.</p>
 </span>
 
-<span><card>
-		<a href="/pro/storage/" >Embedded storage</a></card>
+<span><h3>
+		<a href="/pro/storage/" >Embedded storage</a></h3>
 <p>Dkron Pro has an embedded distributed KV store engine based on etcd. This works out of the box on each node dkron server is started.
 This ensures a dead easy install and setup, basically run dkron and you will have a full working node and at the same time provides you with a fully tested well supported store for its use with dkron.</p>
 </span>
 
-<span><card>
-		<a href="/pro/encryption/" >Encryption</a></card>
+<span><h3>
+		<a href="/pro/encryption/" >Encryption</a></h3>
 <p>SSL encryption is used for communicating dkron pro and the embedded store, and between storage nodes itself. Also if client auth is enabled, only dkron pro clients can talk to the embedded store. This means that no other software running on your local network will be able to talk to dkron&rsquo;s etcd server.
 This ensures that no unexpected usage of the Dkron&rsquo;s store will happen, unless it is another Dkron pro instance.</p>
 </span>
@@ -485,7 +517,7 @@ This ensures that no unexpected usage of the Dkron&rsquo;s store will happen, un
         <div class="chevrons">
     <div id="navigation">
 <a class="nav nav-prev" href="/usage/ecs/" title="Use with AWS ECS"> <i class="fa fa-chevron-left"></i><label>Use with AWS ECS</label></a>
-    <a class="nav nav-next" href="/pro/ecs/" title="AWS ECS Executor" style="margin-right: 0px;"><label>AWS ECS Executor</label><i class="fa fa-chevron-right"></i></a></div>
+    <a class="nav nav-next" href="/pro/quick-start/" title="Quick start" style="margin-right: 0px;"><label>Quick start</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>
@@ -498,12 +530,14 @@ This ensures that no unexpected usage of the Dkron&rsquo;s store will happen, un
 
     
 
-  
+    
 
+    
     <div class="github-link">
       <a href="https://github.com/victorcoder/dkron/edit/master/website/content/pro/_index.md" target="blank"><i class="fa fa-code-fork"></i>
         Improve this page</a>
     </div>
+    
   </div>
 
 
@@ -528,6 +562,7 @@ This ensures that no unexpected usage of the Dkron&rsquo;s store will happen, un
 
 
 <script src="/theme-flex/script.js"></script>
+
 
     
 

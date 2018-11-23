@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="generator" content="Hugo 0.38.2" />
+<meta name="revised" content="2018-11-23T22:00:26 CET">
 <title>Basics :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -35,6 +35,7 @@
 
   
 
+
   </div>
   <div class="burger"><a href="javascript:void(0);" style="font-size:15px;">&#9776;</a></div>
     <nav class="shortcuts">
@@ -63,12 +64,6 @@
             <i class="fa fa-fw fa-home"></i>
           </a>
           </li>
-    <li data-nav-id="/api/" class="dd-item
-        ">
-      <div>
-      <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-    </li>
     <li data-nav-id="/basics/" class="dd-item parent active haschildren
         ">
       <div>
@@ -76,6 +71,13 @@
             <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
+      <li data-nav-id="/basics/installation/" class="dd-item">
+        <div>
+          <a href="/basics/installation/">
+            Installation
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/basics/getting-started/" class="dd-item">
         <div>
           <a href="/basics/getting-started/">
@@ -98,10 +100,10 @@
       <a href="/usage/">Usage</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/usage/concurrency/" class="dd-item">
+      <li data-nav-id="/usage/target-nodes-spec/" class="dd-item">
         <div>
-          <a href="/usage/concurrency/">
-            Concurrency
+          <a href="/usage/target-nodes-spec/">
+            Target nodes spec
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -109,6 +111,27 @@
         <div>
           <a href="/usage/cron-spec/">
             Cron spec
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/clustering/" class="dd-item">
+        <div>
+          <a href="/usage/clustering/">
+            Clustering
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/concurrency/" class="dd-item">
+        <div>
+          <a href="/usage/concurrency/">
+            Concurrency
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/internals/" class="dd-item">
+        <div>
+          <a href="/usage/internals/">
+            Internals
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -162,13 +185,6 @@
     </li>
         </ul>
     </li>
-      <li data-nav-id="/usage/target-nodes-spec/" class="dd-item">
-        <div>
-          <a href="/usage/target-nodes-spec/">
-            Target nodes spec
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
       <li data-nav-id="/usage/ecs/" class="dd-item">
         <div>
           <a href="/usage/ecs/">
@@ -184,6 +200,13 @@
       <a href="/pro/">Dkron Pro</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
+      <li data-nav-id="/pro/quick-start/" class="dd-item">
+        <div>
+          <a href="/pro/quick-start/">
+            Quick start
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/pro/ecs/" class="dd-item">
         <div>
           <a href="/pro/ecs/">
@@ -209,6 +232,20 @@
         <div>
           <a href="/pro/commercial-faq/">
             Commercial FAQ
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/commercial-support/" class="dd-item">
+        <div>
+          <a href="/pro/commercial-support/">
+            Commercial Support
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/configuration/" class="dd-item">
+        <div>
+          <a href="/pro/configuration/">
+            Configuration
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -249,10 +286,10 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/internal/" class="dd-item
+    <li data-nav-id="/operations/" class="dd-item
         ">
       <div>
-      <a href="/internal/">Internals</a><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/operations/">Operations Guide</a><i class="fa fa-circle-thin read-icon"></i>
       </div>
     </li>
     <li data-nav-id="/products/" class="dd-item haschildren
@@ -269,6 +306,34 @@
         </div>
     </li>
         </ul>
+    </li>
+    <li data-nav-id="/intro/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/intro/">Intro</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/intro/dkron_vs_other_software/" class="dd-item">
+        <div>
+          <a href="/intro/dkron_vs_other_software/">
+            Dkron vs. Other Software
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/intro/license/" class="dd-item">
+        <div>
+          <a href="/intro/license/">
+            License
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/api/" class="dd-item
+        ">
+      <div>
+      <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
     </li>
 
 
@@ -294,10 +359,9 @@
       <center>Navigation : 
         <select onchange="javascript:location.href = this.value;">
           
-    <option value="/api/" >
-   API</option>
     <option value="/basics/"  selected>
    Basics</option> 
+      <option value="/basics/installation/" >- Installation</option>
       <option value="/basics/getting-started/" >- Getting started</option>
       <option value="/basics/configuration/" >- Configuration</option>
   
@@ -305,10 +369,14 @@
    Usage</option>
     <option value="/pro/" >
    Dkron Pro</option>
-    <option value="/internal/" >
-   Internals</option>
+    <option value="/operations/" >
+   Operations Guide</option>
     <option value="/products/" >
    Products</option>
+    <option value="/intro/" >
+   Intro</option>
+    <option value="/api/" >
+   API</option>
 
 
 
@@ -338,41 +406,37 @@
 
 
 
-<h2 id="dkron-distributed-fault-tolerant-job-scheduling-system">Dkron - Distributed, fault tolerant job scheduling system</h2>
+<ul class="children children-h2">
 
-<p>Welcome to the Dkron documentation! This is the reference guide on how to use Dkron. If you want a getting started guide refer to the <a href="getting-started">getting started guide</a>.</p>
+<span><h2>
+		<a href="/basics/installation/" >Installation</a></h2>
+<p>Running the binary Download the packaged archive for your platform from the downloads page and extract the package to a shared location in your drive, like /opt/local/bin.
+Run Dkron with default setting: dkron agent --server
+Navigate to http://localhost:8080
+By default dkron will start with a file based, embedded KV store called BoltDB, it is functional for a single node demo but does not offers clustering or HA.
+ Installing the package Debian repo APT repository:</p>
+</span>
 
-<h2 id="what-is-dkron">What is Dkron</h2>
+<span><h2>
+		<a href="/basics/getting-started/" >Getting started</a></h2>
+<p>Introduction Dkron nodes can work in two modes, agents or servers.
+A Dkron agent is a cluster member that can handle job executions, run your scripts and return the resulting output to the server.
+A Dkron server is also a cluster member that send job execution queries to agents or other servers, so servers can execute jobs too.
+The main distinction is that servers order job executions, can be used to schedule jobs, handles data storage and participate on leader election.</p>
+</span>
 
-<p>Dkron is a distributed system to run scheduled jobs against a server or a group of servers of any size. One of the machines is the leader and the others will be followers. If the leader fails or becomes unreachable, any other one will take over and reschedule all jobs to keep the system healthy.</p>
-
-<p>In case the old leader becomes alive again, it&rsquo;ll become a follower.</p>
-
-<p>Dkron is a distributed cron drop-in replacement, easy to setup and fault tolerant with focus in:</p>
-
-<ul>
-<li>Easy: Easy to use with a great UI</li>
-<li>Reliable: Completely fault tolerant</li>
-<li>High scalable: Able to handle high volumes of scheduled jobs and thousands of nodes</li>
+<span><h2>
+		<a href="/basics/configuration/" >Configuration</a></h2>
+<p>Settings for dkron can be specified in three ways: Using a config/dkron.json config file, using env variables starting with DKRON_ or using command line arguments.
+Command line options  --node-name - Name of the node, must be unique in the cluster. By default this is the hostname of the machine.
+ --bind-addr - The address that dkron will bind to for communication with other dkron nodes. By default this is &ldquo;0.</p>
+</span>
 </ul>
 
-<p>Dkron is written in Go and leverage the power of distributed key value stores and <a href="https://www.serfdom.io/">Serf</a> for providing fault tolerance, reliability and scalability while keeping simple and easily installable.</p>
 
-<p>Dkron is inspired by the google whitepaper <a href="https://queue.acm.org/detail.cfm?id=2745840">Reliable Cron across the Planet</a></p>
 
-<p>Dkron runs on Linux, OSX and Windows. It can be used to run scheduled commands on a server cluster using any combination of servers for each job. It has no single points of failure due to the use of the fault tolerant distributed databases and can work at large scale thanks to the efficient and lightweight gossip protocol.</p>
 
-<p>Dkron uses the efficient and lightweight <a href="https://www.serfdom.io/docs/internals/gossip.html">gossip protocol</a> underneath to communicate with nodes. Failure notification and task handling are run efficiently across an entire cluster of any size.</p>
 
-<h2 id="web-ui">Web UI</h2>
-
-<p><center class="hidden-xs">
-<img src="/img/screenshot1.png" alt="" />
-</center></p>
-
-<h2 id="dkron-design">Dkron design</h2>
-
-<p>Dkron is designed to solve one problem well, executing commands in given intervals. Following the unix philosophy of doing one thing and doing it well (like the battle-tested cron) but with the given addition of being designed for the cloud era, removing single points of failure in environments where scheduled jobs are needed to be run in multiple servers.</p>
 
 
 
@@ -380,8 +444,8 @@
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-prev" href="/api/" title="API"> <i class="fa fa-chevron-left"></i><label>API</label></a>
-    <a class="nav nav-next" href="/basics/getting-started/" title="Getting started" style="margin-right: 0px;"><label>Getting started</label><i class="fa fa-chevron-right"></i></a></div>
+<a class="nav nav-prev" href="/" title="Dkron - Distributed job scheduling system"> <i class="fa fa-chevron-left"></i><label>Dkron - Distributed job scheduling system</label></a>
+    <a class="nav nav-next" href="/basics/installation/" title="Installation" style="margin-right: 0px;"><label>Installation</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>
@@ -394,16 +458,14 @@
 
     
 
-  
-    <div class="date">
-        <i class='fa fa-calendar'></i> Last update on 30/06/2017
-    </div>
     
 
+    
     <div class="github-link">
       <a href="https://github.com/victorcoder/dkron/edit/master/website/content/basics/_index.md" target="blank"><i class="fa fa-code-fork"></i>
         Improve this page</a>
     </div>
+    
   </div>
 
 
@@ -428,6 +490,7 @@
 
 
 <script src="/theme-flex/script.js"></script>
+
 
     
 

@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="generator" content="Hugo 0.38.2" />
+<meta name="revised" content="2018-11-23T22:00:27 CET">
 <title>Docker executor :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -35,6 +35,7 @@
 
   
 
+
   </div>
   <div class="burger"><a href="javascript:void(0);" style="font-size:15px;">&#9776;</a></div>
     <nav class="shortcuts">
@@ -63,18 +64,19 @@
             <i class="fa fa-fw fa-home"></i>
           </a>
           </li>
-    <li data-nav-id="/api/" class="dd-item
-        ">
-      <div>
-      <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-    </li>
     <li data-nav-id="/basics/" class="dd-item haschildren
         ">
       <div>
       <a href="/basics/">Basics</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
+      <li data-nav-id="/basics/installation/" class="dd-item">
+        <div>
+          <a href="/basics/installation/">
+            Installation
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/basics/getting-started/" class="dd-item">
         <div>
           <a href="/basics/getting-started/">
@@ -97,10 +99,10 @@
       <a href="/usage/">Usage</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/usage/concurrency/" class="dd-item">
+      <li data-nav-id="/usage/target-nodes-spec/" class="dd-item">
         <div>
-          <a href="/usage/concurrency/">
-            Concurrency
+          <a href="/usage/target-nodes-spec/">
+            Target nodes spec
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -108,6 +110,27 @@
         <div>
           <a href="/usage/cron-spec/">
             Cron spec
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/clustering/" class="dd-item">
+        <div>
+          <a href="/usage/clustering/">
+            Clustering
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/concurrency/" class="dd-item">
+        <div>
+          <a href="/usage/concurrency/">
+            Concurrency
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/internals/" class="dd-item">
+        <div>
+          <a href="/usage/internals/">
+            Internals
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -161,13 +184,6 @@
     </li>
         </ul>
     </li>
-      <li data-nav-id="/usage/target-nodes-spec/" class="dd-item">
-        <div>
-          <a href="/usage/target-nodes-spec/">
-            Target nodes spec
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
       <li data-nav-id="/usage/ecs/" class="dd-item">
         <div>
           <a href="/usage/ecs/">
@@ -184,6 +200,13 @@
             <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
+      <li data-nav-id="/pro/quick-start/" class="dd-item">
+        <div>
+          <a href="/pro/quick-start/">
+            Quick start
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/pro/ecs/" class="dd-item">
         <div>
           <a href="/pro/ecs/">
@@ -209,6 +232,20 @@
         <div>
           <a href="/pro/commercial-faq/">
             Commercial FAQ
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/commercial-support/" class="dd-item">
+        <div>
+          <a href="/pro/commercial-support/">
+            Commercial Support
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/configuration/" class="dd-item">
+        <div>
+          <a href="/pro/configuration/">
+            Configuration
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -249,10 +286,10 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/internal/" class="dd-item
+    <li data-nav-id="/operations/" class="dd-item
         ">
       <div>
-      <a href="/internal/">Internals</a><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/operations/">Operations Guide</a><i class="fa fa-circle-thin read-icon"></i>
       </div>
     </li>
     <li data-nav-id="/products/" class="dd-item haschildren
@@ -269,6 +306,34 @@
         </div>
     </li>
         </ul>
+    </li>
+    <li data-nav-id="/intro/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/intro/">Intro</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/intro/dkron_vs_other_software/" class="dd-item">
+        <div>
+          <a href="/intro/dkron_vs_other_software/">
+            Dkron vs. Other Software
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/intro/license/" class="dd-item">
+        <div>
+          <a href="/intro/license/">
+            License
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/api/" class="dd-item
+        ">
+      <div>
+      <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
     </li>
 
 
@@ -294,28 +359,33 @@
       <center>Navigation : 
         <select onchange="javascript:location.href = this.value;">
           
-    <option value="/api/" >
-   API</option>
     <option value="/basics/" >
    Basics</option>
     <option value="/usage/" >
    Usage</option>
     <option value="/pro/" >
    Dkron Pro</option> 
+      <option value="/pro/quick-start/" >- Quick start</option>
       <option value="/pro/ecs/" >- AWS ECS Executor</option>
       <option value="/pro/auth/" >- Authorization</option>
       <option value="/pro/clustering/" >- Clustering</option>
       <option value="/pro/commercial-faq/" >- Commercial FAQ</option>
+      <option value="/pro/commercial-support/" >- Commercial Support</option>
+      <option value="/pro/configuration/" >- Configuration</option>
       <option value="/pro/docker/"  selected>- Docker executor</option>
       <option value="/pro/elasticsearch/" >- Elasticsearch processor</option>
       <option value="/pro/email/" >- Email processor</option>
       <option value="/pro/storage/" >- Embedded storage</option>
       <option value="/pro/encryption/" >- Encryption</option>
   
-    <option value="/internal/" >
-   Internals</option>
+    <option value="/operations/" >
+   Operations Guide</option>
     <option value="/products/" >
    Products</option>
+    <option value="/intro/" >
+   Intro</option>
+    <option value="/api/" >
+   API</option>
 
 
 
@@ -351,22 +421,19 @@
 <h2 id="configuration">Configuration</h2>
 
 <p>To run a docker job create a job config with the docker executor as in this example:</p>
-
-<pre><code class="language-json">  &quot;executor&quot;: &quot;docker&quot;,
-  &quot;executor_config&quot;: {
-    &quot;image&quot;: &quot;alpine&quot;, //docker image to use
-    &quot;volumes&quot;: &quot;/logs:/var/log/&quot;, //comma separated list of volume mappings
-    &quot;command&quot;: &quot;echo \&quot;Hello from dkron\&quot;&quot;, //command to pass to run on container
-    &quot;env&quot;: &quot;ENVIRONMENT=variable&quot; //environment variables to pass to the container
-  }
-</code></pre>
-
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">  <span style="color:#d88200">&#34;executor&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> <span style="color:#d88200">&#34;docker&#34;</span><span style="color:#960050;background-color:#1e0010">,</span>
+  <span style="color:#d88200">&#34;executor_config&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> <span style="color:#111">{</span>
+    <span style="color:#f92672">&#34;image&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;alpine&#34;</span><span style="color:#111">,</span> <span style="color:#960050;background-color:#1e0010">//docker</span> <span style="color:#960050;background-color:#1e0010">image</span> <span style="color:#960050;background-color:#1e0010">to</span> <span style="color:#960050;background-color:#1e0010">use</span>
+    <span style="color:#f92672">&#34;volumes&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;/logs:/var/log/&#34;</span><span style="color:#111">,</span> <span style="color:#960050;background-color:#1e0010">//comma</span> <span style="color:#960050;background-color:#1e0010">separated</span> <span style="color:#960050;background-color:#1e0010">list</span> <span style="color:#960050;background-color:#1e0010">of</span> <span style="color:#960050;background-color:#1e0010">volume</span> <span style="color:#960050;background-color:#1e0010">mappings</span>
+    <span style="color:#f92672">&#34;command&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;echo \&#34;Hello from dkron\&#34;&#34;</span><span style="color:#111">,</span> <span style="color:#960050;background-color:#1e0010">//command</span> <span style="color:#960050;background-color:#1e0010">to</span> <span style="color:#960050;background-color:#1e0010">pass</span> <span style="color:#960050;background-color:#1e0010">to</span> <span style="color:#960050;background-color:#1e0010">run</span> <span style="color:#960050;background-color:#1e0010">on</span> <span style="color:#960050;background-color:#1e0010">container</span>
+    <span style="color:#f92672">&#34;env&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;ENVIRONMENT=variable&#34;</span> <span style="color:#960050;background-color:#1e0010">//environment</span> <span style="color:#960050;background-color:#1e0010">variables</span> <span style="color:#960050;background-color:#1e0010">to</span> <span style="color:#960050;background-color:#1e0010">pass</span> <span style="color:#960050;background-color:#1e0010">to</span> <span style="color:#960050;background-color:#1e0010">the</span> <span style="color:#960050;background-color:#1e0010">container</span>
+  <span style="color:#111">}</span></code></pre></div>
 
     
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-prev" href="/pro/commercial-faq/" title="Commercial FAQ"> <i class="fa fa-chevron-left"></i><label>Commercial FAQ</label></a>
+<a class="nav nav-prev" href="/pro/configuration/" title="Configuration"> <i class="fa fa-chevron-left"></i><label>Configuration</label></a>
     <a class="nav nav-next" href="/pro/elasticsearch/" title="Elasticsearch processor" style="margin-right: 0px;"><label>Elasticsearch processor</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
@@ -380,12 +447,14 @@
 
     
 
-  
+    
 
+    
     <div class="github-link">
       <a href="https://github.com/victorcoder/dkron/edit/master/website/content/pro/docker.md" target="blank"><i class="fa fa-code-fork"></i>
         Improve this page</a>
     </div>
+    
   </div>
 
 
@@ -410,6 +479,7 @@
 
 
 <script src="/theme-flex/script.js"></script>
+
 
     
 

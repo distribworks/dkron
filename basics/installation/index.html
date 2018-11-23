@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dkron - Distributed job scheduling system</title>
+    
+      <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="revised" content="2018-11-23T22:00:26 CET">
+<title>Installation :: Dkron - Distributed job scheduling system</title>
+<link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
+<link href="/css/font-awesome.min.css" rel="stylesheet">
+<link href="/css/nucleus.css" rel="stylesheet">
+<link href="/theme-flex/style.css" rel="stylesheet">
+
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<script src="/js/jquery-2.x.min.js"></script>
+<script type="text/javascript">
+      var baseurl = "\/";
+</script>
+<link rel="stylesheet" href="/css/custom.css">
+
+
+    
+  </head>
+  <body data-url="/basics/installation/">
+    
+      <header>
+  <div class="logo">
+    
+	
+  
+    <div class="brand">
+  <a class="logo" href="/"><img src="/img/dkron-badge-bw.png"/> Dkron</a>
+</div>
+
+  
+
+
+  </div>
+  <div class="burger"><a href="javascript:void(0);" style="font-size:15px;">&#9776;</a></div>
+    <nav class="shortcuts">
+            <li class="" role="">
+                <a href="https://github.com/victorcoder/dkron"  rel="noopener">
+                  <i class='fa fa-github'></i> Github repo
+                </a>
+            </li>
+            <li class="" role="">
+                <a href="https://github.com/victorcoder/dkron/releases"  rel="noopener">
+                  <i class='fa fa-cloud-download'></i> <label>Download</label>
+                </a>
+            </li>
+            <li class="" role="">
+                <a href="/license"  rel="noopener">
+                  <i class='fa fa-bullhorn'></i> <label>License</label>
+                </a>
+            </li>
+    </nav>
+</header>
+<article>
+  <aside>
+    <ul class="menu">
+          <li data-nav-id="/" class="dd-item">
+          <a href="/">
+            <i class="fa fa-fw fa-home"></i>
+          </a>
+          </li>
+    <li data-nav-id="/basics/" class="dd-item parent haschildren
+        ">
+      <div>
+      <a href="/basics/">Basics</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/basics/installation/" class="dd-item active">
+        <div>
+          <a href="/basics/installation/">
+            Installation
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/basics/getting-started/" class="dd-item">
+        <div>
+          <a href="/basics/getting-started/">
+            Getting started
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/basics/configuration/" class="dd-item">
+        <div>
+          <a href="/basics/configuration/">
+            Configuration
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/usage/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/usage/">Usage</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/usage/target-nodes-spec/" class="dd-item">
+        <div>
+          <a href="/usage/target-nodes-spec/">
+            Target nodes spec
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/cron-spec/" class="dd-item">
+        <div>
+          <a href="/usage/cron-spec/">
+            Cron spec
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/clustering/" class="dd-item">
+        <div>
+          <a href="/usage/clustering/">
+            Clustering
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/concurrency/" class="dd-item">
+        <div>
+          <a href="/usage/concurrency/">
+            Concurrency
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/internals/" class="dd-item">
+        <div>
+          <a href="/usage/internals/">
+            Internals
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/chaining/" class="dd-item">
+        <div>
+          <a href="/usage/chaining/">
+            Job chaining
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/retries/" class="dd-item">
+        <div>
+          <a href="/usage/retries/">
+            Job retries
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/metrics/" class="dd-item">
+        <div>
+          <a href="/usage/metrics/">
+            Metrics
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+    <li data-nav-id="/usage/plugins/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/usage/plugins/">Plugins</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/usage/plugins/processors/" class="dd-item">
+        <div>
+          <a href="/usage/plugins/processors/">
+            Execution Processors
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/plugins/executors/" class="dd-item">
+        <div>
+          <a href="/usage/plugins/executors/">
+            Executors
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/plugins/develop/" class="dd-item">
+        <div>
+          <a href="/usage/plugins/develop/">
+            Developing plugins
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+      <li data-nav-id="/usage/ecs/" class="dd-item">
+        <div>
+          <a href="/usage/ecs/">
+            Use with AWS ECS
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/pro/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/pro/">Dkron Pro</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/pro/quick-start/" class="dd-item">
+        <div>
+          <a href="/pro/quick-start/">
+            Quick start
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/ecs/" class="dd-item">
+        <div>
+          <a href="/pro/ecs/">
+            AWS ECS Executor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/auth/" class="dd-item">
+        <div>
+          <a href="/pro/auth/">
+            Authorization
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/clustering/" class="dd-item">
+        <div>
+          <a href="/pro/clustering/">
+            Clustering
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/commercial-faq/" class="dd-item">
+        <div>
+          <a href="/pro/commercial-faq/">
+            Commercial FAQ
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/commercial-support/" class="dd-item">
+        <div>
+          <a href="/pro/commercial-support/">
+            Commercial Support
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/configuration/" class="dd-item">
+        <div>
+          <a href="/pro/configuration/">
+            Configuration
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/docker/" class="dd-item">
+        <div>
+          <a href="/pro/docker/">
+            Docker executor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/elasticsearch/" class="dd-item">
+        <div>
+          <a href="/pro/elasticsearch/">
+            Elasticsearch processor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/email/" class="dd-item">
+        <div>
+          <a href="/pro/email/">
+            Email processor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/storage/" class="dd-item">
+        <div>
+          <a href="/pro/storage/">
+            Embedded storage
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/encryption/" class="dd-item">
+        <div>
+          <a href="/pro/encryption/">
+            Encryption
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/operations/" class="dd-item
+        ">
+      <div>
+      <a href="/operations/">Operations Guide</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+    </li>
+    <li data-nav-id="/products/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/products/">Products</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/products/pro/" class="dd-item">
+        <div>
+          <a href="/products/pro/">
+            Dkron Pro
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/intro/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/intro/">Intro</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/intro/dkron_vs_other_software/" class="dd-item">
+        <div>
+          <a href="/intro/dkron_vs_other_software/">
+            Dkron vs. Other Software
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/intro/license/" class="dd-item">
+        <div>
+          <a href="/intro/license/">
+            License
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/api/" class="dd-item
+        ">
+      <div>
+      <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+    </li>
+
+
+
+
+    </ul>
+    <section><center>
+
+<a class="github-button" href="https://github.com/victorcoder/dkron" data-icon="octicon-star" data-show-count="true" aria-label="Star victorcoder/dkron on GitHub">Star</a>
+
+
+<a class="github-button" href="https://github.com/victorcoder/dkron/fork" data-icon="octicon-repo-forked" data-show-count="true" aria-label="Fork victorcoder/dkron on GitHub">Fork</a>
+
+</center>
+
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+
+    </section>
+  </aside>
+  <section class="page">
+    
+    <div class="nav-select">
+      <center>Navigation : 
+        <select onchange="javascript:location.href = this.value;">
+          
+    <option value="/basics/" >
+   Basics</option> 
+      <option value="/basics/installation/"  selected>- Installation</option>
+      <option value="/basics/getting-started/" >- Getting started</option>
+      <option value="/basics/configuration/" >- Configuration</option>
+  
+    <option value="/usage/" >
+   Usage</option>
+    <option value="/pro/" >
+   Dkron Pro</option>
+    <option value="/operations/" >
+   Operations Guide</option>
+    <option value="/products/" >
+   Products</option>
+    <option value="/intro/" >
+   Intro</option>
+    <option value="/api/" >
+   API</option>
+
+
+
+        </select>
+      </center>
+    </div>
+      <div>
+        <div class="searchbox">
+          <input data-search-input id="search-by" type="text" placeholder="Search...">
+        </div>
+        <script type="text/javascript" src="/js/lunr.min.js"></script>
+        <script type="text/javascript" src="/js/auto-complete.js"></script>
+        <link href="/css/auto-complete.css" rel="stylesheet">
+        <script type="text/javascript">
+          
+              var baseurl = "\/";
+          
+        </script>
+        <script type="text/javascript" src="/js/search.js"></script>
+      </div>
+    
+
+    <h1>Installation</h1>
+    
+    
+    
+    
+
+<h2 id="running-the-binary">Running the binary</h2>
+
+<p>Download the packaged archive for your platform from the <a href="https://github.com/victorcoder/dkron/releases">downloads page</a> and extract the package to a shared location in your drive, like /opt/local/bin.</p>
+
+<p>Run Dkron with default setting: <code>dkron agent --server</code></p>
+
+<p>Navigate to <a href="http://localhost:8080">http://localhost:8080</a></p>
+
+<div class="notices note" ><p>By default dkron will start with a file based, embedded KV store called BoltDB, it is functional for a single node demo but does not offers clustering or HA.</p>
+</div>
+
+
+<h2 id="installing-the-package">Installing the package</h2>
+
+<h3 id="debian-repo">Debian repo</h3>
+
+<p>APT repository:</p>
+
+<pre><code>deb [trusted=yes] https://apt.fury.io/victorcoder/ /
+</code></pre>
+
+<p>Then install: <code>sudo apt-get install dkron</code></p>
+
+<h3 id="yum-repo">YUM repo</h3>
+
+<p>YUM repository:</p>
+
+<pre><code>[dkron]
+name=Dkron Pro Private Repo
+baseurl=https://yum.fury.io/victorcoder/
+enabled=1
+gpgcheck=0
+</code></pre>
+
+<p>Then install: <code>sudo apt-get install dkron</code></p>
+
+<p>This will start Dkron as a system service and the place example configuration file under <code>/etc/dkron/dkron.yml</code></p>
+
+<h2 id="running-in-docker">Running in Docker</h2>
+
+<p>Dkron provides an official Docker image vi Dockerhub that can be used for deployment on any system running Docker.</p>
+
+<h3 id="launching-dkron-on-a-new-container">Launching Dkron on a new container</h3>
+
+<p>Here’s a quick one-liner to get you off the ground (please note, we recommend further configuration for production deployments below):</p>
+
+<pre><code>docker run -d -p 8080:8080 --name dkron dkron/dkron agent --server
+</code></pre>
+
+<p>This will launch a Dkron server on port 8080 by default. You can use docker logs -f dkron to follow the rest of the initialization progress. Once the Dkron startup completes you can access the app at localhost:8080</p>
+
+<p>Since Docker containers have their own ports and we just map them to the system ports as needed it’s easy to move Dkron onto a different system port if you wish. For example running Dkron on port 12345:</p>
+
+<pre><code>docker run -d -p 12345:8080 --name dkron dkron/dkron
+</code></pre>
+
+<h3 id="mounting-a-mapped-file-storage-volume">Mounting a mapped file storage volume</h3>
+
+<p>In its default configuration Dkron uses the local filesystem to run a BoltDB embedded database to store its own application data. The end result is that your Dkron application data will be on disk inside your container and lost if you ever remove the container.</p>
+
+<p>To persist your data outside of the container and make it available for use between container launches we can mount a local file path inside our container.</p>
+
+<pre><code>docker run -d -p 8080:8080 -v ~/dkron.db:/dkron.db --name dkron dkron/dkron agent --server
+</code></pre>
+
+<p>Now when you launch your container we are mounting that file from our local filesystem into the container.</p>
+
+
+    
+    
+        <div class="chevrons">
+    <div id="navigation">
+<a class="nav nav-prev" href="/basics/" title="Basics"> <i class="fa fa-chevron-left"></i><label>Basics</label></a>
+    <a class="nav nav-next" href="/basics/getting-started/" title="Getting started" style="margin-right: 0px;"><label>Getting started</label><i class="fa fa-chevron-right"></i></a></div>
+  </div>
+
+  </section>
+</article>
+
+<footer>
+
+<div class="footline">
+    
+
+    
+
+    
+
+    
+    <div class="github-link">
+      <a href="https://github.com/victorcoder/dkron/edit/master/website/content/basics/installation.md" target="blank"><i class="fa fa-code-fork"></i>
+        Improve this page</a>
+    </div>
+    
+  </div>
+
+
+	<div>
+
+
+  
+    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - victor@distrib.works</p>
+
+  
+
+
+
+	</div>
+</footer>
+
+<script src="/js/clipboard.min.js"></script>
+
+<link href="/css/featherlight.min.css" rel="stylesheet">
+<script src="/js/featherlight.min.js"></script>
+
+
+
+<script src="/theme-flex/script.js"></script>
+
+
+    
+
+    
+    
+
+    
+  </body>
+</html>

@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="generator" content="Hugo 0.38.2" />
+<meta name="revised" content="2018-11-23T22:00:27 CET">
 <title>AWS ECS Executor :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -35,6 +35,7 @@
 
   
 
+
   </div>
   <div class="burger"><a href="javascript:void(0);" style="font-size:15px;">&#9776;</a></div>
     <nav class="shortcuts">
@@ -63,18 +64,19 @@
             <i class="fa fa-fw fa-home"></i>
           </a>
           </li>
-    <li data-nav-id="/api/" class="dd-item
-        ">
-      <div>
-      <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-    </li>
     <li data-nav-id="/basics/" class="dd-item haschildren
         ">
       <div>
       <a href="/basics/">Basics</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
+      <li data-nav-id="/basics/installation/" class="dd-item">
+        <div>
+          <a href="/basics/installation/">
+            Installation
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/basics/getting-started/" class="dd-item">
         <div>
           <a href="/basics/getting-started/">
@@ -97,10 +99,10 @@
       <a href="/usage/">Usage</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/usage/concurrency/" class="dd-item">
+      <li data-nav-id="/usage/target-nodes-spec/" class="dd-item">
         <div>
-          <a href="/usage/concurrency/">
-            Concurrency
+          <a href="/usage/target-nodes-spec/">
+            Target nodes spec
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -108,6 +110,27 @@
         <div>
           <a href="/usage/cron-spec/">
             Cron spec
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/clustering/" class="dd-item">
+        <div>
+          <a href="/usage/clustering/">
+            Clustering
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/concurrency/" class="dd-item">
+        <div>
+          <a href="/usage/concurrency/">
+            Concurrency
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/internals/" class="dd-item">
+        <div>
+          <a href="/usage/internals/">
+            Internals
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -161,13 +184,6 @@
     </li>
         </ul>
     </li>
-      <li data-nav-id="/usage/target-nodes-spec/" class="dd-item">
-        <div>
-          <a href="/usage/target-nodes-spec/">
-            Target nodes spec
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
       <li data-nav-id="/usage/ecs/" class="dd-item">
         <div>
           <a href="/usage/ecs/">
@@ -184,6 +200,13 @@
             <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
+      <li data-nav-id="/pro/quick-start/" class="dd-item">
+        <div>
+          <a href="/pro/quick-start/">
+            Quick start
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/pro/ecs/" class="dd-item active">
         <div>
           <a href="/pro/ecs/">
@@ -209,6 +232,20 @@
         <div>
           <a href="/pro/commercial-faq/">
             Commercial FAQ
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/commercial-support/" class="dd-item">
+        <div>
+          <a href="/pro/commercial-support/">
+            Commercial Support
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/configuration/" class="dd-item">
+        <div>
+          <a href="/pro/configuration/">
+            Configuration
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -249,10 +286,10 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/internal/" class="dd-item
+    <li data-nav-id="/operations/" class="dd-item
         ">
       <div>
-      <a href="/internal/">Internals</a><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/operations/">Operations Guide</a><i class="fa fa-circle-thin read-icon"></i>
       </div>
     </li>
     <li data-nav-id="/products/" class="dd-item haschildren
@@ -269,6 +306,34 @@
         </div>
     </li>
         </ul>
+    </li>
+    <li data-nav-id="/intro/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/intro/">Intro</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/intro/dkron_vs_other_software/" class="dd-item">
+        <div>
+          <a href="/intro/dkron_vs_other_software/">
+            Dkron vs. Other Software
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/intro/license/" class="dd-item">
+        <div>
+          <a href="/intro/license/">
+            License
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/api/" class="dd-item
+        ">
+      <div>
+      <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
     </li>
 
 
@@ -294,28 +359,33 @@
       <center>Navigation : 
         <select onchange="javascript:location.href = this.value;">
           
-    <option value="/api/" >
-   API</option>
     <option value="/basics/" >
    Basics</option>
     <option value="/usage/" >
    Usage</option>
     <option value="/pro/" >
    Dkron Pro</option> 
+      <option value="/pro/quick-start/" >- Quick start</option>
       <option value="/pro/ecs/"  selected>- AWS ECS Executor</option>
       <option value="/pro/auth/" >- Authorization</option>
       <option value="/pro/clustering/" >- Clustering</option>
       <option value="/pro/commercial-faq/" >- Commercial FAQ</option>
+      <option value="/pro/commercial-support/" >- Commercial Support</option>
+      <option value="/pro/configuration/" >- Configuration</option>
       <option value="/pro/docker/" >- Docker executor</option>
       <option value="/pro/elasticsearch/" >- Elasticsearch processor</option>
       <option value="/pro/email/" >- Email processor</option>
       <option value="/pro/storage/" >- Embedded storage</option>
       <option value="/pro/encryption/" >- Encryption</option>
   
-    <option value="/internal/" >
-   Internals</option>
+    <option value="/operations/" >
+   Operations Guide</option>
     <option value="/products/" >
    Products</option>
+    <option value="/intro/" >
+   Intro</option>
+    <option value="/api/" >
+   API</option>
 
 
 
@@ -347,55 +417,52 @@
 <p>To configure a job to be run in ECS, the executor needs a JSON Task definition template or an already defined task in ECS.</p>
 
 <p>To allow the ECS Task runner to run tasks, the machine running Dkron needs to have the appropriate permissions configured in AWS IAM:</p>
-
-<pre><code class="language-json">{
-    &quot;Version&quot;: &quot;2012-10-17&quot;,
-    &quot;Statement&quot;: [
-        {
-            &quot;Sid&quot;: &quot;Stmt1460720941000&quot;,
-            &quot;Effect&quot;: &quot;Allow&quot;,
-            &quot;Action&quot;: [
-                &quot;ecs:RunTask&quot;,
-                &quot;ecs:DescribeTasks&quot;,
-                &quot;ecs:DescribeTaskDefinition&quot;,
-                &quot;logs:FilterLogEvents&quot;
-            ],
-            &quot;Resource&quot;: [
-                &quot;*&quot;
-            ]
-        }
-    ]
-}
-</code></pre>
-
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">{</span>
+    <span style="color:#f92672">&#34;Version&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;2012-10-17&#34;</span><span style="color:#111">,</span>
+    <span style="color:#f92672">&#34;Statement&#34;</span><span style="color:#111">:</span> <span style="color:#111">[</span>
+        <span style="color:#111">{</span>
+            <span style="color:#f92672">&#34;Sid&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;Stmt1460720941000&#34;</span><span style="color:#111">,</span>
+            <span style="color:#f92672">&#34;Effect&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;Allow&#34;</span><span style="color:#111">,</span>
+            <span style="color:#f92672">&#34;Action&#34;</span><span style="color:#111">:</span> <span style="color:#111">[</span>
+                <span style="color:#d88200">&#34;ecs:RunTask&#34;</span><span style="color:#111">,</span>
+                <span style="color:#d88200">&#34;ecs:DescribeTasks&#34;</span><span style="color:#111">,</span>
+                <span style="color:#d88200">&#34;ecs:DescribeTaskDefinition&#34;</span><span style="color:#111">,</span>
+                <span style="color:#d88200">&#34;logs:FilterLogEvents&#34;</span><span style="color:#111">,</span>
+                <span style="color:#d88200">&#34;logs:DescribeLogStreams&#34;</span><span style="color:#111">,</span>
+                <span style="color:#d88200">&#34;logs:PutLogEvents&#34;</span>
+            <span style="color:#111">],</span>
+            <span style="color:#f92672">&#34;Resource&#34;</span><span style="color:#111">:</span> <span style="color:#111">[</span>
+                <span style="color:#d88200">&#34;*&#34;</span>
+            <span style="color:#111">]</span>
+        <span style="color:#111">}</span>
+    <span style="color:#111">]</span>
+<span style="color:#111">}</span></code></pre></div>
 <p>To configure a job to be run with the ECS executor:</p>
 
 <p>Example using an existing taskdef</p>
-
-<pre><code class="language-json">  &quot;executor&quot;: &quot;ecs&quot;,
-  &quot;executor_config&quot;: {
-    &quot;taskdefName&quot;: &quot;mytaskdef-family&quot;,
-    &quot;region&quot;: &quot;eu-west-1&quot;,
-    &quot;cluster&quot;: &quot;default&quot;,
-    &quot;env&quot;: &quot;ENVIRONMENT=variable&quot;,
-    &quot;service&quot;: &quot;mycontainer&quot;,
-    &quot;overrides&quot;: &quot;echo,\&quot;Hello from dkron\&quot;&quot;
-  }
-</code></pre>
-
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">{</span>
+  <span style="color:#f92672">&#34;executor&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;ecs&#34;</span><span style="color:#111">,</span>
+  <span style="color:#f92672">&#34;executor_config&#34;</span><span style="color:#111">:</span> <span style="color:#111">{</span>
+    <span style="color:#f92672">&#34;taskdefName&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;mytaskdef-family&#34;</span><span style="color:#111">,</span>
+    <span style="color:#f92672">&#34;region&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;eu-west-1&#34;</span><span style="color:#111">,</span>
+    <span style="color:#f92672">&#34;cluster&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;default&#34;</span><span style="color:#111">,</span>
+    <span style="color:#f92672">&#34;env&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;ENVIRONMENT=variable&#34;</span><span style="color:#111">,</span>
+    <span style="color:#f92672">&#34;service&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;mycontainer&#34;</span><span style="color:#111">,</span>
+    <span style="color:#f92672">&#34;overrides&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;echo,\&#34;Hello from dkron\&#34;&#34;</span>
+  <span style="color:#111">}</span>
+<span style="color:#111">}</span></code></pre></div>
 <p>Example using a provided taskdef</p>
-
-<pre><code class="language-json">  &quot;executor&quot;: &quot;ecs&quot;,
-  &quot;executor_config&quot;: {
-    &quot;taskdefBody&quot;: &quot;{\&quot;containerDefinitions\&quot;: [{\&quot;essential\&quot;: true,\&quot;image\&quot;: \&quot;hello-world\&quot;,\&quot;memory\&quot;: 100,\&quot;name\&quot;: \&quot;hello-world\&quot;}],\&quot;family\&quot;: \&quot;helloworld\&quot;}&quot;,
-    &quot;region&quot;: &quot;eu-west-1&quot;,
-    &quot;cluster&quot;: &quot;default&quot;,
-    &quot;fargate&quot;: &quot;yes&quot;,
-    &quot;env&quot;: &quot;ENVIRONMENT=variable&quot;,
-    &quot;maxAttempts&quot;: 5000
-  }
-</code></pre>
-
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">{</span>
+  <span style="color:#f92672">&#34;executor&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;ecs&#34;</span><span style="color:#111">,</span>
+  <span style="color:#f92672">&#34;executor_config&#34;</span><span style="color:#111">:</span> <span style="color:#111">{</span>
+    <span style="color:#f92672">&#34;taskdefBody&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;{\&#34;containerDefinitions\&#34;: [{\&#34;essential\&#34;: true,\&#34;image\&#34;: \&#34;hello-world\&#34;,\&#34;memory\&#34;: 100,\&#34;name\&#34;: \&#34;hello-world\&#34;}],\&#34;family\&#34;: \&#34;helloworld\&#34;}&#34;</span><span style="color:#111">,</span>
+    <span style="color:#f92672">&#34;region&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;eu-west-1&#34;</span><span style="color:#111">,</span>
+    <span style="color:#f92672">&#34;cluster&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;default&#34;</span><span style="color:#111">,</span>
+    <span style="color:#f92672">&#34;fargate&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;yes&#34;</span><span style="color:#111">,</span>
+    <span style="color:#f92672">&#34;env&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;ENVIRONMENT=variable&#34;</span><span style="color:#111">,</span>
+    <span style="color:#f92672">&#34;maxAttempts&#34;</span><span style="color:#111">:</span> <span style="color:#ae81ff">5000</span>
+  <span style="color:#111">}</span>
+<span style="color:#111">}</span></code></pre></div>
 <p>This is the complete list of configuration parameters of the plugin:</p>
 
 <pre><code>taskdefBody
@@ -417,7 +484,7 @@ maxAttempts // Defaults to 2000, with 6s delay between it will wait up to 600s
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-prev" href="/pro/" title="Dkron Pro"> <i class="fa fa-chevron-left"></i><label>Dkron Pro</label></a>
+<a class="nav nav-prev" href="/pro/quick-start/" title="Quick start"> <i class="fa fa-chevron-left"></i><label>Quick start</label></a>
     <a class="nav nav-next" href="/pro/auth/" title="Authorization" style="margin-right: 0px;"><label>Authorization</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
@@ -431,12 +498,14 @@ maxAttempts // Defaults to 2000, with 6s delay between it will wait up to 600s
 
     
 
-  
+    
 
+    
     <div class="github-link">
       <a href="https://github.com/victorcoder/dkron/edit/master/website/content/pro/ecs.md" target="blank"><i class="fa fa-code-fork"></i>
         Improve this page</a>
     </div>
+    
   </div>
 
 
@@ -461,6 +530,7 @@ maxAttempts // Defaults to 2000, with 6s delay between it will wait up to 600s
 
 
 <script src="/theme-flex/script.js"></script>
+
 
     
 

@@ -11,6 +11,18 @@
     
     
     <item>
+      <title>Quick start</title>
+      <link>/pro/quick-start/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/pro/quick-start/</guid>
+      <description>Getting started Dkron Pro provides a clustering backend store out of the box based on etcd.
+To configure the storage a sample etcd.conf.yaml file is provided in /etc/dkron path. Editing the file, allows to configure several options for the embedded store.
+The location of the store configuration can be set in the command line or in the dkron config file /etc/dkron/dkron.yml using etcd-config-file-path parameter.
+Starting a single node Works out of the box, good for non HA installations.</description>
+    </item>
+    
+    <item>
       <title>AWS ECS Executor</title>
       <link>/pro/ecs/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -29,7 +41,7 @@ To allow the ECS Task runner to run tasks, the machine running Dkron needs to ha
       <guid>/pro/auth/</guid>
       <description>Dkron Pro has the ability to be configured to use HTTP basic auth.
 Authentication can be set using these parameters in the dkron config file:
-# dkron.yml username: foo password: bar  This will enable auth on the WebUI and for the API.</description>
+# dkron.yml username: foo password: bar This will enable auth on the WebUI and for the API.</description>
     </item>
     
     <item>
@@ -38,9 +50,10 @@ Authentication can be set using these parameters in the dkron config file:
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/pro/clustering/</guid>
-      <description>Configure a cluster Dkron can run in HA mode, avoiding SPOFs, this mode provides better scalability and better reliability for users that wants a high level of confidence in the cron jobs they need to run.
-To form a cluster, server nodes need to know the address of its peers as in the following example:
-# dkron.yml join: - 10.19.3.9 - 10.19.4.64 - 10.19.7.215  On the other side, the embedded store also needs to know its peers, it needs its own configuration as in the following example:</description>
+      <description>Configure a cluster First follow the Dkron clustering guide then you can continue with this guide.
+The embedded store also needs to know its peers, it needs its own configuration as in the following example:
+# etcd.conf.yaml # Initial cluster configuration for bootstrapping. initial-cluster: dkron1=https://10.19.3.9:2380,dkron2=https://10.19.4.64:2380,dkron3=https://10.19.7.215:2380 With this configuration Dkron Pro should start in cluster mode with embedded storage.
+For a more in detail guide of clustering with etcd follow this guide: https://github.</description>
     </item>
     
     <item>
@@ -56,6 +69,26 @@ What is the license?</description>
     </item>
     
     <item>
+      <title>Commercial Support</title>
+      <link>/pro/commercial-support/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/pro/commercial-support/</guid>
+      <description>Dkron offers only community support. Dkro Pro offers priority support via email.
+Priority Support Covers 1 incident per quarter, with a max response time of 2 working days. Scope is limited to Dkron and Dkron Pro features and APIs, not the application or infrastructure. For support, email support AT distrib.works. Please email using the same domain as the original license email or explain your connection to the licensed company.</description>
+    </item>
+    
+    <item>
+      <title>Configuration</title>
+      <link>/pro/configuration/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/pro/configuration/</guid>
+      <description> Configuration Dkron Pro uses the same parameters as Dkron OSS and add some extra parameters.
+Command line options  --etcd-config-file-path - Etcd node config --username - Authentication username --password - Authentication password --cert-file - Path to the client server TLS cert file --key-file - Path to the client server TLS key file --client-crl-file - Path to the client certificate revocation list file --trusted-ca-file - Path to the client server TLS trusted CA cert file --client-cert-auth - Enable client cert authentication --auto-tls - Client TLS using generated certificates  </description>
+    </item>
+    
+    <item>
       <title>Docker executor</title>
       <link>/pro/docker/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -64,7 +97,7 @@ What is the license?</description>
       <description> Docker executor can launch docker based cron jobs using the docker command of the target node.
 This executor needs a recent version of docker to be available and configured in the target node.
 Configuration To run a docker job create a job config with the docker executor as in this example:
-&amp;quot;executor&amp;quot;: &amp;quot;docker&amp;quot;, &amp;quot;executor_config&amp;quot;: { &amp;quot;image&amp;quot;: &amp;quot;alpine&amp;quot;, //docker image to use &amp;quot;volumes&amp;quot;: &amp;quot;/logs:/var/log/&amp;quot;, //comma separated list of volume mappings &amp;quot;command&amp;quot;: &amp;quot;echo \&amp;quot;Hello from dkron\&amp;quot;&amp;quot;, //command to pass to run on container &amp;quot;env&amp;quot;: &amp;quot;ENVIRONMENT=variable&amp;quot; //environment variables to pass to the container }  </description>
+&amp;#34;executor&amp;#34;: &amp;#34;docker&amp;#34;, &amp;#34;executor_config&amp;#34;: { &amp;#34;image&amp;#34;: &amp;#34;alpine&amp;#34;, //docker image to use &amp;#34;volumes&amp;#34;: &amp;#34;/logs:/var/log/&amp;#34;, //comma separated list of volume mappings &amp;#34;command&amp;#34;: &amp;#34;echo \&amp;#34;Hello from dkron\&amp;#34;&amp;#34;, //command to pass to run on container &amp;#34;env&amp;#34;: &amp;#34;ENVIRONMENT=variable&amp;#34; //environment variables to pass to the container }</description>
     </item>
     
     <item>
@@ -75,7 +108,7 @@ Configuration To run a docker job create a job config with the docker executor a
       <guid>/pro/elasticsearch/</guid>
       <description> The Elasticsearch processor can fordward execution logs to an ES cluster. It need an already available Elasticsearch installation that is visible in the same network of the target node.
 The output logs of the job execution will be stored in the indicated ES instace.
-Configuration &amp;quot;processors&amp;quot;: { &amp;quot;elasticsearch&amp;quot;: { &amp;quot;url&amp;quot;: &amp;quot;http://localhost:9200&amp;quot;, //comma separated list of Elasticsearch hosts urls (default: http://localhost:9200) &amp;quot;index&amp;quot;: &amp;quot;dkron_logs&amp;quot;, //desired index name (default: dkron_logs) &amp;quot;forward&amp;quot;: &amp;quot;false&amp;quot; //forward logs to the next processor (default: false) } }  </description>
+Configuration &amp;#34;processors&amp;#34;: { &amp;#34;elasticsearch&amp;#34;: { &amp;#34;url&amp;#34;: &amp;#34;http://localhost:9200&amp;#34;, //comma separated list of Elasticsearch hosts urls (default: http://localhost:9200) &amp;#34;index&amp;#34;: &amp;#34;dkron_logs&amp;#34;, //desired index name (default: dkron_logs) &amp;#34;forward&amp;#34;: &amp;#34;false&amp;#34; //forward logs to the next processor (default: false) } }</description>
     </item>
     
     <item>
@@ -87,9 +120,9 @@ Configuration &amp;quot;processors&amp;quot;: { &amp;quot;elasticsearch&amp;quot
       <description>The Email processor provides flexibility to job email notifications.
 Configuration of the email processor is stored in a file named dkron-processor-email.yml in the same locations as dkron.yml, and should include a list of providers, it can include any number of providers.
 Example:
-provider1: host: smtp.myprovider.com port: 25 username: myusername password: mypassword from: cron@mycompany.com subjectPrefix: &#39;[Staging] &#39;  Then configure each job with the following options:
+provider1: host: smtp.myprovider.com port: 25 username: myusername password: mypassword from: cron@mycompany.com subjectPrefix: &amp;#39;[Staging] &amp;#39; Then configure each job with the following options:
 Example:
-&amp;quot;processors&amp;quot;: { &amp;quot;email&amp;quot;: { &amp;quot;provider&amp;quot;: &amp;quot;provider1&amp;quot;, &amp;quot;emails&amp;quot;: &amp;quot;team@mycompany.</description>
+&amp;#34;processors&amp;#34;: { &amp;#34;email&amp;#34;: { &amp;#34;provider&amp;#34;: &amp;#34;provider1&amp;#34;, &amp;#34;emails&amp;#34;: &amp;#34;team@mycompany.</description>
     </item>
     
     <item>

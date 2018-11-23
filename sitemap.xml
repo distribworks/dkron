@@ -3,10 +3,6 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>/basics/getting-started/</loc>
-  </url>
-  
-  <url>
     <loc>/usage/plugins/processors/</loc>
   </url>
   
@@ -15,22 +11,55 @@
   </url>
   
   <url>
+    <loc>/basics/installation/</loc>
+  </url>
+  
+  <url>
+    <loc>/pro/quick-start/</loc>
+  </url>
+  
+  <url>
+    <loc>/usage/target-nodes-spec/</loc>
+  </url>
+  
+  <url>
+    <loc>/basics/</loc>
+  </url>
+  
+  <url>
+    <loc>/usage/cron-spec/</loc>
+  </url>
+  
+  <url>
+    <loc>/basics/getting-started/</loc>
+  </url>
+  
+  <url>
+    <loc>/usage/</loc>
+  </url>
+  
+  <url>
+    <loc>/pro/</loc>
+  </url>
+  
+  <url>
+    <loc>/operations/</loc>
+  </url>
+  
+  <url>
+    <loc>/products/</loc>
+  </url>
+  
+  <url>
+    <loc>/intro/</loc>
+  </url>
+  
+  <url>
     <loc>/usage/plugins/develop/</loc>
   </url>
   
   <url>
     <loc>/api/</loc>
-    <lastmod>2017-06-30T14:58:54+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/basics/</loc>
-    <lastmod>2017-06-30T14:58:54+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/usage/</loc>
-    <lastmod>2017-06-30T14:58:54+02:00</lastmod>
   </url>
   
   <url>
@@ -60,11 +89,15 @@
   </url>
   
   <url>
+    <loc>/usage/clustering/</loc>
+  </url>
+  
+  <url>
     <loc>/pro/commercial-faq/</loc>
   </url>
   
   <url>
-    <loc>/commercial-support/</loc>
+    <loc>/pro/commercial-support/</loc>
   </url>
   
   <url>
@@ -76,7 +109,7 @@
   </url>
   
   <url>
-    <loc>/usage/cron-spec/</loc>
+    <loc>/pro/configuration/</loc>
   </url>
   
   <url>
@@ -86,15 +119,11 @@
   </url>
   
   <url>
-    <loc>/pro/</loc>
-  </url>
-  
-  <url>
     <loc>/products/pro/</loc>
   </url>
   
   <url>
-    <loc>/dkron_vs_other_software/</loc>
+    <loc>/intro/dkron_vs_other_software/</loc>
   </url>
   
   <url>
@@ -118,7 +147,7 @@
   </url>
   
   <url>
-    <loc>/internal/</loc>
+    <loc>/usage/internals/</loc>
   </url>
   
   <url>
@@ -130,7 +159,7 @@
   </url>
   
   <url>
-    <loc>/license/</loc>
+    <loc>/intro/license/</loc>
   </url>
   
   <url>
@@ -142,16 +171,8 @@
   </url>
   
   <url>
-    <loc>/products/</loc>
-  </url>
-  
-  <url>
     <loc>/tags/</loc>
     <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/usage/target-nodes-spec/</loc>
   </url>
   
   <url>

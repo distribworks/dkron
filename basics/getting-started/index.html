@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="generator" content="Hugo 0.38.2" />
+<meta name="revised" content="2018-11-23T22:00:26 CET">
 <title>Getting started :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -35,6 +35,7 @@
 
   
 
+
   </div>
   <div class="burger"><a href="javascript:void(0);" style="font-size:15px;">&#9776;</a></div>
     <nav class="shortcuts">
@@ -63,12 +64,6 @@
             <i class="fa fa-fw fa-home"></i>
           </a>
           </li>
-    <li data-nav-id="/api/" class="dd-item
-        ">
-      <div>
-      <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-    </li>
     <li data-nav-id="/basics/" class="dd-item parent haschildren
         ">
       <div>
@@ -76,6 +71,13 @@
             <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
+      <li data-nav-id="/basics/installation/" class="dd-item">
+        <div>
+          <a href="/basics/installation/">
+            Installation
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/basics/getting-started/" class="dd-item active">
         <div>
           <a href="/basics/getting-started/">
@@ -98,10 +100,10 @@
       <a href="/usage/">Usage</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/usage/concurrency/" class="dd-item">
+      <li data-nav-id="/usage/target-nodes-spec/" class="dd-item">
         <div>
-          <a href="/usage/concurrency/">
-            Concurrency
+          <a href="/usage/target-nodes-spec/">
+            Target nodes spec
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -109,6 +111,27 @@
         <div>
           <a href="/usage/cron-spec/">
             Cron spec
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/clustering/" class="dd-item">
+        <div>
+          <a href="/usage/clustering/">
+            Clustering
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/concurrency/" class="dd-item">
+        <div>
+          <a href="/usage/concurrency/">
+            Concurrency
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/internals/" class="dd-item">
+        <div>
+          <a href="/usage/internals/">
+            Internals
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -162,13 +185,6 @@
     </li>
         </ul>
     </li>
-      <li data-nav-id="/usage/target-nodes-spec/" class="dd-item">
-        <div>
-          <a href="/usage/target-nodes-spec/">
-            Target nodes spec
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
       <li data-nav-id="/usage/ecs/" class="dd-item">
         <div>
           <a href="/usage/ecs/">
@@ -184,6 +200,13 @@
       <a href="/pro/">Dkron Pro</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
+      <li data-nav-id="/pro/quick-start/" class="dd-item">
+        <div>
+          <a href="/pro/quick-start/">
+            Quick start
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/pro/ecs/" class="dd-item">
         <div>
           <a href="/pro/ecs/">
@@ -209,6 +232,20 @@
         <div>
           <a href="/pro/commercial-faq/">
             Commercial FAQ
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/commercial-support/" class="dd-item">
+        <div>
+          <a href="/pro/commercial-support/">
+            Commercial Support
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/configuration/" class="dd-item">
+        <div>
+          <a href="/pro/configuration/">
+            Configuration
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -249,10 +286,10 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/internal/" class="dd-item
+    <li data-nav-id="/operations/" class="dd-item
         ">
       <div>
-      <a href="/internal/">Internals</a><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/operations/">Operations Guide</a><i class="fa fa-circle-thin read-icon"></i>
       </div>
     </li>
     <li data-nav-id="/products/" class="dd-item haschildren
@@ -269,6 +306,34 @@
         </div>
     </li>
         </ul>
+    </li>
+    <li data-nav-id="/intro/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/intro/">Intro</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/intro/dkron_vs_other_software/" class="dd-item">
+        <div>
+          <a href="/intro/dkron_vs_other_software/">
+            Dkron vs. Other Software
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/intro/license/" class="dd-item">
+        <div>
+          <a href="/intro/license/">
+            License
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/api/" class="dd-item
+        ">
+      <div>
+      <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
     </li>
 
 
@@ -294,10 +359,9 @@
       <center>Navigation : 
         <select onchange="javascript:location.href = this.value;">
           
-    <option value="/api/" >
-   API</option>
     <option value="/basics/" >
    Basics</option> 
+      <option value="/basics/installation/" >- Installation</option>
       <option value="/basics/getting-started/"  selected>- Getting started</option>
       <option value="/basics/configuration/" >- Configuration</option>
   
@@ -305,10 +369,14 @@
    Usage</option>
     <option value="/pro/" >
    Dkron Pro</option>
-    <option value="/internal/" >
-   Internals</option>
+    <option value="/operations/" >
+   Operations Guide</option>
     <option value="/products/" >
    Products</option>
+    <option value="/intro/" >
+   Intro</option>
+    <option value="/api/" >
+   API</option>
 
 
 
@@ -337,8 +405,6 @@
     
     
 
-<p>Welcome to the intro guide to dkron! This will explain how to setup dkron, how easy is to use it, what problems could it help you to solve, etc.</p>
-
 <h2 id="introduction">Introduction</h2>
 
 <p>Dkron nodes can work in two modes, agents or servers.</p>
@@ -357,11 +423,15 @@
 
 <p>All the execution responses will be gathered by the scheduler and stored in the database.</p>
 
-<h2 id="requirements">Requirements</h2>
+<h2 id="backend-stores">Backend stores</h2>
 
 <p>Dkron relies on the key-value store for data storage, an instance of the distributed store can be run in the same machines as Dkron or connect it to an already existing cluster.</p>
 
-<p>It is compatible with etcd, Consul, Zookeeper and Redis data stores. For instructions on how to install and configure any one of these systems refer to their official sites:</p>
+<div class="notices note" ><p>By default dkron will start with a file based, embedded KV store called BoltDB, it is functional for a single node demo but does not offers clustering or HA.</p>
+</div>
+
+
+<p>It is compatible with etcd, Consul, Zookeeper, BoltDB and partially with Redis. For instructions on how to install and configure any one of these systems refer to their official sites:</p>
 
 <ul>
 <li><a href="https://coreos.com/etcd/docs/latest/">etcd</a></li>
@@ -370,22 +440,13 @@
 <li><a href="https://redis.io/topics/quickstart">Redis</a></li>
 </ul>
 
-<h2 id="installation">Installation</h2>
-
-<h3 id="recommended-method">Recommended method</h3>
-
-<p>APT repository: <code>deb [trusted=yes] https://apt.fury.io/victorcoder/ /</code></p>
-
-<p>Unstable release: <code>sudo apt-get install dkron-unstable</code>
-Stable release: <code>sudo apt-get install dkron</code></p>
-
-<h3 id="other-methods">Other methods</h3>
-
-<p>Simply download the packaged archive for your platform from the <a href="https://github.com/victorcoder/dkron/releases">downloads page</a>, extract the package to a shared location in your drive, like <code>/opt/local</code> and run it from there.</p>
-
 <h2 id="configuration">Configuration</h2>
 
-<p>See the <a href="/basics/configuration">configuration section</a>.</p>
+<p>See the <a href="/basics/installation">installation</a>.</p>
+
+<h2 id="configuration-1">Configuration</h2>
+
+<p>See the <a href="/basics/configuration">configuration</a>.</p>
 
 <h2 id="usage">Usage</h2>
 
@@ -397,9 +458,11 @@ Stable release: <code>sudo apt-get install dkron</code></p>
 <li><code>6868</code> for RPC comunication between agents.</li>
 </ul>
 
-<p><strong>Be sure you have opened this ports (or the ones that you configured) in your firewall or AWS security groups.</strong></p>
+<div class="notices note" ><p>Be sure you have opened this ports (or the ones that you configured) in your firewall or AWS security groups.</p>
+</div>
 
-<p>By default dkron will try to use a local etcd server running in the same machine and in the default port. A different store can be specified setting <code>backend</code> and <code>backend-machines</code> flag in the config file, env variables or as a command line flag.</p>
+
+<p>By default dkron will use the embedded BoltDB KV store. A different store can be specified setting <code>backend</code> and <code>backend-machines</code> flag in the config file, env variables or as a command line flag.</p>
 
 <p>To start a Dkron server instance:</p>
 
@@ -408,34 +471,35 @@ Stable release: <code>sudo apt-get install dkron</code></p>
 
 <p>Time to add the first job:</p>
 
-<div class="notices note" ><p>This job will only run in just one dkron_server node due to the node count in the tag. Refer to the <a href="/usage/target-nodes-spec">target node spec</a> for details.</p>
+<div class="notices note" ><p>This job will only run in just one <code>dkron_server</code> node due to the node count in the tag. Refer to the <a href="/usage/target-nodes-spec">target node spec</a> for details.</p>
 </div>
 
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">curl localhost:8080/v1/jobs -XPOST -d <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">{</span>
+  <span style="color:#d88200">&#34;name&#34;</span>: <span style="color:#d88200">&#34;job1&#34;</span>,
+  <span style="color:#d88200">&#34;schedule&#34;</span>: <span style="color:#d88200">&#34;@every 10s&#34;</span>,
+  <span style="color:#d88200">&#34;timezone&#34;</span>: <span style="color:#d88200">&#34;Europe/Berlin&#34;</span>,
+  <span style="color:#d88200">&#34;owner&#34;</span>: <span style="color:#d88200">&#34;Platform Team&#34;</span>,
+  <span style="color:#d88200">&#34;owner_email&#34;</span>: <span style="color:#d88200">&#34;platform@example.com&#34;</span>,
+  <span style="color:#d88200">&#34;disabled&#34;</span>: false,
+  <span style="color:#d88200">&#34;tags&#34;</span>: <span style="color:#f92672">{</span>
+    <span style="color:#d88200">&#34;dkron_server&#34;</span>: <span style="color:#d88200">&#34;true:1&#34;</span>
+  <span style="color:#f92672">}</span>,
+  <span style="color:#d88200">&#34;concurrency&#34;</span>: <span style="color:#d88200">&#34;allow&#34;</span>,
+  <span style="color:#d88200">&#34;executor&#34;</span>: <span style="color:#d88200">&#34;shell&#34;</span>,
+  <span style="color:#d88200">&#34;executor_config&#34;</span>: <span style="color:#f92672">{</span>
+    <span style="color:#d88200">&#34;command&#34;</span>: <span style="color:#d88200">&#34;date&#34;</span>
+  <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span><span style="color:#d88200">`</span></code></pre></div>
+<p>That&rsquo;s it!</p>
 
-<pre><code class="language-bash">curl localhost:8080/v1/jobs -XPOST -d '{
-  &quot;name&quot;: &quot;job1&quot;,
-  &quot;schedule&quot;: &quot;@every 10s&quot;,
-  &quot;timezone&quot;: &quot;Europe/Berlin&quot;,
-  &quot;owner&quot;: &quot;Platform Team&quot;,
-  &quot;owner_email&quot;: &quot;platform@example.com&quot;,
-  &quot;disabled&quot;: false,
-  &quot;tags&quot;: {
-    &quot;dkron_server&quot;: &quot;true:1&quot;
-  },
-  &quot;concurrency&quot;: &quot;allow&quot;,
-  &quot;executor&quot;: &quot;shell&quot;,
-  &quot;executor_config&quot;: {
-    &quot;command&quot;: &quot;date&quot;
-  }
-}`
-</code></pre>
+<h4 id="to-start-configuring-an-ha-installation-of-dkron-follow-the-clustering-guide-usage-clustering">To start configuring an HA installation of Dkron follow the <a href="/usage/clustering">clustering guide</a></h4>
 
 
     
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-prev" href="/basics/" title="Basics"> <i class="fa fa-chevron-left"></i><label>Basics</label></a>
+<a class="nav nav-prev" href="/basics/installation/" title="Installation"> <i class="fa fa-chevron-left"></i><label>Installation</label></a>
     <a class="nav nav-next" href="/basics/configuration/" title="Configuration" style="margin-right: 0px;"><label>Configuration</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
@@ -449,12 +513,14 @@ Stable release: <code>sudo apt-get install dkron</code></p>
 
     
 
-  
+    
 
+    
     <div class="github-link">
       <a href="https://github.com/victorcoder/dkron/edit/master/website/content/basics/getting-started.md" target="blank"><i class="fa fa-code-fork"></i>
         Improve this page</a>
     </div>
+    
   </div>
 
 
@@ -479,6 +545,7 @@ Stable release: <code>sudo apt-get install dkron</code></p>
 
 
 <script src="/theme-flex/script.js"></script>
+
 
     
 
