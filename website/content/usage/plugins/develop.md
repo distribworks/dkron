@@ -15,7 +15,7 @@ Create a new Go project somewhere in your `$GOPATH`. If you're a GitHub user, we
 
 With the directory made, create a main.go file. This project will be a binary so the package is "main":
 
-```
+```go
 package main
 
 import (

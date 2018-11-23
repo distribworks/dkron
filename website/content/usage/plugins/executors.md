@@ -16,9 +16,11 @@ New plugins will be added, or you can create new ones, to perform different task
 Add this to a job definition to use the `shell` executor:
 
 ```json
-"executor": "shell",
-"executor_config": {
-  "command": "echo \"Hello from dkron\""
+{
+  "executor": "shell",
+  "executor_config": {
+    "command": "echo \"Hello from dkron\""
+  }
 }
 ```
 

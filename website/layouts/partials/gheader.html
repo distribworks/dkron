@@ -1,40 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        
-        <meta name="author" content="Victor Castell">
-        <link rel="canonical" href="http://dkron.io/">
-        <link rel="shortcut icon" href="{{"img/favicon.ico" | relURL}}">
 
-	      <title>{{ .Title }} :: {{ .Site.Title }}</title>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <link href="{{"css/bootstrap-custom.min.css" | relURL}}" rel="stylesheet">
-        <link href="{{"css/font-awesome-4.0.3.css" | relURL}}" rel="stylesheet">
-        <link href="{{"css/app.css" | relURL}}" rel="stylesheet">
+    <meta name="author" content="Victor Castell">
+    <link rel="canonical" href="http://dkron.io/">
+    <link rel="shortcut icon" href="{{"img/favicon.ico" | relURL}}">
 
-        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!--[if lt IE 9]>
+    <title>{{ .Title }} :: {{ .Site.Title }}</title>
+
+    <link href="{{"css/bootstrap-custom.min.css" | relURL}}" rel="stylesheet">
+    <link href="{{"css/font-awesome-4.0.3.css" | relURL}}" rel="stylesheet">
+    <link href="{{"css/app.css" | relURL}}" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
             <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
             <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
         <![endif]-->
 
-        
-        <script>
-            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-            ga('create', 'UA-571371-14', 'dkron.io');
-            ga('send', 'pageview');
-        </script>
-        
-    </head>
-    <body class="page-home ">
 
-      <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+        ga('create', 'UA-571371-14', 'dkron.io');
+        ga('send', 'pageview');
+    </script>
+
+</head>
+
+<body class="page-home ">
+
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
         <div class="container">
 
             <!-- Collapsed navigation -->
@@ -49,7 +53,7 @@
 
                 <!-- Main title -->
                 <div class="brand">
-                  <a class="logo" href="."><img src="/img/dkron-badge-bw.png"/> Dkron</a>
+                    <a class="logo" href="."><img src="/img/dkron-badge-bw.png" /> Dkron</a>
                 </div>
             </div>
 
@@ -60,29 +64,30 @@
                     <li class="active">
                         <a href="{{"/" | relURL}}">Home</a>
                     </li>
-                    <li class="active">
-                      <a href="{{"products/pro" | relURL}}">Pro</a>
-                    </li>
-                    <li >
-                        <a href="{{"basics/getting-started" | relURL}}">Intro</a>
+                    <li>
+                        <a href="{{"intro/" | relURL}}">Intro</a>
                     </li>
                     <li>
-                        <a href="{{"basics/" | relURL}}">Docs</a>
+                        <a href="{{"basics/" | relURL}}">Documentation</a>
+                    </li>
+                    <li class="active">
+                        <a href="{{"products/pro" | relURL}}">Dkron Pro</a>
                     </li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
                         <ul class="dropdown-menu">
-                            <li >
-                                <a href="{{"dkron_vs_other_software/" | relURL}}">Dkron vs other software</a>
+                            <li>
+                                <a href="{{"intro/dkron_vs_other_software/" | relURL}}">Dkron vs other software</a>
                             </li>
-                            <li >
-                                <a href="{{"license/" | relURL}}">License</a>
+                            <li>
+                                <a href="{{"intro/license/" | relURL}}">License</a>
                             </li>
-                            <li >
-                                <a href="https://github.com/victorcoder/dkron/blob/master/COMM-LICENSE">Commercial License</a>
+                            <li>
+                                <a href="https://github.com/victorcoder/dkron/blob/master/COMM-LICENSE">Commercial
+                                    License</a>
                             </li>
-                            <li >
-                                <a href="{{"commercial-support/" | relURL}}">Commercial Support</a>
+                            <li>
+                                <a href="{{"pro/commercial-support/" | relURL}}">Commercial Support</a>
                             </li>
                         </ul>
                     </li>
@@ -92,14 +97,14 @@
                 <ul class="nav navbar-nav navbar-right">
                     <li>
                         <a href="https://twitter.com/dkronio">
-                          <i class="fa fa-twitter fa-lg"></i>
-                          Follow
+                            <i class="fa fa-twitter fa-lg"></i>
+                            Follow
                         </a>
                     </li>
                     <li>
                         <a href="https://github.com/victorcoder/dkron/releases">
-                          <i class="fa fa-cloud-download fa-lg"></i>
-                          Download
+                            <i class="fa fa-cloud-download fa-lg"></i>
+                            Download
                         </a>
                     </li>
                     <li>
@@ -108,8 +113,9 @@
                             GitHub
                         </a>
                     </li>
-                    <a class="github-button" href="https://github.com/victorcoder/dkron" data-icon="octicon-star" data-show-count="true" aria-label="Star victorcoder/dkron on GitHub">Star</a>
+                    <a class="github-button" href="https://github.com/victorcoder/dkron" data-icon="octicon-star"
+                        data-show-count="true" aria-label="Star victorcoder/dkron on GitHub">Star</a>
                 </ul>
             </div>
         </div>
-      </div>
+    </div>

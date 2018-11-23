@@ -1,6 +1,6 @@
 ---
 title: Target nodes spec
-toc: true
+weight: 10
 ---
 
 ## Target nodes spec

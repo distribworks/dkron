@@ -41,7 +41,9 @@ paths:
           collectionFormat: multi
           items:
             type: string
-          description: Filter jobs by tags
+          description: |
+            Filter jobs by tags. Use this param to return only the desired jobs. Use this format ?tags[foo]=bar&tags[baz]=bar
+            this will only return the jobs tagged with the specified tags.
       operationId: getJobs
       tags:
         - jobs

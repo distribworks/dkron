@@ -19,7 +19,9 @@ To allow the ECS Task runner to run tasks, the machine running Dkron needs to ha
                 "ecs:RunTask",
                 "ecs:DescribeTasks",
                 "ecs:DescribeTaskDefinition",
-                "logs:FilterLogEvents"
+                "logs:FilterLogEvents",
+                "logs:DescribeLogStreams",
+                "logs:PutLogEvents"
             ],
             "Resource": [
                 "*"
@@ -34,6 +36,7 @@ To configure a job to be run with the ECS executor:
 Example using an existing taskdef
 
 ```json
+{
   "executor": "ecs",
   "executor_config": {
     "taskdefName": "mytaskdef-family",
@@ -43,11 +46,13 @@ Example using an existing taskdef
     "service": "mycontainer",
     "overrides": "echo,\"Hello from dkron\""
   }
+}
 ```
 
 Example using a provided taskdef
 
 ```json
+{
   "executor": "ecs",
   "executor_config": {
     "taskdefBody": "{\"containerDefinitions\": [{\"essential\": true,\"image\": \"hello-world\",\"memory\": 100,\"name\": \"hello-world\"}],\"family\": \"helloworld\"}",
@@ -57,6 +62,7 @@ Example using a provided taskdef
     "env": "ENVIRONMENT=variable",
     "maxAttempts": 5000
   }
+}
 ```
 
 This is the complete list of configuration parameters of the plugin:

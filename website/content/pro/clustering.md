@@ -4,19 +4,9 @@ title: Clustering
 
 ## Configure a cluster
 
-Dkron can run in HA mode, avoiding SPOFs, this mode provides better scalability and better reliability for users that wants a high level of confidence in the cron jobs they need to run.
+First follow the Dkron [clustering guide](/usage/clustering) then you can continue with this guide.
 
-To form a cluster, server nodes need to know the address of its peers as in the following example:
-
-```yaml
-# dkron.yml
-join:
-- 10.19.3.9
-- 10.19.4.64
-- 10.19.7.215
-```
-
-On the other side, the embedded store also needs to know its peers, it needs its own configuration as in the following example:
+The embedded store also needs to know its peers, it needs its own configuration as in the following example:
 
 ```yaml
 # etcd.conf.yaml
@@ -25,3 +15,5 @@ initial-cluster: dkron1=https://10.19.3.9:2380,dkron2=https://10.19.4.64:2380,dk
 ```
 
 With this configuration Dkron Pro should start in cluster mode with embedded storage.
+
+For a more in detail guide of clustering with etcd follow this guide: https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/clustering.md

@@ -3,6 +3,8 @@ languageCode = "en-us"
 title = "Dkron - Distributed job scheduling system"
 theme = "docdock"
 MetaDataFormat = "yaml"
+pygmentsCodeFences = true
+pygmentsStyle = "monokailight"
 
 [params]
 editURL = "https://github.com/victorcoder/dkron/edit/master/website/content/"
