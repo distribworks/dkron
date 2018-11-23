@@ -9,6 +9,7 @@ The output logs of the job execution will be stored in the indicated ES instace.
 ## Configuration
 
 ```json
+{
   "processors": {
     "elasticsearch": {
       "url": "http://localhost:9200", //comma separated list of Elasticsearch hosts urls (default: http://localhost:9200)
@@ -16,4 +17,5 @@ The output logs of the job execution will be stored in the indicated ES instace.
       "forward": "false" //forward logs to the next processor (default: false)
     }
   }
+}
 ```

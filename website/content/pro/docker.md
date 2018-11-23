@@ -11,6 +11,7 @@ This executor needs a recent version of docker to be available and configured in
 To run a docker job create a job config with the docker executor as in this example:
 
 ```json
+{
   "executor": "docker",
   "executor_config": {
     "image": "alpine", //docker image to use
@@ -18,4 +19,5 @@ To run a docker job create a job config with the docker executor as in this exam
     "command": "echo \"Hello from dkron\"", //command to pass to run on container
     "env": "ENVIRONMENT=variable" //environment variables to pass to the container
   }
+}
 ```

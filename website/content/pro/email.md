@@ -22,6 +22,7 @@ Then configure each job with the following options:
 Example:
 
 ```json
+{
   "processors": {
     "email": {
       "provider": "provider1",
@@ -29,6 +30,7 @@ Example:
       "onSuccess": true
     }
   }
+}
 ```
 
 By default the email procesor doesn't send emails on job success, the `onSuccess` parameter, enables it, like in the previous example.
