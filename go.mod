@@ -10,6 +10,7 @@ require (
 	github.com/coreos/bbolt v1.3.0 // indirect
 	github.com/coreos/etcd v3.2.9+incompatible // indirect
 	github.com/coreos/go-semver v0.2.0 // indirect
+	github.com/cpuguy83/go-md2man v1.0.8 // indirect
 	github.com/fsnotify/fsnotify v1.4.2 // indirect
 	github.com/gin-contrib/multitemplate v0.0.0-20170922032617-bbc6daf6024b
 	github.com/gin-contrib/sse v0.0.0-20170109093832-22d885f9ecc7 // indirect
@@ -56,8 +57,10 @@ require (
 	github.com/pelletier/go-toml v1.0.1 // indirect
 	github.com/pkg/errors v0.8.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/russross/blackfriday v0.0.0-20180804101149-46c73eb196ba
 	github.com/samuel/go-zookeeper v0.0.0-20170815201139-e6b59f6144be // indirect
 	github.com/sean-/seed v0.0.0-20170313163322-e2103e2c3529 // indirect
+	github.com/shurcooL/sanitized_anchor_name v0.0.0-20170918181015-86672fcb3f95 // indirect
 	github.com/sirupsen/logrus v1.0.3
 	github.com/spf13/afero v0.0.0-20171008182726-e67d870304c4 // indirect
 	github.com/spf13/cast v1.1.0 // indirect
