@@ -6,7 +6,7 @@
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="revised" content="2018-11-26T21:23:21 CET">
-<title>Use with AWS ECS :: Dkron - Distributed job scheduling system</title>
+<title>dkron :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
 <link href="/css/nucleus.css" rel="stylesheet">
@@ -22,7 +22,7 @@
 
     
   </head>
-  <body data-url="/usage/ecs/">
+  <body data-url="/cli/dkron/">
     
       <header>
   <div class="logo">
@@ -93,11 +93,10 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/usage/" class="dd-item parent haschildren
+    <li data-nav-id="/usage/" class="dd-item haschildren
         ">
       <div>
-      <a href="/usage/">Usage</a>
-            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/usage/">Usage</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
       <li data-nav-id="/usage/target-nodes-spec/" class="dd-item">
@@ -185,7 +184,7 @@
     </li>
         </ul>
     </li>
-      <li data-nav-id="/usage/ecs/" class="dd-item active">
+      <li data-nav-id="/usage/ecs/" class="dd-item">
         <div>
           <a href="/usage/ecs/">
             Use with AWS ECS
@@ -323,13 +322,14 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/cli/" class="dd-item haschildren
+    <li data-nav-id="/cli/" class="dd-item parent haschildren
         ">
       <div>
-      <a href="/cli/">CLI</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/cli/">CLI</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/cli/dkron/" class="dd-item">
+      <li data-nav-id="/cli/dkron/" class="dd-item active">
         <div>
           <a href="/cli/dkron/">
             dkron
@@ -399,20 +399,7 @@
     <option value="/basics/" >
    Basics</option>
     <option value="/usage/" >
-   Usage</option> 
-      <option value="/usage/target-nodes-spec/" >- Target nodes spec</option>
-      <option value="/usage/cron-spec/" >- Cron spec</option>
-      <option value="/usage/clustering/" >- Clustering</option>
-      <option value="/usage/concurrency/" >- Concurrency</option>
-      <option value="/usage/internals/" >- Internals</option>
-      <option value="/usage/chaining/" >- Job chaining</option>
-      <option value="/usage/retries/" >- Job retries</option>
-      <option value="/usage/metrics/" >- Metrics</option>
-    <option value="/usage/plugins/" >
-  - 
-   Plugins</option>
-      <option value="/usage/ecs/"  selected>- Use with AWS ECS</option>
-  
+   Usage</option>
     <option value="/pro/" >
    Dkron Pro</option>
     <option value="/products/" >
@@ -420,7 +407,13 @@
     <option value="/intro/" >
    Intro</option>
     <option value="/cli/" >
-   CLI</option>
+   CLI</option> 
+      <option value="/cli/dkron/"  selected>- dkron</option>
+      <option value="/cli/dkron_agent/" >- dkron agent</option>
+      <option value="/cli/dkron_doc/" >- dkron doc</option>
+      <option value="/cli/dkron_keygen/" >- dkron keygen</option>
+      <option value="/cli/dkron_version/" >- dkron version</option>
+  
     <option value="/api/" >
    API</option>
 
@@ -445,44 +438,46 @@
       </div>
     
 
-    <h1>Use with AWS ECS</h1>
+    <h1>dkron</h1>
     
     
     
     
 
-<div class="notices note" ><p><a href="/products/pro">Dkron Pro</a> comes with a <a href="/pro/ecs">native ECS executor</a> out of the box.</p>
-</div>
+<h2 id="dkron">dkron</h2>
 
+<p>Open source distributed job scheduling system</p>
 
-<h2 id="use-with-amazon-ecs">Use with Amazon ECS</h2>
+<h3 id="synopsis">Synopsis</h3>
 
-<p>To use Dkron to schedule jobs that run in containers, a wrapper ECS script is needed.</p>
+<p>Dkron is a system service that runs scheduled jobs at given intervals or times,
+just like the cron unix service but distributed in several machines in a cluster.
+If a machine fails (the leader), a follower will take over and keep running the scheduled jobs without human intervention.</p>
 
-<p>Install the following snippet in the node that will run the call to ECS</p>
+<h3 id="options">Options</h3>
 
-<script src="https://gist.github.com/victorcoder/3ac4aae9279d7c68c486fecccc2546cc.js"></script>
+<pre><code>      --config string   config file path
+  -h, --help            help for dkron
+</code></pre>
 
-<h3 id="prerequisites">Prerequisites</h3>
-
-<p>The node that will run the call to ECS will need to have installed</p>
+<h3 id="see-also">SEE ALSO</h3>
 
 <ul>
-<li>AWS cli</li>
-<li>jq</li>
+<li><a href="/cli/dkron_agent/">dkron agent</a>   - Start a dkron agent</li>
+<li><a href="/cli/dkron_doc/">dkron doc</a>   - Generate Markdown documentation for the Dkron CLI.</li>
+<li><a href="/cli/dkron_keygen/">dkron keygen</a>     - Generates a new encryption key</li>
+<li><a href="/cli/dkron_version/">dkron version</a>   - Show version</li>
 </ul>
 
-<h3 id="example">Example</h3>
-
-<p><code>ecs-run --cluster cron --task-definition cron-taskdef --container-name cron --region us-east-1 --command &quot;rake foo&quot;</code></p>
+<h6 id="auto-generated-by-spf13-cobra-on-26-nov-2018">Auto generated by spf13/cobra on 26-Nov-2018</h6>
 
 
     
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-prev" href="/usage/plugins/develop/" title="Developing plugins"> <i class="fa fa-chevron-left"></i><label>Developing plugins</label></a>
-    <a class="nav nav-next" href="/pro/" title="Dkron Pro" style="margin-right: 0px;"><label>Dkron Pro</label><i class="fa fa-chevron-right"></i></a></div>
+<a class="nav nav-prev" href="/cli/" title="CLI"> <i class="fa fa-chevron-left"></i><label>CLI</label></a>
+    <a class="nav nav-next" href="/cli/dkron_agent/" title="dkron agent" style="margin-right: 0px;"><label>dkron agent</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>
@@ -496,10 +491,14 @@
     
 
     
+    <div class="date">
+        <i class='fa fa-calendar'></i> Last update on 26/11/2018
+    </div>
+    
 
     
     <div class="github-link">
-      <a href="https://github.com/victorcoder/dkron/edit/master/website/content/usage/ecs.md" target="blank"><i class="fa fa-code-fork"></i>
+      <a href="https://github.com/victorcoder/dkron/edit/master/website/content/cli/dkron.md" target="blank"><i class="fa fa-code-fork"></i>
         Improve this page</a>
     </div>
     

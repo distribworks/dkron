@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2018-11-23T22:10:40 CET">
+<meta name="revised" content="2018-11-26T21:23:21 CET">
 <title>Target nodes spec :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -323,6 +323,49 @@
     </li>
         </ul>
     </li>
+    <li data-nav-id="/cli/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/cli/">CLI</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/cli/dkron/" class="dd-item">
+        <div>
+          <a href="/cli/dkron/">
+            dkron
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/cli/dkron_agent/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_agent/">
+            dkron agent
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/cli/dkron_doc/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_doc/">
+            dkron doc
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/cli/dkron_keygen/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_keygen/">
+            dkron keygen
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/cli/dkron_version/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_version/">
+            dkron version
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
     <li data-nav-id="/api/" class="dd-item
         ">
       <div>
@@ -376,6 +419,8 @@
    Products</option>
     <option value="/intro/" >
    Intro</option>
+    <option value="/cli/" >
+   CLI</option>
     <option value="/api/" >
    API</option>
 
@@ -417,28 +462,40 @@
 <h3 id="examples">Examples:</h3>
 
 <p>Target all nodes with a tag:</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">{</span>
+    <span style="color:#f92672">&#34;name&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;job_name&#34;</span><span style="color:#111">,</span>
+    <span style="color:#f92672">&#34;command&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;/bin/true&#34;</span><span style="color:#111">,</span>
+    <span style="color:#f92672">&#34;schedule&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;@every 2m&#34;</span><span style="color:#111">,</span>
+    <span style="color:#f92672">&#34;tags&#34;</span><span style="color:#111">:</span> <span style="color:#111">{</span>
+        <span style="color:#f92672">&#34;role&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;web&#34;</span>
+    <span style="color:#111">}</span>
+<span style="color:#111">}</span></code></pre></div>
+<link href="/mermaid/mermaid.css" type="text/css" rel="stylesheet"/>
+<script defer src="/mermaid/mermaid.js">mermaid.initialize({startOnLoad:true});</script>
+<div class="mermaid" align="left" >
+graph LR;
+    J("Job tags: #quot;role#quot;: #quot;web#quot;") -->|Run Job|N1["Node1 tags: #quot;role#quot;: #quot;web#quot;"]
+    J -->|Run Job|N2["Node2 tags: #quot;role#quot;: #quot;web#quot;"]
+    J -->|Run Job|N3["Node2 tags: #quot;role#quot;: #quot;web#quot;"]
+</div>
 
-<pre><code>{
-    &quot;name&quot;: &quot;job_name&quot;,
-    &quot;command&quot;: &quot;/bin/true&quot;,
-    &quot;schedule&quot;: &quot;@every 2m&quot;,
-    &quot;tags&quot;: {
-        &quot;role&quot;: &quot;web&quot;
-    }
-}
-</code></pre>
-
-<p>Target only two nodes of a group of nodes with a tag:</p>
-
-<pre><code>{
-    &quot;name&quot;: &quot;job_name&quot;,
-    &quot;command&quot;: &quot;/bin/true&quot;,
-    &quot;schedule&quot;: &quot;@every 2m&quot;,
-    &quot;tags&quot;: {
-        &quot;role&quot;: &quot;web:2&quot;
-    }
-}
-</code></pre>
+<p>Target only one nodes of a group of nodes with a tag:</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">{</span>
+    <span style="color:#f92672">&#34;name&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;job_name&#34;</span><span style="color:#111">,</span>
+    <span style="color:#f92672">&#34;command&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;/bin/true&#34;</span><span style="color:#111">,</span>
+    <span style="color:#f92672">&#34;schedule&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;@every 2m&#34;</span><span style="color:#111">,</span>
+    <span style="color:#f92672">&#34;tags&#34;</span><span style="color:#111">:</span> <span style="color:#111">{</span>
+        <span style="color:#f92672">&#34;role&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;web:1&#34;</span>
+    <span style="color:#111">}</span>
+<span style="color:#111">}</span></code></pre></div>
+<link href="/mermaid/mermaid.css" type="text/css" rel="stylesheet"/>
+<script defer src="/mermaid/mermaid.js">mermaid.initialize({startOnLoad:true});</script>
+<div class="mermaid" align="left" >
+graph LR;
+    J("Job tags: #quot;role#quot;: #quot;web:1#quot;") -->|Run Job|N1["Node1 tags: #quot;role#quot;: #quot;web#quot;"]
+    J -.- N2["Node2 tags: #quot;role#quot;: #quot;web#quot;"]
+    J -.- N3["Node2 tags: #quot;role#quot;: #quot;web#quot;"]
+</div>
 
 <p>Dkron will try to run the job in the amount of nodes indicated by that count having that tag.</p>
 

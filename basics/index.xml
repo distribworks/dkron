@@ -41,9 +41,8 @@ The main distinction is that servers order job executions, can be used to schedu
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/basics/configuration/</guid>
-      <description>Settings for dkron can be specified in three ways: Using a config/dkron.json config file, using env variables starting with DKRON_ or using command line arguments.
-Command line options  --node-name - Name of the node, must be unique in the cluster. By default this is the hostname of the machine.
- --bind-addr - The address that dkron will bind to for communication with other dkron nodes. By default this is &amp;ldquo;0.</description>
+      <description>Configuration sources Settings can be specified in three ways (in order of precedence):
+ Command line arguments. Environment variables starting with DKRON_ dkron.json config file  Config file example # Dkron example configuration file # backend: etcd # backend-machine: 127.0.0.1:2379 # server: false # log-level: debug # tags: # role: web # datacenter: east # keyspace: dkron # encrypt: a-valid-key-generated-with-dkron-keygen # join: # - 10.0.0.1 # - 10.0.0.2 # - 10.</description>
     </item>
     
   </channel>

@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2018-11-23T22:10:40 CET">
+<meta name="revised" content="2018-11-26T21:23:21 CET">
 <title>Usage :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -323,6 +323,49 @@
     </li>
         </ul>
     </li>
+    <li data-nav-id="/cli/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/cli/">CLI</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/cli/dkron/" class="dd-item">
+        <div>
+          <a href="/cli/dkron/">
+            dkron
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/cli/dkron_agent/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_agent/">
+            dkron agent
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/cli/dkron_doc/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_doc/">
+            dkron doc
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/cli/dkron_keygen/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_keygen/">
+            dkron keygen
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/cli/dkron_version/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_version/">
+            dkron version
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
     <li data-nav-id="/api/" class="dd-item
         ">
       <div>
@@ -376,6 +419,8 @@
    Products</option>
     <option value="/intro/" >
    Intro</option>
+    <option value="/cli/" >
+   CLI</option>
     <option value="/api/" >
    API</option>
 
@@ -414,7 +459,7 @@
 <p>Target nodes spec You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run.
 The target node syntax: [tag-value]:[count]
  Examples: Target all nodes with a tag:
-{ &quot;name&quot;: &quot;job_name&quot;, &quot;command&quot;: &quot;/bin/true&quot;, &quot;schedule&quot;: &quot;@every 2m&quot;, &quot;tags&quot;: { &quot;role&quot;: &quot;web&quot; } }  Target only two nodes of a group of nodes with a tag:</p>
+{ &#34;name&#34;: &#34;job_name&#34;, &#34;command&#34;: &#34;/bin/true&#34;, &#34;schedule&#34;: &#34;@every 2m&#34;, &#34;tags&#34;: { &#34;role&#34;: &#34;web&#34; } } mermaid.initialize({startOnLoad:true}); graph LR; J("Job tags: #quot;role#quot;: #quot;web#quot;") --|Run Job|N1["</p>
 </span>
 
 <span><card>

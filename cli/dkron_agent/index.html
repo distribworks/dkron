@@ -6,7 +6,7 @@
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="revised" content="2018-11-26T21:23:21 CET">
-<title>Use with AWS ECS :: Dkron - Distributed job scheduling system</title>
+<title>dkron agent :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
 <link href="/css/nucleus.css" rel="stylesheet">
@@ -22,7 +22,7 @@
 
     
   </head>
-  <body data-url="/usage/ecs/">
+  <body data-url="/cli/dkron_agent/">
     
       <header>
   <div class="logo">
@@ -93,11 +93,10 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/usage/" class="dd-item parent haschildren
+    <li data-nav-id="/usage/" class="dd-item haschildren
         ">
       <div>
-      <a href="/usage/">Usage</a>
-            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/usage/">Usage</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
       <li data-nav-id="/usage/target-nodes-spec/" class="dd-item">
@@ -185,7 +184,7 @@
     </li>
         </ul>
     </li>
-      <li data-nav-id="/usage/ecs/" class="dd-item active">
+      <li data-nav-id="/usage/ecs/" class="dd-item">
         <div>
           <a href="/usage/ecs/">
             Use with AWS ECS
@@ -323,10 +322,11 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/cli/" class="dd-item haschildren
+    <li data-nav-id="/cli/" class="dd-item parent haschildren
         ">
       <div>
-      <a href="/cli/">CLI</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/cli/">CLI</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
       <li data-nav-id="/cli/dkron/" class="dd-item">
@@ -336,7 +336,7 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/cli/dkron_agent/" class="dd-item">
+      <li data-nav-id="/cli/dkron_agent/" class="dd-item active">
         <div>
           <a href="/cli/dkron_agent/">
             dkron agent
@@ -399,20 +399,7 @@
     <option value="/basics/" >
    Basics</option>
     <option value="/usage/" >
-   Usage</option> 
-      <option value="/usage/target-nodes-spec/" >- Target nodes spec</option>
-      <option value="/usage/cron-spec/" >- Cron spec</option>
-      <option value="/usage/clustering/" >- Clustering</option>
-      <option value="/usage/concurrency/" >- Concurrency</option>
-      <option value="/usage/internals/" >- Internals</option>
-      <option value="/usage/chaining/" >- Job chaining</option>
-      <option value="/usage/retries/" >- Job retries</option>
-      <option value="/usage/metrics/" >- Metrics</option>
-    <option value="/usage/plugins/" >
-  - 
-   Plugins</option>
-      <option value="/usage/ecs/"  selected>- Use with AWS ECS</option>
-  
+   Usage</option>
     <option value="/pro/" >
    Dkron Pro</option>
     <option value="/products/" >
@@ -420,7 +407,13 @@
     <option value="/intro/" >
    Intro</option>
     <option value="/cli/" >
-   CLI</option>
+   CLI</option> 
+      <option value="/cli/dkron/" >- dkron</option>
+      <option value="/cli/dkron_agent/"  selected>- dkron agent</option>
+      <option value="/cli/dkron_doc/" >- dkron doc</option>
+      <option value="/cli/dkron_keygen/" >- dkron keygen</option>
+      <option value="/cli/dkron_version/" >- dkron version</option>
+  
     <option value="/api/" >
    API</option>
 
@@ -445,44 +438,77 @@
       </div>
     
 
-    <h1>Use with AWS ECS</h1>
+    <h1>dkron agent</h1>
     
     
     
     
 
-<div class="notices note" ><p><a href="/products/pro">Dkron Pro</a> comes with a <a href="/pro/ecs">native ECS executor</a> out of the box.</p>
-</div>
+<h2 id="dkron-agent">dkron agent</h2>
 
+<p>Start a dkron agent</p>
 
-<h2 id="use-with-amazon-ecs">Use with Amazon ECS</h2>
+<h3 id="synopsis">Synopsis</h3>
 
-<p>To use Dkron to schedule jobs that run in containers, a wrapper ECS script is needed.</p>
+<p>Start a dkron agent that schedule jobs, listen for executions and run executors.
+It also runs a web UI.</p>
 
-<p>Install the following snippet in the node that will run the call to ECS</p>
+<pre><code>dkron agent [flags]
+</code></pre>
 
-<script src="https://gist.github.com/victorcoder/3ac4aae9279d7c68c486fecccc2546cc.js"></script>
+<h3 id="options">Options</h3>
 
-<h3 id="prerequisites">Prerequisites</h3>
+<pre><code>      --advertise-addr string        Address used to advertise to other nodes in the cluster. By default, the bind address is advertised.
+      --advertise-rpc-port int       Use the value of rpc-port by default.
+      --backend string               store backend (default &quot;boltdb&quot;)
+      --backend-machine strings      store backend machines addresses (default [./dkron.db])
+      --bind-addr string             Address to bind network listeners to. (default &quot;0.0.0.0:8946&quot;)
+      --dog-statsd-addr string       DataDog Agent address.
+      --dog-statsd-tags strings      Datadog tags, specified as key:value
+      --encrypt string               Key for encrypting network traffic. Must be a base64-encoded 16-byte key.
+  -h, --help                         help for agent
+      --http-addr string             Address to bind the UI web server to. Only used when server. (default &quot;:8080&quot;)
+      --join strings                 An initial agent to join with. This flag can be specified multiple times.
+      --keyspace string              The keyspace to use. A prefix under all data is stored for this instance. (default &quot;dkron&quot;)
+      --log-level string             Log level (debug, info, warn, error, fatal, panic), defaults to info (default &quot;info&quot;)
+      --mail-from string             From email address to use.
+      --mail-host string             Mail server host address to use for notifications.
+      --mail-password string         Mail server password to use.
+      --mail-payload string          Notification mail payload.
+      --mail-port string             Mail server port.
+      --mail-subject-prefix string   Notification mail subject prefix. (default &quot;[Dkron]&quot;)
+      --mail-username string         Mail server username used for authentication.
+      --node-name string             Name of this node. Must be unique in the cluster. (default &quot;pris.local&quot;)
+      --profile string               Profile is used to control the timing profiles used. The default if not provided is lan. (default &quot;lan&quot;)
+      --rpc-port int                 RPC Port used to communicate with clients. Only used when server. The RPC IP Address will be the same as the bind address. (default 6868)
+      --server                       This node is running in server mode.
+      --statsd-addr string           Statsd Address.
+      --tag strings                  Tag can be specified multiple times to attach multiple key/value tag pairs to the given node. Specified as key=value
+      --webhook-header strings       Headers to use when calling the webhook URL. Can be specified multiple times.
+      --webhook-payload string       Body of the POST request to send on webhook call.
+      --webhook-url string           Webhook url to call for notifications.
+</code></pre>
 
-<p>The node that will run the call to ECS will need to have installed</p>
+<h3 id="options-inherited-from-parent-commands">Options inherited from parent commands</h3>
+
+<pre><code>      --config string   config file path
+</code></pre>
+
+<h3 id="see-also">SEE ALSO</h3>
 
 <ul>
-<li>AWS cli</li>
-<li>jq</li>
+<li><a href="/cli/dkron/">dkron</a>   - Open source distributed job scheduling system</li>
 </ul>
 
-<h3 id="example">Example</h3>
-
-<p><code>ecs-run --cluster cron --task-definition cron-taskdef --container-name cron --region us-east-1 --command &quot;rake foo&quot;</code></p>
+<h6 id="auto-generated-by-spf13-cobra-on-26-nov-2018">Auto generated by spf13/cobra on 26-Nov-2018</h6>
 
 
     
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-prev" href="/usage/plugins/develop/" title="Developing plugins"> <i class="fa fa-chevron-left"></i><label>Developing plugins</label></a>
-    <a class="nav nav-next" href="/pro/" title="Dkron Pro" style="margin-right: 0px;"><label>Dkron Pro</label><i class="fa fa-chevron-right"></i></a></div>
+<a class="nav nav-prev" href="/cli/dkron/" title="dkron"> <i class="fa fa-chevron-left"></i><label>dkron</label></a>
+    <a class="nav nav-next" href="/cli/dkron_doc/" title="dkron doc" style="margin-right: 0px;"><label>dkron doc</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>
@@ -496,10 +522,14 @@
     
 
     
+    <div class="date">
+        <i class='fa fa-calendar'></i> Last update on 26/11/2018
+    </div>
+    
 
     
     <div class="github-link">
-      <a href="https://github.com/victorcoder/dkron/edit/master/website/content/usage/ecs.md" target="blank"><i class="fa fa-code-fork"></i>
+      <a href="https://github.com/victorcoder/dkron/edit/master/website/content/cli/dkron_agent.md" target="blank"><i class="fa fa-code-fork"></i>
         Improve this page</a>
     </div>
     

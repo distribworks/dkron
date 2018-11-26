@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2018-11-23T22:10:40 CET">
+<meta name="revised" content="2018-11-26T21:23:21 CET">
 <title>Configuration :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -323,6 +323,49 @@
     </li>
         </ul>
     </li>
+    <li data-nav-id="/cli/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/cli/">CLI</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/cli/dkron/" class="dd-item">
+        <div>
+          <a href="/cli/dkron/">
+            dkron
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/cli/dkron_agent/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_agent/">
+            dkron agent
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/cli/dkron_doc/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_doc/">
+            dkron doc
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/cli/dkron_keygen/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_keygen/">
+            dkron keygen
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/cli/dkron_version/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_version/">
+            dkron version
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
     <li data-nav-id="/api/" class="dd-item
         ">
       <div>
@@ -367,6 +410,8 @@
    Products</option>
     <option value="/intro/" >
    Intro</option>
+    <option value="/cli/" >
+   CLI</option>
     <option value="/api/" >
    API</option>
 
@@ -397,55 +442,17 @@
     
     
 
-<p>Settings for dkron can be specified in three ways: Using a <code>config/dkron.json</code> config file, using env variables starting with <code>DKRON_</code> or using command line arguments.</p>
+<h2 id="configuration-sources">Configuration sources</h2>
 
-<h2 id="command-line-options">Command line options</h2>
+<p>Settings can be specified in three ways (in order of precedence):</p>
 
-<ul>
-<li><p><code>--node-name</code> - Name of the node, must be unique in the cluster. By default this is the hostname of the machine.</p></li>
+<ol>
+<li>Command line arguments.</li>
+<li>Environment variables starting with <strong><code>DKRON_</code></strong></li>
+<li><strong><code>dkron.json</code></strong> config file</li>
+</ol>
 
-<li><p><code>--bind-addr</code> - The address that dkron will bind to for communication with other dkron nodes. By default this is &ldquo;0.0.0.0:8946&rdquo;. dkron nodes may have different ports. If a join is specified without a port, we default to locally configured port. dkron uses both TCP and UDP and use the same port for both, so if you have any firewalls be sure to allow both protocols. If this configuration value is changed and no port is specified, the default of &ldquo;8946&rdquo; will be used.</p></li>
-
-<li><p><code>--join</code> - Address of another agent to join upon starting up. This can be specified multiple times to specify multiple agents to join. If Dkron is unable to join with any of the specified addresses, agent startup will fail. By default, the agent won&rsquo;t join any nodes when it starts up.</p></li>
-
-<li><p><code>--advertise-addr</code> - The advertise flag is used to change the address that we advertise to other nodes in the cluster. By default, the bind address is advertised. However, in some cases (specifically NAT traversal), there may be a routable address that cannot be bound to. This flag enables gossiping a different address to support this. If this address is not routable, the node will be in a constant flapping state, as other nodes will treat the non-routability as a failure.</p></li>
-
-<li><p><code>--http-addr</code> - The address where the web UI will be binded. By default <code>:8080</code></p></li>
-
-<li><p><code>--backend</code> - Backend storage to use, etcd, etcdv3, consul, zk (zookeeper) or redis. The default is etcd.</p></li>
-
-<li><p><code>--backend-machine</code> - Backend storage servers addresses to connect to. This flag can be specified multiple times. By default <code>127.0.0.1:2379</code></p></li>
-
-<li><p><code>--tag</code> - The tag flag is used to associate a new key/value pair with the agent. The tags are gossiped and can be used to provide additional information such as roles, ports, and configuration values to other nodes. Multiple tags can be specified per agent. There is a byte size limit for the maximum number of tags, but in practice dozens of tags may be used. Tags can be changed during a config reload.</p></li>
-
-<li><p><code>--server</code> - If this agent is a dkron server, just need to be present. Absent by default.</p></li>
-
-<li><p><code>--keyspace</code> - Keyspace to use for the store. Allows to run different instances using the same storage cluster. <code>dkron</code> by default.</p></li>
-
-<li><p><code>--encrypt</code> - Key for encrypting network traffic. Must be a base64-encoded 16-byte key.</p></li>
-
-<li><p><code>--mail-host</code> - Mail server host address to use for notifications.</p></li>
-
-<li><p><code>--mail-port</code> - Mail server port.</p></li>
-
-<li><p><code>--mail-username</code> - Mail server username used for authentication.</p></li>
-
-<li><p><code>--mail-password</code> - Mail server password to use.</p></li>
-
-<li><p><code>--mail-from</code> - From email address to use.</p></li>
-
-<li><p><code>--webhook-url</code> - Webhook url to call for notifications.</p></li>
-
-<li><p><code>--webhook-payload</code> - Body of the POST request to send on webhook call.</p></li>
-
-<li><p><code>--webhook-header</code> - Headers to use when calling the webhook URL. Can be specified multiple times.</p></li>
-
-<li><p><code>--log-level</code> - Set the log level (debug, info, warn, error, fatal, panic). Defaults to &ldquo;info&rdquo;</p></li>
-
-<li><p><code>--rpc-port</code> - The port that Dkron will use to bind for the agent&rsquo;s RPC server, defaults to <code>6868</code>. The RPC address will be the bind address.</p></li>
-</ul>
-
-<h1 id="config-file-example">Config file example</h1>
+<h3 id="config-file-example">Config file example</h3>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#75715e"># Dkron example configuration file</span>
 <span style="color:#75715e"># backend: etcd</span>
 <span style="color:#75715e"># backend-machine: 127.0.0.1:2379</span>
@@ -469,6 +476,15 @@
 <span style="color:#75715e"># mail-password&#34;: mailpassword</span>
 <span style="color:#75715e"># mail-from&#34;: cron@example.com</span>
 <span style="color:#75715e"># mail-subject_prefix: [Dkron]</span></code></pre></div>
+<h3 id="see-also">SEE ALSO</h3>
+
+<ul>
+<li><a href="/cli/dkron_agent/">dkron agent</a>   - Start a dkron agent</li>
+<li><a href="/cli/dkron_doc/">dkron doc</a>   - Generate Markdown documentation for the Dkron CLI.</li>
+<li><a href="/cli/dkron_keygen/">dkron keygen</a>     - Generates a new encryption key</li>
+<li><a href="/cli/dkron_version/">dkron version</a>   - Show version</li>
+</ul>
+
 
     
     

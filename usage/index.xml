@@ -19,7 +19,7 @@
       <description>Target nodes spec You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run.
 The target node syntax: [tag-value]:[count]
  Examples: Target all nodes with a tag:
-{ &amp;quot;name&amp;quot;: &amp;quot;job_name&amp;quot;, &amp;quot;command&amp;quot;: &amp;quot;/bin/true&amp;quot;, &amp;quot;schedule&amp;quot;: &amp;quot;@every 2m&amp;quot;, &amp;quot;tags&amp;quot;: { &amp;quot;role&amp;quot;: &amp;quot;web&amp;quot; } }  Target only two nodes of a group of nodes with a tag:</description>
+{ &amp;#34;name&amp;#34;: &amp;#34;job_name&amp;#34;, &amp;#34;command&amp;#34;: &amp;#34;/bin/true&amp;#34;, &amp;#34;schedule&amp;#34;: &amp;#34;@every 2m&amp;#34;, &amp;#34;tags&amp;#34;: { &amp;#34;role&amp;#34;: &amp;#34;web&amp;#34; } } mermaid.initialize({startOnLoad:true}); graph LR; J(&#34;Job tags: #quot;role#quot;: #quot;web#quot;&#34;) --|Run Job|N1[&#34;</description>
     </item>
     
     <item>
