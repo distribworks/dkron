@@ -100,7 +100,7 @@ func getPluginName(file string) (string, bool) {
 	}
 
 	// This cleans off the .exe for windows plugins
-	name := strings.TrimRight(parts[2], ".exe")
+	name := strings.TrimSuffix(parts[2], ".exe")
 	return name, true
 }
 
