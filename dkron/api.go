@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/abronan/valkeyrie/store"
+	"github.com/gin-contrib/expvar"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
@@ -42,7 +43,6 @@ func (h *HTTPTransport) ServeHTTP() {
 	h.agent.DashboardRoutes(rootPath)
 
 	h.Engine.Use(h.MetaMiddleware())
-	//r.GET("/debug/vars", expvar.Handler())
 
 	log.WithFields(logrus.Fields{
 		"address": h.agent.config.HTTPAddr,
@@ -53,6 +53,15 @@ func (h *HTTPTransport) ServeHTTP() {
 
 // APIRoutes registers the api routes on the gin RouterGroup.
 func (h *HTTPTransport) APIRoutes(r *gin.RouterGroup) {
+	r.GET("/debug/vars", expvar.Handler())
+
+	h.Engine.GET("/health", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"status": "healthy",
+		})
+	})
+
+	r.GET("/v1", h.indexHandler)
 	v1 := r.Group("/v1")
 	v1.GET("/", h.indexHandler)
 	v1.GET("/members", h.membersHandler)
