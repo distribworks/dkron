@@ -12,6 +12,7 @@ require (
 	github.com/coreos/go-semver v0.2.0 // indirect
 	github.com/cpuguy83/go-md2man v1.0.8 // indirect
 	github.com/fsnotify/fsnotify v1.4.2 // indirect
+	github.com/gin-contrib/expvar v0.0.0-20180827025536-251166f58ff2
 	github.com/gin-contrib/multitemplate v0.0.0-20170922032617-bbc6daf6024b
 	github.com/gin-contrib/sse v0.0.0-20170109093832-22d885f9ecc7 // indirect
 	github.com/gin-gonic/gin v1.3.0

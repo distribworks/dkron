@@ -22,6 +22,8 @@ github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/fsnotify/fsnotify v1.4.2 h1:v5tKwtf2hNhBV24eNYfQ5UmvFOGlOCmRqk7/P1olxtk=
 github.com/fsnotify/fsnotify v1.4.2/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
+github.com/gin-contrib/expvar v0.0.0-20180827025536-251166f58ff2 h1:O4zBnkbwY6lDsYKI43nnd9oXOSfvQwQxFGBhq3YQP1Y=
+github.com/gin-contrib/expvar v0.0.0-20180827025536-251166f58ff2/go.mod h1:mO3bltIbG/imM6BHifhDpdYHn+yLFGjKzjSebsjoe2M=
 github.com/gin-contrib/multitemplate v0.0.0-20170922032617-bbc6daf6024b h1:D/1/eV4p38Ohv2z9qrDiS9QIobfBJ4u4vtXFoFn/jDU=
 github.com/gin-contrib/multitemplate v0.0.0-20170922032617-bbc6daf6024b/go.mod h1:62qM8p4crGvNKE413gTzn4eMFin1VOJfMDWMRzHdvqM=
 github.com/gin-contrib/sse v0.0.0-20170109093832-22d885f9ecc7 h1:AzN37oI0cOS+cougNAV9szl6CVoj2RYwzS3DpUQNtlY=
