@@ -34,7 +34,7 @@ paths:
     get:
       description: |
         List jobs.
-       parameters:
+        parameters:
         - in: query
           name: tags
           type: array
