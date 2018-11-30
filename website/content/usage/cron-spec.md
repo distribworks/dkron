@@ -107,5 +107,5 @@ provided by the Go time package (http://www.golang.org/pkg/time).
 Be aware that jobs scheduled during daylight-savings leap-ahead transitions will
 not be run!
 
-If you specify `timezone` the job will be schduled taking into account daylight-savings 
+If you specify `timezone` the job will be scheduled taking into account daylight-savings 
 and leap-ahead transitions, running the job in the actual time in the specified time zone.
