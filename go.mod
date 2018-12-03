@@ -1,6 +1,7 @@
 module github.com/victorcoder/dkron
 
 require (
+	cloud.google.com/go v0.33.1 // indirect
 	github.com/BurntSushi/toml v0.3.0 // indirect
 	github.com/DataDog/datadog-go v0.0.0-20170427165718-0ddda6bee211 // indirect
 	github.com/abronan/leadership v0.0.0-20171113102752-76df1b7fa384
@@ -33,11 +34,11 @@ require (
 	github.com/hashicorp/consul v1.0.0 // indirect
 	github.com/hashicorp/errwrap v0.0.0-20141028054710-7554cd9344ce // indirect
 	github.com/hashicorp/go-cleanhttp v0.0.0-20170211013415-3573b8b52aa7 // indirect
-	github.com/hashicorp/go-hclog v0.0.0-20171005151751-ca137eb4b438 // indirect
+	github.com/hashicorp/go-hclog v0.0.0-20181001195459-61d530d6c27f // indirect
 	github.com/hashicorp/go-immutable-radix v0.0.0-20170725221215-8aac27015308 // indirect
 	github.com/hashicorp/go-msgpack v0.0.0-20150518234257-fa3f63826f7c // indirect
 	github.com/hashicorp/go-multierror v0.0.0-20170622060955-83588e72410a // indirect
-	github.com/hashicorp/go-plugin v0.0.0-20180216154416-baa83ead6ff9
+	github.com/hashicorp/go-plugin v0.0.0-20181030172320-54b6ff97d818
 	github.com/hashicorp/go-rootcerts v0.0.0-20160503143440-6bb64b370b90 // indirect
 	github.com/hashicorp/go-sockaddr v0.0.0-20170627023441-41949a141473 // indirect
 	github.com/hashicorp/go-syslog v0.0.0-20170829120034-326bf4a7f709
@@ -47,7 +48,7 @@ require (
 	github.com/hashicorp/memberlist v0.0.0-20180209033901-2288bf30e9c8
 	github.com/hashicorp/serf v0.8.1
 	github.com/hashicorp/uuid v0.0.0-20160311170451-ebb0a03e909c // indirect
-	github.com/hashicorp/yamux v0.0.0-20171005170212-f5742cb6b856 // indirect
+	github.com/hashicorp/yamux v0.0.0-20181012175058-2f1d1f20f75d // indirect
 	github.com/hpcloud/tail v1.0.0 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/jonboulle/clockwork v0.1.0 // indirect
@@ -61,11 +62,10 @@ require (
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
 	github.com/miekg/dns v0.0.0-20171018123232-b02ebddc7f2b // indirect
 	github.com/mitchellh/go-homedir v0.0.0-20161203194507-b8bc1bf76747 // indirect
-	github.com/mitchellh/go-testing-interface v0.0.0-20171004221916-a61a99592b77 // indirect
+	github.com/mitchellh/go-testing-interface v1.0.0 // indirect
 	github.com/mitchellh/mapstructure v0.0.0-20171017171808-06020f85339e // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect
-	github.com/oklog/run v1.0.0 // indirect
 	github.com/onsi/ginkgo v1.6.0 // indirect
 	github.com/onsi/gomega v1.4.1 // indirect
 	github.com/pascaldekloe/goe v0.0.0-20180627143212-57f6aae5913c // indirect

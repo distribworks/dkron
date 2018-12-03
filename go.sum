@@ -77,6 +77,9 @@ github.com/hashicorp/go-cleanhttp v0.0.0-20170211013415-3573b8b52aa7 h1:67fHcS+i
 github.com/hashicorp/go-cleanhttp v0.0.0-20170211013415-3573b8b52aa7/go.mod h1:JpRdi6/HCYpAwUzNwuwqhbovhLtngrth3wmdIIUrZ80=
 github.com/hashicorp/go-hclog v0.0.0-20171005151751-ca137eb4b438 h1:HW1KChQ892afBJ553NbXSO5lYNaDhzpwI2rBb1XgT5U=
 github.com/hashicorp/go-hclog v0.0.0-20171005151751-ca137eb4b438/go.mod h1:9bjs9uLqI8l75knNv3lV1kA55veR+WUPSiKIWcQHudI=
+github.com/hashicorp/go-hclog v0.0.0-20180709165350-ff2cf002a8dd/go.mod h1:9bjs9uLqI8l75knNv3lV1kA55veR+WUPSiKIWcQHudI=
+github.com/hashicorp/go-hclog v0.0.0-20181001195459-61d530d6c27f h1:Yv9YzBlAETjy6AOX9eLBZ3nshNVRREgerT/3nvxlGho=
+github.com/hashicorp/go-hclog v0.0.0-20181001195459-61d530d6c27f/go.mod h1:5CU+agLiy3J7N7QjHK5d05KxGsuXiQLrjA0H7acj2lQ=
 github.com/hashicorp/go-immutable-radix v0.0.0-20170725221215-8aac27015308 h1:GO30CSDv5lN/+JJcv1ABUcHm2KofIU0uOBS8Y1oIwYs=
 github.com/hashicorp/go-immutable-radix v0.0.0-20170725221215-8aac27015308/go.mod h1:6ij3Z20p+OhOkCSrA0gImAWoHYQRGbnlcuk6XYTiaRw=
 github.com/hashicorp/go-msgpack v0.0.0-20150518234257-fa3f63826f7c h1:BTAbnbegUIMB6xmQCwWE8yRzbA4XSpnZY5hvRJC188I=
@@ -85,6 +88,8 @@ github.com/hashicorp/go-multierror v0.0.0-20170622060955-83588e72410a h1:RUacJnO
 github.com/hashicorp/go-multierror v0.0.0-20170622060955-83588e72410a/go.mod h1:JMRHfdO9jKNzS/+BTlxCjKNQHg/jZAft8U7LloJvN7I=
 github.com/hashicorp/go-plugin v0.0.0-20180216154416-baa83ead6ff9 h1:GNjM6uTdjX3NoCYMUaMTSLntLGp6JAa+WXdd5M7FlO8=
 github.com/hashicorp/go-plugin v0.0.0-20180216154416-baa83ead6ff9/go.mod h1:JSqWYsict+jzcj0+xElxyrBQRPNoiWQuddnxArJ7XHQ=
+github.com/hashicorp/go-plugin v0.0.0-20181030172320-54b6ff97d818 h1:wA1XRGBHMdpio0gcKUtnmkwSIlCAG1qzpsr+iPyi3Y8=
+github.com/hashicorp/go-plugin v0.0.0-20181030172320-54b6ff97d818/go.mod h1:Ft7ju2vWzhO0ETMKUVo12XmXmII6eSUS4rsPTkY/siA=
 github.com/hashicorp/go-rootcerts v0.0.0-20160503143440-6bb64b370b90 h1:9HVkPxOpo+yO93Ah4yrO67d/qh0fbLLWbKqhYjyHq9A=
 github.com/hashicorp/go-rootcerts v0.0.0-20160503143440-6bb64b370b90/go.mod h1:o4zcYY1e0GEZI6eSEr+43QDYmuGglw1qSO6qdHUHCgg=
 github.com/hashicorp/go-sockaddr v0.0.0-20170627023441-41949a141473 h1:+OFKAM6bHeJGMqWAdzJ91f8OYZRJ6vDpUXjKb5/wfh4=
@@ -105,6 +110,9 @@ github.com/hashicorp/uuid v0.0.0-20160311170451-ebb0a03e909c h1:nQcv325vxv2fFHJs
 github.com/hashicorp/uuid v0.0.0-20160311170451-ebb0a03e909c/go.mod h1:fHzc09UnyJyqyW+bFuq864eh+wC7dj65aXmXLRe5to0=
 github.com/hashicorp/yamux v0.0.0-20171005170212-f5742cb6b856 h1:oAwP+ao/BtHTd9CGrhHNL4x208u0VzHVPoLEZOXU8YM=
 github.com/hashicorp/yamux v0.0.0-20171005170212-f5742cb6b856/go.mod h1:+NfK9FKeTrX5uv1uIXGdwYDTeHna2qgaIlx54MXqjAM=
+github.com/hashicorp/yamux v0.0.0-20180604194846-3520598351bb/go.mod h1:+NfK9FKeTrX5uv1uIXGdwYDTeHna2qgaIlx54MXqjAM=
+github.com/hashicorp/yamux v0.0.0-20181012175058-2f1d1f20f75d h1:kJCB4vdITiW1eC1vq2e6IsrXKrZit1bv/TDYFGMp4BQ=
+github.com/hashicorp/yamux v0.0.0-20181012175058-2f1d1f20f75d/go.mod h1:+NfK9FKeTrX5uv1uIXGdwYDTeHna2qgaIlx54MXqjAM=
 github.com/hpcloud/tail v1.0.0 h1:nfCOvKYfkgYP8hkirhJocXT2+zOD8yUNjXaWfTlyFKI=
 github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpOxQnU=
 github.com/inconshreveable/mousetrap v1.0.0 h1:Z8tu5sraLXCXIcARxBp/8cbvlwVa7Z1NHg9XEKhtSvM=
@@ -138,6 +146,8 @@ github.com/mitchellh/go-homedir v0.0.0-20161203194507-b8bc1bf76747 h1:eQox4Rh4ew
 github.com/mitchellh/go-homedir v0.0.0-20161203194507-b8bc1bf76747/go.mod h1:SfyaCUpYCn1Vlf4IUYiD9fPX4A5wJrkLzIz1N1q0pr0=
 github.com/mitchellh/go-testing-interface v0.0.0-20171004221916-a61a99592b77 h1:7GoSOOW2jpsfkntVKaS2rAr1TJqfcxotyaUcuxoZSzg=
 github.com/mitchellh/go-testing-interface v0.0.0-20171004221916-a61a99592b77/go.mod h1:kRemZodwjscx+RGhAo8eIhFbs2+BFgRtFPeD/KE+zxI=
+github.com/mitchellh/go-testing-interface v1.0.0 h1:fzU/JVNcaqHQEcVFAKeR41fkiLdIPrefOvVG1VZ96U0=
+github.com/mitchellh/go-testing-interface v1.0.0/go.mod h1:kRemZodwjscx+RGhAo8eIhFbs2+BFgRtFPeD/KE+zxI=
 github.com/mitchellh/mapstructure v0.0.0-20171017171808-06020f85339e h1:PtGHLB3CX3TFPcksODQMxncoeQKWwCgTg0bJ40VLJP4=
 github.com/mitchellh/mapstructure v0.0.0-20171017171808-06020f85339e/go.mod h1:FVVH3fgwuzCH5S8UJGiWEs2h04kUh9fWfEaFds41c1Y=
 github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd h1:TRLaZ9cD/w8PVh93nsPXa1VrQ6jlwL5oN8l14QlcNfg=
@@ -259,6 +269,7 @@ google.golang.org/grpc v1.5.0 h1:Ji47YA6K9qlzSt3Tu0EK38f3YmF/n8AoCx4REzOntu8=
 google.golang.org/grpc v1.5.0/go.mod h1:yo6s7OP7yaDglbqo1J04qKzAhqBH6lvTonzMVmEdcZw=
 google.golang.org/grpc v1.13.0 h1:bHIbVsCwmvbArgCJmLdgOdHFXlKqTOVjbibbS19cXHc=
 google.golang.org/grpc v1.13.0/go.mod h1:yo6s7OP7yaDglbqo1J04qKzAhqBH6lvTonzMVmEdcZw=
+google.golang.org/grpc v1.14.0/go.mod h1:yo6s7OP7yaDglbqo1J04qKzAhqBH6lvTonzMVmEdcZw=
 google.golang.org/grpc v1.16.0 h1:dz5IJGuC2BB7qXR5AyHNwAUBhZscK2xVez7mznh72sY=
 google.golang.org/grpc v1.16.0/go.mod h1:0JHn/cJsOMiMfNA9+DeHDlAU7KAAB5GDlYFpa9MZMio=
 gopkg.in/airbrake/gobrake.v2 v2.0.9 h1:7z2uVWwn7oVeeugY1DtlPAy5H+KYgB1KeKTnqjNatLo=
