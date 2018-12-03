@@ -22,9 +22,9 @@ require (
 	github.com/gin-contrib/sse v0.0.0-20170109093832-22d885f9ecc7 // indirect
 	github.com/gin-gonic/gin v1.3.0
 	github.com/gogo/protobuf v1.1.1 // indirect
-	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b // indirect
 	github.com/golang/groupcache v0.0.0-20181024230925-c65c006176ff // indirect
-	github.com/golang/protobuf v1.1.0
+	github.com/golang/lint v0.0.0-20181026193005-c67002cb31c3 // indirect
+	github.com/golang/protobuf v1.2.0
 	github.com/google/btree v0.0.0-20180813153112-4030bb1f1f0c // indirect
 	github.com/gorilla/websocket v1.4.0 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0 // indirect
@@ -97,14 +97,16 @@ require (
 	go.uber.org/multierr v1.1.0 // indirect
 	go.uber.org/zap v1.9.1 // indirect
 	golang.org/x/crypto v0.0.0-20170930174604-9419663f5a44 // indirect
-	golang.org/x/net v0.0.0-20171016235512-1087133bc4af
-	golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f // indirect
-	golang.org/x/sys v0.0.0-20171017063910-8dbc5d05d6ed // indirect
-	golang.org/x/text v0.0.0-20171013141220-c01e4764d870 // indirect
+	golang.org/x/lint v0.0.0-20181026193005-c67002cb31c3 // indirect
+	golang.org/x/net v0.0.0-20181201002055-351d144fa1fc
+	golang.org/x/oauth2 v0.0.0-20181128211412-28207608b838 // indirect
+	golang.org/x/sync v0.0.0-20181108010431-42b317875d0f // indirect
+	golang.org/x/sys v0.0.0-20181128092732-4ed8d59d0b35 // indirect
 	golang.org/x/time v0.0.0-20181108054448-85acf8d2951c // indirect
-	google.golang.org/appengine v1.1.0 // indirect
-	google.golang.org/genproto v0.0.0-20171002232614-f676e0f3ac63 // indirect
-	google.golang.org/grpc v1.5.0
+	golang.org/x/tools v0.0.0-20181201035826-d0ca3933b724 // indirect
+	google.golang.org/appengine v1.3.0 // indirect
+	google.golang.org/genproto v0.0.0-20181202183823-bd91e49a0898 // indirect
+	google.golang.org/grpc v1.16.0
 	gopkg.in/airbrake/gobrake.v2 v2.0.9 // indirect
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
 	gopkg.in/fsnotify.v1 v1.4.7 // indirect
@@ -115,4 +117,5 @@ require (
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gopkg.in/vmihailenco/msgpack.v2 v2.9.1 // indirect
 	gopkg.in/yaml.v2 v2.0.0-20170812160011-eb3733d160e7 // indirect
+	honnef.co/go/tools v0.0.0-20180920025451-e3ad64cb4ed3 // indirect
 )
