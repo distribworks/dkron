@@ -297,6 +297,9 @@ func (a *Agent) StartServer() {
 		if a.config.Backend == "boltdb" {
 			sConfig = &store.Config{Bucket: a.config.Keyspace}
 		}
+		if a.config.Backend == "redis" {
+			sConfig = &store.Config{Password: a.config.BackendPassword}
+		}
 		a.Store = NewStore(a.config.Backend, a.config.BackendMachines, a, a.config.Keyspace, sConfig)
 		if err := a.Store.Healthy(); err != nil {
 			log.WithError(err).Fatal("store: Store backend not reachable")
