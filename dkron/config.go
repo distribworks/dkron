@@ -16,7 +16,7 @@ type Config struct {
 	BindAddr              string `mapstructure:"bind-addr"`
 	HTTPAddr              string `mapstructure:"http-addr"`
 	Backend               string
-	BackendPassword       string
+	BackendPassword       string `mapstructure:"backend-password"`
 	BackendMachines       []string `mapstructure:"backend-machine"`
 	Profile               string
 	Interface             string
