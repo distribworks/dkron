@@ -7,6 +7,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/abronan/valkeyrie/store"
+
 	flag "github.com/spf13/pflag"
 )
 
@@ -15,7 +17,7 @@ type Config struct {
 	NodeName              string `mapstructure:"node-name"`
 	BindAddr              string `mapstructure:"bind-addr"`
 	HTTPAddr              string `mapstructure:"http-addr"`
-	Backend               string
+	Backend               store.Backend
 	BackendMachines       []string `mapstructure:"backend-machine"`
 	Profile               string
 	Interface             string
@@ -93,7 +95,7 @@ func ConfigFlagSet() *flag.FlagSet {
 	cmdFlags.String("bind-addr", c.BindAddr, "Address to bind network listeners to.")
 	cmdFlags.String("advertise-addr", "", "Address used to advertise to other nodes in the cluster. By default, the bind address is advertised.")
 	cmdFlags.String("http-addr", c.HTTPAddr, "Address to bind the UI web server to. Only used when server.")
-	cmdFlags.String("backend", c.Backend, "store backend")
+	cmdFlags.String("backend", string(c.Backend), "store backend")
 	cmdFlags.StringSlice("backend-machine", c.BackendMachines, "store backend machines addresses")
 	cmdFlags.String("profile", c.Profile, "Profile is used to control the timing profiles used. The default if not provided is lan.")
 	cmdFlags.StringSlice("join", []string{}, "An initial agent to join with. This flag can be specified multiple times.")

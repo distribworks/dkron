@@ -294,7 +294,7 @@ func (a *Agent) SetConfig(c *Config) {
 func (a *Agent) StartServer() {
 	if a.Store == nil {
 		var sConfig *store.Config
-		if a.config.Backend == "boltdb" {
+		if a.config.Backend == store.BOLTDB {
 			sConfig = &store.Config{Bucket: a.config.Keyspace}
 		}
 		a.Store = NewStore(a.config.Backend, a.config.BackendMachines, a, a.config.Keyspace, sConfig)
@@ -317,7 +317,7 @@ func (a *Agent) StartServer() {
 		log.WithError(err).Fatal("agent: RPC server failed to start")
 	}
 
-	if a.config.Backend != "boltdb" {
+	if a.config.Backend != store.BOLTDB {
 		a.participate()
 	} else {
 		a.schedule()
@@ -358,7 +358,7 @@ func (a *Agent) runForElection() {
 			}
 
 		case err := <-errCh:
-			log.WithError(err).Debug("Leader election failed, channel is probably closed")
+			log.WithError(err).Error("Leader election failed, channel is probably closed")
 			metrics.IncrCounter([]string{"agent", "election", "failure"}, 1)
 			// Always stop the schedule of this server to prevent multiple servers with the scheduler on
 			a.sched.Stop()
@@ -407,7 +407,7 @@ func (a *Agent) eventLoop() {
 		case e := <-a.eventCh:
 			log.WithFields(logrus.Fields{
 				"event": e.String(),
-			}).Debug("agent: Received event")
+			}).Info("agent: Received event")
 			metrics.IncrCounter([]string{"agent", "event_received", e.String()}, 1)
 
 			// Log all member events
@@ -512,7 +512,7 @@ func (a *Agent) eventLoop() {
 
 // Start or restart scheduler
 func (a *Agent) schedule() {
-	log.Debug("agent: Restarting scheduler")
+	log.Info("agent: Restarting scheduler")
 	jobs, err := a.Store.GetJobs(nil)
 	if err != nil {
 		log.Fatal(err)
@@ -625,7 +625,7 @@ func (a *Agent) RefreshJobStatus(jobName string) {
 		log.WithFields(logrus.Fields{
 			"member":        ex.NodeName,
 			"execution_key": ex.Key(),
-		}).Debug("agent: Asking member for pending execution")
+		}).Info("agent: Asking member for pending execution")
 
 		nodes = append(nodes, ex.NodeName)
 		group = strconv.FormatInt(ex.Group, 10)

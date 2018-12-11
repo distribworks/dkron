@@ -40,7 +40,7 @@ func newCommonDashboardData(a *Agent, nodeName, path string) *commonDashboardDat
 		Version:    Version,
 		LeaderName: leaderName,
 		MemberName: nodeName,
-		Backend:    a.config.Backend,
+		Backend:    string(a.config.Backend),
 		AssetsPath: fmt.Sprintf("%s%s", path, assetsPrefix),
 		Path:       fmt.Sprintf("%s%s", path, dashboardPathPrefix),
 		APIPath:    fmt.Sprintf("%s%s", path, apiPathPrefix),
