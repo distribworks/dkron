@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/sirupsen/logrus"
 	"github.com/abronan/valkeyrie/store"
 	"github.com/hashicorp/serf/serf"
+	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -87,6 +87,11 @@ func (a *Agent) RunQuery(ex *Execution) {
 	log.WithFields(logrus.Fields{
 		"query":    QueryRunJob,
 		"job_name": job.Name,
+	}).Info("agent: Sending query")
+
+	log.WithFields(logrus.Fields{
+		"query":    QueryRunJob,
+		"job_name": job.Name,
 		"json":     string(rqpJson),
 	}).Debug("agent: Sending query")
 
@@ -137,7 +142,7 @@ func (a *Agent) SchedulerRestart() {
 			if a.config.Backend == store.BOLTDB {
 				a.schedule()
 			} else {
-			a.schedulerRestartQuery(string(a.Store.GetLeader()))
+				a.schedulerRestartQuery(string(a.Store.GetLeader()))
 			}
 		})
 	} else {
@@ -192,7 +197,7 @@ func (a *Agent) executionDoneQuery(nodes []string, group string) map[string]stri
 	log.WithFields(logrus.Fields{
 		"query":   QueryExecutionDone,
 		"members": nodes,
-	}).Debug("agent: Sending query")
+	}).Info("agent: Sending query")
 
 	qr, err := a.serf.Query(QueryExecutionDone, []byte(group), params)
 	if err != nil {
