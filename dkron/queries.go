@@ -131,7 +131,14 @@ func (a *Agent) RunQuery(ex *Execution) {
 func (a *Agent) SchedulerRestart() {
 	if rescheduleThrotle == nil {
 		rescheduleThrotle = time.AfterFunc(rescheduleTime, func() {
+			// In case we are using BoltDB we just need to reschedule because
+			// there is no leader nor other nodes.
+			// In case of using any other engine send the scheduler restart query.
+			if a.config.Backend == store.BOLTDB {
+				a.schedule()
+			} else {
 			a.schedulerRestartQuery(string(a.Store.GetLeader()))
+			}
 		})
 	} else {
 		rescheduleThrotle.Reset(rescheduleTime)
