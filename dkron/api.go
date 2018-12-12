@@ -113,7 +113,7 @@ func (h *HTTPTransport) indexHandler(c *gin.Context) {
 		"agent": {
 			"name":           local.Name,
 			"version":        Version,
-			"backend":        h.agent.config.Backend,
+			"backend":        string(h.agent.config.Backend),
 			"backend_status": strconv.FormatInt(int64(status), 10),
 		},
 		"serf": h.agent.serf.Stats(),
