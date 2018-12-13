@@ -12,8 +12,8 @@
     </h2>
   </div>
 
-  {{ range $gk := .ByGroup }}
-  <h4>Execution: {{ $gk }}</h4>
+  {{range $gk := .ByGroup}}
+  <h4>Execution: {{$gk}}</h4>
   <table class="table table-striped">
     <tr>
       <th>Job</th>
@@ -23,17 +23,17 @@
       <th>Output</th>
       <th>Success</th>
     </tr>
-    {{ range $ek, $ex := (index $.Groups $gk) }}
+    {{range $ek, $ex := (index $.Groups $gk)}}
     <tr>
-      <td>{{ $ex.JobName }}</td>
-      <td>{{ $ex.StartedAt }}</td>
-      <td>{{ $ex.FinishedAt }}</td>
-      <td>{{ $ex.NodeName }}</td>
+      <td>{{$ex.JobName}}</td>
+      <td>{{$ex.StartedAt}}</td>
+      <td>{{$ex.FinishedAt}}</td>
+      <td>{{$ex.NodeName}}</td>
       <td>
-        <a href="#" data-toggle="modal" data-target="#{{ $ex.JobName }}-{{ $gk }}-{{ $ek }}-modal">
-          {{ $ex.Output | toString | truncate }}...</a>
+        <a href="#{{ $ex.JobName }}-{{ $gk }}-{{ $ek }}-modal" data-toggle="modal" data-target="#{{ $ex.JobName }}-{{ $gk }}-{{ $ek }}-modal">
+          {{$ex.Output | toString | truncate}}...</a>
       </td>
-      <td>{{ $ex.Success }}</td>
+      <td>{{$ex.Success}}</td>
     </tr>
 
     <!-- Modal -->
@@ -43,10 +43,10 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="myModalLabel">View output for {{ $ex.JobName }}</h4>
+            <h4 class="modal-title" id="myModalLabel">View output for {{$ex.JobName}}</h4>
           </div>
           <div class="modal-body">
-            <pre>{{ $ex.Output | toString }}</pre>
+            <pre>{{$ex.Output | toString}}</pre>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -54,8 +54,20 @@
         </div>
       </div>
     </div>
-    {{ end }}
+    {{end}}
   </table>
-  {{ end }}
+  {{end}}
 </div>
+<script>
+  $(document).ready(function () {
+    if (window.location.hash && $(window.location.hash).length) {
+      $(window.location.hash).modal('show');
+    }
+    $('.modal').on('show.bs.modal', function (e) {
+      if (typeof (e.relatedTarget) != "undefined") {
+        window.location.hash = $(e.relatedTarget).attr('href');
+      }
+    });
+  });
+</script>
 {{end}}
