@@ -132,4 +132,16 @@
 
   </div>
 </div>
+<script>
+  $(document).ready(function () {
+    if (window.location.hash && $(window.location.hash).length) {
+      $(window.location.hash).modal('show');
+    }
+    $('.modal').on('show.bs.modal', function (e) {
+      if (typeof (e.relatedTarget) != "undefined") {
+        window.location.hash = $(e.relatedTarget).attr('href');
+      }
+    });
+  });
+</script>
 {{end}}
