@@ -1,8 +1,15 @@
 {{define "content"}}
-<div class="container content">
+<div class="container content" ng-controller="JobListCtrl">
+  <div class="row">
+    <div id="message"></div>
+  </div>
   <div class="row">
     <h1>Executions</h1>
-    <h2>Showing Last 100 Job executions for job {{.JobName}}</h2>
+    <h2>Showing Last 100 Job executions for job {{.JobName}}
+      <a href="#" ng-click="runJob('{{.JobName}}')" ng-show="!running_{{.JobName}}" title="Run"><i class="glyphicon glyphicon-play"
+          aria-hidden="true"></i></a>
+      <a href="#"><i class="glyphicon glyphicon-cog normal-right-spinner" ng-show="running_{{.JobName}}"></i></a>
+    </h2>
   </div>
 
   {{ range $gk := .ByGroup }}
@@ -23,13 +30,15 @@
       <td>{{ $ex.FinishedAt }}</td>
       <td>{{ $ex.NodeName }}</td>
       <td>
-        <a href="#" data-toggle="modal" data-target="#{{ $ex.JobName }}-{{ $gk }}-{{ $ek }}-modal">{{ $ex.Output | toString | truncate }}...</a>
+        <a href="#" data-toggle="modal" data-target="#{{ $ex.JobName }}-{{ $gk }}-{{ $ek }}-modal">
+          {{ $ex.Output | toString | truncate }}...</a>
       </td>
       <td>{{ $ex.Success }}</td>
     </tr>
 
     <!-- Modal -->
-    <div class="modal fade" id="{{ $ex.JobName }}-{{ $gk }}-{{ $ek }}-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal fade" id="{{ $ex.JobName }}-{{ $gk }}-{{ $ek }}-modal" tabindex="-1" role="dialog"
+      aria-labelledby="myModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
