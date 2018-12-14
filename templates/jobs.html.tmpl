@@ -57,7 +57,7 @@
             <i ng-class="job | statusClass" class="glyphicon"></i>
           </td>
           <td>
-            <a href="#{{`{{ $index }}`}}-modal" data-toggle="modal" data-target="#{{`{{ $index }}`}}-modal" title="View">
+            <a ng-href="#{{`{{ $index }}`}}-modal" data-toggle="modal" data-target="#{{`{{ $index }}`}}-modal" title="View">
               <i class="glyphicon glyphicon-eye-open" aria-hidden="true"></i>
             </a>
             &nbsp;
@@ -134,10 +134,18 @@
 </div>
 <script>
   $(document).ready(function () {
-    if (window.location.hash && $(window.location.hash).length) {
-      $(window.location.hash).modal('show');
-    }
-    $('.modal').on('show.bs.modal', function (e) {
+    // Listen for the job rows to appear
+    $('.table').bind('DOMSubtreeModified', function (e) {
+      if (e.target.innerHTML.length > 0) {
+        if (window.location.hash && $(window.location.hash).length) {
+          $(window.location.hash).modal('show');
+        }
+      }
+    });
+
+    // This should be in the top level document to bind to the future DOM elems
+    // that are not already present on "ready".
+    $(document).on('show.bs.modal', function (e) {
       if (typeof (e.relatedTarget) != "undefined") {
         window.location.hash = $(e.relatedTarget).attr('href');
       }
