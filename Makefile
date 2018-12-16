@@ -9,7 +9,7 @@ goreleaser:
 	goreleaser --rm-dist
 
 .PHONY: release
-release: clean goreleaser fury
+release: clean goreleaser
 
 .PHONY: clean
 clean:
