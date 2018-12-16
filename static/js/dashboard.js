@@ -269,7 +269,7 @@ dkron.controller('ExecutionsCtrl', function ($scope, $http, $interval, hideDelay
   };
 });
 
-dkron.controller('IndexCtrl', function ($scope, $http, $interval, $element) {
+dkron.controller('IndexCtrl', function ($scope, $http, $timeout, $element) {
   $scope.options = {
     renderer: 'line',
     interpolation: 'linear'
@@ -310,6 +310,10 @@ dkron.controller('IndexCtrl', function ($scope, $http, $interval, $element) {
     var response = $http.get(DKRON_API_PATH + '/jobs');
     response.success(function (data, status, headers, config) {
       $scope.updateGraph(data);
+
+      $timeout(function () {
+        updateView();
+      }, 2000);
     });
 
     response.error(function (data, status, headers, config) {
@@ -403,10 +407,6 @@ dkron.controller('IndexCtrl', function ($scope, $http, $interval, $element) {
       data: gdata
     };
   }
-
-  $interval(function () {
-    updateView();
-  }, 2000);
 
   updateView();
 });
