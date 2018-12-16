@@ -1,114 +1,116 @@
 <!DOCTYPE html>
 <html ng-app="dkron">
-  <head>
-    <title>{{ .Common.Name }}</title>
 
-    <link rel="stylesheet" href="{{ .Common.AssetsPath }}/node_modules/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ .Common.AssetsPath }}/css/app.css">
-    <link rel="stylesheet" href="{{ .Common.AssetsPath }}/css/highlight.css">
-    <script src="{{ .Common.AssetsPath }}/js/highlight.pack.js"></script>
+<head>
+  <title>{{ .Common.Name }}</title>
 
-    <script src="{{ .Common.AssetsPath }}/node_modules/angular/angular.js"></script>
-    <script src="{{ .Common.AssetsPath }}/node_modules/angular-route/angular-route.js"></script>
-    <script src="{{ .Common.AssetsPath }}/js/dashboard.js"></script>
+  <link rel="stylesheet" href="{{ .Common.AssetsPath }}/node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{{ .Common.AssetsPath }}/css/app.css">
+  <link rel="stylesheet" href="{{ .Common.AssetsPath }}/css/glyphicon-spinner.css">
 
-    <script src="{{ .Common.AssetsPath }}/node_modules/jquery/dist/jquery.min.js"></script>
-    <script src="{{ .Common.AssetsPath }}/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script src="{{ .Common.AssetsPath }}/node_modules/angular/angular.js"></script>
+  <script src="{{ .Common.AssetsPath }}/node_modules/angular-route/angular-route.js"></script>
+  <script src="{{ .Common.AssetsPath }}/js/dashboard.js"></script>
 
-    <link rel="stylesheet" href="{{ .Common.AssetsPath }}/node_modules/rickshaw/rickshaw.min.css">
+  <script src="{{ .Common.AssetsPath }}/node_modules/jquery/dist/jquery.min.js"></script>
+  <script src="{{ .Common.AssetsPath }}/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 
-    <script src="{{ .Common.AssetsPath }}/node_modules/d3/d3.min.js"></script>
-    <script src="{{ .Common.AssetsPath }}/node_modules/rickshaw/rickshaw.min.js"></script>
-    <script src="{{ .Common.AssetsPath }}/node_modules/angular-rickshaw/rickshaw.js"></script>
+  <link rel="stylesheet" href="{{ .Common.AssetsPath }}/node_modules/rickshaw/rickshaw.min.css">
 
-    <link rel="stylesheet" href="{{ .Common.AssetsPath }}/node_modules/codemirror/lib/codemirror.css">
-    <script src="{{ .Common.AssetsPath }}/node_modules/codemirror/lib/codemirror.js"></script>
-    <script src="{{ .Common.AssetsPath }}/node_modules/codemirror/mode/javascript/javascript.js"></script>
-    <script src="{{ .Common.AssetsPath }}/node_modules/codemirror/addon/display/autorefresh.js"></script>
-    <script src="{{ .Common.AssetsPath }}/node_modules/angular-ui-codemirror/src/ui-codemirror.js"></script>
+  <script src="{{ .Common.AssetsPath }}/node_modules/d3/d3.min.js"></script>
+  <script src="{{ .Common.AssetsPath }}/node_modules/rickshaw/rickshaw.min.js"></script>
+  <script src="{{ .Common.AssetsPath }}/node_modules/angular-rickshaw/rickshaw.js"></script>
 
-    <link rel="shortcut icon" href="{{ .Common.AssetsPath }}/favicon.ico" type="image/x-icon">
-    <link rel="icon" href="{{ .Common.AssetsPath }}/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="{{ .Common.AssetsPath }}/node_modules/codemirror/lib/codemirror.css">
+  <script src="{{ .Common.AssetsPath }}/node_modules/codemirror/lib/codemirror.js"></script>
+  <script src="{{ .Common.AssetsPath }}/node_modules/codemirror/mode/javascript/javascript.js"></script>
+  <script src="{{ .Common.AssetsPath }}/node_modules/codemirror/addon/display/autorefresh.js"></script>
+  <script src="{{ .Common.AssetsPath }}/node_modules/angular-ui-codemirror/src/ui-codemirror.js"></script>
 
-    <script>
-      var DKRON_API_PATH = "{{ .Common.APIPath }}";
-      $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
-      })
-    </script>
-  </head>
+  <link rel="shortcut icon" href="{{ .Common.AssetsPath }}/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="{{ .Common.AssetsPath }}/favicon.ico" type="image/x-icon">
 
-  <body>
-    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
-      <div class="container">
-        <!-- Collapsed navigation -->
-        <div class="navbar-header">
-          <!-- Expander button -->
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-              <span class="sr-only">Toggle navigation</span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-          </button>
+  <script>
+    var DKRON_API_PATH = "{{ .Common.APIPath }}";
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+    })
+  </script>
+</head>
 
-          <!-- Main title -->
-          <div class="brand">
-            <a class="logo" href="{{ .Common.Path }}"><img src="{{ .Common.AssetsPath }}/img/dkron-badge-bw.png"/> {{ .Common.Name }}</a>
-          </div>
-        </div>
+<body>
+  <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+      <!-- Collapsed navigation -->
+      <div class="navbar-header">
+        <!-- Expander button -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
 
-        <!-- Expanded navigation -->
-        <div class="navbar-collapse collapse">
-          <!-- Main navigation -->
-          <ul class="main-links nav navbar-nav">
-            <li>
-              <a href="{{ .Common.Path }}">
-                <i class="glyphicon glyphicon-dashboard"></i>
-                Dashboard
-              </a>
-            </li>
-            <li>
-              <a href="{{ .Common.Path }}/jobs">
-                <i class="glyphicon glyphicon-tasks"></i>
-                Jobs
-              </a>
-            </li>
-          </ul>
-          <!-- Search, Navigation and Repo links -->
-          <ul class="nav navbar-nav navbar-right">
-            <li>
-              <a href="http://dkron.io" target="_blank">
-                <i class="glyphicon glyphicon-book"></i>
-                Docs
-              </a>
-            </li>
-          </ul>
+        <!-- Main title -->
+        <div class="brand">
+          <a class="logo" href="{{ .Common.Path }}"><img src="{{ .Common.AssetsPath }}/img/dkron-badge-bw.png" />
+            {{ .Common.Name }}</a>
         </div>
       </div>
-    </div>
-    {{template "content" .}}
-    <div class="navbar navbar-fixed-bottom navbar-inverse">
-      <div class="navbar-inner">
-        <div class="container text-center">
-            <ul class="nav">
-              <li>
-                <p class="navbar-text">{{ .Common.Name }} {{ .Common.Version }}</p>
-              </li>
-              <li>
-                <p class="navbar-text">Member: {{ .Common.MemberName }}</p>
-              </li>
-              <li>
-                <p class="navbar-text">Leader: {{ .Common.LeaderName }}</p>
-              </li>
-              <li>
-                <p class="navbar-text">Storage backend: {{ .Common.Backend }}</p>
-              </li>
-              <li>
-                <p class="navbar-text">Keyspace: {{ .Common.Keyspace }}</p>
-              </li>
-            </ul>
-        </div>
+
+      <!-- Expanded navigation -->
+      <div class="navbar-collapse collapse">
+        <!-- Main navigation -->
+        <ul class="main-links nav navbar-nav">
+          <li>
+            <a href="{{ .Common.Path }}">
+              <i class="glyphicon glyphicon-dashboard"></i>
+              Dashboard
+            </a>
+          </li>
+          <li>
+            <a href="{{ .Common.Path }}/jobs">
+              <i class="glyphicon glyphicon-tasks"></i>
+              Jobs
+            </a>
+          </li>
+        </ul>
+        <!-- Search, Navigation and Repo links -->
+        <ul class="nav navbar-nav navbar-right">
+          <li>
+            <a href="http://dkron.io" target="_blank">
+              <i class="glyphicon glyphicon-book"></i>
+              Docs
+            </a>
+          </li>
+        </ul>
       </div>
     </div>
-  </body>
+  </div>
+  {{template "content" .}}
+  <div class="navbar navbar-fixed-bottom navbar-inverse">
+    <div class="navbar-inner">
+      <div class="container text-center">
+        <ul class="nav">
+          <li>
+            <p class="navbar-text">{{ .Common.Name }} {{ .Common.Version }}</p>
+          </li>
+          <li>
+            <p class="navbar-text">Member: {{ .Common.MemberName }}</p>
+          </li>
+          <li>
+            <p class="navbar-text">Leader: {{ .Common.LeaderName }}</p>
+          </li>
+          <li>
+            <p class="navbar-text">Storage backend: {{ .Common.Backend }}</p>
+          </li>
+          <li>
+            <p class="navbar-text">Keyspace: {{ .Common.Keyspace }}</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>
+
 </html>
