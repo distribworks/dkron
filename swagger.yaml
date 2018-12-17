@@ -8,7 +8,7 @@ produces:
 schemes:
   - http
 info:
-  version: 0.11.2
+  version: 1.0.0-rc
   title: Dkron REST API
   description: |
     You can communicate with Dkron using a RESTful JSON API over HTTP. Dkron nodes usually listen on port `8080` for API requests. All examples in this section assume that you've found a running leader at `localhost:8080`.
@@ -34,16 +34,14 @@ paths:
     get:
       description: |
         List jobs.
-        parameters:
+      parameters:
         - in: query
           name: tags
           type: array
           collectionFormat: multi
           items:
             type: string
-          description: |
-            Filter jobs by tags. Use this param to return only the desired jobs. Use this format ?tags[foo]=bar&tags[baz]=bar
-            this will only return the jobs tagged with the specified tags.
+          description: Filter jobs by tags
       operationId: getJobs
       tags:
         - jobs
@@ -121,6 +119,24 @@ paths:
           type: string
       responses:
         202:
+          description: Successful response
+          schema:
+            $ref: '#/definitions/job'
+  /jobs/{job_name}/toggle:
+    post:
+      description: |
+        Toggle a job.
+      operationId: toggleJob
+      tags:
+        - jobs
+      parameters:
+        - in: path
+          name: job_name
+          description: The job that needs to be toggled.
+          required: true
+          type: string
+      responses:
+        200:
           description: Successful response
           schema:
             $ref: '#/definitions/job'
