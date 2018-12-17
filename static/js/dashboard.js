@@ -53,12 +53,13 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
   };
 
   $scope.runJob = function (jobName) {
-    $scope["running_" + jobName] = true;
+    let i = $scope.pagedItems[$scope.currentPage].findIndex(j => j.name === jobName);
+    $scope["running_" + i] = true;
     var response = $http.post(DKRON_API_PATH + '/jobs/' + jobName);
     response.success(function (data, status, headers, config) {
       $('#message').html('<div class="alert alert-success fade in">Success running job ' + jobName + '</div>');
       updateView();
-      $scope["running_" + jobName] = false;
+      $scope["running_" + i] = false;
 
       $(".alert-success").delay(hideDelay).slideUp(200, function () {
         $(".alert").alert('close');
@@ -77,7 +78,6 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
       window.alert('Json Format Error');
       return
     }
-    $scope["creating_" + job.name] = true;
     var response = $http.post(DKRON_API_PATH + '/jobs', job);
     response.success(function (data, status, headers, config) {
       $('#message').html('<div class="alert alert-success fade in">Success created job ' + job.name + '</div>');
@@ -100,7 +100,6 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
       window.alert('Json Format Error');
       return
     }
-    $scope["updating_" + job.name] = true;
     var response = $http.post(DKRON_API_PATH + '/jobs', job);
     response.success(function (data, status, headers, config) {
       $('#message').html('<div class="alert alert-success fade in">Success updating job ' + job.name + '</div>');
@@ -117,7 +116,8 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
   };
 
   $scope.deleteJob = function (jobName) {
-    $scope["deleting_" + jobName] = true;
+    let i = $scope.pagedItems[$scope.currentPage].findIndex(j => j.name === jobName);
+    $scope["deleting_" + i] = true;
     var response = $http.delete(DKRON_API_PATH + '/jobs/' + jobName);
     response.success(function (data, status, headers, config) {
       $('#message').html('<div class="alert alert-success fade in">Successfully removed job ' + jobName + '</div>');
@@ -251,11 +251,11 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
 
 dkron.controller('ExecutionsCtrl', function ($scope, $http, $interval, hideDelay) {
   $scope.runJob = function (jobName) {
-    $scope["running_" + jobName] = true;
+    $scope["running_job"] = true;
     var response = $http.post(DKRON_API_PATH + '/jobs/' + jobName);
     response.success(function (data, status, headers, config) {
       $('#message').html('<div class="alert alert-success fade in">Success running job ' + jobName + '</div>');
-      $scope["running_" + jobName] = false;
+      $scope["running_job"] = false;
 
       $(".alert-success").delay(hideDelay).slideUp(200, function () {
         $(".alert").alert('close');
