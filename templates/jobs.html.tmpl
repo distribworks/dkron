@@ -61,15 +61,15 @@
               <i class="glyphicon glyphicon-eye-open" aria-hidden="true"></i>
             </a>
             &nbsp;
-            <a href="#" ng-click="runJob(job.name)" ng-show="!running_{{`{{ job.name }}`}}" title="Run"><i class="glyphicon glyphicon-play"
+            <a href="#" ng-click="runJob(job.name)" ng-show="!running_{{`{{ $index }}`}}" title="Run"><i class="glyphicon glyphicon-play"
                 aria-hidden="true"></i></a>
-            <a href="#"><i class="glyphicon glyphicon-cog normal-right-spinner" ng-show="running_{{`{{ job.name }}`}}"></i></a>
+            <a href="#"><i class="glyphicon glyphicon-cog normal-right-spinner" ng-show="running_{{`{{ $index }}`}}"></i></a>
             &nbsp;
             <a href="#" ng-click="toggleJob(job.name)" title="Toggle"><i class="glyphicon glyphicon-pause" aria-hidden="true"></i></a>
             &nbsp;
-            <a href="#" data-toggle="modal" data-target="#{{`{{ $index }}`}}-modal-delete" ng-show="!deleting_{{`{{ job.name }}`}}"
+            <a href="#" data-toggle="modal" data-target="#{{`{{ $index }}`}}-modal-delete" ng-show="!deleting_{{`{{ $index }}`}}"
               title="Delete"><i class="glyphicon glyphicon-trash" aria-hidden="true"></i></a>
-            <a href=""><i class="glyphicon glyphicon-cog normal-right-spinner" ng-show="deleting_{{`{{ job.name }}`}}"></i></a>
+            <a href=""><i class="glyphicon glyphicon-cog normal-right-spinner" ng-show="deleting_{{`{{ $index }}`}}"></i></a>
           </td>
         </tr>
       </tbody>

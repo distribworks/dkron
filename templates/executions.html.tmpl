@@ -1,14 +1,14 @@
 {{define "content"}}
-<div class="container content" ng-controller="JobListCtrl">
+<div class="container content" ng-controller="ExecutionsCtrl">
   <div class="row">
     <div id="message"></div>
   </div>
   <div class="row">
     <h1>Executions</h1>
     <h2>Showing Last 100 Job executions for job {{.JobName}}
-      <a href="#" ng-click="runJob('{{.JobName}}')" ng-show="!running_{{.JobName}}" title="Run"><i class="glyphicon glyphicon-play"
+      <a href="#" ng-click="runJob('{{.JobName}}')" ng-show="!running_job" title="Run"><i class="glyphicon glyphicon-play"
           aria-hidden="true"></i></a>
-      <a href="#"><i class="glyphicon glyphicon-cog normal-right-spinner" ng-show="running_{{.JobName}}"></i></a>
+      <a href="#"><i class="glyphicon glyphicon-cog normal-right-spinner" ng-show="running_job"></i></a>
     </h2>
   </div>
 
