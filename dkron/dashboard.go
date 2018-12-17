@@ -51,6 +51,16 @@ func newCommonDashboardData(a *Agent, nodeName, path string) *commonDashboardDat
 
 // dashboardRoutes registers dashboard specific routes on the gin RouterGroup.
 func (a *Agent) DashboardRoutes(r *gin.RouterGroup) {
+	// If we are visiting from a browser redirect to the dashboard
+	r.GET("/", func(c *gin.Context) {
+		switch c.NegotiateFormat(gin.MIMEHTML) {
+		case gin.MIMEHTML:
+			c.Redirect(http.StatusMovedPermanently, "/"+dashboardPathPrefix+"/")
+		default:
+			c.AbortWithStatus(http.StatusNotFound)
+		}
+	})
+
 	r.GET("/static/*asset", servePublic)
 
 	dashboard := r.Group("/" + dashboardPathPrefix)
