@@ -16,3 +16,8 @@ main
 config/
 dist
 dkron.db
+
+.DS_Store
+.vscode
+tags
+.sass-cache
