@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+set -e
+
+apk add --no-cache build-base
+go mod download
+goreleaser release --snapshot --rm-dist
