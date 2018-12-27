@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+
+set -e
 docker build -t dkron .
 docker run dkron scripts/validate-gofmt
 docker run dkron go vet
