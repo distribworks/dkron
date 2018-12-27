@@ -6,7 +6,16 @@ $(LINUX_PKGS):
 
 .PHONY: goreleaser
 goreleaser:
-	goreleaser --rm-dist
+	docker run --rm --privileged \
+	-v ${PWD}:/dkron \
+	-v /var/run/docker.sock:/var/run/docker.sock \
+	-w /dkron \
+	-e GITHUB_TOKEN \
+	-e DOCKER_USERNAME \
+	-e DOCKER_PASSWORD \
+	-e DOCKER_REGISTRY \
+	--entrypoint "" \
+	goreleaser/goreleaser scripts/release
 
 .PHONY: release
 release: clean goreleaser
