@@ -23,13 +23,13 @@ func getEnvWithDefault() string {
 	return ea
 }
 
-func Test_unmarshalTags(t *testing.T) {
+func TestUnmarshalTags(t *testing.T) {
 	tagPairs := []string{
 		"tag1=val1",
 		"tag2=val2",
 	}
 
-	tags, err := unmarshalTags(tagPairs)
+	tags, err := UnmarshalTags(tagPairs)
 
 	if err != nil {
 		t.Fatalf("err: %s", err)
