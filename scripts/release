@@ -3,4 +3,4 @@
 set -e
 
 go mod download
-goreleaser release --snapshot --rm-dist
+goreleaser release --rm-dist
