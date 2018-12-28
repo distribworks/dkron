@@ -2,15 +2,11 @@ docs
 static
 site
 public
-downloads
 *.etcd
 vendor
 docker-compose
 dkron_theme
-etcd.*
 build/
-builder/skel/
-!builder/skel/.keep
 website
 dkron-*
 main
