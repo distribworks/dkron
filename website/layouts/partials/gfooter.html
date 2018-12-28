@@ -51,6 +51,22 @@
 <script src="{{"/js/jquery-2.x.min.js" | relURL}}"></script>
 <script src="{{"js/bootstrap-3.0.3.min.js" | relURL}}"></script>
 <script async defer src="https://buttons.github.io/buttons.js"></script>
+<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.0/cookieconsent.min.css" />
+<script src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.0/cookieconsent.min.js"></script>
+<script>
+    window.addEventListener("load", function () {
+        window.cookieconsent.initialise({
+            "palette": {
+                "popup": {
+                    "background": "#252e39"
+                },
+                "button": {
+                    "background": "#14a7d0"
+                }
+            }
+        })
+    });
+</script>
 </body>
 
 </html>
