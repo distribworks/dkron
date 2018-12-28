@@ -108,7 +108,7 @@ func ConfigFlagSet() *flag.FlagSet {
 
 	// Notifications
 	cmdFlags.String("mail-host", "", "Mail server host address to use for notifications.")
-	cmdFlags.String("mail-port", "", "Mail server port.")
+	cmdFlags.Uint16("mail-port", 0, "Mail server port.")
 	cmdFlags.String("mail-username", "", "Mail server username used for authentication.")
 	cmdFlags.String("mail-password", "", "Mail server password to use.")
 	cmdFlags.String("mail-from", "", "From email address to use.")
