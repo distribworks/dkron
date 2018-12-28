@@ -2,6 +2,8 @@ project_name: dkron
 builds:
   - main: ./builtin/bins/dkron-executor-http/
     binary: dkron-executor-http
+    env:
+      - CGO_ENABLED=0
     goos:
       - freebsd
       - windows
@@ -10,9 +12,13 @@ builds:
     goarch:
       - amd64
       - arm64
+    ldflags:
+      - -s -w
 
   - main: ./builtin/bins/dkron-executor-shell/
     binary: dkron-executor-shell
+    env:
+      - CGO_ENABLED=0
     goos:
       - freebsd
       - windows
@@ -21,9 +27,13 @@ builds:
     goarch:
       - amd64
       - arm64
+    ldflags:
+      - -s -w
 
   - main: ./builtin/bins/dkron-processor-files/
     binary: dkron-processor-files
+    env:
+      - CGO_ENABLED=0
     goos:
       - freebsd
       - windows
@@ -32,9 +42,13 @@ builds:
     goarch:
       - amd64
       - arm64
+    ldflags:
+      - -s -w
 
   - main: ./builtin/bins/dkron-processor-log/
     binary: dkron-processor-log
+    env:
+      - CGO_ENABLED=0
     goos:
       - freebsd
       - windows
@@ -43,9 +57,13 @@ builds:
     goarch:
       - amd64
       - arm64
+    ldflags:
+      - -s -w
 
   - main: ./builtin/bins/dkron-processor-syslog/
     binary: dkron-processor-syslog
+    env:
+      - CGO_ENABLED=0
     goos:
       - freebsd
       - windows
@@ -54,9 +72,13 @@ builds:
     goarch:
       - amd64
       - arm64
+    ldflags:
+      - -s -w
 
   - main: .
     binary: dkron
+    env:
+      - CGO_ENABLED=0
     goos:
       - freebsd
       - windows
