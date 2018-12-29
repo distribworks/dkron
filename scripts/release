@@ -3,4 +3,5 @@
 set -e
 
 go mod download
+docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
 goreleaser release --rm-dist
