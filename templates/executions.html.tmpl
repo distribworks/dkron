@@ -68,6 +68,9 @@
         window.location.hash = $(e.relatedTarget).attr('href');
       }
     });
+    $(document).on('hidden.bs.modal', function (e) {
+      history.pushState("", document.title, window.location.pathname + window.location.search);
+    });
   });
 </script>
 {{end}}

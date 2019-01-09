@@ -39,7 +39,7 @@ doc:
 
 gen:
 	go generate ./dkron
-	go fmt ./dkron/bindata.go
+	gofmt -s -w ./dkron/bindata.go
 
 test:
 	@bash --norc -i ./scripts/test
