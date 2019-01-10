@@ -5,16 +5,14 @@ import (
 	"html/template"
 	"io/ioutil"
 	"net/http"
-	"strings"
 
 	"github.com/gin-contrib/multitemplate"
 	"github.com/gin-gonic/gin"
-	"github.com/victorcoder/dkron/static"
-	"github.com/victorcoder/dkron/templates"
+	"github.com/victorcoder/dkron/dkron/assets"
+	"github.com/victorcoder/dkron/dkron/templates"
 )
 
 const (
-	tmplPath            = "templates"
 	dashboardPathPrefix = "dashboard"
 	assetsPrefix        = "static"
 	apiPathPrefix       = "v1"
@@ -64,8 +62,7 @@ func (a *Agent) DashboardRoutes(r *gin.RouterGroup) {
 		}
 	})
 
-	r.StaticFS("static", static.Assets)
-	//r.GET("/static/*asset", servePublic)
+	r.StaticFS("static", assets.Assets)
 
 	dashboard := r.Group("/" + dashboardPathPrefix)
 	dashboard.GET("/", a.dashboardIndexHandler)
@@ -134,69 +131,25 @@ func mustLoadTemplate(path string) []byte {
 func CreateMyRender() multitemplate.Render {
 	r := multitemplate.New()
 
-	status := mustLoadTemplate(tmplPath + "/status.html.tmpl")
-	dash := mustLoadTemplate(tmplPath + "/dashboard.html.tmpl")
+	status := mustLoadTemplate("/status.html.tmpl")
+	dash := mustLoadTemplate("/dashboard.html.tmpl")
 
 	r.AddFromStringsFuncs("index", funcMap(),
 		string(dash),
 		string(status),
-		string(mustLoadTemplate(tmplPath+"/index.html.tmpl")))
+		string(mustLoadTemplate("/index.html.tmpl")))
 
 	r.AddFromStringsFuncs("jobs", funcMap(),
 		string(dash),
 		string(status),
-		string(mustLoadTemplate(tmplPath+"/jobs.html.tmpl")))
+		string(mustLoadTemplate("/jobs.html.tmpl")))
 
 	r.AddFromStringsFuncs("executions", funcMap(),
 		string(dash),
 		string(status),
-		string(mustLoadTemplate(tmplPath+"/executions.html.tmpl")))
+		string(mustLoadTemplate("/executions.html.tmpl")))
 
 	return r
-}
-
-//var Assets http.FileSystem = http.Dir("../static")
-//var Templates http.FileSystem = http.Dir("../templates")
-
-//go:generate vfsgendev -source="github.com/victorcoder/dkron/static".Assets
-//go:generate vfsgendev -source="github.com/victorcoder/dkron/templates".Templates
-func servePublic(c *gin.Context) {
-	path := c.Request.URL.Path
-
-	path = strings.Replace(path, "/", "", 1)
-	split := strings.Split(path, ".")
-	suffix := split[len(split)-1]
-
-	res, err := Asset(path)
-	if err != nil {
-		c.Next()
-		return
-	}
-
-	contentType := "text/plain"
-	switch suffix {
-	case "png":
-		contentType = "image/png"
-	case "jpg", "jpeg":
-		contentType = "image/jpeg"
-	case "gif":
-		contentType = "image/gif"
-	case "js":
-		contentType = "application/javascript"
-	case "css":
-		contentType = "text/css"
-	case "woff":
-		contentType = "application/x-font-woff"
-	case "ttf":
-		contentType = "application/x-font-ttf"
-	case "otf":
-		contentType = "application/x-font-otf"
-	case "html":
-		contentType = "text/html"
-	}
-
-	c.Writer.Header().Set("content-type", contentType)
-	c.String(200, string(res))
 }
 
 func funcMap() template.FuncMap {

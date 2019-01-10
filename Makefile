@@ -38,8 +38,8 @@ doc:
 	ghp-import -p public
 
 gen:
-	go generate ./templates
-	go generate ./static
+	go generate ./dkron/templates
+	go generate ./dkron/assets
 
 test:
 	@bash --norc -i ./scripts/test
