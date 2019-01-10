@@ -38,8 +38,8 @@ doc:
 	ghp-import -p public
 
 gen:
-	go generate ./dkron
-	gofmt -s -w ./dkron/bindata.go
+	go generate ./templates
+	go generate ./static
 
 test:
 	@bash --norc -i ./scripts/test

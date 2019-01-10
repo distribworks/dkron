@@ -3,11 +3,14 @@ package dkron
 import (
 	"fmt"
 	"html/template"
+	"io/ioutil"
 	"net/http"
 	"strings"
 
 	"github.com/gin-contrib/multitemplate"
 	"github.com/gin-gonic/gin"
+	"github.com/victorcoder/dkron/static"
+	"github.com/victorcoder/dkron/templates"
 )
 
 const (
@@ -61,7 +64,8 @@ func (a *Agent) DashboardRoutes(r *gin.RouterGroup) {
 		}
 	})
 
-	r.GET("/static/*asset", servePublic)
+	r.StaticFS("static", static.Assets)
+	//r.GET("/static/*asset", servePublic)
 
 	dashboard := r.Group("/" + dashboardPathPrefix)
 	dashboard.GET("/", a.dashboardIndexHandler)
@@ -112,7 +116,13 @@ func (a *Agent) dashboardExecutionsHandler(c *gin.Context) {
 }
 
 func mustLoadTemplate(path string) []byte {
-	tmpl, err := Asset(path)
+	f, err := templates.Templates.Open(path)
+	if err != nil {
+		log.Error(err)
+		return nil
+	}
+
+	tmpl, err := ioutil.ReadAll(f)
 	if err != nil {
 		log.Error(err)
 		return nil
@@ -145,7 +155,11 @@ func CreateMyRender() multitemplate.Render {
 	return r
 }
 
-//go:generate go-bindata -prefix "../" -pkg dkron -ignore=scss -ignore=.*\.md -ignore=\.?package\.json -ignore=\.?package-lock\.json -ignore=\.gitignore -ignore=Makefile -ignore=examples -ignore=tutorial -ignore=tests -ignore=rickshaw\/src -o bindata.go ../static/... ../templates
+//var Assets http.FileSystem = http.Dir("../static")
+//var Templates http.FileSystem = http.Dir("../templates")
+
+//go:generate vfsgendev -source="github.com/victorcoder/dkron/static".Assets
+//go:generate vfsgendev -source="github.com/victorcoder/dkron/templates".Templates
 func servePublic(c *gin.Context) {
 	path := c.Request.URL.Path
 
