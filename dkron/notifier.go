@@ -110,8 +110,12 @@ func (n *Notifier) sendExecutionEmail() {
 	}
 
 	serverAddr := fmt.Sprintf("%s:%d", n.Config.MailHost, n.Config.MailPort)
-	err := e.Send(serverAddr, smtp.PlainAuth("", n.Config.MailUsername, n.Config.MailPassword, n.Config.MailHost))
-	if err != nil {
+
+	var auth smtp.Auth
+	if n.Config.MailUsername != "" && n.Config.MailPassword != "" {
+		auth = smtp.PlainAuth("", n.Config.MailUsername, n.Config.MailPassword, n.Config.MailHost)
+	}
+	if err := em.Send(serverAddr, auth); err != nil {
 		log.WithError(err).Error("notifier: Error sending email")
 	}
 }
