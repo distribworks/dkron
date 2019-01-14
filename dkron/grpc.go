@@ -110,11 +110,13 @@ retry:
 		origExec := *NewExecutionFromProto(execDoneReq)
 		execution = origExec
 		for k, v := range job.Processors {
-			log.WithField("plugin", k).Debug("grpc: Processing execution with plugin")
+			log.WithField("plugin", k).Info("grpc: Processing execution with plugin")
 			if processor, ok := grpcs.agent.ProcessorPlugins[k]; ok {
 				v["reporting_node"] = grpcs.agent.config.NodeName
 				e := processor.Process(&ExecutionProcessorArgs{Execution: origExec, Config: v})
 				execution = e
+			} else {
+				log.WithField("plugin", k).Error("grpc: Specified plugin not found")
 			}
 		}
 
