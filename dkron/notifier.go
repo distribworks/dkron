@@ -10,8 +10,8 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/sirupsen/logrus"
 	"github.com/jordan-wright/email"
+	"github.com/sirupsen/logrus"
 )
 
 type Notifier struct {
@@ -115,7 +115,7 @@ func (n *Notifier) sendExecutionEmail() {
 	if n.Config.MailUsername != "" && n.Config.MailPassword != "" {
 		auth = smtp.PlainAuth("", n.Config.MailUsername, n.Config.MailPassword, n.Config.MailHost)
 	}
-	if err := em.Send(serverAddr, auth); err != nil {
+	if err := e.Send(serverAddr, auth); err != nil {
 		log.WithError(err).Error("notifier: Error sending email")
 	}
 }
