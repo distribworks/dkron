@@ -138,4 +138,4 @@ dockers:
     image_templates:
       - "dkron/dkron:latest"
       - "dkron/dkron:{{ .Tag }}"
-      - "dkron/dkron:{{ .Major }}"
+      - "dkron/dkron:v{{ .Major }}"
