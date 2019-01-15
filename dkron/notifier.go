@@ -110,14 +110,19 @@ func (n *Notifier) sendExecutionEmail() {
 	}
 
 	serverAddr := fmt.Sprintf("%s:%d", n.Config.MailHost, n.Config.MailPort)
+	if err := e.Send(serverAddr, n.auth()); err != nil {
+		log.WithError(err).Error("notifier: Error sending email")
+	}
+}
 
+func (n *Notifier) auth() smtp.Auth {
 	var auth smtp.Auth
+	
 	if n.Config.MailUsername != "" && n.Config.MailPassword != "" {
 		auth = smtp.PlainAuth("", n.Config.MailUsername, n.Config.MailPassword, n.Config.MailHost)
 	}
-	if err := e.Send(serverAddr, auth); err != nil {
-		log.WithError(err).Error("notifier: Error sending email")
-	}
+	
+	return auth
 }
 
 func (n *Notifier) callExecutionWebhook() {

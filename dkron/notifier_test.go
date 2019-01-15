@@ -7,6 +7,8 @@ import (
 	"net/http/httptest"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNotifier_callExecutionWebhook(t *testing.T) {
@@ -60,8 +62,29 @@ func TestNotifier_sendExecutionEmail(t *testing.T) {
 	}
 
 	n := Notification(c, ex1, exg, job)
-
 	n.Send()
+}
+
+func Test_auth(t *testing.T) {
+	n1 := &Notifier{
+		Config: &Config{
+			MailHost:     "localhost",
+			MailPort:     25,
+			MailUsername: "username",
+			MailPassword: "password",
+		}}
+
+	a1 := n1.auth()
+	assert.NotNil(t, a1)
+
+	n2 := &Notifier{
+		Config: &Config{
+			MailHost: "localhost",
+			MailPort: 25,
+		}}
+
+	a2 := n2.auth()
+	assert.Nil(t, a2)
 }
 
 func TestNotifier_buildTemplate(t *testing.T) {
