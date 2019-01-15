@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"os"
 	"os/exec"
 	"path"
 	"path/filepath"
@@ -16,6 +17,8 @@ import (
 type Plugins struct {
 	Processors map[string]dkron.ExecutionProcessor
 	Executors  map[string]dkron.Executor
+	LogLevel   string
+	NodeName   string
 }
 
 // Discover plugins located on disk
@@ -104,13 +107,16 @@ func getPluginName(file string) (string, bool) {
 	return name, true
 }
 
-func (Plugins) pluginFactory(path string, pluginType string) (interface{}, error) {
+func (p *Plugins) pluginFactory(path string, pluginType string) (interface{}, error) {
 	// Build the plugin client configuration and init the plugin
 	var config plugin.ClientConfig
 	config.Cmd = exec.Command(path)
 	config.HandshakeConfig = dkplugin.Handshake
 	config.Managed = true
 	config.Plugins = dkplugin.PluginMap
+	config.SyncStdout = os.Stdout
+	config.SyncStderr = os.Stderr
+	config.Logger = &dkron.HCLogAdapter{Log: dkron.InitLogger(p.LogLevel, p.NodeName), Name: "plugins"}
 
 	switch pluginType {
 	case dkplugin.ProcessorPluginName:

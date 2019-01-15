@@ -48,7 +48,10 @@ func init() {
 
 func agentRun(args ...string) error {
 	// Make sure we clean up any managed plugins at the end of this
-	p := &Plugins{}
+	p := &Plugins{
+		LogLevel: config.LogLevel,
+		NodeName: config.NodeName,
+	}
 	if err := p.DiscoverPlugins(); err != nil {
 		log.Fatal(err)
 	}

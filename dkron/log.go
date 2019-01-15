@@ -10,7 +10,7 @@ import (
 var log = logrus.NewEntry(logrus.New())
 
 // InitLogger creates the logger instance
-func InitLogger(logLevel string, node string) {
+func InitLogger(logLevel string, node string) logrus.FieldLogger {
 	formattedLogger := logrus.New()
 	formattedLogger.Formatter = &logrus.TextFormatter{FullTimestamp: true}
 
@@ -30,4 +30,6 @@ func InitLogger(logLevel string, node string) {
 		gin.DefaultWriter = ioutil.Discard
 		gin.SetMode(gin.ReleaseMode)
 	}
+
+	return log
 }

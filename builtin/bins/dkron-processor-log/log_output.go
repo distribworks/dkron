@@ -1,6 +1,9 @@
 package main
 
 import (
+	"fmt"
+	"os"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/victorcoder/dkron/dkron"
 )
@@ -13,6 +16,19 @@ func (l *LogOutput) Process(args *dkron.ExecutionProcessorArgs) dkron.Execution 
 	log.SetFormatter(&log.TextFormatter{FullTimestamp: true})
 
 	l.parseConfig(args.Config)
+
+	// Output to stdout in case of success or to stderr on failure
+	if args.Execution.Success {
+		fmt.Printf("----- BEGIN OUTPUT job=%s execution=%s -----\n", args.Execution.JobName, args.Execution.Key())
+		fmt.Print(string(args.Execution.Output))
+		fmt.Printf("----- END OUTPUT -----\n")
+	} else {
+		fmt.Fprintf(os.Stderr, "----- BEGIN OUTPUT job=%s execution=%s -----\n", args.Execution.JobName, args.Execution.Key())
+		fmt.Fprint(os.Stderr, string(args.Execution.Output))
+		fmt.Fprintf(os.Stderr, "----- END OUTPUT -----\n")
+	}
+
+	// Override output if not forwarding
 	if !l.forward {
 		args.Execution.Output = []byte("Output in dkron log")
 	}
