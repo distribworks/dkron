@@ -4,14 +4,14 @@ import (
 	"errors"
 	"expvar"
 
-	"github.com/sirupsen/logrus"
 	"github.com/armon/go-metrics"
+	"github.com/sirupsen/logrus"
 	"github.com/victorcoder/dkron/cron"
 )
 
 var (
 	cronInspect      = expvar.NewMap("cron_entries")
-	schedulerStarted = expvar.NewString("scheduler_started")
+	schedulerStarted = expvar.NewInt("scheduler_started")
 
 	ErrScheduleParse = errors.New("Can't parse job schedule")
 )
@@ -33,7 +33,7 @@ type Scheduler struct {
 
 func NewScheduler() *Scheduler {
 	c := cron.New()
-	schedulerStarted.Set("false")
+	schedulerStarted.Set(1)
 	return &Scheduler{Cron: c, Started: false}
 }
 
@@ -60,7 +60,7 @@ func (s *Scheduler) Start(jobs []*Job) {
 	s.Cron.Start()
 	s.Started = true
 
-	schedulerStarted.Set("true")
+	schedulerStarted.Set(1)
 }
 
 func (s *Scheduler) Stop() {
@@ -74,7 +74,7 @@ func (s *Scheduler) Stop() {
 		cronInspect.Do(func(kv expvar.KeyValue) {
 			kv.Value = nil
 		})
-		schedulerStarted.Set("false")
+		schedulerStarted.Set(0)
 	}
 }
 
