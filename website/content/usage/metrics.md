@@ -24,10 +24,10 @@ dog_statsd_addr: "localhost:8125"
 - dkron.memberlist.tcp.sent
 - dkron.memberlist.udp.received
 - dkron.memberlist.udp.sent
-- dkron.rpc.call_execution_done
-- dkron.rpc.call_get_job
-- dkron.rpc.execution_done
-- dkron.rpc.get_job
+- dkron.grpc.call_execution_done
+- dkron.grpc.call_get_job
+- dkron.grpc.execution_done
+- dkron.grpc.get_job
 - dkron.runtime.alloc_bytes
 - dkron.runtime.free_count
 - dkron.runtime.gc_pause_ns
