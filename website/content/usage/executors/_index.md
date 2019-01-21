@@ -1,6 +1,6 @@
 ---
 title: Executors
-weight: 2
+weight: 30
 ---
 
 ## Executors
@@ -13,15 +13,4 @@ New plugins will be added, or you can create new ones, to perform different task
 
 [Dkron Pro](/products/pro/) have commercially supported executors
 
-Add this to a job definition to use the `shell` executor:
-
-```json
-{
-  "executor": "shell",
-  "executor_config": {
-    "command": "echo \"Hello from dkron\""
-  }
-}
-```
-
-Refer to the API documentation for [params accepted by the `shell` executor](/usage/api/#executor-shell).
+{{% children  %}}
