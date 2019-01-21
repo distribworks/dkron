@@ -15,7 +15,7 @@ forward: Forward log output to the next processor
 
 Example
 
-```
+```json
 {
     "name": "job_name",
     "command": "echo 'Hello files'",

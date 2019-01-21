@@ -12,7 +12,7 @@ Parameters
 
 Example
 
-```
+```json
 {
     "name": "job_name",
     "command": "echo 'Hello log'",
