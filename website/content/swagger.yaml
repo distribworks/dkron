@@ -297,9 +297,8 @@ definitions:
         readOnly: false
       dependent_jobs:
         type: array
-        items: {
+        items:
           type: string
-        }
         description: "Array containing the jobs that depends on this one"
         example: ['dependent_job']
         readOnly: true
