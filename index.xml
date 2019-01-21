@@ -12,27 +12,6 @@
     
     
     <item>
-      <title>Execution Processors</title>
-      <link>/usage/plugins/processors/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/usage/plugins/processors/</guid>
-      <description>Execution Processors Processor plugins are called when an execution response has been received. They are passed the resulting execution data and configuration parameters, this plugins can perform a variety of operations with the execution and it&amp;rsquo;s very flexible and per Job, examples of operations this plugins can do:
- Execution output storage, forwarding or redirection. Notification Monitoring  For example, Processor plugins can be used to redirect the output of a job execution to different targets.</description>
-    </item>
-    
-    <item>
-      <title>Executors</title>
-      <link>/usage/plugins/executors/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/usage/plugins/executors/</guid>
-      <description>Executors Executors plugins are the main mechanism of execution in Dkron. They implement different &amp;ldquo;types&amp;rdquo; of jobs in the sense that they can perform the most diverse actions on the target nodes.
-For example, the built-in shell executor, will run the indicated command in the target node.
-New plugins will be added, or you can create new ones, to perform different tasks, as HTTP requests, Docker runs, anything that you can imagine.</description>
-    </item>
-    
-    <item>
       <title>Installation</title>
       <link>/basics/installation/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -176,10 +155,10 @@ dkron version [flags]  Options  -h, --help help for version  Options inherited f
     
     <item>
       <title>AWS ECS Executor</title>
-      <link>/pro/ecs/</link>
+      <link>/pro/executors/ecs/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/pro/ecs/</guid>
+      <guid>/pro/executors/ecs/</guid>
       <description>The ECS exeutor is capable of launching tasks in ECS clusters, then listen to a stream of CloudWatch Logs and return the output.
 To configure a job to be run in ECS, the executor needs a JSON Task definition template or an already defined task in ECS.
 To allow the ECS Task runner to run tasks, the machine running Dkron needs to have the appropriate permissions configured in AWS IAM:</description>
@@ -193,7 +172,7 @@ To allow the ECS Task runner to run tasks, the machine running Dkron needs to ha
       <guid>/pro/auth/</guid>
       <description>Dkron Pro has the ability to be configured to use HTTP basic auth.
 Authentication can be set using these parameters in the dkron config file:
-# dkron.yml username: foo password: bar This will enable auth on the WebUI and for the API.</description>
+# dkron.yml username: dkron_admin password: adminpassword This will enable auth on the WebUI and for the API.</description>
     </item>
     
     <item>
@@ -297,10 +276,10 @@ Dkron vs. Rundeck Rundeck is a popular and mature platform to automate operation
     
     <item>
       <title>Docker executor</title>
-      <link>/pro/docker/</link>
+      <link>/pro/executors/docker/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/pro/docker/</guid>
+      <guid>/pro/executors/docker/</guid>
       <description> Docker executor can launch docker based cron jobs using the docker command of the target node.
 This executor needs a recent version of docker to be available and configured in the target node.
 Configuration To run a docker job create a job config with the docker executor as in this example:
@@ -309,10 +288,10 @@ Configuration To run a docker job create a job config with the docker executor a
     
     <item>
       <title>Elasticsearch processor</title>
-      <link>/pro/elasticsearch/</link>
+      <link>/pro/processors/elasticsearch/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/pro/elasticsearch/</guid>
+      <guid>/pro/processors/elasticsearch/</guid>
       <description> The Elasticsearch processor can fordward execution logs to an ES cluster. It need an already available Elasticsearch installation that is visible in the same network of the target node.
 The output logs of the job execution will be stored in the indicated ES instace.
 Configuration { &amp;#34;processors&amp;#34;: { &amp;#34;elasticsearch&amp;#34;: { &amp;#34;url&amp;#34;: &amp;#34;http://localhost:9200&amp;#34;, //comma separated list of Elasticsearch hosts urls (default: http://localhost:9200) &amp;#34;index&amp;#34;: &amp;#34;dkron_logs&amp;#34;, //desired index name (default: dkron_logs) &amp;#34;forward&amp;#34;: &amp;#34;false&amp;#34; //forward logs to the next processor (default: false) } } }</description>
@@ -320,10 +299,10 @@ Configuration { &amp;#34;processors&amp;#34;: { &amp;#34;elasticsearch&amp;#34;:
     
     <item>
       <title>Email processor</title>
-      <link>/pro/email/</link>
+      <link>/pro/processors/email/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/pro/email/</guid>
+      <guid>/pro/processors/email/</guid>
       <description>The Email processor provides flexibility to job email notifications.
 Configuration of the email processor is stored in a file named dkron-processor-email.yml in the same locations as dkron.yml, and should include a list of providers, it can include any number of providers.
 Example:
@@ -350,6 +329,30 @@ This ensures a dead easy install and setup, basically run dkron and you will hav
       <guid>/pro/encryption/</guid>
       <description>SSL encryption is used for communicating dkron pro and the embedded store, and between storage nodes itself. Also if client auth is enabled, only dkron pro clients can talk to the embedded store. This means that no other software running on your local network will be able to talk to dkron&amp;rsquo;s etcd server.
 This ensures that no unexpected usage of the Dkron&amp;rsquo;s store will happen, unless it is another Dkron pro instance.</description>
+    </item>
+    
+    <item>
+      <title>File Processor</title>
+      <link>/usage/processors/file/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/usage/processors/file/</guid>
+      <description> File processor saves the execution output to a single log file in the specified directory
+Configuration Parameters
+log_dir: Path to the location where the log files will be saved forward: Forward log output to the next processor  Example
+{ &amp;quot;name&amp;quot;: &amp;quot;job_name&amp;quot;, &amp;quot;command&amp;quot;: &amp;quot;echo &#39;Hello files&#39;&amp;quot;, &amp;quot;schedule&amp;quot;: &amp;quot;@every 2m&amp;quot;, &amp;quot;tags&amp;quot;: { &amp;quot;role&amp;quot;: &amp;quot;web&amp;quot; }, &amp;quot;processors&amp;quot;: { &amp;quot;files&amp;quot;: { &amp;quot;log_dir&amp;quot;: &amp;quot;/var/log/mydir&amp;quot;, &amp;quot;forward&amp;quot;: true } } }  </description>
+    </item>
+    
+    <item>
+      <title>HTTP Executor</title>
+      <link>/usage/executors/http/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/usage/executors/http/</guid>
+      <description>HTTP executor can send a request to an HTTP endpoint
+Configuration Params:
+method: Request method in uppercase url: Request url headers: Json string, such as &amp;quot;[\&amp;quot;Content-Type: application/json\&amp;quot;]&amp;quot; body: POST body timeout: Request timeout, unit seconds expectCode: Expect response code, such as 200,206 expectBody: Expect response body, support regexp, such as /success/ debug: Debug option, will log everything when this option is not empty  Example
+{ &amp;#34;executor&amp;#34;: &amp;#34;http&amp;#34;, &amp;#34;executor_config&amp;#34;: { &amp;#34;method&amp;#34;: &amp;#34;GET&amp;#34;, &amp;#34;url&amp;#34;: &amp;#34;http://example.</description>
     </item>
     
     <item>
@@ -397,6 +400,19 @@ Dkron is an Open Source project licensed under the terms of the LGPLv3 license. 
     </item>
     
     <item>
+      <title>Log Processor</title>
+      <link>/usage/processors/log/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/usage/processors/log/</guid>
+      <description> Log processor writes the execution output to stdout/stderr
+Configuration Parameters
+forward: Forward the output to the next processor
+Example
+{ &amp;quot;name&amp;quot;: &amp;quot;job_name&amp;quot;, &amp;quot;command&amp;quot;: &amp;quot;echo &#39;Hello log&#39;&amp;quot;, &amp;quot;schedule&amp;quot;: &amp;quot;@every 2m&amp;quot;, &amp;quot;tags&amp;quot;: { &amp;quot;role&amp;quot;: &amp;quot;web&amp;quot; }, &amp;quot;processors&amp;quot;: { &amp;quot;log&amp;quot;: { &amp;quot;forward&amp;quot;: true } } }  </description>
+    </item>
+    
+    <item>
       <title>Metrics</title>
       <link>/usage/metrics/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -404,7 +420,33 @@ Dkron is an Open Source project licensed under the terms of the LGPLv3 license. 
       <guid>/usage/metrics/</guid>
       <description>Dkron has the ability to send metrics to Statsd for dashboards and historical reporting. It sends job processing metrics and golang, serf metrics too.
 Configuration Add this in your yaml config file
-dog_statsd_addr: &amp;#34;localhost:8125&amp;#34; Metrics  dkron.agent.event_received.query_execution_done dkron.agent.event_received.query_run_job dkron.memberlist.gossip dkron.memberlist.probeNode dkron.memberlist.pushPullNode dkron.memberlist.tcp.accept dkron.memberlist.tcp.connect dkron.memberlist.tcp.sent dkron.memberlist.udp.received dkron.memberlist.udp.sent dkron.rpc.call_execution_done dkron.rpc.call_get_job dkron.rpc.execution_done dkron.rpc.get_job dkron.runtime.alloc_bytes dkron.runtime.free_count dkron.runtime.gc_pause_ns dkron.runtime.heap_objects dkron.runtime.malloc_count dkron.runtime.num_goroutines dkron.runtime.sys_bytes dkron.runtime.total_gc_pause_ns dkron.runtime.total_gc_runs dkron.serf.coordinate.adjustment_ms dkron.serf.msgs.received dkron.serf.msgs.sent dkron.serf.queries dkron.serf.queries.execution_done dkron.serf.queries.run_job dkron.serf.query_acks dkron.serf.query_responses dkron.serf.queue.Event dkron.serf.queue.Intent dkron.</description>
+dog_statsd_addr: &amp;#34;localhost:8125&amp;#34; Metrics  dkron.agent.event_received.query_execution_done dkron.agent.event_received.query_run_job dkron.memberlist.gossip dkron.memberlist.probeNode dkron.memberlist.pushPullNode dkron.memberlist.tcp.accept dkron.memberlist.tcp.connect dkron.memberlist.tcp.sent dkron.memberlist.udp.received dkron.memberlist.udp.sent dkron.grpc.call_execution_done dkron.grpc.call_get_job dkron.grpc.execution_done dkron.grpc.get_job dkron.runtime.alloc_bytes dkron.runtime.free_count dkron.runtime.gc_pause_ns dkron.runtime.heap_objects dkron.runtime.malloc_count dkron.runtime.num_goroutines dkron.runtime.sys_bytes dkron.runtime.total_gc_pause_ns dkron.runtime.total_gc_runs dkron.serf.coordinate.adjustment_ms dkron.serf.msgs.received dkron.serf.msgs.sent dkron.serf.queries dkron.serf.queries.execution_done dkron.serf.queries.run_job dkron.serf.query_acks dkron.serf.query_responses dkron.serf.queue.Event dkron.serf.queue.Intent dkron.</description>
+    </item>
+    
+    <item>
+      <title>Shell Executor</title>
+      <link>/usage/executors/shell/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/usage/executors/shell/</guid>
+      <description> Shell executor run a system command
+Configuration Params
+shell: Run this command using a shell environment command: The command to run env: Env vars separated by comma cwd: Chdir before command run  Example
+{ &amp;#34;executor&amp;#34;: &amp;#34;shell&amp;#34;, &amp;#34;executor_config&amp;#34;: { &amp;#34;shell&amp;#34;: &amp;#34;true&amp;#34;, &amp;#34;command&amp;#34;: &amp;#34;my_command&amp;#34;, &amp;#34;env&amp;#34;: &amp;#34;ENV_VAR=va1,ANOTHER_ENV_VAR=var2&amp;#34;, &amp;#34;cwd&amp;#34;: &amp;#34;/app&amp;#34; } }</description>
+    </item>
+    
+    <item>
+      <title>Syslog Processor</title>
+      <link>/usage/processors/syslog/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/usage/processors/syslog/</guid>
+      <description> Syslog processor writes the execution output to the system syslog daemon
+Note: Only work on linux systems
+Configuration Parameters
+forward: Forward the output to the next processor
+Example
+{ &amp;quot;name&amp;quot;: &amp;quot;job_name&amp;quot;, &amp;quot;command&amp;quot;: &amp;quot;echo &#39;Hello syslog&#39;&amp;quot;, &amp;quot;schedule&amp;quot;: &amp;quot;@every 2m&amp;quot;, &amp;quot;tags&amp;quot;: { &amp;quot;role&amp;quot;: &amp;quot;web&amp;quot; }, &amp;quot;processors&amp;quot;: { &amp;quot;syslog&amp;quot;: { &amp;quot;forward&amp;quot;: true } } }  </description>
     </item>
     
     <item>

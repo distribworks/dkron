@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Processors on Dkron - Distributed job scheduling system</title>
+    <link>/usage/processors/</link>
+    <description>Recent content in Processors on Dkron - Distributed job scheduling system</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    
+	<atom:link href="/usage/processors/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>File Processor</title>
+      <link>/usage/processors/file/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/usage/processors/file/</guid>
+      <description> File processor saves the execution output to a single log file in the specified directory
+Configuration Parameters
+log_dir: Path to the location where the log files will be saved forward: Forward log output to the next processor  Example
+{ &amp;quot;name&amp;quot;: &amp;quot;job_name&amp;quot;, &amp;quot;command&amp;quot;: &amp;quot;echo &#39;Hello files&#39;&amp;quot;, &amp;quot;schedule&amp;quot;: &amp;quot;@every 2m&amp;quot;, &amp;quot;tags&amp;quot;: { &amp;quot;role&amp;quot;: &amp;quot;web&amp;quot; }, &amp;quot;processors&amp;quot;: { &amp;quot;files&amp;quot;: { &amp;quot;log_dir&amp;quot;: &amp;quot;/var/log/mydir&amp;quot;, &amp;quot;forward&amp;quot;: true } } }  </description>
+    </item>
+    
+    <item>
+      <title>Log Processor</title>
+      <link>/usage/processors/log/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/usage/processors/log/</guid>
+      <description> Log processor writes the execution output to stdout/stderr
+Configuration Parameters
+forward: Forward the output to the next processor
+Example
+{ &amp;quot;name&amp;quot;: &amp;quot;job_name&amp;quot;, &amp;quot;command&amp;quot;: &amp;quot;echo &#39;Hello log&#39;&amp;quot;, &amp;quot;schedule&amp;quot;: &amp;quot;@every 2m&amp;quot;, &amp;quot;tags&amp;quot;: { &amp;quot;role&amp;quot;: &amp;quot;web&amp;quot; }, &amp;quot;processors&amp;quot;: { &amp;quot;log&amp;quot;: { &amp;quot;forward&amp;quot;: true } } }  </description>
+    </item>
+    
+    <item>
+      <title>Syslog Processor</title>
+      <link>/usage/processors/syslog/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/usage/processors/syslog/</guid>
+      <description> Syslog processor writes the execution output to the system syslog daemon
+Note: Only work on linux systems
+Configuration Parameters
+forward: Forward the output to the next processor
+Example
+{ &amp;quot;name&amp;quot;: &amp;quot;job_name&amp;quot;, &amp;quot;command&amp;quot;: &amp;quot;echo &#39;Hello syslog&#39;&amp;quot;, &amp;quot;schedule&amp;quot;: &amp;quot;@every 2m&amp;quot;, &amp;quot;tags&amp;quot;: { &amp;quot;role&amp;quot;: &amp;quot;web&amp;quot; }, &amp;quot;processors&amp;quot;: { &amp;quot;syslog&amp;quot;: { &amp;quot;forward&amp;quot;: true } } }  </description>
+    </item>
+    
+  </channel>
+</rss>

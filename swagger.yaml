@@ -8,7 +8,7 @@ produces:
 schemes:
   - http
 info:
-  version: 1.0.0-rc
+  version: 1.0
   title: Dkron REST API
   description: |
     You can communicate with Dkron using a RESTful JSON API over HTTP. Dkron nodes usually listen on port `8080` for API requests. All examples in this section assume that you've found a running leader at `localhost:8080`.
@@ -297,15 +297,13 @@ definitions:
         readOnly: false
       dependent_jobs:
         type: array
-        items: {
+        items:
           type: string
-        }
         description: "Array containing the jobs that depends on this one"
         example: ['dependent_job']
         readOnly: true
       processors:
         $ref: '#/definitions/processors'
-        readOnly: false
       concurrency:
         type: string
         description: "Concurrency policy for the job allow/forbid"
@@ -318,7 +316,6 @@ definitions:
         example: "shell"
       executor_config:
         $ref: '#/definitions/executor_config'
-        readOnly: false
   member:
     type: object
     description: A member represents a cluster member node.

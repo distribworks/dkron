@@ -3,14 +3,6 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>/usage/plugins/processors/</loc>
-  </url>
-  
-  <url>
-    <loc>/usage/plugins/executors/</loc>
-  </url>
-  
-  <url>
     <loc>/basics/installation/</loc>
   </url>
   
@@ -31,7 +23,15 @@
   </url>
   
   <url>
+    <loc>/usage/executors/</loc>
+  </url>
+  
+  <url>
     <loc>/basics/getting-started/</loc>
+  </url>
+  
+  <url>
+    <loc>/usage/processors/</loc>
   </url>
   
   <url>
@@ -98,7 +98,7 @@
   </url>
   
   <url>
-    <loc>/pro/ecs/</loc>
+    <loc>/pro/executors/ecs/</loc>
   </url>
   
   <url>
@@ -153,15 +153,15 @@
   </url>
   
   <url>
-    <loc>/pro/docker/</loc>
+    <loc>/pro/executors/docker/</loc>
   </url>
   
   <url>
-    <loc>/pro/elasticsearch/</loc>
+    <loc>/pro/processors/elasticsearch/</loc>
   </url>
   
   <url>
-    <loc>/pro/email/</loc>
+    <loc>/pro/processors/email/</loc>
   </url>
   
   <url>
@@ -170,6 +170,18 @@
   
   <url>
     <loc>/pro/encryption/</loc>
+  </url>
+  
+  <url>
+    <loc>/pro/executors/</loc>
+  </url>
+  
+  <url>
+    <loc>/usage/processors/file/</loc>
+  </url>
+  
+  <url>
+    <loc>/usage/executors/http/</loc>
   </url>
   
   <url>
@@ -189,11 +201,27 @@
   </url>
   
   <url>
+    <loc>/usage/processors/log/</loc>
+  </url>
+  
+  <url>
     <loc>/usage/metrics/</loc>
   </url>
   
   <url>
     <loc>/usage/plugins/</loc>
+  </url>
+  
+  <url>
+    <loc>/pro/processors/</loc>
+  </url>
+  
+  <url>
+    <loc>/usage/executors/shell/</loc>
+  </url>
+  
+  <url>
+    <loc>/usage/processors/syslog/</loc>
   </url>
   
   <url>

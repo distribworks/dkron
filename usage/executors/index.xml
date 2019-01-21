@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Executors on Dkron - Distributed job scheduling system</title>
+    <link>/usage/executors/</link>
+    <description>Recent content in Executors on Dkron - Distributed job scheduling system</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    
+	<atom:link href="/usage/executors/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>HTTP Executor</title>
+      <link>/usage/executors/http/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/usage/executors/http/</guid>
+      <description>HTTP executor can send a request to an HTTP endpoint
+Configuration Params:
+method: Request method in uppercase url: Request url headers: Json string, such as &amp;quot;[\&amp;quot;Content-Type: application/json\&amp;quot;]&amp;quot; body: POST body timeout: Request timeout, unit seconds expectCode: Expect response code, such as 200,206 expectBody: Expect response body, support regexp, such as /success/ debug: Debug option, will log everything when this option is not empty  Example
+{ &amp;#34;executor&amp;#34;: &amp;#34;http&amp;#34;, &amp;#34;executor_config&amp;#34;: { &amp;#34;method&amp;#34;: &amp;#34;GET&amp;#34;, &amp;#34;url&amp;#34;: &amp;#34;http://example.</description>
+    </item>
+    
+    <item>
+      <title>Shell Executor</title>
+      <link>/usage/executors/shell/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/usage/executors/shell/</guid>
+      <description> Shell executor run a system command
+Configuration Params
+shell: Run this command using a shell environment command: The command to run env: Env vars separated by comma cwd: Chdir before command run  Example
+{ &amp;#34;executor&amp;#34;: &amp;#34;shell&amp;#34;, &amp;#34;executor_config&amp;#34;: { &amp;#34;shell&amp;#34;: &amp;#34;true&amp;#34;, &amp;#34;command&amp;#34;: &amp;#34;my_command&amp;#34;, &amp;#34;env&amp;#34;: &amp;#34;ENV_VAR=va1,ANOTHER_ENV_VAR=var2&amp;#34;, &amp;#34;cwd&amp;#34;: &amp;#34;/app&amp;#34; } }</description>
+    </item>
+    
+  </channel>
+</rss>
