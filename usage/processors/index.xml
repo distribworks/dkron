@@ -19,7 +19,7 @@
       <description> File processor saves the execution output to a single log file in the specified directory
 Configuration Parameters
 log_dir: Path to the location where the log files will be saved forward: Forward log output to the next processor  Example
-{ &amp;quot;name&amp;quot;: &amp;quot;job_name&amp;quot;, &amp;quot;command&amp;quot;: &amp;quot;echo &#39;Hello files&#39;&amp;quot;, &amp;quot;schedule&amp;quot;: &amp;quot;@every 2m&amp;quot;, &amp;quot;tags&amp;quot;: { &amp;quot;role&amp;quot;: &amp;quot;web&amp;quot; }, &amp;quot;processors&amp;quot;: { &amp;quot;files&amp;quot;: { &amp;quot;log_dir&amp;quot;: &amp;quot;/var/log/mydir&amp;quot;, &amp;quot;forward&amp;quot;: true } } }  </description>
+{ &amp;#34;name&amp;#34;: &amp;#34;job_name&amp;#34;, &amp;#34;command&amp;#34;: &amp;#34;echo &amp;#39;Hello files&amp;#39;&amp;#34;, &amp;#34;schedule&amp;#34;: &amp;#34;@every 2m&amp;#34;, &amp;#34;tags&amp;#34;: { &amp;#34;role&amp;#34;: &amp;#34;web&amp;#34; }, &amp;#34;processors&amp;#34;: { &amp;#34;files&amp;#34;: { &amp;#34;log_dir&amp;#34;: &amp;#34;/var/log/mydir&amp;#34;, &amp;#34;forward&amp;#34;: true } } }</description>
     </item>
     
     <item>
@@ -32,7 +32,7 @@ log_dir: Path to the location where the log files will be saved forward: Forward
 Configuration Parameters
 forward: Forward the output to the next processor
 Example
-{ &amp;quot;name&amp;quot;: &amp;quot;job_name&amp;quot;, &amp;quot;command&amp;quot;: &amp;quot;echo &#39;Hello log&#39;&amp;quot;, &amp;quot;schedule&amp;quot;: &amp;quot;@every 2m&amp;quot;, &amp;quot;tags&amp;quot;: { &amp;quot;role&amp;quot;: &amp;quot;web&amp;quot; }, &amp;quot;processors&amp;quot;: { &amp;quot;log&amp;quot;: { &amp;quot;forward&amp;quot;: true } } }  </description>
+{ &amp;#34;name&amp;#34;: &amp;#34;job_name&amp;#34;, &amp;#34;command&amp;#34;: &amp;#34;echo &amp;#39;Hello log&amp;#39;&amp;#34;, &amp;#34;schedule&amp;#34;: &amp;#34;@every 2m&amp;#34;, &amp;#34;tags&amp;#34;: { &amp;#34;role&amp;#34;: &amp;#34;web&amp;#34; }, &amp;#34;processors&amp;#34;: { &amp;#34;log&amp;#34;: { &amp;#34;forward&amp;#34;: true } } }</description>
     </item>
     
     <item>
@@ -46,7 +46,7 @@ Note: Only work on linux systems
 Configuration Parameters
 forward: Forward the output to the next processor
 Example
-{ &amp;quot;name&amp;quot;: &amp;quot;job_name&amp;quot;, &amp;quot;command&amp;quot;: &amp;quot;echo &#39;Hello syslog&#39;&amp;quot;, &amp;quot;schedule&amp;quot;: &amp;quot;@every 2m&amp;quot;, &amp;quot;tags&amp;quot;: { &amp;quot;role&amp;quot;: &amp;quot;web&amp;quot; }, &amp;quot;processors&amp;quot;: { &amp;quot;syslog&amp;quot;: { &amp;quot;forward&amp;quot;: true } } }  </description>
+{ &amp;#34;name&amp;#34;: &amp;#34;job_name&amp;#34;, &amp;#34;command&amp;#34;: &amp;#34;echo &amp;#39;Hello syslog&amp;#39;&amp;#34;, &amp;#34;schedule&amp;#34;: &amp;#34;@every 2m&amp;#34;, &amp;#34;tags&amp;#34;: { &amp;#34;role&amp;#34;: &amp;#34;web&amp;#34; }, &amp;#34;processors&amp;#34;: { &amp;#34;syslog&amp;#34;: { &amp;#34;forward&amp;#34;: true } } }</description>
     </item>
     
   </channel>

@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2019-01-21T22:09:50 CET">
+<meta name="revised" content="2019-01-21T22:14:41 CET">
 <title>File Processor :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -526,23 +526,20 @@ forward: Forward log output to the next processor
 </code></pre>
 
 <p>Example</p>
-
-<pre><code>{
-    &quot;name&quot;: &quot;job_name&quot;,
-    &quot;command&quot;: &quot;echo 'Hello files'&quot;,
-    &quot;schedule&quot;: &quot;@every 2m&quot;,
-    &quot;tags&quot;: {
-        &quot;role&quot;: &quot;web&quot;
-    },
-    &quot;processors&quot;: {
-        &quot;files&quot;: {
-            &quot;log_dir&quot;: &quot;/var/log/mydir&quot;,
-            &quot;forward&quot;: true
-        }
-    }
-}
-</code></pre>
-
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">{</span>
+    <span style="color:#f92672">&#34;name&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;job_name&#34;</span><span style="color:#111">,</span>
+    <span style="color:#f92672">&#34;command&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;echo &#39;Hello files&#39;&#34;</span><span style="color:#111">,</span>
+    <span style="color:#f92672">&#34;schedule&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;@every 2m&#34;</span><span style="color:#111">,</span>
+    <span style="color:#f92672">&#34;tags&#34;</span><span style="color:#111">:</span> <span style="color:#111">{</span>
+        <span style="color:#f92672">&#34;role&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;web&#34;</span>
+    <span style="color:#111">},</span>
+    <span style="color:#f92672">&#34;processors&#34;</span><span style="color:#111">:</span> <span style="color:#111">{</span>
+        <span style="color:#f92672">&#34;files&#34;</span><span style="color:#111">:</span> <span style="color:#111">{</span>
+            <span style="color:#f92672">&#34;log_dir&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;/var/log/mydir&#34;</span><span style="color:#111">,</span>
+            <span style="color:#f92672">&#34;forward&#34;</span><span style="color:#111">:</span> <span style="color:#00a8c8">true</span>
+        <span style="color:#111">}</span>
+    <span style="color:#111">}</span>
+<span style="color:#111">}</span></code></pre></div>
 
     
     

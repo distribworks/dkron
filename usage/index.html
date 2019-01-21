@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2019-01-21T22:09:49 CET">
+<meta name="revised" content="2019-01-21T22:14:41 CET">
 <title>Usage :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -120,20 +120,6 @@
       <a href="/usage/executors/">Executors</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/usage/executors/http/" class="dd-item">
-        <div>
-          <a href="/usage/executors/http/">
-            HTTP Executor
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/usage/executors/shell/" class="dd-item">
-        <div>
-          <a href="/usage/executors/shell/">
-            Shell Executor
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
         </ul>
     </li>
     <li data-nav-id="/usage/processors/" class="dd-item haschildren
@@ -561,7 +547,7 @@ shell: Run this command using a shell environment command: The command to run en
 <p> File processor saves the execution output to a single log file in the specified directory
 Configuration Parameters
 log_dir: Path to the location where the log files will be saved forward: Forward log output to the next processor  Example
-{ &quot;name&quot;: &quot;job_name&quot;, &quot;command&quot;: &quot;echo 'Hello files'&quot;, &quot;schedule&quot;: &quot;@every 2m&quot;, &quot;tags&quot;: { &quot;role&quot;: &quot;web&quot; }, &quot;processors&quot;: { &quot;files&quot;: { &quot;log_dir&quot;: &quot;/var/log/mydir&quot;, &quot;forward&quot;: true } } }  </p>
+{ &#34;name&#34;: &#34;job_name&#34;, &#34;command&#34;: &#34;echo &#39;Hello files&#39;&#34;, &#34;schedule&#34;: &#34;@every 2m&#34;, &#34;tags&#34;: { &#34;role&#34;: &#34;web&#34; }, &#34;processors&#34;: { &#34;files&#34;: { &#34;log_dir&#34;: &#34;/var/log/mydir&#34;, &#34;forward&#34;: true } } }</p>
 </span>
 
 <span><card>
@@ -570,7 +556,7 @@ log_dir: Path to the location where the log files will be saved forward: Forward
 Configuration Parameters
 forward: Forward the output to the next processor
 Example
-{ &quot;name&quot;: &quot;job_name&quot;, &quot;command&quot;: &quot;echo 'Hello log'&quot;, &quot;schedule&quot;: &quot;@every 2m&quot;, &quot;tags&quot;: { &quot;role&quot;: &quot;web&quot; }, &quot;processors&quot;: { &quot;log&quot;: { &quot;forward&quot;: true } } }  </p>
+{ &#34;name&#34;: &#34;job_name&#34;, &#34;command&#34;: &#34;echo &#39;Hello log&#39;&#34;, &#34;schedule&#34;: &#34;@every 2m&#34;, &#34;tags&#34;: { &#34;role&#34;: &#34;web&#34; }, &#34;processors&#34;: { &#34;log&#34;: { &#34;forward&#34;: true } } }</p>
 </span>
 
 <span><card>
@@ -580,7 +566,7 @@ Note: Only work on linux systems
 Configuration Parameters
 forward: Forward the output to the next processor
 Example
-{ &quot;name&quot;: &quot;job_name&quot;, &quot;command&quot;: &quot;echo 'Hello syslog'&quot;, &quot;schedule&quot;: &quot;@every 2m&quot;, &quot;tags&quot;: { &quot;role&quot;: &quot;web&quot; }, &quot;processors&quot;: { &quot;syslog&quot;: { &quot;forward&quot;: true } } }  </p>
+{ &#34;name&#34;: &#34;job_name&#34;, &#34;command&#34;: &#34;echo &#39;Hello syslog&#39;&#34;, &#34;schedule&#34;: &#34;@every 2m&#34;, &#34;tags&#34;: { &#34;role&#34;: &#34;web&#34; }, &#34;processors&#34;: { &#34;syslog&#34;: { &#34;forward&#34;: true } } }</p>
 </span>
 
 <span><card>

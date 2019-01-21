@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2019-01-21T22:09:50 CET">
+<meta name="revised" content="2019-01-21T22:14:41 CET">
 <title>Syslog Processor :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -322,17 +322,59 @@
       <a href="/pro/processors/">Processors</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/pro/processors/elasticsearch/" class="dd-item">
+      <li data-nav-id="/pro/quick-start/" class="dd-item">
         <div>
-          <a href="/pro/processors/elasticsearch/">
-            Elasticsearch processor
+          <a href="/pro/quick-start/">
+            Quick start
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/pro/processors/email/" class="dd-item">
+      <li data-nav-id="/pro/auth/" class="dd-item">
         <div>
-          <a href="/pro/processors/email/">
-            Email processor
+          <a href="/pro/auth/">
+            Authorization
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/clustering/" class="dd-item">
+        <div>
+          <a href="/pro/clustering/">
+            Clustering
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/commercial-faq/" class="dd-item">
+        <div>
+          <a href="/pro/commercial-faq/">
+            Commercial FAQ
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/commercial-support/" class="dd-item">
+        <div>
+          <a href="/pro/commercial-support/">
+            Commercial Support
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/configuration/" class="dd-item">
+        <div>
+          <a href="/pro/configuration/">
+            Configuration
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/storage/" class="dd-item">
+        <div>
+          <a href="/pro/storage/">
+            Embedded storage
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/encryption/" class="dd-item">
+        <div>
+          <a href="/pro/encryption/">
+            Encryption
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -526,22 +568,19 @@
 <p><code>forward: Forward the output to the next processor</code></p>
 
 <p>Example</p>
-
-<pre><code>{
-    &quot;name&quot;: &quot;job_name&quot;,
-    &quot;command&quot;: &quot;echo 'Hello syslog'&quot;,
-    &quot;schedule&quot;: &quot;@every 2m&quot;,
-    &quot;tags&quot;: {
-        &quot;role&quot;: &quot;web&quot;
-    },
-    &quot;processors&quot;: {
-        &quot;syslog&quot;: {
-            &quot;forward&quot;: true
-        }
-    }
-}
-</code></pre>
-
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">{</span>
+    <span style="color:#f92672">&#34;name&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;job_name&#34;</span><span style="color:#111">,</span>
+    <span style="color:#f92672">&#34;command&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;echo &#39;Hello syslog&#39;&#34;</span><span style="color:#111">,</span>
+    <span style="color:#f92672">&#34;schedule&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;@every 2m&#34;</span><span style="color:#111">,</span>
+    <span style="color:#f92672">&#34;tags&#34;</span><span style="color:#111">:</span> <span style="color:#111">{</span>
+        <span style="color:#f92672">&#34;role&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;web&#34;</span>
+    <span style="color:#111">},</span>
+    <span style="color:#f92672">&#34;processors&#34;</span><span style="color:#111">:</span> <span style="color:#111">{</span>
+        <span style="color:#f92672">&#34;syslog&#34;</span><span style="color:#111">:</span> <span style="color:#111">{</span>
+            <span style="color:#f92672">&#34;forward&#34;</span><span style="color:#111">:</span> <span style="color:#00a8c8">true</span>
+        <span style="color:#111">}</span>
+    <span style="color:#111">}</span>
+<span style="color:#111">}</span></code></pre></div>
 
     
     
