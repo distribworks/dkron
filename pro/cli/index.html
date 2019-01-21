@@ -5,8 +5,8 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2019-01-21T22:24:19 CET">
-<title>Clustering :: Dkron - Distributed job scheduling system</title>
+<meta name="revised" content="2019-01-21T22:24:18 CET">
+<title>Pro CLI :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
 <link href="/css/nucleus.css" rel="stylesheet">
@@ -22,7 +22,7 @@
 
     
   </head>
-  <body data-url="/pro/clustering/">
+  <body data-url="/pro/cli/">
     
       <header>
   <div class="logo">
@@ -244,10 +244,11 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-    <li data-nav-id="/pro/cli/" class="dd-item haschildren
+    <li data-nav-id="/pro/cli/" class="dd-item parent active haschildren
         ">
       <div>
-      <a href="/pro/cli/">Pro CLI</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/pro/cli/">Pro CLI</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
       <li data-nav-id="/cli/dkron/" class="dd-item">
@@ -294,7 +295,7 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/pro/clustering/" class="dd-item active">
+      <li data-nav-id="/pro/clustering/" class="dd-item">
         <div>
           <a href="/pro/clustering/">
             Clustering
@@ -499,11 +500,17 @@
     <option value="/pro/" >
    Dkron Pro</option> 
       <option value="/pro/quick-start/" >- Quick start</option>
-    <option value="/pro/cli/" >
+    <option value="/pro/cli/"  selected>
   - 
-   Pro CLI</option>
+   Pro CLI</option> 
+      <option value="/cli/dkron/" >-- dkron</option>
+      <option value="/cli/dkron_agent/" >-- dkron agent</option>
+      <option value="/cli/dkron_doc/" >-- dkron doc</option>
+      <option value="/cli/dkron_keygen/" >-- dkron keygen</option>
+      <option value="/cli/dkron_version/" >-- dkron version</option>
+  
       <option value="/pro/auth/" >- Authorization</option>
-      <option value="/pro/clustering/"  selected>- Clustering</option>
+      <option value="/pro/clustering/" >- Clustering</option>
       <option value="/pro/commercial-faq/" >- Commercial FAQ</option>
       <option value="/pro/commercial-support/" >- Commercial Support</option>
       <option value="/pro/configuration/" >- Configuration</option>
@@ -546,31 +553,64 @@
       </div>
     
 
-    <h1>Clustering</h1>
-    
+    <h1>Pro CLI</h1>
     
     
     
 
-<h2 id="configure-a-cluster">Configure a cluster</h2>
 
-<p>First follow the Dkron <a href="/usage/clustering">clustering guide</a> then you can continue with this guide.</p>
 
-<p>The embedded store also needs to know its peers, it needs its own configuration as in the following example:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#75715e"># etcd.conf.yaml</span>
-<span style="color:#75715e"># Initial cluster configuration for bootstrapping.</span>
-initial-cluster<span style="color:#111">:</span> dkron1=https<span style="color:#111">:</span>//<span style="color:#ae81ff">10.19</span>.<span style="color:#ae81ff">3.9</span><span style="color:#111">:</span><span style="color:#ae81ff">2380</span><span style="color:#111">,</span>dkron2=https<span style="color:#111">:</span>//<span style="color:#ae81ff">10.19</span>.<span style="color:#ae81ff">4.64</span><span style="color:#111">:</span><span style="color:#ae81ff">2380</span><span style="color:#111">,</span>dkron3=https<span style="color:#111">:</span>//<span style="color:#ae81ff">10.19</span>.<span style="color:#ae81ff">7.215</span><span style="color:#111">:</span><span style="color:#ae81ff">2380</span></code></pre></div>
-<p>With this configuration Dkron Pro should start in cluster mode with embedded storage.</p>
+<ul class="children children-h2">
 
-<p>For a more in detail guide of clustering with etcd follow this guide: <a href="https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/clustering.md">https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/clustering.md</a></p>
+<span><h2>
+		<a href="/cli/dkron/" >dkron</a></h2>
+<p>dkron Professional distributed job scheduling system
+Synopsis Dkron is a system service that runs scheduled jobs at given intervals or times, just like the cron unix service but distributed in several machines in a cluster. If a machine fails (the leader), a follower will take over and keep running the scheduled jobs without human intervention.
+Options  --config string config file (default is /etc/dkron/dkron.yml) -h, --help help for dkron  SEE ALSO  dkron agent - Start a dkron agent dkron doc - Generate Markdown documentation for the Dkron CLI.</p>
+</span>
+
+<span><h2>
+		<a href="/cli/dkron_agent/" >dkron agent</a></h2>
+<p>dkron agent Start a dkron agent
+Synopsis Start a dkron agent that schedule jobs, listen for executions and run executors. It also runs a web UI.
+dkron agent [flags]  Options  --advertise-addr string Address used to advertise to other nodes in the cluster. By default, the bind address is advertised. --advertise-rpc-port int Use the value of rpc-port by default. --auto-tls Client TLS using generated certificates (default true) --backend string store backend (default &quot;boltdb&quot;) --backend-machine strings store backend machines addresses (default [.</p>
+</span>
+
+<span><h2>
+		<a href="/cli/dkron_doc/" >dkron doc</a></h2>
+<p>dkron doc Generate Markdown documentation for the Dkron CLI.
+Synopsis Generate Markdown documentation for the Dkron CLI. This command is, mostly, used to create up-to-date documentation of Dkron&rsquo;s command-line interface for http://dkron.io/. It creates one Markdown file per command with front matter suitable for rendering in Hugo.
+dkron doc [flags]  Options  --dir string the directory to write the doc. (default &quot;/tmp/dkrondoc/&quot;) -h, --help help for doc  Options inherited from parent commands  --config string config file (default is /etc/dkron/dkron.</p>
+</span>
+
+<span><h2>
+		<a href="/cli/dkron_keygen/" >dkron keygen</a></h2>
+<p> dkron keygen Generates a new encryption key
+Synopsis Generates a new encryption key that can be used to configure the agent to encrypt traffic. The output of this command is already in the proper format that the agent expects.
+dkron keygen [flags]  Options  -h, --help help for keygen  Options inherited from parent commands  --config string config file (default is /etc/dkron/dkron.yml)  SEE ALSO  dkron - Professional distributed job scheduling system  Auto generated by spf13/cobra on 21-Jan-2019 </p>
+</span>
+
+<span><h2>
+		<a href="/cli/dkron_version/" >dkron version</a></h2>
+<p> dkron version Show version
+Synopsis Show the version
+dkron version [flags]  Options  -h, --help help for version  Options inherited from parent commands  --config string config file (default is /etc/dkron/dkron.yml)  SEE ALSO  dkron - Professional distributed job scheduling system  Auto generated by spf13/cobra on 21-Jan-2019 </p>
+</span>
+</ul>
+
+
+
+
+
+
 
 
     
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-prev" href="/pro/auth/" title="Authorization"> <i class="fa fa-chevron-left"></i><label>Authorization</label></a>
-    <a class="nav nav-next" href="/pro/commercial-faq/" title="Commercial FAQ" style="margin-right: 0px;"><label>Commercial FAQ</label><i class="fa fa-chevron-right"></i></a></div>
+<a class="nav nav-prev" href="/pro/quick-start/" title="Quick start"> <i class="fa fa-chevron-left"></i><label>Quick start</label></a>
+    <a class="nav nav-next" href="/cli/dkron/" title="dkron" style="margin-right: 0px;"><label>dkron</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>
@@ -584,10 +624,14 @@ initial-cluster<span style="color:#111">:</span> dkron1=https<span style="color:
     
 
     
+    <div class="date">
+        <i class='fa fa-calendar'></i> Last update on 21/01/2019
+    </div>
+    
 
     
     <div class="github-link">
-      <a href="https://github.com/victorcoder/dkron/edit/master/website/content/pro/clustering.md" target="blank"><i class="fa fa-code-fork"></i>
+      <a href="https://github.com/victorcoder/dkron/edit/master/website/content/pro/cli/_index.md" target="blank"><i class="fa fa-code-fork"></i>
         Improve this page</a>
     </div>
     

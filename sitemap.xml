@@ -56,11 +56,41 @@
   </url>
   
   <url>
+    <loc>/pro/cli/</loc>
+    <lastmod>2019-01-21T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/usage/plugins/develop/</loc>
   </url>
   
   <url>
     <loc>/api/</loc>
+  </url>
+  
+  <url>
+    <loc>/cli/dkron/</loc>
+    <lastmod>2019-01-21T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/cli/dkron_agent/</loc>
+    <lastmod>2019-01-21T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/cli/dkron_doc/</loc>
+    <lastmod>2019-01-21T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/cli/dkron_keygen/</loc>
+    <lastmod>2019-01-21T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/cli/dkron_version/</loc>
+    <lastmod>2019-01-21T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -140,7 +170,7 @@
   
   <url>
     <loc>/</loc>
-    <lastmod>2018-11-26T00:00:00+00:00</lastmod>
+    <lastmod>2019-01-21T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
