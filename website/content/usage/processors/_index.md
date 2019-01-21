@@ -1,6 +1,6 @@
 ---
-title: Execution Processors
-weight: 2
+title: Processors
+weight: 30
 ---
 
 ## Execution Processors
@@ -28,23 +28,4 @@ Dkron provides the following built-in processors:
 
 All plugins accepts one configuration option: `forward` Indicated if the plugin must forward the original execution output. This allows for chaining plugins and sending output to different targets at the same time.
 
-You can set more than one processor to a job. For example:
-
-```
-{
-    "name": "job_name",
-    "command": "/bin/true",
-    "schedule": "@every 2m",
-    "tags": {
-        "role": "web"
-    },
-    "processors": {
-        "files": {
-            "forward": true
-        },
-        "syslog": {
-            "forward": true
-        },
-    }
-}
-```
+{{% children  %}}
