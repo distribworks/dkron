@@ -32,7 +32,7 @@ Next, run the included Docker Compose config:
 
 `docker-compose up`
 
-This will start, etc, consul and Dkron instances. To add more Dkron instances to the clusters:
+This will start Dkron instances. To add more Dkron instances to the clusters:
 
 `docker-compose scale dkron=4`
 

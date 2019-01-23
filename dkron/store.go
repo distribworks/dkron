@@ -10,6 +10,7 @@ import (
 	"github.com/abronan/valkeyrie/store"
 	"github.com/abronan/valkeyrie/store/boltdb"
 	"github.com/abronan/valkeyrie/store/consul"
+	"github.com/abronan/valkeyrie/store/dynamodb"
 	"github.com/abronan/valkeyrie/store/etcd/v2"
 	"github.com/abronan/valkeyrie/store/etcd/v3"
 	"github.com/abronan/valkeyrie/store/redis"
@@ -57,6 +58,7 @@ func init() {
 	zookeeper.Register()
 	redis.Register()
 	boltdb.Register()
+	dynamodb.Register()
 }
 
 func NewStore(backend store.Backend, machines []string, a *Agent, keyspace string, config *store.Config) *Store {

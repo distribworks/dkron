@@ -4,7 +4,7 @@ require (
 	github.com/BurntSushi/toml v0.3.0 // indirect
 	github.com/DataDog/datadog-go v0.0.0-20170427165718-0ddda6bee211 // indirect
 	github.com/abronan/leadership v0.0.0-20171113102752-76df1b7fa384
-	github.com/abronan/valkeyrie v0.0.0-20171113095143-2461fc53ec823c81911896e33b8f4253bb3977e2
+	github.com/abronan/valkeyrie v0.0.0-20190123051312-61bbc4571a5d
 	github.com/armon/circbuf v0.0.0-20150827004946-bbbad097214e
 	github.com/armon/go-metrics v0.0.0-20171002182731-9a4b6e10bed6
 	github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973 // indirect

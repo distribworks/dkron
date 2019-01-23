@@ -1,3 +1,142 @@
+## Unreleased
+
+- Add DynamoDB support
+
+## 1.0.2
+
+05e318b 💅
+72d9573 Allow sending mail without credentials
+bd03a87 Fix docker tagging
+7dd22e5 Fix to send mail
+b7b739c Log plugin fix and improvements
+1ef9356 More specific processor plugin usage logging
+979138b Refactor: auth in notifier
+
+## 1.0.1
+
+60b66f9 Conform to the new image_templates in goreleaser
+d97559b Copy from the same directory structure in Dockerfile.hub for release
+3770122 Don't dockerignore dist folder, it is needed by gorelease docker builder
+2824449 Fix contact
+24d17a5 Gen
+fa323c2 Ignore node modules
+2475b37 Move static assets to it's own directory inside static folder
+d9ca0a4 Reformat
+987dd5d Remove hash from url on modal close
+455495c Remove node_modules
+0c02ce0 Reorg asset generation in subpackages
+6aced8d Use gofmt -s -w
+138323a vfsgen is not a direct dep
+
+## 1.0.0
+
+1c10d34 Button
+c42884e Checksums for relase
+0cb5eda Checksums for testing
+c91852b Cookie consent
+9865012 Do not install build tools
+e280d31 Docker login
+3229dc2 Ensure building static binaries
+01e62b6 Error on test
+69380f5 Ignore system files
+3e34f5d No snapshot
+5a594a7 Release script
+a02a1ab Release with docker
+e795210 Remove old dockerignore entries
+c9c692c Remove unmarshalTags from dkron.go
+c5f5de0 Report errors on unmarshal config
+62e1e15 Sums for release
+1cf235a UnmarshalTags belongs to the agent and should be public
+36f9318 Update readme
+80b2ab1 mail-port flag is uint
+
+## 1.0.0-rc4
+
+913ee87 Bump mapstructure
+5bd120f Remove legacy config loading
+f20fbe5 Update mods
+
+## 1.0.0-rc3
+
+4811e48 Fix UI run and delete
+8695242 Redirect to dashboard
+
+## 1,0.0-rc2
+
+d6dbb1a Add toggle to swagger
+ffa4feb Deep linking to job views
+fdc5344 Don't fury on make
+236b5f4 Don't query jobs on interval in Dashboard
+ea5e60b Fixes rescheduling on boltdb store
+f55e2e3 Gardening and anchor links open modal
+b22b362 Gen
+6887c36 Logging info
+d21cf16 Logging info and use store.Backend type instead of strings in config
+28c130b Open modal with anchor links and gardening
+1afb3df Several ui fixes introduced when migrating to glyphicons
+
+
+## 1.0.0-rc1
+
+ef86e13 Bump go-plugin
+d09b942 Bump several dependencies
+f96d622 GRPC
+8e3b4b9 Ignore dist folder
+1b7d4bc Issue template
+caf4711 Logrus
+5821c8c Mainly etcd
+33a12c5 Revert "Bump several dependencies"
+fb9460d Update cron-spec.md
+706e65d Upgrade pflag
+
+## 0.11.3
+
+723326f Add logging for pending executions response
+df76e9c Add real examples to swagger spec
+d1318a1 Add tags param to swagger spec
+4da0b3b Big docs refactor
+2d91a5e Break on errors
+8fac831 Command to generate cli docs from cobra
+31418de Docs
+1622070 Docs
+e223fc4 Docs
+81fb69a Docs
+cea8d20 Docs
+b9ae4e0 Docs
+5fc9dcf Docs
+257f202 Docs for cli and target nodes
+bdcd09c Don't use swagger2markup
+253fe57 ECS and email pro docs
+e89b353 Expvar dep
+187190e Fix indentation
+c8320b5 Fix testing
+9037d65 Fix typo in getting started
+9c60fe8 Formatting
+f11ed84 Formatting
+20be8e5 Integrate swagger-ui for a bit better API visualization
+2cede00 Merge branch 'master' into boltdb
+53d8464 Only query for pending executions when there is some
+712be35 Remove extra useless locking introduced in 88c072c
+dacb379 This should be TrimSuffix
+dec6701 Update contacts
+c21e565 Update getting-started.md
+3fdba5f Use boltdb as default storage
+70d9229 Wrong dash in example config file
+9653bbc expvars are back and simple health endpoint
+
+## 0.11.2
+
+7d88742 Add code of conduct
+aed2f44 Proper serf debug logging
+1226c93 Publish docker
+a0b6f59 Publish docker
+f1aaecc Reorg imports
+8758bac Tests should use etcdv3
+fa3aaa4 Tests should use v3 client
+5bcea4c Update create or update job api endpoint
+39728d0 refactor: Methond name
+1c64da4 refactor: Proper gin logging and mode
+
 ## 0.11.1 (2018-10-07)
 
  - Add support for passing payload to command STDIN (@gustavosbarreto)
