@@ -1,4 +1,4 @@
-// protoc -I proto/ proto/dkron.proto --go_out=plugins=grpc:dkron/grpc/
+// protoc -I proto/ proto/dkron.proto --go_out=plugins=grpc:proto/
 syntax = "proto3";
 
 package proto;
@@ -13,9 +13,6 @@ message GetJobResponse {
   string name = 1;
   string timezone = 2;
   string schedule = 3;
-  bool shell = 4;
-  string command = 5;
-  repeated string environment_variables = 6;
   string owner = 7;
   string owner_email = 8;
   int32 success_count = 9;
