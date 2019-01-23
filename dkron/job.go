@@ -55,15 +55,6 @@ type Job struct {
 	// Cron expression for the job. When to run the job.
 	Schedule string `json:"schedule"`
 
-	// Use shell to run the command.
-	Shell bool `json:"shell"`
-
-	// Command to run. Must be a shell command to execute.
-	Command string `json:"command"`
-
-	// Extra environment variable to give to the command to execute.
-	EnvironmentVariables []string `json:"environment_variables"`
-
 	// Owner of the job.
 	Owner string `json:"owner"`
 
@@ -122,25 +113,22 @@ type Job struct {
 
 func NewJobFromProto(in *proto.GetJobResponse) *Job {
 	return &Job{
-		Name:                 in.Name,
-		Timezone:             in.Timezone,
-		Schedule:             in.Schedule,
-		Shell:                in.Shell,
-		Command:              in.Command,
-		EnvironmentVariables: in.EnvironmentVariables,
-		Owner:                in.Owner,
-		OwnerEmail:           in.OwnerEmail,
-		SuccessCount:         int(in.SuccessCount),
-		ErrorCount:           int(in.ErrorCount),
-		Disabled:             in.Disabled,
-		Tags:                 in.Tags,
-		Retries:              uint(in.Retries),
-		DependentJobs:        in.DependentJobs,
-		ParentJob:            in.ParentJob,
-		Concurrency:          in.Concurrency,
-		Executor:             in.Executor,
-		ExecutorConfig:       in.ExecutorConfig,
-		Status:               in.Status,
+		Name:           in.Name,
+		Timezone:       in.Timezone,
+		Schedule:       in.Schedule,
+		Owner:          in.Owner,
+		OwnerEmail:     in.OwnerEmail,
+		SuccessCount:   int(in.SuccessCount),
+		ErrorCount:     int(in.ErrorCount),
+		Disabled:       in.Disabled,
+		Tags:           in.Tags,
+		Retries:        uint(in.Retries),
+		DependentJobs:  in.DependentJobs,
+		ParentJob:      in.ParentJob,
+		Concurrency:    in.Concurrency,
+		Executor:       in.Executor,
+		ExecutorConfig: in.ExecutorConfig,
+		Status:         in.Status,
 	}
 }
 

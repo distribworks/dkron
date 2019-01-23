@@ -3,14 +3,10 @@ package dkron
 import (
 	"errors"
 	"math/rand"
-	"os"
-	"os/exec"
-	"runtime"
 	"time"
 
 	"github.com/armon/circbuf"
 	"github.com/hashicorp/serf/serf"
-	"github.com/mattn/go-shellwords"
 )
 
 const (
@@ -83,31 +79,4 @@ func (a *Agent) getServerRPCAddresFromTags() (string, error) {
 		return addr, nil
 	}
 	return "", ErrNoRPCAddress
-}
-
-// Determine the shell invocation based on OS
-func buildCmd(job *Job) (cmd *exec.Cmd) {
-	var shell, flag string
-
-	if job.Shell {
-		if runtime.GOOS == windows {
-			shell = "cmd"
-			flag = "/C"
-		} else {
-			shell = "/bin/sh"
-			flag = "-c"
-		}
-		cmd = exec.Command(shell, flag, job.Command)
-	} else {
-		args, err := shellwords.Parse(job.Command)
-		if err != nil {
-			log.WithError(err).Fatal("invoke: Error parsing command arguments")
-		}
-		cmd = exec.Command(args[0], args[1:]...)
-	}
-	if job.EnvironmentVariables != nil {
-		cmd.Env = append(os.Environ(), job.EnvironmentVariables...)
-	}
-
-	return
 }

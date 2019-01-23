@@ -72,9 +72,6 @@ func (grpcs *GRPCServer) GetJob(ctx context.Context, getJobReq *proto.GetJobRequ
 
 	// Copy the data structure
 	gjr.Name = j.Name
-	gjr.Shell = j.Shell
-	gjr.EnvironmentVariables = j.EnvironmentVariables
-	gjr.Command = j.Command
 	gjr.Executor = j.Executor
 	gjr.ExecutorConfig = j.ExecutorConfig
 
