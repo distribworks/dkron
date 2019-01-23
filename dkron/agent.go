@@ -471,7 +471,7 @@ func (a *Agent) eventLoop() {
 
 					go func() {
 						if err := a.invokeJob(job, ex); err != nil {
-							log.WithError(err).Error("agent: Error invoking job command")
+							log.WithError(err).Error("agent: Error invoking job")
 						}
 					}()
 
