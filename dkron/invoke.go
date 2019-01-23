@@ -1,12 +1,11 @@
 package dkron
 
 import (
+	"errors"
 	"math/rand"
 	"os"
 	"os/exec"
 	"runtime"
-	"strconv"
-	"strings"
 	"time"
 
 	"github.com/armon/circbuf"
@@ -32,15 +31,7 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 	jex := job.Executor
 	exc := job.ExecutorConfig
 	if jex == "" {
-		jex = "shell"
-		exc = map[string]string{
-			"command": job.Command,
-			"shell":   strconv.FormatBool(job.Shell),
-			"env":     strings.Join(job.EnvironmentVariables, ","),
-		}
-		log.Warning("invoke: Deprecation waring! fields command, " +
-			"shell and environment_variables params are deprecated and will be removed in future versions. " +
-			"Consider migrating the job definition to the shell executor plugin")
+		return errors.New("invoke: No executor defined, nothing to do")
 	}
 
 	// Check if executor is exists
