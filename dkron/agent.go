@@ -294,7 +294,7 @@ func (a *Agent) SetConfig(c *Config) {
 func (a *Agent) StartServer() {
 	if a.Store == nil {
 		var sConfig *store.Config
-		if a.config.Backend == store.BOLTDB {
+		if a.config.Backend == store.BOLTDB || a.config.Backend == store.DYNAMODB {
 			sConfig = &store.Config{Bucket: a.config.Keyspace}
 		}
 		a.Store = NewStore(a.config.Backend, a.config.BackendMachines, a, a.config.Keyspace, sConfig)
