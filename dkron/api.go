@@ -237,9 +237,6 @@ func (h *HTTPTransport) leaderHandler(c *gin.Context) {
 }
 
 func (h *HTTPTransport) leaveHandler(c *gin.Context) {
-	if c.Request.Method == http.MethodGet {
-		log.Warn("/leave GET is deprecated and will be removed, use POST")
-	}
 	if err := h.agent.serf.Leave(); err != nil {
 		renderJSON(c, http.StatusOK, h.agent.listServers())
 	}
