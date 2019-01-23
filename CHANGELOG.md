@@ -1,6 +1,7 @@
 ## Unreleased
 
 - Add DynamoDB support
+- Breaking: Remove support and deprecation message for old command, environment_variables and shell parameters
 
 ## 1.0.2
 
