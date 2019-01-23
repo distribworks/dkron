@@ -1,3 +1,7 @@
+## Unreleased
+
+- Add DynamoDB support
+
 ## 1.0.2
 
 - Allow sending mail without credentials
