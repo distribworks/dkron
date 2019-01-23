@@ -36,7 +36,7 @@ It is compatible with etcd, Consul, Zookeeper, BoltDB and partially with Redis. 
 - [ZooKeeper](https://zookeeper.apache.org/doc/r3.3.3/zookeeperStarted.html)
 - [Redis](https://redis.io/topics/quickstart)
 
-## Configuration
+## Installation
 
 See the [installation](/basics/installation).
 
