@@ -170,7 +170,7 @@ func (h *HTTPTransport) jobCreateOrUpdateHandler(c *gin.Context) {
 	h.agent.SchedulerRestart()
 
 	c.Header("Location", fmt.Sprintf("%s/%s", c.Request.RequestURI, job.Name))
-	renderJSON(c, http.StatusCreated, job)
+	renderJSON(c, http.StatusCreated, &job)
 }
 
 func (h *HTTPTransport) jobDeleteHandler(c *gin.Context) {

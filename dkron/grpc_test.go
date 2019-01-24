@@ -40,7 +40,8 @@ func TestGRPCExecutionDone(t *testing.T) {
 	testJob := &Job{
 		Name:     "test",
 		Schedule: "@every 1m",
-		Command:  "/bin/false",
+		Executor: "shell",
+		ExecutorConfig: map[string]string{"command": "/bin/false"},
 		Disabled: true,
 	}
 

@@ -44,7 +44,7 @@ func setupAPITest(t *testing.T) (a *Agent) {
 func TestAPIJobCreateUpdate(t *testing.T) {
 	a := setupAPITest(t)
 
-	jsonStr := []byte(`{"name": "test_job", "schedule": "@every 1m", "command": "date", "owner": "mec", "owner_email": "foo@bar.com", "disabled": true}`)
+	jsonStr := []byte(`{"name": "test_job", "schedule": "@every 1m", "executor": "shell", "executor_config": {"command": "date"}, "owner": "mec", "owner_email": "foo@bar.com", "disabled": true}`)
 
 	resp, err := http.Post("http://localhost:8090/v1/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
 	if err != nil {
@@ -59,7 +59,7 @@ func TestAPIJobCreateUpdate(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	jsonStr1 := []byte(`{"name": "test_job", "schedule": "@every 1m", "command": "test", "disabled": false}`)
+	jsonStr1 := []byte(`{"name": "test_job", "schedule": "@every 1m", "executor": "shell", "executor_config": {"command": "test"}, "disabled": false}`)
 	resp, err = http.Post("http://localhost:8090/v1/jobs", "encoding/json", bytes.NewBuffer(jsonStr1))
 	if err != nil {
 		t.Fatal(err)
@@ -75,8 +75,8 @@ func TestAPIJobCreateUpdate(t *testing.T) {
 
 	assert.Equal(t, origJob.Name, overwriteJob.Name)
 	assert.False(t, overwriteJob.Disabled)
-	assert.NotEqual(t, origJob.Command, overwriteJob.Command)
-	assert.Equal(t, "test", overwriteJob.Command)
+	assert.NotEqual(t, origJob.ExecutorConfig["command"], overwriteJob.ExecutorConfig["command"])
+	assert.Equal(t, "test", overwriteJob.ExecutorConfig["command"])
 
 	// Send a shutdown request
 	a.Stop()

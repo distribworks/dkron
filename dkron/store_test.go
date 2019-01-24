@@ -18,10 +18,11 @@ func TestStore(t *testing.T) {
 	}
 
 	testJob := &Job{
-		Name:     "test",
-		Schedule: "@every 2s",
-		Command:  "/bin/false",
-		Disabled: true,
+		Name:           "test",
+		Schedule:       "@every 2s",
+		Executor:       "shell",
+		ExecutorConfig: map[string]string{"command": "/bin/false"},
+		Disabled:       true,
 	}
 
 	// Check that we still get an empty job list

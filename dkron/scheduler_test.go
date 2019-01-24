@@ -13,12 +13,12 @@ func TestSchedule(t *testing.T) {
 	assert.False(t, sched.Started)
 
 	testJob1 := &Job{
-		Name:       "cron_job",
-		Schedule:   "@every 2s",
-		Command:    "echo 'test1'",
-		Owner:      "John Dough",
-		OwnerEmail: "foo@bar.com",
-		Shell:      true,
+		Name:           "cron_job",
+		Schedule:       "@every 2s",
+		Executor:       "shell",
+		ExecutorConfig: map[string]string{"command": "echo 'test1'", "shell": "true"},
+		Owner:          "John Dough",
+		OwnerEmail:     "foo@bar.com",
 	}
 	sched.Start([]*Job{testJob1})
 
@@ -28,12 +28,12 @@ func TestSchedule(t *testing.T) {
 	assert.Equal(t, now.Add(time.Second*2), sched.GetEntry(testJob1).Next)
 
 	testJob2 := &Job{
-		Name:       "cron_job",
-		Schedule:   "@every 5s",
-		Command:    "echo 'test2'",
-		Owner:      "John Dough",
-		OwnerEmail: "foo@bar.com",
-		Shell:      true,
+		Name:           "cron_job",
+		Schedule:       "@every 5s",
+		Executor:       "shell",
+		ExecutorConfig: map[string]string{"command": "echo 'test2'", "shell": "true"},
+		Owner:          "John Dough",
+		OwnerEmail:     "foo@bar.com",
 	}
 	sched.Restart([]*Job{testJob2})
 
