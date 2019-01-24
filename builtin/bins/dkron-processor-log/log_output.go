@@ -21,11 +21,11 @@ func (l *LogOutput) Process(args *dkron.ExecutionProcessorArgs) dkron.Execution 
 	if args.Execution.Success {
 		fmt.Printf("----- BEGIN OUTPUT job=%s execution=%s -----\n", args.Execution.JobName, args.Execution.Key())
 		fmt.Print(string(args.Execution.Output))
-		fmt.Printf("----- END OUTPUT -----\n")
+		fmt.Printf("\n----- END OUTPUT -----\n")
 	} else {
 		fmt.Fprintf(os.Stderr, "----- BEGIN OUTPUT job=%s execution=%s -----\n", args.Execution.JobName, args.Execution.Key())
 		fmt.Fprint(os.Stderr, string(args.Execution.Output))
-		fmt.Fprintf(os.Stderr, "----- END OUTPUT -----\n")
+		fmt.Fprintf(os.Stderr, "\n----- END OUTPUT -----\n")
 	}
 
 	// Override output if not forwarding
