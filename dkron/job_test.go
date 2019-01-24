@@ -21,9 +21,10 @@ func TestJobGetParent(t *testing.T) {
 	}
 
 	parentTestJob := &Job{
-		Name:     "parent_test",
-		Command:  "/bin/false",
-		Schedule: "@every 2s",
+		Name:           "parent_test",
+		Executor:       "shell",
+		ExecutorConfig: map[string]string{"command": "/bin/false"},
+		Schedule:       "@every 2s",
 	}
 
 	if err := store.SetJob(parentTestJob, true); err != nil {
@@ -31,9 +32,10 @@ func TestJobGetParent(t *testing.T) {
 	}
 
 	dependentTestJob := &Job{
-		Name:      "dependent_test",
-		Command:   "/bin/false",
-		ParentJob: "parent_test",
+		Name:           "dependent_test",
+		Executor:       "shell",
+		ExecutorConfig: map[string]string{"command": "/bin/false"},
+		ParentJob:      "parent_test",
 	}
 
 	err = store.SetJob(dependentTestJob, true)

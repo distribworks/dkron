@@ -170,7 +170,7 @@ func (h *HTTPTransport) jobCreateOrUpdateHandler(c *gin.Context) {
 	h.agent.SchedulerRestart()
 
 	c.Header("Location", fmt.Sprintf("%s/%s", c.Request.RequestURI, job.Name))
-	renderJSON(c, http.StatusCreated, job)
+	renderJSON(c, http.StatusCreated, &job)
 }
 
 func (h *HTTPTransport) jobDeleteHandler(c *gin.Context) {
@@ -237,9 +237,6 @@ func (h *HTTPTransport) leaderHandler(c *gin.Context) {
 }
 
 func (h *HTTPTransport) leaveHandler(c *gin.Context) {
-	if c.Request.Method == http.MethodGet {
-		log.Warn("/leave GET is deprecated and will be removed, use POST")
-	}
 	if err := h.agent.serf.Leave(); err != nil {
 		renderJSON(c, http.StatusOK, h.agent.listServers())
 	}

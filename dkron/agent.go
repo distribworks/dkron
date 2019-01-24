@@ -463,7 +463,7 @@ func (a *Agent) eventLoop() {
 						log.WithError(err).Error("agent: Error on rpc.GetJob call")
 						continue
 					}
-					log.WithField("command", job.Command).Debug("agent: GetJob by RPC")
+					log.WithField("job", job.Name).Debug("agent: GetJob by RPC")
 
 					ex := rqp.Execution
 					ex.StartedAt = time.Now()
@@ -471,7 +471,7 @@ func (a *Agent) eventLoop() {
 
 					go func() {
 						if err := a.invokeJob(job, ex); err != nil {
-							log.WithError(err).Error("agent: Error invoking job command")
+							log.WithError(err).Error("agent: Error invoking job")
 						}
 					}()
 

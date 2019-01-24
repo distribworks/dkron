@@ -38,10 +38,11 @@ func TestGRPCExecutionDone(t *testing.T) {
 	time.Sleep(2 * time.Second)
 
 	testJob := &Job{
-		Name:     "test",
-		Schedule: "@every 1m",
-		Command:  "/bin/false",
-		Disabled: true,
+		Name:           "test",
+		Schedule:       "@every 1m",
+		Executor:       "shell",
+		ExecutorConfig: map[string]string{"command": "/bin/false"},
+		Disabled:       true,
 	}
 
 	if err := store.SetJob(testJob, true); err != nil {
