@@ -1,7 +1,11 @@
-## Unreleased
+## 1.1.0
 
 - Add DynamoDB support
 - Breaking: Remove support and deprecation message for old command, environment_variables and shell parameters
+- Change scheduler_started expvar to int to be parseable
+- Several docs improvements
+- Fixed swagger.yaml syntax error
+- Add new line before END OUTPUT for log processor
 
 ## 1.0.2
 
