@@ -4,7 +4,7 @@ title: Slack processor
 
 The Slack processor provides slack notifications with multiple configurations and rich format.
 
-Configuration of the slack processor is stored in a file named `dkron-processor-slack.yml` in the same locations as `dkron.yml`, and should include a list of providers, it can include any number of teams.
+Configuration of the slack processor is stored in a file named `dkron-processor-slack.yml` in the same locations as `dkron.yml`, and should include a list of teams, it can include any number of teams.
 
 Example:
 ```yaml
