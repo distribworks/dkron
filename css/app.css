@@ -523,7 +523,7 @@ footer[role="contentinfo"] p {
 }
 #jumbotron-mask #jumbotron .container .text-wrapper a {
   margin: 2em .5em 0 .5em;
-  font-size: .7em;
+  font-size: 1em;
   text-transform: uppercase;
   font-family: "Lato", "Open-Sans", Sans-serif;
 }
@@ -539,7 +539,7 @@ footer[role="contentinfo"] p {
     padding-bottom: 5em;
   }
   #jumbotron-mask #jumbotron .container .text-wrapper {
-    width: 49.15254%;
+    width: 35%;
     float: left;
     margin-right: 1.69492%;
     margin-left: 8.47458%;
@@ -556,8 +556,8 @@ footer[role="contentinfo"] p {
     height: 200px;
     width: 13.7931%;
     float: left;
-    margin-right: 3.44828%;
-    margin-left: 8.47458%;
+    margin-right: 3%;
+    margin-left: 3%;
   }
   #jumbotron-mask #jumbotron .container .dkron-logo img {
     width: auto;

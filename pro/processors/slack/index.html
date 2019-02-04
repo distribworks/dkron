@@ -6,7 +6,7 @@
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="revised" content="2019-02-04T22:26:18 CET">
-<title>Dkron vs. Other Software :: Dkron - Distributed job scheduling system</title>
+<title>Slack processor :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
 <link href="/css/nucleus.css" rel="stylesheet">
@@ -22,7 +22,7 @@
 
     
   </head>
-  <body data-url="/intro/dkron_vs_other_software/">
+  <body data-url="/pro/processors/slack/">
     
       <header>
   <div class="logo">
@@ -230,10 +230,11 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/pro/" class="dd-item haschildren
+    <li data-nav-id="/pro/" class="dd-item parent haschildren
         ">
       <div>
-      <a href="/pro/">Dkron Pro</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/pro/">Dkron Pro</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
       <li data-nav-id="/pro/quick-start/" class="dd-item">
@@ -357,10 +358,11 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/pro/processors/" class="dd-item haschildren
+    <li data-nav-id="/pro/processors/" class="dd-item parent haschildren
         ">
       <div>
-      <a href="/pro/processors/">Processors</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/pro/processors/">Processors</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
       <li data-nav-id="/pro/processors/elasticsearch/" class="dd-item">
@@ -377,7 +379,7 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/pro/processors/slack/" class="dd-item">
+      <li data-nav-id="/pro/processors/slack/" class="dd-item active">
         <div>
           <a href="/pro/processors/slack/">
             Slack processor
@@ -403,14 +405,13 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/intro/" class="dd-item parent haschildren
+    <li data-nav-id="/intro/" class="dd-item haschildren
         ">
       <div>
-      <a href="/intro/">Intro</a>
-            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/intro/">Intro</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/intro/dkron_vs_other_software/" class="dd-item active">
+      <li data-nav-id="/intro/dkron_vs_other_software/" class="dd-item">
         <div>
           <a href="/intro/dkron_vs_other_software/">
             Dkron vs. Other Software
@@ -504,14 +505,33 @@
     <option value="/usage/" >
    Usage</option>
     <option value="/pro/" >
-   Dkron Pro</option>
+   Dkron Pro</option> 
+      <option value="/pro/quick-start/" >- Quick start</option>
+    <option value="/pro/cli/" >
+  - 
+   Pro CLI</option>
+      <option value="/pro/auth/" >- Authorization</option>
+      <option value="/pro/clustering/" >- Clustering</option>
+      <option value="/pro/commercial-faq/" >- Commercial FAQ</option>
+      <option value="/pro/commercial-support/" >- Commercial Support</option>
+      <option value="/pro/configuration/" >- Configuration</option>
+      <option value="/pro/storage/" >- Embedded storage</option>
+      <option value="/pro/encryption/" >- Encryption</option>
+    <option value="/pro/executors/" >
+  - 
+   Executors</option>
+    <option value="/pro/processors/" >
+  - 
+   Processors</option> 
+      <option value="/pro/processors/elasticsearch/" >-- Elasticsearch processor</option>
+      <option value="/pro/processors/email/" >-- Email processor</option>
+      <option value="/pro/processors/slack/"  selected>-- Slack processor</option>
+  
+  
     <option value="/products/" >
    Products</option>
     <option value="/intro/" >
-   Intro</option> 
-      <option value="/intro/dkron_vs_other_software/"  selected>- Dkron vs. Other Software</option>
-      <option value="/intro/license/" >- License</option>
-  
+   Intro</option>
     <option value="/cli/" >
    CLI</option>
     <option value="/api/" >
@@ -538,42 +558,41 @@
       </div>
     
 
-    <h1>Dkron vs. Other Software</h1>
+    <h1>Slack processor</h1>
     
     
     
-    
+    <p>The Slack processor provides slack notifications with multiple configurations and rich format.</p>
 
-<h2 id="dkron-vs-chronos">Dkron vs. Chronos</h2>
+<p>Configuration of the slack processor is stored in a file named <code>dkron-processor-slack.yml</code> in the same locations as <code>dkron.yml</code>, and should include a list of teams, it can include any number of teams.</p>
 
-<p>Airbnb&rsquo;s Chronos is a job scheduler that is similar to dkron, it&rsquo;s distributed and fault tolerant thanks to the use of Zookeeper and Apache Mesos.</p>
+<p><img src="/img/slack.png" alt="" /></p>
 
-<p>If you don&rsquo;t have/want to run a Mesos cluster and deal with the not easy configuration and maintenance of Zookeeper and you want something lighter, Dkron could help you.</p>
+<p>Example:</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">team1<span style="color:#111">:</span>
+  webhook_url<span style="color:#111">:</span> https<span style="color:#111">:</span>//hooks.slack.com/services/XXXXXXXXXXXXXXXXXXX
+  bot_name<span style="color:#111">:</span> Dkron Production</code></pre></div>
+<p>Then configure each job with the following options:</p>
 
-<h2 id="dkron-vs-rundeck">Dkron vs. Rundeck</h2>
-
-<p>Rundeck is a popular and mature platform to automate operations and schedule jobs.</p>
-
-<p>It has cool features:</p>
-
-<ul>
-<li>Agentless</li>
-<li>Permissions and auditing</li>
-</ul>
-
-<p>It&rsquo;s written in Java and it&rsquo;s not trivial to setup right.</p>
-
-<p>It uses a central database to store job execution results and configuration data, that makes it vulnerable to failures, and you need to care yourself of providing an HA environement for the database, and that&rsquo;s not an easy task to do with the Rundeck&rsquo;s supported databases.</p>
-
-<p>Dkron lacks some of it&rsquo;s features but it&rsquo;s lightweight and fault-tolerant out-of-the-box.</p>
+<p>Example:</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">{</span>
+  <span style="color:#f92672">&#34;processors&#34;</span><span style="color:#111">:</span> <span style="color:#111">{</span>
+    <span style="color:#f92672">&#34;slack&#34;</span><span style="color:#111">:</span> <span style="color:#111">{</span>
+      <span style="color:#f92672">&#34;team&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;team1&#34;</span><span style="color:#111">,</span>
+      <span style="color:#f92672">&#34;channel&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;#cron-production&#34;</span><span style="color:#111">,</span>
+      <span style="color:#f92672">&#34;onSuccess&#34;</span><span style="color:#111">:</span> <span style="color:#00a8c8">true</span>
+    <span style="color:#111">}</span>
+  <span style="color:#111">}</span>
+<span style="color:#111">}</span></code></pre></div>
+<p>By default the slack procesor doesn&rsquo;t send notifications on job success, the <code>onSuccess</code> parameter, enables it, like in the previous example.</p>
 
 
     
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-prev" href="/intro/" title="Intro"> <i class="fa fa-chevron-left"></i><label>Intro</label></a>
-    <a class="nav nav-next" href="/intro/license/" title="License" style="margin-right: 0px;"><label>License</label><i class="fa fa-chevron-right"></i></a></div>
+<a class="nav nav-prev" href="/pro/processors/email/" title="Email processor"> <i class="fa fa-chevron-left"></i><label>Email processor</label></a>
+    <a class="nav nav-next" href="/products/" title="Products" style="margin-right: 0px;"><label>Products</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>
@@ -590,7 +609,7 @@
 
     
     <div class="github-link">
-      <a href="https://github.com/victorcoder/dkron/edit/master/website/content/intro/dkron_vs_other_software.md" target="blank"><i class="fa fa-code-fork"></i>
+      <a href="https://github.com/victorcoder/dkron/edit/master/website/content/pro/processors/slack.md" target="blank"><i class="fa fa-code-fork"></i>
         Improve this page</a>
     </div>
     

@@ -35,5 +35,19 @@ Example:
 { &amp;#34;processors&amp;#34;: { &amp;#34;email&amp;#34;: { &amp;#34;provider&amp;#34;: &amp;#34;provider1&amp;#34;, &amp;#34;emails&amp;#34;: &amp;#34;team@mycompany.</description>
     </item>
     
+    <item>
+      <title>Slack processor</title>
+      <link>/pro/processors/slack/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/pro/processors/slack/</guid>
+      <description>The Slack processor provides slack notifications with multiple configurations and rich format.
+Configuration of the slack processor is stored in a file named dkron-processor-slack.yml in the same locations as dkron.yml, and should include a list of teams, it can include any number of teams.
+Example:
+team1: webhook_url: https://hooks.slack.com/services/XXXXXXXXXXXXXXXXXXX bot_name: Dkron Production Then configure each job with the following options:
+Example:
+{ &amp;#34;processors&amp;#34;: { &amp;#34;slack&amp;#34;: { &amp;#34;team&amp;#34;: &amp;#34;team1&amp;#34;, &amp;#34;channel&amp;#34;: &amp;#34;#cron-production&amp;#34;, &amp;#34;onSuccess&amp;#34;: true } } } By default the slack procesor doesn&amp;rsquo;t send notifications on job success, the onSuccess parameter, enables it, like in the previous example.</description>
+    </item>
+    
   </channel>
 </rss>

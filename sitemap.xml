@@ -251,6 +251,10 @@
   </url>
   
   <url>
+    <loc>/pro/processors/slack/</loc>
+  </url>
+  
+  <url>
     <loc>/usage/processors/syslog/</loc>
   </url>
   
