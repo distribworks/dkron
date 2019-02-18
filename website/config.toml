@@ -33,7 +33,7 @@ weight = 11
 
 [[menu.shortcuts]]
 name = "<i class='fa fa-bullhorn'></i> <label>License</label>"
-url = "/license"
+url = "/intro/license/"
 weight = 30
 
 [outputs]
