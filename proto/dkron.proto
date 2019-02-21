@@ -4,6 +4,7 @@ syntax = "proto3";
 package proto;
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
 
 message GetJobRequest {
   string job_name = 1;
@@ -47,4 +48,5 @@ message ExecutionDoneResponse {
 service Dkron {
   rpc GetJob (GetJobRequest) returns (GetJobResponse);
   rpc ExecutionDone (ExecutionDoneRequest) returns (ExecutionDoneResponse);
+  rpc Leave (google.protobuf.Empty) returns (google.protobuf.Empty);
 }

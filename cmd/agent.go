@@ -111,7 +111,7 @@ WAIT:
 	log.Info("agent: Gracefully shutting down agent...")
 	go func() {
 		plugin.CleanupClients()
-		if err := agent.Leave(); err != nil {
+		if err := agent.Stop(); err != nil {
 			fmt.Printf("Error: %s", err)
 			log.Error(fmt.Sprintf("Error: %s", err))
 			return
