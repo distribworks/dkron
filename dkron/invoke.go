@@ -66,8 +66,13 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 }
 
 func (a *Agent) selectServer() serf.Member {
+	var server serf.Member
+
 	servers := a.listServers()
-	server := servers[rand.Intn(len(servers))]
+
+	if len(servers) > 0 {
+		server = servers[rand.Intn(len(servers))]
+	}
 
 	return server
 }

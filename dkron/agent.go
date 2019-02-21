@@ -106,9 +106,21 @@ func (a *Agent) Start() error {
 	return nil
 }
 
+// Stop stops an agent, if the agent is a server and is running for election
+// stop running for election, if this server was the leader
+// this will force the cluster to elect a new leader and start a new scheduler.
+// If this is a server and has the scheduler started stop it, ignoring if this server
+// was participating in leader election or not (local storage).
+// Then actually leave the cluster.
 func (a *Agent) Stop() error {
-	if a.config.Server {
+	log.Info("agent: Called member stop, now stopping")
+
+	if a.config.Server && a.candidate != nil {
 		a.candidate.Stop()
+	}
+
+	if a.config.Server && a.sched.Started {
+		a.sched.Stop()
 	}
 
 	if err := a.serf.Leave(); err != nil {
@@ -593,10 +605,6 @@ func (a *Agent) getRPCAddr() string {
 	bindIP := a.serf.LocalMember().Addr
 
 	return fmt.Sprintf("%s:%d", bindIP, a.config.AdvertiseRPCPort)
-}
-
-func (a *Agent) Leave() error {
-	return a.serf.Leave()
 }
 
 func (a *Agent) SetTags(tags map[string]string) error {
