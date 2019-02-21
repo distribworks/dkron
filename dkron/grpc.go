@@ -8,11 +8,11 @@ import (
 
 	"github.com/abronan/valkeyrie/store"
 	metrics "github.com/armon/go-metrics"
+	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/sirupsen/logrus"
 	"github.com/victorcoder/dkron/proto"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
-	"github.com/golang/protobuf/ptypes/empty"
 )
 
 var (
@@ -210,10 +210,10 @@ func NewGRPCClient(dialOpt grpc.DialOption) DkronGRPCClient {
 		dialOpt = grpc.WithInsecure()
 	}
 	return &GRPCClient{dialOpt: []grpc.DialOption{
-			dialOpt,
-			grpc.WithBlock(),
-			grpc.WithTimeout(5*time.Second),
-		},
+		dialOpt,
+		grpc.WithBlock(),
+		grpc.WithTimeout(5 * time.Second),
+	},
 	}
 }
 
