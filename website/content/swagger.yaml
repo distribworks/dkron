@@ -228,7 +228,6 @@ definitions:
     required:
     - name
     - schedule
-    - command
     properties:
       name:
         type: string
