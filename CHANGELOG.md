@@ -1,3 +1,8 @@
+## 1.1.1
+
+- Add RPC leave command
+- Fix: Missing tzdata in release image
+
 ## 1.1.0
 
 - Add DynamoDB support
