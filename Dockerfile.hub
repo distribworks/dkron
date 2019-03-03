@@ -2,7 +2,7 @@ FROM alpine
 MAINTAINER Victor Castell <victor@victorcastell.com>
 
 RUN set -x \
-	&& buildDeps='bash ca-certificates openssl' \
+	&& buildDeps='bash ca-certificates openssl tzdata' \
 	&& apk add --update $buildDeps \
 	&& rm -rf /var/cache/apk/* \
 	&& mkdir -p /opt/local/dkron
