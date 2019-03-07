@@ -28,7 +28,17 @@ const (
 type Shell struct{}
 
 // Execute method of the plugin
-func (s *Shell) Execute(args *dkron.ExecuteRequest) ([]byte, error) {
+func (s *Shell) Execute(args *dkron.ExecuteRequest) (*dkron.ExecuteResponse, error) {
+	out, err := s.ExecuteImpl(args)
+	resp := &dkron.ExecuteResponse{Output: out}
+	if err != nil {
+		resp.Error = err.Error()
+	}
+	return resp, nil
+}
+
+// ExecuteImpl do execute command
+func (s *Shell) ExecuteImpl(args *dkron.ExecuteRequest) ([]byte, error) {
 	output, _ := circbuf.NewBuffer(maxBufSize)
 
 	shell, err := strconv.ParseBool(args.Config["shell"])
@@ -87,11 +97,7 @@ func (s *Shell) Execute(args *dkron.ExecuteRequest) ([]byte, error) {
 	// Always log output
 	log.Printf("shell: Command output %s", output)
 
-	if err != nil {
-		return nil, err
-	}
-
-	return output.Bytes(), nil
+	return output.Bytes(), err
 }
 
 // Determine the shell invocation based on OS

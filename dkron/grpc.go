@@ -84,6 +84,7 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.E
 	log.WithFields(logrus.Fields{
 		"group": execDoneReq.Group,
 		"job":   execDoneReq.JobName,
+		"from":  execDoneReq.NodeName,
 	}).Debug("grpc: Received execution done")
 
 	var execution Execution
