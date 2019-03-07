@@ -38,15 +38,21 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 			JobName: job.Name,
 			Config:  exc,
 		})
+
+		if err == nil && out.Error != "" {
+			err = errors.New(out.Error)
+		}
 		if err != nil {
 			log.WithError(err).WithField("job", job.Name).WithField("plugin", executor).Error("invoke: command error output")
 			success = false
-			output.Write([]byte(err.Error()))
+			output.Write([]byte(err.Error() + "\n"))
 		} else {
 			success = true
 		}
 
-		output.Write(out)
+		if out != nil {
+			output.Write(out.Output)
+		}
 	} else {
 		log.WithField("executor", jex).Error("invoke: Specified executor is not present")
 	}
