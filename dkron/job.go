@@ -8,6 +8,7 @@ import (
 
 	"github.com/abronan/valkeyrie/store"
 	"github.com/sirupsen/logrus"
+	"github.com/victorcoder/dkron/cron"
 	"github.com/victorcoder/dkron/proto"
 )
 
@@ -109,6 +110,9 @@ type Job struct {
 
 	// Computed job status
 	Status string `json:"status"`
+
+	// Computed next execution
+	Next time.Time `json:"next"`
 }
 
 func NewJobFromProto(in *proto.GetJobResponse) *Job {
@@ -258,6 +262,14 @@ func (j *Job) Unlock() error {
 	}
 
 	return nil
+}
+
+func (j *Job) GetNext() (time.Time, error) {
+	s, err := cron.Parse(j.Schedule)
+	if err != nil {
+		return time.Time{}, err
+	}
+	return s.Next(time.Now()), nil
 }
 
 func (j *Job) isRunnable() bool {

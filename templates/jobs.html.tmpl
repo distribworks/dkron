@@ -8,8 +8,8 @@
           <div class="input-group-addon"><i class="glyphicon glyphicon-search"></i></div>
           <input type="text" class="form-control" placeholder="Filter" ng-model="searchJob">
           <div class="input-group-addon">
-            <a href="#" data-toggle="modal" data-target="#jobTemplateModal" title="New"><i class="glyphicon glyphicon-plus"
-                aria-hidden="true"></i></a>
+            <a href="#" data-toggle="modal" data-target="#jobTemplateModal" title="New"><i
+                class="glyphicon glyphicon-plus" aria-hidden="true"></i></a>
           </div>
         </div>
       </div>
@@ -22,6 +22,7 @@
           <th>Success</th>
           <th>Error</th>
           <th>Last execution</th>
+          <th>Next execution</th>
           <th>Status</th>
           <th>Actions</th>
         </tr>
@@ -34,8 +35,8 @@
                 <a href ng-click="prevPage()">« Prev</a>
               </li>
 
-              <li ng-repeat="n in range(pagedItems.length, currentPage, currentPage + gap) " ng-class="{active: n == currentPage}"
-                ng-click="setPage()">
+              <li ng-repeat="n in range(pagedItems.length, currentPage, currentPage + gap) "
+                ng-class="{active: n == currentPage}" ng-click="setPage()">
                 <a href ng-bind="n + 1"></a>
               </li>
 
@@ -52,39 +53,48 @@
           <td ng-bind="job.schedule"></td>
           <td ng-bind="job.success_count"></td>
           <td ng-bind="job.error_count"></td>
-          <td ng-bind="(job.last_success > job.last_error ? job.last_success : job.last_error) | date:'yyyy-MM-dd HH:mm:ss Z'"></td>
+          <td
+            ng-bind="(job.last_success > job.last_error ? job.last_success : job.last_error) | date:'yyyy-MM-dd HH:mm:ss Z'">
+          </td>
+          <td ng-bind="job.next | date:'yyyy-MM-dd HH:mm:ss Z'"></td>
           <td>
             <i ng-class="job | statusClass" class="glyphicon"></i>
           </td>
           <td>
-            <a ng-href="#{{`{{ $index }}`}}-modal" data-toggle="modal" data-target="#{{`{{ $index }}`}}-modal" title="View">
+            <a ng-href="#{{`{{ $index }}`}}-modal" data-toggle="modal" data-target="#{{`{{ $index }}`}}-modal"
+              title="View">
               <i class="glyphicon glyphicon-eye-open" aria-hidden="true"></i>
             </a>
             &nbsp;
-            <a href="#" ng-click="runJob(job.name)" ng-show="!running_{{`{{ $index }}`}}" title="Run"><i class="glyphicon glyphicon-play"
+            <a href="#" ng-click="runJob(job.name)" ng-show="!running_{{`{{ $index }}`}}" title="Run"><i
+                class="glyphicon glyphicon-play" aria-hidden="true"></i></a>
+            <a href="#"><i class="glyphicon glyphicon-cog normal-right-spinner"
+                ng-show="running_{{`{{ $index }}`}}"></i></a>
+            &nbsp;
+            <a href="#" ng-click="toggleJob(job.name)" title="Toggle"><i class="glyphicon glyphicon-pause"
                 aria-hidden="true"></i></a>
-            <a href="#"><i class="glyphicon glyphicon-cog normal-right-spinner" ng-show="running_{{`{{ $index }}`}}"></i></a>
             &nbsp;
-            <a href="#" ng-click="toggleJob(job.name)" title="Toggle"><i class="glyphicon glyphicon-pause" aria-hidden="true"></i></a>
-            &nbsp;
-            <a href="#" data-toggle="modal" data-target="#{{`{{ $index }}`}}-modal-delete" ng-show="!deleting_{{`{{ $index }}`}}"
-              title="Delete"><i class="glyphicon glyphicon-trash" aria-hidden="true"></i></a>
-            <a href=""><i class="glyphicon glyphicon-cog normal-right-spinner" ng-show="deleting_{{`{{ $index }}`}}"></i></a>
+            <a href="#" data-toggle="modal" data-target="#{{`{{ $index }}`}}-modal-delete"
+              ng-show="!deleting_{{`{{ $index }}`}}" title="Delete"><i class="glyphicon glyphicon-trash"
+                aria-hidden="true"></i></a>
+            <a href=""><i class="glyphicon glyphicon-cog normal-right-spinner"
+                ng-show="deleting_{{`{{ $index }}`}}"></i></a>
           </td>
         </tr>
       </tbody>
     </table>
 
     <!-- Modal Delete -->
-    <div ng-repeat="job in pagedItems[currentPage] | filter:searchJob" class="modal fade" id="{{`{{ $index }}`}}-modal-delete"
-      tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div ng-repeat="job in pagedItems[currentPage] | filter:searchJob" class="modal fade"
+      id="{{`{{ $index }}`}}-modal-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-body">
             Are you sure?
           </div>
           <div class="modal-footer">
-            <button class="btn btn-default" ng-click="deleteJob(job.name)" value="Delete" data-dismiss="modal">Confirm</button>
+            <button class="btn btn-default" ng-click="deleteJob(job.name)" value="Delete"
+              data-dismiss="modal">Confirm</button>
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
           </div>
         </div>
@@ -97,7 +107,8 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
             <h4 class="modal-title" id="myModalLabel" ng-bind="'View ' + job.name"></h4>
           </div>
           <div class="modal-body" ng-init="jobJson=toJson(job)">
@@ -105,7 +116,8 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button class="btn btn-default" ng-click="updateJob(jobJson)" value="update" data-dismiss="modal">Update</button>
+            <button class="btn btn-default" ng-click="updateJob(jobJson)" value="update"
+              data-dismiss="modal">Update</button>
           </div>
         </div>
       </div>
@@ -116,7 +128,8 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
             <h4 class="modal-title" id="myModalLabel" ng-bind="'Create'"></h4>
           </div>
           <div class="modal-body">
@@ -124,7 +137,8 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button class="btn btn-default" ng-click="createJob(jobTemplateJson)" value="Create" data-dismiss="modal">Create</button>
+            <button class="btn btn-default" ng-click="createJob(jobTemplateJson)" value="Create"
+              data-dismiss="modal">Create</button>
           </div>
         </div>
       </div>
