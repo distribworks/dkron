@@ -264,6 +264,7 @@ func (j *Job) Unlock() error {
 	return nil
 }
 
+// GetNext returns the job's next schedule
 func (j *Job) GetNext() (time.Time, error) {
 	s, err := cron.Parse(j.Schedule)
 	if err != nil {

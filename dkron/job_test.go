@@ -2,6 +2,7 @@ package dkron
 
 import (
 	"testing"
+	"time"
 
 	s "github.com/abronan/valkeyrie/store"
 	"github.com/stretchr/testify/assert"
@@ -65,4 +66,17 @@ func TestJobGetParent(t *testing.T) {
 	ptj, err = store.GetJob(parentTestJob.Name, nil)
 	assert.NoError(t, err)
 	assert.Equal(t, []string{}, ptj.DependentJobs)
+}
+
+func TestJobGetNext(t *testing.T) {
+	j := Job{
+		Schedule: "@daily",
+	}
+
+	td := time.Now()
+	tonight := time.Date(td.Year(), td.Month(), td.Day()+1, 0, 0, 0, 0, td.Location())
+	n, err := j.GetNext()
+
+	assert.NoError(t, err)
+	assert.Equal(t, tonight, n)
 }
