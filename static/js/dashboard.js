@@ -276,12 +276,8 @@ dkron.controller('IndexCtrl', function ($scope, $http, $timeout, $element) {
   };
 
   $scope.series = [{
-    name: 'Success count',
+    name: 'Running',
     color: 'green',
-    data: [{ x: 0, y: 0 }]
-  }, {
-    name: 'Error count',
-    color: 'red',
     data: [{ x: 0, y: 0 }]
   }];
   $scope.features = {
@@ -353,6 +349,9 @@ dkron.controller('IndexCtrl', function ($scope, $http, $timeout, $element) {
   $scope.error_count = 0;
   $scope.failed_jobs = 0;
   $scope.successful_jobs = 0;
+
+  $scope.running = 0;
+
   $scope.jobs = [];
 
   $scope.updateGraph = function (data) {
@@ -361,7 +360,7 @@ dkron.controller('IndexCtrl', function ($scope, $http, $timeout, $element) {
     var color = $scope.series[0].color;
     var success_count = 0;
     var error_count = 0;
-    var diff = 0;
+    var running = 0;
 
     $scope.jobs = data;
     $scope.failed_jobs = 0;
@@ -376,13 +375,14 @@ dkron.controller('IndexCtrl', function ($scope, $http, $timeout, $element) {
       } else {
         $scope.failed_jobs = $scope.failed_jobs + 1;
       }
-    }
-    if ($scope.success_count != 0) {
-      diff = success_count - $scope.success_count;
+
+      if (data[i].status == 'running') {
+        running = running + 1;
+      }
     }
     $scope.success_count = success_count;
 
-    gdata.push({ x: gdata[gdata.length - 1].x + 1, y: diff })
+    gdata.push({ x: gdata[gdata.length - 1].x + 1, y: running })
 
     $scope.series[0] = {
       name: name,
@@ -390,22 +390,7 @@ dkron.controller('IndexCtrl', function ($scope, $http, $timeout, $element) {
       data: gdata
     };
 
-    gdata = $scope.series[1].data;
-    name = $scope.series[1].name;
-    color = $scope.series[1].color;
-
-    if ($scope.error_count != 0) {
-      diff = error_count - $scope.error_count;
-    }
     $scope.error_count = error_count;
-
-    gdata.push({ x: gdata[gdata.length - 1].x + 1, y: diff })
-
-    $scope.series[1] = {
-      name: name,
-      color: color,
-      data: gdata
-    };
   }
 
   updateView();
