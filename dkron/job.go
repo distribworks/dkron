@@ -266,11 +266,15 @@ func (j *Job) Unlock() error {
 
 // GetNext returns the job's next schedule
 func (j *Job) GetNext() (time.Time, error) {
-	s, err := cron.Parse(j.Schedule)
-	if err != nil {
-		return time.Time{}, err
+	if j.Schedule != "" {
+		s, err := cron.Parse(j.Schedule)
+		if err != nil {
+			return time.Time{}, err
+		}
+		return s.Next(time.Now()), nil
 	}
-	return s.Next(time.Now()), nil
+
+	return time.Time{}, nil
 }
 
 func (j *Job) isRunnable() bool {

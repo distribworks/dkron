@@ -48,7 +48,7 @@ func TestJobGetParent(t *testing.T) {
 
 	ptj, err := dependentTestJob.GetParent()
 	assert.NoError(t, err)
-	assert.Equal(t, parentTestJob, ptj)
+	assert.Equal(t, parentTestJob.Name, ptj.Name)
 
 	// Remove the parent job
 	dependentTestJob.ParentJob = ""
