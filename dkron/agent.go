@@ -305,11 +305,15 @@ func (a *Agent) SetConfig(c *Config) {
 
 func (a *Agent) StartServer() {
 	if a.Store == nil {
-		var sConfig *store.Config
-		if a.config.Backend == store.BOLTDB || a.config.Backend == store.DYNAMODB {
-			sConfig = &store.Config{Bucket: a.config.Keyspace}
+		var sConfig = store.Config{}
+		backend := a.config.Backend
+		switch backend {
+		case store.BOLTDB, store.DYNAMODB:
+			sConfig.Bucket = a.config.Keyspace
+		case store.REDIS:
+			sConfig.Password = a.config.BackendPassword
 		}
-		a.Store = NewStore(a.config.Backend, a.config.BackendMachines, a, a.config.Keyspace, sConfig)
+		a.Store = NewStore(a.config.Backend, a.config.BackendMachines, a, a.config.Keyspace, &sConfig)
 		if err := a.Store.Healthy(); err != nil {
 			log.WithError(err).Fatal("store: Store backend not reachable")
 		}
