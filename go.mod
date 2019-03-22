@@ -1,10 +1,9 @@
 module github.com/victorcoder/dkron
 
 require (
-	github.com/BurntSushi/toml v0.3.0 // indirect
 	github.com/DataDog/datadog-go v0.0.0-20170427165718-0ddda6bee211 // indirect
 	github.com/abronan/leadership v0.0.0-20171113102752-76df1b7fa384
-	github.com/abronan/valkeyrie v0.0.0-20190123051312-61bbc4571a5d
+	github.com/abronan/valkeyrie v0.0.0-20190313085051-8fd1c7cad28d
 	github.com/armon/circbuf v0.0.0-20150827004946-bbbad097214e
 	github.com/armon/go-metrics v0.0.0-20171002182731-9a4b6e10bed6
 	github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973 // indirect
@@ -108,3 +107,5 @@ require (
 	gopkg.in/vmihailenco/msgpack.v2 v2.9.1 // indirect
 	gopkg.in/yaml.v2 v2.0.0-20170812160011-eb3733d160e7 // indirect
 )
+
+replace google.golang.org/grpc => google.golang.org/grpc v1.19.0

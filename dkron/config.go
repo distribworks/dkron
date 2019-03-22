@@ -99,7 +99,7 @@ func ConfigFlagSet() *flag.FlagSet {
 	cmdFlags.String("http-addr", c.HTTPAddr, "Address to bind the UI web server to. Only used when server")
 	cmdFlags.String("backend", string(c.Backend), "Store backend (etcd|etcdv3|consul|zk|redis|boltdb|dynamodb)")
 	cmdFlags.StringSlice("backend-machine", c.BackendMachines, "Store backend machines addresses")
-	cmdFlags.String("backend-password", c.BackendPassword, "Store backend machines password only use redis")
+	cmdFlags.String("backend-password", c.BackendPassword, "Store backend machines password or token, only REDIS/CONSUL")
 	cmdFlags.String("profile", c.Profile, "Profile is used to control the timing profiles used")
 	cmdFlags.StringSlice("join", []string{}, "An initial agent to join with. This flag can be specified multiple times")
 	cmdFlags.StringSlice("tag", []string{}, "Tag can be specified multiple times to attach multiple key/value tag pairs to the given node, specified as key=value")
