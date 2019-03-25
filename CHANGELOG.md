@@ -6,7 +6,7 @@
 - Feature: Add backend consul token
 - Improvement: Main graph showing running jobs
 
-**NOTE: Breaking change, executors plugins interface signature changed, should be recompiled and adapted.**
+**NOTE: Breaking change for 3rd party plugins, executors plugins interface signature changed, should be recompiled and adapted.**
 
 ## 1.1.1
 
