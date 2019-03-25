@@ -1,3 +1,11 @@
+## 1.1.2
+
+- Fix: Update executor support error log instead of fail only (@tengattack)
+- Feature: Return next execution field in API and dashboard.
+- Feature: Add backend redis password flag (@lisuo3389)
+- Feature: Add backend consul token
+- Improvement: Main graph showing running jobs
+
 ## 1.1.1
 
 - Add RPC leave command
