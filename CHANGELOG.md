@@ -1,10 +1,12 @@
-## 1.1.2
+## 1.2.1
 
 - Fix: Update executor support error log instead of fail only (@tengattack)
 - Feature: Return next execution field in API and dashboard.
 - Feature: Add backend redis password flag (@lisuo3389)
 - Feature: Add backend consul token
 - Improvement: Main graph showing running jobs
+
+**NOTE: Breaking change, executors plugins interface signature changed, should be recompiled and adapted.**
 
 ## 1.1.1
 
