@@ -1,4 +1,4 @@
-## 1.2.1
+## 1.2.0
 
 - Fix: Update executor support error log instead of fail only (@tengattack)
 - Feature: Return next execution field in API and dashboard.
