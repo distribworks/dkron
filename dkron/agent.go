@@ -312,6 +312,8 @@ func (a *Agent) StartServer() {
 			sConfig.Bucket = a.config.Keyspace
 		case store.REDIS:
 			sConfig.Password = a.config.BackendPassword
+		case store.CONSUL:
+			sConfig.Token = a.config.BackendPassword
 		}
 		a.Store = NewStore(a.config.Backend, a.config.BackendMachines, a, a.config.Keyspace, &sConfig)
 		if err := a.Store.Healthy(); err != nil {
