@@ -33,7 +33,7 @@ type Scheduler struct {
 
 func NewScheduler() *Scheduler {
 	c := cron.New()
-	schedulerStarted.Set(1)
+	schedulerStarted.Set(0)
 	return &Scheduler{Cron: c, Started: false}
 }
 
@@ -74,8 +74,8 @@ func (s *Scheduler) Stop() {
 		cronInspect.Do(func(kv expvar.KeyValue) {
 			kv.Value = nil
 		})
-		schedulerStarted.Set(0)
 	}
+	schedulerStarted.Set(0)
 }
 
 func (s *Scheduler) Restart(jobs []*Job) {
