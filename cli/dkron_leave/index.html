@@ -6,7 +6,7 @@
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="revised" content="2019-04-13T11:13:44 CEST">
-<title>Log Processor :: Dkron - Distributed job scheduling system</title>
+<title>dkron leave :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
 <link href="/css/nucleus.css" rel="stylesheet">
@@ -22,7 +22,7 @@
 
     
   </head>
-  <body data-url="/usage/processors/log/">
+  <body data-url="/cli/dkron_leave/">
     
       <header>
   <div class="logo">
@@ -93,11 +93,10 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/usage/" class="dd-item parent haschildren
+    <li data-nav-id="/usage/" class="dd-item haschildren
         ">
       <div>
-      <a href="/usage/">Usage</a>
-            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/usage/">Usage</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
       <li data-nav-id="/usage/target-nodes-spec/" class="dd-item">
@@ -136,11 +135,10 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/usage/processors/" class="dd-item parent haschildren
+    <li data-nav-id="/usage/processors/" class="dd-item haschildren
         ">
       <div>
-      <a href="/usage/processors/">Processors</a>
-            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/usage/processors/">Processors</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
       <li data-nav-id="/usage/processors/file/" class="dd-item">
@@ -150,7 +148,7 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/usage/processors/log/" class="dd-item active">
+      <li data-nav-id="/usage/processors/log/" class="dd-item">
         <div>
           <a href="/usage/processors/log/">
             Log Processor
@@ -427,10 +425,11 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/cli/" class="dd-item haschildren
+    <li data-nav-id="/cli/" class="dd-item parent haschildren
         ">
       <div>
-      <a href="/cli/">CLI</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/cli/">CLI</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
       <li data-nav-id="/cli/dkron/" class="dd-item">
@@ -461,7 +460,7 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/cli/dkron_leave/" class="dd-item">
+      <li data-nav-id="/cli/dkron_leave/" class="dd-item active">
         <div>
           <a href="/cli/dkron_leave/">
             dkron leave
@@ -510,30 +509,7 @@
     <option value="/basics/" >
    Basics</option>
     <option value="/usage/" >
-   Usage</option> 
-      <option value="/usage/target-nodes-spec/" >- Target nodes spec</option>
-      <option value="/usage/cron-spec/" >- Cron spec</option>
-    <option value="/usage/executors/" >
-  - 
-   Executors</option>
-    <option value="/usage/processors/" >
-  - 
-   Processors</option> 
-      <option value="/usage/processors/file/" >-- File Processor</option>
-      <option value="/usage/processors/log/"  selected>-- Log Processor</option>
-      <option value="/usage/processors/syslog/" >-- Syslog Processor</option>
-  
-      <option value="/usage/clustering/" >- Clustering</option>
-      <option value="/usage/concurrency/" >- Concurrency</option>
-      <option value="/usage/internals/" >- Internals</option>
-      <option value="/usage/chaining/" >- Job chaining</option>
-      <option value="/usage/retries/" >- Job retries</option>
-      <option value="/usage/metrics/" >- Metrics</option>
-    <option value="/usage/plugins/" >
-  - 
-   Plugins</option>
-      <option value="/usage/ecs/" >- Use with AWS ECS</option>
-  
+   Usage</option>
     <option value="/pro/" >
    Dkron Pro</option>
     <option value="/products/" >
@@ -541,7 +517,14 @@
     <option value="/intro/" >
    Intro</option>
     <option value="/cli/" >
-   CLI</option>
+   CLI</option> 
+      <option value="/cli/dkron/" >- dkron</option>
+      <option value="/cli/dkron_agent/" >- dkron agent</option>
+      <option value="/cli/dkron_doc/" >- dkron doc</option>
+      <option value="/cli/dkron_keygen/" >- dkron keygen</option>
+      <option value="/cli/dkron_leave/"  selected>- dkron leave</option>
+      <option value="/cli/dkron_version/" >- dkron version</option>
+  
     <option value="/api/" >
    API</option>
 
@@ -566,41 +549,54 @@
       </div>
     
 
-    <h1>Log Processor</h1>
+    <h1>dkron leave</h1>
     
     
     
     
 
-<p>Log processor writes the execution output to stdout/stderr</p>
+<h2 id="dkron-leave">dkron leave</h2>
 
-<h2 id="configuration">Configuration</h2>
+<p>Force an agent to leave the cluster</p>
 
-<p>Parameters</p>
+<h3 id="synopsis">Synopsis</h3>
 
-<p><code>forward: Forward the output to the next processor</code></p>
+<p>Stop stops an agent, if the agent is a server and is running for election
+    stop running for election, if this server was the leader
+    this will force the cluster to elect a new leader and start a new scheduler.
+    If this is a server and has the scheduler started stop it, ignoring if this server
+    was participating in leader election or not (local storage).
+    Then actually leave the cluster.</p>
 
-<p>Example</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">{</span>
-    <span style="color:#f92672">&#34;name&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;job_name&#34;</span><span style="color:#111">,</span>
-    <span style="color:#f92672">&#34;command&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;echo &#39;Hello log&#39;&#34;</span><span style="color:#111">,</span>
-    <span style="color:#f92672">&#34;schedule&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;@every 2m&#34;</span><span style="color:#111">,</span>
-    <span style="color:#f92672">&#34;tags&#34;</span><span style="color:#111">:</span> <span style="color:#111">{</span>
-        <span style="color:#f92672">&#34;role&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;web&#34;</span>
-    <span style="color:#111">},</span>
-    <span style="color:#f92672">&#34;processors&#34;</span><span style="color:#111">:</span> <span style="color:#111">{</span>
-        <span style="color:#f92672">&#34;log&#34;</span><span style="color:#111">:</span> <span style="color:#111">{</span>
-            <span style="color:#f92672">&#34;forward&#34;</span><span style="color:#111">:</span> <span style="color:#00a8c8">true</span>
-        <span style="color:#111">}</span>
-    <span style="color:#111">}</span>
-<span style="color:#111">}</span></code></pre></div>
+<pre><code>dkron leave [flags]
+</code></pre>
+
+<h3 id="options">Options</h3>
+
+<pre><code>  -h, --help              help for leave
+      --rpc-addr string   gRPC address of the agent (default &quot;127.0.0.1:6868&quot;)
+</code></pre>
+
+<h3 id="options-inherited-from-parent-commands">Options inherited from parent commands</h3>
+
+<pre><code>      --config string   config file path
+</code></pre>
+
+<h3 id="see-also">SEE ALSO</h3>
+
+<ul>
+<li><a href="/cli/dkron/">dkron</a>   - Open source distributed job scheduling system</li>
+</ul>
+
+<h6 id="auto-generated-by-spf13-cobra-on-22-mar-2019">Auto generated by spf13/cobra on 22-Mar-2019</h6>
+
 
     
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-prev" href="/usage/processors/file/" title="File Processor"> <i class="fa fa-chevron-left"></i><label>File Processor</label></a>
-    <a class="nav nav-next" href="/usage/processors/syslog/" title="Syslog Processor" style="margin-right: 0px;"><label>Syslog Processor</label><i class="fa fa-chevron-right"></i></a></div>
+<a class="nav nav-prev" href="/cli/dkron_keygen/" title="dkron keygen"> <i class="fa fa-chevron-left"></i><label>dkron keygen</label></a>
+    <a class="nav nav-next" href="/cli/dkron_version/" title="dkron version" style="margin-right: 0px;"><label>dkron version</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>
@@ -614,10 +610,14 @@
     
 
     
+    <div class="date">
+        <i class='fa fa-calendar'></i> Last update on 22/03/2019
+    </div>
+    
 
     
     <div class="github-link">
-      <a href="https://github.com/victorcoder/dkron/edit/master/website/content/usage/processors/log.md" target="blank"><i class="fa fa-code-fork"></i>
+      <a href="https://github.com/victorcoder/dkron/edit/master/website/content/cli/dkron_leave.md" target="blank"><i class="fa fa-code-fork"></i>
         Improve this page</a>
     </div>
     

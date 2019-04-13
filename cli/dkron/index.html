@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2019-02-18T11:06:09 CET">
+<meta name="revised" content="2019-04-13T11:13:44 CEST">
 <title>dkron :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -230,10 +230,11 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/pro/" class="dd-item haschildren
+    <li data-nav-id="/pro/" class="dd-item parent haschildren
         ">
       <div>
-      <a href="/pro/">Dkron Pro</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/pro/">Dkron Pro</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
       <li data-nav-id="/pro/quick-start/" class="dd-item">
@@ -243,10 +244,11 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-    <li data-nav-id="/pro/cli/" class="dd-item haschildren
+    <li data-nav-id="/pro/cli/" class="dd-item parent haschildren
         ">
       <div>
-      <a href="/pro/cli/">Pro CLI</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/pro/cli/">Pro CLI</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
       <li data-nav-id="/cli/dkron/" class="dd-item active">
@@ -425,11 +427,10 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/cli/" class="dd-item parent haschildren
+    <li data-nav-id="/cli/" class="dd-item haschildren
         ">
       <div>
-      <a href="/cli/">CLI</a>
-            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/cli/">CLI</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
       <li data-nav-id="/cli/dkron/" class="dd-item active">
@@ -457,6 +458,13 @@
         <div>
           <a href="/cli/dkron_keygen/">
             dkron keygen
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/cli/dkron_leave/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_leave/">
+            dkron leave
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -504,19 +512,37 @@
     <option value="/usage/" >
    Usage</option>
     <option value="/pro/" >
-   Dkron Pro</option>
+   Dkron Pro</option> 
+      <option value="/pro/quick-start/" >- Quick start</option>
+    <option value="/pro/cli/" >
+  - 
+   Pro CLI</option> 
+      <option value="/cli/dkron/"  selected>-- dkron</option>
+      <option value="/cli/dkron_agent/" >-- dkron agent</option>
+      <option value="/cli/dkron_doc/" >-- dkron doc</option>
+      <option value="/cli/dkron_keygen/" >-- dkron keygen</option>
+      <option value="/cli/dkron_version/" >-- dkron version</option>
+  
+      <option value="/pro/auth/" >- Authorization</option>
+      <option value="/pro/clustering/" >- Clustering</option>
+      <option value="/pro/commercial-faq/" >- Commercial FAQ</option>
+      <option value="/pro/commercial-support/" >- Commercial Support</option>
+      <option value="/pro/configuration/" >- Configuration</option>
+      <option value="/pro/storage/" >- Embedded storage</option>
+      <option value="/pro/encryption/" >- Encryption</option>
+    <option value="/pro/executors/" >
+  - 
+   Executors</option>
+    <option value="/pro/processors/" >
+  - 
+   Processors</option>
+  
     <option value="/products/" >
    Products</option>
     <option value="/intro/" >
    Intro</option>
     <option value="/cli/" >
-   CLI</option> 
-      <option value="/cli/dkron/"  selected>- dkron</option>
-      <option value="/cli/dkron_agent/" >- dkron agent</option>
-      <option value="/cli/dkron_doc/" >- dkron doc</option>
-      <option value="/cli/dkron_keygen/" >- dkron keygen</option>
-      <option value="/cli/dkron_version/" >- dkron version</option>
-  
+   CLI</option>
     <option value="/api/" >
    API</option>
 
@@ -549,7 +575,7 @@
 
 <h2 id="dkron">dkron</h2>
 
-<p>Open source distributed job scheduling system</p>
+<p>Professional distributed job scheduling system</p>
 
 <h3 id="synopsis">Synopsis</h3>
 
@@ -559,7 +585,7 @@ If a machine fails (the leader), a follower will take over and keep running the 
 
 <h3 id="options">Options</h3>
 
-<pre><code>      --config string   config file path
+<pre><code>      --config string   config file (default is /etc/dkron/dkron.yml)
   -h, --help            help for dkron
 </code></pre>
 
@@ -572,7 +598,7 @@ If a machine fails (the leader), a follower will take over and keep running the 
 <li><a href="/cli/dkron_version/">dkron version</a>   - Show version</li>
 </ul>
 
-<h6 id="auto-generated-by-spf13-cobra-on-26-nov-2018">Auto generated by spf13/cobra on 26-Nov-2018</h6>
+<h6 id="auto-generated-by-spf13-cobra-on-21-jan-2019">Auto generated by spf13/cobra on 21-Jan-2019</h6>
 
 
     
@@ -595,13 +621,13 @@ If a machine fails (the leader), a follower will take over and keep running the 
 
     
     <div class="date">
-        <i class='fa fa-calendar'></i> Last update on 26/11/2018
+        <i class='fa fa-calendar'></i> Last update on 21/01/2019
     </div>
     
 
     
     <div class="github-link">
-      <a href="https://github.com/victorcoder/dkron/edit/master/website/content/cli/dkron.md" target="blank"><i class="fa fa-code-fork"></i>
+      <a href="https://github.com/victorcoder/dkron/edit/master/website/content/pro/cli/dkron.md" target="blank"><i class="fa fa-code-fork"></i>
         Improve this page</a>
     </div>
     
