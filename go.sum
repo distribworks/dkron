@@ -12,6 +12,8 @@ github.com/abronan/valkeyrie v0.0.0-20190123051312-61bbc4571a5d h1:zi7xxDWztTeG3
 github.com/abronan/valkeyrie v0.0.0-20190123051312-61bbc4571a5d/go.mod h1:A/IdrwsPb8nboz577OaOlF9StXVQHPXus26p6ZOEhZM=
 github.com/abronan/valkeyrie v0.0.0-20190313085051-8fd1c7cad28d h1:P4aevzwd2Xm9RzPSfOWQMfhAVu5/jGVI3/7BKgoOG94=
 github.com/abronan/valkeyrie v0.0.0-20190313085051-8fd1c7cad28d/go.mod h1:A/IdrwsPb8nboz577OaOlF9StXVQHPXus26p6ZOEhZM=
+github.com/abronan/valkeyrie v0.0.0-20190413090811-6dca4ce9985f h1:Iay+9inZMzH65WW6BN/2OPV7LYoG0kR8Ul/oTPf7ynk=
+github.com/abronan/valkeyrie v0.0.0-20190413090811-6dca4ce9985f/go.mod h1:NOvlKBjVll/vPwdjPHGLNhKk7VrnLzLGU/VGOVPLiog=
 github.com/armon/circbuf v0.0.0-20150827004946-bbbad097214e h1:QEF07wC0T1rKkctt1RINW/+RMTVmiwxETico2l3gxJA=
 github.com/armon/circbuf v0.0.0-20150827004946-bbbad097214e/go.mod h1:3U/XgcO3hCbHZ8TKRvWD2dDTCfh9M9ya+I9JpbB7O8o=
 github.com/armon/go-metrics v0.0.0-20171002182731-9a4b6e10bed6 h1:rfTl4Lc+Gfud1YdmAFg99WN4rICM1S65KXBuADdLTms=
