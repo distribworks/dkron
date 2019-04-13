@@ -108,4 +108,4 @@ require (
 	gopkg.in/yaml.v2 v2.0.0-20170812160011-eb3733d160e7 // indirect
 )
 
-replace github.com/abronan/valkeyrie => github.com/abronan/valkeyrie v0.0.0-20190413090811-6dca4ce9985f
+replace github.com/abronan/valkeyrie => github.com/abronan/valkeyrie v0.0.0-20190413102404-e04dc0b66b0e
