@@ -21,6 +21,6 @@ It has cool features:
 
 It's written in Java and it's not trivial to setup right.
 
-It uses a central database to store job execution results and configuration data, that makes it vulnerable to failures, and you need to care yourself of providing an HA environement for the database, and that's not an easy task to do with the Rundeck's supported databases.
+It uses a central database to store job execution results and configuration data, that makes it vulnerable to failures, and you need to take care of providing an HA environment for the database yourself, and that's not an easy task to do with Rundeck's supported databases.
 
-Dkron lacks some of it's features but it's lightweight and fault-tolerant out-of-the-box.
+Dkron lacks some of its features but it's lightweight and fault-tolerant out-of-the-box.

@@ -18,9 +18,9 @@ Dkron is a distributed cron drop-in replacement, easy to setup and fault toleran
 
 - Easy: Easy to use with a great UI
 - Reliable: Completely fault tolerant
-- High scalable: Able to handle high volumes of scheduled jobs and thousands of nodes
+- Highly scalable: Able to handle high volumes of scheduled jobs and thousands of nodes
 
-Dkron is written in Go and leverage the power of distributed key value stores and [Serf](https://www.serfdom.io/) for providing fault tolerance, reliability and scalability while keeping simple and easily installable.
+Dkron is written in Go and leverages the power of distributed key value stores and [Serf](https://www.serfdom.io/) for providing fault tolerance, reliability and scalability while remaining simple and easily installable.
 
 Dkron is inspired by the google whitepaper [Reliable Cron across the Planet](https://queue.acm.org/detail.cfm?id=2745840)
 
