@@ -3,7 +3,7 @@
 title: Shell Executor
 ---
 
-Shell executor run a system command
+Shell executor runs a system command
 
 ## Configuration
 
