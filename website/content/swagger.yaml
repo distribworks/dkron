@@ -15,7 +15,7 @@ info:
 
     Dkron implements a RESTful JSON API over HTTP to communicate with software clients. Dkron listens in port `8080` by default. All examples in this section assume that you're using the default port.
 
-    Default API responses are unformatted JSON. Add the `pretty=true` param to format the response.
+    Default API responses are unformatted JSON add the `pretty=true` param to format the response.
 
 paths:
   /:
@@ -314,7 +314,17 @@ definitions:
         readOnly: false
         example: "shell"
       executor_config:
-        $ref: '#/definitions/executor_config'
+        type: object
+        description: Executor plugin parameters
+        additionalProperties:
+          type: string
+        example: 
+          command: "echo 'Hello from Dkron'"
+      status:
+        type: string
+        readOnly: true
+        description: "Status of the job"
+        example: "success"
   member:
     type: object
     description: A member represents a cluster member node.
@@ -405,11 +415,3 @@ definitions:
     example:
       files:
         forward: true
-
-  executor_config:
-    type: object
-    description: Executor plugin parameters
-    additionalProperties:
-      type: string
-    example:
-      command: "echo 'Hello from Dkron'"
