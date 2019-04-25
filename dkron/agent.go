@@ -41,7 +41,7 @@ type Agent struct {
 	ProcessorPlugins map[string]ExecutionProcessor
 	ExecutorPlugins  map[string]Executor
 	HTTPTransport    Transport
-	Store            *Store
+	Store            Storage
 	GRPCServer       DkronGRPCServer
 	GRPCClient       DkronGRPCClient
 
@@ -343,7 +343,7 @@ func (a *Agent) StartServer() {
 }
 
 func (a *Agent) participate() {
-	a.candidate = leadership.NewCandidate(a.Store.Client, a.Store.LeaderKey(), a.config.NodeName, defaultLeaderTTL)
+	a.candidate = leadership.NewCandidate(a.Store.Client(), a.Store.LeaderKey(), a.config.NodeName, defaultLeaderTTL)
 
 	go func() {
 		for {
