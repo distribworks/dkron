@@ -16,7 +16,7 @@ func TestJobGetParent(t *testing.T) {
 	store.agent = a
 
 	// Cleanup everything
-	err := store.Client.DeleteTree("dkron-test")
+	err := store.Client().DeleteTree("dkron-test")
 	if err != nil && err != s.ErrKeyNotFound {
 		t.Logf("error cleaning up: %s", err)
 	}
