@@ -215,7 +215,7 @@ func createTestStore() *Store {
 }
 
 func cleanTestKVSpace(s *Store) error {
-	err := s.Client.DeleteTree("dkron-test")
+	err := s.Client().DeleteTree("dkron-test")
 	if err != nil && err != store.ErrKeyNotFound {
 		return err
 	}

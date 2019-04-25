@@ -36,7 +36,7 @@ func setupAPITest(t *testing.T) (a *Agent) {
 	time.Sleep(1 * time.Second)
 
 	// clean up the keyspace to ensure clean runs
-	a.Store.Client.DeleteTree("dkron-test")
+	a.Store.Client().DeleteTree("dkron-test")
 
 	return
 }

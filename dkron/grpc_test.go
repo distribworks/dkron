@@ -15,7 +15,7 @@ func TestGRPCExecutionDone(t *testing.T) {
 	viper.Reset()
 
 	// Cleanup everything
-	err := store.Client.DeleteTree("dkron")
+	err := store.Client().DeleteTree("dkron")
 	if err != nil {
 		t.Logf("error cleaning up: %s", err)
 	}
