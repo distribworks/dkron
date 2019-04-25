@@ -5,7 +5,7 @@ require (
 	github.com/abronan/leadership v0.0.0-20171113102752-76df1b7fa384
 	github.com/abronan/valkeyrie v0.0.0-20190313085051-8fd1c7cad28d
 	github.com/armon/circbuf v0.0.0-20150827004946-bbbad097214e
-	github.com/armon/go-metrics v0.0.0-20171002182731-9a4b6e10bed6
+	github.com/armon/go-metrics v0.0.0-20180917152333-f0300d1749da
 	github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973 // indirect
 	github.com/boltdb/bolt v1.3.1 // indirect
 	github.com/circonus-labs/circonus-gometrics v2.2.5+incompatible // indirect
@@ -23,25 +23,17 @@ require (
 	github.com/gin-gonic/gin v1.3.0
 	github.com/golang/groupcache v0.0.0-20181024230925-c65c006176ff // indirect
 	github.com/golang/protobuf v1.2.0
-	github.com/google/btree v0.0.0-20180813153112-4030bb1f1f0c // indirect
 	github.com/gorilla/websocket v1.4.0 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0 // indirect
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway v1.5.1 // indirect
-	github.com/hashicorp/errwrap v0.0.0-20141028054710-7554cd9344ce // indirect
 	github.com/hashicorp/go-hclog v0.0.0-20181001195459-61d530d6c27f
-	github.com/hashicorp/go-immutable-radix v0.0.0-20170725221215-8aac27015308 // indirect
-	github.com/hashicorp/go-msgpack v0.0.0-20150518234257-fa3f63826f7c // indirect
-	github.com/hashicorp/go-multierror v0.0.0-20170622060955-83588e72410a // indirect
 	github.com/hashicorp/go-plugin v0.0.0-20181030172320-54b6ff97d818
 	github.com/hashicorp/go-retryablehttp v0.5.1 // indirect
-	github.com/hashicorp/go-sockaddr v0.0.0-20170627023441-41949a141473 // indirect
-	github.com/hashicorp/go-syslog v0.0.0-20170829120034-326bf4a7f709
-	github.com/hashicorp/go-uuid v0.0.0-20180228145832-27454136f036 // indirect
-	github.com/hashicorp/golang-lru v0.0.0-20160813221303-0a025b7e63ad // indirect
+	github.com/hashicorp/go-syslog v1.0.0
 	github.com/hashicorp/hcl v0.0.0-20171017181929-23c074d0eceb // indirect
-	github.com/hashicorp/memberlist v0.0.0-20180209033901-2288bf30e9c8
-	github.com/hashicorp/serf v0.8.1
+	github.com/hashicorp/memberlist v0.1.3
+	github.com/hashicorp/serf v0.8.2
 	github.com/hashicorp/uuid v0.0.0-20160311170451-ebb0a03e909c // indirect
 	github.com/hashicorp/yamux v0.0.0-20181012175058-2f1d1f20f75d // indirect
 	github.com/hpcloud/tail v1.0.0 // indirect
@@ -53,16 +45,13 @@ require (
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/magiconair/properties v1.7.3 // indirect
 	github.com/mailru/easyjson v0.0.0-20180823135443-60711f1a8329 // indirect
-	github.com/mattn/go-isatty v0.0.3 // indirect
 	github.com/mattn/go-shellwords v0.0.0-20160315040826-525bedee691b
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
-	github.com/miekg/dns v0.0.0-20171018123232-b02ebddc7f2b // indirect
 	github.com/mitchellh/go-testing-interface v1.0.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/onsi/ginkgo v1.6.0 // indirect
 	github.com/onsi/gomega v1.4.1 // indirect
-	github.com/pascaldekloe/goe v0.0.0-20180627143212-57f6aae5913c // indirect
 	github.com/pelletier/go-toml v1.0.1 // indirect
 	github.com/philhofer/fwd v1.0.0 // indirect
 	github.com/pkg/errors v0.8.0 // indirect
@@ -72,7 +61,6 @@ require (
 	github.com/prometheus/common v0.0.0-20181126121408-4724e9255275 // indirect
 	github.com/prometheus/procfs v0.0.0-20181129180645-aa55a523dc0a // indirect
 	github.com/russross/blackfriday v0.0.0-20180804101149-46c73eb196ba // indirect
-	github.com/sean-/seed v0.0.0-20170313163322-e2103e2c3529 // indirect
 	github.com/shurcooL/httpfs v0.0.0-20181222201310-74dc9339e414 // indirect
 	github.com/shurcooL/vfsgen v0.0.0-20181202132449-6a9ea43bcacd // indirect
 	github.com/sirupsen/logrus v1.2.0
@@ -93,7 +81,6 @@ require (
 	go.uber.org/zap v1.9.1 // indirect
 	golang.org/x/crypto v0.0.0-20181203042331-505ab145d0a9 // indirect
 	golang.org/x/net v0.0.0-20181201002055-351d144fa1fc
-	golang.org/x/sync v0.0.0-20181108010431-42b317875d0f // indirect
 	golang.org/x/sys v0.0.0-20181128092732-4ed8d59d0b35 // indirect
 	golang.org/x/time v0.0.0-20181108054448-85acf8d2951c // indirect
 	google.golang.org/appengine v1.3.0 // indirect
