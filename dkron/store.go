@@ -385,6 +385,8 @@ func (s *Store) GetLastExecutionGroup(jobName string) ([]*Execution, error) {
 	return executions, nil
 }
 
+// GetExecutionGroup returns all executions in the same group of a given execution
+// TODO: refactor to use GetExecutions
 func (s *Store) GetExecutionGroup(execution *Execution) ([]*Execution, error) {
 	res, err := s.client.List(fmt.Sprintf("%s/executions/%s", s.keyspace, execution.JobName), nil)
 	if err != nil {

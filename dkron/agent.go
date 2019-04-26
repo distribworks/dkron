@@ -37,6 +37,7 @@ var (
 	runningExecutions sync.Map
 )
 
+// Agent is the main struct that represents a dkron agent
 type Agent struct {
 	ProcessorPlugins map[string]ExecutionProcessor
 	ExecutorPlugins  map[string]Executor
@@ -44,6 +45,9 @@ type Agent struct {
 	Store            Storage
 	GRPCServer       DkronGRPCServer
 	GRPCClient       DkronGRPCClient
+
+	// Set a global peer updater func
+	PeerUpdaterFunc func(...string)
 
 	serf      *serf.Serf
 	config    *Config
@@ -396,7 +400,8 @@ func (a *Agent) leaderMember() (*serf.Member, error) {
 	return nil, ErrLeaderNotFound
 }
 
-func (a *Agent) listServers() []serf.Member {
+// List servers returns the list of server members
+func (a *Agent) ListServers() []serf.Member {
 	members := []serf.Member{}
 
 	for _, member := range a.serf.Members() {
@@ -409,11 +414,38 @@ func (a *Agent) listServers() []serf.Member {
 	return members
 }
 
+// LocalMember return the local serf member
+func (a *Agent) LocalMember() serf.Member {
+	return a.serf.LocalMember()
+}
+
 // GetBindIP returns the IP address that the agent is bound to.
 // This could be different than the originally configured address.
 func (a *Agent) GetBindIP() (string, error) {
 	bindIP, _, err := a.config.AddrParts(a.config.BindAddr)
 	return bindIP, err
+}
+
+// UpdatePeers updates a function with a list of the current serf servers peers
+// Peer address is the same as the serf bind port + 1000
+func (a *Agent) UpdatePeers(pu func(...string)) {
+	if pu == nil {
+		if a.PeerUpdaterFunc == nil {
+			return
+		}
+		pu = a.PeerUpdaterFunc
+	}
+
+	s := a.ListServers()
+	var peers []string
+	for _, m := range s {
+		fmt.Println(m.Addr.String())
+		p := fmt.Sprintf("http://%s:%d", m.Addr.String(), m.Port+1000)
+		peers = append(peers, p)
+		fmt.Println(p)
+	}
+
+	pu(peers...)
 }
 
 // Listens to events from Serf and handle the event.
@@ -437,6 +469,9 @@ func (a *Agent) eventLoop() {
 						"event":  e.EventType(),
 					}).Debug("agent: Member event")
 				}
+
+				//In case of member event update peer list
+				a.UpdatePeers(nil)
 			}
 
 			if e.EventType() == serf.EventQuery {

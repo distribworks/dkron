@@ -2,10 +2,11 @@ package dkron
 
 import (
 	"errors"
-	"math/rand"
+	"net/url"
 	"time"
 
 	"github.com/armon/circbuf"
+	"github.com/golang/groupcache/consistenthash"
 	"github.com/hashicorp/serf/serf"
 )
 
@@ -61,7 +62,7 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 	execution.Success = success
 	execution.Output = output.Bytes()
 
-	rpcServer, err := a.getServerRPCAddresFromTags()
+	rpcServer, err := a.selectServerByKey(execution.Key())
 	if err != nil {
 		return err
 	}
@@ -71,22 +72,25 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 	return a.GRPCClient.CallExecutionDone(rpcServer, execution)
 }
 
-func (a *Agent) selectServer() serf.Member {
+// Select a server based on key using a consistent hash key
+// like a cache store.
+func (a *Agent) selectServerByKey(key string) (string, error) {
+	ch := consistenthash.New(50, nil)
+	a.UpdatePeers(ch.Add)
+	su := ch.Get(key)
+	u, err := url.Parse(su)
+	if err != nil {
+		return "", err
+	}
 	var server serf.Member
-
-	servers := a.listServers()
-
-	if len(servers) > 0 {
-		server = servers[rand.Intn(len(servers))]
+	ss := a.ListServers()
+	for _, s := range ss {
+		if s.Addr.String() == u.Hostname() {
+			server = s
+		}
 	}
 
-	return server
-}
-
-func (a *Agent) getServerRPCAddresFromTags() (string, error) {
-	s := a.selectServer()
-
-	if addr, ok := s.Tags["dkron_rpc_addr"]; ok {
+	if addr, ok := server.Tags["dkron_rpc_addr"]; ok {
 		return addr, nil
 	}
 	return "", ErrNoRPCAddress
