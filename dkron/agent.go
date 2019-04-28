@@ -83,7 +83,7 @@ func (a *Agent) Start() error {
 		return fmt.Errorf("agent: Can not setup serf, %s", err)
 	}
 	a.serf = s
-	a.join(a.config.StartJoin, true)
+	a.join(a.config.StartJoin, false)
 
 	if err := initMetrics(a); err != nil {
 		log.Fatal("agent: Can not setup metrics")
