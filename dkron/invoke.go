@@ -3,6 +3,7 @@ package dkron
 import (
 	"errors"
 	"net/url"
+	"strconv"
 	"time"
 
 	"github.com/armon/circbuf"
@@ -66,6 +67,7 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 	if err != nil {
 		return err
 	}
+	log.WithField("server", rpcServer).Debug("invoke: *************** Select server to send result")
 
 	runningExecutions.Delete(execution.GetGroup())
 
@@ -84,8 +86,14 @@ func (a *Agent) selectServerByKey(key string) (string, error) {
 	}
 	var server serf.Member
 	ss := a.ListServers()
+
+	uPort, err := strconv.Atoi(u.Port())
+	if err != nil {
+		return "", err
+	}
+
 	for _, s := range ss {
-		if s.Addr.String() == u.Hostname() {
+		if s.Addr.String() == u.Hostname() && s.Port == uint16(uPort-1000) {
 			server = s
 		}
 	}
