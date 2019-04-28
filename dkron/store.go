@@ -386,23 +386,16 @@ func (s *Store) GetLastExecutionGroup(jobName string) ([]*Execution, error) {
 }
 
 // GetExecutionGroup returns all executions in the same group of a given execution
-// TODO: refactor to use GetExecutions
 func (s *Store) GetExecutionGroup(execution *Execution) ([]*Execution, error) {
-	res, err := s.client.List(fmt.Sprintf("%s/executions/%s", s.keyspace, execution.JobName), nil)
+	res, err := s.GetExecutions(execution.JobName)
 	if err != nil {
 		return nil, err
 	}
 
 	var executions []*Execution
-	for _, node := range res {
-		var ex Execution
-		err := json.Unmarshal([]byte(node.Value), &ex)
-		if err != nil {
-			return nil, err
-		}
-
+	for _, ex := range res {
 		if ex.Group == execution.Group {
-			executions = append(executions, &ex)
+			executions = append(executions, ex)
 		}
 	}
 	return executions, nil
