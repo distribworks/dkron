@@ -423,9 +423,9 @@ func (s *Store) GetGroupedExecutions(jobName string) (map[int64][]*Execution, []
 	return groups, byGroup, nil
 }
 
-// Save a new execution and returns the key of the new saved item or an error.
+// SetExecution Save a new execution and returns the key of the new saved item or an error.
 func (s *Store) SetExecution(execution *Execution) (string, error) {
-	exJson, _ := json.Marshal(execution)
+	exJSON, _ := json.Marshal(execution)
 	key := execution.Key()
 
 	log.WithFields(logrus.Fields{
@@ -433,7 +433,7 @@ func (s *Store) SetExecution(execution *Execution) (string, error) {
 		"execution": key,
 	}).Debug("store: Setting key")
 
-	err := s.client.Put(fmt.Sprintf("%s/executions/%s/%s", s.keyspace, execution.JobName, key), exJson, nil)
+	err := s.client.Put(fmt.Sprintf("%s/executions/%s/%s", s.keyspace, execution.JobName, key), exJSON, nil)
 	if err != nil {
 		log.WithFields(logrus.Fields{
 			"job":       execution.JobName,
@@ -453,6 +453,7 @@ func (s *Store) SetExecution(execution *Execution) (string, error) {
 	// Delete all execution results over the limit, starting from olders
 	if len(execs) > MaxExecutions {
 		//sort the array of all execution groups by StartedAt time
+		// TODO: Use sort.Slice
 		sort.Sort(ExecList(execs))
 		for i := 0; i < len(execs)-MaxExecutions; i++ {
 			log.WithFields(logrus.Fields{
