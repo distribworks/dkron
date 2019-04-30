@@ -2,7 +2,6 @@ package dkron
 
 import (
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/armon/circbuf"
@@ -78,19 +77,6 @@ func (a *Agent) selectServerByKey(key string) (string, error) {
 	ch := consistenthash.New(50, nil)
 	ch.Add(a.GetPeers()...)
 	peerAddress := ch.Get(key)
-	servers := a.ListServers()
 
-	for _, server := range servers {
-		addr, ok := server.Tags["dkron_http_addr"]
-		if !ok {
-			return "", fmt.Errorf("dkron_http_addr tag not found for member: %s", server.Name)
-		}
-		if peerAddress == addr {
-			if addr, ok := server.Tags["dkron_rpc_addr"]; ok {
-				return addr, nil
-			}
-		}
-	}
-
-	return "", ErrNoRPCAddress
+	return peerAddress, nil
 }

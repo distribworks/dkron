@@ -430,7 +430,7 @@ func (a *Agent) GetBindIP() (string, error) {
 func (a *Agent) GetPeers() (peers []string) {
 	s := a.ListServers()
 	for _, m := range s {
-		if addr, ok := m.Tags["dkron_http_addr"]; ok {
+		if addr, ok := m.Tags["dkron_rpc_addr"]; ok {
 			peers = append(peers, addr)
 			log.WithField("peer", addr).Debug("agent: updated peer")
 		}
@@ -644,11 +644,6 @@ func (a *Agent) getRPCAddr() string {
 func (a *Agent) SetTags(tags map[string]string) error {
 	if a.config.Server {
 		tags["dkron_rpc_addr"] = a.getRPCAddr()
-		_, port, err := net.SplitHostPort(a.Config().HTTPAddr)
-		if err != nil {
-			return err
-		}
-		tags["dkron_http_addr"] = net.JoinHostPort(a.serf.LocalMember().Addr.String(), port)
 	}
 	return a.serf.SetTags(tags)
 }
