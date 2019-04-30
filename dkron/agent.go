@@ -426,26 +426,17 @@ func (a *Agent) GetBindIP() (string, error) {
 	return bindIP, err
 }
 
-// UpdatePeers updates a function with a list of the current serf servers peers
-// Peer address is the same as the serf bind port + 1000
-func (a *Agent) UpdatePeers(pu func(...string)) {
-	if pu == nil {
-		if a.PeerUpdaterFunc == nil {
-			return
-		}
-		pu = a.PeerUpdaterFunc
-	}
-
+// GetPeers returns a list of the current serf servers peers addresses
+func (a *Agent) GetPeers() (peers []string) {
 	s := a.ListServers()
-	var peers []string
 	for _, m := range s {
-		fmt.Println(m.Addr.String())
-		p := fmt.Sprintf("http://%s:%d", m.Addr.String(), m.Port+1000)
-		peers = append(peers, p)
-		fmt.Println(p)
+		if addr, ok := m.Tags["dkron_http_addr"]; ok {
+			peers = append(peers, addr)
+			log.WithField("peer", addr).Debug("agent: updated peer")
+		}
 	}
 
-	pu(peers...)
+	return
 }
 
 // Listens to events from Serf and handle the event.
@@ -471,7 +462,9 @@ func (a *Agent) eventLoop() {
 				}
 
 				//In case of member event update peer list
-				a.UpdatePeers(nil)
+				if a.PeerUpdaterFunc != nil {
+					a.PeerUpdaterFunc(a.GetPeers()...)
+				}
 			}
 
 			if e.EventType() == serf.EventQuery {
@@ -651,6 +644,11 @@ func (a *Agent) getRPCAddr() string {
 func (a *Agent) SetTags(tags map[string]string) error {
 	if a.config.Server {
 		tags["dkron_rpc_addr"] = a.getRPCAddr()
+		_, port, err := net.SplitHostPort(a.Config().HTTPAddr)
+		if err != nil {
+			return err
+		}
+		tags["dkron_http_addr"] = net.JoinHostPort(a.serf.LocalMember().Addr.String(), port)
 	}
 	return a.serf.SetTags(tags)
 }

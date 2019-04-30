@@ -2,13 +2,11 @@ package dkron
 
 import (
 	"errors"
-	"net/url"
-	"strconv"
+	"fmt"
 	"time"
 
 	"github.com/armon/circbuf"
 	"github.com/golang/groupcache/consistenthash"
-	"github.com/hashicorp/serf/serf"
 )
 
 const (
@@ -67,7 +65,7 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 	if err != nil {
 		return err
 	}
-	log.WithField("server", rpcServer).Debug("invoke: *************** Select server to send result")
+	log.WithField("server", rpcServer).Debug("invoke: Selected a server to send result")
 
 	runningExecutions.Delete(execution.GetGroup())
 
@@ -78,28 +76,21 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 // like a cache store.
 func (a *Agent) selectServerByKey(key string) (string, error) {
 	ch := consistenthash.New(50, nil)
-	a.UpdatePeers(ch.Add)
-	su := ch.Get(key)
-	u, err := url.Parse(su)
-	if err != nil {
-		return "", err
-	}
-	var server serf.Member
-	ss := a.ListServers()
+	ch.Add(a.GetPeers()...)
+	peerAddress := ch.Get(key)
+	servers := a.ListServers()
 
-	uPort, err := strconv.Atoi(u.Port())
-	if err != nil {
-		return "", err
-	}
-
-	for _, s := range ss {
-		if s.Addr.String() == u.Hostname() && s.Port == uint16(uPort-1000) {
-			server = s
+	for _, server := range servers {
+		addr, ok := server.Tags["dkron_http_addr"]
+		if !ok {
+			return "", fmt.Errorf("dkron_http_addr tag not found for member: %s", server.Name)
+		}
+		if peerAddress == addr {
+			if addr, ok := server.Tags["dkron_rpc_addr"]; ok {
+				return addr, nil
+			}
 		}
 	}
 
-	if addr, ok := server.Tags["dkron_rpc_addr"]; ok {
-		return addr, nil
-	}
 	return "", ErrNoRPCAddress
 }
