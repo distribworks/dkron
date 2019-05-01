@@ -60,7 +60,7 @@ Example using a provided taskdef
     "cluster": "default",
     "fargate": "yes",
     "env": "ENVIRONMENT=variable",
-    "maxAttempts": 5000
+    "maxAttempts": "5000"
   }
 }
 ```
@@ -79,5 +79,5 @@ subnet
 env
 service
 overrides
-maxAttempts // Defaults to 2000, with 6s delay between it will wait up to 600s
+maxAttempts // Defaults to 2000, will perform a check every 6s * 2000 times waiting a total of 12000s or 3.3h
 ```

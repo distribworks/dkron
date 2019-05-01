@@ -2,11 +2,10 @@ package dkron
 
 import (
 	"errors"
-	"math/rand"
 	"time"
 
 	"github.com/armon/circbuf"
-	"github.com/hashicorp/serf/serf"
+	"github.com/golang/groupcache/consistenthash"
 )
 
 const (
@@ -61,33 +60,23 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 	execution.Success = success
 	execution.Output = output.Bytes()
 
-	rpcServer, err := a.getServerRPCAddresFromTags()
+	rpcServer, err := a.selectServerByKey(execution.Key())
 	if err != nil {
 		return err
 	}
+	log.WithField("server", rpcServer).Debug("invoke: Selected a server to send result")
 
 	runningExecutions.Delete(execution.GetGroup())
 
 	return a.GRPCClient.CallExecutionDone(rpcServer, execution)
 }
 
-func (a *Agent) selectServer() serf.Member {
-	var server serf.Member
+// Select a server based on key using a consistent hash key
+// like a cache store.
+func (a *Agent) selectServerByKey(key string) (string, error) {
+	ch := consistenthash.New(50, nil)
+	ch.Add(a.GetPeers()...)
+	peerAddress := ch.Get(key)
 
-	servers := a.listServers()
-
-	if len(servers) > 0 {
-		server = servers[rand.Intn(len(servers))]
-	}
-
-	return server
-}
-
-func (a *Agent) getServerRPCAddresFromTags() (string, error) {
-	s := a.selectServer()
-
-	if addr, ok := s.Tags["dkron_rpc_addr"]; ok {
-		return addr, nil
-	}
-	return "", ErrNoRPCAddress
+	return peerAddress, nil
 }
