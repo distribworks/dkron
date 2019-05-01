@@ -400,7 +400,7 @@ func (a *Agent) leaderMember() (*serf.Member, error) {
 	return nil, ErrLeaderNotFound
 }
 
-// List servers returns the list of server members
+// ListServers returns the list of server members
 func (a *Agent) ListServers() []serf.Member {
 	members := []serf.Member{}
 
