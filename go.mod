@@ -21,7 +21,7 @@ require (
 	github.com/gin-contrib/multitemplate v0.0.0-20170922032617-bbc6daf6024b
 	github.com/gin-contrib/sse v0.0.0-20170109093832-22d885f9ecc7 // indirect
 	github.com/gin-gonic/gin v1.3.0
-	github.com/golang/groupcache v0.0.0-20181024230925-c65c006176ff // indirect
+	github.com/golang/groupcache v0.0.0-20181024230925-c65c006176ff
 	github.com/golang/protobuf v1.2.0
 	github.com/gorilla/websocket v1.4.0 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0 // indirect

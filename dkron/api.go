@@ -238,7 +238,7 @@ func (h *HTTPTransport) leaderHandler(c *gin.Context) {
 
 func (h *HTTPTransport) leaveHandler(c *gin.Context) {
 	if err := h.agent.Stop(); err != nil {
-		renderJSON(c, http.StatusOK, h.agent.listServers())
+		renderJSON(c, http.StatusOK, h.agent.ListServers())
 	}
 }
 

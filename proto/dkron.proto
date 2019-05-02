@@ -45,6 +45,10 @@ message ExecutionDoneResponse {
   bytes payload = 2;
 }
 
+message Executions {
+  repeated ExecutionDoneRequest executions = 1;
+}
+
 service Dkron {
   rpc GetJob (GetJobRequest) returns (GetJobResponse);
   rpc ExecutionDone (ExecutionDoneRequest) returns (ExecutionDoneResponse);

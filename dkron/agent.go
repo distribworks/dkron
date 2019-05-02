@@ -37,6 +37,7 @@ var (
 	runningExecutions sync.Map
 )
 
+// Agent is the main struct that represents a dkron agent
 type Agent struct {
 	ProcessorPlugins map[string]ExecutionProcessor
 	ExecutorPlugins  map[string]Executor
@@ -44,6 +45,9 @@ type Agent struct {
 	Store            Storage
 	GRPCServer       DkronGRPCServer
 	GRPCClient       DkronGRPCClient
+
+	// Set a global peer updater func
+	PeerUpdaterFunc func(...string)
 
 	serf      *serf.Serf
 	config    *Config
@@ -79,7 +83,7 @@ func (a *Agent) Start() error {
 		return fmt.Errorf("agent: Can not setup serf, %s", err)
 	}
 	a.serf = s
-	a.join(a.config.StartJoin, true)
+	a.join(a.config.StartJoin, false)
 
 	if err := initMetrics(a); err != nil {
 		log.Fatal("agent: Can not setup metrics")
@@ -396,7 +400,8 @@ func (a *Agent) leaderMember() (*serf.Member, error) {
 	return nil, ErrLeaderNotFound
 }
 
-func (a *Agent) listServers() []serf.Member {
+// ListServers returns the list of server members
+func (a *Agent) ListServers() []serf.Member {
 	members := []serf.Member{}
 
 	for _, member := range a.serf.Members() {
@@ -409,11 +414,29 @@ func (a *Agent) listServers() []serf.Member {
 	return members
 }
 
+// LocalMember return the local serf member
+func (a *Agent) LocalMember() serf.Member {
+	return a.serf.LocalMember()
+}
+
 // GetBindIP returns the IP address that the agent is bound to.
 // This could be different than the originally configured address.
 func (a *Agent) GetBindIP() (string, error) {
 	bindIP, _, err := a.config.AddrParts(a.config.BindAddr)
 	return bindIP, err
+}
+
+// GetPeers returns a list of the current serf servers peers addresses
+func (a *Agent) GetPeers() (peers []string) {
+	s := a.ListServers()
+	for _, m := range s {
+		if addr, ok := m.Tags["dkron_rpc_addr"]; ok {
+			peers = append(peers, addr)
+			log.WithField("peer", addr).Debug("agent: updated peer")
+		}
+	}
+
+	return
 }
 
 // Listens to events from Serf and handle the event.
@@ -436,6 +459,11 @@ func (a *Agent) eventLoop() {
 						"member": member.Name,
 						"event":  e.EventType(),
 					}).Debug("agent: Member event")
+				}
+
+				//In case of member event update peer list
+				if a.PeerUpdaterFunc != nil {
+					a.PeerUpdaterFunc(a.GetPeers()...)
 				}
 			}
 
