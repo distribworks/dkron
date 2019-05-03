@@ -29,7 +29,7 @@ Dkron relies on the key-value store for data storage, an instance of the distrib
 By default dkron will start with a file based, embedded KV store called BoltDB, it is functional for a single node demo but does not offers clustering or HA.
 {{% /notice %}}
 
-It is compatible with etcd, Consul, Zookeeper, DynamoDB, BoltDB and partially with Redis. For instructions on how to install and configure any one of these systems refer to their official sites:
+It is compatible with etcd, Consul, Zookeeper, Redis, DynamoDB and BoltDB. For instructions on how to install and configure any one of these systems refer to their official sites:
 
 - [etcd](https://coreos.com/etcd/docs/latest/)
 - [Consul](https://consul.io/intro/getting-started/install.html)
