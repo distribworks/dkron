@@ -323,8 +323,8 @@ Command line options  --etcd-config-file-path - Etcd node config --username - Au
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/products/pro/</guid>
-      <description>Dkron Pro Improved security, features and reliability for your scheduled jobs  Buy      Get additional fetures and commercial support from the creator of Dkron
- Key features Embedded storage  When it comes to choose a storage you could be making a wrong decission. Easy of use comes from having a well tested and supported storage.
+      <description>Dkron Pro Improved security, features and reliability for your scheduled jobs  Buy      Get additional features and commercial support from the creator of Dkron
+ Key features Embedded storage  When it comes to choosing a storage you could be making a wrong decision. Easy of use comes from having a well tested and supported storage.
 The embedded etcd storage is tuned for use with dkron out of the box.</description>
     </item>
     
@@ -494,7 +494,7 @@ dog_statsd_addr: &amp;#34;localhost:8125&amp;#34; Metrics  dkron.agent.event_rec
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/usage/executors/shell/</guid>
-      <description> Shell executor run a system command
+      <description> Shell executor runs a system command
 Configuration Params
 shell: Run this command using a shell environment command: The command to run env: Env vars separated by comma cwd: Chdir before command run  Example
 { &amp;#34;executor&amp;#34;: &amp;#34;shell&amp;#34;, &amp;#34;executor_config&amp;#34;: { &amp;#34;shell&amp;#34;: &amp;#34;true&amp;#34;, &amp;#34;command&amp;#34;: &amp;#34;my_command&amp;#34;, &amp;#34;env&amp;#34;: &amp;#34;ENV_VAR=va1,ANOTHER_ENV_VAR=var2&amp;#34;, &amp;#34;cwd&amp;#34;: &amp;#34;/app&amp;#34; } }</description>

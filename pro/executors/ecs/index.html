@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2019-04-13T11:13:44 CEST">
+<meta name="revised" content="2019-05-06T22:49:59 CEST">
 <title>AWS ECS Executor :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -616,7 +616,7 @@
     <span style="color:#f92672">&#34;cluster&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;default&#34;</span><span style="color:#111">,</span>
     <span style="color:#f92672">&#34;fargate&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;yes&#34;</span><span style="color:#111">,</span>
     <span style="color:#f92672">&#34;env&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;ENVIRONMENT=variable&#34;</span><span style="color:#111">,</span>
-    <span style="color:#f92672">&#34;maxAttempts&#34;</span><span style="color:#111">:</span> <span style="color:#ae81ff">5000</span>
+    <span style="color:#f92672">&#34;maxAttempts&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;5000&#34;</span>
   <span style="color:#111">}</span>
 <span style="color:#111">}</span></code></pre></div>
 <p>This is the complete list of configuration parameters of the plugin:</p>
@@ -632,7 +632,7 @@ subnet
 env
 service
 overrides
-maxAttempts // Defaults to 2000, with 6s delay between it will wait up to 600s
+maxAttempts // Defaults to 2000, will perform a check every 6s * 2000 times waiting a total of 12000s or 3.3h
 </code></pre>
 
 
