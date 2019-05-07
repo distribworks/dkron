@@ -3,7 +3,7 @@ module github.com/victorcoder/dkron
 require (
 	github.com/DataDog/datadog-go v0.0.0-20170427165718-0ddda6bee211 // indirect
 	github.com/abronan/leadership v0.0.0-20171113102752-76df1b7fa384
-	github.com/abronan/valkeyrie v0.0.0-20190313085051-8fd1c7cad28d
+	github.com/abronan/valkeyrie v0.0.0-20190503213338-20861cd6729e
 	github.com/armon/circbuf v0.0.0-20150827004946-bbbad097214e
 	github.com/armon/go-metrics v0.0.0-20180917152333-f0300d1749da
 	github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973 // indirect
@@ -15,7 +15,6 @@ require (
 	github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f // indirect
 	github.com/cpuguy83/go-md2man v1.0.8 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
-	github.com/fsnotify/fsnotify v1.4.2 // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/gin-contrib/expvar v0.0.0-20180827025536-251166f58ff2
 	github.com/gin-contrib/multitemplate v0.0.0-20170922032617-bbc6daf6024b
@@ -36,7 +35,6 @@ require (
 	github.com/hashicorp/serf v0.8.2
 	github.com/hashicorp/uuid v0.0.0-20160311170451-ebb0a03e909c // indirect
 	github.com/hashicorp/yamux v0.0.0-20181012175058-2f1d1f20f75d // indirect
-	github.com/hpcloud/tail v1.0.0 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/jonboulle/clockwork v0.1.0 // indirect
 	github.com/jordan-wright/email v0.0.0-20180115032944-94ae17dedda2
@@ -50,8 +48,6 @@ require (
 	github.com/mitchellh/go-testing-interface v1.0.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect
-	github.com/onsi/ginkgo v1.6.0 // indirect
-	github.com/onsi/gomega v1.4.1 // indirect
 	github.com/pelletier/go-toml v1.0.1 // indirect
 	github.com/philhofer/fwd v1.0.0 // indirect
 	github.com/pkg/errors v0.8.0 // indirect
@@ -87,12 +83,7 @@ require (
 	google.golang.org/genproto v0.0.0-20181202183823-bd91e49a0898 // indirect
 	google.golang.org/grpc v1.18.0
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
-	gopkg.in/fsnotify.v1 v1.4.7 // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/go-playground/validator.v8 v8.18.2 // indirect
-	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gopkg.in/vmihailenco/msgpack.v2 v2.9.1 // indirect
-	gopkg.in/yaml.v2 v2.0.0-20170812160011-eb3733d160e7 // indirect
 )
-
-replace github.com/abronan/valkeyrie => github.com/abronan/valkeyrie v0.0.0-20190413102404-e04dc0b66b0e

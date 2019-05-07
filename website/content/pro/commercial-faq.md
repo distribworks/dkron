@@ -53,7 +53,7 @@ If you purchased Dkron Pro ([settings](https://gumroad.com/settings)) with a cre
 
 ## Can I request a change to the license terms?
 
-Dkron Pro is sold as is, no change to terms.
+Dkron Pro purchasing the Appliance license can ask for changes to the terms and conditions. Email your concerns and we can negotiate something.
 
 ## Can I pay via invoice and purchase order?
 
