@@ -101,7 +101,7 @@
     }
 
     .case-container {
-      @include clearfix;
+      //@include clearfix;
       display:inline-block;
       margin:0 auto;
       text-align: center;
@@ -172,7 +172,7 @@
 
     .vertical-align {
 
-      @include clearfix;
+      //@include clearfix;
 
       &:nth-child(even) {
         img {
@@ -195,7 +195,7 @@
 
   .page-home {
     blockquote {
-      background:#fff;
+      background:#eee;
       margin:4em 0;
       p {
         font-size:1.5em;

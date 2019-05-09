@@ -12,6 +12,9 @@ section[role="main"] {
   padding:2em 0;
 }
 
+a {
+  color: $color-link;
+}
 
 h1[id]:before, 
 h2[id]:before, 

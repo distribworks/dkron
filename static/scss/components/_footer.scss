@@ -2,7 +2,7 @@ footer[role="contentinfo"] {
   font-size:.6em;
   font-weight:bold;
   text-transform: uppercase;
-  color:lighten(#000,90%);
+  color:$color-base-dark;
   padding-bottom:2em;
 
   .footer-logo {
