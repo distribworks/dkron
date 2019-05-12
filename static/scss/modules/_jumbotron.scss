@@ -17,7 +17,8 @@
 
         a {
           margin:2em .5em 0 .5em;
-          font-size:.7em;
+          font-size:.8em;
+          font-weight: bold;
           text-transform:uppercase;
           font-family: $font-headlines;
         }
@@ -47,8 +48,8 @@
         padding-bottom:5em;
 
         .text-wrapper {
-          @include span(6 of 12);
-          @include push(1 of 12);
+          //@include span(6 of 12);
+          //@include push(1 of 12);
           text-align: left;
 
           h2 {
@@ -62,8 +63,8 @@
           margin-top:1.7em;
           display:block;
           height:200px;
-          @include span(1 of 6);
-          @include push(1 of 12);
+          //@include span(1 of 6);
+          //@include push(1 of 12);
           img {
             width:auto;
             height:200px;;

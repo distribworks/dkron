@@ -12,8 +12,8 @@ header .logo {
 
 header .logo img {
   margin-right: 0;
-  height: inherit;
   vertical-align: text-top;
+  height: 45px;
 }
 
 .brand {
@@ -28,7 +28,7 @@ header .logo img {
   color: #FFF;
   text-decoration: none;
 }
-.brand img {
-  width: 30px;
-  height: 30px;
+
+section a {
+  color: #fc505e;
 }
