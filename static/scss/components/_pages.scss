@@ -167,7 +167,11 @@
     }
 
     .main-content {
-      text-align:center;
+      text-align:left;
+
+      #features{
+        text-align:center;
+      }
     }
 
     .vertical-align {

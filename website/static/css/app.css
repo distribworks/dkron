@@ -444,6 +444,9 @@ footer[role=contentinfo] p {
     clear: left;
   }
   .page-home .main-content {
+    text-align: left;
+  }
+  .page-home .main-content #features {
     text-align: center;
   }
   .page-home .vertical-align h3 {
