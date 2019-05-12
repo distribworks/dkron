@@ -444,15 +444,14 @@ footer[role=contentinfo] p {
     clear: left;
   }
   .page-home .main-content {
-    text-align: left;
+    text-align: center;
   }
-  .page-home .vertical-align:nth-child(even) img {
-    float: left;
-    margin-right: 2em;
+  .page-home .vertical-align h3 {
+    margin-top: 0em;
   }
-  .page-home .vertical-align:nth-child(odd) img {
-    float: right;
-    margin-left: 2em;
+  .page-home .vertical-align img {
+    margin: 0em;
+    width: 60%;
   }
 }
 @media (min-width: 1200px) {

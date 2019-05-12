@@ -167,25 +167,17 @@
     }
 
     .main-content {
-      text-align:left;
+      text-align:center;
     }
 
     .vertical-align {
-
-      //@include clearfix;
-
-      &:nth-child(even) {
-        img {
-          float:left;
-          margin-right:2em;
-        }
+      h3 {
+        margin-top: 0em;
       }
-
-      &:nth-child(odd) {
-        img {
-          float:right;
-          margin-left:2em;
-        }
+      
+      img {
+        margin:0em;
+        width: 60%;
       }
     }
   }

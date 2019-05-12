@@ -28,3 +28,7 @@ header .logo img {
   color: #FFF;
   text-decoration: none;
 }
+
+section a {
+  color: #fc505e;
+}
