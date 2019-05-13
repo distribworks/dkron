@@ -1,3 +1,25 @@
+## 1.2.4
+
+- Update swagger spec: fix executor_config, add status
+- New site design
+- Testing: Parameterize test suite to use any backend
+- Refactor: GetLastExecutionGroup to simplify code
+
+## 1.2.3
+
+- Fix: Bump valkeyrie with redis watches fix
+- Implement server selection using consistent hash
+- Upgrade serf to 0.8.2
+- refactor: Store should implement the interface
+
+## 1.2.2
+
+- Fix: Use branched valkeyrie fixing DynamoDB return all items
+
+## 1.2.1
+
+- Fix: scheduler_started expvar fix
+
 ## 1.2.0
 
 - Fix: Update executor support error log instead of fail only (@tengattack)
