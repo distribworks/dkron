@@ -1,19 +1,23 @@
 /* base components */
 /** Font vars **/
 /* Boostrap shitty breakpoints */
-@import url(https://fonts.googleapis.com/css?family=Lato:400,300);
+@import url(https://fonts.googleapis.com/css?family=Montserrat:400,300);
 html {
   font-size: 100%;
 }
 
 body {
-  font-family: "Lato", "Open-Sans", Sans-serif;
   padding-top: 90px;
+  background-color: #eee;
 }
 
-section[role="main"] {
+section[role=main] {
   background: #F9FAFA;
   padding: 2em 0;
+}
+
+a {
+  color: #fc505e;
 }
 
 h1[id]:before,
@@ -30,7 +34,6 @@ h6[id]:before {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: "Lato", "Open-Sans", Sans-serif;
   margin-bottom: 1em;
 }
 
@@ -71,7 +74,7 @@ ul.status li strong {
 .bs-sidenav {
   margin-top: 1em;
   padding: 1em 0;
-  font-size: .9em;
+  font-size: 0.9em;
   line-height: 1em;
 }
 
@@ -80,7 +83,7 @@ ul.status li strong {
   display: block;
   padding: 5px 20px;
   z-index: 1;
-  margin-bottom: .7em;
+  margin-bottom: 0.7em;
 }
 
 .bs-sidebar .nav > li > a:hover,
@@ -119,7 +122,7 @@ ul.status li strong {
 
   /* Widen the fixed sidebar */
   .bs-sidebar.affix,
-  .bs-sidebar.affix-bottom {
+.bs-sidebar.affix-bottom {
     width: 213px;
   }
 
@@ -135,7 +138,7 @@ ul.status li strong {
   }
 
   .bs-sidebar.affix-bottom .bs-sidenav,
-  .bs-sidebar.affix .bs-sidenav {
+.bs-sidebar.affix .bs-sidenav {
     margin-top: 0;
     margin-bottom: 0;
   }
@@ -143,7 +146,7 @@ ul.status li strong {
 @media (min-width: 1200px) {
   /* Widen the fixed sidebar again */
   .bs-sidebar.affix-bottom,
-  .bs-sidebar.affix {
+.bs-sidebar.affix {
     width: 263px;
   }
 }
@@ -152,11 +155,11 @@ ul.status li strong {
   margin-bottom: 20px;
 }
 .navbar-default .navbar-header .brand {
-  margin: 10px;
+  margin: 3px;
   line-height: 0;
   margin-left: 5px;
   font-size: 26px;
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
   font-weight: 300;
 }
 .navbar-default .navbar-header .brand a {
@@ -166,8 +169,7 @@ ul.status li strong {
 .navbar-default .navbar-header .brand img {
   margin-top: 7px;
   margin-bottom: 13px;
-  width: 30px;
-  height: 30px;
+  height: 45px;
 }
 .navbar-default .navbar-collapse {
   border: 0;
@@ -179,7 +181,7 @@ ul.status li strong {
   padding: 0;
 }
 .navbar-default .navbar-nav > li.open .dropdown-menu {
-  padding: .5em 0;
+  padding: 0.5em 0;
   margin: 1em 0;
   border-top: 1px solid #fff;
   border-bottom: 1px solid #fff;
@@ -191,7 +193,6 @@ ul.status li strong {
   color: #FFF;
   padding: 0;
   line-height: 1em;
-  font-family: "Lato", "Open-Sans", Sans-serif;
   font-size: 0.9em !important;
   text-transform: uppercase;
 }
@@ -214,28 +215,28 @@ ul.status li strong {
     margin-right: 4em;
   }
   .navbar-default .container > .navbar-collapse {
-    margin-top: 1.8em;
+    margin-top: 1.5em;
   }
   .navbar-default .navbar-nav.navbar-right:last-child {
     margin-right: 0;
   }
   .navbar-default .navbar-header .navbar-nav > .active > a:before,
-  .navbar-default .navbar-header .navbar-nav > .active > a:hover:before,
-  .navbar-default .navbar-header .navbar-nav > .active > a:focus:before {
+.navbar-default .navbar-header .navbar-nav > .active > a:hover:before,
+.navbar-default .navbar-header .navbar-nav > .active > a:focus:before {
     content: "";
     display: block;
     height: 2px;
     background: #fff;
     width: 50%;
     position: absolute;
-    bottom: -.7em;
+    bottom: -0.7em;
   }
 
   .navbar-nav.main-links > li {
     border-left: 1px solid #fff;
     padding: 0;
     padding-left: 1em;
-    margin: .5em;
+    margin: 0.5em;
   }
   .navbar-nav.main-links > li:first-child {
     border: none;
@@ -248,11 +249,11 @@ ul.status li strong {
     display: block;
   }
   .navbar-nav.main-links > li.open .dropdown-menu > li > a {
-    padding: .5em;
+    padding: 0.5em;
   }
 
   .navbar-nav.navbar-right > li {
-    padding: .5em;
+    padding: 0.5em;
   }
 }
 .button {
@@ -261,28 +262,28 @@ ul.status li strong {
   border-radius: 6px;
   border: 1px solid #fff;
   background: "transparent";
-  padding: .7em 1.2em;
-  transition: all .2s;
+  padding: 0.7em 1.2em;
+  transition: all 0.2s;
 }
 .button:hover {
   text-decoration: none;
   color: #fff;
-  opacity: .7;
+  opacity: 0.7;
 }
 
 .button-light {
   display: inline-block;
-  color: #72A6B2;
+  color: #000000;
   border-radius: 6px;
-  border: 1px solid #72A6B2;
+  border: 1px solid #000000;
   background: #fff;
-  padding: .7em 1.2em;
-  transition: all .2s;
+  padding: 0.7em 1.2em;
+  transition: all 0.2s;
 }
 .button-light:hover {
   text-decoration: none;
-  color: #72A6B2;
-  opacity: .7;
+  color: #000000;
+  opacity: 0.7;
 }
 
 .tooltip-inner {
@@ -291,18 +292,18 @@ ul.status li strong {
   white-space: nowrap;
 }
 
-footer[role="contentinfo"] {
-  font-size: .6em;
+footer[role=contentinfo] {
+  font-size: 0.6em;
   font-weight: bold;
   text-transform: uppercase;
-  color: #e6e6e6;
+  color: #540b63;
   padding-bottom: 2em;
 }
-footer[role="contentinfo"] .footer-logo {
+footer[role=contentinfo] .footer-logo {
   margin: 2em auto;
   text-align: center;
 }
-footer[role="contentinfo"] p {
+footer[role=contentinfo] p {
   margin: 0;
   text-align: center;
 }
@@ -314,8 +315,8 @@ footer[role="contentinfo"] p {
 .page-home blockquote {
   text-align: center;
   border: none;
-  font-family: "Lato", "Open-Sans", Sans-serif;
-  color: #a3c5cd;
+  font-family: "Montserrat", "Open-Sans", Sans-serif;
+  color: #262626;
   margin: 1.5em auto;
 }
 .page-home blockquote p {
@@ -324,7 +325,7 @@ footer[role="contentinfo"] p {
 }
 .page-home blockquote .main-content h2 {
   text-align: center;
-  color: #9B999E;
+  color: #737374;
 }
 .page-home footer hr {
   margin-top: 0;
@@ -343,7 +344,7 @@ footer[role="contentinfo"] p {
 }
 .page-home .main-content h2:before {
   position: absolute;
-  border: 3px solid #6B93BA;
+  border: 3px solid #000000;
   width: 10%;
   left: 50%;
   margin-left: -5%;
@@ -355,7 +356,7 @@ footer[role="contentinfo"] p {
   margin: 1em 0;
 }
 .page-home .main-content h3 {
-  color: #6B93BA;
+  color: #000000;
 }
 .page-home .main-content p {
   color: #999999;
@@ -373,23 +374,12 @@ footer[role="contentinfo"] p {
   padding-bottom: 20px;
 }
 .page-home #use-cases-mask {
-  background: #1F779F;
+  background: #fd505d;
   /* Old browsers */
-  background: -moz-linear-gradiyent(left, #72A6B2 0%, #1F779F 100%);
-  /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, right top, color-stop(0%, #72A6B2), color-stop(100%, #1F779F));
-  /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(left, #72A6B2 0%, #1F779F 100%);
-  /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(left, #72A6B2 0%, #1F779F 100%);
-  /* Opera 11.10+ */
-  background: -ms-linear-gradient(left, #72A6B2 0%, #1F779F 100%);
-  /* IE10+ */
-  background: linear-gradient(to right, #72a6b2 0%, #1f779f 100%);
+  background: linear-gradient(to top right, #fd505d 0%, #9c43fc 100%);
   /* W3C */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#90a6b2', endColorstr='#6ca4b2',GradientType=1 );
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr="#90a6b2", endColorstr="#6ca4b2",GradientType=1 );
   /* IE6-9 */
-  background: -webkit-gradient(linear, left top, right top, left, right);
   padding: 3em 0;
   color: #fff;
   text-align: center;
@@ -401,14 +391,12 @@ footer[role="contentinfo"] p {
 .page-home #use-cases-mask span {
   display: block;
   margin-top: 1.5em;
-  font-size: .9em;
+  font-size: 0.9em;
 }
 .page-home #use-cases-mask .container {
   text-align: center;
 }
 .page-home #use-cases-mask .case-container {
-  overflow: hidden;
-  *zoom: 1;
   display: inline-block;
   margin: 0 auto;
   text-align: center;
@@ -437,7 +425,7 @@ footer[role="contentinfo"] p {
   color: #999999;
 }
 .page-home #products .comparison-chart .products-table {
-  font-size: .9em;
+  font-size: 0.9em;
   color: #999999;
 }
 .page-home #products .comparison-chart .products-table .btn {
@@ -458,22 +446,20 @@ footer[role="contentinfo"] p {
   .page-home .main-content {
     text-align: left;
   }
-  .page-home .vertical-align {
-    overflow: hidden;
-    *zoom: 1;
+  .page-home .main-content #features {
+    text-align: center;
   }
-  .page-home .vertical-align:nth-child(even) img {
-    float: left;
-    margin-right: 2em;
+  .page-home .vertical-align h3 {
+    margin-top: 0em;
   }
-  .page-home .vertical-align:nth-child(odd) img {
-    float: right;
-    margin-left: 2em;
+  .page-home .vertical-align img {
+    margin: 0em;
+    width: 60%;
   }
 }
 @media (min-width: 1200px) {
   .page-home blockquote {
-    background: #fff;
+    background: #eee;
     margin: 4em 0;
   }
   .page-home blockquote p {
@@ -491,24 +477,13 @@ footer[role="contentinfo"] p {
 }
 #jumbotron-mask {
   margin-top: -20px;
-  background: #72A6B2;
-  background: #1F779F;
+  background: #000000;
+  background: #fd505d;
   /* Old browsers */
-  background: -moz-linear-gradiyent(left, #72A6B2 0%, #1F779F 100%);
-  /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, right top, color-stop(0%, #72A6B2), color-stop(100%, #1F779F));
-  /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(left, #72A6B2 0%, #1F779F 100%);
-  /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(left, #72A6B2 0%, #1F779F 100%);
-  /* Opera 11.10+ */
-  background: -ms-linear-gradient(left, #72A6B2 0%, #1F779F 100%);
-  /* IE10+ */
-  background: linear-gradient(to right, #72a6b2 0%, #1f779f 100%);
+  background: linear-gradient(to top right, #fd505d 0%, #9c43fc 100%);
   /* W3C */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#90a6b2', endColorstr='#6ca4b2',GradientType=1 );
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr="#90a6b2", endColorstr="#6ca4b2",GradientType=1 );
   /* IE6-9 */
-  background: -webkit-gradient(linear, left top, right top, left, right);
 }
 #jumbotron-mask h2 {
   color: #FFF;
@@ -516,16 +491,17 @@ footer[role="contentinfo"] p {
 #jumbotron-mask #jumbotron .container {
   padding-top: 4em;
   padding-bottom: 2em;
-  transition: all .2s;
+  transition: all 0.2s;
 }
 #jumbotron-mask #jumbotron .container .text-wrapper {
   text-align: center;
 }
 #jumbotron-mask #jumbotron .container .text-wrapper a {
-  margin: 2em .5em 0 .5em;
-  font-size: 1em;
+  margin: 2em 0.5em 0 0.5em;
+  font-size: 0.8em;
+  font-weight: bold;
   text-transform: uppercase;
-  font-family: "Lato", "Open-Sans", Sans-serif;
+  font-family: "Montserrat", "Open-Sans", Sans-serif;
 }
 #jumbotron-mask #jumbotron .container h2 {
   text-align: center;
@@ -539,10 +515,6 @@ footer[role="contentinfo"] p {
     padding-bottom: 5em;
   }
   #jumbotron-mask #jumbotron .container .text-wrapper {
-    width: 35%;
-    float: left;
-    margin-right: 1.69492%;
-    margin-left: 8.47458%;
     text-align: left;
   }
   #jumbotron-mask #jumbotron .container .text-wrapper h2 {
@@ -554,10 +526,6 @@ footer[role="contentinfo"] p {
     margin-top: 1.7em;
     display: block;
     height: 200px;
-    width: 13.7931%;
-    float: left;
-    margin-right: 3%;
-    margin-left: 3%;
   }
   #jumbotron-mask #jumbotron .container .dkron-logo img {
     width: auto;
