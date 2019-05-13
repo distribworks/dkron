@@ -357,32 +357,16 @@ func (s *Store) GetExecutions(jobName string) ([]*Execution, error) {
 }
 
 func (s *Store) GetLastExecutionGroup(jobName string) ([]*Execution, error) {
-	res, err := s.client.List(fmt.Sprintf("%s/executions/%s", s.keyspace, jobName), nil)
+	executions, byGroup, err := s.GetGroupedExecutions(jobName)
 	if err != nil {
 		return nil, err
 	}
-	if len(res) == 0 {
-		return []*Execution{}, nil
+
+	if len(executions) > 0 && len(byGroup) > 0 {
+		return executions[byGroup[0]], nil
 	}
 
-	var lastEx Execution
-	var executions []*Execution
-	// res does not guarantee any order,
-	// so compare them by `StartedAt` time and get the last one
-	for _, node := range res {
-		var ex Execution
-		err := json.Unmarshal([]byte(node.Value), &ex)
-		if err != nil {
-			return nil, err
-		}
-		if ex.StartedAt.After(lastEx.StartedAt) {
-			lastEx = ex
-			executions = []*Execution{&ex}
-		} else if ex.Group == lastEx.Group {
-			executions = append(executions, &ex)
-		}
-	}
-	return executions, nil
+	return nil, nil
 }
 
 // GetExecutionGroup returns all executions in the same group of a given execution
