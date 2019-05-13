@@ -1,7 +1,6 @@
 package dkron
 
 import (
-	"reflect"
 	"testing"
 	"time"
 
@@ -10,7 +9,7 @@ import (
 )
 
 func TestStore(t *testing.T) {
-	s := NewStore("etcd", []string{etcdAddr}, nil, "dkron-test", nil)
+	s := NewStore(store.Backend(backend), []string{backendMachine}, nil, "dkron-test", nil)
 
 	// Cleanup everything
 	if err := cleanTestKVSpace(s); err != nil {
@@ -96,6 +95,7 @@ func TestStore_GetLastExecutionGroup(t *testing.T) {
 		Success:    true,
 		Output:     []byte("type"),
 		NodeName:   "testNode1",
+		Group:      1,
 	}
 	executionSingleMiddle := &Execution{
 		JobName:    "test",
@@ -104,6 +104,7 @@ func TestStore_GetLastExecutionGroup(t *testing.T) {
 		Success:    true,
 		Output:     []byte("type"),
 		NodeName:   "testNode1",
+		Group:      2,
 	}
 	executionGroupMiddle1 := &Execution{
 		JobName:    "test",
@@ -112,6 +113,7 @@ func TestStore_GetLastExecutionGroup(t *testing.T) {
 		Success:    true,
 		Output:     []byte("type"),
 		NodeName:   "testNode1",
+		Group:      3,
 	}
 	executionGroupMiddle2 := &Execution{
 		JobName:    "test",
@@ -120,6 +122,7 @@ func TestStore_GetLastExecutionGroup(t *testing.T) {
 		Success:    true,
 		Output:     []byte("type"),
 		NodeName:   "testNode2",
+		Group:      3,
 	}
 	executionGroupLater1 := &Execution{
 		JobName:    "test",
@@ -128,6 +131,7 @@ func TestStore_GetLastExecutionGroup(t *testing.T) {
 		Success:    true,
 		Output:     []byte("type"),
 		NodeName:   "testNode1",
+		Group:      4,
 	}
 	executionGroupLater2 := &Execution{
 		JobName:    "test",
@@ -136,6 +140,7 @@ func TestStore_GetLastExecutionGroup(t *testing.T) {
 		Success:    true,
 		Output:     []byte("type"),
 		NodeName:   "testNode2",
+		Group:      4,
 	}
 
 	tests := []struct {
@@ -197,21 +202,15 @@ func TestStore_GetLastExecutionGroup(t *testing.T) {
 				t.Errorf("Store.GetLastExecutionGroup() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Store.GetLastExecutionGroup() = %+v, want %+v", got, tt.want)
-				for i, e := range got {
-					t.Logf("Got %d: %v", i, e)
-				}
-				for i, e := range tt.want {
-					t.Logf("Want %d: %v", i, e)
-				}
+			for _, w := range tt.want {
+				assert.Contains(t, got, w)
 			}
 		})
 	}
 }
 
 func createTestStore() *Store {
-	return NewStore("etcd", []string{etcdAddr}, nil, "dkron-test", nil)
+	return NewStore(store.Backend(backend), []string{backendMachine}, nil, "dkron-test", nil)
 }
 
 func cleanTestKVSpace(s *Store) error {

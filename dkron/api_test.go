@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"os"
 	"testing"
 	"time"
 
+	"github.com/abronan/valkeyrie/store"
 	"github.com/hashicorp/serf/testutil"
 	"github.com/stretchr/testify/assert"
 )
@@ -21,8 +21,8 @@ func setupAPITest(t *testing.T) (a *Agent) {
 	c.Server = true
 	c.LogLevel = logLevel
 	c.Keyspace = "dkron-test"
-	c.Backend = "etcdv3"
-	c.BackendMachines = []string{os.Getenv("DKRON_BACKEND_MACHINE")}
+	c.Backend = store.Backend(backend)
+	c.BackendMachines = []string{backendMachine}
 
 	a = NewAgent(c, nil)
 	a.Start()

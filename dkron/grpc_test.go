@@ -5,17 +5,18 @@ import (
 	"testing"
 	"time"
 
+	"github.com/abronan/valkeyrie/store"
 	"github.com/hashicorp/serf/testutil"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGRPCExecutionDone(t *testing.T) {
-	store := NewStore("etcdv3", []string{etcdAddr}, nil, "dkron", nil)
+	s := NewStore(store.Backend(backend), []string{backendMachine}, nil, "dkron", nil)
 	viper.Reset()
 
 	// Cleanup everything
-	err := store.Client().DeleteTree("dkron")
+	err := s.Client().DeleteTree("dkron")
 	if err != nil {
 		t.Logf("error cleaning up: %s", err)
 	}
@@ -24,12 +25,12 @@ func TestGRPCExecutionDone(t *testing.T) {
 
 	c := DefaultConfig()
 	c.BindAddr = aAddr
-	c.BackendMachines = []string{etcdAddr}
+	c.BackendMachines = []string{backendMachine}
 	c.NodeName = "test1"
 	c.Server = true
 	c.LogLevel = logLevel
 	c.Keyspace = "dkron"
-	c.Backend = "etcdv3"
+	c.Backend = store.Backend(backend)
 	c.BackendMachines = []string{os.Getenv("DKRON_BACKEND_MACHINE")}
 
 	a := NewAgent(c, nil)
@@ -45,7 +46,7 @@ func TestGRPCExecutionDone(t *testing.T) {
 		Disabled:       true,
 	}
 
-	if err := store.SetJob(testJob, true); err != nil {
+	if err := s.SetJob(testJob, true); err != nil {
 		t.Fatalf("error creating job: %s", err)
 	}
 
@@ -61,13 +62,13 @@ func TestGRPCExecutionDone(t *testing.T) {
 
 	rc := NewGRPCClient(nil)
 	rc.CallExecutionDone(a.getRPCAddr(), testExecution)
-	execs, _ := store.GetExecutions("test")
+	execs, _ := s.GetExecutions("test")
 
 	assert.Len(t, execs, 1)
 	assert.Equal(t, string(testExecution.Output), string(execs[0].Output))
 
 	// Test store execution on a deleted job
-	store.DeleteJob(testJob.Name)
+	s.DeleteJob(testJob.Name)
 
 	testExecution.FinishedAt = time.Now()
 	err = rc.CallExecutionDone(a.getRPCAddr(), testExecution)

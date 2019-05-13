@@ -4,6 +4,8 @@ set -e
 docker build -t dkron .
 docker run dkron scripts/validate-gofmt
 docker run dkron go vet
-[[ $(docker ps -f "name=etcd" --format '{{.Names}}') == etcd ]] ||
-docker run --rm --name etcd -d -p "2379" quay.io/coreos/etcd etcd -name=dkron1 -advertise-client-urls http://etcd:2379 -listen-client-urls http://0.0.0.0:2379
-docker run --rm --link etcd -e DKRON_BACKEND_MACHINE=etcd:2379 dkron go test -v -timeout 30s ./... $1
+#[[ $(docker ps -f "name=etcd" --format '{{.Names}}') == etcd ]] ||
+#docker run --rm --name etcd -d -p "2379" quay.io/coreos/etcd etcd -name=dkron1 -advertise-client-urls http://etcd:2379 -listen-client-urls http://0.0.0.0:2379
+[[ $(docker ps -f "name=redis" --format '{{.Names}}') == redis ]] ||
+docker run --rm --name redis -d -p "6379" redis
+docker run --rm --link redis -e DKRON_BACKEND_MACHINE=redis:6379 -e DKRON_BACKEND=redis dkron go test -v -timeout 120s ./... $1
