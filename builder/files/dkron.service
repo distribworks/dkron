@@ -5,7 +5,7 @@ After=network.target
 
 [Service]
 User=root
-ExecStart=/usr/bin/dkron agent
+ExecStart=/usr/bin/dkron agent --server
 ExecReload=/bin/kill -HUP $MAINPID
 Restart=on-failure
 KillSignal=SIGTERM
