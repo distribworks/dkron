@@ -4,11 +4,11 @@ import (
 	"net/rpc"
 
 	"github.com/hashicorp/go-plugin"
-	"github.com/victorcoder/dkron/dkron"
+	"github.com/victorcoder/dkron/plugintypes"
 )
 
 type ExecutionProcessorPlugin struct {
-	Processor dkron.ExecutionProcessor
+	Processor plugintypes.ExecutionProcessor
 }
 
 func (p *ExecutionProcessorPlugin) Server(b *plugin.MuxBroker) (interface{}, error) {
@@ -26,8 +26,8 @@ type ExecutionProcessor struct {
 }
 
 // The Process method that actually call the plugin Process method.
-func (e *ExecutionProcessor) Process(args *dkron.ExecutionProcessorArgs) dkron.Execution {
-	var resp dkron.Execution
+func (e *ExecutionProcessor) Process(args *plugintypes.ExecutionProcessorArgs) plugintypes.Execution {
+	var resp plugintypes.Execution
 	err := e.Client.Call("Plugin.Process", args, &resp)
 	if err != nil {
 		// You usually want your interfaces to return errors. If they don't,
@@ -43,10 +43,10 @@ func (e *ExecutionProcessor) Process(args *dkron.ExecutionProcessorArgs) dkron.E
 type ExecutionProcessorServer struct {
 	// This is the real implementation
 	Broker    *plugin.MuxBroker
-	Processor dkron.ExecutionProcessor
+	Processor plugintypes.ExecutionProcessor
 }
 
-func (e *ExecutionProcessorServer) Process(args *dkron.ExecutionProcessorArgs, resp *dkron.Execution) error {
+func (e *ExecutionProcessorServer) Process(args *plugintypes.ExecutionProcessorArgs, resp *plugintypes.Execution) error {
 	*resp = e.Processor.Process(args)
 	return nil
 }

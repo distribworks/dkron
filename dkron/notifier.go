@@ -12,16 +12,17 @@ import (
 
 	"github.com/jordan-wright/email"
 	"github.com/sirupsen/logrus"
+	"github.com/victorcoder/dkron/plugintypes"
 )
 
 type Notifier struct {
 	Config         *Config
 	Job            *Job
-	Execution      *Execution
-	ExecutionGroup []*Execution
+	Execution      *plugintypes.Execution
+	ExecutionGroup []*plugintypes.Execution
 }
 
-func Notification(config *Config, execution *Execution, exGroup []*Execution, job *Job) *Notifier {
+func Notification(config *Config, execution *plugintypes.Execution, exGroup []*plugintypes.Execution, job *Job) *Notifier {
 	return &Notifier{
 		Config:         config,
 		Execution:      execution,
@@ -117,11 +118,11 @@ func (n *Notifier) sendExecutionEmail() {
 
 func (n *Notifier) auth() smtp.Auth {
 	var auth smtp.Auth
-	
+
 	if n.Config.MailUsername != "" && n.Config.MailPassword != "" {
 		auth = smtp.PlainAuth("", n.Config.MailUsername, n.Config.MailPassword, n.Config.MailHost)
 	}
-	
+
 	return auth
 }
 
@@ -150,7 +151,7 @@ func (n *Notifier) callExecutionWebhook() {
 	}).Debug("notifier: Webhook call response")
 }
 
-func (n *Notifier) statusString(execution *Execution) string {
+func (n *Notifier) statusString(execution *plugintypes.Execution) string {
 	if execution.Success {
 		return "Success"
 	}

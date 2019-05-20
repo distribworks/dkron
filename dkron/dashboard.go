@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/victorcoder/dkron/dkron/assets"
 	"github.com/victorcoder/dkron/dkron/templates"
+	"github.com/victorcoder/dkron/plugintypes"
 )
 
 const (
@@ -99,7 +100,7 @@ func (a *Agent) dashboardExecutionsHandler(c *gin.Context) {
 
 	data := struct {
 		Common  *commonDashboardData
-		Groups  map[int64][]*Execution
+		Groups  map[int64][]*plugintypes.Execution
 		JobName string
 		ByGroup int64arr
 	}{

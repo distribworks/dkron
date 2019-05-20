@@ -9,6 +9,7 @@ import (
 	"github.com/abronan/valkeyrie/store"
 	"github.com/sirupsen/logrus"
 	"github.com/victorcoder/dkron/cron"
+	"github.com/victorcoder/dkron/plugintypes"
 	"github.com/victorcoder/dkron/proto"
 )
 
@@ -97,7 +98,7 @@ type Job struct {
 	lock store.Locker
 
 	// Processors to use for this job
-	Processors map[string]PluginConfig `json:"processors"`
+	Processors map[string]plugintypes.PluginConfig `json:"processors"`
 
 	// Concurrency policy for this job (allow, forbid)
 	Concurrency string `json:"concurrency"`
@@ -106,7 +107,7 @@ type Job struct {
 	Executor string `json:"executor"`
 
 	// Executor args
-	ExecutorConfig ExecutorPluginConfig `json:"executor_config"`
+	ExecutorConfig plugintypes.ExecutorPluginConfig `json:"executor_config"`
 
 	// Computed job status
 	Status string `json:"status"`
@@ -153,7 +154,7 @@ func (j *Job) Run() {
 			cronInspect.Set(j.Name, j)
 
 			// Simple execution wrapper
-			ex := NewExecution(j.Name)
+			ex := plugintypes.NewExecution(j.Name)
 			j.Agent.RunQuery(ex)
 		}
 	}

@@ -10,6 +10,7 @@ import (
 	metrics "github.com/armon/go-metrics"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/sirupsen/logrus"
+	"github.com/victorcoder/dkron/plugintypes"
 	"github.com/victorcoder/dkron/proto"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
@@ -87,7 +88,7 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.E
 		"from":  execDoneReq.NodeName,
 	}).Debug("grpc: Received execution done")
 
-	var execution Execution
+	var execution plugintypes.Execution
 	processed := false
 
 retry:
@@ -106,13 +107,13 @@ retry:
 
 	if !processed {
 		// Get the defined output types for the job, and call them
-		origExec := *NewExecutionFromProto(execDoneReq)
+		origExec := *plugintypes.NewExecutionFromProto(execDoneReq)
 		execution = origExec
 		for k, v := range job.Processors {
 			log.WithField("plugin", k).Info("grpc: Processing execution with plugin")
 			if processor, ok := grpcs.agent.ProcessorPlugins[k]; ok {
 				v["reporting_node"] = grpcs.agent.config.NodeName
-				e := processor.Process(&ExecutionProcessorArgs{Execution: origExec, Config: v})
+				e := processor.Process(&plugintypes.ExecutionProcessorArgs{Execution: origExec, Config: v})
 				execution = e
 			} else {
 				log.WithField("plugin", k).Error("grpc: Specified plugin not found")
@@ -197,7 +198,7 @@ func (grpcs *GRPCServer) Leave(ctx context.Context, in *empty.Empty) (*empty.Emp
 
 type DkronGRPCClient interface {
 	Connect(string) (*grpc.ClientConn, error)
-	CallExecutionDone(string, *Execution) error
+	CallExecutionDone(string, *plugintypes.Execution) error
 	CallGetJob(string, string) (*Job, error)
 	Leave(string) error
 }
@@ -227,7 +228,7 @@ func (grpcc *GRPCClient) Connect(addr string) (*grpc.ClientConn, error) {
 	return conn, nil
 }
 
-func (grpcc *GRPCClient) CallExecutionDone(addr string, execution *Execution) error {
+func (grpcc *GRPCClient) CallExecutionDone(addr string, execution *plugintypes.Execution) error {
 	defer metrics.MeasureSince([]string{"grpc", "call_execution_done"}, time.Now())
 	var conn *grpc.ClientConn
 

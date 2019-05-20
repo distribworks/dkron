@@ -9,6 +9,7 @@ import (
 	"github.com/gin-contrib/expvar"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"github.com/victorcoder/dkron/plugintypes"
 )
 
 const (
@@ -195,7 +196,7 @@ func (h *HTTPTransport) jobRunHandler(c *gin.Context) {
 		return
 	}
 
-	ex := NewExecution(job.Name)
+	ex := plugintypes.NewExecution(job.Name)
 	h.agent.RunQuery(ex)
 
 	c.Header("Location", c.Request.RequestURI)
@@ -215,7 +216,7 @@ func (h *HTTPTransport) executionsHandler(c *gin.Context) {
 	executions, err := h.agent.Store.GetExecutions(job.Name)
 	if err != nil {
 		if err == store.ErrKeyNotFound {
-			renderJSON(c, http.StatusOK, &[]Execution{})
+			renderJSON(c, http.StatusOK, &[]plugintypes.Execution{})
 			return
 		}
 		log.Error(err)

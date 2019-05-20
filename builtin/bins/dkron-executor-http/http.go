@@ -14,7 +14,7 @@ import (
 	"time"
 
 	"github.com/armon/circbuf"
-	"github.com/victorcoder/dkron/dkron"
+	"github.com/victorcoder/dkron/plugintypes"
 )
 
 const (
@@ -42,9 +42,9 @@ type HTTP struct {
 //     "expectBody": "",            // Expect response body, support regexp, such as /success/
 //     "debug": "true"              // Debug option, will log everything when this option is not empty
 // }
-func (s *HTTP) Execute(args *dkron.ExecuteRequest) (*dkron.ExecuteResponse, error) {
+func (s *HTTP) Execute(args *plugintypes.ExecuteRequest) (*plugintypes.ExecuteResponse, error) {
 	out, err := s.ExecuteImpl(args)
-	resp := &dkron.ExecuteResponse{Output: out}
+	resp := &plugintypes.ExecuteResponse{Output: out}
 	if err != nil {
 		resp.Error = err.Error()
 	}
@@ -52,7 +52,7 @@ func (s *HTTP) Execute(args *dkron.ExecuteRequest) (*dkron.ExecuteResponse, erro
 }
 
 // ExecuteImpl do http request
-func (s *HTTP) ExecuteImpl(args *dkron.ExecuteRequest) ([]byte, error) {
+func (s *HTTP) ExecuteImpl(args *plugintypes.ExecuteRequest) ([]byte, error) {
 	output, _ := circbuf.NewBuffer(maxBufSize)
 	var debug bool
 	if args.Config["debug"] != "" {

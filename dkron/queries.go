@@ -8,6 +8,7 @@ import (
 	"github.com/abronan/valkeyrie/store"
 	"github.com/hashicorp/serf/serf"
 	"github.com/sirupsen/logrus"
+	"github.com/victorcoder/dkron/plugintypes"
 )
 
 const (
@@ -21,13 +22,13 @@ const (
 var rescheduleThrotle *time.Timer
 
 type RunQueryParam struct {
-	Execution *Execution `json:"execution"`
-	RPCAddr   string     `json:"rpc_addr"`
+	Execution *plugintypes.Execution `json:"execution"`
+	RPCAddr   string                 `json:"rpc_addr"`
 }
 
 // Send a serf run query to the cluster, this is used to ask a node or nodes
 // to run a Job.
-func (a *Agent) RunQuery(ex *Execution) {
+func (a *Agent) RunQuery(ex *plugintypes.Execution) {
 	var params *serf.QueryParam
 
 	job, err := a.Store.GetJob(ex.JobName, nil)

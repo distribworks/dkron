@@ -1,4 +1,4 @@
-package dkron
+package plugintypes
 
 import (
 	"fmt"

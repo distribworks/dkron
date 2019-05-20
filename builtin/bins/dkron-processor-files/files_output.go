@@ -6,7 +6,7 @@ import (
 	"os"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/victorcoder/dkron/dkron"
+	"github.com/victorcoder/dkron/plugintypes"
 )
 
 const defaultLogDir = "/var/log/dkron"
@@ -19,7 +19,7 @@ type FilesOutput struct {
 }
 
 // Process method of the plugin
-func (l *FilesOutput) Process(args *dkron.ExecutionProcessorArgs) dkron.Execution {
+func (l *FilesOutput) Process(args *plugintypes.ExecutionProcessorArgs) plugintypes.Execution {
 	log.SetFormatter(&log.TextFormatter{FullTimestamp: true})
 	l.parseConfig(args.Config)
 
@@ -38,7 +38,7 @@ func (l *FilesOutput) Process(args *dkron.ExecutionProcessorArgs) dkron.Executio
 	return args.Execution
 }
 
-func (l *FilesOutput) parseConfig(config dkron.PluginConfig) {
+func (l *FilesOutput) parseConfig(config plugintypes.PluginConfig) {
 	forward, ok := config["forward"].(bool)
 	if ok {
 		l.forward = forward

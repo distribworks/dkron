@@ -19,6 +19,7 @@ import (
 	"github.com/hashicorp/memberlist"
 	"github.com/hashicorp/serf/serf"
 	"github.com/sirupsen/logrus"
+	"github.com/victorcoder/dkron/plugintypes"
 )
 
 const (
@@ -39,8 +40,8 @@ var (
 
 // Agent is the main struct that represents a dkron agent
 type Agent struct {
-	ProcessorPlugins map[string]ExecutionProcessor
-	ExecutorPlugins  map[string]Executor
+	ProcessorPlugins map[string]plugintypes.ExecutionProcessor
+	ExecutorPlugins  map[string]plugintypes.Executor
 	HTTPTransport    Transport
 	Store            Storage
 	GRPCServer       DkronGRPCServer
@@ -59,11 +60,11 @@ type Agent struct {
 
 // ProcessorFactory is a function type that creates a new instance
 // of a processor.
-type ProcessorFactory func() (ExecutionProcessor, error)
+type ProcessorFactory func() (plugintypes.ExecutionProcessor, error)
 
 type Plugins struct {
-	Processors map[string]ExecutionProcessor
-	Executors  map[string]Executor
+	Processors map[string]plugintypes.ExecutionProcessor
+	Executors  map[string]plugintypes.Executor
 }
 
 func NewAgent(config *Config, plugins *Plugins) *Agent {
@@ -618,8 +619,8 @@ func (a *Agent) processFilteredNodes(job *Job) ([]string, map[string]string, err
 	return nodes, tags, nil
 }
 
-func (a *Agent) setExecution(payload []byte) *Execution {
-	var ex Execution
+func (a *Agent) setExecution(payload []byte) *plugintypes.Execution {
+	var ex plugintypes.Execution
 	if err := json.Unmarshal(payload, &ex); err != nil {
 		log.Fatal(err)
 	}
@@ -655,7 +656,7 @@ func (a *Agent) RefreshJobStatus(jobName string) {
 	execs, _ := a.Store.GetLastExecutionGroup(jobName)
 	nodes := []string{}
 
-	unfinishedExecutions := []*Execution{}
+	unfinishedExecutions := []*plugintypes.Execution{}
 	for _, ex := range execs {
 		if ex.FinishedAt.IsZero() {
 			unfinishedExecutions = append(unfinishedExecutions, ex)

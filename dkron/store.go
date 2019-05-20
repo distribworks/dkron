@@ -17,6 +17,7 @@ import (
 	"github.com/abronan/valkeyrie/store/zookeeper"
 	"github.com/sirupsen/logrus"
 	"github.com/victorcoder/dkron/cron"
+	"github.com/victorcoder/dkron/plugintypes"
 )
 
 const MaxExecutions = 100
@@ -28,11 +29,11 @@ type Storage interface {
 	GetJob(name string, options *JobOptions) (*Job, error)
 	GetJobWithKVPair(name string, options *JobOptions) (*Job, *store.KVPair, error)
 	DeleteJob(name string) (*Job, error)
-	GetExecutions(jobName string) ([]*Execution, error)
-	GetLastExecutionGroup(jobName string) ([]*Execution, error)
-	GetExecutionGroup(execution *Execution) ([]*Execution, error)
-	GetGroupedExecutions(jobName string) (map[int64][]*Execution, []int64, error)
-	SetExecution(execution *Execution) (string, error)
+	GetExecutions(jobName string) ([]*plugintypes.Execution, error)
+	GetLastExecutionGroup(jobName string) ([]*plugintypes.Execution, error)
+	GetExecutionGroup(execution *plugintypes.Execution) ([]*plugintypes.Execution, error)
+	GetGroupedExecutions(jobName string) (map[int64][]*plugintypes.Execution, []int64, error)
+	SetExecution(execution *plugintypes.Execution) (string, error)
 	DeleteExecutions(jobName string) error
 	GetLeader() []byte
 	LeaderKey() string
@@ -346,7 +347,7 @@ func (s *Store) DeleteJob(name string) (*Job, error) {
 	return job, nil
 }
 
-func (s *Store) GetExecutions(jobName string) ([]*Execution, error) {
+func (s *Store) GetExecutions(jobName string) ([]*plugintypes.Execution, error) {
 	prefix := fmt.Sprintf("%s/executions/%s", s.keyspace, jobName)
 	res, err := s.client.List(prefix, nil)
 	if err != nil {
@@ -356,7 +357,7 @@ func (s *Store) GetExecutions(jobName string) ([]*Execution, error) {
 	return s.unmarshalExecutions(res, jobName)
 }
 
-func (s *Store) GetLastExecutionGroup(jobName string) ([]*Execution, error) {
+func (s *Store) GetLastExecutionGroup(jobName string) ([]*plugintypes.Execution, error) {
 	executions, byGroup, err := s.GetGroupedExecutions(jobName)
 	if err != nil {
 		return nil, err
@@ -370,13 +371,13 @@ func (s *Store) GetLastExecutionGroup(jobName string) ([]*Execution, error) {
 }
 
 // GetExecutionGroup returns all executions in the same group of a given execution
-func (s *Store) GetExecutionGroup(execution *Execution) ([]*Execution, error) {
+func (s *Store) GetExecutionGroup(execution *plugintypes.Execution) ([]*plugintypes.Execution, error) {
 	res, err := s.GetExecutions(execution.JobName)
 	if err != nil {
 		return nil, err
 	}
 
-	var executions []*Execution
+	var executions []*plugintypes.Execution
 	for _, ex := range res {
 		if ex.Group == execution.Group {
 			executions = append(executions, ex)
@@ -387,12 +388,12 @@ func (s *Store) GetExecutionGroup(execution *Execution) ([]*Execution, error) {
 
 // Returns executions for a job grouped and with an ordered index
 // to facilitate access.
-func (s *Store) GetGroupedExecutions(jobName string) (map[int64][]*Execution, []int64, error) {
+func (s *Store) GetGroupedExecutions(jobName string) (map[int64][]*plugintypes.Execution, []int64, error) {
 	execs, err := s.GetExecutions(jobName)
 	if err != nil {
 		return nil, nil, err
 	}
-	groups := make(map[int64][]*Execution)
+	groups := make(map[int64][]*plugintypes.Execution)
 	for _, exec := range execs {
 		groups[exec.Group] = append(groups[exec.Group], exec)
 	}
@@ -408,7 +409,7 @@ func (s *Store) GetGroupedExecutions(jobName string) (map[int64][]*Execution, []
 }
 
 // SetExecution Save a new execution and returns the key of the new saved item or an error.
-func (s *Store) SetExecution(execution *Execution) (string, error) {
+func (s *Store) SetExecution(execution *plugintypes.Execution) (string, error) {
 	exJSON, _ := json.Marshal(execution)
 	key := execution.Key()
 
@@ -438,7 +439,7 @@ func (s *Store) SetExecution(execution *Execution) (string, error) {
 	if len(execs) > MaxExecutions {
 		//sort the array of all execution groups by StartedAt time
 		// TODO: Use sort.Slice
-		sort.Sort(ExecList(execs))
+		sort.Sort(plugintypes.ExecList(execs))
 		for i := 0; i < len(execs)-MaxExecutions; i++ {
 			log.WithFields(logrus.Fields{
 				"job":       execs[i].JobName,
@@ -456,8 +457,8 @@ func (s *Store) SetExecution(execution *Execution) (string, error) {
 	return key, nil
 }
 
-func (s *Store) unmarshalExecutions(res []*store.KVPair, stopWord string) ([]*Execution, error) {
-	var executions []*Execution
+func (s *Store) unmarshalExecutions(res []*store.KVPair, stopWord string) ([]*plugintypes.Execution, error) {
+	var executions []*plugintypes.Execution
 	for _, node := range res {
 		if store.Backend(s.backend) != store.ZK {
 			path := store.SplitKey(node.Key)
@@ -466,7 +467,7 @@ func (s *Store) unmarshalExecutions(res []*store.KVPair, stopWord string) ([]*Ex
 				continue
 			}
 		}
-		var execution Execution
+		var execution plugintypes.Execution
 		err := json.Unmarshal([]byte(node.Value), &execution)
 		if err != nil {
 			return nil, err

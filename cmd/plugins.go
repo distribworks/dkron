@@ -12,11 +12,12 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/victorcoder/dkron/dkron"
 	dkplugin "github.com/victorcoder/dkron/plugin"
+	"github.com/victorcoder/dkron/plugintypes"
 )
 
 type Plugins struct {
-	Processors map[string]dkron.ExecutionProcessor
-	Executors  map[string]dkron.Executor
+	Processors map[string]plugintypes.ExecutionProcessor
+	Executors  map[string]plugintypes.Executor
 	LogLevel   string
 	NodeName   string
 }
@@ -30,8 +31,8 @@ type Plugins struct {
 //
 // Whichever file is discoverd LAST wins.
 func (p *Plugins) DiscoverPlugins() error {
-	p.Processors = make(map[string]dkron.ExecutionProcessor)
-	p.Executors = make(map[string]dkron.Executor)
+	p.Processors = make(map[string]plugintypes.ExecutionProcessor)
+	p.Executors = make(map[string]plugintypes.Executor)
 
 	// Look in /etc/dkron/plugins
 	processors, err := plugin.Discover("dkron-processor-*", filepath.Join("/etc", "dkron", "plugins"))
@@ -74,7 +75,7 @@ func (p *Plugins) DiscoverPlugins() error {
 		if err != nil {
 			return err
 		}
-		p.Processors[pluginName] = raw.(dkron.ExecutionProcessor)
+		p.Processors[pluginName] = raw.(plugintypes.ExecutionProcessor)
 	}
 
 	for _, file := range executors {
@@ -88,7 +89,7 @@ func (p *Plugins) DiscoverPlugins() error {
 		if err != nil {
 			return err
 		}
-		p.Executors[pluginName] = raw.(dkron.Executor)
+		p.Executors[pluginName] = raw.(plugintypes.Executor)
 	}
 
 	return nil

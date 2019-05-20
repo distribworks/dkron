@@ -12,7 +12,7 @@ import (
 
 	"github.com/armon/circbuf"
 	"github.com/mattn/go-shellwords"
-	"github.com/victorcoder/dkron/dkron"
+	"github.com/victorcoder/dkron/plugintypes"
 )
 
 const (
@@ -28,9 +28,9 @@ const (
 type Shell struct{}
 
 // Execute method of the plugin
-func (s *Shell) Execute(args *dkron.ExecuteRequest) (*dkron.ExecuteResponse, error) {
+func (s *Shell) Execute(args *plugintypes.ExecuteRequest) (*plugintypes.ExecuteResponse, error) {
 	out, err := s.ExecuteImpl(args)
-	resp := &dkron.ExecuteResponse{Output: out}
+	resp := &plugintypes.ExecuteResponse{Output: out}
 	if err != nil {
 		resp.Error = err.Error()
 	}
@@ -38,7 +38,7 @@ func (s *Shell) Execute(args *dkron.ExecuteRequest) (*dkron.ExecuteResponse, err
 }
 
 // ExecuteImpl do execute command
-func (s *Shell) ExecuteImpl(args *dkron.ExecuteRequest) ([]byte, error) {
+func (s *Shell) ExecuteImpl(args *plugintypes.ExecuteRequest) ([]byte, error) {
 	output, _ := circbuf.NewBuffer(maxBufSize)
 
 	shell, err := strconv.ParseBool(args.Config["shell"])

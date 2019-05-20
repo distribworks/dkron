@@ -6,6 +6,7 @@ import (
 
 	"github.com/armon/circbuf"
 	"github.com/golang/groupcache/consistenthash"
+	"github.com/victorcoder/dkron/plugintypes"
 )
 
 const (
@@ -18,7 +19,7 @@ const (
 )
 
 // invokeJob will execute the given job. Depending on the event.
-func (a *Agent) invokeJob(job *Job, execution *Execution) error {
+func (a *Agent) invokeJob(job *Job, execution *plugintypes.Execution) error {
 	output, _ := circbuf.NewBuffer(maxBufSize)
 
 	var success bool
@@ -33,7 +34,7 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 	if executor, ok := a.ExecutorPlugins[jex]; ok {
 		log.WithField("plugin", jex).Debug("invoke: calling executor plugin")
 		runningExecutions.Store(execution.GetGroup(), execution)
-		out, err := executor.Execute(&ExecuteRequest{
+		out, err := executor.Execute(&plugintypes.ExecuteRequest{
 			JobName: job.Name,
 			Config:  exc,
 		})

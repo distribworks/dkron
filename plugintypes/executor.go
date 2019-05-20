@@ -1,4 +1,4 @@
-package dkron
+package plugintypes
 
 // Executor is the interface that we're exposing as a plugin.
 type Executor interface {

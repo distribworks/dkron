@@ -2,7 +2,7 @@ package plugin
 
 import (
 	"github.com/hashicorp/go-plugin"
-	"github.com/victorcoder/dkron/dkron"
+	"github.com/victorcoder/dkron/plugintypes"
 )
 
 // The constants below are the names of the plugins that can be dispensed
@@ -21,8 +21,8 @@ var Handshake = plugin.HandshakeConfig{
 
 // ServeOpts are the configurations to serve a plugin.
 type ServeOpts struct {
-	Processor dkron.ExecutionProcessor
-	Executor  dkron.Executor
+	Processor plugintypes.ExecutionProcessor
+	Executor  plugintypes.Executor
 }
 
 // Serve serves a plugin. This function never returns and should be the final

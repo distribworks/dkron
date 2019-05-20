@@ -5,14 +5,14 @@ import (
 	"os"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/victorcoder/dkron/dkron"
+	"github.com/victorcoder/dkron/plugintypes"
 )
 
 type LogOutput struct {
 	forward bool
 }
 
-func (l *LogOutput) Process(args *dkron.ExecutionProcessorArgs) dkron.Execution {
+func (l *LogOutput) Process(args *plugintypes.ExecutionProcessorArgs) plugintypes.Execution {
 	log.SetFormatter(&log.TextFormatter{FullTimestamp: true})
 
 	l.parseConfig(args.Config)
@@ -36,7 +36,7 @@ func (l *LogOutput) Process(args *dkron.ExecutionProcessorArgs) dkron.Execution 
 	return args.Execution
 }
 
-func (l *LogOutput) parseConfig(config dkron.PluginConfig) {
+func (l *LogOutput) parseConfig(config plugintypes.PluginConfig) {
 	forward, ok := config["forward"].(bool)
 	if ok {
 		l.forward = forward
