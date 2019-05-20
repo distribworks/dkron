@@ -5,19 +5,19 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/victorcoder/dkron/dkron"
+	"github.com/victorcoder/dkron/plugintypes"
 )
 
 func TestProcess(t *testing.T) {
 	now := time.Now()
 
-	pa := &dkron.ExecutionProcessorArgs{
-		Execution: dkron.Execution{
+	pa := &plugintypes.ExecutionProcessorArgs{
+		Execution: plugintypes.Execution{
 			StartedAt: now,
 			NodeName:  "testNode",
 			Output:    []byte("test"),
 		},
-		Config: dkron.PluginConfig{
+		Config: plugintypes.PluginConfig{
 			"forward": true,
 		},
 	}

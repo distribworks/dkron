@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/victorcoder/dkron/dkron"
+	"github.com/victorcoder/dkron/plugintypes"
 )
 
 func TestExecute(t *testing.T) {
-	pa := &dkron.ExecuteRequest{
+	pa := &plugintypes.ExecuteRequest{
 		JobName: "testJob",
 		Config: map[string]string{
 			"method":     "GET",
@@ -27,7 +27,7 @@ func TestExecute(t *testing.T) {
 }
 
 func TestExecutePost(t *testing.T) {
-	pa := &dkron.ExecuteRequest{
+	pa := &plugintypes.ExecuteRequest{
 		JobName: "testJob",
 		Config: map[string]string{
 			"method":     "POST",

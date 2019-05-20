@@ -6,6 +6,7 @@ import (
 
 	"github.com/abronan/valkeyrie/store"
 	"github.com/stretchr/testify/assert"
+	"github.com/victorcoder/dkron/plugintypes"
 )
 
 func TestStore(t *testing.T) {
@@ -50,7 +51,7 @@ func TestStore(t *testing.T) {
 		t.Fatalf("error job deletion should fail: %s", err)
 	}
 
-	testExecution := &Execution{
+	testExecution := &plugintypes.Execution{
 		JobName:    "test",
 		StartedAt:  time.Now(),
 		FinishedAt: time.Now(),
@@ -88,7 +89,7 @@ func TestStore_GetLastExecutionGroup(t *testing.T) {
 	middleTime := earlyTime.Add(1 * time.Minute)
 	lateTime := earlyTime.Add(1 * time.Hour)
 
-	executionSingleEarly := &Execution{
+	executionSingleEarly := &plugintypes.Execution{
 		JobName:    "test",
 		StartedAt:  earlyTime,
 		FinishedAt: earlyTime,
@@ -97,7 +98,7 @@ func TestStore_GetLastExecutionGroup(t *testing.T) {
 		NodeName:   "testNode1",
 		Group:      1,
 	}
-	executionSingleMiddle := &Execution{
+	executionSingleMiddle := &plugintypes.Execution{
 		JobName:    "test",
 		StartedAt:  middleTime,
 		FinishedAt: middleTime,
@@ -106,7 +107,7 @@ func TestStore_GetLastExecutionGroup(t *testing.T) {
 		NodeName:   "testNode1",
 		Group:      2,
 	}
-	executionGroupMiddle1 := &Execution{
+	executionGroupMiddle1 := &plugintypes.Execution{
 		JobName:    "test",
 		StartedAt:  middleTime,
 		FinishedAt: middleTime,
@@ -115,7 +116,7 @@ func TestStore_GetLastExecutionGroup(t *testing.T) {
 		NodeName:   "testNode1",
 		Group:      3,
 	}
-	executionGroupMiddle2 := &Execution{
+	executionGroupMiddle2 := &plugintypes.Execution{
 		JobName:    "test",
 		StartedAt:  middleTime,
 		FinishedAt: middleTime,
@@ -124,7 +125,7 @@ func TestStore_GetLastExecutionGroup(t *testing.T) {
 		NodeName:   "testNode2",
 		Group:      3,
 	}
-	executionGroupLater1 := &Execution{
+	executionGroupLater1 := &plugintypes.Execution{
 		JobName:    "test",
 		StartedAt:  lateTime,
 		FinishedAt: lateTime,
@@ -133,7 +134,7 @@ func TestStore_GetLastExecutionGroup(t *testing.T) {
 		NodeName:   "testNode1",
 		Group:      4,
 	}
-	executionGroupLater2 := &Execution{
+	executionGroupLater2 := &plugintypes.Execution{
 		JobName:    "test",
 		StartedAt:  lateTime,
 		FinishedAt: lateTime,
@@ -146,44 +147,44 @@ func TestStore_GetLastExecutionGroup(t *testing.T) {
 	tests := []struct {
 		name          string
 		jobName       string
-		addExecutions []*Execution
-		want          []*Execution
+		addExecutions []*plugintypes.Execution
+		want          []*plugintypes.Execution
 		wantErr       bool
 	}{
 		{
 			"Test with one",
 			"test",
-			[]*Execution{executionSingleEarly},
-			[]*Execution{executionSingleEarly},
+			[]*plugintypes.Execution{executionSingleEarly},
+			[]*plugintypes.Execution{executionSingleEarly},
 			false,
 		}, {
 			"Test with two",
 			"test",
-			[]*Execution{executionSingleEarly, executionSingleMiddle},
-			[]*Execution{executionSingleMiddle},
+			[]*plugintypes.Execution{executionSingleEarly, executionSingleMiddle},
+			[]*plugintypes.Execution{executionSingleMiddle},
 			false,
 		}, {
 			"Test with three",
 			"test",
-			[]*Execution{executionSingleEarly, executionSingleMiddle, executionGroupMiddle1},
-			[]*Execution{executionGroupMiddle1},
+			[]*plugintypes.Execution{executionSingleEarly, executionSingleMiddle, executionGroupMiddle1},
+			[]*plugintypes.Execution{executionGroupMiddle1},
 			false,
 		}, {
 			"Test with one group",
 			"test",
-			[]*Execution{executionSingleEarly, executionGroupMiddle1, executionGroupMiddle2},
-			[]*Execution{executionGroupMiddle1, executionGroupMiddle2},
+			[]*plugintypes.Execution{executionSingleEarly, executionGroupMiddle1, executionGroupMiddle2},
+			[]*plugintypes.Execution{executionGroupMiddle1, executionGroupMiddle2},
 			false,
 		}, {
 			"Test with two groups",
 			"test",
-			[]*Execution{executionSingleEarly, executionGroupMiddle1, executionGroupMiddle2, executionGroupLater1, executionGroupLater2},
-			[]*Execution{executionGroupLater1, executionGroupLater2},
+			[]*plugintypes.Execution{executionSingleEarly, executionGroupMiddle1, executionGroupMiddle2, executionGroupLater1, executionGroupLater2},
+			[]*plugintypes.Execution{executionGroupLater1, executionGroupLater2},
 			false,
 		}, {
 			"Test with none",
 			"test",
-			[]*Execution{},
+			[]*plugintypes.Execution{},
 			nil,
 			true,
 		},

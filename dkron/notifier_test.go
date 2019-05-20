@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/victorcoder/dkron/plugintypes"
 )
 
 func TestNotifier_callExecutionWebhook(t *testing.T) {
@@ -23,7 +24,7 @@ func TestNotifier_callExecutionWebhook(t *testing.T) {
 		WebhookHeaders: []string{"Content-Type: application/x-www-form-urlencoded"},
 	}
 
-	n := Notification(c, &Execution{}, []*Execution{}, &Job{})
+	n := Notification(c, &plugintypes.Execution{}, []*plugintypes.Execution{}, &Job{})
 
 	n.Send()
 }
@@ -42,7 +43,7 @@ func TestNotifier_sendExecutionEmail(t *testing.T) {
 		OwnerEmail: "cron@job.com",
 	}
 
-	ex1 := &Execution{
+	ex1 := &plugintypes.Execution{
 		JobName:    "test",
 		StartedAt:  time.Now(),
 		FinishedAt: time.Now(),
@@ -51,7 +52,7 @@ func TestNotifier_sendExecutionEmail(t *testing.T) {
 		Output:     []byte("test-output"),
 	}
 
-	exg := []*Execution{
+	exg := []*plugintypes.Execution{
 		{
 			JobName:   "test",
 			StartedAt: time.Now(),
@@ -92,7 +93,7 @@ func TestNotifier_buildTemplate(t *testing.T) {
 		NodeName: "test-node",
 	}
 
-	ex1 := &Execution{
+	ex1 := &plugintypes.Execution{
 		JobName:    "test",
 		StartedAt:  time.Now(),
 		FinishedAt: time.Now(),
@@ -101,7 +102,7 @@ func TestNotifier_buildTemplate(t *testing.T) {
 		Output:     []byte("test-output"),
 	}
 
-	exg := []*Execution{
+	exg := []*plugintypes.Execution{
 		{
 			JobName:   "test",
 			StartedAt: time.Now(),

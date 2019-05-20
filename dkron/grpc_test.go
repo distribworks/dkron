@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/serf/testutil"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
+	"github.com/victorcoder/dkron/plugintypes"
 )
 
 func TestGRPCExecutionDone(t *testing.T) {
@@ -50,7 +51,7 @@ func TestGRPCExecutionDone(t *testing.T) {
 		t.Fatalf("error creating job: %s", err)
 	}
 
-	testExecution := &Execution{
+	testExecution := &plugintypes.Execution{
 		JobName:    "test",
 		Group:      time.Now().UnixNano(),
 		StartedAt:  time.Now(),
