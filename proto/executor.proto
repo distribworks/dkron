@@ -1,7 +1,7 @@
-// protoc -I proto/ proto/executor.proto --go_out=plugins=grpc:dkron/
+// protoc -I proto/ proto/executor.proto --go_out=plugins=grpc:plugintypes/
 syntax = "proto3";
 
-package dkron;
+package plugintypes;
 
 message ExecuteRequest {
   string job_name = 1;
