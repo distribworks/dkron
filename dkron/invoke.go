@@ -17,6 +17,9 @@ const (
 	maxBufSize = 256000
 )
 
+// Return an error in case no suitable server to send the request is found.
+var ErrNoSuitableServer = errors.New("No suitable server found to send the request, aborting.")
+
 // invokeJob will execute the given job. Depending on the event.
 func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 	output, _ := circbuf.NewBuffer(maxBufSize)
@@ -77,6 +80,9 @@ func (a *Agent) selectServerByKey(key string) (string, error) {
 	ch := consistenthash.New(50, nil)
 	ch.Add(a.GetPeers()...)
 	peerAddress := ch.Get(key)
+	if peerAddress == "" {
+		return "", ErrNoSuitableServer
+	}
 
 	return peerAddress, nil
 }

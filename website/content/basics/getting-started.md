@@ -21,21 +21,9 @@ You can choose whether a job is run on a node or nodes by specifying tags and a 
 
 All the execution responses will be gathered by the scheduler and stored in the database.
 
-## Backend stores
+## State storage
 
-Dkron relies on the key-value store for data storage, an instance of the distributed store can be run in the same machines as Dkron or connect it to an already existing cluster.
-
-{{% notice note %}}
-By default dkron will start with a file based, embedded KV store called BoltDB, it is functional for a single node demo but does not offers clustering or HA.
-{{% /notice %}}
-
-It is compatible with etcd, Consul, Zookeeper, Redis, DynamoDB and BoltDB. For instructions on how to install and configure any one of these systems refer to their official sites:
-
-- [etcd](https://coreos.com/etcd/docs/latest/)
-- [Consul](https://consul.io/intro/getting-started/install.html)
-- [ZooKeeper](https://zookeeper.apache.org/doc/r3.3.3/zookeeperStarted.html)
-- [Redis](https://redis.io/topics/quickstart)
-- [DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/SettingUp.html)
+Dkron deployment is just a single binary, it stores the state in an internal BadgerDB instance and replicate all changes between all server nodes using the Raft protocol, it doesn't need any other storage system outside itself.
 
 ## Installation
 
@@ -49,15 +37,43 @@ See the [configuration](/basics/configuration).
 
 By default Dkron uses the following ports:
 
-- `8946` for communicating between agents
+- `8946` for serf layer between agents
 - `8080` for HTTP for the API and Dashboard
-- `6868` for RPC comunication between agents.
+- `6868` for gRPC and raft layer comunication between agents.
 
 {{% notice note %}}
 Be sure you have opened this ports (or the ones that you configured) in your firewall or AWS security groups.
 {{% /notice %}}
 
-By default dkron will use the embedded BoltDB KV store. A different store can be specified setting `backend` and `backend-machines` flag in the config file, env variables or as a command line flag.
+### Starting a single node
+
+Works out of the box, good for non HA installations.
+
+- System service: If no changes are done to the default config files, dkron will start as a service in single mode.
+- Command line: Running a single node with default config can be done by running: `dkron agent --server`
+
+Check your server is working: `curl localhost:8080/v1`
+
+Simple as that, now it is time to add some jobs:
+
+```bash
+curl localhost:8080/v1/jobs -XPOST -d '{
+  "name": "job1",
+  "schedule": "@every 10s",
+  "timezone": "Europe/Berlin",
+  "owner": "Platform Team",
+  "owner_email": "platform@example.com",
+  "disabled": false,
+  "tags": {
+    "server": "true"
+  },
+  "concurrency": "allow",
+  "executor": "shell",
+  "executor_config": {
+    "command": "date"
+  }
+}'
+```
 
 To start a Dkron server instance:
 
@@ -68,7 +84,7 @@ dkron agent --server
 Time to add the first job:
 
 {{% notice note %}}
-This job will only run in just one `dkron_server` node due to the node count in the tag. Refer to the [target node spec](/usage/target-nodes-spec) for details.
+This job will only run in just one `server` node due to the node count in the tag. Refer to the [target node spec](/usage/target-nodes-spec) for details.
 {{% /notice %}}
 
 ```bash
@@ -80,7 +96,7 @@ curl localhost:8080/v1/jobs -XPOST -d '{
   "owner_email": "platform@example.com",
   "disabled": false,
   "tags": {
-    "dkron_server": "true:1"
+    "server": "true:1"
   },
   "concurrency": "allow",
   "executor": "shell",

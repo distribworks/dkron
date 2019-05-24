@@ -1,92 +1,86 @@
 package dkron
 
 import (
-	"encoding/json"
+	"bytes"
+	"errors"
 	"fmt"
 	"sort"
+	"strings"
+	"sync"
 	"time"
 
-	"github.com/abronan/valkeyrie"
-	"github.com/abronan/valkeyrie/store"
-	"github.com/abronan/valkeyrie/store/boltdb"
-	"github.com/abronan/valkeyrie/store/consul"
-	"github.com/abronan/valkeyrie/store/dynamodb"
-	"github.com/abronan/valkeyrie/store/etcd/v2"
-	etcdv3 "github.com/abronan/valkeyrie/store/etcd/v3"
-	"github.com/abronan/valkeyrie/store/redis"
-	"github.com/abronan/valkeyrie/store/zookeeper"
+	"github.com/dgraph-io/badger"
+	"github.com/golang/protobuf/proto"
 	"github.com/sirupsen/logrus"
 	"github.com/victorcoder/dkron/cron"
+	dkronpb "github.com/victorcoder/dkron/proto"
 )
 
-const MaxExecutions = 100
+const (
+	MaxExecutions            = 100
+	defaultUpdateMaxAttempts = 5
+	defaultGCInterval        = 5 * time.Minute
+	defaultGCDiscardRatio    = 0.7
+)
 
-type Storage interface {
-	SetJob(job *Job, copyDependentJobs bool) error
-	AtomicJobPut(job *Job, prevJobKVPair *store.KVPair) (bool, error)
-	GetJobs(options *JobOptions) ([]*Job, error)
-	GetJob(name string, options *JobOptions) (*Job, error)
-	GetJobWithKVPair(name string, options *JobOptions) (*Job, *store.KVPair, error)
-	DeleteJob(name string) (*Job, error)
-	GetExecutions(jobName string) ([]*Execution, error)
-	GetLastExecutionGroup(jobName string) ([]*Execution, error)
-	GetExecutionGroup(execution *Execution) ([]*Execution, error)
-	GetGroupedExecutions(jobName string) (map[int64][]*Execution, []int64, error)
-	SetExecution(execution *Execution) (string, error)
-	DeleteExecutions(jobName string) error
-	GetLeader() []byte
-	LeaderKey() string
-	Healthy() error
-	Client() store.Store
-}
+var (
+	// ErrTooManyUpdateConflicts is returned when all update attempts fails
+	ErrTooManyUpdateConflicts = errors.New("badger: too many transaction conflicts")
+)
 
 type Store struct {
-	client   store.Store
-	agent    *Agent
-	keyspace string
-	backend  store.Backend
+	agent  *Agent
+	db     *badger.DB
+	lock   *sync.Mutex // for
+	closed bool
 }
 
 type JobOptions struct {
 	ComputeStatus bool
-	Tags          map[string]string `json:"tags"`
+	Metadata      map[string]string `json:"tags"`
 }
 
-func init() {
-	etcd.Register()
-	etcdv3.Register()
-	consul.Register()
-	zookeeper.Register()
-	redis.Register()
-	boltdb.Register()
-	dynamodb.Register()
-}
+func NewStore(a *Agent, dir string) (*Store, error) {
+	opts := badger.DefaultOptions
+	opts.Dir = dir
+	opts.ValueDir = dir
 
-func NewStore(backend store.Backend, machines []string, a *Agent, keyspace string, config *store.Config) *Store {
-	s, err := valkeyrie.NewStore(store.Backend(backend), machines, config)
+	db, err := badger.Open(opts)
 	if err != nil {
-		log.Error(err)
+		return nil, err
 	}
 
-	log.WithFields(logrus.Fields{
-		"backend":  backend,
-		"machines": machines,
-		"keyspace": keyspace,
-	}).Debug("store: Backend config")
-
-	return &Store{client: s, agent: a, keyspace: keyspace, backend: backend}
-}
-
-func (s *Store) Client() store.Store {
-	return s.client
-}
-
-func (s *Store) Healthy() error {
-	_, err := s.client.List(s.keyspace, nil)
-	if err != store.ErrKeyNotFound && err != nil {
-		return err
+	store := &Store{
+		db:    db,
+		agent: a,
+		lock:  &sync.Mutex{},
 	}
-	return nil
+
+	go store.runGcLoop()
+
+	return store, nil
+}
+
+func (s *Store) runGcLoop() {
+	ticker := time.NewTicker(defaultGCInterval)
+	defer ticker.Stop()
+	for range ticker.C {
+		s.lock.Lock()
+		closed := s.closed
+		s.lock.Unlock()
+		if closed {
+			break
+		}
+
+		// One call would only result in removal of at max one log file.
+		// As an optimization, you could also immediately re-run it whenever it returns nil error
+		//(indicating a successful value log GC), as shown below.
+	again:
+		err := s.db.RunValueLogGC(defaultGCDiscardRatio)
+		if err == nil {
+			goto again
+		}
+	}
 }
 
 // Store a job
@@ -95,7 +89,7 @@ func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
 
 	// Sanitize the job name
 	job.Name = generateSlug(job.Name)
-	jobKey := fmt.Sprintf("%s/jobs/%s", s.keyspace, job.Name)
+	jobKey := fmt.Sprintf("jobs/%s", job.Name)
 
 	// Init the job agent
 	job.Agent = s.agent
@@ -104,45 +98,80 @@ func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
 		return err
 	}
 
-	// Get if the requested job already exist
-	ej, err := s.GetJob(job.Name, nil)
-	if err != nil && err != store.ErrKeyNotFound {
-		return err
-	}
-	if ej != nil {
-		// When the job runs, these status vars are updated
-		// otherwise use the ones that are stored
-		if ej.LastError.After(job.LastError) {
-			job.LastError = ej.LastError
+	err := s.db.Update(func(txn *badger.Txn) error {
+		// Get if the requested job already exist
+		ej, err := s.GetJob(job.Name, nil)
+		if err != nil && err != badger.ErrKeyNotFound {
+			return err
 		}
-		if ej.LastSuccess.After(job.LastSuccess) {
-			job.LastSuccess = ej.LastSuccess
+		if ej != nil {
+			// When the job runs, these status vars are updated
+			// otherwise use the ones that are stored
+			if ej.LastError.After(job.LastError) {
+				job.LastError = ej.LastError
+			}
+			if ej.LastSuccess.After(job.LastSuccess) {
+				job.LastSuccess = ej.LastSuccess
+			}
+			if ej.SuccessCount > job.SuccessCount {
+				job.SuccessCount = ej.SuccessCount
+			}
+			if ej.ErrorCount > job.ErrorCount {
+				job.ErrorCount = ej.ErrorCount
+			}
+			if len(ej.DependentJobs) != 0 && copyDependentJobs {
+				job.DependentJobs = ej.DependentJobs
+			}
 		}
-		if ej.SuccessCount > job.SuccessCount {
-			job.SuccessCount = ej.SuccessCount
-		}
-		if ej.ErrorCount > job.ErrorCount {
-			job.ErrorCount = ej.ErrorCount
-		}
-		if len(ej.DependentJobs) != 0 && copyDependentJobs {
-			job.DependentJobs = ej.DependentJobs
-		}
-	}
 
-	jobJSON, _ := json.Marshal(job)
+		pbj := job.ToProto()
+		jb, err := proto.Marshal(pbj)
+		if err != nil {
+			return err
+		}
+		log.WithField("job", job.Name).Debug("store: Setting job")
 
-	log.WithFields(logrus.Fields{
-		"job":  job.Name,
-		"json": string(jobJSON),
-	}).Debug("store: Setting job")
+		if err := txn.Set([]byte(jobKey), jb); err != nil {
+			return err
+		}
 
-	if err := s.client.Put(jobKey, jobJSON, nil); err != nil {
-		return err
-	}
+		if ej != nil {
+			// Existing job that doesn't have parent job set and it's being set
+			if ej.ParentJob == "" && job.ParentJob != "" {
+				pj, err := job.GetParent()
+				if err != nil {
+					return err
+				}
 
-	if ej != nil {
-		// Existing job that doesn't have parent job set and it's being set
-		if ej.ParentJob == "" && job.ParentJob != "" {
+				pj.DependentJobs = append(pj.DependentJobs, job.Name)
+				if err := s.SetJob(pj, false); err != nil {
+					return err
+				}
+			}
+
+			// Existing job that has parent job set and it's being removed
+			if ej.ParentJob != "" && job.ParentJob == "" {
+				pj, err := ej.GetParent()
+				if err != nil {
+					return err
+				}
+
+				ndx := 0
+				for i, djn := range pj.DependentJobs {
+					if djn == job.Name {
+						ndx = i
+						break
+					}
+				}
+				pj.DependentJobs = append(pj.DependentJobs[:ndx], pj.DependentJobs[ndx+1:]...)
+				if err := s.SetJob(pj, false); err != nil {
+					return err
+				}
+			}
+		}
+
+		// New job that has parent job set
+		if ej == nil && job.ParentJob != "" {
 			pj, err := job.GetParent()
 			if err != nil {
 				return err
@@ -153,42 +182,10 @@ func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
 				return err
 			}
 		}
+		return nil
+	})
 
-		// Existing job that has parent job set and it's being removed
-		if ej.ParentJob != "" && job.ParentJob == "" {
-			pj, err := ej.GetParent()
-			if err != nil {
-				return err
-			}
-
-			ndx := 0
-			for i, djn := range pj.DependentJobs {
-				if djn == job.Name {
-					ndx = i
-					break
-				}
-			}
-			pj.DependentJobs = append(pj.DependentJobs[:ndx], pj.DependentJobs[ndx+1:]...)
-			if err := s.SetJob(pj, false); err != nil {
-				return err
-			}
-		}
-	}
-
-	// New job that has parent job set
-	if ej == nil && job.ParentJob != "" {
-		pj, err := job.GetParent()
-		if err != nil {
-			return err
-		}
-
-		pj.DependentJobs = append(pj.DependentJobs, job.Name)
-		if err := s.SetJob(pj, false); err != nil {
-			return err
-		}
-	}
-
-	return nil
+	return err
 }
 
 func (s *Store) validateTimeZone(timezone string) error {
@@ -199,13 +196,46 @@ func (s *Store) validateTimeZone(timezone string) error {
 	return err
 }
 
-func (s *Store) AtomicJobPut(job *Job, prevJobKVPair *store.KVPair) (bool, error) {
-	jobKey := fmt.Sprintf("%s/jobs/%s", s.keyspace, job.Name)
-	jobJSON, _ := json.Marshal(job)
+// SetExecutionDone saves the execution and updates the job with the corresponding
+// results
+func (s *Store) SetExecutionDone(execution *Execution) (bool, error) {
+	err := s.db.Update(func(txn *badger.Txn) error {
+		// Load the job from the store
+		job, err := s.GetJob(execution.JobName, &JobOptions{
+			ComputeStatus: true,
+		})
 
-	ok, _, err := s.client.AtomicPut(jobKey, jobJSON, prevJobKVPair, nil)
+		if err != nil {
+			if err == badger.ErrKeyNotFound {
+				log.Warning(ErrExecutionDoneForDeletedJob)
+				return ErrExecutionDoneForDeletedJob
+			}
+			log.WithError(err).Fatal(err)
+			return err
+		}
 
-	return ok, err
+		// Save the execution to store
+		if _, err := s.SetExecution(execution); err != nil {
+			return err
+		}
+
+		if execution.Success {
+			job.LastSuccess = execution.FinishedAt
+			job.SuccessCount++
+		} else {
+			job.LastError = execution.FinishedAt
+			job.ErrorCount++
+		}
+
+		if err := s.SetJob(job, false); err != nil {
+			log.WithError(err).Fatal("store: Error in SetExecutionDone")
+			return err
+		}
+
+		return nil
+	})
+
+	return true, err
 }
 
 func (s *Store) validateJob(job *Job) error {
@@ -230,16 +260,16 @@ func (s *Store) validateJob(job *Job) error {
 	return nil
 }
 
-func (s *Store) jobHasTags(job *Job, tags map[string]string) bool {
-	if job == nil || job.Tags == nil || len(job.Tags) == 0 {
+func (s *Store) jobHasMetadata(job *Job, metadata map[string]string) bool {
+	if job == nil || job.Metadata == nil || len(job.Metadata) == 0 {
 		return false
 	}
 
 	res := true
-	for k, v := range tags {
+	for k, v := range metadata {
 		var found bool
 
-		if val, ok := job.Tags[k]; ok && v == val {
+		if val, ok := job.Metadata[k]; ok && v == val {
 			found = true
 		}
 
@@ -255,105 +285,165 @@ func (s *Store) jobHasTags(job *Job, tags map[string]string) bool {
 
 // GetJobs returns all jobs
 func (s *Store) GetJobs(options *JobOptions) ([]*Job, error) {
-	res, err := s.client.List(s.keyspace+"/jobs/", nil)
-	if err != nil {
-		if err == store.ErrKeyNotFound {
-			log.Debug("store: No jobs found")
-			return []*Job{}, nil
-		}
-		return nil, err
-	}
-
 	jobs := make([]*Job, 0)
-	for _, node := range res {
-		var job Job
-		err := json.Unmarshal([]byte(node.Value), &job)
-		if err != nil {
-			return nil, err
+
+	err := s.db.View(func(txn *badger.Txn) error {
+		it := txn.NewIterator(badger.DefaultIteratorOptions)
+		defer it.Close()
+		prefix := []byte("jobs")
+		for it.Seek(prefix); it.ValidForPrefix(prefix); it.Next() {
+			item := it.Item()
+			v, err := item.ValueCopy(nil)
+			if err != nil {
+				return err
+			}
+
+			var pbj dkronpb.Job
+			if err := proto.Unmarshal(v, &pbj); err != nil {
+				return err
+			}
+			job := NewJobFromProto(&pbj)
+
+			job.Agent = s.agent
+			if options != nil {
+				if options.Metadata != nil && len(options.Metadata) > 0 && !s.jobHasMetadata(job, options.Metadata) {
+					continue
+				}
+				if options.ComputeStatus {
+					job.Status = job.GetStatus()
+				}
+			}
+
+			n, err := job.GetNext()
+			if err != nil {
+				return err
+			}
+			job.Next = n
+
+			jobs = append(jobs, job)
 		}
+		return nil
+	})
+
+	return jobs, err
+}
+
+// GetJob finds and return a Job from the store
+func (s *Store) GetJob(name string, options *JobOptions) (*Job, error) {
+	var job *Job
+
+	err := s.db.View(func(txn *badger.Txn) error {
+		item, err := txn.Get([]byte("jobs/" + name))
+		if err != nil {
+			return err
+		}
+
+		res, err := item.ValueCopy(nil)
+		if err != nil {
+			return err
+		}
+		var pbj dkronpb.Job
+		if err := proto.Unmarshal(res, &pbj); err != nil {
+			return err
+		}
+		job = NewJobFromProto(&pbj)
+
+		log.WithFields(logrus.Fields{
+			"job": job.Name,
+		}).Debug("store: Retrieved job from datastore")
+
 		job.Agent = s.agent
-		if options != nil {
-			if options.Tags != nil && len(options.Tags) > 0 && !s.jobHasTags(&job, options.Tags) {
-				continue
-			}
-			if options.ComputeStatus {
-				job.Status = job.GetStatus()
-			}
+		if options != nil && options.ComputeStatus {
+			job.Status = job.GetStatus()
 		}
 
 		n, err := job.GetNext()
 		if err != nil {
-			return nil, err
+			return err
 		}
 		job.Next = n
+		return nil
+	})
 
-		jobs = append(jobs, &job)
-	}
-	return jobs, nil
-}
-
-// Get a job
-func (s *Store) GetJob(name string, options *JobOptions) (*Job, error) {
-	job, _, err := s.GetJobWithKVPair(name, options)
 	return job, err
 }
 
-func (s *Store) GetJobWithKVPair(name string, options *JobOptions) (*Job, *store.KVPair, error) {
-	res, err := s.client.Get(s.keyspace+"/jobs/"+name, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var job Job
-	if err = json.Unmarshal([]byte(res.Value), &job); err != nil {
-		return nil, nil, err
-	}
-
-	log.WithFields(logrus.Fields{
-		"job": job.Name,
-	}).Debug("store: Retrieved job from datastore")
-
-	job.Agent = s.agent
-	if options != nil && options.ComputeStatus {
-		job.Status = job.GetStatus()
-	}
-
-	n, err := job.GetNext()
-	if err != nil {
-		return nil, nil, err
-	}
-	job.Next = n
-
-	return &job, res, nil
-}
-
 func (s *Store) DeleteJob(name string) (*Job, error) {
-	job, err := s.GetJob(name, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := s.DeleteExecutions(name); err != nil {
-		if err != store.ErrKeyNotFound {
-			return nil, err
+	var job *Job
+	err := s.db.Update(func(txn *badger.Txn) error {
+		j, err := s.GetJob(name, nil)
+		if err != nil {
+			return err
 		}
-	}
+		job = j
 
-	if err := s.client.Delete(s.keyspace + "/jobs/" + name); err != nil {
-		return nil, err
-	}
+		if err := s.DeleteExecutions(name); err != nil {
+			if err != nil {
+				return err
+			}
+		}
 
-	return job, nil
+		return txn.Delete([]byte("jobs/" + name))
+	})
+
+	return job, err
 }
 
 func (s *Store) GetExecutions(jobName string) ([]*Execution, error) {
-	prefix := fmt.Sprintf("%s/executions/%s", s.keyspace, jobName)
-	res, err := s.client.List(prefix, nil)
+	prefix := fmt.Sprintf("executions/%s", jobName)
+
+	kvs, err := s.list(prefix, true)
 	if err != nil {
 		return nil, err
 	}
 
-	return s.unmarshalExecutions(res, jobName)
+	return s.unmarshalExecutions(kvs, jobName)
+}
+
+type kv struct {
+	Key   string
+	Value []byte
+}
+
+func (s *Store) list(prefix string, checkRoot bool) ([]*kv, error) {
+	prefix = strings.TrimSuffix(prefix, "/")
+
+	kvs := []*kv{}
+	found := false
+
+	err := s.db.View(func(tx *badger.Txn) error {
+		it := tx.NewIterator(badger.DefaultIteratorOptions)
+		defer it.Close()
+
+		prefix := []byte(prefix)
+
+		for it.Seek(prefix); it.ValidForPrefix(prefix); it.Next() {
+			found = true
+			item := it.Item()
+			k := item.Key()
+
+			// ignore self in listing
+			if bytes.Equal(trimDirectoryKey(k), prefix) {
+				continue
+			}
+
+			body, err := item.ValueCopy(nil)
+			if err != nil {
+				return err
+			}
+
+			kv := &kv{Key: string(k), Value: body}
+			kvs = append(kvs, kv)
+		}
+
+		return nil
+	})
+
+	if err == nil && !found && checkRoot {
+		return nil, badger.ErrKeyNotFound
+	}
+
+	return kvs, err
 }
 
 func (s *Store) GetLastExecutionGroup(jobName string) ([]*Execution, error) {
@@ -409,42 +499,76 @@ func (s *Store) GetGroupedExecutions(jobName string) (map[int64][]*Execution, []
 
 // SetExecution Save a new execution and returns the key of the new saved item or an error.
 func (s *Store) SetExecution(execution *Execution) (string, error) {
-	exJSON, _ := json.Marshal(execution)
-	key := execution.Key()
+	pbe := execution.ToProto()
+	eb, err := proto.Marshal(pbe)
+	if err != nil {
+		return "", err
+	}
+
+	key := fmt.Sprintf("executions/%s/%s", execution.JobName, execution.Key())
 
 	log.WithFields(logrus.Fields{
 		"job":       execution.JobName,
 		"execution": key,
+		"finished":  execution.FinishedAt.String(),
 	}).Debug("store: Setting key")
 
-	err := s.client.Put(fmt.Sprintf("%s/executions/%s/%s", s.keyspace, execution.JobName, key), exJSON, nil)
+	err = s.db.Update(func(txn *badger.Txn) error {
+		// Get previous execution
+		i, err := txn.Get([]byte(key))
+		if err != nil && err != badger.ErrKeyNotFound {
+			return err
+		}
+		// Do nothing if a previous execution exists and is
+		// more recent, avoiding non ordered execution set
+		if i != nil {
+			v, err := i.ValueCopy(nil)
+			if err != nil {
+				return err
+			}
+			var p dkronpb.Execution
+			if err := proto.Unmarshal(v, &p); err != nil {
+				return err
+			}
+			// Compare existing execution
+			if p.GetFinishedAt().Seconds > pbe.GetFinishedAt().Seconds {
+				return nil
+			}
+		}
+		return txn.Set([]byte(key), eb)
+	})
+
 	if err != nil {
-		log.WithFields(logrus.Fields{
+		log.WithError(err).WithFields(logrus.Fields{
 			"job":       execution.JobName,
 			"execution": key,
-			"error":     err,
 		}).Debug("store: Failed to set key")
 		return "", err
 	}
 
 	execs, err := s.GetExecutions(execution.JobName)
-	if err != nil {
+	if err != nil && err != badger.ErrKeyNotFound {
 		log.WithError(err).
 			WithField("job", execution.JobName).
-			Error("store: Error no executions found for job")
+			Error("store: Error getting executions for job")
 	}
 
 	// Delete all execution results over the limit, starting from olders
 	if len(execs) > MaxExecutions {
 		//sort the array of all execution groups by StartedAt time
-		// TODO: Use sort.Slice
-		sort.Sort(ExecList(execs))
+		sort.Slice(execs, func(i, j int) bool {
+			return execs[i].StartedAt.Before(execs[j].StartedAt)
+		})
+
 		for i := 0; i < len(execs)-MaxExecutions; i++ {
 			log.WithFields(logrus.Fields{
 				"job":       execs[i].JobName,
 				"execution": execs[i].Key(),
 			}).Debug("store: to detele key")
-			err := s.client.Delete(fmt.Sprintf("%s/executions/%s/%s", s.keyspace, execs[i].JobName, execs[i].Key()))
+			err = s.db.Update(func(txn *badger.Txn) error {
+				k := fmt.Sprintf("executions/%s/%s", execs[i].JobName, execs[i].Key())
+				return txn.Delete([]byte(k))
+			})
 			if err != nil {
 				log.WithError(err).
 					WithField("execution", execs[i].Key()).
@@ -456,49 +580,89 @@ func (s *Store) SetExecution(execution *Execution) (string, error) {
 	return key, nil
 }
 
-func (s *Store) unmarshalExecutions(res []*store.KVPair, stopWord string) ([]*Execution, error) {
-	var executions []*Execution
-	for _, node := range res {
-		if store.Backend(s.backend) != store.ZK {
-			path := store.SplitKey(node.Key)
-			dir := path[len(path)-2]
-			if dir != stopWord {
-				continue
+// DeleteExecutions removes all executions of a job
+func (s *Store) DeleteExecutions(jobName string) error {
+	prefix := []byte(jobName)
+
+	// transaction may conflict
+ConflictRetry:
+	for i := 0; i < defaultUpdateMaxAttempts; i++ {
+
+		// always retry when TxnTooBig is signalled
+	TxnTooBigRetry:
+		for {
+			txn := s.db.NewTransaction(true)
+			opts := badger.DefaultIteratorOptions
+			opts.PrefetchValues = false
+
+			it := txn.NewIterator(opts)
+
+			for it.Seek(prefix); it.ValidForPrefix(prefix); it.Next() {
+				k := it.Item().KeyCopy(nil)
+
+				err := txn.Delete(k)
+				it.Close()
+				if err != badger.ErrTxnTooBig {
+					return err
+				}
+
+				err = txn.Commit(nil)
+
+				// commit failed with conflict
+				if err == badger.ErrConflict {
+					continue ConflictRetry
+				}
+
+				if err != nil {
+					return err
+				}
+
+				// open new transaction and continue
+				continue TxnTooBigRetry
 			}
+
+			it.Close()
+			err := txn.Commit(nil)
+
+			// commit failed with conflict
+			if err == badger.ErrConflict {
+				continue ConflictRetry
+			}
+
+			return err
 		}
-		var execution Execution
-		err := json.Unmarshal([]byte(node.Value), &execution)
-		if err != nil {
+	}
+
+	return ErrTooManyUpdateConflicts
+}
+
+func (s *Store) Shutdown() error {
+	return s.db.Close()
+}
+
+func (s *Store) unmarshalExecutions(items []*kv, stopWord string) ([]*Execution, error) {
+	var executions []*Execution
+	for _, item := range items {
+		var pbe dkronpb.Execution
+
+		if err := proto.Unmarshal(item.Value, &pbe); err != nil {
+			log.WithError(err).WithField("key", item.Key).Debug("error unmarshaling")
 			return nil, err
 		}
-		executions = append(executions, &execution)
+		execution := NewExecutionFromProto(&pbe)
+		executions = append(executions, execution)
 	}
 	return executions, nil
 }
 
-// Removes all executions of a job
-func (s *Store) DeleteExecutions(jobName string) error {
-	return s.client.DeleteTree(fmt.Sprintf("%s/executions/%s", s.keyspace, jobName))
-}
-
-// Retrieve the leader from the store
-func (s *Store) GetLeader() []byte {
-	res, err := s.client.Get(s.LeaderKey(), nil)
-	if err != nil {
-		if err == store.ErrNotReachable {
-			log.Fatal("store: Store not reachable, be sure you have an existing key-value store running is running and is reachable.")
-		} else if err != store.ErrKeyNotFound {
-			log.Error(err)
-		}
-		return nil
+func trimDirectoryKey(key []byte) []byte {
+	if isDirectoryKey(key) {
+		return key[:len(key)-1]
 	}
 
-	log.WithField("node", string(res.Value)).Debug("store: Retrieved leader from datastore")
-
-	return res.Value
+	return key
 }
 
-// Retrieve the leader key used in the KV store to store the leader node
-func (s *Store) LeaderKey() string {
-	return s.keyspace + "/leader"
+func isDirectoryKey(key []byte) bool {
+	return len(key) > 0 && key[len(key)-1] == '/'
 }

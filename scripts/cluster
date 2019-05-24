@@ -1,0 +1,9 @@
+scripts/run agent --server --node-name=node1 --log-level=debug --bootstrap-expect=3
+
+scripts/run agent --server --node-name=node2 --bind-addr=0.0.0.0:8947 \
+   --rpc-port=6869 --data-dir=node2.data --http-addr=:8081 \
+   --join=127.0.0.1:8946 --log-level=debug --bootstrap-expect=3
+
+scripts/run agent --server --node-name=node3 --bind-addr=0.0.0.0:8948 \
+   --rpc-port=6870 --data-dir=node3.data --http-addr=:8082 \
+   --join=127.0.0.1:8946 --log-level=debug --bootstrap-expect=3

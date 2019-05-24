@@ -22,11 +22,9 @@ type commonDashboardData struct {
 	Version    string
 	LeaderName string
 	MemberName string
-	Backend    string
 	AssetsPath string
 	Path       string
 	APIPath    string
-	Keyspace   string
 	Name       string
 }
 
@@ -41,11 +39,9 @@ func newCommonDashboardData(a *Agent, nodeName, path string) *commonDashboardDat
 		Version:    Version,
 		LeaderName: leaderName,
 		MemberName: nodeName,
-		Backend:    string(a.config.Backend),
 		AssetsPath: fmt.Sprintf("%s%s", path, assetsPrefix),
 		Path:       fmt.Sprintf("%s%s", path, dashboardPathPrefix),
 		APIPath:    fmt.Sprintf("%s%s", path, apiPathPrefix),
-		Keyspace:   a.config.Keyspace,
 		Name:       Name,
 	}
 }

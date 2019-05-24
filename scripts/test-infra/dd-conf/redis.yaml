@@ -1,6 +1,0 @@
-init_config:
-
-instances:
-   -   host: redis0
-       port: 6379
-       timeout: 3

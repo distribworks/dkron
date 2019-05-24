@@ -66,12 +66,12 @@ docker run -d -p 12345:8080 --name dkron dkron/dkron
 
 ### Mounting a mapped file storage volume
 
-In its default configuration Dkron uses the local filesystem to run a BoltDB embedded database to store its own application data. The end result is that your Dkron application data will be on disk inside your container and lost if you ever remove the container.
+Dkron uses the local filesystem for storing the embedded database to store its own application data and the Raft protocol log. The end result is that your Dkron data will be on disk inside your container and lost if you ever remove the container.
 
-To persist your data outside of the container and make it available for use between container launches we can mount a local file path inside our container.
+To persist your data outside of the container and make it available for use between container launches we can mount a local path inside our container.
 
 ```
-docker run -d -p 8080:8080 -v ~/dkron.db:/dkron.db --name dkron dkron/dkron agent --server
+docker run -d -p 8080:8080 -v ~/dkron.data:/dkron.data --name dkron dkron/dkron agent --server
 ```
 
-Now when you launch your container we are mounting that file from our local filesystem into the container.
+Now when you launch your container we are mounting that folder from our local filesystem into the container.
