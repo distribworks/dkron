@@ -5,6 +5,12 @@ import (
 	"net"
 	"os"
 	"strconv"
+	"strings"
+	"unicode"
+
+	version "github.com/hashicorp/go-version"
+	"github.com/hashicorp/serf/serf"
+)
 
 	version "github.com/hashicorp/go-version"
 	"github.com/hashicorp/serf/serf"

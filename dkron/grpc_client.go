@@ -4,34 +4,28 @@ import (
 	"time"
 
 	metrics "github.com/armon/go-metrics"
-	"github.com/distribworks/dkron/proto"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/sirupsen/logrus"
+	"github.com/victorcoder/dkron/proto"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 )
 
-// DkronGRPCClient defines the interface that any gRPC client for
-// dkron should implement.
 type DkronGRPCClient interface {
 	Connect(string) (*grpc.ClientConn, error)
-	ExecutionDone(string, *Execution) error
-	GetJob(string, string) (*Job, error)
-	SetJob(*Job) error
-	DeleteJob(string) (*Job, error)
+	CallExecutionDone(string, *Execution) error
+	CallGetJob(string, string) (*Job, error)
+	CallSetJob(*Job) error
+	CallDeleteJob(string) (*Job, error)
 	Leave(string) error
-	RunJob(string) (*Job, error)
-	RaftGetConfiguration(string) (*proto.RaftGetConfigurationResponse, error)
-	RaftRemovePeerByID(string, string) error
+	CallRunJob(string) (*Job, error)
 }
 
-// GRPCClient is the local implementation of the DkronGRPCClient interface.
 type GRPCClient struct {
 	dialOpt []grpc.DialOption
 	agent   *Agent
 }
 
-// NewGRPCClient returns a new instance of the gRPC client.
 func NewGRPCClient(dialOpt grpc.DialOption, agent *Agent) DkronGRPCClient {
 	if dialOpt == nil {
 		dialOpt = grpc.WithInsecure()
@@ -46,7 +40,6 @@ func NewGRPCClient(dialOpt grpc.DialOption, agent *Agent) DkronGRPCClient {
 	}
 }
 
-// Connect dialing to a gRPC server
 func (grpcc *GRPCClient) Connect(addr string) (*grpc.ClientConn, error) {
 	// Initiate a connection with the server
 	conn, err := grpc.Dial(addr, grpcc.dialOpt...)
@@ -56,7 +49,7 @@ func (grpcc *GRPCClient) Connect(addr string) (*grpc.ClientConn, error) {
 	return conn, nil
 }
 
-func (grpcc *GRPCClient) ExecutionDone(addr string, execution *Execution) error {
+func (grpcc *GRPCClient) CallExecutionDone(addr string, execution *Execution) error {
 	defer metrics.MeasureSince([]string{"grpc", "call_execution_done"}, time.Now())
 	var conn *grpc.ClientConn
 
@@ -64,7 +57,7 @@ func (grpcc *GRPCClient) ExecutionDone(addr string, execution *Execution) error 
 	defer conn.Close()
 	if err != nil {
 		log.WithError(err).WithFields(logrus.Fields{
-			"method":      "ExecutionDone",
+			"method":      "CallExecutionDone",
 			"server_addr": addr,
 		}).Error("grpc: error dialing.")
 		return err
@@ -93,7 +86,7 @@ func (grpcc *GRPCClient) ExecutionDone(addr string, execution *Execution) error 
 	return nil
 }
 
-func (grpcc *GRPCClient) GetJob(addr, jobName string) (*Job, error) {
+func (grpcc *GRPCClient) CallGetJob(addr, jobName string) (*Job, error) {
 	defer metrics.MeasureSince([]string{"grpc", "call_get_job"}, time.Now())
 	var conn *grpc.ClientConn
 
@@ -102,7 +95,7 @@ func (grpcc *GRPCClient) GetJob(addr, jobName string) (*Job, error) {
 	defer conn.Close()
 	if err != nil {
 		log.WithError(err).WithFields(logrus.Fields{
-			"method":      "GetJob",
+			"method":      "CallGetJob",
 			"server_addr": addr,
 		}).Error("grpc: error dialing.")
 		return nil, err
@@ -140,18 +133,17 @@ func (grpcc *GRPCClient) Leave(addr string) error {
 	d := proto.NewDkronClient(conn)
 	_, err = d.Leave(context.Background(), &empty.Empty{})
 	if err != nil {
-		log.WithError(err).WithFields(logrus.Fields{
-			"method":      "Leave",
-			"server_addr": addr,
-		}).Error("grpc: Error calling gRPC method")
+		log.WithFields(logrus.Fields{
+			"error": err,
+		}).Warning("grpc: Error calling Leave")
 		return err
 	}
 
 	return nil
 }
 
-// SetJob calls the leader passing the job
-func (grpcc *GRPCClient) SetJob(job *Job) error {
+// CallSetJob calls the leader passing the job
+func (grpcc *GRPCClient) CallSetJob(job *Job) error {
 	var conn *grpc.ClientConn
 
 	addr := grpcc.agent.raft.Leader()
@@ -173,17 +165,16 @@ func (grpcc *GRPCClient) SetJob(job *Job) error {
 		Job: job.ToProto(),
 	})
 	if err != nil {
-		log.WithError(err).WithFields(logrus.Fields{
-			"method":      "SetJob",
-			"server_addr": addr,
-		}).Error("grpc: Error calling gRPC method")
+		log.WithFields(logrus.Fields{
+			"error": err,
+		}).Warning("grpc: Error calling SetJob")
 		return err
 	}
 	return nil
 }
 
-// DeleteJob calls the leader passing the job name
-func (grpcc *GRPCClient) DeleteJob(jobName string) (*Job, error) {
+// CallDeleteJob calls the leader passing the job name
+func (grpcc *GRPCClient) CallDeleteJob(jobName string) (*Job, error) {
 	var conn *grpc.ClientConn
 
 	addr := grpcc.agent.raft.Leader()
@@ -192,7 +183,7 @@ func (grpcc *GRPCClient) DeleteJob(jobName string) (*Job, error) {
 	conn, err := grpcc.Connect(string(addr))
 	if err != nil {
 		log.WithError(err).WithFields(logrus.Fields{
-			"method":      "DeleteJob",
+			"method":      "CallDeleteJob",
 			"server_addr": addr,
 		}).Error("grpc: error dialing.")
 		return nil, err
@@ -205,10 +196,9 @@ func (grpcc *GRPCClient) DeleteJob(jobName string) (*Job, error) {
 		JobName: jobName,
 	})
 	if err != nil {
-		log.WithError(err).WithFields(logrus.Fields{
-			"method":      "CallDeleteJob",
-			"server_addr": addr,
-		}).Error("grpc: Error calling gRPC method")
+		log.WithFields(logrus.Fields{
+			"error": err,
+		}).Warning("grpc: Error calling SetJob")
 		return nil, err
 	}
 
@@ -217,8 +207,8 @@ func (grpcc *GRPCClient) DeleteJob(jobName string) (*Job, error) {
 	return job, nil
 }
 
-// RunJob calls the leader passing the job name
-func (grpcc *GRPCClient) RunJob(jobName string) (*Job, error) {
+// CallRunJob calls the leader passing the job name
+func (grpcc *GRPCClient) CallRunJob(jobName string) (*Job, error) {
 	var conn *grpc.ClientConn
 
 	addr := grpcc.agent.raft.Leader()
@@ -240,74 +230,13 @@ func (grpcc *GRPCClient) RunJob(jobName string) (*Job, error) {
 		JobName: jobName,
 	})
 	if err != nil {
-		log.WithError(err).WithFields(logrus.Fields{
-			"method":      "CallRunJob",
-			"server_addr": addr,
-		}).Error("grpc: Error calling gRPC method")
+		log.WithFields(logrus.Fields{
+			"error": err,
+		}).Warning("grpc: Error calling SetJob")
 		return nil, err
 	}
 
 	job := NewJobFromProto(res.Job)
 
 	return job, nil
-}
-
-// RaftGetConfiguration get the current raft configuration of peers
-func (grpcc *GRPCClient) RaftGetConfiguration(addr string) (*proto.RaftGetConfigurationResponse, error) {
-	var conn *grpc.ClientConn
-
-	// Initiate a connection with the server
-	conn, err := grpcc.Connect(addr)
-	if err != nil {
-		log.WithError(err).WithFields(logrus.Fields{
-			"method":      "RaftGetConfiguration",
-			"server_addr": addr,
-		}).Error("grpc: error dialing.")
-		return nil, err
-	}
-	defer conn.Close()
-
-	// Synchronous call
-	d := proto.NewDkronClient(conn)
-	res, err := d.RaftGetConfiguration(context.Background(), &empty.Empty{})
-	if err != nil {
-		log.WithError(err).WithFields(logrus.Fields{
-			"method":      "RaftGetConfiguration",
-			"server_addr": addr,
-		}).Error("grpc: Error calling gRPC method")
-		return nil, err
-	}
-
-	return res, nil
-}
-
-// RaftRemovePeerByID remove a raft peer
-func (grpcc *GRPCClient) RaftRemovePeerByID(addr, peerID string) error {
-	var conn *grpc.ClientConn
-
-	// Initiate a connection with the server
-	conn, err := grpcc.Connect(addr)
-	if err != nil {
-		log.WithError(err).WithFields(logrus.Fields{
-			"method":      "RaftRemovePeerByID",
-			"server_addr": addr,
-		}).Error("grpc: error dialing.")
-		return err
-	}
-	defer conn.Close()
-
-	// Synchronous call
-	d := proto.NewDkronClient(conn)
-	_, err = d.RaftRemovePeerByID(context.Background(),
-		&proto.RaftRemovePeerByIDRequest{Id: peerID},
-	)
-	if err != nil {
-		log.WithError(err).WithFields(logrus.Fields{
-			"method":      "RaftRemovePeerByID",
-			"server_addr": addr,
-		}).Error("grpc: Error calling gRPC method")
-		return err
-	}
-
-	return nil
 }

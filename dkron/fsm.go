@@ -5,25 +5,18 @@ import (
 	"io"
 	"sync"
 
-	dkronpb "github.com/distribworks/dkron/proto"
 	"github.com/golang/protobuf/proto"
 	"github.com/hashicorp/raft"
+	dkronpb "github.com/victorcoder/dkron/proto"
 )
 
-// MessageType is the type to encode FSM commands.
 type MessageType uint8
 
 const (
-	// SetJobType is the command used to store a job in the store.
 	SetJobType MessageType = iota
-	// DeleteJobType is the command used to delete a Job from the store.
 	DeleteJobType
-	// SetExecutionType is the command used to store an Execution to the store.
 	SetExecutionType
-	// DeleteExecutionsType is the command used to delete executions from the store.
 	DeleteExecutionsType
-	// ExecutionDoneType is the command to perform the logic needed once an exeuction
-	// is done.
 	ExecutionDoneType
 )
 
@@ -32,7 +25,7 @@ type dkronFSM struct {
 	mu    sync.Mutex
 }
 
-// NewFSM is used to construct a new FSM with a blank state
+// NewFSMPath is used to construct a new FSM with a blank state
 func NewFSM(store Storage) *dkronFSM {
 	return &dkronFSM{
 		store: store,
@@ -117,9 +110,9 @@ func (d *dkronFSM) applySetExecution(buf []byte) interface{} {
 // Persist encodes the needed data from fsmsnapshot and transport it to
 // Restore where the necessary data is replicated into the finite state machine.
 // This allows the consensus algorithm to truncate the replicated log.
-func (d *dkronFSM) Snapshot() (raft.FSMSnapshot, error) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
+func (f *dkronFSM) Snapshot() (raft.FSMSnapshot, error) {
+	f.mu.Lock()
+	defer f.mu.Unlock()
 
 	// Clone the kvstore into a map for easy transport
 	mapClone := make(map[string]string)
@@ -135,7 +128,7 @@ func (d *dkronFSM) Snapshot() (raft.FSMSnapshot, error) {
 }
 
 // Restore stores the key-value store to a previous state.
-func (d *dkronFSM) Restore(kvMap io.ReadCloser) error {
+func (f *dkronFSM) Restore(kvMap io.ReadCloser) error {
 	kvSnapshot := make(map[string]string)
 	if err := json.NewDecoder(kvMap).Decode(&kvSnapshot); err != nil {
 		return err
@@ -154,10 +147,10 @@ type dkronSnapshot struct {
 	kvMap map[string]string
 }
 
-func (d *dkronSnapshot) Persist(sink raft.SnapshotSink) error {
+func (f *dkronSnapshot) Persist(sink raft.SnapshotSink) error {
 	err := func() error {
 		// Encode data.
-		b, err := json.Marshal(d.kvMap)
+		b, err := json.Marshal(f.kvMap)
 		if err != nil {
 			return err
 		}
@@ -183,4 +176,4 @@ func (d *dkronSnapshot) Persist(sink raft.SnapshotSink) error {
 	return nil
 }
 
-func (d *dkronSnapshot) Release() {}
+func (f *dkronSnapshot) Release() {}

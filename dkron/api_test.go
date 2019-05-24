@@ -27,7 +27,6 @@ func setupAPITest(t *testing.T, port string) (dir string, a *Agent) {
 	c.LogLevel = logLevel
 	c.BootstrapExpect = 1
 	c.DevMode = true
-	c.DataDir = dir
 
 	a = NewAgent(c, nil)
 	a.Start()

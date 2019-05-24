@@ -10,10 +10,10 @@ import (
 	"time"
 
 	"github.com/dgraph-io/badger"
-	"github.com/distribworks/dkron/cron"
-	dkronpb "github.com/distribworks/dkron/proto"
 	"github.com/golang/protobuf/proto"
 	"github.com/sirupsen/logrus"
+	"github.com/victorcoder/dkron/cron"
+	dkronpb "github.com/victorcoder/dkron/proto"
 )
 
 const (
@@ -87,6 +87,8 @@ func (s *Store) runGcLoop() {
 func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
 	//Existing job that has children, let's keep it's children
 
+	// Sanitize the job name
+	job.Name = generateSlug(job.Name)
 	jobKey := fmt.Sprintf("jobs/%s", job.Name)
 
 	// Init the job agent
@@ -312,6 +314,12 @@ func (s *Store) GetJobs(options *JobOptions) ([]*Job, error) {
 				}
 			}
 
+			n, err := job.GetNext()
+			if err != nil {
+				return err
+			}
+			job.Next = n
+
 			jobs = append(jobs, job)
 		}
 		return nil
@@ -349,6 +357,11 @@ func (s *Store) GetJob(name string, options *JobOptions) (*Job, error) {
 			job.Status = job.GetStatus()
 		}
 
+		n, err := job.GetNext()
+		if err != nil {
+			return err
+		}
+		job.Next = n
 		return nil
 	})
 

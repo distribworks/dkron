@@ -10,14 +10,11 @@ import (
 )
 
 func TestJobGetParent(t *testing.T) {
-	dir, err := ioutil.TempDir("", "dkron-test")
-	require.NoError(t, err)
-	defer os.RemoveAll(dir)
-
 	a := &Agent{}
-	s, err := NewStore(a, dir)
-	defer s.Shutdown()
-	require.NoError(t, err)
+	s, err := NewStore(a, "test")
+	if err != nil {
+		t.Fatal(err)
+	}
 	a.Store = s
 
 	parentTestJob := &Job{
@@ -65,4 +62,17 @@ func TestJobGetParent(t *testing.T) {
 	ptj, err = s.GetJob(parentTestJob.Name, nil)
 	assert.NoError(t, err)
 	assert.Nil(t, ptj.DependentJobs)
+}
+
+func TestJobGetNext(t *testing.T) {
+	j := Job{
+		Schedule: "@daily",
+	}
+
+	td := time.Now()
+	tonight := time.Date(td.Year(), td.Month(), td.Day()+1, 0, 0, 0, 0, td.Location())
+	n, err := j.GetNext()
+
+	assert.NoError(t, err)
+	assert.Equal(t, tonight, n)
 }

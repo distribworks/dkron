@@ -61,8 +61,6 @@ func NewExecutionFromProto(e *proto.Execution) *Execution {
 	}
 }
 
-// ToProto returns the protobuf struct corresponding to
-// the representation of the current execution.
 func (e *Execution) ToProto() *proto.Execution {
 	startedAt, _ := ptypes.TimestampProto(e.StartedAt)
 	finishedAt, _ := ptypes.TimestampProto(e.FinishedAt)

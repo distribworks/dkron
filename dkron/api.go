@@ -3,7 +3,6 @@ package dkron
 import (
 	"fmt"
 	"net/http"
-	"regexp"
 
 	"github.com/dgraph-io/badger"
 	"github.com/gin-contrib/expvar"
@@ -152,15 +151,8 @@ func (h *HTTPTransport) jobCreateOrUpdateHandler(c *gin.Context) {
 		return
 	}
 
-	// Validate job name
-	if b, chr := isSlug(job.Name); !b {
-		c.AbortWithStatus(http.StatusBadRequest)
-		c.Writer.WriteString(fmt.Sprintf("Name contains illegal character '%s'.", chr))
-		return
-	}
-
 	// Call gRPC SetJob
-	if err := h.agent.GRPCClient.SetJob(&job); err != nil {
+	if err := h.agent.GRPCClient.CallSetJob(&job); err != nil {
 		c.AbortWithError(422, err)
 		return
 	}
@@ -173,7 +165,7 @@ func (h *HTTPTransport) jobDeleteHandler(c *gin.Context) {
 	jobName := c.Param("job")
 
 	// Call gRPC DeleteJob
-	job, err := h.agent.GRPCClient.DeleteJob(jobName)
+	job, err := h.agent.GRPCClient.CallDeleteJob(jobName)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
@@ -185,7 +177,7 @@ func (h *HTTPTransport) jobRunHandler(c *gin.Context) {
 	jobName := c.Param("job")
 
 	// Call gRPC RunJob
-	job, err := h.agent.GRPCClient.RunJob(jobName)
+	job, err := h.agent.GRPCClient.CallRunJob(jobName)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
@@ -248,7 +240,7 @@ func (h *HTTPTransport) jobToggleHandler(c *gin.Context) {
 	job.Disabled = !job.Disabled
 
 	// Call gRPC SetJob
-	if err := h.agent.GRPCClient.SetJob(job); err != nil {
+	if err := h.agent.GRPCClient.CallSetJob(job); err != nil {
 		c.AbortWithError(422, err)
 		return
 	}

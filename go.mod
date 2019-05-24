@@ -43,7 +43,6 @@ require (
 	github.com/pelletier/go-toml v1.0.1 // indirect
 	github.com/pkg/errors v0.8.1 // indirect
 	github.com/russross/blackfriday v0.0.0-20180804101149-46c73eb196ba // indirect
-	github.com/ryanuber/columnize v2.1.0+incompatible
 	github.com/sirupsen/logrus v1.2.0
 	github.com/soheilhy/cmux v0.1.4
 	github.com/spf13/afero v0.0.0-20171008182726-e67d870304c4 // indirect

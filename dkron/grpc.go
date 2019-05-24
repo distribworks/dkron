@@ -8,7 +8,6 @@ import (
 	"time"
 
 	metrics "github.com/armon/go-metrics"
-	"github.com/distribworks/dkron/proto"
 	pb "github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/raft"
@@ -22,11 +21,8 @@ var (
 	// ErrExecutionDoneForDeletedJob is returned when an execution done
 	// is received for a non existent job.
 	ErrExecutionDoneForDeletedJob = errors.New("rpc: Received execution done for a deleted job")
-	// ErrRPCDialing is returned on dialing fail.
-	ErrRPCDialing = errors.New("rpc: Error dialing, verify the network connection to the server")
-	// ErrNotLeader is the error returned when the operation need the node to be the leader,
-	// but the current node is not the leader.
-	ErrNotLeader = errors.New("Error, server is not leader, this operation should be run on the leader")
+	ErrRPCDialing                 = errors.New("rpc: Error dialing, verify the network connection to the server")
+	ErrNotLeader                  = errors.New("Error, server is not leader, this operation should be run on the leader")
 )
 
 // DkronGRPCServer defines the basics that a gRPC server should implement.
@@ -158,7 +154,7 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.E
 	// Forward the request to the leader in case current node is not the leader.
 	if !grpcs.agent.IsLeader() {
 		addr := grpcs.agent.raft.Leader()
-		grpcs.agent.GRPCClient.ExecutionDone(string(addr), NewExecutionFromProto(execDoneReq.Execution))
+		grpcs.agent.GRPCClient.CallExecutionDone(string(addr), NewExecutionFromProto(execDoneReq.Execution))
 		return nil, ErrNotLeader
 	}
 
@@ -252,7 +248,7 @@ func (grpcs *GRPCServer) RunJob(ctx context.Context, req *proto.RunJobRequest) (
 	}
 
 	ex := NewExecution(job.Name)
-	grpcs.agent.RunQuery(job, ex)
+	grpcs.agent.RunQuery(ex)
 
 	jpb := job.ToProto()
 
@@ -261,93 +257,5 @@ func (grpcs *GRPCServer) RunJob(ctx context.Context, req *proto.RunJobRequest) (
 
 // ToggleJob toggle the enablement of a job
 func (grpcs *GRPCServer) ToggleJob(ctx context.Context, getJobReq *proto.ToggleJobRequest) (*proto.ToggleJobResponse, error) {
-	return nil, nil
-}
-
-// RaftGetConfiguration get raft config
-func (grpcs *GRPCServer) RaftGetConfiguration(ctx context.Context, in *empty.Empty) (*proto.RaftGetConfigurationResponse, error) {
-	// We can't fetch the leader and the configuration atomically with
-	// the current Raft API.
-	future := grpcs.agent.raft.GetConfiguration()
-	if err := future.Error(); err != nil {
-		return nil, err
-	}
-
-	// Index the information about the servers.
-	serverMap := make(map[raft.ServerAddress]serf.Member)
-	for _, member := range grpcs.agent.serf.Members() {
-		valid, parts := isServer(member)
-		if !valid {
-			continue
-		}
-
-		addr := (&net.TCPAddr{IP: member.Addr, Port: parts.Port}).String()
-		serverMap[raft.ServerAddress(addr)] = member
-	}
-
-	// Fill out the reply.
-	leader := grpcs.agent.raft.Leader()
-	reply := &proto.RaftGetConfigurationResponse{}
-	reply.Index = future.Index()
-	for _, server := range future.Configuration().Servers {
-		node := "(unknown)"
-		raftProtocolVersion := "unknown"
-		if member, ok := serverMap[server.Address]; ok {
-			node = member.Name
-			if raftVsn, ok := member.Tags["raft_vsn"]; ok {
-				raftProtocolVersion = raftVsn
-			}
-		}
-
-		entry := &proto.RaftServer{
-			Id:           string(server.ID),
-			Node:         node,
-			Address:      string(server.Address),
-			Leader:       server.Address == leader,
-			Voter:        server.Suffrage == raft.Voter,
-			RaftProtocol: raftProtocolVersion,
-		}
-		reply.Servers = append(reply.Servers, entry)
-	}
-	return reply, nil
-}
-
-// RaftRemovePeerByID is used to kick a stale peer (one that is in the Raft
-// quorum but no longer known to Serf or the catalog) by address in the form of
-// "IP:port". The reply argument is not used, but is required to fulfill the RPC
-// interface.
-func (grpcs *GRPCServer) RaftRemovePeerByID(ctx context.Context, in *proto.RaftRemovePeerByIDRequest) (*empty.Empty, error) {
-	// Since this is an operation designed for humans to use, we will return
-	// an error if the supplied id isn't among the peers since it's
-	// likely they screwed up.
-	{
-		future := grpcs.agent.raft.GetConfiguration()
-		if err := future.Error(); err != nil {
-			return nil, err
-		}
-		for _, s := range future.Configuration().Servers {
-			if s.ID == raft.ServerID(in.Id) {
-				goto REMOVE
-			}
-		}
-		return nil, fmt.Errorf("id %q was not found in the Raft configuration", in.Id)
-	}
-
-REMOVE:
-	// The Raft library itself will prevent various forms of foot-shooting,
-	// like making a configuration with no voters. Some consideration was
-	// given here to adding more checks, but it was decided to make this as
-	// low-level and direct as possible. We've got ACL coverage to lock this
-	// down, and if you are an operator, it's assumed you know what you are
-	// doing if you are calling this. If you remove a peer that's known to
-	// Serf, for example, it will come back when the leader does a reconcile
-	// pass.
-	future := grpcs.agent.raft.RemoveServer(raft.ServerID(in.Id), 0, 0)
-	if err := future.Error(); err != nil {
-		log.WithError(err).WithField("peer", in.Id).Warn("failed to remove Raft peer")
-		return nil, err
-	}
-
-	log.WithField("peer", in.Id).Warn("removed Raft peer")
 	return nil, nil
 }

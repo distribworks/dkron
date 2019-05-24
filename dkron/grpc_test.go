@@ -16,7 +16,7 @@ func TestGRPCExecutionDone(t *testing.T) {
 
 	c := DefaultConfig()
 	c.BindAddr = aAddr
-	c.NodeName = "test-grpc"
+	c.NodeName = "test1"
 	c.Server = true
 	c.LogLevel = logLevel
 	c.BootstrapExpect = 1
@@ -55,7 +55,7 @@ func TestGRPCExecutionDone(t *testing.T) {
 	}
 
 	rc := NewGRPCClient(nil, a)
-	rc.ExecutionDone(a.getRPCAddr(), testExecution)
+	rc.CallExecutionDone(a.getRPCAddr(), testExecution)
 	execs, _ := a.Store.GetExecutions("test")
 
 	assert.Len(t, execs, 1)
@@ -65,7 +65,7 @@ func TestGRPCExecutionDone(t *testing.T) {
 	a.Store.DeleteJob(testJob.Name)
 
 	testExecution.FinishedAt = time.Now()
-	err := rc.ExecutionDone(a.getRPCAddr(), testExecution)
+	err := rc.CallExecutionDone(a.getRPCAddr(), testExecution)
 
 	assert.Error(t, err, ErrExecutionDoneForDeletedJob)
 }
