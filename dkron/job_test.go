@@ -4,22 +4,16 @@ import (
 	"testing"
 	"time"
 
-	"github.com/abronan/valkeyrie/store"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestJobGetParent(t *testing.T) {
-	s := NewStore(store.Backend(backend), []string{backendMachine}, nil, "dkron-test", nil)
-	a := &Agent{
-		Store: s,
+	a := &Agent{}
+	s, err := NewStore(a, "test")
+	if err != nil {
+		t.Fatal(err)
 	}
-	s.agent = a
-
-	// Cleanup everything
-	err := s.Client().DeleteTree("dkron-test")
-	if err != nil && err != store.ErrKeyNotFound {
-		t.Logf("error cleaning up: %s", err)
-	}
+	a.Store = s
 
 	parentTestJob := &Job{
 		Name:           "parent_test",
@@ -65,7 +59,7 @@ func TestJobGetParent(t *testing.T) {
 
 	ptj, err = s.GetJob(parentTestJob.Name, nil)
 	assert.NoError(t, err)
-	assert.Equal(t, []string{}, ptj.DependentJobs)
+	assert.Nil(t, ptj.DependentJobs)
 }
 
 func TestJobGetNext(t *testing.T) {

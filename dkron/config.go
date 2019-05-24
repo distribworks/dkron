@@ -7,8 +7,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/abronan/valkeyrie/store"
-
 	flag "github.com/spf13/pflag"
 )
 
@@ -17,11 +15,6 @@ type Config struct {
 	NodeName              string `mapstructure:"node-name"`
 	BindAddr              string `mapstructure:"bind-addr"`
 	HTTPAddr              string `mapstructure:"http-addr"`
-	Backend               store.Backend
-	BackendMachines       []string `mapstructure:"backend-machine"`
-	BackendUsername       string   `mapstructure:"backend-username"`
-	BackendPassword       string   `mapstructure:"backend-password"`
-	BackendTLS            bool     `mapstructure:"backend-tls"`
 	Profile               string
 	Interface             string
 	AdvertiseAddr         string            `mapstructure:"advertise-addr"`
@@ -36,10 +29,33 @@ type Config struct {
 	Server                bool
 	EncryptKey            string   `mapstructure:"encrypt"`
 	StartJoin             []string `mapstructure:"join"`
-	Keyspace              string
-	RPCPort               int    `mapstructure:"rpc-port"`
-	AdvertiseRPCPort      int    `mapstructure:"advertise-rpc-port"`
-	LogLevel              string `mapstructure:"log-level"`
+	RPCPort               int      `mapstructure:"rpc-port"`
+	AdvertiseRPCPort      int      `mapstructure:"advertise-rpc-port"`
+	LogLevel              string   `mapstructure:"log-level"`
+	Datacenter            string
+	Region                string
+
+	// Bootstrap mode is used to bring up the first Dkron server.  It is
+	// required so that it can elect a leader without any other nodes
+	// being present
+	Bootstrap bool
+
+	// BootstrapExpect tries to automatically bootstrap the Consul cluster,
+	// by withholding peers until enough servers join.
+	BootstrapExpect int `mapstructure:"bootstrap-expect"`
+
+	// DataDir is the directory to store our state in
+	DataDir string `mapstructure:"data-dir"`
+
+	// DevMode is used for development purposes only and limits the
+	// use of persistence or state.
+	DevMode bool
+
+	// ReconcileInterval controls how often we reconcile the strongly
+	// consistent store with the Serf info. This is used to handle nodes
+	// that are force removed, as well as intermittent unavailability during
+	// leader election.
+	ReconcileInterval time.Duration
 
 	MailHost          string `mapstructure:"mail-host"`
 	MailPort          uint16 `mapstructure:"mail-port"`
@@ -71,23 +87,21 @@ func DefaultConfig() *Config {
 		log.Panic(err)
 	}
 
-	tags := map[string]string{"dkron_version": Version}
+	tags := map[string]string{}
 
 	return &Config{
 		NodeName:          hostname,
 		BindAddr:          fmt.Sprintf("0.0.0.0:%d", DefaultBindPort),
 		HTTPAddr:          ":8080",
-		Backend:           "boltdb",
-		BackendMachines:   []string{"./dkron.db"},
-		BackendUsername:   "",
-		BackendPassword:   "",
-		BackendTLS:        false,
 		Profile:           "lan",
-		Keyspace:          "dkron",
 		LogLevel:          "info",
 		RPCPort:           6868,
 		MailSubjectPrefix: "[Dkron]",
 		Tags:              tags,
+		DataDir:           "dkron.data",
+		Datacenter:        "dc1",
+		Region:            "global",
+		ReconcileInterval: 60 * time.Second,
 	}
 }
 
@@ -101,19 +115,17 @@ func ConfigFlagSet() *flag.FlagSet {
 	cmdFlags.String("bind-addr", c.BindAddr, "Address to bind network listeners to")
 	cmdFlags.String("advertise-addr", "", "Address used to advertise to other nodes in the cluster. By default, the bind address is advertised")
 	cmdFlags.String("http-addr", c.HTTPAddr, "Address to bind the UI web server to. Only used when server")
-	cmdFlags.String("backend", string(c.Backend), "Store backend (etcd|etcdv3|consul|zk|redis|boltdb|dynamodb)")
-	cmdFlags.StringSlice("backend-machine", c.BackendMachines, "Store backend machines addresses")
-	cmdFlags.String("backend-username", c.BackendPassword, "Store backend machines username, only ETCD")
-	cmdFlags.String("backend-password", c.BackendPassword, "Store backend machines password or token, only ETCD/REDIS/CONSUL")
-	cmdFlags.Bool("backend-tls", c.BackendTLS, "Use TLS to connect to store backend machines, only ETCD/CONSUL")
 	cmdFlags.String("profile", c.Profile, "Profile is used to control the timing profiles used")
 	cmdFlags.StringSlice("join", []string{}, "An initial agent to join with. This flag can be specified multiple times")
 	cmdFlags.StringSlice("tag", []string{}, "Tag can be specified multiple times to attach multiple key/value tag pairs to the given node, specified as key=value")
-	cmdFlags.String("keyspace", c.Keyspace, "The keyspace to use. A prefix under all data is stored for this instance")
 	cmdFlags.String("encrypt", "", "Key for encrypting network traffic. Must be a base64-encoded 16-byte key")
 	cmdFlags.String("log-level", c.LogLevel, "Log level (debug|info|warn|error|fatal|panic)")
 	cmdFlags.Int("rpc-port", c.RPCPort, "RPC Port used to communicate with clients. Only used when server. The RPC IP Address will be the same as the bind address")
 	cmdFlags.Int("advertise-rpc-port", 0, "Use the value of rpc-port by default")
+	cmdFlags.Int("bootstrap-expect", 0, "Expected cluster size")
+	cmdFlags.String("data-dir", c.DataDir, "Specifies the directory to use - for server-specific data, including the replicated log. By default, this is - the top-level data_dir suffixed with [server], like [/var/lib/dkron]")
+	cmdFlags.String("datacenter", c.Datacenter, "Specifies the data center of the local agent. All members of a datacenter should share a local LAN connection.")
+	cmdFlags.String("region", c.Region, "Specifies the region the Dkron agent is a member of. A region typically maps to a geographic region, for example us, with potentially multiple zones, which map to datacenters such as us-west and us-east")
 
 	// Notifications
 	cmdFlags.String("mail-host", "", "Mail server host address to use for notifications")

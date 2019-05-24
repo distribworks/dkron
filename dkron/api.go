@@ -3,9 +3,8 @@ package dkron
 import (
 	"fmt"
 	"net/http"
-	"strconv"
 
-	"github.com/abronan/valkeyrie/store"
+	"github.com/dgraph-io/badger"
 	"github.com/gin-contrib/expvar"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -102,31 +101,22 @@ func renderJSON(c *gin.Context, status int, v interface{}) {
 func (h *HTTPTransport) indexHandler(c *gin.Context) {
 	local := h.agent.serf.LocalMember()
 
-	var status int
-	if err := h.agent.Store.Healthy(); err != nil {
-		status = http.StatusServiceUnavailable
-	} else {
-		status = http.StatusOK
-	}
-
 	stats := map[string]map[string]string{
 		"agent": {
-			"name":           local.Name,
-			"version":        Version,
-			"backend":        string(h.agent.config.Backend),
-			"backend_status": strconv.FormatInt(int64(status), 10),
+			"name":    local.Name,
+			"version": Version,
 		},
 		"serf": h.agent.serf.Stats(),
 		"tags": local.Tags,
 	}
 
-	renderJSON(c, status, stats)
+	renderJSON(c, http.StatusOK, stats)
 }
 
 func (h *HTTPTransport) jobsHandler(c *gin.Context) {
-	jobTags := c.QueryMap("tags")
+	metadata := c.QueryMap("metadata")
 
-	jobs, err := h.agent.Store.GetJobs(&JobOptions{ComputeStatus: true, Tags: jobTags})
+	jobs, err := h.agent.Store.GetJobs(&JobOptions{ComputeStatus: true, Metadata: metadata})
 	if err != nil {
 		log.WithError(err).Error("api: Unable to get jobs, store not reachable.")
 		return
@@ -161,13 +151,11 @@ func (h *HTTPTransport) jobCreateOrUpdateHandler(c *gin.Context) {
 		return
 	}
 
-	// Save the job to the store
-	if err := h.agent.Store.SetJob(&job, true); err != nil {
+	// Call gRPC SetJob
+	if err := h.agent.GRPCClient.CallSetJob(&job); err != nil {
 		c.AbortWithError(422, err)
 		return
 	}
-
-	h.agent.SchedulerRestart()
 
 	c.Header("Location", fmt.Sprintf("%s/%s", c.Request.RequestURI, job.Name))
 	renderJSON(c, http.StatusCreated, &job)
@@ -176,27 +164,24 @@ func (h *HTTPTransport) jobCreateOrUpdateHandler(c *gin.Context) {
 func (h *HTTPTransport) jobDeleteHandler(c *gin.Context) {
 	jobName := c.Param("job")
 
-	job, err := h.agent.Store.DeleteJob(jobName)
+	// Call gRPC DeleteJob
+	job, err := h.agent.GRPCClient.CallDeleteJob(jobName)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
-
-	h.agent.SchedulerRestart()
 	renderJSON(c, http.StatusOK, job)
 }
 
 func (h *HTTPTransport) jobRunHandler(c *gin.Context) {
 	jobName := c.Param("job")
 
-	job, err := h.agent.Store.GetJob(jobName, nil)
+	// Call gRPC RunJob
+	job, err := h.agent.GRPCClient.CallRunJob(jobName)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
-
-	ex := NewExecution(job.Name)
-	h.agent.RunQuery(job, ex)
 
 	c.Header("Location", c.Request.RequestURI)
 	c.Status(http.StatusAccepted)
@@ -214,7 +199,7 @@ func (h *HTTPTransport) executionsHandler(c *gin.Context) {
 
 	executions, err := h.agent.Store.GetExecutions(job.Name)
 	if err != nil {
-		if err == store.ErrKeyNotFound {
+		if err == badger.ErrKeyNotFound {
 			renderJSON(c, http.StatusOK, &[]Execution{})
 			return
 		}
@@ -251,13 +236,15 @@ func (h *HTTPTransport) jobToggleHandler(c *gin.Context) {
 		return
 	}
 
+	// Toggle job status
 	job.Disabled = !job.Disabled
-	if err := h.agent.Store.SetJob(job, false); err != nil {
-		c.AbortWithError(http.StatusPreconditionFailed, err)
+
+	// Call gRPC SetJob
+	if err := h.agent.GRPCClient.CallSetJob(job); err != nil {
+		c.AbortWithError(422, err)
 		return
 	}
 
-	h.agent.SchedulerRestart()
 	c.Header("Location", c.Request.RequestURI)
 	renderJSON(c, http.StatusOK, job)
 }

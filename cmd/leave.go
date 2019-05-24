@@ -19,7 +19,7 @@ var leaveCmd = &cobra.Command{
 	Then actually leave the cluster.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var gc dkron.DkronGRPCClient
-		gc = dkron.NewGRPCClient(nil)
+		gc = dkron.NewGRPCClient(nil, nil)
 
 		if err := gc.Leave(rpcAddr); err != nil {
 			return err

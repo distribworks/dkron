@@ -4,16 +4,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/abronan/valkeyrie/store"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestStore(t *testing.T) {
-	s := NewStore(store.Backend(backend), []string{backendMachine}, nil, "dkron-test", nil)
-
-	// Cleanup everything
-	if err := cleanTestKVSpace(s); err != nil {
-		t.Logf("error cleaning up: %v", err)
+	s, err := NewStore(nil, "test.db")
+	if err != nil {
+		t.Fatal(err)
 	}
 
 	testJob := &Job{
@@ -79,7 +76,10 @@ func TestStore(t *testing.T) {
 }
 
 func TestStore_GetLastExecutionGroup(t *testing.T) {
-	s := createTestStore()
+	s, err := NewStore(nil, "test.db")
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	// This can not use time.Now() because that will include monotonic information
 	// that will cause the unmarshalled execution to differ from our generated version
@@ -190,9 +190,6 @@ func TestStore_GetLastExecutionGroup(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := cleanTestKVSpace(s); err != nil {
-				t.Logf("error cleaning up: %v", err)
-			}
 			for _, e := range tt.addExecutions {
 				s.SetExecution(e)
 			}
@@ -207,16 +204,4 @@ func TestStore_GetLastExecutionGroup(t *testing.T) {
 			}
 		})
 	}
-}
-
-func createTestStore() *Store {
-	return NewStore(store.Backend(backend), []string{backendMachine}, nil, "dkron-test", nil)
-}
-
-func cleanTestKVSpace(s *Store) error {
-	err := s.Client().DeleteTree("dkron-test")
-	if err != nil && err != store.ErrKeyNotFound {
-		return err
-	}
-	return nil
 }

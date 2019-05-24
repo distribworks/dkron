@@ -1,55 +1,32 @@
 ---
 version: '2'
 services:
-  # Uncomment to use etcd
-  etcd:
-    image: quay.io/coreos/etcd
-    ports:
-      - "2379"
-    volumes:
-      - ./etcd.data:/data
-    command: etcd -name=dkron1 -advertise-client-urls http://etcd:2379 -listen-client-urls http://0.0.0.0:2379
-
-  consul:
-    image: consul
-    ports:
-      - "8500:8500"
-      - "8300"
-    hostname: node1
-    command: agent -server -bootstrap -client=0.0.0.0
-
-  zk:
-    image: zookeeper
-    ports:
-      - "2181"
-    hostname: node1
-
-  redis:
-    image: redis
-    ports:
-      - "6379"
-
-  dkron:
+  dkron1:
     build: .
-    depends_on:
-      - consul
-      - etcd
-      - zk
-      - redis
     ports:
-      - "8080"
+      - "8080:8080"
       - "8946"
+      - "6868"
     volumes:
      - ./:/gopath/src/github.com/victorcoder/dkron
     environment:
       - GODEBUG=netdns=go
-    # Uncomment to use consul
-    command: scripts/run agent --server --backend=consul --backend-machine=consul:8500 --join=dkron:8946 --log-level=debug
-    # Uncomment to use etcd
-    # command: scripts/run agent --server --backend=etcd --backend-machine=etcd:2379 --join=dkron:8946 --log-level=debug
-    # Uncomment to use etcdv3
-    # command: scripts/run agent --server --backend=etcdv3 --backend-machine=etcd:2379 --join=dkron:8946 --log-level=debug
-    # Uncomment to use zk
-    # command: scripts/run agent --server --backend=zk --backend-machine=zk:2181 --join=dkron:8946 --log-level=debug
-    # Uncomment to use redis
-    # command: scripts/run agent --server --backend=redis --backend-machine=redis:6379 --join=dkron:8946 --log-level=debug
+    command: scripts/run agent --server --join=dkron1:8946 --log-level=debug --bootstrap-expect=3
+  dkron2:
+    build: .
+    ports:
+      - "8081:8080"
+      - "8946"
+      - "6868"
+    environment:
+      - GODEBUG=netdns=go
+    command: bash -c "sleep 10 && scripts/run agent --server --join=dkron1:8946 --log-level=debug --bootstrap-expect=3"
+  dkron3:
+    build: .
+    ports:
+      - "8082:8080"
+      - "8946"
+      - "6868"
+    environment:
+      - GODEBUG=netdns=go
+    command: bash -c "sleep 10 && scripts/run agent --server --join=dkron1:8946 --log-level=debug --bootstrap-expect=3"

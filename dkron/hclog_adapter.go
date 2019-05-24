@@ -2,6 +2,7 @@ package dkron
 
 import (
 	"bytes"
+	"io"
 	golog "log"
 
 	"github.com/hashicorp/go-hclog"
@@ -83,6 +84,11 @@ func (a *HCLogAdapter) ResetNamed(name string) hclog.Logger {
 	fields := []interface{}{"subsystem_name", name}
 	e := a.CreateEntry(fields)
 	return &HCLogAdapter{Log: e, Name: name}
+}
+
+// Return a value that conforms to io.Writer, which can be passed into log.SetOutput()
+func (a *HCLogAdapter) StandardWriter(opts *hclog.StandardLoggerOptions) io.Writer {
+	return nil
 }
 
 // StandardLogger is meant to return a stldib Logger type which wraps around

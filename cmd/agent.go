@@ -134,12 +134,6 @@ WAIT:
 func handleReload() {
 	fmt.Println("Reloading configuration...")
 	initConfig()
-
-	// Reset serf tags
-	if err := agent.SetTags(agent.Config().Tags); err != nil {
-		fmt.Printf("Failed to reload tags %v", agent.Config().Tags)
-		return
-	}
 	//Config reloading will also reload Notification settings
 }
 

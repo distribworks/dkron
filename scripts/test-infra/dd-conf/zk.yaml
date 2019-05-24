@@ -1,6 +1,0 @@
-init_config:
-
-instances:
-   -   host: zoo1
-       port: 2181
-       timeout: 3
