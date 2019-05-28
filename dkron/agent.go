@@ -12,6 +12,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"crypto/tls"
 
 	"github.com/abronan/leadership"
 	"github.com/abronan/valkeyrie/store"
@@ -318,9 +319,15 @@ func (a *Agent) StartServer() {
 			sConfig.Password = a.config.BackendPassword
 		case store.CONSUL:
 			sConfig.Token = a.config.BackendPassword
+			if a.config.BackendTLS {
+				sConfig.TLS = &tls.Config{}
+			}
 		case store.ETCD:
 			sConfig.Username = a.config.BackendUsername
 			sConfig.Password = a.config.BackendPassword
+			if a.config.BackendTLS {
+				sConfig.TLS = &tls.Config{}
+			}
 		}
 		a.Store = NewStore(a.config.Backend, a.config.BackendMachines, a, a.config.Keyspace, &sConfig)
 		if err := a.Store.Healthy(); err != nil {

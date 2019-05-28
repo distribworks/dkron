@@ -21,6 +21,7 @@ type Config struct {
 	BackendMachines       []string `mapstructure:"backend-machine"`
 	BackendUsername       string   `mapstructure:"backend-username"`
 	BackendPassword       string   `mapstructure:"backend-password"`
+	BackendTLS            bool     `mapstructure:"backend-tls"`
 	Profile               string
 	Interface             string
 	AdvertiseAddr         string            `mapstructure:"advertise-addr"`
@@ -80,6 +81,7 @@ func DefaultConfig() *Config {
 		BackendMachines:   []string{"./dkron.db"},
 		BackendUsername:   "",
 		BackendPassword:   "",
+		BackendTLS:        false,
 		Profile:           "lan",
 		Keyspace:          "dkron",
 		LogLevel:          "info",
@@ -103,6 +105,7 @@ func ConfigFlagSet() *flag.FlagSet {
 	cmdFlags.StringSlice("backend-machine", c.BackendMachines, "Store backend machines addresses")
 	cmdFlags.String("backend-username", c.BackendPassword, "Store backend machines username, only ETCD")
 	cmdFlags.String("backend-password", c.BackendPassword, "Store backend machines password or token, only ETCD/REDIS/CONSUL")
+	cmdFlags.Bool("backend-tls", c.BackendTLS, "Use TLS to connect to store backend machines, only ETCD/CONSUL")
 	cmdFlags.String("profile", c.Profile, "Profile is used to control the timing profiles used")
 	cmdFlags.StringSlice("join", []string{}, "An initial agent to join with. This flag can be specified multiple times")
 	cmdFlags.StringSlice("tag", []string{}, "Tag can be specified multiple times to attach multiple key/value tag pairs to the given node, specified as key=value")
