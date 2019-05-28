@@ -1,6 +1,7 @@
 package dkron
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"expvar"
@@ -12,7 +13,6 @@ import (
 	"strings"
 	"sync"
 	"time"
-	"crypto/tls"
 
 	"github.com/abronan/leadership"
 	"github.com/abronan/valkeyrie/store"
