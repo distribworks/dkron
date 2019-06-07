@@ -443,7 +443,7 @@ func (s *Store) SetExecution(execution *Execution) (string, error) {
 			log.WithFields(logrus.Fields{
 				"job":       execs[i].JobName,
 				"execution": execs[i].Key(),
-			}).Debug("store: to detele key")
+			}).Debug("store: to delete key")
 			err := s.client.Delete(fmt.Sprintf("%s/executions/%s/%s", s.keyspace, execs[i].JobName, execs[i].Key()))
 			if err != nil {
 				log.WithError(err).
