@@ -1,5 +1,4 @@
-// This library implements a cron spec parser and runner.  See the README for
-// more details.
+// This library implements a cron spec runner. See the README for more details.
 package cron
 
 import (
