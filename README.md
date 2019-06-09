@@ -16,6 +16,12 @@ Dkron runs on Linux, OSX and Windows. It can be used to run scheduled commands o
 
 You can use Dkron to run the most important part of your company, scheduled jobs.
 
+## Project status
+
+Dkron v1.x is stable and being used in production by several companies.
+
+Dkron v2.x is under heavy development but approaching stability. Follow https://github.com/victorcoder/dkron/pull/543 for cahnges.
+
 ## Installation
 
 [Installation instructions](https://dkron.io/basics/installation/)
