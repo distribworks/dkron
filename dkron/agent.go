@@ -318,6 +318,9 @@ func (a *Agent) StartServer() {
 			sConfig.Password = a.config.BackendPassword
 		case store.CONSUL:
 			sConfig.Token = a.config.BackendPassword
+		case store.ETCD:
+			sConfig.Username = a.config.BackendUsername
+			sConfig.Password = a.config.BackendPassword
 		}
 		a.Store = NewStore(a.config.Backend, a.config.BackendMachines, a, a.config.Keyspace, &sConfig)
 		if err := a.Store.Healthy(); err != nil {
