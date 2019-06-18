@@ -193,3 +193,35 @@ func TestAPIJobCreateUpdateValidationValidName(t *testing.T) {
 
 	assert.Equal(t, http.StatusCreated, resp.StatusCode)
 }
+
+func TestAPIJobCreateUpdateValidationBadName(t *testing.T) {
+	a := setupAPITest(t)
+
+	jsonStr := []byte(`{"name": "BAD JOB NAME!", "schedule": "@every 1m", "executor": "shell", "executor_config": {"command": "date"}, "disabled": true}`)
+
+	resp, err := http.Post("http://localhost:8090/v1/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
+
+	// Send a shutdown request
+	a.Stop()
+}
+
+func TestAPIJobCreateUpdateValidationValidName(t *testing.T) {
+	a := setupAPITest(t)
+
+	jsonStr := []byte(`{"name": "abcdefghijklmnopqrstuvwxyz0123456789-_ßñëäïüøüáéíóýćàèìòùâêîôûæšłç", "schedule": "@every 1m", "executor": "shell", "executor_config": {"command": "date"}, "disabled": true}`)
+
+	resp, err := http.Post("http://localhost:8090/v1/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.Equal(t, http.StatusCreated, resp.StatusCode)
+
+	// Send a shutdown request
+	a.Stop()
+}
