@@ -143,33 +143,14 @@ func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
 	if ej != nil {
 		// Existing job that doesn't have parent job set and it's being set
 		if ej.ParentJob == "" && job.ParentJob != "" {
-			pj, err := job.GetParent()
-			if err != nil {
-				return err
-			}
-
-			pj.DependentJobs = append(pj.DependentJobs, job.Name)
-			if err := s.SetJob(pj, false); err != nil {
+			if err := s.addDependentJobToParent(job); err != nil {
 				return err
 			}
 		}
 
 		// Existing job that has parent job set and it's being removed
 		if ej.ParentJob != "" && job.ParentJob == "" {
-			pj, err := ej.GetParent()
-			if err != nil {
-				return err
-			}
-
-			ndx := 0
-			for i, djn := range pj.DependentJobs {
-				if djn == job.Name {
-					ndx = i
-					break
-				}
-			}
-			pj.DependentJobs = append(pj.DependentJobs[:ndx], pj.DependentJobs[ndx+1:]...)
-			if err := s.SetJob(pj, false); err != nil {
+			if err := s.removeDependentJobFromParent(ej); err != nil {
 				return err
 			}
 		}
@@ -177,15 +158,43 @@ func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
 
 	// New job that has parent job set
 	if ej == nil && job.ParentJob != "" {
-		pj, err := job.GetParent()
-		if err != nil {
+		if err := s.addDependentJobToParent(job); err != nil {
 			return err
 		}
+	}
 
-		pj.DependentJobs = append(pj.DependentJobs, job.Name)
-		if err := s.SetJob(pj, false); err != nil {
-			return err
+	return nil
+}
+
+func (s *Store) removeDependentJobFromParent(child *Job) error {
+	parent, err := child.GetParent()
+	if err != nil {
+		return err
+	}
+
+	var djs []string = nil
+	for _, djn := range parent.DependentJobs {
+		if djn != child.Name {
+			djs = append(djs, djn)
 		}
+	}
+	parent.DependentJobs = djs
+	if err := s.SetJob(parent, false); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *Store) addDependentJobToParent(child *Job) error {
+	parent, err := child.GetParent()
+	if err != nil {
+		return err
+	}
+
+	parent.DependentJobs = append(parent.DependentJobs, child.Name)
+	if err := s.SetJob(parent, false); err != nil {
+		return err
 	}
 
 	return nil
@@ -319,6 +328,12 @@ func (s *Store) DeleteJob(name string) (*Job, error) {
 	job, err := s.GetJob(name, nil)
 	if err != nil {
 		return nil, err
+	}
+
+	if job.ParentJob != "" {
+		if err := s.removeDependentJobFromParent(job); err != nil {
+			return nil, err
+		}
 	}
 
 	if err := s.DeleteExecutions(name); err != nil {
