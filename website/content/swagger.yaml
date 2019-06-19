@@ -36,12 +36,12 @@ paths:
         List jobs.
       parameters:
         - in: query
-          name: tags
+          name: metadata
           type: array
           collectionFormat: multi
           items:
             type: string
-          description: Filter jobs by tags
+          description: Filter jobs by metadata
       operationId: getJobs
       tags:
         - jobs
