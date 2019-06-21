@@ -258,7 +258,7 @@ func (h *HTTPTransport) jobToggleHandler(c *gin.Context) {
 }
 
 // isSlug determines whether the given string is a proper value to be used as
-// key in the backend store (a "slug"). If false, the 2nd return value
+// key for the backend store (a "slug"). If false, the 2nd return value
 // will contain the first illegal character found.
 func isSlug(candidate string) (bool, string) {
 	// Allow only lower case letters (unicode), digits, underscore and dash.
