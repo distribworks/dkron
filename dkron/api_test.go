@@ -39,7 +39,15 @@ func setupAPITest(t *testing.T) (a *Agent) {
 func TestAPIJobCreateUpdate(t *testing.T) {
 	a := setupAPITest(t)
 
-	jsonStr := []byte(`{"name": "test_job", "schedule": "@every 1m", "executor": "shell", "executor_config": {"command": "date"}, "owner": "mec", "owner_email": "foo@bar.com", "disabled": true}`)
+	jsonStr := []byte(`{
+		"name": "test_job",
+		"schedule": "@every 1m",
+		"executor": "shell",
+		"executor_config": {"command": "date"},
+		"owner": "mec",
+		"owner_email": "foo@bar.com",
+		"disabled": true
+	}`)
 
 	resp, err := http.Post("http://localhost:8090/v1/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
 	if err != nil {
@@ -54,7 +62,13 @@ func TestAPIJobCreateUpdate(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	jsonStr1 := []byte(`{"name": "test_job", "schedule": "@every 1m", "executor": "shell", "executor_config": {"command": "test"}, "disabled": false}`)
+	jsonStr1 := []byte(`{
+		"name": "test_job",
+		"schedule": "@every 1m",
+		"executor": "shell",
+		"executor_config": {"command": "test"},
+		"disabled": false
+	}`)
 	resp, err = http.Post("http://localhost:8090/v1/jobs", "encoding/json", bytes.NewBuffer(jsonStr1))
 	if err != nil {
 		t.Fatal(err)
@@ -136,7 +150,13 @@ func TestAPIJobCreateUpdateParentJob_NoParent(t *testing.T) {
 func TestAPIJobCreateUpdateValidationBadName(t *testing.T) {
 	a := setupAPITest(t)
 
-	jsonStr := []byte(`{"name": "BAD JOB NAME!", "schedule": "@every 1m", "executor": "shell", "executor_config": {"command": "date"}, "disabled": true}`)
+	jsonStr := []byte(`{
+		"name": "BAD JOB NAME!",
+		"schedule": "@every 1m",
+		"executor": "shell",
+		"executor_config": {"command": "date"},
+		"disabled": true
+	}`)
 
 	resp, err := http.Post("http://localhost:8090/v1/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
 	if err != nil {
@@ -152,7 +172,13 @@ func TestAPIJobCreateUpdateValidationBadName(t *testing.T) {
 func TestAPIJobCreateUpdateValidationValidName(t *testing.T) {
 	a := setupAPITest(t)
 
-	jsonStr := []byte(`{"name": "abcdefghijklmnopqrstuvwxyz0123456789-_ßñëäïüøüáéíóýćàèìòùâêîôûæšłç", "schedule": "@every 1m", "executor": "shell", "executor_config": {"command": "date"}, "disabled": true}`)
+	jsonStr := []byte(`{
+		"name": "abcdefghijklmnopqrstuvwxyz0123456789-_ßñëäïüøüáéíóýćàèìòùâêîôûæšłç",
+		"schedule": "@every 1m",
+		"executor": "shell",
+		"executor_config": {"command": "date"},
+		"disabled": true
+	}`)
 
 	resp, err := http.Post("http://localhost:8090/v1/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
 	if err != nil {
