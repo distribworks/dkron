@@ -27,7 +27,7 @@ const (
 var agentCmd = &cobra.Command{
 	Use:   "agent",
 	Short: "Start a dkron agent",
-	Long: `Start a dkron agent that schedule jobs, listen for executions and run executors.
+	Long: `Start a dkron agent that schedules jobs, listens for executions and runs executors.
 It also runs a web UI.`,
 	// Run will execute the main functions of the agent command.
 	// This includes the main eventloop and starting the server if enabled.
