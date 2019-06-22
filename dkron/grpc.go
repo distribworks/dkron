@@ -243,7 +243,7 @@ func (grpcs *GRPCServer) RunJob(ctx context.Context, req *proto.RunJobRequest) (
 	}
 
 	ex := NewExecution(job.Name)
-	grpcs.agent.RunQuery(ex)
+	grpcs.agent.RunQuery(job, ex)
 
 	jpb := job.ToProto()
 

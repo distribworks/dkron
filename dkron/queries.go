@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/dgraph-io/badger"
 	"github.com/hashicorp/serf/serf"
 	"github.com/sirupsen/logrus"
 )
@@ -28,17 +27,15 @@ type RunQueryParam struct {
 func (a *Agent) RunQuery(job *Job, ex *Execution) {
 	var params *serf.QueryParam
 
-	job, err := a.Store.GetJob(ex.JobName, nil)
-
-	if err != nil {
-		//Job can be removed and the QuerySchedulerRestart not yet received.
-		//In this case, the job will not be found in the store.
-		if err == badger.ErrKeyNotFound {
-			log.Warning("agent: Job not found, cancelling this execution")
-			return
-		}
-		log.WithError(err).Fatal("agent: Getting job error")
-		return
+	e := a.sched.GetEntry(job)
+	if e != nil {
+		job.Next = e.Next
+	}
+	if err := a.GRPCClient.CallSetJob(job); err != nil {
+		log.WithError(err).WithFields(logrus.Fields{
+			"job":    job.Name,
+			"method": "RunQuery",
+		}).Fatal("agent: Error storing job before running")
 	}
 
 	// In the first execution attempt we build and filter the target nodes
@@ -46,7 +43,9 @@ func (a *Agent) RunQuery(job *Job, ex *Execution) {
 	if ex.Attempt <= 1 {
 		filterNodes, filterTags, err := a.processFilteredNodes(job)
 		if err != nil {
-			log.WithError(err).WithField("job", job.Name).Fatal("agent: Error processing filtered nodes")
+			log.WithError(err).WithFields(logrus.Fields{
+				"job": job.Name,
+			}).Fatal("agent: Error processing filtered nodes")
 		}
 		log.Debug("agent: Filtered nodes to run: ", filterNodes)
 		log.Debug("agent: Filtered tags to run: ", filterTags)
