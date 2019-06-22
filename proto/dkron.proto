@@ -26,6 +26,7 @@ message Job {
   map<string, string> metadata = 20;
   google.protobuf.Timestamp last_success = 21;
   google.protobuf.Timestamp last_error = 22;
+  google.protobuf.Timestamp next = 23;
 }
 
 message SetJobRequest {

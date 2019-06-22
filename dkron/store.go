@@ -314,12 +314,6 @@ func (s *Store) GetJobs(options *JobOptions) ([]*Job, error) {
 				}
 			}
 
-			n, err := job.GetNext()
-			if err != nil {
-				return err
-			}
-			job.Next = n
-
 			jobs = append(jobs, job)
 		}
 		return nil
@@ -357,11 +351,6 @@ func (s *Store) GetJob(name string, options *JobOptions) (*Job, error) {
 			job.Status = job.GetStatus()
 		}
 
-		n, err := job.GetNext()
-		if err != nil {
-			return err
-		}
-		job.Next = n
 		return nil
 	})
 
