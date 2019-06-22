@@ -15,10 +15,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func setupAPITest(t *testing.T, port string) (dir string, a *Agent) {
-	dir, err := ioutil.TempDir("", "dkron-test")
-	require.NoError(t, err)
-
+func setupAPITest(port string) (a *Agent) {
 	c := DefaultConfig()
 	c.BindAddr = testutil.GetBindAddr().String()
 	c.HTTPAddr = fmt.Sprintf("127.0.0.1:%s", port)
@@ -27,6 +24,7 @@ func setupAPITest(t *testing.T, port string) (dir string, a *Agent) {
 	c.LogLevel = logLevel
 	c.BootstrapExpect = 1
 	c.DevMode = true
+	c.DataDir = "dkron-test-" + port + ".data"
 
 	a = NewAgent(c, nil)
 	a.Start()
@@ -45,8 +43,7 @@ func setupAPITest(t *testing.T, port string) (dir string, a *Agent) {
 func TestAPIJobCreateUpdate(t *testing.T) {
 	port := "8091"
 	baseURL := fmt.Sprintf("http://localhost:%s/v1", port)
-	dir, _ := setupAPITest(t, port)
-	defer os.RemoveAll(dir)
+	setupAPITest(port)
 
 	jsonStr := []byte(`{
 		"name": "test_job",
@@ -71,13 +68,7 @@ func TestAPIJobCreateUpdate(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	jsonStr1 := []byte(`{
-		"name": "test_job",
-		"schedule": "@every 1m",
-		"executor": "shell",
-		"executor_config": {"command": "test"},
-		"disabled": false
-	}`)
+	jsonStr1 := []byte(`{"name": "test_job", "schedule": "@every 1m", "executor": "shell", "executor_config": {"command": "test"}, "disabled": false}`)
 	resp, err = http.Post(baseURL+"/jobs", "encoding/json", bytes.NewBuffer(jsonStr1))
 	if err != nil {
 		t.Fatal(err)
@@ -95,13 +86,15 @@ func TestAPIJobCreateUpdate(t *testing.T) {
 	assert.False(t, overwriteJob.Disabled)
 	assert.NotEqual(t, origJob.ExecutorConfig["command"], overwriteJob.ExecutorConfig["command"])
 	assert.Equal(t, "test", overwriteJob.ExecutorConfig["command"])
+
+	// Send a shutdown request
+	//a.Stop()
 }
 
 func TestAPIJobCreateUpdateParentJob_SameParent(t *testing.T) {
 	port := "8092"
 	baseURL := fmt.Sprintf("http://localhost:%s/v1", port)
-	dir, _ := setupAPITest(t, port)
-	defer os.RemoveAll(dir)
+	setupAPITest(port)
 
 	jsonStr := []byte(`{
 		"name": "test_job",
@@ -131,9 +124,7 @@ func TestAPIJobCreateUpdateParentJob_SameParent(t *testing.T) {
 func TestAPIJobCreateUpdateParentJob_NoParent(t *testing.T) {
 	port := "8093"
 	baseURL := fmt.Sprintf("http://localhost:%s/v1", port)
-	dir, a := setupAPITest(t, port)
-	defer os.RemoveAll(dir)
-	defer a.Stop()
+	a := setupAPITest(port)
 
 	jsonStr := []byte(`{
 		"name": "test_job",

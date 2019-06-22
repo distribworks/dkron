@@ -9,6 +9,7 @@ import (
 	"github.com/dgraph-io/badger"
 	"github.com/golang/protobuf/ptypes"
 	"github.com/sirupsen/logrus"
+	"github.com/victorcoder/dkron/proto"
 )
 
 const (
@@ -115,9 +116,11 @@ type Job struct {
 	Next time.Time `json:"next"`
 }
 
+// NewJobFromProto create a new Job from a PB Job struct
 func NewJobFromProto(in *proto.Job) *Job {
 	lastSuccess, _ := ptypes.Timestamp(in.GetLastSuccess())
 	lastError, _ := ptypes.Timestamp(in.GetLastError())
+	next, _ := ptypes.Timestamp(in.GetNext())
 	return &Job{
 		Name:           in.Name,
 		Timezone:       in.Timezone,
@@ -138,13 +141,15 @@ func NewJobFromProto(in *proto.Job) *Job {
 		Metadata:       in.Metadata,
 		LastSuccess:    lastSuccess,
 		LastError:      lastError,
+		Next:           next,
 	}
 }
 
-// ToProto return the corresponding proto type
+// ToProto return the corresponding representation of this Job in proto struct
 func (j *Job) ToProto() *proto.Job {
 	lastSuccess, _ := ptypes.TimestampProto(j.LastSuccess)
 	lastError, _ := ptypes.TimestampProto(j.LastError)
+	next, _ := ptypes.TimestampProto(j.Next)
 	return &proto.Job{
 		Name:           j.Name,
 		Timezone:       j.Timezone,
@@ -165,6 +170,7 @@ func (j *Job) ToProto() *proto.Job {
 		Metadata:       j.Metadata,
 		LastSuccess:    lastSuccess,
 		LastError:      lastError,
+		Next:           next,
 	}
 }
 
@@ -186,15 +192,6 @@ func (j *Job) Run() {
 
 			// Simple execution wrapper
 			ex := NewExecution(j.Name)
-
-			// This should be only called on the actual scheduler execution
-			n, err := j.GetNext()
-			if err != nil {
-				log.WithError(err).WithField("job", j.Name).
-					Fatal("agent: Error computing next execution")
-			}
-			j.Next = n
-
 			j.Agent.RunQuery(j, ex)
 		}
 	}
@@ -266,19 +263,6 @@ func (j *Job) GetParent() (*Job, error) {
 	}
 
 	return parentJob, nil
-}
-
-// GetNext returns the job's next schedule
-func (j *Job) GetNext() (time.Time, error) {
-	if j.Schedule != "" {
-		s, err := cron.Parse(j.Schedule)
-		if err != nil {
-			return time.Time{}, err
-		}
-		return s.Next(j.getLast()), nil
-	}
-
-	return time.Time{}, nil
 }
 
 func (j *Job) getLast() time.Time {
