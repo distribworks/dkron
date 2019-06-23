@@ -240,8 +240,7 @@ func parseDescriptor(spec string) Schedule {
 	if strings.HasPrefix(spec, at) {
 		date, err := time.Parse(time.RFC3339, spec[len(at):])
 		if err != nil {
-			log.Printf("Failed to parse date %s: %s. Recovering as past date, job will never run on schedule.", spec, err)
-			date = time.Now().Add(-time.Duration(24 * time.Hour))
+			log.Panicf("Failed to parse date %s: %s", spec, err)
 		}
 		return At(date)
 	}
