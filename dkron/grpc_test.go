@@ -16,7 +16,7 @@ func TestGRPCExecutionDone(t *testing.T) {
 
 	c := DefaultConfig()
 	c.BindAddr = aAddr
-	c.NodeName = "test1"
+	c.NodeName = "test-grpc"
 	c.Server = true
 	c.LogLevel = logLevel
 	c.BootstrapExpect = 1
