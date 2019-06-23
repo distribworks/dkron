@@ -201,7 +201,9 @@ func TestAPIJobCreateUpdateValidationValidName(t *testing.T) {
 }
 
 func TestAPIJobCreateUpdateValidationBadName(t *testing.T) {
-	a := setupAPITest(t)
+	port := "8094"
+	baseURL := fmt.Sprintf("http://localhost:%s/v1", port)
+	a := setupAPITest(port)
 
 	jsonStr := []byte(`{
 		"name": "BAD JOB NAME!",
@@ -211,7 +213,7 @@ func TestAPIJobCreateUpdateValidationBadName(t *testing.T) {
 		"disabled": true
 	}`)
 
-	resp, err := http.Post("http://localhost:8090/v1/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
+	resp, err := http.Post(baseURL+"/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -223,7 +225,9 @@ func TestAPIJobCreateUpdateValidationBadName(t *testing.T) {
 }
 
 func TestAPIJobCreateUpdateValidationValidName(t *testing.T) {
-	a := setupAPITest(t)
+	port := "8095"
+	baseURL := fmt.Sprintf("http://localhost:%s/v1", port)
+	a := setupAPITest(port)
 
 	jsonStr := []byte(`{
 		"name": "abcdefghijklmnopqrstuvwxyz0123456789-_ßñëäïüøüáéíóýćàèìòùâêîôûæšłç",
@@ -233,7 +237,7 @@ func TestAPIJobCreateUpdateValidationValidName(t *testing.T) {
 		"disabled": true
 	}`)
 
-	resp, err := http.Post("http://localhost:8090/v1/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
+	resp, err := http.Post(baseURL+"/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
 	if err != nil {
 		t.Fatal(err)
 	}
