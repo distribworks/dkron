@@ -3,6 +3,7 @@ package dkron
 import (
 	"fmt"
 	"net/http"
+	"regexp"
 
 	"github.com/dgraph-io/badger"
 	"github.com/gin-contrib/expvar"
@@ -151,6 +152,13 @@ func (h *HTTPTransport) jobCreateOrUpdateHandler(c *gin.Context) {
 		return
 	}
 
+	// Validate job name
+	if b, chr := isSlug(job.Name); !b {
+		c.AbortWithStatus(http.StatusBadRequest)
+		c.Writer.WriteString(fmt.Sprintf("Name contains illegal character '%s'.", chr))
+		return
+	}
+
 	// Call gRPC SetJob
 	if err := h.agent.GRPCClient.CallSetJob(&job); err != nil {
 		c.AbortWithError(422, err)
@@ -247,4 +255,14 @@ func (h *HTTPTransport) jobToggleHandler(c *gin.Context) {
 
 	c.Header("Location", c.Request.RequestURI)
 	renderJSON(c, http.StatusOK, job)
+}
+
+// isSlug determines whether the given string is a proper value to be used as
+// key in the backend store (a "slug"). If false, the 2nd return value
+// will contain the first illegal character found.
+func isSlug(candidate string) (bool, string) {
+	// Allow only lower case letters (unicode), digits, underscore and dash.
+	illegalCharPattern, _ := regexp.Compile(`[^\p{Ll}0-9_-]`)
+	whyNot := illegalCharPattern.FindString(candidate)
+	return whyNot == "", whyNot
 }

@@ -87,8 +87,6 @@ func (s *Store) runGcLoop() {
 func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
 	//Existing job that has children, let's keep it's children
 
-	// Sanitize the job name
-	job.Name = generateSlug(job.Name)
 	jobKey := fmt.Sprintf("jobs/%s", job.Name)
 
 	// Init the job agent
