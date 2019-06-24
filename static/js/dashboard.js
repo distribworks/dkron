@@ -235,9 +235,10 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
       success_count = success_count + data[i].success_count;
       error_count = error_count + data[i].error_count;
 
-      if (new Date(Date.parse(data[i].last_success)) > new Date(Date.parse(data[i].last_error))) {
+      var lastErrorDate = new Date(Date.parse(data[i].last_error));
+      if (new Date(Date.parse(data[i].last_success)) > lastErrorDate) {
         $scope.successful_jobs = $scope.successful_jobs + 1;
-      } else {
+      } else if (lastErrorDate.getFullYear() !== 1) {
         $scope.failed_jobs = $scope.failed_jobs + 1;
       }
     }
@@ -370,9 +371,10 @@ dkron.controller('IndexCtrl', function ($scope, $http, $timeout, $element) {
       success_count = success_count + data[i].success_count;
       error_count = error_count + data[i].error_count;
 
-      if (new Date(Date.parse(data[i].last_success)) > new Date(Date.parse(data[i].last_error))) {
+      var lastErrorDate = new Date(Date.parse(data[i].last_error));
+      if (new Date(Date.parse(data[i].last_success)) > lastErrorDate) {
         $scope.successful_jobs = $scope.successful_jobs + 1;
-      } else {
+      } else if (lastErrorDate.getFullYear() !== 1) {
         $scope.failed_jobs = $scope.failed_jobs + 1;
       }
 
