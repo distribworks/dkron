@@ -6,14 +6,19 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"testing"
 	"time"
 
 	"github.com/hashicorp/serf/testutil"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
-func setupAPITest(port string) (a *Agent) {
+func setupAPITest(t *testing.T, port string) (dir string, a *Agent) {
+	dir, err := ioutil.TempDir("", "dkron-test")
+	require.NoError(t, err)
+
 	c := DefaultConfig()
 	c.BindAddr = testutil.GetBindAddr().String()
 	c.HTTPAddr = fmt.Sprintf("127.0.0.1:%s", port)
@@ -22,7 +27,7 @@ func setupAPITest(port string) (a *Agent) {
 	c.LogLevel = logLevel
 	c.BootstrapExpect = 1
 	c.DevMode = true
-	c.DataDir = "dkron-test-" + port + ".data"
+	c.DataDir = dir
 
 	a = NewAgent(c, nil)
 	a.Start()
@@ -41,7 +46,8 @@ func setupAPITest(port string) (a *Agent) {
 func TestAPIJobCreateUpdate(t *testing.T) {
 	port := "8091"
 	baseURL := fmt.Sprintf("http://localhost:%s/v1", port)
-	setupAPITest(port)
+	dir, _ := setupAPITest(t, port)
+	defer os.RemoveAll(dir)
 
 	jsonStr := []byte(`{
 		"name": "test_job",
@@ -90,15 +96,13 @@ func TestAPIJobCreateUpdate(t *testing.T) {
 	assert.False(t, overwriteJob.Disabled)
 	assert.NotEqual(t, origJob.ExecutorConfig["command"], overwriteJob.ExecutorConfig["command"])
 	assert.Equal(t, "test", overwriteJob.ExecutorConfig["command"])
-
-	// Send a shutdown request
-	//a.Stop()
 }
 
 func TestAPIJobCreateUpdateParentJob_SameParent(t *testing.T) {
 	port := "8092"
 	baseURL := fmt.Sprintf("http://localhost:%s/v1", port)
-	setupAPITest(port)
+	dir, _ := setupAPITest(t, port)
+	defer os.RemoveAll(dir)
 
 	jsonStr := []byte(`{
 		"name": "test_job",
@@ -128,7 +132,9 @@ func TestAPIJobCreateUpdateParentJob_SameParent(t *testing.T) {
 func TestAPIJobCreateUpdateParentJob_NoParent(t *testing.T) {
 	port := "8093"
 	baseURL := fmt.Sprintf("http://localhost:%s/v1", port)
-	a := setupAPITest(port)
+	dir, a := setupAPITest(t, port)
+	defer os.RemoveAll(dir)
+	defer a.Stop()
 
 	jsonStr := []byte(`{
 		"name": "test_job",
@@ -150,15 +156,14 @@ func TestAPIJobCreateUpdateParentJob_NoParent(t *testing.T) {
 	assert.Equal(t, 422, resp.StatusCode)
 	errJSON, err := json.Marshal(ErrParentJobNotFound.Error())
 	assert.Contains(t, string(errJSON)+"\n", string(body))
-
-	// Send a shutdown request
-	a.Stop()
 }
 
 func TestAPIJobCreateUpdateValidationBadName(t *testing.T) {
 	port := "8094"
 	baseURL := fmt.Sprintf("http://localhost:%s/v1", port)
-	a := setupAPITest(port)
+	dir, a := setupAPITest(t, port)
+	defer os.RemoveAll(dir)
+	defer a.Stop()
 
 	jsonStr := []byte(`{
 		"name": "BAD JOB NAME!",
@@ -174,15 +179,14 @@ func TestAPIJobCreateUpdateValidationBadName(t *testing.T) {
 	}
 
 	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
-
-	// Send a shutdown request
-	a.Stop()
 }
 
 func TestAPIJobCreateUpdateValidationValidName(t *testing.T) {
 	port := "8095"
 	baseURL := fmt.Sprintf("http://localhost:%s/v1", port)
-	a := setupAPITest(port)
+	dir, a := setupAPITest(t, port)
+	defer os.RemoveAll(dir)
+	defer a.Stop()
 
 	jsonStr := []byte(`{
 		"name": "abcdefghijklmnopqrstuvwxyz0123456789-_ßñëäïüøüáéíóýćàèìòùâêîôûæšłç",
@@ -198,7 +202,4 @@ func TestAPIJobCreateUpdateValidationValidName(t *testing.T) {
 	}
 
 	assert.Equal(t, http.StatusCreated, resp.StatusCode)
-
-	// Send a shutdown request
-	a.Stop()
 }
