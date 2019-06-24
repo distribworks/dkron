@@ -30,7 +30,7 @@ func (a *Agent) monitorLeadership() {
 	var weAreLeaderCh chan struct{}
 	var leaderLoop sync.WaitGroup
 	for {
-		log.Info("dkron: monitoring leadeship")
+		log.Info("dkron: monitoring leadership")
 		select {
 		case isLeader := <-a.leaderCh:
 			switch {

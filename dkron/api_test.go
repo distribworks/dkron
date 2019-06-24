@@ -43,7 +43,15 @@ func TestAPIJobCreateUpdate(t *testing.T) {
 	baseURL := fmt.Sprintf("http://localhost:%s/v1", port)
 	setupAPITest(port)
 
-	jsonStr := []byte(`{"name": "test_job", "schedule": "@every 1m", "executor": "shell", "executor_config": {"command": "date"}, "owner": "mec", "owner_email": "foo@bar.com", "disabled": true}`)
+	jsonStr := []byte(`{
+		"name": "test_job",
+		"schedule": "@every 1m",
+		"executor": "shell",
+		"executor_config": {"command": "date"},
+		"owner": "mec",
+		"owner_email": "foo@bar.com",
+		"disabled": true
+	}`)
 
 	resp, err := http.Post(baseURL+"/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
 	if err != nil {
@@ -58,7 +66,13 @@ func TestAPIJobCreateUpdate(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	jsonStr1 := []byte(`{"name": "test_job", "schedule": "@every 1m", "executor": "shell", "executor_config": {"command": "test"}, "disabled": false}`)
+	jsonStr1 := []byte(`{
+		"name": "test_job",
+		"schedule": "@every 1m",
+		"executor": "shell",
+		"executor_config": {"command": "test"},
+		"disabled": false
+	}`)
 	resp, err = http.Post(baseURL+"/jobs", "encoding/json", bytes.NewBuffer(jsonStr1))
 	if err != nil {
 		t.Fatal(err)
@@ -91,8 +105,7 @@ func TestAPIJobCreateUpdateParentJob_SameParent(t *testing.T) {
 		"schedule": "@every 1m",
 		"command": "date",
 		"owner": "mec",
-		"owner_email":
-		"foo@bar.com",
+		"owner_email": "foo@bar.com",
 		"disabled": true,
 		"parent_job": "test_job"
 	}`)
@@ -122,8 +135,7 @@ func TestAPIJobCreateUpdateParentJob_NoParent(t *testing.T) {
 		"schedule": "@every 1m",
 		"command": "date",
 		"owner": "mec",
-		"owner_email":
-		"foo@bar.com",
+		"owner_email": "foo@bar.com",
 		"disabled": true,
 		"parent_job": "parent_test_job"
 	}`)
@@ -138,6 +150,54 @@ func TestAPIJobCreateUpdateParentJob_NoParent(t *testing.T) {
 	assert.Equal(t, 422, resp.StatusCode)
 	errJSON, err := json.Marshal(ErrParentJobNotFound.Error())
 	assert.Contains(t, string(errJSON)+"\n", string(body))
+
+	// Send a shutdown request
+	a.Stop()
+}
+
+func TestAPIJobCreateUpdateValidationBadName(t *testing.T) {
+	port := "8094"
+	baseURL := fmt.Sprintf("http://localhost:%s/v1", port)
+	a := setupAPITest(port)
+
+	jsonStr := []byte(`{
+		"name": "BAD JOB NAME!",
+		"schedule": "@every 1m",
+		"executor": "shell",
+		"executor_config": {"command": "date"},
+		"disabled": true
+	}`)
+
+	resp, err := http.Post(baseURL+"/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
+
+	// Send a shutdown request
+	a.Stop()
+}
+
+func TestAPIJobCreateUpdateValidationValidName(t *testing.T) {
+	port := "8095"
+	baseURL := fmt.Sprintf("http://localhost:%s/v1", port)
+	a := setupAPITest(port)
+
+	jsonStr := []byte(`{
+		"name": "abcdefghijklmnopqrstuvwxyz0123456789-_ßñëäïüøüáéíóýćàèìòùâêîôûæšłç",
+		"schedule": "@every 1m",
+		"executor": "shell",
+		"executor_config": {"command": "date"},
+		"disabled": true
+	}`)
+
+	resp, err := http.Post(baseURL+"/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.Equal(t, http.StatusCreated, resp.StatusCode)
 
 	// Send a shutdown request
 	a.Stop()
