@@ -10,11 +10,15 @@ import (
 )
 
 func TestJobGetParent(t *testing.T) {
+	dir, err := ioutil.TempDir("", "dkron-test")
+	require.NoError(t, err)
+	defer os.RemoveAll(dir)
+
+	s, err := NewStore(nil, dir)
+	defer s.Shutdown()
+	require.NoError(t, err)
+
 	a := &Agent{}
-	s, err := NewStore(a, "test")
-	if err != nil {
-		t.Fatal(err)
-	}
 	a.Store = s
 
 	parentTestJob := &Job{
