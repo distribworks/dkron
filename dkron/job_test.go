@@ -14,11 +14,10 @@ func TestJobGetParent(t *testing.T) {
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
 
-	s, err := NewStore(nil, dir)
+	a := &Agent{}
+	s, err := NewStore(a, dir)
 	defer s.Shutdown()
 	require.NoError(t, err)
-
-	a := &Agent{}
 	a.Store = s
 
 	parentTestJob := &Job{
