@@ -169,7 +169,7 @@ func (s *Store) removeFromParent(child *Job) error {
 
 	// Remove all occurrences from the parent, not just one.
 	// Due to an old bug, a parent can have the same child more than once.
-	var djs []string = nil
+	djs := []string{}
 	for _, djn := range parent.DependentJobs {
 		if djn != child.Name {
 			djs = append(djs, djn)
