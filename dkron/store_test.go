@@ -11,11 +11,13 @@ import (
 )
 
 func TestStore(t *testing.T) {
-	s, err := NewStore(nil, "test1.data")
+	dir, err := ioutil.TempDir("", "dkron-test")
+	require.NoError(t, err)
+	defer os.RemoveAll(dir)
+
+	s, err := NewStore(nil, dir)
+	require.NoError(t, err)
 	defer s.Shutdown()
-	if err != nil {
-		t.Fatal(err)
-	}
 
 	testJob := &Job{
 		Name:           "test",
@@ -80,12 +82,6 @@ func TestStore(t *testing.T) {
 }
 
 func TestStore_GetLastExecutionGroup(t *testing.T) {
-	s, err := NewStore(nil, "test2.data")
-	defer s.Shutdown()
-	if err != nil {
-		t.Fatal(err)
-	}
-
 	// This can not use time.Now() because that will include monotonic information
 	// that will cause the unmarshalled execution to differ from our generated version
 	// See `go doc time`
@@ -195,6 +191,11 @@ func TestStore_GetLastExecutionGroup(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			dir, err := ioutil.TempDir("", "dkron-test")
+			require.NoError(t, err)
+			s, err := NewStore(nil, dir)
+			require.NoError(t, err)
+
 			for _, e := range tt.addExecutions {
 				s.SetExecution(e)
 			}
@@ -207,6 +208,11 @@ func TestStore_GetLastExecutionGroup(t *testing.T) {
 			for _, w := range tt.want {
 				assert.Contains(t, got, w)
 			}
+
+			err = s.Shutdown()
+			require.NoError(t, err)
+			err = os.RemoveAll(dir)
+			require.NoError(t, err)
 		})
 	}
 }
