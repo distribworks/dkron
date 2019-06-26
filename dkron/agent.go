@@ -174,21 +174,11 @@ func (a *Agent) Stop() error {
 	return nil
 }
 
-func (a *Agent) setupRaft(raftl net.Listener) error {
+func (a *Agent) setupRaft() error {
 	if a.config.BootstrapExpect > 0 {
 		if a.config.BootstrapExpect == 1 {
 			a.config.Bootstrap = true
 		}
-	}
-	// Create a transport layer
-	if a.RaftLayer == nil {
-		rl := NewRaftLayer()
-		a.RaftLayer = rl
-	}
-
-	err := a.RaftLayer.Open(raftl)
-	if err != nil {
-		log.Fatal(err)
 	}
 
 	transport := raft.NewNetworkTransport(a.RaftLayer, 3, raftTimeout, os.Stdout)
@@ -499,24 +489,48 @@ func (a *Agent) StartServer() {
 
 	// Create a cmux object.
 	tcpm := cmux.New(l)
+	var grpcl, raftl net.Listener
+	var tlsm cmux.CMux
 
-	// Declare the match for different services required.
-	grpcl := tcpm.MatchWithWriters(
-		cmux.HTTP2MatchHeaderFieldSendSettings("content-type", "application/grpc"))
-	raftl := tcpm.Match(cmux.Any())
+	// If RaftLayer brings TLS config listen to TLS
+	if a.RaftLayer != nil && a.RaftLayer.TLSConfig != nil {
+		tlsl := tcpm.Match(cmux.Any())
+		tlsl = tls.NewListener(tlsl, a.RaftLayer.TLSConfig)
+		tlsm = cmux.New(tlsl)
+		// Declare the match for TLS gRPC
+		grpcl = tlsm.Match(cmux.HTTP2HeaderField("content-type", "application/grpc"))
+		// Declare the match for TLS raft RPC
+		raftl = tlsm.Match(cmux.Any())
+
+	} else {
+		rl := NewRaftLayer()
+		a.RaftLayer = rl
+
+		// Declare the match for gRPC
+		grpcl = tcpm.Match(cmux.HTTP2HeaderField("content-type", "application/grpc"))
+		// Declare the match for raft RPC
+		raftl = tcpm.Match(cmux.Any())
+	}
 
 	if a.GRPCServer == nil {
 		a.GRPCServer = NewGRPCServer(a)
 	}
+
 	if err := a.GRPCServer.Serve(grpcl); err != nil {
 		log.WithError(err).Fatal("agent: RPC server failed to start")
 	}
 
-	if err := a.setupRaft(raftl); err != nil {
+	if err := a.RaftLayer.Open(raftl); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := a.setupRaft(); err != nil {
 		log.WithError(err).Fatal("agent: Raft layer failed to start")
 	}
-	go tcpm.Serve()
 
+	// TODO Control errors
+	go tlsm.Serve()
+	go tcpm.Serve()
 	go a.monitorLeadership()
 }
 

@@ -11,12 +11,9 @@ import (
 
 // RaftLayer is the network layer for internode communications.
 type RaftLayer struct {
-	ln net.Listener
+	TLSConfig *tls.Config
 
-	certFile        string // Path to local X.509 cert.
-	certKey         string // Path to corresponding X.509 key.
-	remoteEncrypted bool   // Remote nodes use encrypted communication.
-	skipVerify      bool   // Skip verification of remote node certs.
+	ln net.Listener
 }
 
 // NewRaftLayer returns an initialized unecrypted RaftLayer.
@@ -25,25 +22,12 @@ func NewRaftLayer() *RaftLayer {
 }
 
 // NewTLSRaftLayer returns an initialized TLS-ecrypted RaftLayer.
-func NewTLSRaftLayer(certFile, keyPath string, skipVerify bool) *RaftLayer {
-	return &RaftLayer{
-		certFile:        certFile,
-		certKey:         keyPath,
-		remoteEncrypted: true,
-		skipVerify:      skipVerify,
-	}
+func NewTLSRaftLayer(tlsConfig *tls.Config) *RaftLayer {
+	return &RaftLayer{TLSConfig: tlsConfig}
 }
 
 // Open opens the RaftLayer, binding to the supplied address.
 func (t *RaftLayer) Open(l net.Listener) error {
-	if t.certFile != "" {
-		config, err := createTLSConfig(t.certFile, t.certKey)
-		if err != nil {
-			return err
-		}
-		l = tls.NewListener(l, config)
-	}
-
 	t.ln = l
 	return nil
 }
@@ -54,12 +38,9 @@ func (t *RaftLayer) Dial(addr raft.ServerAddress, timeout time.Duration) (net.Co
 
 	var err error
 	var conn net.Conn
-	if t.remoteEncrypted {
-		conf := &tls.Config{
-			InsecureSkipVerify: t.skipVerify,
-		}
-		fmt.Println("doing a TLS dial")
-		conn, err = tls.DialWithDialer(dialer, "tcp", string(addr), conf)
+	if t.TLSConfig != nil {
+		log.Debug("doing a TLS dial")
+		conn, err = tls.DialWithDialer(dialer, "tcp", string(addr), t.TLSConfig)
 	} else {
 		conn, err = dialer.Dial("tcp", string(addr))
 	}
@@ -84,16 +65,4 @@ func (t *RaftLayer) Close() error {
 // Addr returns the binding address of the RaftLayer.
 func (t *RaftLayer) Addr() net.Addr {
 	return t.ln.Addr()
-}
-
-// createTLSConfig returns a TLS config from the given cert and key.
-func createTLSConfig(certFile, keyFile string) (*tls.Config, error) {
-	var err error
-	config := &tls.Config{}
-	config.Certificates = make([]tls.Certificate, 1)
-	config.Certificates[0], err = tls.LoadX509KeyPair(certFile, keyFile)
-	if err != nil {
-		return nil, err
-	}
-	return config, nil
 }
