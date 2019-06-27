@@ -190,6 +190,7 @@ func (a *Agent) setupRaft() error {
 
 	config := raft.DefaultConfig()
 	config.LogOutput = logger
+	config.LocalID = raft.ServerID(a.config.NodeName)
 
 	// Build an all in-memory setup for dev mode, otherwise prepare a full
 	// disk-based setup.
@@ -226,9 +227,27 @@ func (a *Agent) setupRaft() error {
 			return err
 		}
 		logStore = cacheStore
-	}
 
-	config.LocalID = raft.ServerID(a.config.NodeName)
+		// Check for peers.json file for recovery
+		peersFile := filepath.Join(a.config.DataDir, "raft", "peers.json")
+		if _, err := os.Stat(peersFile); err == nil {
+			log.Info("found peers.json file, recovering Raft configuration...")
+			var configuration raft.Configuration
+			configuration, err = raft.ReadConfigJSON(peersFile)
+			if err != nil {
+				return fmt.Errorf("recovery failed to parse peers.json: %v", err)
+			}
+			tmpFsm := NewFSM(nil)
+			if err := raft.RecoverCluster(config, tmpFsm,
+				logStore, stableStore, snapshots, transport, configuration); err != nil {
+				return fmt.Errorf("recovery failed: %v", err)
+			}
+			if err := os.Remove(peersFile); err != nil {
+				return fmt.Errorf("recovery failed to delete peers.json, please delete manually (see peers.info for details): %v", err)
+			}
+			log.Info("deleted peers.json file after successful recovery")
+		}
+	}
 
 	// If we are in bootstrap or dev mode and the state is clean then we can
 	// bootstrap now.
