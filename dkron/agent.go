@@ -37,9 +37,8 @@ const (
 var (
 	expNode = expvar.NewString("node")
 
-	// ErrLeaderNotFound is returned when obtained leader from store is not found in member list
+	// ErrLeaderNotFound is returned when obtained leader is not found in member list
 	ErrLeaderNotFound = errors.New("No member leader found in member list")
-	ErrNoRPCAddress   = errors.New("No RPC address tag found in server")
 
 	defaultLeaderTTL = 20 * time.Second
 
@@ -54,10 +53,7 @@ type Agent struct {
 	Store            Storage
 	GRPCServer       DkronGRPCServer
 	GRPCClient       DkronGRPCClient
-
-	// RaftLayer provides network layering of the raft RPC along with
-	// the Dkron gRPC transport layer.
-	RaftLayer *RaftLayer
+	TLSConfig        *tls.Config
 
 	// Set a global peer updater func
 	PeerUpdaterFunc func(...string)
@@ -71,8 +67,11 @@ type Agent struct {
 
 	// The raft instance is used among Dkron nodes within the
 	// region to protect operations that require strong consistency
-	leaderCh      <-chan bool
-	raft          *raft.Raft
+	leaderCh <-chan bool
+	raft     *raft.Raft
+	// raftLayer provides network layering of the raft RPC along with
+	// the Dkron gRPC transport layer.
+	raftLayer     *RaftLayer
 	raftStore     *raftboltdb.BoltStore
 	raftInmem     *raft.InmemStore
 	raftTransport *raft.NetworkTransport
@@ -181,10 +180,16 @@ func (a *Agent) setupRaft() error {
 		}
 	}
 
-	transport := raft.NewNetworkTransport(a.RaftLayer, 3, raftTimeout, os.Stdout)
+	logger := ioutil.Discard
+	if log.Logger.Level == logrus.DebugLevel {
+		logger = log.Logger.Writer()
+	}
+
+	transport := raft.NewNetworkTransport(a.raftLayer, 3, raftTimeout, logger)
 	a.raftTransport = transport
 
 	config := raft.DefaultConfig()
+	config.LogOutput = logger
 
 	// Build an all in-memory setup for dev mode, otherwise prepare a full
 	// disk-based setup.
@@ -201,7 +206,7 @@ func (a *Agent) setupRaft() error {
 		var err error
 		// Create the snapshot store. This allows the Raft to truncate the log to
 		// mitigate the issue of having an unbounded replicated log.
-		snapshots, err = raft.NewFileSnapshotStore(filepath.Join(a.config.DataDir, "raft"), 3, os.Stderr)
+		snapshots, err = raft.NewFileSnapshotStore(filepath.Join(a.config.DataDir, "raft"), 3, logger)
 		if err != nil {
 			return fmt.Errorf("file snapshot store: %s", err)
 		}
@@ -447,11 +452,12 @@ func (a *Agent) Config() *Config {
 	return a.config
 }
 
-// Config returns the agent's config.
+// SetConfig sets the agent's config.
 func (a *Agent) SetConfig(c *Config) {
 	a.config = c
 }
 
+// StartServer launch a new dkron server process
 func (a *Agent) StartServer() {
 	if a.Store == nil {
 		dirExists, err := exists(a.config.DataDir)
@@ -493,21 +499,35 @@ func (a *Agent) StartServer() {
 	var tlsm cmux.CMux
 
 	// If RaftLayer brings TLS config listen to TLS
-	if a.RaftLayer != nil && a.RaftLayer.TLSConfig != nil {
+	if a.TLSConfig != nil {
+		// Create a RaftLayer with TLS
+		a.raftLayer = NewTLSRaftLayer(a.TLSConfig)
+
+		// Match any connection to the recursive mux
 		tlsl := tcpm.Match(cmux.Any())
-		tlsl = tls.NewListener(tlsl, a.RaftLayer.TLSConfig)
+		tlsl = tls.NewListener(tlsl, a.TLSConfig)
+
+		// Declare sub cMUX for TLS
 		tlsm = cmux.New(tlsl)
+
 		// Declare the match for TLS gRPC
-		grpcl = tlsm.Match(cmux.HTTP2HeaderField("content-type", "application/grpc"))
+		grpcl = tlsm.MatchWithWriters(cmux.HTTP2MatchHeaderFieldSendSettings("content-type", "application/grpc"))
+
 		// Declare the match for TLS raft RPC
 		raftl = tlsm.Match(cmux.Any())
 
+		go func() {
+			if err := tlsm.Serve(); err != nil {
+				log.Fatal(err)
+			}
+		}()
 	} else {
-		rl := NewRaftLayer()
-		a.RaftLayer = rl
+		// Declare a plain RaftLayer
+		a.raftLayer = NewRaftLayer()
 
 		// Declare the match for gRPC
-		grpcl = tcpm.Match(cmux.HTTP2HeaderField("content-type", "application/grpc"))
+		grpcl = tcpm.MatchWithWriters(cmux.HTTP2MatchHeaderFieldSendSettings("content-type", "application/grpc"))
+
 		// Declare the match for raft RPC
 		raftl = tcpm.Match(cmux.Any())
 	}
@@ -520,7 +540,7 @@ func (a *Agent) StartServer() {
 		log.WithError(err).Fatal("agent: RPC server failed to start")
 	}
 
-	if err := a.RaftLayer.Open(raftl); err != nil {
+	if err := a.raftLayer.Open(raftl); err != nil {
 		log.Fatal(err)
 	}
 
@@ -528,9 +548,12 @@ func (a *Agent) StartServer() {
 		log.WithError(err).Fatal("agent: Raft layer failed to start")
 	}
 
-	// TODO Control errors
-	go tlsm.Serve()
-	go tcpm.Serve()
+	// Start serving everything
+	go func() {
+		if err := tcpm.Serve(); err != nil {
+			log.Fatal(err)
+		}
+	}()
 	go a.monitorLeadership()
 }
 
