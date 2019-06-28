@@ -93,6 +93,24 @@ message ToggleJobResponse {
   Job job = 1;
 }
 
+message RaftServer {
+  string id = 1;
+	string node = 2;
+	string address = 3;
+	bool leader = 4;
+	bool voter = 5; 
+	string raft_protocol = 6;
+}
+
+message RaftGetConfigurationResponse {
+  repeated RaftServer servers = 1;
+  uint64 index = 2;   
+}
+
+message RaftRemovePeerByIDRequest {
+  string id = 1;
+}
+
 service Dkron {
   rpc GetJob (GetJobRequest) returns (GetJobResponse);
   rpc ExecutionDone (ExecutionDoneRequest) returns (ExecutionDoneResponse);
@@ -101,4 +119,6 @@ service Dkron {
   rpc DeleteJob (DeleteJobRequest) returns (DeleteJobResponse);
   rpc RunJob (RunJobRequest) returns (RunJobResponse);
   rpc ToggleJob (ToggleJobRequest) returns (ToggleJobResponse);
+  rpc RaftGetConfiguration (google.protobuf.Empty) returns (RaftGetConfigurationResponse);
+  rpc RaftRemovePeerByID (RaftRemovePeerByIDRequest) returns (google.protobuf.Empty);
 }

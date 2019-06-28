@@ -31,7 +31,7 @@ If `dkron leave` isn't able to remove the server, you can use the `dkron raft re
 You can use the `dkron raft list-peers` command to inspect the Raft configuration:
 
 ```
-$ dkron operator raft list-peers
+$ dkron raft list-peers
 Node                   ID               Address          State     Voter
 dkron-server01.global  10.10.11.5:4647  10.10.11.5:4647  follower  true
 dkron-server02.global  10.10.11.6:4647  10.10.11.6:4647  leader    true
@@ -94,11 +94,11 @@ At this point, the cluster should be in an operable state again. One of the node
 You can use the `dkron raft list-peers` command to inspect the Raft configuration:
 
 ```
-$ dkron operator raft list-peers
-Node                   ID               Address          State     Voter
-dkron-server01.global  10.10.11.5:4647  10.10.11.5:4647  follower  true
-dkron-server02.global  10.10.11.6:4647  10.10.11.6:4647  leader    true
-dkron-server03.global  10.10.11.7:4647  10.10.11.7:4647  follower  true
+$ dkron raft list-peers
+Node   ID     Address          State     Voter
+node1  node1  10.10.11.5:4647  follower  true
+node2  node2  10.10.11.6:4647  leader    true
+node3  node3  10.10.11.7:4647  follower  true
 ```
 
 * id (string: <required>) - Specifies the node ID of the server. This is the `name` of the node.
