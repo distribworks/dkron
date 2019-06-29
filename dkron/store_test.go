@@ -130,6 +130,30 @@ func TestStore_DependentJobsUpdatedAfterSwappingParent(t *testing.T) {
 	assert.Equal(t, "child1", parent2.DependentJobs[0])
 }
 
+func TestStore_JobBecomesDependentJob(t *testing.T) {
+	s, dir := setupStore(t)
+	defer cleanupStore(dir, s)
+
+	storeJob(t, s, "child1")
+	storeJob(t, s, "parent1")
+	storeChildJob(t, s, "child1", "parent1")
+	parent := loadJob(t, s, "parent1")
+
+	assert.Equal(t, "child1", parent.DependentJobs[0])
+}
+
+func TestStore_JobBecomesIndependentJob(t *testing.T) {
+	s, dir := setupStore(t)
+	defer cleanupStore(dir, s)
+
+	storeJob(t, s, "parent1")
+	storeChildJob(t, s, "child1", "parent1")
+	storeJob(t, s, "child1")
+	parent := loadJob(t, s, "parent1")
+
+	assert.Equal(t, 0, len(parent.DependentJobs))
+}
+
 func TestStore_GetLastExecutionGroup(t *testing.T) {
 	// This can not use time.Now() because that will include monotonic information
 	// that will cause the unmarshalled execution to differ from our generated version
