@@ -81,6 +81,55 @@ func TestStore(t *testing.T) {
 	}
 }
 
+func TestStore_AddDependentJobToParent(t *testing.T) {
+	s, dir := setupStore(t)
+	defer cleanupStore(dir, s)
+
+	storeJob(t, s, "parent1")
+	storeChildJob(t, s, "child1", "parent1")
+	parent := loadJob(t, s, "parent1")
+
+	assert.Equal(t, "child1", parent.DependentJobs[0])
+}
+
+func TestStore_ParentIsUpdatedAfterDeletingDependentJob(t *testing.T) {
+	s, dir := setupStore(t)
+	defer cleanupStore(dir, s)
+
+	storeJob(t, s, "parent1")
+	storeChildJob(t, s, "child1", "parent1")
+	parent := loadJob(t, s, "parent1")
+
+	assert.Equal(t, "child1", parent.DependentJobs[0])
+
+	deleteJob(t, s, "child1")
+	parent = loadJob(t, s, "parent1")
+
+	// Child has to have been removed from the parent (nr. of dependent jobs is 0)
+	assert.Equal(t, 0, len(parent.DependentJobs))
+}
+
+func TestStore_DependentJobsUpdatedAfterSwappingParent(t *testing.T) {
+	s, dir := setupStore(t)
+	defer cleanupStore(dir, s)
+
+	storeJob(t, s, "parent1")
+	storeChildJob(t, s, "child1", "parent1")
+	parent1 := loadJob(t, s, "parent1")
+
+	assert.Equal(t, parent1.DependentJobs[0], "child1")
+
+	storeJob(t, s, "parent2")
+	storeChildJob(t, s, "child1", "parent2")
+	parent1 = loadJob(t, s, "parent1")
+
+	assert.Equal(t, 0, len(parent1.DependentJobs))
+
+	parent2 := loadJob(t, s, "parent2")
+
+	assert.Equal(t, "child1", parent2.DependentJobs[0])
+}
+
 func TestStore_GetLastExecutionGroup(t *testing.T) {
 	// This can not use time.Now() because that will include monotonic information
 	// that will cause the unmarshalled execution to differ from our generated version
@@ -215,4 +264,57 @@ func TestStore_GetLastExecutionGroup(t *testing.T) {
 			require.NoError(t, err)
 		})
 	}
+}
+
+// Following are supporting functions for the tests
+
+func storeJob(t *testing.T, s *Store, jobName string) {
+	job := scaffoldJob()
+	job.Name = jobName
+	require.NoError(t, s.SetJob(job, false))
+}
+
+func storeChildJob(t *testing.T, s *Store, jobName string, parentName string) {
+	job := scaffoldJob()
+	job.Name = jobName
+	job.ParentJob = parentName
+	require.NoError(t, s.SetJob(job, false))
+}
+
+func scaffoldJob() *Job {
+	return &Job{
+		Name:           "test",
+		Schedule:       "@every 1m",
+		Executor:       "shell",
+		ExecutorConfig: map[string]string{"command": "/bin/false"},
+		Disabled:       true,
+	}
+}
+
+func setupStore(t *testing.T) (*Store, string) {
+	dir, err := ioutil.TempDir("", "dkron-test")
+	require.NoError(t, err)
+
+	a := NewAgent(nil, nil)
+	s, err := NewStore(a, dir)
+	require.NoError(t, err)
+	a.Store = s
+
+	return s, dir
+}
+
+func cleanupStore(dir string, s *Store) {
+	s.Shutdown()
+	os.RemoveAll(dir)
+}
+
+func loadJob(t *testing.T, s *Store, name string) *Job {
+	job, err := s.GetJob(name, nil)
+	require.NoError(t, err)
+	return job
+}
+
+func deleteJob(t *testing.T, s *Store, name string) {
+	_, err := s.DeleteJob(name)
+	require.NoError(t, err)
 }
