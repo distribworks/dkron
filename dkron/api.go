@@ -196,7 +196,7 @@ func (h *HTTPTransport) jobRunHandler(c *gin.Context) {
 	}
 
 	ex := NewExecution(job.Name)
-	h.agent.RunQuery(ex)
+	h.agent.RunQuery(job, ex)
 
 	c.Header("Location", c.Request.RequestURI)
 	c.Status(http.StatusAccepted)
