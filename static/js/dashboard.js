@@ -167,6 +167,8 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
   // calculate page in place
   $scope.groupToPages = function () {
     $scope.gap = Math.round($scope.jobs.length / $scope.itemsPerPage);
+    $scope.gap = Math.min($scope.gap, 10);
+    
     $scope.pagedItems = [];
 
     for (var i = 0; i < $scope.jobs.length; i++) {
@@ -191,6 +193,12 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
     return ret;
   };
 
+  $scope.firstPage = function () {
+    if ($scope.currentPage > 0) {
+      $scope.currentPage = 0;
+    }
+  };
+
   $scope.prevPage = function () {
     if ($scope.currentPage > 0) {
       $scope.currentPage--;
@@ -200,6 +208,12 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
   $scope.nextPage = function () {
     if ($scope.currentPage < $scope.pagedItems.length - 1) {
       $scope.currentPage++;
+    }
+  };
+
+  $scope.lastPage = function () {
+    if ($scope.currentPage < $scope.pagedItems.length - 1) {
+      $scope.currentPage = Math.ceil($scope.jobs.length / $scope.itemsPerPage) - 1;
     }
   };
 
