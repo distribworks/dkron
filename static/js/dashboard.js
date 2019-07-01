@@ -166,11 +166,9 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
 
   // calculate page in place
   $scope.groupToPages = function () {
-    if (Math.round($scope.jobs.length / $scope.itemsPerPage) < 10) {
-      $scope.gap = Math.round($scope.jobs.length / $scope.itemsPerPage);
-    } else {
-      $scope.gap = 10;
-    }
+    $scope.gap = Math.round($scope.jobs.length / $scope.itemsPerPage);
+    $scope.gap = Math.min($scope.gap, 10);
+    
     $scope.pagedItems = [];
 
     for (var i = 0; i < $scope.jobs.length; i++) {
