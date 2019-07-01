@@ -281,12 +281,6 @@ func (s *Store) GetJobs(options *JobOptions) ([]*Job, error) {
 			}
 		}
 
-		n, err := job.GetNext()
-		if err != nil {
-			return nil, err
-		}
-		job.Next = n
-
 		jobs = append(jobs, &job)
 	}
 	return jobs, nil
@@ -317,12 +311,6 @@ func (s *Store) GetJobWithKVPair(name string, options *JobOptions) (*Job, *store
 	if options != nil && options.ComputeStatus {
 		job.Status = job.GetStatus()
 	}
-
-	n, err := job.GetNext()
-	if err != nil {
-		return nil, nil, err
-	}
-	job.Next = n
 
 	return &job, res, nil
 }

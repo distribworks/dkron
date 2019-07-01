@@ -162,7 +162,7 @@ retry:
 			"execution": execution,
 		}).Debug("grpc: Retrying execution")
 
-		grpcs.agent.RunQuery(&execution)
+		grpcs.agent.RunQuery(job, &execution)
 		return nil, nil
 	}
 

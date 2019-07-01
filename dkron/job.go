@@ -154,7 +154,16 @@ func (j *Job) Run() {
 
 			// Simple execution wrapper
 			ex := NewExecution(j.Name)
-			j.Agent.RunQuery(ex)
+
+			// This should be only called on the actual scheduler execution
+			n, err := j.GetNext()
+			if err != nil {
+				log.WithError(err).WithField("job", j.Name).
+					Fatal("agent: Error computing next execution")
+			}
+			j.Next = n
+
+			j.Agent.RunQuery(j, ex)
 		}
 	}
 }
@@ -264,7 +273,7 @@ func (j *Job) Unlock() error {
 	return nil
 }
 
-// GetNext returns the job's next schedule
+// GetNext returns the job's next schedule from now
 func (j *Job) GetNext() (time.Time, error) {
 	if j.Schedule != "" {
 		s, err := cron.Parse(j.Schedule)

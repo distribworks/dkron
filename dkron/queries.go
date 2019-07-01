@@ -27,20 +27,14 @@ type RunQueryParam struct {
 
 // Send a serf run query to the cluster, this is used to ask a node or nodes
 // to run a Job.
-func (a *Agent) RunQuery(ex *Execution) {
+func (a *Agent) RunQuery(job *Job, ex *Execution) {
 	var params *serf.QueryParam
 
-	job, err := a.Store.GetJob(ex.JobName, nil)
-
-	if err != nil {
-		//Job can be removed and the QuerySchedulerRestart not yet received.
-		//In this case, the job will not be found in the store.
-		if err == store.ErrKeyNotFound {
-			log.Warning("agent: Job not found, cancelling this execution")
-			return
-		}
-		log.WithError(err).Fatal("agent: Getting job error")
-		return
+	if err := a.Store.SetJob(job, false); err != nil {
+		log.WithError(err).WithFields(logrus.Fields{
+			"job":    job.Name,
+			"method": "RunQuery",
+		}).Fatal("agent: Error storing job before running")
 	}
 
 	// In the first execution attempt we build and filter the target nodes
@@ -48,10 +42,7 @@ func (a *Agent) RunQuery(ex *Execution) {
 	if ex.Attempt <= 1 {
 		filterNodes, filterTags, err := a.processFilteredNodes(job)
 		if err != nil {
-			log.WithFields(logrus.Fields{
-				"job": job.Name,
-				"err": err.Error(),
-			}).Fatal("agent: Error processing filtered nodes")
+			log.WithError(err).WithField("job", job.Name).Fatal("agent: Error processing filtered nodes")
 		}
 		log.Debug("agent: Filtered nodes to run: ", filterNodes)
 		log.Debug("agent: Filtered tags to run: ", job.Tags)
