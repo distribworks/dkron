@@ -11,6 +11,8 @@ import (
 	"google.golang.org/grpc"
 )
 
+// DkronGRPCClient defines the interface that any gRPC client for
+// dkron should implement.
 type DkronGRPCClient interface {
 	Connect(string) (*grpc.ClientConn, error)
 	CallExecutionDone(string, *Execution) error
@@ -23,11 +25,13 @@ type DkronGRPCClient interface {
 	RaftRemovePeerByID(string, string) error
 }
 
+// GRPCClient is the local implementation of the DkronGRPCClient interface.
 type GRPCClient struct {
 	dialOpt []grpc.DialOption
 	agent   *Agent
 }
 
+// NewGRPCClient returns a new instance of the gRPC client.
 func NewGRPCClient(dialOpt grpc.DialOption, agent *Agent) DkronGRPCClient {
 	if dialOpt == nil {
 		dialOpt = grpc.WithInsecure()
@@ -42,6 +46,7 @@ func NewGRPCClient(dialOpt grpc.DialOption, agent *Agent) DkronGRPCClient {
 	}
 }
 
+// Connect dialing to a gRPC server
 func (grpcc *GRPCClient) Connect(addr string) (*grpc.ClientConn, error) {
 	// Initiate a connection with the server
 	conn, err := grpc.Dial(addr, grpcc.dialOpt...)
@@ -276,7 +281,7 @@ func (grpcc *GRPCClient) RaftGetConfiguration(addr string) (*proto.RaftGetConfig
 	return res, nil
 }
 
-// RaftRemovePeerByAddress remove a raft peer
+// RaftRemovePeerByID remove a raft peer
 func (grpcc *GRPCClient) RaftRemovePeerByID(addr, peerID string) error {
 	var conn *grpc.ClientConn
 

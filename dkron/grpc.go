@@ -19,16 +19,23 @@ import (
 )
 
 var (
+	// ErrExecutionDoneForDeletedJob is returned when an execution done
+	// is received for a non existent job.
 	ErrExecutionDoneForDeletedJob = errors.New("rpc: Received execution done for a deleted job")
-	ErrRPCDialing                 = errors.New("rpc: Error dialing, verify the network connection to the server")
-	ErrNotLeader                  = errors.New("Error, server is not leader, this operation should be run on the leader")
+	// ErrRPCDialing is returned on dialing fail.
+	ErrRPCDialing = errors.New("rpc: Error dialing, verify the network connection to the server")
+	// ErrNotLeader is the error returned when the operation need the node to be the leader,
+	// but the current node is not the leader.
+	ErrNotLeader = errors.New("Error, server is not leader, this operation should be run on the leader")
 )
 
+// DkronGRPCServer defines the basics that a gRPC server should implement.
 type DkronGRPCServer interface {
 	proto.DkronServer
 	Serve(net.Listener) error
 }
 
+// GRPCServer is the local implementation of the gRPC server interface.
 type GRPCServer struct {
 	agent *Agent
 }

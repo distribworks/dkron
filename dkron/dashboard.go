@@ -46,7 +46,7 @@ func newCommonDashboardData(a *Agent, nodeName, path string) *commonDashboardDat
 	}
 }
 
-// dashboardRoutes registers dashboard specific routes on the gin RouterGroup.
+// DashboardRoutes registers dashboard specific routes on the gin RouterGroup.
 func (a *Agent) DashboardRoutes(r *gin.RouterGroup) {
 	// If we are visiting from a browser redirect to the dashboard
 	r.GET("/", func(c *gin.Context) {
@@ -124,6 +124,8 @@ func mustLoadTemplate(path string) []byte {
 	return tmpl
 }
 
+// CreateMyRender returns a new custom multitemplate renderer
+// to use with Gin.
 func CreateMyRender() multitemplate.Render {
 	r := multitemplate.New()
 

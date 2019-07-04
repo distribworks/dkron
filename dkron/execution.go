@@ -61,6 +61,8 @@ func NewExecutionFromProto(e *proto.Execution) *Execution {
 	}
 }
 
+// ToProto returns the protobuf struct corresponding to
+// the representation of the current execution.
 func (e *Execution) ToProto() *proto.Execution {
 	startedAt, _ := ptypes.TimestampProto(e.StartedAt)
 	finishedAt, _ := ptypes.TimestampProto(e.FinishedAt)
@@ -81,6 +83,7 @@ func (e *Execution) Key() string {
 	return fmt.Sprintf("%d-%s", e.StartedAt.UnixNano(), e.NodeName)
 }
 
+// GetGroup is the getter for the execution group.
 func (e *Execution) GetGroup() string {
 	return strconv.FormatInt(e.Group, 10)
 }

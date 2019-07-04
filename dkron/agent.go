@@ -92,11 +92,14 @@ type Agent struct {
 // of a processor.
 type ProcessorFactory func() (ExecutionProcessor, error)
 
+// Plugins struct to store loaded plugins of each type
 type Plugins struct {
 	Processors map[string]ExecutionProcessor
 	Executors  map[string]Executor
 }
 
+// NewAgent return a new Agent instace capable of starting
+// and running a Dkron instance.
 func NewAgent(config *Config, plugins *Plugins) *Agent {
 	a := &Agent{config: config}
 
@@ -108,6 +111,8 @@ func NewAgent(config *Config, plugins *Plugins) *Agent {
 	return a
 }
 
+// Start the current agent by running all the necessary
+// checks and server or client routines.
 func (a *Agent) Start() error {
 	s, err := a.setupSerf()
 	if err != nil {

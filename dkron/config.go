@@ -81,6 +81,8 @@ type Config struct {
 // DefaultBindPort is the default port that dkron will use for Serf communication
 const DefaultBindPort int = 8946
 
+// DefaultConfig returns a Config struct pointer with sensible
+// default settings.
 func DefaultConfig() *Config {
 	hostname, err := os.Hostname()
 	if err != nil {
@@ -105,7 +107,7 @@ func DefaultConfig() *Config {
 	}
 }
 
-// configFlagSet creates all of our configuration flags.
+// ConfigFlagSet creates all of our configuration flags.
 func ConfigFlagSet() *flag.FlagSet {
 	c := DefaultConfig()
 	cmdFlags := flag.NewFlagSet("agent flagset", flag.ContinueOnError)
