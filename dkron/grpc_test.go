@@ -55,7 +55,7 @@ func TestGRPCExecutionDone(t *testing.T) {
 	}
 
 	rc := NewGRPCClient(nil, a)
-	rc.CallExecutionDone(a.getRPCAddr(), testExecution)
+	rc.ExecutionDone(a.getRPCAddr(), testExecution)
 	execs, _ := a.Store.GetExecutions("test")
 
 	assert.Len(t, execs, 1)
@@ -65,7 +65,7 @@ func TestGRPCExecutionDone(t *testing.T) {
 	a.Store.DeleteJob(testJob.Name)
 
 	testExecution.FinishedAt = time.Now()
-	err := rc.CallExecutionDone(a.getRPCAddr(), testExecution)
+	err := rc.ExecutionDone(a.getRPCAddr(), testExecution)
 
 	assert.Error(t, err, ErrExecutionDoneForDeletedJob)
 }
