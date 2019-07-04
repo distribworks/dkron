@@ -9,6 +9,7 @@ import (
 	"github.com/dgraph-io/badger"
 	"github.com/golang/protobuf/ptypes"
 	"github.com/sirupsen/logrus"
+	"github.com/victorcoder/dkron/cron"
 	"github.com/victorcoder/dkron/proto"
 )
 
@@ -279,6 +280,19 @@ func (j *Job) getLast() time.Time {
 		return j.LastSuccess
 	}
 	return j.LastError
+}
+
+// GetNext returns the job's next schedule from now
+func (j *Job) GetNext() (time.Time, error) {
+	if j.Schedule != "" {
+		s, err := cron.Parse(j.Schedule)
+		if err != nil {
+			return time.Time{}, err
+		}
+		return s.Next(time.Now()), nil
+	}
+
+	return time.Time{}, nil
 }
 
 func (j *Job) isRunnable() bool {
