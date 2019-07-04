@@ -7,7 +7,7 @@ import (
 
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
-	"github.com/victorcoder/dkron/dkron"
+	"github.com/distribworks/dkron/dkron"
 )
 
 var (

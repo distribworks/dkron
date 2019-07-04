@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/hashicorp/go-plugin"
-	dkplugin "github.com/victorcoder/dkron/plugin"
+	dkplugin "github.com/distribworks/dkron/plugin"
 )
 
 func main() {

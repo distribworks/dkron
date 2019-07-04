@@ -6,7 +6,7 @@ import (
 	"os"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/victorcoder/dkron/dkron"
+	"github.com/distribworks/dkron/dkron"
 )
 
 const defaultLogDir = "/var/log/dkron"

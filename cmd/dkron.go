@@ -9,7 +9,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/victorcoder/dkron/dkron"
+	"github.com/distribworks/dkron/dkron"
 )
 
 var cfgFile string

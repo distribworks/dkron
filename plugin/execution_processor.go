@@ -4,7 +4,7 @@ import (
 	"net/rpc"
 
 	"github.com/hashicorp/go-plugin"
-	"github.com/victorcoder/dkron/dkron"
+	"github.com/distribworks/dkron/dkron"
 )
 
 type ExecutionProcessorPlugin struct {

@@ -16,7 +16,7 @@ import (
 	"github.com/abronan/valkeyrie/store/redis"
 	"github.com/abronan/valkeyrie/store/zookeeper"
 	"github.com/sirupsen/logrus"
-	"github.com/victorcoder/dkron/cron"
+	"github.com/distribworks/dkron/cron"
 )
 
 const MaxExecutions = 100

@@ -8,8 +8,8 @@ import (
 
 	"github.com/gin-contrib/multitemplate"
 	"github.com/gin-gonic/gin"
-	"github.com/victorcoder/dkron/dkron/assets"
-	"github.com/victorcoder/dkron/dkron/templates"
+	"github.com/distribworks/dkron/dkron/assets"
+	"github.com/distribworks/dkron/dkron/templates"
 )
 
 const (

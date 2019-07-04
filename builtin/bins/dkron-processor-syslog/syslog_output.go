@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/hashicorp/go-syslog"
 	log "github.com/sirupsen/logrus"
-	"github.com/victorcoder/dkron/dkron"
+	"github.com/distribworks/dkron/dkron"
 )
 
 type SyslogOutput struct {

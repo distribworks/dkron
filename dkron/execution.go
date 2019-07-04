@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/golang/protobuf/ptypes"
-	"github.com/victorcoder/dkron/proto"
+	"github.com/distribworks/dkron/proto"
 )
 
 // Execution type holds all of the details of a specific Execution.

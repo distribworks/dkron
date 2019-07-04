@@ -14,7 +14,7 @@ import (
 	"time"
 
 	"github.com/armon/circbuf"
-	"github.com/victorcoder/dkron/dkron"
+	"github.com/distribworks/dkron/dkron"
 )
 
 const (

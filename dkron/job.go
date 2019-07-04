@@ -8,8 +8,8 @@ import (
 
 	"github.com/abronan/valkeyrie/store"
 	"github.com/sirupsen/logrus"
-	"github.com/victorcoder/dkron/cron"
-	"github.com/victorcoder/dkron/proto"
+	"github.com/distribworks/dkron/cron"
+	"github.com/distribworks/dkron/proto"
 )
 
 const (

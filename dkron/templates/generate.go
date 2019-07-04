@@ -1,3 +1,3 @@
 package templates
 
-//go:generate vfsgendev -source="github.com/victorcoder/dkron/dkron/templates".Templates
+//go:generate vfsgendev -source="github.com/distribworks/dkron/dkron/templates".Templates

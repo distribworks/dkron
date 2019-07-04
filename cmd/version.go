@@ -5,7 +5,7 @@ import (
 
 	"github.com/hashicorp/serf/serf"
 	"github.com/spf13/cobra"
-	"github.com/victorcoder/dkron/dkron"
+	"github.com/distribworks/dkron/dkron"
 )
 
 // versionCmd represents the version command

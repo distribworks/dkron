@@ -10,8 +10,8 @@ import (
 	"github.com/hashicorp/go-plugin"
 	"github.com/kardianos/osext"
 	"github.com/sirupsen/logrus"
-	"github.com/victorcoder/dkron/dkron"
-	dkplugin "github.com/victorcoder/dkron/plugin"
+	"github.com/distribworks/dkron/dkron"
+	dkplugin "github.com/distribworks/dkron/plugin"
 )
 
 type Plugins struct {

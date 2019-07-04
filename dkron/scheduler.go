@@ -6,7 +6,7 @@ import (
 
 	"github.com/armon/go-metrics"
 	"github.com/sirupsen/logrus"
-	"github.com/victorcoder/dkron/cron"
+	"github.com/distribworks/dkron/cron"
 )
 
 var (

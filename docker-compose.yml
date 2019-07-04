@@ -40,7 +40,7 @@ services:
       - "8080"
       - "8946"
     volumes:
-     - ./:/gopath/src/github.com/victorcoder/dkron
+     - ./:/gopath/src/github.com/distribworks/dkron
     environment:
       - GODEBUG=netdns=go
     # Uncomment to use consul

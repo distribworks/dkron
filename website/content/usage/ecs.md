@@ -12,7 +12,7 @@ To use Dkron to schedule jobs that run in containers, a wrapper ECS script is ne
 
 Install the following snippet in the node that will run the call to ECS
 
-<script src="https://gist.github.com/victorcoder/3ac4aae9279d7c68c486fecccc2546cc.js"></script>
+<script src="https://gist.github.com/distribworks/3ac4aae9279d7c68c486fecccc2546cc.js"></script>
 
 ### Prerequisites
 
