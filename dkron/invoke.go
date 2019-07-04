@@ -71,7 +71,7 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 
 	runningExecutions.Delete(execution.GetGroup())
 
-	return a.GRPCClient.CallExecutionDone(rpcServer, execution)
+	return a.GRPCClient.ExecutionDone(rpcServer, execution)
 }
 
 // Select a server based on key using a consistent hash key

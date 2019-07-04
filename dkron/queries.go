@@ -31,7 +31,7 @@ func (a *Agent) RunQuery(job *Job, ex *Execution) {
 	if e != nil {
 		job.Next = e.Next
 	}
-	if err := a.GRPCClient.CallSetJob(job); err != nil {
+	if err := a.GRPCClient.SetJob(job); err != nil {
 		log.WithError(err).WithFields(logrus.Fields{
 			"job":    job.Name,
 			"method": "RunQuery",

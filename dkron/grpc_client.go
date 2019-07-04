@@ -15,12 +15,12 @@ import (
 // dkron should implement.
 type DkronGRPCClient interface {
 	Connect(string) (*grpc.ClientConn, error)
-	CallExecutionDone(string, *Execution) error
-	CallGetJob(string, string) (*Job, error)
-	CallSetJob(*Job) error
-	CallDeleteJob(string) (*Job, error)
+	ExecutionDone(string, *Execution) error
+	GetJob(string, string) (*Job, error)
+	SetJob(*Job) error
+	DeleteJob(string) (*Job, error)
 	Leave(string) error
-	CallRunJob(string) (*Job, error)
+	RunJob(string) (*Job, error)
 	RaftGetConfiguration(string) (*proto.RaftGetConfigurationResponse, error)
 	RaftRemovePeerByID(string, string) error
 }
@@ -56,7 +56,7 @@ func (grpcc *GRPCClient) Connect(addr string) (*grpc.ClientConn, error) {
 	return conn, nil
 }
 
-func (grpcc *GRPCClient) CallExecutionDone(addr string, execution *Execution) error {
+func (grpcc *GRPCClient) ExecutionDone(addr string, execution *Execution) error {
 	defer metrics.MeasureSince([]string{"grpc", "call_execution_done"}, time.Now())
 	var conn *grpc.ClientConn
 
@@ -64,7 +64,7 @@ func (grpcc *GRPCClient) CallExecutionDone(addr string, execution *Execution) er
 	defer conn.Close()
 	if err != nil {
 		log.WithError(err).WithFields(logrus.Fields{
-			"method":      "CallExecutionDone",
+			"method":      "ExecutionDone",
 			"server_addr": addr,
 		}).Error("grpc: error dialing.")
 		return err
@@ -93,7 +93,7 @@ func (grpcc *GRPCClient) CallExecutionDone(addr string, execution *Execution) er
 	return nil
 }
 
-func (grpcc *GRPCClient) CallGetJob(addr, jobName string) (*Job, error) {
+func (grpcc *GRPCClient) GetJob(addr, jobName string) (*Job, error) {
 	defer metrics.MeasureSince([]string{"grpc", "call_get_job"}, time.Now())
 	var conn *grpc.ClientConn
 
@@ -102,7 +102,7 @@ func (grpcc *GRPCClient) CallGetJob(addr, jobName string) (*Job, error) {
 	defer conn.Close()
 	if err != nil {
 		log.WithError(err).WithFields(logrus.Fields{
-			"method":      "CallGetJob",
+			"method":      "GetJob",
 			"server_addr": addr,
 		}).Error("grpc: error dialing.")
 		return nil, err
@@ -150,8 +150,8 @@ func (grpcc *GRPCClient) Leave(addr string) error {
 	return nil
 }
 
-// CallSetJob calls the leader passing the job
-func (grpcc *GRPCClient) CallSetJob(job *Job) error {
+// SetJob calls the leader passing the job
+func (grpcc *GRPCClient) SetJob(job *Job) error {
 	var conn *grpc.ClientConn
 
 	addr := grpcc.agent.raft.Leader()
@@ -174,7 +174,7 @@ func (grpcc *GRPCClient) CallSetJob(job *Job) error {
 	})
 	if err != nil {
 		log.WithError(err).WithFields(logrus.Fields{
-			"method":      "CallSetJob",
+			"method":      "SetJob",
 			"server_addr": addr,
 		}).Error("grpc: Error calling gRPC method")
 		return err
@@ -182,8 +182,8 @@ func (grpcc *GRPCClient) CallSetJob(job *Job) error {
 	return nil
 }
 
-// CallDeleteJob calls the leader passing the job name
-func (grpcc *GRPCClient) CallDeleteJob(jobName string) (*Job, error) {
+// DeleteJob calls the leader passing the job name
+func (grpcc *GRPCClient) DeleteJob(jobName string) (*Job, error) {
 	var conn *grpc.ClientConn
 
 	addr := grpcc.agent.raft.Leader()
@@ -192,7 +192,7 @@ func (grpcc *GRPCClient) CallDeleteJob(jobName string) (*Job, error) {
 	conn, err := grpcc.Connect(string(addr))
 	if err != nil {
 		log.WithError(err).WithFields(logrus.Fields{
-			"method":      "CallDeleteJob",
+			"method":      "DeleteJob",
 			"server_addr": addr,
 		}).Error("grpc: error dialing.")
 		return nil, err
@@ -217,8 +217,8 @@ func (grpcc *GRPCClient) CallDeleteJob(jobName string) (*Job, error) {
 	return job, nil
 }
 
-// CallRunJob calls the leader passing the job name
-func (grpcc *GRPCClient) CallRunJob(jobName string) (*Job, error) {
+// RunJob calls the leader passing the job name
+func (grpcc *GRPCClient) RunJob(jobName string) (*Job, error) {
 	var conn *grpc.ClientConn
 
 	addr := grpcc.agent.raft.Leader()

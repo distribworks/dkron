@@ -158,7 +158,7 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.E
 	// Forward the request to the leader in case current node is not the leader.
 	if !grpcs.agent.IsLeader() {
 		addr := grpcs.agent.raft.Leader()
-		grpcs.agent.GRPCClient.CallExecutionDone(string(addr), NewExecutionFromProto(execDoneReq.Execution))
+		grpcs.agent.GRPCClient.ExecutionDone(string(addr), NewExecutionFromProto(execDoneReq.Execution))
 		return nil, ErrNotLeader
 	}
 

@@ -160,7 +160,7 @@ func (h *HTTPTransport) jobCreateOrUpdateHandler(c *gin.Context) {
 	}
 
 	// Call gRPC SetJob
-	if err := h.agent.GRPCClient.CallSetJob(&job); err != nil {
+	if err := h.agent.GRPCClient.SetJob(&job); err != nil {
 		c.AbortWithError(422, err)
 		return
 	}
@@ -173,7 +173,7 @@ func (h *HTTPTransport) jobDeleteHandler(c *gin.Context) {
 	jobName := c.Param("job")
 
 	// Call gRPC DeleteJob
-	job, err := h.agent.GRPCClient.CallDeleteJob(jobName)
+	job, err := h.agent.GRPCClient.DeleteJob(jobName)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
@@ -185,7 +185,7 @@ func (h *HTTPTransport) jobRunHandler(c *gin.Context) {
 	jobName := c.Param("job")
 
 	// Call gRPC RunJob
-	job, err := h.agent.GRPCClient.CallRunJob(jobName)
+	job, err := h.agent.GRPCClient.RunJob(jobName)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
@@ -248,7 +248,7 @@ func (h *HTTPTransport) jobToggleHandler(c *gin.Context) {
 	job.Disabled = !job.Disabled
 
 	// Call gRPC SetJob
-	if err := h.agent.GRPCClient.CallSetJob(job); err != nil {
+	if err := h.agent.GRPCClient.SetJob(job); err != nil {
 		c.AbortWithError(422, err)
 		return
 	}

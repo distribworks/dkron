@@ -720,7 +720,7 @@ func (a *Agent) eventLoop() {
 					// On dial error we should retry with a limit.
 					i := 0
 				RetryGetJob:
-					job, err := a.GRPCClient.CallGetJob(rqp.RPCAddr, rqp.Execution.JobName)
+					job, err := a.GRPCClient.GetJob(rqp.RPCAddr, rqp.Execution.JobName)
 					if err != nil {
 						if err == ErrRPCDialing {
 							if i < 10 {
