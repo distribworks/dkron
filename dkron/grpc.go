@@ -8,8 +8,8 @@ import (
 	"time"
 
 	metrics "github.com/armon/go-metrics"
-	pb "github.com/golang/protobuf/proto"
 	"github.com/distribworks/dkron/proto"
+	pb "github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/raft"
 	"github.com/hashicorp/serf/serf"

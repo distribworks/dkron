@@ -10,10 +10,10 @@ import (
 	"time"
 
 	"github.com/dgraph-io/badger"
+	"github.com/distribworks/dkron/cron"
+	dkronpb "github.com/distribworks/dkron/proto"
 	"github.com/golang/protobuf/proto"
 	"github.com/sirupsen/logrus"
-	dkronpb "github.com/distribworks/dkron/proto"
-	"github.com/distribworks/dkron/cron"
 )
 
 const (
