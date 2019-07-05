@@ -23,12 +23,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/victorcoder/dkron.git"
+    "url": "git+https://github.com/distribworks/dkron.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/victorcoder/dkron/issues"
+    "url": "https://github.com/distribworks/dkron/issues"
   },
-  "homepage": "https://github.com/victorcoder/dkron#readme"
+  "homepage": "https://github.com/distribworks/dkron#readme"
 }

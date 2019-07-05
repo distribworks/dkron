@@ -1,4 +1,4 @@
-module github.com/victorcoder/dkron
+module github.com/distribworks/dkron
 
 require (
 	github.com/DataDog/datadog-go v0.0.0-20170427165718-0ddda6bee211 // indirect

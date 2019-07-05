@@ -117,11 +117,11 @@ func (n *Notifier) sendExecutionEmail() {
 
 func (n *Notifier) auth() smtp.Auth {
 	var auth smtp.Auth
-	
+
 	if n.Config.MailUsername != "" && n.Config.MailPassword != "" {
 		auth = smtp.PlainAuth("", n.Config.MailUsername, n.Config.MailPassword, n.Config.MailHost)
 	}
-	
+
 	return auth
 }
 

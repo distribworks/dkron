@@ -16,7 +16,7 @@ I'm sure you're very nice but no. Everyone pays the same price.
 
 ### What is the license?
 
-See [COMM-LICENSE](https://github.com/victorcoder/dkron/blob/master/COMM-LICENSE).
+See [COMM-LICENSE](https://github.com/distribworks/dkron/blob/master/COMM-LICENSE).
 
 ### How does Pro licensing work?
 

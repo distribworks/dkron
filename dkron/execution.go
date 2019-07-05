@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/distribworks/dkron/proto"
 	"github.com/golang/protobuf/ptypes"
-	"github.com/victorcoder/dkron/proto"
 )
 
 // Execution type holds all of the details of a specific Execution.

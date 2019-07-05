@@ -6,7 +6,7 @@ weight: 10
 
 ## Running the binary
 
-Download the packaged archive for your platform from the [downloads page](https://github.com/victorcoder/dkron/releases) and extract the package to a shared location in your drive, like /opt/local/bin.
+Download the packaged archive for your platform from the [downloads page](https://github.com/distribworks/dkron/releases) and extract the package to a shared location in your drive, like /opt/local/bin.
 
 Run Dkron with default setting: `dkron agent --server`
 
@@ -23,7 +23,7 @@ By default dkron will start with a file based, embedded KV store called BoltDB, 
 
 APT repository: 
 ```
-deb [trusted=yes] https://apt.fury.io/victorcoder/ /
+deb [trusted=yes] https://apt.fury.io/distribworks/ /
 ```
 
 Then install: `sudo apt-get install dkron`
@@ -35,7 +35,7 @@ YUM repository:
 ```
 [dkron]
 name=Dkron Pro Private Repo
-baseurl=https://yum.fury.io/victorcoder/
+baseurl=https://yum.fury.io/distribworks/
 enabled=1
 gpgcheck=0
 ```

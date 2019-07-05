@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/distribworks/dkron/dkron"
 	log "github.com/sirupsen/logrus"
-	"github.com/victorcoder/dkron/dkron"
 )
 
 type LogOutput struct {

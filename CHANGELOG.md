@@ -361,9 +361,9 @@ Due to the change in the internal tags `server` to `dkron_server`, you'll need t
 
 - Refactor leader election, the old method could lead to cases where 2 or more nodes could have the scheduler running without noticing the other master.
 - Get rid of `keys`, in a serf cluster node names are unique so using it for leader keys now.
-- Fix [#85](https://github.com/victorcoder/dkron/issues/85) Restart scheduler on job deletion
+- Fix [#85](https://github.com/distribworks/dkron/issues/85) Restart scheduler on job deletion
 - Refactor logging, replace `debug` with `log-level`
-- Order nodes in UI [#81](https://github.com/victorcoder/dkron/issues/81) (kudos @whizz)
+- Order nodes in UI [#81](https://github.com/distribworks/dkron/issues/81) (kudos @whizz)
 - Add exposed vars to easy debugging
 - Go 1.6
 - Add @minutely as predefined schedule (kudos @mlafeldt)
@@ -375,7 +375,7 @@ To upgrade an existing installation you must first delete the pre-exiting leader
 ## 0.6.4 (2016-02-18)
 
 - Use expvars to expose metrics
-- fix https://github.com/victorcoder/dkron/issues/71
+- fix https://github.com/distribworks/dkron/issues/71
 - Better example config in package and docs
 
 ## 0.6.3 (2015-12-28)
@@ -385,11 +385,11 @@ To upgrade an existing installation you must first delete the pre-exiting leader
 
 ## 0.6.2 (2015-12-22)
 
-- Fixed [#62](https://github.com/victorcoder/dkron/issues/55)
+- Fixed [#62](https://github.com/distribworks/dkron/issues/55)
 
 ## 0.6.1 (2015-12-21)
 
-- Fixed bugs [#55](https://github.com/victorcoder/dkron/issues/55), [#52](https://github.com/victorcoder/dkron/issues/52), etc.
+- Fixed bugs [#55](https://github.com/distribworks/dkron/issues/55), [#52](https://github.com/distribworks/dkron/issues/52), etc.
 - Build for linux arm
 
 ## 0.6.0 (2015-12-11)
