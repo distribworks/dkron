@@ -15,8 +15,8 @@ import (
 	etcdv3 "github.com/abronan/valkeyrie/store/etcd/v3"
 	"github.com/abronan/valkeyrie/store/redis"
 	"github.com/abronan/valkeyrie/store/zookeeper"
-	"github.com/sirupsen/logrus"
 	"github.com/distribworks/dkron/cron"
+	"github.com/sirupsen/logrus"
 )
 
 const MaxExecutions = 100

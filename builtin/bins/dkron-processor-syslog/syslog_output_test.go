@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/distribworks/dkron/dkron"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestProcess(t *testing.T) {

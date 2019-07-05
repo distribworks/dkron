@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/spf13/cobra"
 	"github.com/distribworks/dkron/dkron"
+	"github.com/spf13/cobra"
 )
 
 var rpcAddr string

@@ -5,8 +5,8 @@ import (
 	"io/ioutil"
 	"os"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/distribworks/dkron/dkron"
+	log "github.com/sirupsen/logrus"
 )
 
 const defaultLogDir = "/var/log/dkron"

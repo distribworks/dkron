@@ -6,10 +6,10 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/gin-contrib/multitemplate"
-	"github.com/gin-gonic/gin"
 	"github.com/distribworks/dkron/dkron/assets"
 	"github.com/distribworks/dkron/dkron/templates"
+	"github.com/gin-contrib/multitemplate"
+	"github.com/gin-gonic/gin"
 )
 
 const (

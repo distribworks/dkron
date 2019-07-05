@@ -11,8 +11,8 @@ import (
 	"time"
 
 	"github.com/armon/circbuf"
-	"github.com/mattn/go-shellwords"
 	"github.com/distribworks/dkron/dkron"
+	"github.com/mattn/go-shellwords"
 )
 
 const (

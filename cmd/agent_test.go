@@ -5,9 +5,9 @@ import (
 	"os"
 	"testing"
 
+	"github.com/distribworks/dkron/dkron"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
-	"github.com/distribworks/dkron/dkron"
 )
 
 var (

@@ -1,9 +1,9 @@
 package main
 
 import (
+	"github.com/distribworks/dkron/dkron"
 	"github.com/hashicorp/go-syslog"
 	log "github.com/sirupsen/logrus"
-	"github.com/distribworks/dkron/dkron"
 )
 
 type SyslogOutput struct {
