@@ -8,9 +8,9 @@ import (
 
 	"github.com/dgraph-io/badger"
 	"github.com/golang/protobuf/ptypes"
+	"github.com/distribworks/dkron/cron"
+	"github.com/distribworks/dkron/proto"
 	"github.com/sirupsen/logrus"
-	"github.com/victorcoder/dkron/cron"
-	"github.com/victorcoder/dkron/proto"
 )
 
 const (

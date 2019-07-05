@@ -1,8 +1,8 @@
 package plugin
 
 import (
+	"github.com/distribworks/dkron/dkron"
 	"github.com/hashicorp/go-plugin"
-	"github.com/victorcoder/dkron/dkron"
 )
 
 // The constants below are the names of the plugins that can be dispensed

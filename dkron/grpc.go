@@ -9,11 +9,11 @@ import (
 
 	metrics "github.com/armon/go-metrics"
 	pb "github.com/golang/protobuf/proto"
+	"github.com/distribworks/dkron/proto"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/raft"
 	"github.com/hashicorp/serf/serf"
 	"github.com/sirupsen/logrus"
-	"github.com/victorcoder/dkron/proto"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 )

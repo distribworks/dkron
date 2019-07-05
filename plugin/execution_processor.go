@@ -3,8 +3,8 @@ package plugin
 import (
 	"net/rpc"
 
+	"github.com/distribworks/dkron/dkron"
 	"github.com/hashicorp/go-plugin"
-	"github.com/victorcoder/dkron/dkron"
 )
 
 type ExecutionProcessorPlugin struct {

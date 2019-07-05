@@ -1,8 +1,8 @@
 package main
 
 import (
+	dkplugin "github.com/distribworks/dkron/plugin"
 	"github.com/hashicorp/go-plugin"
-	dkplugin "github.com/victorcoder/dkron/plugin"
 )
 
 func main() {

@@ -7,11 +7,11 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/distribworks/dkron/dkron"
+	dkplugin "github.com/distribworks/dkron/plugin"
 	"github.com/hashicorp/go-plugin"
 	"github.com/kardianos/osext"
 	"github.com/sirupsen/logrus"
-	"github.com/victorcoder/dkron/dkron"
-	dkplugin "github.com/victorcoder/dkron/plugin"
 )
 
 type Plugins struct {

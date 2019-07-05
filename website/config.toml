@@ -7,7 +7,7 @@ pygmentsCodeFences = true
 pygmentsStyle = "monokailight"
 
 [params]
-editURL = "https://github.com/victorcoder/dkron/edit/master/website/content/"
+editURL = "https://github.com/distribworks/dkron/edit/master/website/content/"
 showVisitedLinks = true # default is false
 themeStyle = "flex" # "original" or "flex" # default "flex"
 themeVariant = "" # choose theme variant "green", "gold" , "gray", "blue" (default)
@@ -23,12 +23,12 @@ enableGitInfo = true
 pre = "<h3>More</h3>"
 name = "<i class='fa fa-github'></i> Github repo"
 identifier = "ds"
-url = "https://github.com/victorcoder/dkron"
+url = "https://github.com/distribworks/dkron"
 weight = 1
 
 [[menu.shortcuts]]
 name = "<i class='fa fa-cloud-download'></i> <label>Download</label>"
-url = "https://github.com/victorcoder/dkron/releases"
+url = "https://github.com/distribworks/dkron/releases"
 weight = 11
 
 [[menu.shortcuts]]

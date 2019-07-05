@@ -1,4 +1,4 @@
-# Dkron - Distributed, fault tolerant job scheduling system [![GoDoc](https://godoc.org/github.com/victorcoder/dkron?status.svg)](https://godoc.org/github.com/victorcoder/dkron) [![Build Status](https://travis-ci.org/victorcoder/dkron.svg?branch=master)](https://travis-ci.org/victorcoder/dkron)
+# Dkron - Distributed, fault tolerant job scheduling system [![GoDoc](https://godoc.org/github.com/distribworks/dkron?status.svg)](https://godoc.org/github.com/distribworks/dkron) [![Build Status](https://travis-ci.org/distribworks/dkron.svg?branch=master)](https://travis-ci.org/distribworks/dkron)
 
 Website: http://dkron.io/
 
@@ -20,7 +20,7 @@ You can use Dkron to run the most important part of your company, scheduled jobs
 
 Dkron v1.x is stable and being used in production by several companies.
 
-Dkron v2.x is under heavy development but approaching stability. Follow https://github.com/victorcoder/dkron/pull/543 for changes.
+Dkron v2.x is under heavy development but approaching stability. Follow https://github.com/distribworks/dkron/pull/543 for changes.
 
 ## Installation
 
@@ -70,7 +70,7 @@ https://github.com/gromo/dkron-php-adapter
 
 ## Get in touch
 
-- Twitter: [@distribworks](https://twitter.com/distribworks) or [@victorcoder](https://twitter.com/victorcoder)
+- Twitter: [@distribworks](https://twitter.com/distribworks) or [@distribworks](https://twitter.com/distribworks)
 - Email: victor at distrib.works
 
 # Sponsor

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/victorcoder/dkron/plugin"
+	"github.com/distribworks/dkron/plugin"
 )
 
 func main() {

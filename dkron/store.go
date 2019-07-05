@@ -12,8 +12,8 @@ import (
 	"github.com/dgraph-io/badger"
 	"github.com/golang/protobuf/proto"
 	"github.com/sirupsen/logrus"
-	"github.com/victorcoder/dkron/cron"
-	dkronpb "github.com/victorcoder/dkron/proto"
+	dkronpb "github.com/distribworks/dkron/proto"
+	"github.com/distribworks/dkron/cron"
 )
 
 const (

@@ -5,8 +5,8 @@ import (
 	"expvar"
 
 	"github.com/armon/go-metrics"
+	"github.com/distribworks/dkron/cron"
 	"github.com/sirupsen/logrus"
-	"github.com/victorcoder/dkron/cron"
 )
 
 var (
