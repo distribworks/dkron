@@ -8,7 +8,7 @@ services:
       - "8946"
       - "6868"
     volumes:
-     - ./:/gopath/src/github.com/victorcoder/dkron
+     - ./:/gopath/src/github.com/distribworks/dkron
     environment:
       - GODEBUG=netdns=go
     command: scripts/run agent --server --join=dkron1:8946 --log-level=debug --bootstrap-expect=3

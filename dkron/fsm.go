@@ -7,7 +7,7 @@ import (
 
 	"github.com/golang/protobuf/proto"
 	"github.com/hashicorp/raft"
-	dkronpb "github.com/victorcoder/dkron/proto"
+	dkronpb "github.com/distribworks/dkron/proto"
 )
 
 // MessageType is the type to encode FSM commands.

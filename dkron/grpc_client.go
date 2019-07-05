@@ -6,7 +6,7 @@ import (
 	metrics "github.com/armon/go-metrics"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/sirupsen/logrus"
-	"github.com/victorcoder/dkron/proto"
+	"github.com/distribworks/dkron/proto"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 )
