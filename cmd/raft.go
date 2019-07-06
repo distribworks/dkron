@@ -3,9 +3,9 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/distribworks/dkron/dkron"
 	"github.com/ryanuber/columnize"
 	"github.com/spf13/cobra"
-	"github.com/distribworks/dkron/dkron"
 )
 
 // versionCmd represents the version command
