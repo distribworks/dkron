@@ -29,6 +29,7 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
   }
   $scope.jobTemplate = {
     name: "job",
+    displayname: "My job",
     schedule: "",
     owner: "",
     owner_email: "",

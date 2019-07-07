@@ -234,6 +234,10 @@ definitions:
         description: "Name for the job."
         readOnly: false
         example: "job1"
+      displayname: string
+        type: string
+        description: "Nice name for the job. Optional."
+        readOnly: false
       schedule:
         type: string
         description: "Cron expression for the job."
