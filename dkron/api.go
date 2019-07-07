@@ -216,7 +216,7 @@ func (h *HTTPTransport) executionsHandler(c *gin.Context) {
 		return
 	}
 
-	executions, err := h.agent.Store.GetExecutions(job.Name)
+	executions, err := h.agent.Store.GetExecutions(job.Name, job.GetTimeLocation())
 	if err != nil {
 		if err == badger.ErrKeyNotFound {
 			renderJSON(c, http.StatusOK, &[]Execution{})

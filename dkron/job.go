@@ -249,7 +249,7 @@ func (j *Job) GetStatus() string {
 		return StatusNotSet
 	}
 
-	execs, _ := j.Agent.Store.GetLastExecutionGroup(j.Name)
+	execs, _ := j.Agent.Store.GetLastExecutionGroup(j.Name, j.GetTimeLocation())
 	success := 0
 	failed := 0
 	for _, ex := range execs {
@@ -303,6 +303,14 @@ func (j *Job) GetParent() (*Job, error) {
 	}
 
 	return parentJob, nil
+}
+
+// GetTimeLocation returns the time.Location based on the job's Timezone, or
+// the default (UTC) if none is configured, or
+// nil if an error occurred while creating the timezone from the property
+func (j *Job) GetTimeLocation() *time.Location {
+	loc, _ := time.LoadLocation(j.Timezone)
+	return loc
 }
 
 // GetNext returns the job's next schedule from now

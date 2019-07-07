@@ -416,8 +416,8 @@ func (s *Store) DeleteJob(name string) (*Job, error) {
 	return job, nil
 }
 
-// GetExecutions returns the exections given a Job name.
-func (s *Store) GetExecutions(jobName string) ([]*Execution, error) {
+// GetExecutions returns the executions given a Job name.
+func (s *Store) GetExecutions(jobName string, timezone *time.Location) ([]*Execution, error) {
 	prefix := fmt.Sprintf("executions/%s/", jobName)
 
 	kvs, err := s.list(prefix, true)
@@ -425,7 +425,7 @@ func (s *Store) GetExecutions(jobName string) ([]*Execution, error) {
 		return nil, err
 	}
 
-	return s.unmarshalExecutions(kvs)
+	return s.unmarshalExecutions(kvs, timezone)
 }
 
 type kv struct {
@@ -476,8 +476,8 @@ func (*Store) listTxnFunc(prefix string, kvs *[]kv, found *bool) func(txn *badge
 }
 
 // GetLastExecutionGroup get last execution group given the Job name.
-func (s *Store) GetLastExecutionGroup(jobName string) ([]*Execution, error) {
-	executions, byGroup, err := s.GetGroupedExecutions(jobName)
+func (s *Store) GetLastExecutionGroup(jobName string, timezone *time.Location) ([]*Execution, error) {
+	executions, byGroup, err := s.GetGroupedExecutions(jobName, timezone)
 	if err != nil {
 		return nil, err
 	}
@@ -490,8 +490,8 @@ func (s *Store) GetLastExecutionGroup(jobName string) ([]*Execution, error) {
 }
 
 // GetExecutionGroup returns all executions in the same group of a given execution
-func (s *Store) GetExecutionGroup(execution *Execution) ([]*Execution, error) {
-	res, err := s.GetExecutions(execution.JobName)
+func (s *Store) GetExecutionGroup(execution *Execution, timezone *time.Location) ([]*Execution, error) {
+	res, err := s.GetExecutions(execution.JobName, timezone)
 	if err != nil {
 		return nil, err
 	}
@@ -507,8 +507,8 @@ func (s *Store) GetExecutionGroup(execution *Execution) ([]*Execution, error) {
 
 // GetGroupedExecutions returns executions for a job grouped and with an ordered index
 // to facilitate access.
-func (s *Store) GetGroupedExecutions(jobName string) (map[int64][]*Execution, []int64, error) {
-	execs, err := s.GetExecutions(jobName)
+func (s *Store) GetGroupedExecutions(jobName string, timezone *time.Location) (map[int64][]*Execution, []int64, error) {
+	execs, err := s.GetExecutions(jobName, timezone)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -580,7 +580,7 @@ func (s *Store) SetExecution(execution *Execution) (string, error) {
 		return "", err
 	}
 
-	execs, err := s.GetExecutions(execution.JobName)
+	execs, err := s.GetExecutions(execution.JobName, nil)
 	if err != nil && err != badger.ErrKeyNotFound {
 		log.WithError(err).
 			WithField("job", execution.JobName).
@@ -638,7 +638,7 @@ func (s *Store) Restore(r io.ReadCloser) error {
 	return s.db.Load(r, 256)
 }
 
-func (s *Store) unmarshalExecutions(items []kv) ([]*Execution, error) {
+func (s *Store) unmarshalExecutions(items []kv, timezone *time.Location) ([]*Execution, error) {
 	var executions []*Execution
 	for _, item := range items {
 		var pbe dkronpb.Execution
@@ -648,6 +648,10 @@ func (s *Store) unmarshalExecutions(items []kv) ([]*Execution, error) {
 			return nil, err
 		}
 		execution := NewExecutionFromProto(&pbe)
+		if timezone != nil {
+			execution.FinishedAt = execution.FinishedAt.In(timezone)
+			execution.StartedAt = execution.StartedAt.In(timezone)
+		}
 		executions = append(executions, execution)
 	}
 	return executions, nil
@@ -663,7 +667,7 @@ func (s *Store) computeStatus(jobName string, exGroup int64, txn *badger.Txn) (s
 		return "", err
 	}
 
-	execs, err := s.unmarshalExecutions(kvs)
+	execs, err := s.unmarshalExecutions(kvs, nil)
 	if err != nil {
 		return "", err
 	}
