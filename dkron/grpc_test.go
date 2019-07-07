@@ -56,7 +56,7 @@ func TestGRPCExecutionDone(t *testing.T) {
 
 	rc := NewGRPCClient(nil, a)
 	rc.ExecutionDone(a.getRPCAddr(), testExecution)
-	execs, _ := a.Store.GetExecutions("test")
+	execs, _ := a.Store.GetExecutions("test", nil)
 
 	assert.Len(t, execs, 1)
 	assert.Equal(t, string(testExecution.Output), string(execs[0].Output))

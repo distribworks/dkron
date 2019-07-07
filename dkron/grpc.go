@@ -200,7 +200,7 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.E
 		return nil, nil
 	}
 
-	exg, err := grpcs.agent.Store.GetExecutionGroup(&execution)
+	exg, err := grpcs.agent.Store.GetExecutionGroup(&execution, job.GetTimeLocation())
 	if err != nil {
 		log.WithError(err).WithField("group", execution.Group).Error("grpc: Error getting execution group.")
 		return nil, err

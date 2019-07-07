@@ -824,7 +824,7 @@ func (a *Agent) getRPCAddr() string {
 func (a *Agent) RefreshJobStatus(jobName string) {
 	var group string
 
-	execs, _ := a.Store.GetLastExecutionGroup(jobName)
+	execs, _ := a.Store.GetLastExecutionGroup(jobName, nil)
 	nodes := []string{}
 
 	unfinishedExecutions := []*Execution{}
@@ -846,7 +846,7 @@ func (a *Agent) RefreshJobStatus(jobName string) {
 		log.WithField("group", group).Debug("agent: Pending execution group")
 	}
 
-	// If there is pending executions to finish ask if they are really pending.
+	// If there are pending executions to finish, ask if they are really pending.
 	if len(nodes) > 0 && group != "" {
 		statuses := a.executionDoneQuery(nodes, group)
 
