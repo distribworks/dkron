@@ -188,6 +188,12 @@ func (a *Agent) establishLeadership(stopCh chan struct{}) error {
 	defer metrics.MeasureSince([]string{"dkron", "leader", "establish_leadership"}, time.Now())
 	a.schedule()
 
+	for _, f := range a.establishLeadershipFuncs {
+		if err := f(); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -196,6 +202,12 @@ func (a *Agent) establishLeadership(stopCh chan struct{}) error {
 func (a *Agent) revokeLeadership() error {
 	defer metrics.MeasureSince([]string{"dkron", "leader", "revoke_leadership"}, time.Now())
 	a.sched.Stop()
+
+	for _, f := range a.revokeLeadershipFuncs {
+		if err := f(); err != nil {
+			return err
+		}
+	}
 
 	return nil
 }
