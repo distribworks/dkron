@@ -55,7 +55,7 @@ type Agent struct {
 	GRPCClient       DkronGRPCClient
 	TLSConfig        *tls.Config
 
-	// Set a global peer updater func
+	// PeerUpdaterFunc set a global peer updater func
 	PeerUpdaterFunc func(...string)
 
 	serf       *serf.Serf
@@ -98,17 +98,19 @@ type Plugins struct {
 	Executors  map[string]Executor
 }
 
+// AgentOption type that defines agent options
+type AgentOption func(agent *Agent)
+
 // NewAgent return a new Agent instace capable of starting
 // and running a Dkron instance.
-func NewAgent(config *Config, plugins *Plugins) *Agent {
-	a := &Agent{config: config}
+func NewAgent(config *Config, options ...AgentOption) *Agent {
+	agent := &Agent{config: config}
 
-	if plugins != nil {
-		a.ProcessorPlugins = plugins.Processors
-		a.ExecutorPlugins = plugins.Executors
+	for _, option := range options {
+		option(agent)
 	}
 
-	return a
+	return agent
 }
 
 // Start the current agent by running all the necessary

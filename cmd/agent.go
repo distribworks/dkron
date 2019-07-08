@@ -60,7 +60,7 @@ func agentRun(args ...string) error {
 		Executors:  p.Executors,
 	}
 
-	agent = dkron.NewAgent(config, plugins)
+	agent = dkron.NewAgent(config, dkron.WithPlugins(plugins))
 	if err := agent.Start(); err != nil {
 		return err
 	}
