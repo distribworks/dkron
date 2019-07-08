@@ -140,52 +140,64 @@ func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
 		return err
 	}
 
-	if ej != nil {
-		// Existing job that doesn't have parent job set and it's being set
-		if ej.ParentJob == "" && job.ParentJob != "" {
-			pj, err := job.GetParent()
-			if err != nil {
-				return err
-			}
-
-			pj.DependentJobs = append(pj.DependentJobs, job.Name)
-			if err := s.SetJob(pj, false); err != nil {
-				return err
-			}
+	// If the parent job changed or a new job is created and has a parent,
+	// update the parents of the old (if any) and new jobs
+	if (ej == nil && job.ParentJob != "") || (ej != nil && job.ParentJob != ej.ParentJob) {
+		if err := s.removeFromParent(ej); err != nil {
+			return err
 		}
-
-		// Existing job that has parent job set and it's being removed
-		if ej.ParentJob != "" && job.ParentJob == "" {
-			pj, err := ej.GetParent()
-			if err != nil {
-				return err
-			}
-
-			ndx := 0
-			for i, djn := range pj.DependentJobs {
-				if djn == job.Name {
-					ndx = i
-					break
-				}
-			}
-			pj.DependentJobs = append(pj.DependentJobs[:ndx], pj.DependentJobs[ndx+1:]...)
-			if err := s.SetJob(pj, false); err != nil {
-				return err
-			}
+		if err := s.addToParent(job); err != nil {
+			return err
 		}
 	}
 
-	// New job that has parent job set
-	if ej == nil && job.ParentJob != "" {
-		pj, err := job.GetParent()
-		if err != nil {
-			return err
-		}
+	return nil
+}
 
-		pj.DependentJobs = append(pj.DependentJobs, job.Name)
-		if err := s.SetJob(pj, false); err != nil {
-			return err
+// Removes the given job from its parent.
+// Does nothing if nil is passed as child.
+func (s *Store) removeFromParent(child *Job) error {
+	// Do nothing if no job was given or job has no parent
+	if child == nil || child.ParentJob == "" {
+		return nil
+	}
+
+	parent, err := child.GetParent()
+	if err != nil {
+		return err
+	}
+
+	// Remove all occurrences from the parent, not just one.
+	// Due to an old bug, a parent can have the same child more than once.
+	djs := []string{}
+	for _, djn := range parent.DependentJobs {
+		if djn != child.Name {
+			djs = append(djs, djn)
 		}
+	}
+	parent.DependentJobs = djs
+	if err := s.SetJob(parent, false); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Adds the given job to its parent.
+func (s *Store) addToParent(child *Job) error {
+	// Do nothing if job has no parent
+	if child.ParentJob == "" {
+		return nil
+	}
+
+	parent, err := child.GetParent()
+	if err != nil {
+		return err
+	}
+
+	parent.DependentJobs = append(parent.DependentJobs, child.Name)
+	if err := s.SetJob(parent, false); err != nil {
+		return err
 	}
 
 	return nil
@@ -319,6 +331,12 @@ func (s *Store) DeleteJob(name string) (*Job, error) {
 	job, err := s.GetJob(name, nil)
 	if err != nil {
 		return nil, err
+	}
+
+	if job.ParentJob != "" {
+		if err := s.removeFromParent(job); err != nil {
+			return nil, err
+		}
 	}
 
 	if err := s.DeleteExecutions(name); err != nil {
