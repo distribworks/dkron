@@ -1,3 +1,13 @@
+## 1.2.5
+
+- Fix: dependent job updates (@yvanoers)
+- Fix: Job reschedule on every page refresh
+- Fix: paginator gap and add First and Last button
+- Fix: new jobs counting as failed in dashboard (@yvanoers)
+- Feature: backend TLS support (@fopina)
+- Feature: support for authentication with etcd backend (@fopina)
+- Fix: sample dkron.yml for slack configuration (@kakakikikeke-fork)
+
 ## 1.2.4
 
 - Update swagger spec: fix executor_config, add status
