@@ -13,9 +13,12 @@ var (
 	cronInspect      = expvar.NewMap("cron_entries")
 	schedulerStarted = expvar.NewInt("scheduler_started")
 
+	// ErrScheduleParse is the error returned when the schdule parsing fails.
 	ErrScheduleParse = errors.New("Can't parse job schedule")
 )
 
+// Cron interface is the minimum set of methods that a Cron
+// engine should implement to work with Dkron.
 type Cron interface {
 	Start()
 	Stop()
@@ -26,17 +29,22 @@ type Cron interface {
 	AddTimezoneSensitiveJob(spec, timezone string, cmd cron.Job) error
 }
 
+// Scheduler represents a dkron scheduler instance, it stores the cron engine
+// and the related parameters.
 type Scheduler struct {
 	Cron    Cron
 	Started bool
 }
 
+// NewScheduler creates a new Scheduler instance
 func NewScheduler() *Scheduler {
 	c := cron.New()
 	schedulerStarted.Set(0)
 	return &Scheduler{Cron: c, Started: false}
 }
 
+// Start thee cron scheduler adding it's corresponding jobs and
+// executiong them on time.
 func (s *Scheduler) Start(jobs []*Job) {
 	metrics.IncrCounter([]string{"scheduler", "start"}, 1)
 	for _, job := range jobs {
@@ -63,6 +71,7 @@ func (s *Scheduler) Start(jobs []*Job) {
 	schedulerStarted.Set(1)
 }
 
+// Stop stop the scheduler efectively not running any job.
 func (s *Scheduler) Stop() {
 	if s.Started {
 		log.Debug("scheduler: Stopping scheduler")
@@ -78,11 +87,14 @@ func (s *Scheduler) Stop() {
 	schedulerStarted.Set(0)
 }
 
+// Restart thee scheduler
 func (s *Scheduler) Restart(jobs []*Job) {
 	s.Stop()
 	s.Start(jobs)
 }
 
+// GetEntry returns a scheduler entry from a snapshot in
+// the current time.
 func (s *Scheduler) GetEntry(job *Job) *cron.Entry {
 	for _, e := range s.Cron.Entries() {
 		j, _ := e.Job.(*Job)

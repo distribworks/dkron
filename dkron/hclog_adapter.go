@@ -16,7 +16,7 @@ type HCLogAdapter struct {
 	Name string
 }
 
-// HCLog has one more level than we do. As such, we will never
+// Trace HCLog has one more level than we do. As such, we will never
 // set trace level.
 func (*HCLogAdapter) Trace(_ string, _ ...interface{}) {
 	return

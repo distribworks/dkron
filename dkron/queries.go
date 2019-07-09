@@ -10,19 +10,24 @@ import (
 )
 
 const (
+	// QuerySchedulerRestart define the string to be sent
 	QuerySchedulerRestart = "scheduler:restart"
-	QueryRunJob           = "run:job"
-	QueryExecutionDone    = "execution:done"
+	// QueryRunJob define a run job query string
+	QueryRunJob = "run:job"
+	// QueryExecutionDone define the execution done query string
+	QueryExecutionDone = "execution:done"
 )
 
 var rescheduleThrotle *time.Timer
 
+// RunQueryParam defines the struct used to send a Run query
+// using serf.
 type RunQueryParam struct {
 	Execution *Execution `json:"execution"`
 	RPCAddr   string     `json:"rpc_addr"`
 }
 
-// Send a serf run query to the cluster, this is used to ask a node or nodes
+// RunQuery sends a serf run query to the cluster, this is used to ask a node or nodes
 // to run a Job.
 func (a *Agent) RunQuery(job *Job, ex *Execution) {
 	var params *serf.QueryParam
@@ -76,7 +81,7 @@ func (a *Agent) RunQuery(job *Job, ex *Execution) {
 		Execution: ex,
 		RPCAddr:   a.getRPCAddr(),
 	}
-	rqpJson, _ := json.Marshal(rqp)
+	rqpJSON, _ := json.Marshal(rqp)
 
 	log.WithFields(logrus.Fields{
 		"query":    QueryRunJob,
@@ -86,10 +91,10 @@ func (a *Agent) RunQuery(job *Job, ex *Execution) {
 	log.WithFields(logrus.Fields{
 		"query":    QueryRunJob,
 		"job_name": job.Name,
-		"json":     string(rqpJson),
+		"json":     string(rqpJSON),
 	}).Debug("agent: Sending query")
 
-	qr, err := a.serf.Query(QueryRunJob, rqpJson, params)
+	qr, err := a.serf.Query(QueryRunJob, rqpJSON, params)
 	if err != nil {
 		log.WithField("query", QueryRunJob).WithError(err).Fatal("agent: Sending query error")
 	}

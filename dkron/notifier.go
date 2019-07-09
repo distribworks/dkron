@@ -14,6 +14,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// Notifier represents a new notification to be sent by any of the available notificators
 type Notifier struct {
 	Config         *Config
 	Job            *Job
@@ -21,6 +22,7 @@ type Notifier struct {
 	ExecutionGroup []*Execution
 }
 
+// Notification creates a new Notifier instance
 func Notification(config *Config, execution *Execution, exGroup []*Execution, job *Job) *Notifier {
 	return &Notifier{
 		Config:         config,
@@ -30,6 +32,7 @@ func Notification(config *Config, execution *Execution, exGroup []*Execution, jo
 	}
 }
 
+// Send sends the notifications using any configured method
 func (n *Notifier) Send() {
 	if n.Config.MailHost != "" && n.Config.MailPort != 0 && n.Job.OwnerEmail != "" {
 		n.sendExecutionEmail()

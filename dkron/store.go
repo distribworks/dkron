@@ -17,7 +17,9 @@ import (
 )
 
 const (
-	MaxExecutions            = 100
+	// MaxExecutions to maintain in the storage
+	MaxExecutions = 100
+
 	defaultUpdateMaxAttempts = 5
 	defaultGCInterval        = 5 * time.Minute
 	defaultGCDiscardRatio    = 0.7
@@ -28,6 +30,9 @@ var (
 	ErrTooManyUpdateConflicts = errors.New("badger: too many transaction conflicts")
 )
 
+// Store is the local implementation of the Storage interface.
+// It gives dkron the ability to manipulate its embedded storage
+// BadgerDB.
 type Store struct {
 	agent  *Agent
 	db     *badger.DB
@@ -35,11 +40,13 @@ type Store struct {
 	closed bool
 }
 
+// JobOptions additional options to apply when loading a Job.
 type JobOptions struct {
 	ComputeStatus bool
 	Metadata      map[string]string `json:"tags"`
 }
 
+// NewStore creates a new Storage instance.
 func NewStore(a *Agent, dir string) (*Store, error) {
 	opts := badger.DefaultOptions
 	opts.Dir = dir
@@ -83,7 +90,7 @@ func (s *Store) runGcLoop() {
 	}
 }
 
-// Store a job
+// SetJob stores a job in the storage
 func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
 	//Existing job that has children, let's keep it's children
 
@@ -409,6 +416,7 @@ func (s *Store) DeleteJob(name string) (*Job, error) {
 	return job, err
 }
 
+// GetExecutions returns the exections given a Job name.
 func (s *Store) GetExecutions(jobName string) ([]*Execution, error) {
 	prefix := fmt.Sprintf("executions/%s", jobName)
 
@@ -466,6 +474,7 @@ func (s *Store) list(prefix string, checkRoot bool) ([]*kv, error) {
 	return kvs, err
 }
 
+// GetLastExecutionGroup get last execution group given the Job name.
 func (s *Store) GetLastExecutionGroup(jobName string) ([]*Execution, error) {
 	executions, byGroup, err := s.GetGroupedExecutions(jobName)
 	if err != nil {
@@ -495,7 +504,7 @@ func (s *Store) GetExecutionGroup(execution *Execution) ([]*Execution, error) {
 	return executions, nil
 }
 
-// Returns executions for a job grouped and with an ordered index
+// GetGroupedExecutions returns executions for a job grouped and with an ordered index
 // to facilitate access.
 func (s *Store) GetGroupedExecutions(jobName string) (map[int64][]*Execution, []int64, error) {
 	execs, err := s.GetExecutions(jobName)
@@ -656,6 +665,7 @@ ConflictRetry:
 	return ErrTooManyUpdateConflicts
 }
 
+// Shutdown close the KV store
 func (s *Store) Shutdown() error {
 	return s.db.Close()
 }

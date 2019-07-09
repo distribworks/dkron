@@ -17,8 +17,8 @@ const (
 	maxBufSize = 256000
 )
 
-// Return an error in case no suitable server to send the request is found.
-var ErrNoSuitableServer = errors.New("No suitable server found to send the request, aborting.")
+// ErrNoSuitableServer returns an error in case no suitable server to send the request is found.
+var ErrNoSuitableServer = errors.New("no suitable server found to send the request, aborting")
 
 // invokeJob will execute the given job. Depending on the event.
 func (a *Agent) invokeJob(job *Job, execution *Execution) error {

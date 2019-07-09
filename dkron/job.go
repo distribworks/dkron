@@ -14,14 +14,15 @@ import (
 )
 
 const (
+	// StatusNotSet is the initial job status.
 	StatusNotSet = ""
-	// Success is status of a job whose last run was a success.
+	// StatusSuccess is status of a job whose last run was a success.
 	StatusSuccess = "success"
-	// Running is status of a job whose last run has not finished.
+	// StatusRunning is status of a job whose last run has not finished.
 	StatusRunning = "running"
-	// Failed is status of a job whose last run was not successful on any nodes.
+	// StatusFailed is status of a job whose last run was not successful on any nodes.
 	StatusFailed = "failed"
-	// PartialyFailed is status of a job whose last run was successful on only some nodes.
+	// StatusPartialyFailed is status of a job whose last run was successful on only some nodes.
 	StatusPartialyFailed = "partially_failed"
 
 	// ConcurrencyAllow allows a job to execute concurrency.
@@ -212,7 +213,7 @@ func (j *Job) String() string {
 	return fmt.Sprintf("\"Job: %s, scheduled at: %s, tags:%v\"", j.Name, j.Schedule, j.Tags)
 }
 
-// Status returns the status of a job whether it's running, succeded or failed
+// GetStatus returns the status of a job whether it's running, succeded or failed
 func (j *Job) GetStatus() string {
 	// Maybe we are testing
 	if j.Agent == nil {
