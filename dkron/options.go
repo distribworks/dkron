@@ -14,20 +14,6 @@ func WithPlugins(plugins *Plugins) AgentOption {
 	}
 }
 
-// WithEstablishLeadershipFunc set an extra function to run after leadership acquisition
-func WithEstablishLeadershipFunc(establishLeadershipFunc func() error) AgentOption {
-	return func(agent *Agent) {
-		agent.establishLeadershipFuncs = append(agent.establishLeadershipFuncs, establishLeadershipFunc)
-	}
-}
-
-// WithRevokeLeadershipFunc set an extra function to run after leadership rovokation
-func WithRevokeLeadershipFunc(revokeLeadershipFunc func() error) AgentOption {
-	return func(agent *Agent) {
-		agent.revokeLeadershipFuncs = append(agent.revokeLeadershipFuncs, revokeLeadershipFunc)
-	}
-}
-
 // WithTransportCredentials set tls config in the agent
 func WithTransportCredentials(tls *tls.Config) AgentOption {
 	return func(agent *Agent) {
