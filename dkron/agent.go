@@ -55,9 +55,6 @@ type Agent struct {
 	GRPCClient       DkronGRPCClient
 	TLSConfig        *tls.Config
 
-	// PeerUpdaterFunc set a global peer updater func
-	PeerUpdaterFunc func(...string)
-
 	serf       *serf.Serf
 	config     *Config
 	eventCh    chan serf.Event
@@ -687,11 +684,6 @@ func (a *Agent) eventLoop() {
 				case serf.EventMemberUpdate, serf.EventUser, serf.EventQuery: // Ignore
 				default:
 					log.WithField("event", e.String()).Warn("agent: Unhandled serf event")
-				}
-
-				//In case of member event update peer list
-				if a.PeerUpdaterFunc != nil {
-					a.PeerUpdaterFunc(a.GetPeers()...)
 				}
 			}
 
