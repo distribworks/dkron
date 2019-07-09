@@ -368,6 +368,8 @@ func (s *Store) GetJob(name string, options *JobOptions) (*Job, error) {
 	return job, err
 }
 
+// DeleteJob deletes the given job from the store, along with
+// all its executions and references to it.
 func (s *Store) DeleteJob(name string) (*Job, error) {
 	var job *Job
 	err := s.db.Update(func(txn *badger.Txn) error {
@@ -379,6 +381,18 @@ func (s *Store) DeleteJob(name string) (*Job, error) {
 
 		if j.ParentJob != "" {
 			if err := s.removeFromParent(j); err != nil {
+				return err
+			}
+		}
+
+		// Remove the parent from any children
+		for _, djn := range j.DependentJobs {
+			child, err := s.GetJob(djn, nil)
+			if err != nil {
+				return err
+			}
+			child.ParentJob = ""
+			if err := s.SetJob(child, false); err != nil {
 				return err
 			}
 		}
