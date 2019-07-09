@@ -154,6 +154,18 @@ func TestStore_JobBecomesIndependentJob(t *testing.T) {
 	assert.Equal(t, 0, len(parent.DependentJobs))
 }
 
+func TestStore_ChildIsUpdatedAfterDeletingParentJob(t *testing.T) {
+	s, dir := setupStore(t)
+	defer cleanupStore(dir, s)
+
+	storeJob(t, s, "parent1")
+	storeChildJob(t, s, "child1", "parent1")
+	deleteJob(t, s, "parent1")
+	orphan := loadJob(t, s, "child1")
+
+	assert.Equal(t, "", orphan.ParentJob)
+}
+
 func TestStore_GetLastExecutionGroup(t *testing.T) {
 	// This can not use time.Now() because that will include monotonic information
 	// that will cause the unmarshalled execution to differ from our generated version
@@ -319,7 +331,7 @@ func setupStore(t *testing.T) (*Store, string) {
 	dir, err := ioutil.TempDir("", "dkron-test")
 	require.NoError(t, err)
 
-	a := NewAgent(nil, nil)
+	a := NewAgent(nil)
 	s, err := NewStore(a, dir)
 	require.NoError(t, err)
 	a.Store = s
