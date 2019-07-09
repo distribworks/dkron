@@ -83,9 +83,6 @@ type Agent struct {
 	peers      map[string][]*serverParts
 	localPeers map[raft.ServerAddress]*serverParts
 	peerLock   sync.RWMutex
-
-	establishLeadershipFuncs []func() error
-	revokeLeadershipFuncs    []func() error
 }
 
 // ProcessorFactory is a function type that creates a new instance
