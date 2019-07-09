@@ -40,13 +40,14 @@ type GRPCServer struct {
 	agent *Agent
 }
 
-// NewRPCServe creates and returns an instance of an RPCServer implementation
+// NewGRPCServer creates and returns an instance of a DkronGRPCServer implementation
 func NewGRPCServer(agent *Agent) DkronGRPCServer {
 	return &GRPCServer{
 		agent: agent,
 	}
 }
 
+// Serve creates and start a new gRPC dkron server
 func (grpcs *GRPCServer) Serve(lis net.Listener) error {
 	grpcServer := grpc.NewServer()
 	proto.RegisterDkronServer(grpcServer, grpcs)
@@ -240,6 +241,7 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.E
 	}, nil
 }
 
+// Leave calls the Stop method, stopping everything in the server
 func (grpcs *GRPCServer) Leave(ctx context.Context, in *empty.Empty) (*empty.Empty, error) {
 	return in, grpcs.agent.Stop()
 }

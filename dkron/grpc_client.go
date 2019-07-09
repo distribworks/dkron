@@ -56,6 +56,7 @@ func (grpcc *GRPCClient) Connect(addr string) (*grpc.ClientConn, error) {
 	return conn, nil
 }
 
+// ExecutionDone calls the ExecutionDone gRPC method
 func (grpcc *GRPCClient) ExecutionDone(addr string, execution *Execution) error {
 	defer metrics.MeasureSince([]string{"grpc", "call_execution_done"}, time.Now())
 	var conn *grpc.ClientConn
@@ -93,8 +94,9 @@ func (grpcc *GRPCClient) ExecutionDone(addr string, execution *Execution) error 
 	return nil
 }
 
+// GetJob calls GetJob gRPC method in the server
 func (grpcc *GRPCClient) GetJob(addr, jobName string) (*Job, error) {
-	defer metrics.MeasureSince([]string{"grpc", "call_get_job"}, time.Now())
+	defer metrics.MeasureSince([]string{"grpc", "get_job"}, time.Now())
 	var conn *grpc.ClientConn
 
 	// Initiate a connection with the server
@@ -122,6 +124,7 @@ func (grpcc *GRPCClient) GetJob(addr, jobName string) (*Job, error) {
 	return NewJobFromProto(gjr.Job), nil
 }
 
+// Leave calls Leave method on the gRPC server
 func (grpcc *GRPCClient) Leave(addr string) error {
 	var conn *grpc.ClientConn
 
