@@ -124,8 +124,8 @@ func ConfigFlagSet() *flag.FlagSet {
 	cmdFlags.String("log-level", c.LogLevel, "Log level (debug|info|warn|error|fatal|panic)")
 	cmdFlags.Int("rpc-port", c.RPCPort, "RPC Port used to communicate with clients. Only used when server. The RPC IP Address will be the same as the bind address")
 	cmdFlags.Int("advertise-rpc-port", 0, "Use the value of rpc-port by default")
-	cmdFlags.Int("bootstrap-expect", 0, "Expected cluster size")
-	cmdFlags.String("data-dir", c.DataDir, "Specifies the directory to use - for server-specific data, including the replicated log. By default, this is - the top-level data_dir suffixed with [server], like [/var/lib/dkron]")
+	cmdFlags.Int("bootstrap-expect", 0, "Provides the number of expected servers in the datacenter. Either this value should not be provided or the value must agree with other servers in the cluster. When provided, Dkron waits until the specified number of servers are available and then bootstraps the cluster. This allows an initial leader to be elected automatically. This flag requires server mode.")
+	cmdFlags.String("data-dir", c.DataDir, "Specifies the directory to use for server-specific data, including the replicated log. By default, this is the top-level data-dir, like [/var/lib/dkron]")
 	cmdFlags.String("datacenter", c.Datacenter, "Specifies the data center of the local agent. All members of a datacenter should share a local LAN connection.")
 	cmdFlags.String("region", c.Region, "Specifies the region the Dkron agent is a member of. A region typically maps to a geographic region, for example us, with potentially multiple zones, which map to datacenters such as us-west and us-east")
 
