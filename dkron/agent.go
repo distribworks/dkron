@@ -805,6 +805,10 @@ func (a *Agent) processFilteredNodes(job *Job) ([]string, map[string]string, err
 		tags[key] = val
 	}
 
+	// Always filter by region tag as we currently only target nodes
+	// on the same region.
+	tags["region"] = a.config.Region
+
 	for jtk, jtv := range tags {
 		var tc []string
 		if tc = strings.Split(jtv, ":"); len(tc) == 2 {
