@@ -22,7 +22,7 @@ func TestGRPCExecutionDone(t *testing.T) {
 	c.BootstrapExpect = 1
 	c.DevMode = true
 
-	a := NewAgent(c, nil)
+	a := NewAgent(c)
 	a.Start()
 
 	for {

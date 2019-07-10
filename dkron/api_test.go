@@ -29,7 +29,7 @@ func setupAPITest(t *testing.T, port string) (dir string, a *Agent) {
 	c.DevMode = true
 	c.DataDir = dir
 
-	a = NewAgent(c, nil)
+	a = NewAgent(c)
 	a.Start()
 
 	for {

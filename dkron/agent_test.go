@@ -33,7 +33,7 @@ func TestAgentCommand_runForElection(t *testing.T) {
 	c.BootstrapExpect = 3
 	c.DevMode = true
 
-	a1 := NewAgent(c, nil)
+	a1 := NewAgent(c)
 	if err := a1.Start(); err != nil {
 		t.Fatal(err)
 	}
@@ -58,7 +58,7 @@ func TestAgentCommand_runForElection(t *testing.T) {
 	c.BootstrapExpect = 3
 	c.DevMode = true
 
-	a2 := NewAgent(c, nil)
+	a2 := NewAgent(c)
 	a2.Start()
 
 	// Start another agent
@@ -71,7 +71,7 @@ func TestAgentCommand_runForElection(t *testing.T) {
 	c.BootstrapExpect = 3
 	c.DevMode = true
 
-	a3 := NewAgent(c, nil)
+	a3 := NewAgent(c)
 	a3.Start()
 
 	time.Sleep(2 * time.Second)
@@ -101,7 +101,7 @@ func Test_processFilteredNodes(t *testing.T) {
 	c.Tags = map[string]string{"tag": "test"}
 	c.DevMode = true
 
-	a1 := NewAgent(c, nil)
+	a1 := NewAgent(c)
 	a1.Start()
 
 	time.Sleep(2 * time.Second)
@@ -119,7 +119,7 @@ func Test_processFilteredNodes(t *testing.T) {
 	}
 	c.DevMode = true
 
-	a2 := NewAgent(c, nil)
+	a2 := NewAgent(c)
 	a2.Start()
 
 	time.Sleep(2 * time.Second)
@@ -155,7 +155,7 @@ func TestEncrypt(t *testing.T) {
 	c.LogLevel = logLevel
 	c.DevMode = true
 
-	a := NewAgent(c, nil)
+	a := NewAgent(c)
 	a.Start()
 
 	time.Sleep(2 * time.Second)
@@ -175,7 +175,7 @@ func Test_getRPCAddr(t *testing.T) {
 	c.LogLevel = logLevel
 	c.DevMode = true
 
-	a := NewAgent(c, nil)
+	a := NewAgent(c)
 	a.Start()
 
 	time.Sleep(2 * time.Second)
@@ -195,7 +195,7 @@ func TestAgentConfig(t *testing.T) {
 	c.AdvertiseAddr = advAddr
 	c.LogLevel = logLevel
 
-	a := NewAgent(c, nil)
+	a := NewAgent(c)
 	a.Start()
 
 	time.Sleep(2 * time.Second)
