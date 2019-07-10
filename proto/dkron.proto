@@ -27,6 +27,7 @@ message Job {
   google.protobuf.Timestamp last_success = 21;
   google.protobuf.Timestamp last_error = 22;
   google.protobuf.Timestamp next = 23;
+  string displayname = 24;
 }
 
 message SetJobRequest {

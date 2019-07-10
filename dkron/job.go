@@ -39,9 +39,9 @@ var (
 	// ErrSameParent is returned when the job's parent is itself.
 	ErrSameParent = errors.New("The job can not have itself as parent")
 	// ErrNoParent is returned when the job has no parent.
-	ErrNoParent = errors.New("The job doens't have a parent job set")
+	ErrNoParent = errors.New("The job doesn't have a parent job set")
 	// ErrNoCommand is returned when attempting to store a job that has no command.
-	ErrNoCommand = errors.New("Unespecified command for job")
+	ErrNoCommand = errors.New("Unspecified command for job")
 	// ErrWrongConcurrency is returned when Concurrency is set to a non existing setting.
 	ErrWrongConcurrency = errors.New("Wrong concurrency policy value, use: allow/forbid")
 )
@@ -50,6 +50,9 @@ var (
 type Job struct {
 	// Job name. Must be unique, acts as the id.
 	Name string `json:"name"`
+
+	// Display name of the job. If present, displayed instead of the name
+	DisplayName string `json:"displayname"`
 
 	// The timezone where the cron expression will be evaluated in.
 	// Empty means local time.
@@ -125,6 +128,7 @@ func NewJobFromProto(in *proto.Job) *Job {
 	next, _ := ptypes.Timestamp(in.GetNext())
 	return &Job{
 		Name:           in.Name,
+		DisplayName:    in.Displayname,
 		Timezone:       in.Timezone,
 		Schedule:       in.Schedule,
 		Owner:          in.Owner,
@@ -154,6 +158,7 @@ func (j *Job) ToProto() *proto.Job {
 	next, _ := ptypes.TimestampProto(j.Next)
 	return &proto.Job{
 		Name:           j.Name,
+		Displayname:    j.DisplayName,
 		Timezone:       j.Timezone,
 		Schedule:       j.Schedule,
 		Owner:          j.Owner,
@@ -213,7 +218,7 @@ func (j *Job) String() string {
 	return fmt.Sprintf("\"Job: %s, scheduled at: %s, tags:%v\"", j.Name, j.Schedule, j.Tags)
 }
 
-// GetStatus returns the status of a job whether it's running, succeded or failed
+// GetStatus returns the status of a job whether it's running, succeeded or failed
 func (j *Job) GetStatus() string {
 	// Maybe we are testing
 	if j.Agent == nil {
