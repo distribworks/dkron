@@ -50,38 +50,15 @@ Be sure you have opened this ports (or the ones that you configured) in your fir
 Works out of the box, good for non HA installations.
 
 - System service: If no changes are done to the default config files, dkron will start as a service in single mode.
-- Command line: Running a single node with default config can be done by running: `dkron agent --server`
+- Command line: Running a single node with default config can be done by running: `dkron agent --server --bootstrap-expect=1`
+
+```
+dkron agent --server --bootstrap-expect=1
+```
 
 Check your server is working: `curl localhost:8080/v1`
 
-Simple as that, now it is time to add some jobs:
-
-```bash
-curl localhost:8080/v1/jobs -XPOST -d '{
-  "name": "job1",
-  "schedule": "@every 10s",
-  "timezone": "Europe/Berlin",
-  "owner": "Platform Team",
-  "owner_email": "platform@example.com",
-  "disabled": false,
-  "tags": {
-    "server": "true"
-  },
-  "concurrency": "allow",
-  "executor": "shell",
-  "executor_config": {
-    "command": "date"
-  }
-}'
-```
-
-To start a Dkron server instance:
-
-```
-dkron agent --server
-```
-
-Time to add the first job:
+Simple as that, now it is time to add a job:
 
 {{% notice note %}}
 This job will only run in just one `server` node due to the node count in the tag. Refer to the [target node spec](/usage/target-nodes-spec) for details.
@@ -96,15 +73,20 @@ curl localhost:8080/v1/jobs -XPOST -d '{
   "owner_email": "platform@example.com",
   "disabled": false,
   "tags": {
-    "server": "true:1"
+    "server": "true"
   },
+  "metadata": {
+    "user": "12345"
+  }
   "concurrency": "allow",
   "executor": "shell",
   "executor_config": {
     "command": "date"
   }
-}`
+}'
 ```
+
+For full Job params description refer to the Job model in the [API guide](/api)
 
 That's it!
 
