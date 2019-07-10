@@ -163,7 +163,7 @@ func (grpcc *GRPCClient) SetJob(job *Job) error {
 	conn, err := grpcc.Connect(string(addr))
 	if err != nil {
 		log.WithError(err).WithFields(logrus.Fields{
-			"method":      "CallSetJob",
+			"method":      "SetJob",
 			"server_addr": addr,
 		}).Error("grpc: error dialing.")
 		return err
@@ -209,7 +209,7 @@ func (grpcc *GRPCClient) DeleteJob(jobName string) (*Job, error) {
 	})
 	if err != nil {
 		log.WithError(err).WithFields(logrus.Fields{
-			"method":      "CallDeleteJob",
+			"method":      "DeleteJob",
 			"server_addr": addr,
 		}).Error("grpc: Error calling gRPC method")
 		return nil, err
@@ -230,7 +230,7 @@ func (grpcc *GRPCClient) RunJob(jobName string) (*Job, error) {
 	conn, err := grpcc.Connect(string(addr))
 	if err != nil {
 		log.WithError(err).WithFields(logrus.Fields{
-			"method":      "CallRunJob",
+			"method":      "RunJob",
 			"server_addr": addr,
 		}).Error("grpc: error dialing.")
 		return nil, err
@@ -244,7 +244,7 @@ func (grpcc *GRPCClient) RunJob(jobName string) (*Job, error) {
 	})
 	if err != nil {
 		log.WithError(err).WithFields(logrus.Fields{
-			"method":      "CallRunJob",
+			"method":      "RunJob",
 			"server_addr": addr,
 		}).Error("grpc: Error calling gRPC method")
 		return nil, err
