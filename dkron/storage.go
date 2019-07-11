@@ -1,5 +1,7 @@
 package dkron
 
+import "io"
+
 // Storage is the interface that should be used by any
 // storage engine implemented for dkron. It contains the
 // minumum set of operations that are needed to have a working
@@ -18,4 +20,6 @@ type Storage interface {
 	GetExecutionGroup(execution *Execution) ([]*Execution, error)
 	GetGroupedExecutions(jobName string) (map[int64][]*Execution, []int64, error)
 	Shutdown() error
+	Snapshot(w io.WriteCloser) error
+	Restore(r io.ReadCloser) error
 }

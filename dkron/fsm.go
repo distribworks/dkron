@@ -1,7 +1,6 @@
 package dkron
 
 import (
-	"encoding/json"
 	"io"
 	"sync"
 
@@ -113,70 +112,31 @@ func (d *dkronFSM) applySetExecution(buf []byte) interface{} {
 }
 
 // Snapshot returns a snapshot of the key-value store. We wrap
-// the things we need in fsmSnapshot and then send that over to Persist.
-// Persist encodes the needed data from fsmsnapshot and transport it to
+// the things we need in dkronSnapshot and then send that over to Persist.
+// Persist encodes the needed data from dkronSnapshot and transport it to
 // Restore where the necessary data is replicated into the finite state machine.
 // This allows the consensus algorithm to truncate the replicated log.
 func (d *dkronFSM) Snapshot() (raft.FSMSnapshot, error) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
-
-	// Clone the kvstore into a map for easy transport
-	mapClone := make(map[string]string)
-	// opt := badger.DefaultIteratorOptions
-	// itr := f.kvs.kv.NewIterator(opt)
-	// for itr.Rewind(); itr.Valid(); itr.Next() {
-	// 	item := itr.Item()
-	// 	mapClone[string(item.Key()[:])] = string(item.Value()[:])
-	// }
-	// itr.Close()
-
-	return &dkronSnapshot{kvMap: mapClone}, nil
+	return &dkronSnapshot{store: d.store}, nil
 }
 
 // Restore stores the key-value store to a previous state.
-func (d *dkronFSM) Restore(kvMap io.ReadCloser) error {
-	kvSnapshot := make(map[string]string)
-	if err := json.NewDecoder(kvMap).Decode(&kvSnapshot); err != nil {
-		return err
-	}
-
-	// Set the state from the snapshot, no lock required according to
-	// Hashicorp docs.
-	//for k, v := range kvSnapshot {
-	//	f.kvs.Set([]byte(k), []byte(v))
-	//}
-
-	return nil
+func (d *dkronFSM) Restore(r io.ReadCloser) error {
+	return d.Restore(r)
 }
 
 type dkronSnapshot struct {
-	kvMap map[string]string
+	store Storage
 }
 
 func (d *dkronSnapshot) Persist(sink raft.SnapshotSink) error {
-	err := func() error {
-		// Encode data.
-		b, err := json.Marshal(d.kvMap)
-		if err != nil {
-			return err
-		}
-
-		// Write data to sink.
-		if _, err := sink.Write(b); err != nil {
-			return err
-		}
-
-		// Close the sink.
-		if err := sink.Close(); err != nil {
-			return err
-		}
-
-		return nil
-	}()
-
-	if err != nil {
+	if err := d.store.Snapshot(sink); err != nil {
 		sink.Cancel()
+		return err
+	}
+
+	// Close the sink.
+	if err := sink.Close(); err != nil {
 		return err
 	}
 

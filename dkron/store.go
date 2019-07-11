@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"io"
 	"sort"
 	"strings"
 	"sync"
@@ -668,6 +669,17 @@ ConflictRetry:
 // Shutdown close the KV store
 func (s *Store) Shutdown() error {
 	return s.db.Close()
+}
+
+// Snapshot creates a backup of the data stored in Badger
+func (s *Store) Snapshot(w io.WriteCloser) error {
+	_, err := s.db.Backup(w, 0)
+	return err
+}
+
+// Restore load data created with backup in to Badger
+func (s *Store) Restore(r io.ReadCloser) error {
+	return s.db.Load(r)
 }
 
 func (s *Store) unmarshalExecutions(items []*kv, stopWord string) ([]*Execution, error) {
