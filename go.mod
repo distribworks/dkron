@@ -8,8 +8,9 @@ require (
 	github.com/armon/go-metrics v0.0.0-20180917152333-f0300d1749da
 	github.com/boltdb/bolt v1.3.1 // indirect
 	github.com/cpuguy83/go-md2man v1.0.8 // indirect
-	github.com/dgraph-io/badger v1.5.4
+	github.com/dgraph-io/badger v2.0.0-rc2+incompatible
 	github.com/dgryski/go-farm v0.0.0-20190104051053-3adb47b1fb0f // indirect
+	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/gin-contrib/expvar v0.0.0-20180827025536-251166f58ff2
 	github.com/gin-contrib/multitemplate v0.0.0-20170922032617-bbc6daf6024b
 	github.com/gin-contrib/sse v0.0.0-20170109093832-22d885f9ecc7 // indirect

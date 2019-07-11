@@ -49,9 +49,7 @@ type JobOptions struct {
 
 // NewStore creates a new Storage instance.
 func NewStore(a *Agent, dir string) (*Store, error) {
-	opts := badger.DefaultOptions
-	opts.Dir = dir
-	opts.ValueDir = dir
+	opts := badger.DefaultOptions(dir)
 
 	db, err := badger.Open(opts)
 	if err != nil {
@@ -636,7 +634,7 @@ ConflictRetry:
 					return err
 				}
 
-				err = txn.Commit(nil)
+				err = txn.Commit()
 
 				// commit failed with conflict
 				if err == badger.ErrConflict {
@@ -652,7 +650,7 @@ ConflictRetry:
 			}
 
 			it.Close()
-			err := txn.Commit(nil)
+			err := txn.Commit()
 
 			// commit failed with conflict
 			if err == badger.ErrConflict {
@@ -679,7 +677,7 @@ func (s *Store) Snapshot(w io.WriteCloser) error {
 
 // Restore load data created with backup in to Badger
 func (s *Store) Restore(r io.ReadCloser) error {
-	return s.db.Load(r)
+	return s.db.Load(r, 0)
 }
 
 func (s *Store) unmarshalExecutions(items []*kv, stopWord string) ([]*Execution, error) {
