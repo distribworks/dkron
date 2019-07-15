@@ -611,57 +611,7 @@ func (s *Store) SetExecution(execution *Execution) (string, error) {
 // DeleteExecutions removes all executions of a job
 func (s *Store) DeleteExecutions(jobName string) error {
 	prefix := []byte(jobName)
-
-	// transaction may conflict
-ConflictRetry:
-	for i := 0; i < defaultUpdateMaxAttempts; i++ {
-
-		// always retry when TxnTooBig is signalled
-	TxnTooBigRetry:
-		for {
-			txn := s.db.NewTransaction(true)
-			opts := badger.DefaultIteratorOptions
-			opts.PrefetchValues = false
-
-			it := txn.NewIterator(opts)
-
-			for it.Seek(prefix); it.ValidForPrefix(prefix); it.Next() {
-				k := it.Item().KeyCopy(nil)
-
-				err := txn.Delete(k)
-				it.Close()
-				if err != badger.ErrTxnTooBig {
-					return err
-				}
-
-				err = txn.Commit()
-
-				// commit failed with conflict
-				if err == badger.ErrConflict {
-					continue ConflictRetry
-				}
-
-				if err != nil {
-					return err
-				}
-
-				// open new transaction and continue
-				continue TxnTooBigRetry
-			}
-
-			it.Close()
-			err := txn.Commit()
-
-			// commit failed with conflict
-			if err == badger.ErrConflict {
-				continue ConflictRetry
-			}
-
-			return err
-		}
-	}
-
-	return ErrTooManyUpdateConflicts
+	return s.db.DropPrefix(prefix)
 }
 
 // Shutdown close the KV store
