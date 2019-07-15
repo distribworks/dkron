@@ -122,7 +122,8 @@ func (d *dkronFSM) Snapshot() (raft.FSMSnapshot, error) {
 
 // Restore stores the key-value store to a previous state.
 func (d *dkronFSM) Restore(r io.ReadCloser) error {
-	return d.Restore(r)
+	defer r.Close()
+	return d.store.Restore(r)
 }
 
 type dkronSnapshot struct {
