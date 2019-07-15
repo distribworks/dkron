@@ -626,8 +626,10 @@ func (s *Store) Snapshot(w io.WriteCloser) error {
 }
 
 // Restore load data created with backup in to Badger
+// Default value for maxPendingWrites is 256, to minimise memory usage
+// and overall finish time.
 func (s *Store) Restore(r io.ReadCloser) error {
-	return s.db.Load(r, 0)
+	return s.db.Load(r, 256)
 }
 
 func (s *Store) unmarshalExecutions(items []*kv, stopWord string) ([]*Execution, error) {
