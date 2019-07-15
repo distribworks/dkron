@@ -17,6 +17,7 @@ import (
 	"time"
 
 	metrics "github.com/armon/go-metrics"
+	"github.com/distribworks/dkron/proto"
 	"github.com/hashicorp/memberlist"
 	"github.com/hashicorp/raft"
 	raftboltdb "github.com/hashicorp/raft-boltdb"
@@ -918,4 +919,26 @@ func (a *Agent) RefreshJobStatus(jobName string) {
 			a.setExecution(ej)
 		}
 	}
+}
+
+// applySetJob is a helper method to be called when
+// a job property need to be modifeid from the leader.
+func (a *Agent) applySetJob(job *proto.Job) error {
+	cmd, err := Encode(SetJobType, job)
+	if err != nil {
+		return err
+	}
+	af := a.raft.Apply(cmd, raftTimeout)
+	if err := af.Error(); err != nil {
+		return err
+	}
+	res := af.Response()
+	switch res {
+	case ErrParentJobNotFound:
+		return ErrParentJobNotFound
+	case ErrSameParent:
+		return ErrParentJobNotFound
+	}
+
+	return nil
 }

@@ -77,20 +77,8 @@ func (grpcs *GRPCServer) SetJob(ctx context.Context, setJobReq *proto.SetJobRequ
 		"job": setJobReq.Job.Name,
 	}).Debug("grpc: Received SetJob")
 
-	cmd, err := Encode(SetJobType, setJobReq.Job)
-	if err != nil {
+	if err := grpcs.agent.applySetJob(setJobReq.Job); err != nil {
 		return nil, err
-	}
-	af := grpcs.agent.raft.Apply(cmd, raftTimeout)
-	if err := af.Error(); err != nil {
-		return nil, err
-	}
-	res := af.Response()
-	switch res {
-	case ErrParentJobNotFound:
-		return nil, ErrParentJobNotFound
-	case ErrSameParent:
-		return nil, ErrParentJobNotFound
 	}
 
 	// If everything is ok, restart the scheduler
