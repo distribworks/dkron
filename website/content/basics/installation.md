@@ -35,7 +35,7 @@ enabled=1
 gpgcheck=0
 ```
 
-Then install: `sudo apt-get install dkron`
+Then install: `sudo yum install dkron`
 
 This will start Dkron as a system service and the place example configuration file under `/etc/dkron/dkron.yml`
 
