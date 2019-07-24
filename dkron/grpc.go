@@ -208,7 +208,9 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.E
 	}
 
 	// Send notification
-	Notification(grpcs.agent.config, &execution, exg, job).Send()
+	if err := Notification(grpcs.agent.config, &execution, exg, job).Send(); err != nil {
+		return nil, err
+	}
 
 	// Jobs that have dependent jobs are a bit more expensive because we need to call the Status() method for every execution.
 	// Check first if there's dependent jobs and then check for the job status to begin execution dependent jobs on success.

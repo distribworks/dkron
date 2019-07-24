@@ -33,13 +33,15 @@ func Notification(config *Config, execution *Execution, exGroup []*Execution, jo
 }
 
 // Send sends the notifications using any configured method
-func (n *Notifier) Send() {
+func (n *Notifier) Send() error {
 	if n.Config.MailHost != "" && n.Config.MailPort != 0 && n.Job.OwnerEmail != "" {
-		n.sendExecutionEmail()
+		return n.sendExecutionEmail()
 	}
 	if n.Config.WebhookURL != "" && n.Config.WebhookPayload != "" {
-		n.callExecutionWebhook()
+		return n.callExecutionWebhook()
 	}
+
+	return nil
 }
 
 func (n *Notifier) report() string {
@@ -97,7 +99,7 @@ func (n *Notifier) buildTemplate(templ string) *bytes.Buffer {
 	return out
 }
 
-func (n *Notifier) sendExecutionEmail() {
+func (n *Notifier) sendExecutionEmail() error {
 	var data *bytes.Buffer
 	if n.Config.MailPayload != "" {
 		data = n.buildTemplate(n.Config.MailPayload)
@@ -114,8 +116,10 @@ func (n *Notifier) sendExecutionEmail() {
 
 	serverAddr := fmt.Sprintf("%s:%d", n.Config.MailHost, n.Config.MailPort)
 	if err := e.Send(serverAddr, n.auth()); err != nil {
-		log.WithError(err).Error("notifier: Error sending email")
+		return fmt.Errorf("notifier: Error sending email %s", err)
 	}
+
+	return nil
 }
 
 func (n *Notifier) auth() smtp.Auth {
@@ -128,7 +132,7 @@ func (n *Notifier) auth() smtp.Auth {
 	return auth
 }
 
-func (n *Notifier) callExecutionWebhook() {
+func (n *Notifier) callExecutionWebhook() error {
 	out := n.buildTemplate(n.Config.WebhookPayload)
 	req, err := http.NewRequest("POST", n.Config.WebhookURL, out)
 	for _, h := range n.Config.WebhookHeaders {
@@ -141,7 +145,7 @@ func (n *Notifier) callExecutionWebhook() {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.WithError(err).Error("notifier: Error posting notification")
+		return fmt.Errorf("notifier: Error posting notification: %s", err)
 	}
 	defer resp.Body.Close()
 
@@ -151,6 +155,8 @@ func (n *Notifier) callExecutionWebhook() {
 		"header": resp.Header,
 		"body":   string(body),
 	}).Debug("notifier: Webhook call response")
+
+	return nil
 }
 
 func (n *Notifier) statusString(execution *Execution) string {
