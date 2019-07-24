@@ -75,14 +75,15 @@ func (grpcc *GRPCClient) ExecutionDone(addr string, execution *Execution) error 
 	edr, err := d.ExecutionDone(context.Background(), &proto.ExecutionDoneRequest{Execution: execution.ToProto()})
 	if err != nil {
 		if err == ErrNotLeader {
-			log.WithError(err).Info("grpc: ExecutionDone forwarded to the leader")
+			log.Info("grpc: ExecutionDone forwarded to the leader")
 			return nil
+		} else {
+			log.WithError(err).WithFields(logrus.Fields{
+				"method":      "ExecutionDone",
+				"server_addr": addr,
+			}).Error("grpc: Error calling gRPC method")
+			return err
 		}
-		log.WithError(err).WithFields(logrus.Fields{
-			"method":      "ExecutionDone",
-			"server_addr": addr,
-		}).Error("grpc: Error calling gRPC method")
-		return err
 	}
 	log.WithFields(logrus.Fields{
 		"method":      "ExecutionDone",
