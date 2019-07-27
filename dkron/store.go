@@ -27,8 +27,8 @@ const (
 )
 
 var (
-	// ErrTooManyUpdateConflicts is returned when all update attempts fails
-	ErrTooManyUpdateConflicts = errors.New("badger: too many transaction conflicts")
+	// ErrDependentJobs is returned when deleting a job that has dependent jobs
+	ErrDependentJobs = errors.New("store: could not delete job with dependent jobs, delete childs first")
 )
 
 // Store is the local implementation of the Storage interface.
@@ -91,7 +91,7 @@ func (s *Store) runGcLoop() {
 
 // SetJob stores a job in the storage
 func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
-	//Existing job that has children, let's keep it's children
+	var ej *Job
 
 	jobKey := fmt.Sprintf("jobs/%s", job.Name)
 
@@ -104,10 +104,14 @@ func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
 
 	err := s.db.Update(func(txn *badger.Txn) error {
 		// Get if the requested job already exist
-		ej, err := s.GetJob(job.Name, nil)
+		var pbej dkronpb.Job
+		err := s.getJobTxnFunc(job.Name, &pbej)(txn)
 		if err != nil && err != badger.ErrKeyNotFound {
 			return err
 		}
+
+		ej = NewJobFromProto(&pbej)
+
 		if ej != nil {
 			// When the job runs, these status vars are updated
 			// otherwise use the ones that are stored
@@ -139,21 +143,25 @@ func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
 			return err
 		}
 
-		// If the parent job changed or a new job is created and has a parent,
-		// update the parents of the old (if any) and new jobs
-		if (ej == nil && job.ParentJob != "") || (ej != nil && job.ParentJob != ej.ParentJob) {
-			if err := s.removeFromParent(ej); err != nil {
-				return err
-			}
-			if err := s.addToParent(job); err != nil {
-				return err
-			}
-		}
-
 		return nil
 	})
 
-	return err
+	if err != nil {
+		return err
+	}
+
+	// If the parent job changed or a new job is created and has a parent,
+	// update the parents of the old (if any) and new jobs
+	if (ej == nil && job.ParentJob != "") || (ej != nil && job.ParentJob != ej.ParentJob) {
+		if err := s.removeFromParent(ej); err != nil {
+			return err
+		}
+		if err := s.addToParent(job); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // Removes the given job from its parent.
@@ -341,9 +349,22 @@ func (s *Store) GetJobs(options *JobOptions) ([]*Job, error) {
 
 // GetJob finds and return a Job from the store
 func (s *Store) GetJob(name string, options *JobOptions) (*Job, error) {
-	var job *Job
+	var pbj dkronpb.Job
 
-	err := s.db.View(func(txn *badger.Txn) error {
+	err := s.db.View(s.getJobTxnFunc(name, &pbj))
+
+	job := NewJobFromProto(&pbj)
+	job.Agent = s.agent
+	if options != nil && options.ComputeStatus {
+		job.Status = job.GetStatus()
+	}
+
+	return job, err
+}
+
+// This will allow reuse this code to avoid nesting transactions
+func (s *Store) getJobTxnFunc(name string, pbj *dkronpb.Job) func(txn *badger.Txn) error {
+	return func(txn *badger.Txn) error {
 		item, err := txn.Get([]byte("jobs/" + name))
 		if err != nil {
 			return err
@@ -353,25 +374,17 @@ func (s *Store) GetJob(name string, options *JobOptions) (*Job, error) {
 		if err != nil {
 			return err
 		}
-		var pbj dkronpb.Job
-		if err := proto.Unmarshal(res, &pbj); err != nil {
+
+		if err := proto.Unmarshal(res, pbj); err != nil {
 			return err
 		}
-		job = NewJobFromProto(&pbj)
 
 		log.WithFields(logrus.Fields{
-			"job": job.Name,
+			"job": pbj.Name,
 		}).Debug("store: Retrieved job from datastore")
 
-		job.Agent = s.agent
-		if options != nil && options.ComputeStatus {
-			job.Status = job.GetStatus()
-		}
-
 		return nil
-	})
-
-	return job, err
+	}
 }
 
 // DeleteJob deletes the given job from the store, along with
@@ -379,40 +392,38 @@ func (s *Store) GetJob(name string, options *JobOptions) (*Job, error) {
 func (s *Store) DeleteJob(name string) (*Job, error) {
 	var job *Job
 	err := s.db.Update(func(txn *badger.Txn) error {
-		j, err := s.GetJob(name, nil)
-		if err != nil {
+		// Get if the job
+		var pbj dkronpb.Job
+		if err := s.getJobTxnFunc(name, &pbj)(txn); err != nil {
 			return err
 		}
-		job = j
-
-		if j.ParentJob != "" {
-			if err := s.removeFromParent(j); err != nil {
-				return err
-			}
+		// Check if the job has dependent jobs
+		// and return an error indicating to remove childs
+		// first.
+		if len(pbj.DependentJobs) > 0 {
+			return ErrDependentJobs
 		}
-
-		// Remove the parent from any children
-		for _, djn := range j.DependentJobs {
-			child, err := s.GetJob(djn, nil)
-			if err != nil {
-				return err
-			}
-			child.ParentJob = ""
-			if err := s.SetJob(child, false); err != nil {
-				return err
-			}
-		}
+		job = NewJobFromProto(&pbj)
+		job.Agent = s.agent
 
 		if err := s.DeleteExecutions(name); err != nil {
-			if err != nil {
-				return err
-			}
+			return err
 		}
 
 		return txn.Delete([]byte("jobs/" + name))
 	})
+	if err != nil {
+		return nil, err
+	}
 
-	return job, err
+	// If the transaction succeded, remove from parent
+	if job.ParentJob != "" {
+		if err := s.removeFromParent(job); err != nil {
+			return nil, err
+		}
+	}
+
+	return job, nil
 }
 
 // GetExecutions returns the exections given a Job name.
