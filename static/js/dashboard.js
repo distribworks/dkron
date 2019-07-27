@@ -256,10 +256,12 @@ dkron.controller('JobListCtrl', function ($scope, $location, $http, $interval, h
       success_count = success_count + data[i].success_count;
       error_count = error_count + data[i].error_count;
 
-      var lastErrorDate = new Date(Date.parse(data[i].last_error));
-      if (new Date(Date.parse(data[i].last_success)) > lastErrorDate) {
+      // Compute last...Dates: they're either a date or null
+      var lastSuccessDate = data[i].last_success && new Date(Date.parse(data[i].last_success));
+      var lastErrorDate = data[i].last_error && new Date(Date.parse(data[i].last_error));
+      if ((lastSuccessDate !== null && lastErrorDate === null) || lastSuccessDate > lastErrorDate) {
         $scope.successful_jobs = $scope.successful_jobs + 1;
-      } else if (lastErrorDate.getFullYear() !== 1) {
+      } else if ((lastSuccessDate === null && lastErrorDate !== null) || lastSuccessDate < lastErrorDate) {
         $scope.failed_jobs = $scope.failed_jobs + 1;
       }
     }
@@ -385,10 +387,12 @@ dkron.controller('IndexCtrl', function ($scope, $http, $timeout, $element) {
       success_count = success_count + data[i].success_count;
       error_count = error_count + data[i].error_count;
 
-      var lastErrorDate = new Date(Date.parse(data[i].last_error));
-      if (new Date(Date.parse(data[i].last_success)) > lastErrorDate) {
+      // Compute last...Dates: they're either a date or null
+      var lastSuccessDate = data[i].last_success && new Date(Date.parse(data[i].last_success));
+      var lastErrorDate = data[i].last_error && new Date(Date.parse(data[i].last_error));
+      if ((lastSuccessDate !== null && lastErrorDate === null) || lastSuccessDate > lastErrorDate) {
         $scope.successful_jobs = $scope.successful_jobs + 1;
-      } else if (lastErrorDate.getFullYear() !== 1) {
+      } else if ((lastSuccessDate === null && lastErrorDate !== null) || lastSuccessDate < lastErrorDate) {
         $scope.failed_jobs = $scope.failed_jobs + 1;
       }
 

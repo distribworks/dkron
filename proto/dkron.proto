@@ -24,8 +24,12 @@ message Job {
   map<string, string> executor_config = 18;
   string status = 19;
   map<string, string> metadata = 20;
-  google.protobuf.Timestamp last_success = 21;
-  google.protobuf.Timestamp last_error = 22;
+  message NullableTime {
+    bool has_value = 1;
+    google.protobuf.Timestamp time = 2;
+  }
+  NullableTime last_success = 25;
+  NullableTime last_error = 26;
   google.protobuf.Timestamp next = 23;
   string displayname = 24;
 }
