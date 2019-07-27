@@ -160,10 +160,13 @@ func TestStore_ChildIsUpdatedAfterDeletingParentJob(t *testing.T) {
 
 	storeJob(t, s, "parent1")
 	storeChildJob(t, s, "child1", "parent1")
-	deleteJob(t, s, "parent1")
-	orphan := loadJob(t, s, "child1")
 
-	assert.Equal(t, "", orphan.ParentJob)
+	_, err := s.DeleteJob("parent1")
+	assert.EqualError(t, err, ErrDependentJobs.Error())
+
+	deleteJob(t, s, "child1")
+	_, err = s.DeleteJob("parent1")
+	assert.NoError(t, err)
 }
 
 func TestStore_GetLastExecutionGroup(t *testing.T) {

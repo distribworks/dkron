@@ -111,6 +111,7 @@ func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
 		}
 
 		ej = NewJobFromProto(&pbej)
+		ej.Agent = s.agent
 
 		if ej != nil {
 			// When the job runs, these status vars are updated
