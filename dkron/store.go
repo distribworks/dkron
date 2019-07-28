@@ -89,11 +89,28 @@ func (s *Store) runGcLoop() {
 	}
 }
 
+func (s *Store) setJobTxnFunc(pbj *dkronpb.Job) func(txn *badger.Txn) error {
+	return func(txn *badger.Txn) error {
+		jobKey := fmt.Sprintf("jobs/%s", pbj.Name)
+
+		jb, err := proto.Marshal(pbj)
+		if err != nil {
+			return err
+		}
+		log.WithField("job", pbj.Name).Debug("store: Setting job")
+
+		if err := txn.Set([]byte(jobKey), jb); err != nil {
+			return err
+		}
+
+		return nil
+	}
+}
+
 // SetJob stores a job in the storage
 func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
+	var pbej dkronpb.Job
 	var ej *Job
-
-	jobKey := fmt.Sprintf("jobs/%s", job.Name)
 
 	// Init the job agent
 	job.Agent = s.agent
@@ -104,7 +121,6 @@ func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
 
 	err := s.db.Update(func(txn *badger.Txn) error {
 		// Get if the requested job already exist
-		var pbej dkronpb.Job
 		err := s.getJobTxnFunc(job.Name, &pbej)(txn)
 		if err != nil && err != badger.ErrKeyNotFound {
 			return err
@@ -134,19 +150,9 @@ func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
 		}
 
 		pbj := job.ToProto()
-		jb, err := proto.Marshal(pbj)
-		if err != nil {
-			return err
-		}
-		log.WithField("job", job.Name).Debug("store: Setting job")
-
-		if err := txn.Set([]byte(jobKey), jb); err != nil {
-			return err
-		}
-
+		s.setJobTxnFunc(pbj)(txn)
 		return nil
 	})
-
 	if err != nil {
 		return err
 	}
@@ -227,11 +233,8 @@ func (s *Store) validateTimeZone(timezone string) error {
 func (s *Store) SetExecutionDone(execution *Execution) (bool, error) {
 	err := s.db.Update(func(txn *badger.Txn) error {
 		// Load the job from the store
-		job, err := s.GetJob(execution.JobName, &JobOptions{
-			ComputeStatus: true,
-		})
-
-		if err != nil {
+		var pbj dkronpb.Job
+		if err := s.db.View(s.getJobTxnFunc(execution.JobName, &pbj)); err != nil {
 			if err == badger.ErrKeyNotFound {
 				log.Warning(ErrExecutionDoneForDeletedJob)
 				return ErrExecutionDoneForDeletedJob
@@ -240,28 +243,34 @@ func (s *Store) SetExecutionDone(execution *Execution) (bool, error) {
 			return err
 		}
 
+		key := fmt.Sprintf("executions/%s/%s", execution.JobName, execution.Key())
+
 		// Save the execution to store
-		if _, err := s.SetExecution(execution); err != nil {
+		pbe := execution.ToProto()
+		if err := s.setExecutionTxnFunc(key, pbe)(txn); err != nil {
 			return err
 		}
 
-		if execution.Success {
-			job.LastSuccess = execution.FinishedAt
-			job.SuccessCount++
+		if pbe.Success {
+			pbj.LastSuccess = pbe.FinishedAt
+			pbj.SuccessCount++
 		} else {
-			job.LastError = execution.FinishedAt
-			job.ErrorCount++
+			pbj.LastError = pbe.FinishedAt
+			pbj.ErrorCount++
 		}
 
-		if err := s.SetJob(job, false); err != nil {
-			log.WithError(err).Fatal("store: Error in SetExecutionDone")
+		if err := s.setJobTxnFunc(&pbj)(txn); err != nil {
 			return err
 		}
 
 		return nil
 	})
+	if err != nil {
+		log.WithError(err).Fatal("store: Error in SetExecutionDone")
+		return false, err
+	}
 
-	return true, err
+	return true, nil
 }
 
 func (s *Store) validateJob(job *Job) error {
@@ -393,7 +402,7 @@ func (s *Store) getJobTxnFunc(name string, pbj *dkronpb.Job) func(txn *badger.Tx
 func (s *Store) DeleteJob(name string) (*Job, error) {
 	var job *Job
 	err := s.db.Update(func(txn *badger.Txn) error {
-		// Get if the job
+		// Get the job
 		var pbj dkronpb.Job
 		if err := s.getJobTxnFunc(name, &pbj)(txn); err != nil {
 			return err
@@ -537,23 +546,8 @@ func (s *Store) GetGroupedExecutions(jobName string) (map[int64][]*Execution, []
 	return groups, byGroup, nil
 }
 
-// SetExecution Save a new execution and returns the key of the new saved item or an error.
-func (s *Store) SetExecution(execution *Execution) (string, error) {
-	pbe := execution.ToProto()
-	eb, err := proto.Marshal(pbe)
-	if err != nil {
-		return "", err
-	}
-
-	key := fmt.Sprintf("executions/%s/%s", execution.JobName, execution.Key())
-
-	log.WithFields(logrus.Fields{
-		"job":       execution.JobName,
-		"execution": key,
-		"finished":  execution.FinishedAt.String(),
-	}).Debug("store: Setting key")
-
-	err = s.db.Update(func(txn *badger.Txn) error {
+func (*Store) setExecutionTxnFunc(key string, pbe *dkronpb.Execution) func(txn *badger.Txn) error {
+	return func(txn *badger.Txn) error {
 		// Get previous execution
 		i, err := txn.Get([]byte(key))
 		if err != nil && err != badger.ErrKeyNotFound {
@@ -575,8 +569,27 @@ func (s *Store) SetExecution(execution *Execution) (string, error) {
 				return nil
 			}
 		}
+
+		eb, err := proto.Marshal(pbe)
+		if err != nil {
+			return err
+		}
 		return txn.Set([]byte(key), eb)
-	})
+	}
+}
+
+// SetExecution Save a new execution and returns the key of the new saved item or an error.
+func (s *Store) SetExecution(execution *Execution) (string, error) {
+	pbe := execution.ToProto()
+	key := fmt.Sprintf("executions/%s/%s", execution.JobName, execution.Key())
+
+	log.WithFields(logrus.Fields{
+		"job":       execution.JobName,
+		"execution": key,
+		"finished":  execution.FinishedAt.String(),
+	}).Debug("store: Setting key")
+
+	err := s.db.Update(s.setExecutionTxnFunc(key, pbe))
 
 	if err != nil {
 		log.WithError(err).WithFields(logrus.Fields{
