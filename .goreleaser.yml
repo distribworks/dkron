@@ -49,6 +49,7 @@ builds:
       - -s -w
 
   - main: ./builtin/bins/dkron-processor-log/
+    id: dkron-processor-log
     binary: dkron-processor-log
     env:
       - CGO_ENABLED=0
