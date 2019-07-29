@@ -1,6 +1,7 @@
 project_name: dkron
 builds:
   - main: ./builtin/bins/dkron-executor-http/
+    id: dkron-executor-http
     binary: dkron-executor-http
     env:
       - CGO_ENABLED=0
@@ -16,6 +17,7 @@ builds:
       - -s -w
 
   - main: ./builtin/bins/dkron-executor-shell/
+    id: dkron-executor-shell
     binary: dkron-executor-shell
     env:
       - CGO_ENABLED=0
@@ -31,6 +33,7 @@ builds:
       - -s -w
 
   - main: ./builtin/bins/dkron-processor-files/
+    id: dkron-processor-files
     binary: dkron-processor-files
     env:
       - CGO_ENABLED=0
@@ -61,6 +64,7 @@ builds:
       - -s -w
 
   - main: ./builtin/bins/dkron-processor-syslog/
+    id: dkron-processor-syslog
     binary: dkron-processor-syslog
     env:
       - CGO_ENABLED=0
