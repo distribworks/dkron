@@ -10,7 +10,11 @@ To migrate jobs from v1 to v2, export jobs from the v1 cluster and import them i
 
 A basic script to do that can be found [here](https://gist.github.com/pjz/94f4bd81a0897fd64db44593078e2156)
 
-You can take the opportunity to change your job tags as explained in the following section.
+You can take the opportunity to update your job definitions as explained in the following section:
+
+## Change job name
+
+In v2 dkron doesn't accept jobs with invalid naming, adapt your scripts or api calls if necessary to set the job name with valid characters.
 
 ## Changing tags and metadata
 
