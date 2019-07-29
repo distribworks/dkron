@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/dgraph-io/badger"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -27,58 +28,67 @@ func TestStore(t *testing.T) {
 		Disabled:       true,
 	}
 
+	testJob2 := &Job{
+		Name:           "test2",
+		Schedule:       "@every 2s",
+		Executor:       "shell",
+		ExecutorConfig: map[string]string{"command": "/bin/false"},
+		Disabled:       true,
+	}
+
 	// Check that we still get an empty job list
 	jobs, err := s.GetJobs(nil)
-	if err != nil {
-		t.Fatalf("error getting jobs: %s", err)
-	}
+	assert.NoError(t, err)
 	assert.NotNil(t, jobs, "jobs nil, expecting empty slice")
+	assert.Empty(t, jobs)
 
-	if err := s.SetJob(testJob, true); err != nil {
-		t.Fatalf("error creating job: %s", err)
-	}
+	err = s.SetJob(testJob, true)
+	assert.NoError(t, err)
+	err = s.SetJob(testJob2, true)
+	assert.NoError(t, err)
 
 	jobs, err = s.GetJobs(nil)
-	if err != nil {
-		t.Fatalf("error getting jobs: %s", err)
-	}
-	assert.Len(t, jobs, 1)
+	assert.NoError(t, err)
+	assert.Len(t, jobs, 2)
 	assert.Equal(t, "test", jobs[0].Name)
-
-	if _, err := s.DeleteJob("test"); err != nil {
-		t.Fatalf("error deleting job: %s", err)
-	}
-
-	if _, err := s.DeleteJob("test"); err == nil {
-		t.Fatalf("error job deletion should fail: %s", err)
-	}
 
 	testExecution := &Execution{
 		JobName:    "test",
-		StartedAt:  time.Now(),
-		FinishedAt: time.Now(),
+		StartedAt:  time.Now().UTC(),
+		FinishedAt: time.Now().UTC(),
 		Success:    true,
 		Output:     []byte("type"),
 		NodeName:   "testNode",
 	}
 
 	_, err = s.SetExecution(testExecution)
-	if err != nil {
-		t.Fatalf("error setting the execution: %s", err)
+	require.NoError(t, err)
+
+	testExecution2 := &Execution{
+		JobName:    "test2",
+		StartedAt:  time.Now().UTC(),
+		FinishedAt: time.Now().UTC(),
+		Success:    true,
+		Output:     []byte("type"),
+		NodeName:   "testNode",
 	}
+	_, err = s.SetExecution(testExecution2)
+	require.NoError(t, err)
 
 	execs, err := s.GetExecutions("test")
-	if err != nil {
-		t.Fatalf("error getting executions: %s", err)
-	}
+	assert.NoError(t, err)
 
-	if !execs[0].StartedAt.Equal(testExecution.StartedAt) {
-		t.Fatalf("error on retrieved excution expected: %s got: %s", testExecution.StartedAt, execs[0].StartedAt)
-	}
+	assert.Equal(t, testExecution, execs[0])
+	assert.Len(t, execs, 1)
 
-	if len(execs) != 1 {
-		t.Fatalf("error in number of expected executions: %v", execs)
-	}
+	_, err = s.DeleteJob("test")
+	assert.NoError(t, err)
+
+	_, err = s.DeleteJob("test")
+	assert.EqualError(t, err, badger.ErrKeyNotFound.Error())
+
+	_, err = s.DeleteJob("test2")
+	assert.NoError(t, err)
 }
 
 func TestStore_AddDependentJobToParent(t *testing.T) {

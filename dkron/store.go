@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"sort"
-	"strings"
 	"sync"
 	"time"
 
@@ -438,7 +437,7 @@ func (s *Store) DeleteJob(name string) (*Job, error) {
 
 // GetExecutions returns the exections given a Job name.
 func (s *Store) GetExecutions(jobName string) ([]*Execution, error) {
-	prefix := fmt.Sprintf("executions/%s", jobName)
+	prefix := fmt.Sprintf("executions/%s/", jobName)
 
 	kvs, err := s.list(prefix, true)
 	if err != nil {
@@ -454,8 +453,6 @@ type kv struct {
 }
 
 func (s *Store) list(prefix string, checkRoot bool) ([]*kv, error) {
-	prefix = strings.TrimSuffix(prefix, "/")
-
 	kvs := []*kv{}
 	found := false
 
@@ -481,6 +478,7 @@ func (s *Store) list(prefix string, checkRoot bool) ([]*kv, error) {
 			}
 
 			kv := &kv{Key: string(k), Value: body}
+			fmt.Println(kv.Key)
 			kvs = append(kvs, kv)
 		}
 
