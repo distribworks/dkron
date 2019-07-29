@@ -55,6 +55,10 @@ func NewStore(a *Agent, dir string) (*Store, error) {
 		return nil, err
 	}
 
+	if err := db.DropAll(); err != nil {
+		return nil, err
+	}
+
 	store := &Store{
 		db:    db,
 		agent: a,
