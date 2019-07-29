@@ -478,7 +478,6 @@ func (s *Store) list(prefix string, checkRoot bool) ([]*kv, error) {
 			}
 
 			kv := &kv{Key: string(k), Value: body}
-			fmt.Println(kv.Key)
 			kvs = append(kvs, kv)
 		}
 
