@@ -136,7 +136,6 @@ changelog:
     - '^Merge pull request'
 
 dockers:
-  - binary: dkron
     dockerfile: Dockerfile.hub
     extra_files:
       - dist/linux_amd64
