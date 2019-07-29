@@ -138,8 +138,12 @@ changelog:
 dockers:
   -
     dockerfile: Dockerfile.hub
-    extra_files:
-      - dist/linux_amd64
+    binaries:
+      - dkron
+      - dkron-executor-http
+      - dkron-processor-syslog
+      - dkron-processor-log
+      - dkron-processor-files
     image_templates:
       - "dkron/dkron:latest"
       - "dkron/dkron:{{ .Tag }}"
