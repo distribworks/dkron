@@ -12,28 +12,31 @@ import (
 
 // Config stores all configuration options for the dkron package.
 type Config struct {
-	NodeName              string `mapstructure:"node-name"`
-	BindAddr              string `mapstructure:"bind-addr"`
-	HTTPAddr              string `mapstructure:"http-addr"`
-	Profile               string
-	Interface             string
-	AdvertiseAddr         string            `mapstructure:"advertise-addr"`
-	Tags                  map[string]string `mapstructure:"tags"`
-	SnapshotPath          string            `mapstructure:"snapshot-path"`
-	ReconnectInterval     time.Duration     `mapstructure:"reconnect-interval"`
-	ReconnectTimeout      time.Duration     `mapstructure:"reconnect-timeout"`
-	TombstoneTimeout      time.Duration     `mapstructure:"tombstone-timeout"`
-	DisableNameResolution bool              `mapstructure:"disable-name-resolution"`
-	KeyringFile           string            `mapstructure:"keyring-file"`
-	RejoinAfterLeave      bool              `mapstructure:"rejoin-after-leave"`
-	Server                bool
-	EncryptKey            string   `mapstructure:"encrypt"`
-	StartJoin             []string `mapstructure:"join"`
-	RPCPort               int      `mapstructure:"rpc-port"`
-	AdvertiseRPCPort      int      `mapstructure:"advertise-rpc-port"`
-	LogLevel              string   `mapstructure:"log-level"`
-	Datacenter            string
-	Region                string
+	NodeName                string `mapstructure:"node-name"`
+	BindAddr                string `mapstructure:"bind-addr"`
+	HTTPAddr                string `mapstructure:"http-addr"`
+	Profile                 string
+	Interface               string
+	AdvertiseAddr           string            `mapstructure:"advertise-addr"`
+	Tags                    map[string]string `mapstructure:"tags"`
+	SnapshotPath            string            `mapstructure:"snapshot-path"`
+	ReconnectInterval       time.Duration     `mapstructure:"reconnect-interval"`
+	ReconnectTimeout        time.Duration     `mapstructure:"reconnect-timeout"`
+	TombstoneTimeout        time.Duration     `mapstructure:"tombstone-timeout"`
+	DisableNameResolution   bool              `mapstructure:"disable-name-resolution"`
+	KeyringFile             string            `mapstructure:"keyring-file"`
+	RejoinAfterLeave        bool              `mapstructure:"rejoin-after-leave"`
+	Server                  bool
+	EncryptKey              string        `mapstructure:"encrypt"`
+	StartJoin               []string      `mapstructure:"join"`
+	RetryJoinLAN            []string      `mapstructure:"retry-join"`
+	RetryJoinMaxAttemptsLAN int           `mapstructure:"retry-max"`
+	RetryJoinIntervalLAN    time.Duration `mapstructure:"retry-interval"`
+	RPCPort                 int           `mapstructure:"rpc-port"`
+	AdvertiseRPCPort        int           `mapstructure:"advertise-rpc-port"`
+	LogLevel                string        `mapstructure:"log-level"`
+	Datacenter              string
+	Region                  string
 
 	// Bootstrap mode is used to bring up the first Dkron server.  It is
 	// required so that it can elect a leader without any other nodes
@@ -119,6 +122,9 @@ func ConfigFlagSet() *flag.FlagSet {
 	cmdFlags.String("http-addr", c.HTTPAddr, "Address to bind the UI web server to. Only used when server")
 	cmdFlags.String("profile", c.Profile, "Profile is used to control the timing profiles used")
 	cmdFlags.StringSlice("join", []string{}, "An initial agent to join with. This flag can be specified multiple times")
+	cmdFlags.StringSlice("retry-join", []string{}, "Address of an agent to join at start time with retries enabled. Can be specified multiple times.")
+	cmdFlags.Int("retry-max", 0, "Maximum number of join attempts. Defaults to 0, which will retry indefinitely.")
+	cmdFlags.String("retry-interval", "0", "Time to wait between join attempts.")
 	cmdFlags.StringSlice("tag", []string{}, "Tag can be specified multiple times to attach multiple key/value tag pairs to the given node, specified as key=value")
 	cmdFlags.String("encrypt", "", "Key for encrypting network traffic. Must be a base64-encoded 16-byte key")
 	cmdFlags.String("log-level", c.LogLevel, "Log level (debug|info|warn|error|fatal|panic)")

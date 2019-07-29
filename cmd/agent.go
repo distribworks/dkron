@@ -84,6 +84,9 @@ WAIT:
 	select {
 	case s := <-signalCh:
 		sig = s
+	case err := <-agent.RetryJoinCh():
+		fmt.Println("[ERR] agent: Retry join failed: ", err)
+		return 1
 	case <-ShutdownCh:
 		sig = os.Interrupt
 	}

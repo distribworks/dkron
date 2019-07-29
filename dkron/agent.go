@@ -56,12 +56,13 @@ type Agent struct {
 	GRPCClient       DkronGRPCClient
 	TLSConfig        *tls.Config
 
-	serf       *serf.Serf
-	config     *Config
-	eventCh    chan serf.Event
-	sched      *Scheduler
-	ready      bool
-	shutdownCh chan struct{}
+	serf        *serf.Serf
+	config      *Config
+	eventCh     chan serf.Event
+	sched       *Scheduler
+	ready       bool
+	shutdownCh  chan struct{}
+	retryJoinCh chan error
 
 	// The raft instance is used among Dkron nodes within the
 	// region to protect operations that require strong consistency
@@ -102,7 +103,10 @@ type AgentOption func(agent *Agent)
 // NewAgent return a new Agent instace capable of starting
 // and running a Dkron instance.
 func NewAgent(config *Config, options ...AgentOption) *Agent {
-	agent := &Agent{config: config}
+	agent := &Agent{
+		config:      config,
+		retryJoinCh: make(chan error),
+	}
 
 	for _, option := range options {
 		option(agent)
@@ -119,7 +123,13 @@ func (a *Agent) Start() error {
 		return fmt.Errorf("agent: Can not setup serf, %s", err)
 	}
 	a.serf = s
-	a.join(a.config.StartJoin, false)
+
+	// start retry join
+	if len(a.config.RetryJoinLAN) > 0 {
+		a.retryJoinLAN()
+	} else {
+		a.join(a.config.StartJoin, true)
+	}
 
 	if err := initMetrics(a); err != nil {
 		log.Fatal("agent: Can not setup metrics")
@@ -147,6 +157,19 @@ func (a *Agent) Start() error {
 	a.ready = true
 
 	return nil
+}
+
+// RetryJoinCh is a channel that transports errors
+// from the retry join process.
+func (a *Agent) RetryJoinCh() <-chan error {
+	return a.retryJoinCh
+}
+
+// JoinLAN is used to have Consul join the inner-DC pool
+// The target address should be another node inside the DC
+// listening on the Serf LAN address
+func (a *Agent) JoinLAN(addrs []string) (int, error) {
+	return a.serf.Join(addrs, true)
 }
 
 // Stop stops an agent, if the agent is a server and is running for election
