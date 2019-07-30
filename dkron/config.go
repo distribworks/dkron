@@ -43,7 +43,7 @@ type Config struct {
 	// being present
 	Bootstrap bool
 
-	// BootstrapExpect tries to automatically bootstrap the Consul cluster,
+	// BootstrapExpect tries to automatically bootstrap the Dkron cluster,
 	// by withholding peers until enough servers join.
 	BootstrapExpect int `mapstructure:"bootstrap-expect"`
 

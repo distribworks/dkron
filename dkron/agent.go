@@ -165,7 +165,7 @@ func (a *Agent) RetryJoinCh() <-chan error {
 	return a.retryJoinCh
 }
 
-// JoinLAN is used to have Consul join the inner-DC pool
+// JoinLAN is used to have Dkron join the inner-DC pool
 // The target address should be another node inside the DC
 // listening on the Serf LAN address
 func (a *Agent) JoinLAN(addrs []string) (int, error) {

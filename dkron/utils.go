@@ -48,9 +48,9 @@ func (s *serverParts) Copy() *serverParts {
 	return ns
 }
 
-// UserAgent returns the consistent user-agent string for Consul.
+// UserAgent returns the consistent user-agent string
 func UserAgent() string {
-	return fmt.Sprintf("Consul/%s (+%s;)", Version, projectURL)
+	return fmt.Sprintf("Dkron/%s (+%s;)", Version, projectURL)
 }
 
 // Returns if a member is a Dkron server. Returns a boolean,
