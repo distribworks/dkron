@@ -237,7 +237,7 @@ func (s *Store) SetExecutionDone(execution *Execution) (bool, error) {
 	err := s.db.Update(func(txn *badger.Txn) error {
 		// Load the job from the store
 		var pbj dkronpb.Job
-		if err := s.db.View(s.getJobTxnFunc(execution.JobName, &pbj)); err != nil {
+		if err := s.getJobTxnFunc(execution.JobName, &pbj)(txn); err != nil {
 			if err == badger.ErrKeyNotFound {
 				log.Warning(ErrExecutionDoneForDeletedJob)
 				return ErrExecutionDoneForDeletedJob
@@ -429,6 +429,10 @@ func (s *Store) DeleteJob(name string) (*Job, error) {
 		return nil, err
 	}
 
+	jbs, _ := s.GetJobs(nil)
+	for _, j := range jbs {
+		fmt.Println("**************** ", j.Name)
+	}
 	// If the transaction succeded, remove from parent
 	if job.ParentJob != "" {
 		if err := s.removeFromParent(job); err != nil {
@@ -636,8 +640,8 @@ func (s *Store) SetExecution(execution *Execution) (string, error) {
 
 // DeleteExecutions removes all executions of a job
 func (s *Store) DeleteExecutions(jobName string) error {
-	prefix := []byte(jobName)
-	return s.db.DropPrefix(prefix)
+	prefix := fmt.Sprintf("executions/%s/", jobName)
+	return s.db.DropPrefix([]byte(prefix))
 }
 
 // Shutdown close the KV store
