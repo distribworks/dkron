@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 	"time"
+	slog "log"
 
-	"github.com/hashicorp/consul/lib"
 	discover "github.com/hashicorp/go-discover"
 	discoverk8s "github.com/hashicorp/go-discover/provider/k8s"
 )
@@ -57,7 +57,7 @@ func (r *retryJoiner) retryJoin() error {
 	providers["k8s"] = &discoverk8s.Provider{}
 
 	disco, err := discover.New(
-		discover.WithUserAgent(lib.UserAgent()),
+		discover.WithUserAgent(UserAgent()),
 		discover.WithProviders(providers),
 	)
 	if err != nil {
@@ -74,7 +74,7 @@ func (r *retryJoiner) retryJoin() error {
 		for _, addr := range r.addrs {
 			switch {
 			case strings.Contains(addr, "provider="):
-				servers, err := disco.Addrs(addr, nil)
+				servers, err := disco.Addrs(addr, slog.New(log.Logger.Writer(), "", slog.LstdFlags|slog.Lshortfile))
 				if err != nil {
 					log.WithError(err).WithField("cluster", r.cluster).Error("agent: Error Joining")
 				} else {

@@ -10,6 +10,11 @@ import (
 	"github.com/hashicorp/serf/serf"
 )
 
+var (
+	// projectURL is the project URL.
+	projectURL = "https://dkron.io/"
+)
+
 type int64arr []int64
 
 func (a int64arr) Len() int           { return len(a) }
@@ -41,6 +46,11 @@ func (s *serverParts) Copy() *serverParts {
 	ns := new(serverParts)
 	*ns = *s
 	return ns
+}
+
+// UserAgent returns the consistent user-agent string for Consul.
+func UserAgent() string {
+	return fmt.Sprintf("Consul/%s (+%s;)", Version, projectURL)
 }
 
 // Returns if a member is a Dkron server. Returns a boolean,
