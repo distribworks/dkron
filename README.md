@@ -1,4 +1,8 @@
-# Dkron - Distributed, fault tolerant job scheduling system [![GoDoc](https://godoc.org/github.com/distribworks/dkron?status.svg)](https://godoc.org/github.com/distribworks/dkron) [![Build Status](https://travis-ci.org/distribworks/dkron.svg?branch=master)](https://travis-ci.org/distribworks/dkron)
+<p align="center">
+<img width="400" src="doc/images/DKRON_STICKER_OK_CMYK_RGB_CONV_300.png" alt="Dkron" title="Dkron" />
+</p>
+
+# Dkron - Distributed, fault tolerant job scheduling system for cloud native environments [![GoDoc](https://godoc.org/github.com/distribworks/dkron?status.svg)](https://godoc.org/github.com/distribworks/dkron) [![Build Status](https://travis-ci.org/distribworks/dkron.svg?branch=master)](https://travis-ci.org/distribworks/dkron)
 
 Website: http://dkron.io/
 

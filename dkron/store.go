@@ -269,7 +269,7 @@ func (s *Store) SetExecutionDone(execution *Execution) (bool, error) {
 		return nil
 	})
 	if err != nil {
-		log.WithError(err).Fatal("store: Error in SetExecutionDone")
+		log.WithError(err).Error("store: Error in SetExecutionDone")
 		return false, err
 	}
 
