@@ -429,10 +429,6 @@ func (s *Store) DeleteJob(name string) (*Job, error) {
 		return nil, err
 	}
 
-	jbs, _ := s.GetJobs(nil)
-	for _, j := range jbs {
-		fmt.Println("**************** ", j.Name)
-	}
 	// If the transaction succeded, remove from parent
 	if job.ParentJob != "" {
 		if err := s.removeFromParent(job); err != nil {
