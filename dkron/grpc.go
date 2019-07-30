@@ -109,6 +109,9 @@ func (grpcs *GRPCServer) DeleteJob(ctx context.Context, delJobReq *proto.DeleteJ
 	}
 	jpb := job.ToProto()
 
+	// If everything is ok, restart the scheduler
+	grpcs.agent.SchedulerRestart()
+
 	return &proto.DeleteJobResponse{Job: jpb}, nil
 }
 
