@@ -2,9 +2,9 @@ package dkron
 
 import (
 	"fmt"
+	slog "log"
 	"strings"
 	"time"
-	slog "log"
 
 	discover "github.com/hashicorp/go-discover"
 	discoverk8s "github.com/hashicorp/go-discover/provider/k8s"
