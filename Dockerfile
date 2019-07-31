@@ -3,8 +3,6 @@ LABEL maintainer="Victor Castell <victor@victorcastell.com>"
 
 EXPOSE 8080 8946
 
-RUN apk add --no-cache git mercurial bash
-
 RUN mkdir -p /app
 WORKDIR /app
 
