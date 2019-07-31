@@ -9,3 +9,4 @@ build/
 website
 dkron-*
 main
+*.data
