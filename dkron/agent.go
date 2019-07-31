@@ -634,17 +634,12 @@ func (a *Agent) IsLeader() bool {
 
 // ListServers returns the list of server members
 func (a *Agent) ListServers() (members []*serverParts) {
-	ok, lm := isServer(a.serf.LocalMember())
-	if !ok {
-		return nil
-	}
-
 	for _, member := range a.serf.Members() {
 		ok, parts := isServer(member)
 		if !ok || member.Status != serf.StatusAlive {
 			continue
 		}
-		if lm.Region == parts.Region {
+		if a.config.Region == parts.Region {
 			members = append(members, parts)
 		}
 	}
