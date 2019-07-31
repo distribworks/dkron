@@ -22,7 +22,13 @@ dkron.filter('statusClass', function () {
 
 dkron.constant('hideDelay', 2000);
 
-dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
+dkron.controller('JobListCtrl', function ($scope, $location, $http, $interval, hideDelay) {
+  $scope.searchJob = $location.search()['filter']
+
+  $scope.filter = function (filter) {
+    $scope.searchJob = filter;
+  };
+
   // pretty json func
   $scope.toJson = function (str) {
     return angular.toJson(str, true);
