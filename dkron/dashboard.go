@@ -93,16 +93,23 @@ func (a *Agent) dashboardExecutionsHandler(c *gin.Context) {
 		log.Error(err)
 	}
 
+	var count int
+	for _, v := range groups {
+		count = count + len(v)
+	}
+
 	data := struct {
 		Common  *commonDashboardData
 		Groups  map[int64][]*Execution
 		JobName string
 		ByGroup int64arr
+		Count   int
 	}{
 		Common:  newCommonDashboardData(a, a.config.NodeName, "../../../"),
 		Groups:  groups,
 		JobName: job,
 		ByGroup: byGroup,
+		Count:   count,
 	}
 
 	c.HTML(http.StatusOK, "executions", data)

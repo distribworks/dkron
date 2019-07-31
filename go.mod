@@ -47,6 +47,8 @@ require (
 	github.com/pkg/errors v0.8.1 // indirect
 	github.com/russross/blackfriday v0.0.0-20180804101149-46c73eb196ba // indirect
 	github.com/ryanuber/columnize v2.1.0+incompatible
+	github.com/shurcooL/httpfs v0.0.0-20190707220628-8d4bc4ba7749 // indirect
+	github.com/shurcooL/vfsgen v0.0.0-20181202132449-6a9ea43bcacd // indirect
 	github.com/sirupsen/logrus v1.2.0
 	github.com/soheilhy/cmux v0.1.4
 	github.com/spf13/afero v0.0.0-20171008182726-e67d870304c4 // indirect
