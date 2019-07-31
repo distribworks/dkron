@@ -1,32 +1,28 @@
 ---
 version: '2'
 services:
-  dkron1:
+  dkron:
     build: .
     ports:
       - "8080:8080"
       - "8946"
       - "6868"
-    volumes:
-     - ./:/gopath/src/github.com/distribworks/dkron
     environment:
       - GODEBUG=netdns=go
-    command: scripts/run agent --server --join=dkron1:8946 --log-level=debug --bootstrap-expect=3
-  dkron2:
+    command: dkron agent --server --log-level=debug --bootstrap-expect=1
+  dkron-server:
     build: .
     ports:
-      - "8081:8080"
+      - "8080"
       - "8946"
       - "6868"
     environment:
       - GODEBUG=netdns=go
-    command: bash -c "sleep 10 && scripts/run agent --server --join=dkron1:8946 --log-level=debug --bootstrap-expect=3"
-  dkron3:
+    command: dkron agent --server --retry-join=dkron:8946 --log-level=debug --bootstrap-expect=3
+  dkron-agent:
     build: .
     ports:
-      - "8082:8080"
       - "8946"
-      - "6868"
     environment:
       - GODEBUG=netdns=go
-    command: bash -c "sleep 10 && scripts/run agent --server --join=dkron1:8946 --log-level=debug --bootstrap-expect=3"
+    command: dkron agent --retry-join=dkron:8946 --log-level=debug
