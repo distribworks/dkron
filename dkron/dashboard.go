@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"io/ioutil"
 	"net/http"
+	"time"
 
 	"github.com/distribworks/dkron/dkron/assets"
 	"github.com/distribworks/dkron/dkron/templates"
@@ -26,6 +27,7 @@ type commonDashboardData struct {
 	Path       string
 	APIPath    string
 	Name       string
+	Time       string
 }
 
 func newCommonDashboardData(a *Agent, nodeName, path string) *commonDashboardData {
@@ -43,6 +45,7 @@ func newCommonDashboardData(a *Agent, nodeName, path string) *commonDashboardDat
 		Path:       fmt.Sprintf("%s%s", path, dashboardPathPrefix),
 		APIPath:    fmt.Sprintf("%s%s", path, apiPathPrefix),
 		Name:       Name,
+		Time:       time.Now().UTC().Format("15:04:05 UTC"),
 	}
 }
 
