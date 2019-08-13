@@ -60,7 +60,7 @@
           <td ng-bind="job.success_count"></td>
           <td ng-bind="job.error_count"></td>
           <td
-            ng-bind="(job.last_success > job.last_error ? job.last_success : job.last_error) | date:'yyyy-MM-dd HH:mm:ss Z'">
+            ng-bind="(job.last_error === null || job.last_success > job.last_error ? (job.last_success === null ? 'never' : job.last_success) : job.last_error) | date:'yyyy-MM-dd HH:mm:ss Z'">
           </td>
           <td ng-bind="job.next | date:'yyyy-MM-dd HH:mm:ss Z'"></td>
           <td>
