@@ -255,10 +255,12 @@ func (s *Store) SetExecutionDone(execution *Execution) (bool, error) {
 		}
 
 		if pbe.Success {
-			pbj.LastSuccess = pbe.FinishedAt
+			pbj.LastSuccess.HasValue = true
+			pbj.LastSuccess.Time = pbe.FinishedAt
 			pbj.SuccessCount++
 		} else {
-			pbj.LastError = pbe.FinishedAt
+			pbj.LastError.HasValue = true
+			pbj.LastError.Time = pbe.FinishedAt
 			pbj.ErrorCount++
 		}
 
