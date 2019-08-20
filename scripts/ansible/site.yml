@@ -1,0 +1,67 @@
+---
+#  Install Dkron beta on a clean instance
+
+- hosts: localhost
+  tasks:
+    - packet_device:
+        hostnames: [dkron01, dkron02, dkron03]
+        operating_system: ubuntu_19_04
+        plan: baremetal_0
+        facility: sjc1
+        wait_for_public_IPv: 4
+        project_id: 904af849-79ff-4847-90f7-dfa02367ae72
+      register: newhosts
+    
+    - debug: var=newhosts
+
+    - name: wait for ssh
+      wait_for:
+        delay: 1
+        host: "{{ item.public_ipv4 }}"
+        port: 22
+        state: started
+        timeout: 500
+      loop: "{{ newhosts.devices }}"
+
+- hosts: packet
+  user: root
+  become: yes
+  become_method: sudo
+
+  vars:
+    version: 2.0.0-b7
+    dkron_log_level: debug
+    dkron_bootstrap_expect: 3
+    dkron_data_dir: /var/lib/dkron
+
+  pre_tasks:
+    - set_fact:
+        dkron_servers: "{{ groups['packet'] }}"
+
+    - name: Copy package
+      copy:
+        src: ../dist/dkron_{{ version }}_linux_amd64.deb
+        dest: /tmp
+    
+    - name: Install package
+      apt:
+        deb: /tmp/dkron_{{ version }}_linux_amd64.deb
+
+    - name: ensure data dir
+      file:
+        path: /var/lib/dkron
+        owner: root
+        group: root
+        mode: 755
+        state: directory
+    
+    - name: configure
+      template: src={{ item }}.yml.j2 dest=/etc/dkron/{{ item }}.yml
+      loop:
+        - dkron
+
+    - name: ensure service is running and enabled
+      systemd:
+        name: dkron
+        enabled: yes
+        state: started

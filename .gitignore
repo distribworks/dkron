@@ -16,7 +16,7 @@ dist
 static/node_modules
 *.db
 *.data
-
+*.retry
 .DS_Store
 .vscode
 tags

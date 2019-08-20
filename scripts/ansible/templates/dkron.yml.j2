@@ -1,0 +1,55 @@
+server: true
+{% if dkron_bootstrap_expect %}
+bootstrap-expect: {{ dkron_bootstrap_expect }}
+{% endif %}
+{% if dkron_data_dir is defined %}
+data-dir: {{ dkron_data_dir }}
+{% endif %}
+{% if dkron_tags is defined and dkron_tags %}
+tags:
+  {{ dkron_tags | to_nice_yaml }}
+{% endif %}
+{% if dkron_encrypt is defined %}
+encrypt: {{ dkron_encrypt }}
+{% endif %}
+{% if dkron_servers is defined and dkron_servers %}
+join:
+{{ dkron_servers | to_nice_yaml }}
+{% endif %}
+{% if dkron_webhook_url is defined and dkron_webhook_url %}
+webhook-url: "{{ dkron_webhook_url }}"
+{% endif %}
+{% if dkron_webhook_payload is defined and dkron_webhook_payload %}
+webhook-payload: "{{ dkron_webhook_payload }}"
+{% endif %}
+{% if dkron_webhook_headers is defined and dkron_webhook_headers %}
+webhook-headers: "{{ dkron_webhook_headers }}"
+{% endif %}
+{% if dkron_mail_host is defined and dkron_mail_host %}
+mail-host: "{{ dkron_mail_host }}"
+{% endif %}
+{% if dkron_mail_port is defined and dkron_mail_port %}
+mail-port: {{ dkron_mail_port }}
+{% endif %}
+{% if dkron_mail_username is defined and dkron_mail_username %}
+mail-username: {{ dkron_mail_username }}
+{% endif %}
+{% if dkron_mail_password is defined and dkron_mail_password %}
+mail-password: {{ dkron_mail_password }}
+{% endif %}
+{% if dkron_mail_from is defined and dkron_mail_from %}
+mail-from: {{ dkron_mail_from }}
+{% endif %}
+{% if dkron_mail_subject_prefix is defined and dkron_mail_subject_prefix %}
+mail-subject-prefix: "{{ dkron_mail_subject_prefix }}"
+{% endif %}
+{% if dkron_dog_statsd_addr is defined and dkron_dog_statsd_addr %}
+dog-statsd-addr: {{ dkron_dog_statsd_addr }}
+{% endif %}
+{% if dkron_username is defined and dkron_username %}
+username: {{ dkron_username }}
+{% endif %}
+{% if dkron_password is defined and dkron_password %}
+password: {{ dkron_password }}
+{% endif %}
+log-level: {{ dkron_log_level }}
