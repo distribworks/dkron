@@ -124,9 +124,9 @@ func ConfigFlagSet() *flag.FlagSet {
 
 	cmdFlags.Bool("server", false, "This node is running in server mode")
 	cmdFlags.String("node-name", c.NodeName, "Name of this node. Must be unique in the cluster")
-	cmdFlags.String("bind-addr", c.BindAddr, "Address to bind network listeners to")
-	cmdFlags.String("advertise-addr", "", "Address used to advertise to other nodes in the cluster. By default, the bind address is advertised")
-	cmdFlags.String("http-addr", c.HTTPAddr, "Address to bind the UI web server to. Only used when server")
+	cmdFlags.String("bind-addr", c.BindAddr, "Specifies which address the agent should bind to for network services, including the internal gossip protocol and RPC mechanism. This should be specified in IP format, and can be used to easily bind all network services to the same address. The value supports go-sockaddr/template format.")
+	cmdFlags.String("advertise-addr", "", "Address used to advertise to other nodes in the cluster. By default, the bind address is advertised. The value supports go-sockaddr/template format.")
+	cmdFlags.String("http-addr", c.HTTPAddr, "Address to bind the UI web server to. Only used when server. The value supports go-sockaddr/template format.")
 	cmdFlags.String("profile", c.Profile, "Profile is used to control the timing profiles used")
 	cmdFlags.StringSlice("join", []string{}, "An initial agent to join with. This flag can be specified multiple times")
 	cmdFlags.StringSlice("retry-join", []string{}, "Address of an agent to join at start time with retries enabled. Can be specified multiple times.")
