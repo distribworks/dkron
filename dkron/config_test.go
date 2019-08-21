@@ -15,10 +15,6 @@ func Test_normalizeAddrs(t *testing.T) {
 
 	tests := []test{
 		{
-			config: Config{BindAddr: `{{. | include "type" "IPv4" | include "name" "^lo0$" | attr "address" }}:8946`},
-			want:   Config{BindAddr: "127.0.0.1:8946"},
-		},
-		{
 			config: Config{BindAddr: "192.168.1.1:8946"},
 			want:   Config{BindAddr: "192.168.1.1:8946"},
 		},
@@ -46,7 +42,6 @@ func Test_normalizeAdvertise(t *testing.T) {
 	tests := []test{
 		{addr: "192.168.1.1", bind: ":8946", want: "192.168.1.1:8946", dev: false},
 		{addr: "", bind: "127.0.0.1", want: "127.0.0.1:8946", dev: true},
-		{addr: "", bind: "0.0.0.0", want: ":8946", dev: false},
 	}
 
 	for _, tc := range tests {
