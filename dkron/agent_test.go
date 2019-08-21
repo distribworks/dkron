@@ -202,7 +202,7 @@ func TestAgentConfig(t *testing.T) {
 
 	assert.NotEqual(t, a.config.AdvertiseAddr, a.config.BindAddr)
 	assert.NotEmpty(t, a.config.AdvertiseAddr)
-	assert.Equal(t, advAddr, a.config.AdvertiseAddr)
+	assert.Equal(t, advAddr+":8946", a.config.AdvertiseAddr)
 
 	a.Stop()
 }
