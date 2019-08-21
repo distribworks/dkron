@@ -10,7 +10,6 @@ import (
 	"net"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strconv"
 	"strings"
 	"sync"
@@ -324,78 +323,6 @@ func (a *Agent) setupSerf() (*serf.Serf, error) {
 		return nil, fmt.Errorf("Invalid bind address: %s", err)
 	}
 
-	// Check if we have an interface
-	if iface, _ := config.NetworkInterface(); iface != nil {
-		addrs, err := iface.Addrs()
-		if err != nil {
-			return nil, fmt.Errorf("Failed to get interface addresses: %s", err)
-		}
-		if len(addrs) == 0 {
-			return nil, fmt.Errorf("Interface '%s' has no addresses", config.Interface)
-		}
-
-		// If there is no bind IP, pick an address
-		if bindIP == "0.0.0.0" {
-			found := false
-			for _, ad := range addrs {
-				var addrIP net.IP
-				if runtime.GOOS == "windows" {
-					// Waiting for https://github.com/golang/go/issues/5395 to use IPNet only
-					addr, ok := ad.(*net.IPAddr)
-					if !ok {
-						continue
-					}
-					addrIP = addr.IP
-				} else {
-					addr, ok := ad.(*net.IPNet)
-					if !ok {
-						continue
-					}
-					addrIP = addr.IP
-				}
-
-				// Skip self-assigned IPs
-				if addrIP.IsLinkLocalUnicast() {
-					continue
-				}
-
-				// Found an IP
-				found = true
-				bindIP = addrIP.String()
-				log.Infof("Using interface '%s' address '%s'", config.Interface, bindIP)
-
-				// Update the configuration
-				bindAddr := &net.TCPAddr{
-					IP:   net.ParseIP(bindIP),
-					Port: bindPort,
-				}
-				config.BindAddr = bindAddr.String()
-				break
-			}
-			if !found {
-				return nil, fmt.Errorf("Failed to find usable address for interface '%s'", config.Interface)
-			}
-
-		} else {
-			// If there is a bind IP, ensure it is available
-			found := false
-			for _, ad := range addrs {
-				addr, ok := ad.(*net.IPNet)
-				if !ok {
-					continue
-				}
-				if addr.IP.String() == bindIP {
-					found = true
-					break
-				}
-			}
-			if !found {
-				return nil, fmt.Errorf("Interface '%s' has no '%s' address",
-					config.Interface, bindIP)
-			}
-		}
-	}
-
 	var advertiseIP string
 	var advertisePort int
 	if config.AdvertiseAddr != "" {
@@ -403,10 +330,6 @@ func (a *Agent) setupSerf() (*serf.Serf, error) {
 		if err != nil {
 			return nil, fmt.Errorf("Invalid advertise address: %s", err)
 		}
-	}
-	//Use the value of "RPCPort" if AdvertiseRPCPort has not been set
-	if config.AdvertiseRPCPort <= 0 {
-		config.AdvertiseRPCPort = config.RPCPort
 	}
 
 	encryptKey, err := config.EncryptBytes()
@@ -506,6 +429,11 @@ func (a *Agent) SetConfig(c *Config) {
 
 // StartServer launch a new dkron server process
 func (a *Agent) StartServer() {
+	//Use the value of "RPCPort" if AdvertiseRPCPort has not been set
+	if a.config.AdvertiseRPCPort <= 0 {
+		a.config.AdvertiseRPCPort = a.config.RPCPort
+	}
+
 	if a.Store == nil {
 		dirExists, err := exists(a.config.DataDir)
 		if err != nil {
@@ -533,8 +461,7 @@ func (a *Agent) StartServer() {
 	a.HTTPTransport.ServeHTTP()
 
 	// Create a listener at the desired port.
-	// TODO Fix get address
-	addr := fmt.Sprintf("%s:%d", a.serf.LocalMember().Addr, a.config.RPCPort)
+	addr := fmt.Sprintf(":%d", a.config.RPCPort)
 	l, err := net.Listen("tcp", addr)
 	if err != nil {
 		log.Fatal(err)

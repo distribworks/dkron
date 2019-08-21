@@ -179,15 +179,6 @@ START:
 	return addr.IP.String(), addr.Port, nil
 }
 
-// NetworkInterface is used to get the associated network
-// interface from the configured value
-func (c *Config) NetworkInterface() (*net.Interface, error) {
-	if c.Interface == "" {
-		return nil, nil
-	}
-	return net.InterfaceByName(c.Interface)
-}
-
 // EncryptBytes returns the encryption key configured.
 func (c *Config) EncryptBytes() ([]byte, error) {
 	return base64.StdEncoding.DecodeString(c.EncryptKey)
