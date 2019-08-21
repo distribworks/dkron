@@ -2,11 +2,15 @@ package dkron
 
 import (
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"net"
 	"os"
+	"strconv"
+	"strings"
 	"time"
 
+	"github.com/hashicorp/go-sockaddr/template"
 	flag "github.com/spf13/pflag"
 )
 
@@ -82,7 +86,10 @@ type Config struct {
 }
 
 // DefaultBindPort is the default port that dkron will use for Serf communication
-const DefaultBindPort int = 8946
+const (
+	DefaultBindPort int = 8946
+	DefaultRPCPort  int = 6868
+)
 
 // DefaultConfig returns a Config struct pointer with sensible
 // default settings.
@@ -100,7 +107,7 @@ func DefaultConfig() *Config {
 		HTTPAddr:          ":8080",
 		Profile:           "lan",
 		LogLevel:          "info",
-		RPCPort:           6868,
+		RPCPort:           DefaultRPCPort,
 		MailSubjectPrefix: "[Dkron]",
 		Tags:              tags,
 		DataDir:           "dkron.data",
@@ -153,6 +160,130 @@ func ConfigFlagSet() *flag.FlagSet {
 	cmdFlags.String("statsd-addr", "", "Statsd address")
 
 	return cmdFlags
+}
+
+// normalizeAddrs normalizes Addresses and AdvertiseAddrs to always be
+// initialized and have sane defaults.
+func (c *Config) normalizeAddrs() error {
+	if c.BindAddr != "" {
+		ipStr, err := parseSingleIPTemplate(c.BindAddr)
+		if err != nil {
+			return fmt.Errorf("Bind address resolution failed: %v", err)
+		}
+		c.BindAddr = ipStr
+	}
+
+	if c.HTTPAddr != "" {
+		ipStr, err := parseSingleIPTemplate(c.HTTPAddr)
+		if err != nil {
+			return fmt.Errorf("Bind address resolution failed: %v", err)
+		}
+		c.HTTPAddr = ipStr
+	}
+
+	addr, err := normalizeAdvertise(c.AdvertiseAddr, c.BindAddr, DefaultBindPort, c.DevMode)
+	if err != nil {
+		return fmt.Errorf("Failed to parse HTTP advertise address (%v, %v, %v, %v): %v", c.AdvertiseAddr, c.BindAddr, DefaultBindPort, c.DevMode, err)
+	}
+	c.AdvertiseAddr = addr
+
+	return nil
+}
+
+// parseSingleIPTemplate is used as a helper function to parse out a single IP
+// address from a config parameter.
+func parseSingleIPTemplate(ipTmpl string) (string, error) {
+	out, err := template.Parse(ipTmpl)
+	if err != nil {
+		return "", fmt.Errorf("Unable to parse address template %q: %v", ipTmpl, err)
+	}
+
+	ips := strings.Split(out, " ")
+	switch len(ips) {
+	case 0:
+		return "", errors.New("No addresses found, please configure one.")
+	case 1:
+		return ips[0], nil
+	default:
+		return "", fmt.Errorf("Multiple addresses found (%q), please configure one.", out)
+	}
+}
+
+// normalizeAdvertise returns a normalized advertise address.
+//
+// If addr is set, it is used and the default port is appended if no port is
+// set.
+//
+// If addr is not set and bind is a valid address, the returned string is the
+// bind+port.
+//
+// If addr is not set and bind is not a valid advertise address, the hostname
+// is resolved and returned with the port.
+//
+// Loopback is only considered a valid advertise address in dev mode.
+func normalizeAdvertise(addr string, bind string, defport int, dev bool) (string, error) {
+	addr, err := parseSingleIPTemplate(addr)
+	if err != nil {
+		return "", fmt.Errorf("Error parsing advertise address template: %v", err)
+	}
+
+	if addr != "" {
+		// Default to using manually configured address
+		_, _, err = net.SplitHostPort(addr)
+		if err != nil {
+			if !isMissingPort(err) && !isTooManyColons(err) {
+				return "", fmt.Errorf("Error parsing advertise address %q: %v", addr, err)
+			}
+
+			// missing port, append the default
+			return net.JoinHostPort(addr, strconv.Itoa(defport)), nil
+		}
+
+		return addr, nil
+	}
+
+	// Fallback to bind address first, and then try resolving the local hostname
+	ips, err := net.LookupIP(bind)
+	if err != nil {
+		return "", fmt.Errorf("Error resolving bind address %q: %v", bind, err)
+	}
+
+	// Return the first non-localhost unicast address
+	for _, ip := range ips {
+		if ip.IsLinkLocalUnicast() || ip.IsGlobalUnicast() {
+			return net.JoinHostPort(ip.String(), strconv.Itoa(defport)), nil
+		}
+		if ip.IsLoopback() {
+			if dev {
+				// loopback is fine for dev mode
+				return net.JoinHostPort(ip.String(), strconv.Itoa(defport)), nil
+			}
+			return "", fmt.Errorf("Defaulting advertise to localhost is unsafe, please set advertise manually")
+		}
+	}
+
+	// Bind is not localhost but not a valid advertise IP, use first private IP
+	addr, err = parseSingleIPTemplate("{{ GetPrivateIP }}")
+	if err != nil {
+		return "", fmt.Errorf("Unable to parse default advertise address: %v", err)
+	}
+	return net.JoinHostPort(addr, strconv.Itoa(defport)), nil
+}
+
+// isMissingPort returns true if an error is a "missing port" error from
+// net.SplitHostPort.
+func isMissingPort(err error) bool {
+	// matches error const in net/ipsock.go
+	const missingPort = "missing port in address"
+	return err != nil && strings.Contains(err.Error(), missingPort)
+}
+
+// isTooManyColons returns true if an error is a "too many colons" error from
+// net.SplitHostPort.
+func isTooManyColons(err error) bool {
+	// matches error const in net/ipsock.go
+	const tooManyColons = "too many colons in address"
+	return err != nil && strings.Contains(err.Error(), tooManyColons)
 }
 
 // AddrParts returns the parts of the BindAddr that should be

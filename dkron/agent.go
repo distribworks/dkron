@@ -117,6 +117,9 @@ func NewAgent(config *Config, options ...AgentOption) *Agent {
 // Start the current agent by running all the necessary
 // checks and server or client routines.
 func (a *Agent) Start() error {
+	// Normalize configured addresses
+	a.config.normalizeAddrs()
+
 	s, err := a.setupSerf()
 	if err != nil {
 		return fmt.Errorf("agent: Can not setup serf, %s", err)
@@ -461,7 +464,7 @@ func (a *Agent) StartServer() {
 	a.HTTPTransport.ServeHTTP()
 
 	// Create a listener at the desired port.
-	addr := fmt.Sprintf(":%d", a.config.RPCPort)
+	addr := a.getRPCAddr()
 	l, err := net.Listen("tcp", addr)
 	if err != nil {
 		log.Fatal(err)
@@ -576,13 +579,6 @@ func (a *Agent) ListServers() (members []*serverParts) {
 // LocalMember return the local serf member
 func (a *Agent) LocalMember() serf.Member {
 	return a.serf.LocalMember()
-}
-
-// GetBindIP returns the IP address that the agent is bound to.
-// This could be different than the originally configured address.
-func (a *Agent) GetBindIP() (string, error) {
-	bindIP, _, err := a.config.AddrParts(a.config.BindAddr)
-	return bindIP, err
 }
 
 // GetPeers returns a list of the current serf servers peers addresses
@@ -810,8 +806,7 @@ func (a *Agent) setExecution(payload []byte) *Execution {
 // in marathon, it would return the host's IP and advertise RPC port
 func (a *Agent) getRPCAddr() string {
 	bindIP := a.serf.LocalMember().Addr
-
-	return fmt.Sprintf("%s:%d", bindIP, a.config.AdvertiseRPCPort)
+	return net.JoinHostPort(bindIP.String(), strconv.Itoa(a.config.AdvertiseRPCPort))
 }
 
 // RefreshJobStatus asks the nodes their progress on an execution
