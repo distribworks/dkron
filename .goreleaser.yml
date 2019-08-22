@@ -145,7 +145,7 @@ dockers:
     binaries:
       - dkron
       - dkron-executor-http
-      - dkron-processor-shell
+      - dkron-executor-shell
       - dkron-processor-syslog
       - dkron-processor-log
       - dkron-processor-files
