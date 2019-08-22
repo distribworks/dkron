@@ -376,25 +376,10 @@ func (a *Agent) setupSerf() (*serf.Serf, error) {
 	serfConfig.MemberlistConfig.SecretKey = encryptKey
 	serfConfig.NodeName = config.NodeName
 	serfConfig.Tags = config.Tags
-	serfConfig.SnapshotPath = config.SnapshotPath
 	serfConfig.CoalescePeriod = 3 * time.Second
 	serfConfig.QuiescentPeriod = time.Second
 	serfConfig.UserCoalescePeriod = 3 * time.Second
 	serfConfig.UserQuiescentPeriod = time.Second
-	if config.ReconnectInterval != 0 {
-		serfConfig.ReconnectInterval = config.ReconnectInterval
-	}
-	if config.ReconnectTimeout != 0 {
-		serfConfig.ReconnectTimeout = config.ReconnectTimeout
-	}
-	if config.TombstoneTimeout != 0 {
-		serfConfig.TombstoneTimeout = config.TombstoneTimeout
-	}
-	serfConfig.EnableNameConflictResolution = !config.DisableNameResolution
-	if config.KeyringFile != "" {
-		serfConfig.KeyringFile = config.KeyringFile
-	}
-	serfConfig.RejoinAfterLeave = config.RejoinAfterLeave
 
 	// Create a channel to listen for events from Serf
 	a.eventCh = make(chan serf.Event, 64)
