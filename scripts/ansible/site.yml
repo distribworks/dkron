@@ -29,7 +29,7 @@
   become_method: sudo
 
   vars:
-    version: 2.0.0-b7
+    version: 2.0.0-b8
     dkron_log_level: debug
     dkron_bootstrap_expect: 3
     dkron_data_dir: /var/lib/dkron
@@ -40,7 +40,7 @@
 
     - name: Copy package
       copy:
-        src: ../dist/dkron_{{ version }}_linux_amd64.deb
+        src: ../../dist/dkron_{{ version }}_linux_amd64.deb
         dest: /tmp
     
     - name: Install package
@@ -64,4 +64,4 @@
       systemd:
         name: dkron
         enabled: yes
-        state: started
+        state: restarted
