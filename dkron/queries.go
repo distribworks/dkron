@@ -30,6 +30,7 @@ type RunQueryParam struct {
 // RunQuery sends a serf run query to the cluster, this is used to ask a node or nodes
 // to run a Job.
 func (a *Agent) RunQuery(job *Job, ex *Execution) {
+	start := time.Now()
 	var params *serf.QueryParam
 
 	e := a.sched.GetEntry(job)
@@ -126,6 +127,7 @@ func (a *Agent) RunQuery(job *Job, ex *Execution) {
 		}
 	}
 	log.WithFields(logrus.Fields{
+		"time":  time.Since(start),
 		"query": QueryRunJob,
 	}).Debug("agent: Done receiving acks and responses")
 }

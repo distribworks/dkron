@@ -27,7 +27,6 @@ import (
 
 const (
 	raftTimeout    = 10 * time.Second
-	rescheduleTime = 2 * time.Second
 	// raftLogCacheSize is the maximum number of logs to cache in-memory.
 	// This is used to reduce disk I/O for the recently committed entries.
 	raftLogCacheSize = 512
@@ -519,18 +518,6 @@ func (a *Agent) StartServer() {
 	go a.monitorLeadership()
 }
 
-// SchedulerRestart Dispatch a SchedulerRestartQuery to the cluster but
-// after a timeout to actually throtle subsequent calls
-func (a *Agent) SchedulerRestart() {
-	if rescheduleThrotle == nil {
-		rescheduleThrotle = time.AfterFunc(rescheduleTime, func() {
-			a.schedule()
-		})
-	} else {
-		rescheduleThrotle.Reset(rescheduleTime)
-	}
-}
-
 // Utility method to get leader nodename
 func (a *Agent) leaderMember() (*serf.Member, error) {
 	l := a.raft.Leader()
@@ -700,7 +687,7 @@ func (a *Agent) eventLoop() {
 	}
 }
 
-// Start or restart scheduler
+// schedule Start or restart scheduler
 func (a *Agent) schedule() {
 	log.Info("agent: Restarting scheduler")
 	jobs, err := a.Store.GetJobs(nil)
