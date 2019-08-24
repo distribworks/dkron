@@ -132,7 +132,7 @@ func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
 		ej = NewJobFromProto(&pbej)
 		ej.Agent = s.agent
 
-		if ej != nil {
+		if ej.Name != "" {
 			// When the job runs, these status vars are updated
 			// otherwise use the ones that are stored
 			if ej.LastError.After(job.LastError) {
@@ -150,6 +150,11 @@ func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
 			if len(ej.DependentJobs) != 0 && copyDependentJobs {
 				job.DependentJobs = ej.DependentJobs
 			}
+		} else {
+			job.Next, err = job.GetNext()
+			if err != nil {
+				return err
+			}
 		}
 
 		pbj := job.ToProto()
@@ -160,9 +165,8 @@ func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
 		return err
 	}
 
-	// If the parent job changed or a new job is created and has a parent,
-	// update the parents of the old (if any) and new jobs
-	if (ej == nil && job.ParentJob != "") || (ej != nil && job.ParentJob != ej.ParentJob) {
+	// If the parent job changed update the parents of the old (if any) and new jobs
+	if job.ParentJob != ej.ParentJob {
 		if err := s.removeFromParent(ej); err != nil {
 			return err
 		}
