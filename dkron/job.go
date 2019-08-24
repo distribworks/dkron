@@ -3,7 +3,6 @@ package dkron
 import (
 	"errors"
 	"fmt"
-	"sync"
 	"time"
 
 	"github.com/dgraph-io/badger"
@@ -95,7 +94,8 @@ type Job struct {
 	// Number of times to retry a job that failed an execution.
 	Retries uint `json:"retries"`
 
-	running sync.Mutex
+	// running indicates that the Run method is still broadcasting
+	running bool
 
 	// Jobs that are dependent upon this one will be run after this job runs.
 	DependentJobs []string `json:"dependent_jobs"`
@@ -199,8 +199,8 @@ func (j *Job) ToProto() *proto.Job {
 
 // Run the job
 func (j *Job) Run() {
-	j.running.Lock()
-	defer j.running.Unlock()
+	j.running = true
+	defer func() { j.running = false }()
 
 	// Maybe we are testing or it's disabled
 	if j.Agent != nil && j.Disabled == false {
@@ -321,8 +321,13 @@ func (j *Job) isRunnable() bool {
 			"job":         j.Name,
 			"concurrency": j.Concurrency,
 			"job_status":  j.Status,
-		}).Debug("scheduler: Skipping execution")
+		}).Info("job: Skipping concurrent execution")
 		return false
+	}
+
+	if j.running {
+		log.WithField("job", j.Name).
+			Warning("job: Skipping execution because last execution still broadcasting, consider increasing schedule interval")
 	}
 
 	return true
