@@ -367,6 +367,9 @@ func (s *Store) GetJob(name string, options *JobOptions) (*Job, error) {
 	var pbj dkronpb.Job
 
 	err := s.db.View(s.getJobTxnFunc(name, &pbj))
+	if err != nil {
+		return nil, err
+	}
 
 	job := NewJobFromProto(&pbj)
 	job.Agent = s.agent
@@ -374,7 +377,7 @@ func (s *Store) GetJob(name string, options *JobOptions) (*Job, error) {
 		job.Status = job.GetStatus()
 	}
 
-	return job, err
+	return job, nil
 }
 
 // This will allow reuse this code to avoid nesting transactions

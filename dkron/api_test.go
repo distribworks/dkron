@@ -203,3 +203,15 @@ func TestAPIJobCreateUpdateValidationValidName(t *testing.T) {
 
 	assert.Equal(t, http.StatusCreated, resp.StatusCode)
 }
+
+func TestAPIGetNonExistentJobReturnsNotFound(t *testing.T) {
+	port := "8096"
+	baseURL := fmt.Sprintf("http://localhost:%s/v1", port)
+	dir, a := setupAPITest(t, port)
+	defer os.RemoveAll(dir)
+	defer a.Stop()
+
+	resp, _ := http.Get(baseURL + "/jobs/notajob")
+
+	assert.Equal(t, http.StatusNotFound, resp.StatusCode)
+}
