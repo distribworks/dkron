@@ -29,7 +29,7 @@
   become_method: sudo
 
   vars:
-    version: 2.0.0-b9
+    version: 2.0.0-rc1
     dkron_log_level: debug
     dkron_bootstrap_expect: 3
     dkron_data_dir: /var/lib/dkron
