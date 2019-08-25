@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2019-05-13T21:39:13 CEST">
+<meta name="revised" content="2019-08-26T00:14:43 CEST">
 <title>Encryption :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -40,12 +40,12 @@
   <div class="burger"><a href="javascript:void(0);" style="font-size:15px;">&#9776;</a></div>
     <nav class="shortcuts">
             <li class="" role="">
-                <a href="https://github.com/victorcoder/dkron"  rel="noopener">
+                <a href="https://github.com/distribworks/dkron"  rel="noopener">
                   <i class='fa fa-github'></i> Github repo
                 </a>
             </li>
             <li class="" role="">
-                <a href="https://github.com/victorcoder/dkron/releases"  rel="noopener">
+                <a href="https://github.com/distribworks/dkron/releases"  rel="noopener">
                   <i class='fa fa-cloud-download'></i> <label>Download</label>
                 </a>
             </li>
@@ -164,6 +164,13 @@
     </li>
         </ul>
     </li>
+      <li data-nav-id="/usage/cloud-auto-join/" class="dd-item">
+        <div>
+          <a href="/usage/cloud-auto-join/">
+            Cloud Auto-join
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/usage/clustering/" class="dd-item">
         <div>
           <a href="/usage/clustering/">
@@ -175,6 +182,13 @@
         <div>
           <a href="/usage/concurrency/">
             Concurrency
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/storage/" class="dd-item">
+        <div>
+          <a href="/usage/storage/">
+            Embedded storage
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -203,6 +217,13 @@
         <div>
           <a href="/usage/metrics/">
             Metrics
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/recovery/" class="dd-item">
+        <div>
+          <a href="/usage/recovery/">
+            Outage recovery
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -237,13 +258,6 @@
             <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/pro/quick-start/" class="dd-item">
-        <div>
-          <a href="/pro/quick-start/">
-            Quick start
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
     <li data-nav-id="/pro/cli/" class="dd-item haschildren
         ">
       <div>
@@ -294,13 +308,6 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/pro/clustering/" class="dd-item">
-        <div>
-          <a href="/pro/clustering/">
-            Clustering
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
       <li data-nav-id="/pro/commercial-faq/" class="dd-item">
         <div>
           <a href="/pro/commercial-faq/">
@@ -319,13 +326,6 @@
         <div>
           <a href="/pro/configuration/">
             Configuration
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/pro/storage/" class="dd-item">
-        <div>
-          <a href="/pro/storage/">
-            Embedded storage
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -467,6 +467,27 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
+      <li data-nav-id="/cli/dkron_raft/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_raft/">
+            dkron raft
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/cli/dkron_raft_list-peers/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_raft_list-peers/">
+            dkron raft list-peers
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/cli/dkron_raft_remove-peer/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_raft_remove-peer/">
+            dkron raft remove-peer
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/cli/dkron_version/" class="dd-item">
         <div>
           <a href="/cli/dkron_version/">
@@ -482,6 +503,21 @@
       <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
       </div>
     </li>
+    <li data-nav-id="/upgrading/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
+        <div>
+          <a href="/upgrading/from_v1_to_v2/">
+            Upgrade from v1 to v2
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
 
 
 
@@ -489,10 +525,10 @@
     </ul>
     <section><center>
 
-<a class="github-button" href="https://github.com/victorcoder/dkron" data-icon="octicon-star" data-show-count="true" aria-label="Star victorcoder/dkron on GitHub">Star</a>
+<a class="github-button" href="https://github.com/distribworks/dkron" data-icon="octicon-star" data-show-count="true" aria-label="Star distribworks/dkron on GitHub">Star</a>
 
 
-<a class="github-button" href="https://github.com/victorcoder/dkron/fork" data-icon="octicon-repo-forked" data-show-count="true" aria-label="Fork victorcoder/dkron on GitHub">Fork</a>
+<a class="github-button" href="https://github.com/distribworks/dkron/fork" data-icon="octicon-repo-forked" data-show-count="true" aria-label="Fork distribworks/dkron on GitHub">Fork</a>
 
 </center>
 
@@ -512,16 +548,13 @@
    Usage</option>
     <option value="/pro/" >
    Dkron Pro</option> 
-      <option value="/pro/quick-start/" >- Quick start</option>
     <option value="/pro/cli/" >
   - 
    Pro CLI</option>
       <option value="/pro/auth/" >- Authorization</option>
-      <option value="/pro/clustering/" >- Clustering</option>
       <option value="/pro/commercial-faq/" >- Commercial FAQ</option>
       <option value="/pro/commercial-support/" >- Commercial Support</option>
       <option value="/pro/configuration/" >- Configuration</option>
-      <option value="/pro/storage/" >- Embedded storage</option>
       <option value="/pro/encryption/"  selected>- Encryption</option>
     <option value="/pro/executors/" >
   - 
@@ -538,6 +571,8 @@
    CLI</option>
     <option value="/api/" >
    API</option>
+    <option value="/upgrading/" >
+   Upgradings</option>
 
 
 
@@ -564,7 +599,7 @@
     
     
     
-    <p>SSL encryption is used for communicating dkron pro and the embedded store, and between storage nodes itself. Also if client auth is enabled, only dkron pro clients can talk to the embedded store. This means that no other software running on your local network will be able to talk to dkron&rsquo;s etcd server.</p>
+    <p>SSL encryption is used for communicating dkron pro nodes. Also if client auth is enabled. This means that no other software running on your local network will be able to talk to dkron servers.</p>
 
 <p>This ensures that no unexpected usage of the Dkron&rsquo;s store will happen, unless it is another Dkron pro instance.</p>
 
@@ -574,9 +609,9 @@
 
 <p>Follow <a href="https://coreos.com/os/docs/latest/generate-self-signed-certificates.html">this tutorial</a> to generate autosigned SSL certificates for your instances.</p>
 
-<div class="notices note" ><p>You don&rsquo;t need a client certificate for Dkron server, just add &ldquo;client auth&rdquo; usage to your server cert.</p>
+<div class="notices note" >
+You don't need a client certificate for Dkron server, just add "client auth" usage to your server cert.
 </div>
-
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#75715e"># dkron.yaml</span>
 auto-tls<span style="color:#111">:</span> <span style="color:#00a8c8">false</span> <span style="color:#75715e"># Set to false to use custom certs</span>
 key-file<span style="color:#111">:</span> server-key.pem
@@ -588,7 +623,7 @@ client-cert-auth<span style="color:#111">:</span> <span style="color:#00a8c8">tr
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-prev" href="/pro/storage/" title="Embedded storage"> <i class="fa fa-chevron-left"></i><label>Embedded storage</label></a>
+<a class="nav nav-prev" href="/pro/configuration/" title="Configuration"> <i class="fa fa-chevron-left"></i><label>Configuration</label></a>
     <a class="nav nav-next" href="/pro/executors/" title="Executors" style="margin-right: 0px;"><label>Executors</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
@@ -606,7 +641,7 @@ client-cert-auth<span style="color:#111">:</span> <span style="color:#00a8c8">tr
 
     
     <div class="github-link">
-      <a href="https://github.com/victorcoder/dkron/edit/master/website/content/pro/encryption.md" target="blank"><i class="fa fa-code-fork"></i>
+      <a href="https://github.com/distribworks/dkron/edit/master/website/content/pro/encryption.md" target="blank"><i class="fa fa-code-fork"></i>
         Improve this page</a>
     </div>
     

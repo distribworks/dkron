@@ -36,12 +36,12 @@ paths:
         List jobs.
       parameters:
         - in: query
-          name: tags
+          name: metadata
           type: array
           collectionFormat: multi
           items:
             type: string
-          description: Filter jobs by tags
+          description: Filter jobs by metadata
       operationId: getJobs
       tags:
         - jobs
@@ -234,6 +234,10 @@ definitions:
         description: "Name for the job."
         readOnly: false
         example: "job1"
+      displayname: string
+        type: string
+        description: "Nice name for the job. Optional."
+        readOnly: false
       schedule:
         type: string
         description: "Cron expression for the job."
@@ -283,7 +287,7 @@ definitions:
           type: string
         readOnly: false
         example:
-          dkron_server: "true"
+          server: "true"
       retries:
         type: integer
         description: "Number of times to retry a failed job execution"
@@ -347,9 +351,9 @@ definitions:
         additionalProperties:
           type: string
         example:
-          dkron_rpc_addr: "192.168.1.137:6868"
-          dkron_server: "true"
-          dkron_version": "1.0.0"
+          rpc_addr: "192.168.1.137:6868"
+          server: "true"
+          version": "1.0.0"
       Status:
         type: integer
         description: "The serf status of the node see: https://godoc.org/github.com/hashicorp/serf/serf#MemberStatus"

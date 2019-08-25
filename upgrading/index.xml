@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Upgradings on Dkron - Distributed job scheduling system</title>
+    <link>/upgrading/</link>
+    <description>Recent content in Upgradings on Dkron - Distributed job scheduling system</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    
+	<atom:link href="/upgrading/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Upgrade from v1 to v2</title>
+      <link>/upgrading/from_v1_to_v2/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/upgrading/from_v1_to_v2/</guid>
+      <description>Dkron v2 brings lots of changes to the previous version. To successfully upgrade from v1 to v2 you need to take care of certain changes:
+Migrating Jobs To migrate jobs from v1 to v2, export jobs from the v1 cluster and import them into v2.
+A basic script to do that can be found here
+You can take the opportunity to update your job definitions as explained in the following section:</description>
+    </item>
+    
+  </channel>
+</rss>

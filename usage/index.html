@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2019-05-13T21:39:13 CEST">
+<meta name="revised" content="2019-08-26T00:14:43 CEST">
 <title>Usage :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -40,12 +40,12 @@
   <div class="burger"><a href="javascript:void(0);" style="font-size:15px;">&#9776;</a></div>
     <nav class="shortcuts">
             <li class="" role="">
-                <a href="https://github.com/victorcoder/dkron"  rel="noopener">
+                <a href="https://github.com/distribworks/dkron"  rel="noopener">
                   <i class='fa fa-github'></i> Github repo
                 </a>
             </li>
             <li class="" role="">
-                <a href="https://github.com/victorcoder/dkron/releases"  rel="noopener">
+                <a href="https://github.com/distribworks/dkron/releases"  rel="noopener">
                   <i class='fa fa-cloud-download'></i> <label>Download</label>
                 </a>
             </li>
@@ -165,6 +165,13 @@
     </li>
         </ul>
     </li>
+      <li data-nav-id="/usage/cloud-auto-join/" class="dd-item">
+        <div>
+          <a href="/usage/cloud-auto-join/">
+            Cloud Auto-join
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/usage/clustering/" class="dd-item">
         <div>
           <a href="/usage/clustering/">
@@ -176,6 +183,13 @@
         <div>
           <a href="/usage/concurrency/">
             Concurrency
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/storage/" class="dd-item">
+        <div>
+          <a href="/usage/storage/">
+            Embedded storage
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -204,6 +218,13 @@
         <div>
           <a href="/usage/metrics/">
             Metrics
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/recovery/" class="dd-item">
+        <div>
+          <a href="/usage/recovery/">
+            Outage recovery
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -237,13 +258,6 @@
       <a href="/pro/">Dkron Pro</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/pro/quick-start/" class="dd-item">
-        <div>
-          <a href="/pro/quick-start/">
-            Quick start
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
     <li data-nav-id="/pro/cli/" class="dd-item haschildren
         ">
       <div>
@@ -294,13 +308,6 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/pro/clustering/" class="dd-item">
-        <div>
-          <a href="/pro/clustering/">
-            Clustering
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
       <li data-nav-id="/pro/commercial-faq/" class="dd-item">
         <div>
           <a href="/pro/commercial-faq/">
@@ -319,13 +326,6 @@
         <div>
           <a href="/pro/configuration/">
             Configuration
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/pro/storage/" class="dd-item">
-        <div>
-          <a href="/pro/storage/">
-            Embedded storage
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -467,6 +467,27 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
+      <li data-nav-id="/cli/dkron_raft/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_raft/">
+            dkron raft
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/cli/dkron_raft_list-peers/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_raft_list-peers/">
+            dkron raft list-peers
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/cli/dkron_raft_remove-peer/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_raft_remove-peer/">
+            dkron raft remove-peer
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/cli/dkron_version/" class="dd-item">
         <div>
           <a href="/cli/dkron_version/">
@@ -482,6 +503,21 @@
       <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
       </div>
     </li>
+    <li data-nav-id="/upgrading/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
+        <div>
+          <a href="/upgrading/from_v1_to_v2/">
+            Upgrade from v1 to v2
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
 
 
 
@@ -489,10 +525,10 @@
     </ul>
     <section><center>
 
-<a class="github-button" href="https://github.com/victorcoder/dkron" data-icon="octicon-star" data-show-count="true" aria-label="Star victorcoder/dkron on GitHub">Star</a>
+<a class="github-button" href="https://github.com/distribworks/dkron" data-icon="octicon-star" data-show-count="true" aria-label="Star distribworks/dkron on GitHub">Star</a>
 
 
-<a class="github-button" href="https://github.com/victorcoder/dkron/fork" data-icon="octicon-repo-forked" data-show-count="true" aria-label="Fork victorcoder/dkron on GitHub">Fork</a>
+<a class="github-button" href="https://github.com/distribworks/dkron/fork" data-icon="octicon-repo-forked" data-show-count="true" aria-label="Fork distribworks/dkron on GitHub">Fork</a>
 
 </center>
 
@@ -518,12 +554,15 @@
     <option value="/usage/processors/" >
   - 
    Processors</option>
+      <option value="/usage/cloud-auto-join/" >- Cloud Auto-join</option>
       <option value="/usage/clustering/" >- Clustering</option>
       <option value="/usage/concurrency/" >- Concurrency</option>
+      <option value="/usage/storage/" >- Embedded storage</option>
       <option value="/usage/internals/" >- Internals</option>
       <option value="/usage/chaining/" >- Job chaining</option>
       <option value="/usage/retries/" >- Job retries</option>
       <option value="/usage/metrics/" >- Metrics</option>
+      <option value="/usage/recovery/" >- Outage recovery</option>
     <option value="/usage/plugins/" >
   - 
    Plugins</option>
@@ -539,6 +578,8 @@
    CLI</option>
     <option value="/api/" >
    API</option>
+    <option value="/upgrading/" >
+   Upgradings</option>
 
 
 
@@ -566,33 +607,30 @@
     
     
 
-
-
 <ul class="children children-card">
 
 <span><card>
-		<a href="/usage/target-nodes-spec/" >Target nodes spec</a></card>
+        <a href="/usage/target-nodes-spec/" >Target nodes spec</a></card>
 <p>Target nodes spec You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run.
-The target node syntax: [tag-value]:[count]
- Examples: Target all nodes with a tag:
+The target node syntax: `[tag-value]:[count]`  Examples: Target all nodes with a tag:
 { &#34;name&#34;: &#34;job_name&#34;, &#34;command&#34;: &#34;/bin/true&#34;, &#34;schedule&#34;: &#34;@every 2m&#34;, &#34;tags&#34;: { &#34;role&#34;: &#34;web&#34; } } mermaid.initialize({startOnLoad:true}); graph LR; J("Job tags: #quot;role#quot;: #quot;web#quot;") --|Run Job|N1["</p>
 </span>
 
 <span><card>
-		<a href="/usage/cron-spec/" >Cron spec</a></card>
+        <a href="/usage/cron-spec/" >Cron spec</a></card>
 <p>CRON Expression Format A cron expression represents a set of times, using 6 space-separated fields.
 Field name | Mandatory? | Allowed values | Allowed special characters ---------- | ---------- | -------------- | -------------------------- Seconds | Yes | 0-59 | * / , - Minutes | Yes | 0-59 | * / , - Hours | Yes | 0-23 | * / , - Day of month | Yes | 1-31 | * / , - ?</p>
 </span>
 
 <span><card>
-		<a href="/usage/executors/" >Executors</a></card>
+        <a href="/usage/executors/" >Executors</a></card>
 <p>Executors Executors plugins are the main mechanism of execution in Dkron. They implement different &ldquo;types&rdquo; of jobs in the sense that they can perform the most diverse actions on the target nodes.
 For example, the built-in shell executor, will run the indicated command in the target node.
 New plugins will be added, or you can create new ones, to perform different tasks, as HTTP requests, Docker runs, anything that you can imagine.</p>
 </span>
 
 <span><card>
-		<a href="/usage/executors/http/" >HTTP Executor</a></card>
+        <a href="/usage/executors/http/" >HTTP Executor</a></card>
 <p>HTTP executor can send a request to an HTTP endpoint
 Configuration Params:
 method: Request method in uppercase url: Request url headers: Json string, such as &quot;[\&quot;Content-Type: application/json\&quot;]&quot; body: POST body timeout: Request timeout, unit seconds expectCode: Expect response code, such as 200,206 expectBody: Expect response body, support regexp, such as /success/ debug: Debug option, will log everything when this option is not empty  Example
@@ -600,7 +638,7 @@ method: Request method in uppercase url: Request url headers: Json string, such 
 </span>
 
 <span><card>
-		<a href="/usage/executors/shell/" >Shell Executor</a></card>
+        <a href="/usage/executors/shell/" >Shell Executor</a></card>
 <p> Shell executor runs a system command
 Configuration Params
 shell: Run this command using a shell environment command: The command to run env: Env vars separated by comma cwd: Chdir before command run  Example
@@ -608,13 +646,13 @@ shell: Run this command using a shell environment command: The command to run en
 </span>
 
 <span><card>
-		<a href="/usage/processors/" >Processors</a></card>
+        <a href="/usage/processors/" >Processors</a></card>
 <p>Execution Processors Processor plugins are called when an execution response has been received. They are passed the resulting execution data and configuration parameters, this plugins can perform a variety of operations with the execution and it&rsquo;s very flexible and per Job, examples of operations this plugins can do:
  Execution output storage, forwarding or redirection. Notification Monitoring  For example, Processor plugins can be used to redirect the output of a job execution to different targets.</p>
 </span>
 
 <span><card>
-		<a href="/usage/processors/file/" >File Processor</a></card>
+        <a href="/usage/processors/file/" >File Processor</a></card>
 <p> File processor saves the execution output to a single log file in the specified directory
 Configuration Parameters
 log_dir: Path to the location where the log files will be saved forward: Forward log output to the next processor  Example
@@ -622,7 +660,7 @@ log_dir: Path to the location where the log files will be saved forward: Forward
 </span>
 
 <span><card>
-		<a href="/usage/processors/log/" >Log Processor</a></card>
+        <a href="/usage/processors/log/" >Log Processor</a></card>
 <p> Log processor writes the execution output to stdout/stderr
 Configuration Parameters
 forward: Forward the output to the next processor
@@ -631,7 +669,7 @@ Example
 </span>
 
 <span><card>
-		<a href="/usage/processors/syslog/" >Syslog Processor</a></card>
+        <a href="/usage/processors/syslog/" >Syslog Processor</a></card>
 <p> Syslog processor writes the execution output to the system syslog daemon
 Note: Only work on linux systems
 Configuration Parameters
@@ -641,14 +679,18 @@ Example
 </span>
 
 <span><card>
-		<a href="/usage/clustering/" >Clustering</a></card>
-<p>Configure a cluster Dkron can run in HA mode, avoiding SPOFs, this mode provides better scalability and better reliability for users that wants a high level of confidence in the cron jobs they need to run.
-To form a cluster, server nodes need to know the address of its peers as in the following example:
-# dkron.yml join: - 10.19.3.9 - 10.19.4.64 - 10.19.7.215 Etcd For a more in detail guide of clustering with etcd follow this guide: https://github.</p>
+        <a href="/usage/cloud-auto-join/" >Cloud Auto-join</a></card>
+<p>Dkron supports automatic cluster joining using cloud metadata on various providers.</p>
 </span>
 
 <span><card>
-		<a href="/usage/concurrency/" >Concurrency</a></card>
+        <a href="/usage/clustering/" >Clustering</a></card>
+<p>Configure a cluster Dkron can run in HA mode, avoiding SPOFs, this mode provides better scalability and better reliability for users that wants a high level of confidence in the cron jobs they need to run.
+Manually bootstrapping a Dkron cluster does not rely on additional tooling, but does require operator participation in the cluster formation process. When bootstrapping, Dkron servers and clients must be started and informed with the address of at least one Dkron server.</p>
+</span>
+
+<span><card>
+        <a href="/usage/concurrency/" >Concurrency</a></card>
 <p> Concurrency Jobs can be configured to allow overlapping executions or forbid them.
 Concurrency property accepts two option:
  allow (default): Allow concurrent job executions. forbid: If the job is already running don&rsquo;t send the execution, it will skip the executions until the next schedule.  Example:
@@ -656,7 +698,13 @@ Concurrency property accepts two option:
 </span>
 
 <span><card>
-		<a href="/usage/internals/" >Internals</a></card>
+        <a href="/usage/storage/" >Embedded storage</a></card>
+<p>Dkron has an embedded distributed KV store engine based on BadgerDB. This works out of the box on each dkron server.
+This ensures a dead easy install and setup, basically run dkron and you will have a full working node.</p>
+</span>
+
+<span><card>
+        <a href="/usage/internals/" >Internals</a></card>
 <p>This document is a WIP, it&rsquo;s intended to describe the reasons that lead to design decisions in Dkron.
 Execution results Dkron store the result of each job execution in each node.
 Every time dkron executes a job it assigns it an execution group, generating a new uuid and send a serf query to target machines and waits for a response.
@@ -664,7 +712,7 @@ Each target machine that will run the job, then responds with an execution objec
 </span>
 
 <span><card>
-		<a href="/usage/chaining/" >Job chaining</a></card>
+        <a href="/usage/chaining/" >Job chaining</a></card>
 <p>Job chaining You can set some jobs to run after other job is executed. To setup a job that will be executed after any other given job, just set the parent_job property when saving the new job.
 The dependent job will be executed after the main job finished a successful execution.
 Child jobs schedule property will be ignored if it&rsquo;s present.
@@ -672,45 +720,46 @@ Take into account that parent jobs must be created before any child job.</p>
 </span>
 
 <span><card>
-		<a href="/usage/retries/" >Job retries</a></card>
+        <a href="/usage/retries/" >Job retries</a></card>
 <p>Jobs can be configured to retry in case of failure.
 Configuration { &#34;name&#34;: &#34;job1&#34;, &#34;schedule&#34;: &#34;@every 10s&#34;, &#34;executor&#34;: &#34;shell&#34;, &#34;executor_config&#34;: { &#34;command&#34;: &#34;echo \&#34;Hello from parent\&#34;&#34; }, &#34;retries&#34;: 5 } In case of failure to run the job in one node, it will try to run the job again in that node until the retries count reaches the limit.</p>
 </span>
 
 <span><card>
-		<a href="/usage/metrics/" >Metrics</a></card>
+        <a href="/usage/metrics/" >Metrics</a></card>
 <p>Dkron has the ability to send metrics to Statsd for dashboards and historical reporting. It sends job processing metrics and golang, serf metrics too.
 Configuration Add this in your yaml config file
 dog_statsd_addr: &#34;localhost:8125&#34; Metrics  dkron.agent.event_received.query_execution_done dkron.agent.event_received.query_run_job dkron.memberlist.gossip dkron.memberlist.probeNode dkron.memberlist.pushPullNode dkron.memberlist.tcp.accept dkron.memberlist.tcp.connect dkron.memberlist.tcp.sent dkron.memberlist.udp.received dkron.memberlist.udp.sent dkron.grpc.call_execution_done dkron.grpc.call_get_job dkron.grpc.execution_done dkron.grpc.get_job dkron.runtime.alloc_bytes dkron.runtime.free_count dkron.runtime.gc_pause_ns dkron.runtime.heap_objects dkron.runtime.malloc_count dkron.runtime.num_goroutines dkron.runtime.sys_bytes dkron.runtime.total_gc_pause_ns dkron.runtime.total_gc_runs dkron.serf.coordinate.adjustment_ms dkron.serf.msgs.received dkron.serf.msgs.sent dkron.serf.queries dkron.serf.queries.execution_done dkron.serf.queries.run_job dkron.serf.query_acks dkron.serf.query_responses dkron.serf.queue.Event dkron.serf.queue.Intent dkron.</p>
 </span>
 
 <span><card>
-		<a href="/usage/plugins/" >Plugins</a></card>
+        <a href="/usage/recovery/" >Outage recovery</a></card>
+<p>Outage Recovery Don&rsquo;t panic! This is a critical first step.
+Depending on your deployment configuration, it may take only a single server failure for cluster unavailability. Recovery requires an operator to intervene, but the process is straightforward.
+This guide is for recovery from a Dkron outage due to a majority of server nodes in a datacenter being lost. If you are looking to add or remove servers, see the [clustering](/usage/clustering) guide.</p>
+</span>
+
+<span><card>
+        <a href="/usage/plugins/" >Plugins</a></card>
 <p>Intro Plugins in Dkron allow you to add funcionality that integrates with the workflow of the job execution in Dkron. It&rsquo;s a powerful system that allows you to extend and adapt Dkron to your special needs.
 This page documents the basics of how the plugin system in Dkron works, and how to setup a basic development environment for plugin development if you&rsquo;re writing a Dkron plugin.
 How it Works Dkron execution execution processors are provided via plugins.</p>
 </span>
 
 <span><card>
-		<a href="/usage/plugins/develop/" >Developing plugins</a></card>
-<p>Developing a Plugin Advanced topic! Plugin development is a highly advanced topic, and is not required knowledge for day-to-day usage. If you don&rsquo;t plan on writing any plugins, we recommend not reading the following section of the documentation. Developing a plugin is simple. The only knowledge necessary to write a plugin is basic command-line skills and basic knowledge of the Go programming language.
+        <a href="/usage/plugins/develop/" >Developing plugins</a></card>
+<p>Developing a Plugin **Advanced topic!** Plugin development is a highly advanced topic, and is not required knowledge for day-to-day usage. If you don't plan on writing any plugins, we recommend not reading the following section of the documentation. Developing a plugin is simple. The only knowledge necessary to write a plugin is basic command-line skills and basic knowledge of the Go programming language.
 Note: A common pitfall is not properly setting up a $GOPATH.</p>
 </span>
 
 <span><card>
-		<a href="/usage/ecs/" >Use with AWS ECS</a></card>
-<p>Dkron Pro comes with a native ECS executor out of the box.
- Use with Amazon ECS To use Dkron to schedule jobs that run in containers, a wrapper ECS script is needed.
+        <a href="/usage/ecs/" >Use with AWS ECS</a></card>
+<p>[Dkron Pro](/products/pro) comes with a [native ECS executor](/pro/ecs) out of the box.  Use with Amazon ECS To use Dkron to schedule jobs that run in containers, a wrapper ECS script is needed.
 Install the following snippet in the node that will run the call to ECS
  Prerequisites The node that will run the call to ECS will need to have installed
  AWS cli jq  Example ecs-run --cluster cron --task-definition cron-taskdef --container-name cron --region us-east-1 --command &quot;rake foo&quot;</p>
 </span>
 </ul>
-
-
-
-
-
 
 
 
@@ -736,7 +785,7 @@ Install the following snippet in the node that will run the call to ECS
 
     
     <div class="github-link">
-      <a href="https://github.com/victorcoder/dkron/edit/master/website/content/usage/_index.md" target="blank"><i class="fa fa-code-fork"></i>
+      <a href="https://github.com/distribworks/dkron/edit/master/website/content/usage/_index.md" target="blank"><i class="fa fa-code-fork"></i>
         Improve this page</a>
     </div>
     

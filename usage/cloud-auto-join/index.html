@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dkron - Distributed job scheduling system</title>
+    
+      <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="revised" content="2019-08-26T00:14:43 CEST">
+<title>Cloud Auto-join :: Dkron - Distributed job scheduling system</title>
+<link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
+<link href="/css/font-awesome.min.css" rel="stylesheet">
+<link href="/css/nucleus.css" rel="stylesheet">
+<link href="/theme-flex/style.css" rel="stylesheet">
+
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<script src="/js/jquery-2.x.min.js"></script>
+<script type="text/javascript">
+      var baseurl = "\/";
+</script>
+<link rel="stylesheet" href="/css/custom.css">
+
+
+    
+  </head>
+  <body data-url="/usage/cloud-auto-join/">
+    
+      <header>
+  <div class="logo">
+    
+	
+  
+    <div class="brand">
+  <a class="logo" href="/"><img src="/img/dkron-logo.png"/></a>
+</div>
+
+  
+
+
+  </div>
+  <div class="burger"><a href="javascript:void(0);" style="font-size:15px;">&#9776;</a></div>
+    <nav class="shortcuts">
+            <li class="" role="">
+                <a href="https://github.com/distribworks/dkron"  rel="noopener">
+                  <i class='fa fa-github'></i> Github repo
+                </a>
+            </li>
+            <li class="" role="">
+                <a href="https://github.com/distribworks/dkron/releases"  rel="noopener">
+                  <i class='fa fa-cloud-download'></i> <label>Download</label>
+                </a>
+            </li>
+            <li class="" role="">
+                <a href="/intro/license/"  rel="noopener">
+                  <i class='fa fa-bullhorn'></i> <label>License</label>
+                </a>
+            </li>
+    </nav>
+</header>
+<article>
+  <aside>
+    <ul class="menu">
+          <li data-nav-id="/" class="dd-item">
+          <a href="/">
+            <i class="fa fa-fw fa-home"></i>
+          </a>
+          </li>
+    <li data-nav-id="/basics/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/basics/">Basics</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/basics/installation/" class="dd-item">
+        <div>
+          <a href="/basics/installation/">
+            Installation
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/basics/getting-started/" class="dd-item">
+        <div>
+          <a href="/basics/getting-started/">
+            Getting started
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/basics/configuration/" class="dd-item">
+        <div>
+          <a href="/basics/configuration/">
+            Configuration
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/usage/" class="dd-item parent haschildren
+        ">
+      <div>
+      <a href="/usage/">Usage</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/usage/target-nodes-spec/" class="dd-item">
+        <div>
+          <a href="/usage/target-nodes-spec/">
+            Target nodes spec
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/cron-spec/" class="dd-item">
+        <div>
+          <a href="/usage/cron-spec/">
+            Cron spec
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+    <li data-nav-id="/usage/executors/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/usage/executors/">Executors</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/usage/executors/http/" class="dd-item">
+        <div>
+          <a href="/usage/executors/http/">
+            HTTP Executor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/executors/shell/" class="dd-item">
+        <div>
+          <a href="/usage/executors/shell/">
+            Shell Executor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/usage/processors/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/usage/processors/">Processors</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/usage/processors/file/" class="dd-item">
+        <div>
+          <a href="/usage/processors/file/">
+            File Processor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/processors/log/" class="dd-item">
+        <div>
+          <a href="/usage/processors/log/">
+            Log Processor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/processors/syslog/" class="dd-item">
+        <div>
+          <a href="/usage/processors/syslog/">
+            Syslog Processor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+      <li data-nav-id="/usage/cloud-auto-join/" class="dd-item active">
+        <div>
+          <a href="/usage/cloud-auto-join/">
+            Cloud Auto-join
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/clustering/" class="dd-item">
+        <div>
+          <a href="/usage/clustering/">
+            Clustering
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/concurrency/" class="dd-item">
+        <div>
+          <a href="/usage/concurrency/">
+            Concurrency
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/storage/" class="dd-item">
+        <div>
+          <a href="/usage/storage/">
+            Embedded storage
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/internals/" class="dd-item">
+        <div>
+          <a href="/usage/internals/">
+            Internals
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/chaining/" class="dd-item">
+        <div>
+          <a href="/usage/chaining/">
+            Job chaining
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/retries/" class="dd-item">
+        <div>
+          <a href="/usage/retries/">
+            Job retries
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/metrics/" class="dd-item">
+        <div>
+          <a href="/usage/metrics/">
+            Metrics
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/recovery/" class="dd-item">
+        <div>
+          <a href="/usage/recovery/">
+            Outage recovery
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+    <li data-nav-id="/usage/plugins/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/usage/plugins/">Plugins</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/usage/plugins/develop/" class="dd-item">
+        <div>
+          <a href="/usage/plugins/develop/">
+            Developing plugins
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+      <li data-nav-id="/usage/ecs/" class="dd-item">
+        <div>
+          <a href="/usage/ecs/">
+            Use with AWS ECS
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/pro/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/pro/">Dkron Pro</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+    <li data-nav-id="/pro/cli/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/pro/cli/">Pro CLI</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/cli/dkron/" class="dd-item">
+        <div>
+          <a href="/cli/dkron/">
+            dkron
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/cli/dkron_agent/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_agent/">
+            dkron agent
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/cli/dkron_doc/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_doc/">
+            dkron doc
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/cli/dkron_keygen/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_keygen/">
+            dkron keygen
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/cli/dkron_version/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_version/">
+            dkron version
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+      <li data-nav-id="/pro/auth/" class="dd-item">
+        <div>
+          <a href="/pro/auth/">
+            Authorization
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/commercial-faq/" class="dd-item">
+        <div>
+          <a href="/pro/commercial-faq/">
+            Commercial FAQ
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/commercial-support/" class="dd-item">
+        <div>
+          <a href="/pro/commercial-support/">
+            Commercial Support
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/configuration/" class="dd-item">
+        <div>
+          <a href="/pro/configuration/">
+            Configuration
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/encryption/" class="dd-item">
+        <div>
+          <a href="/pro/encryption/">
+            Encryption
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+    <li data-nav-id="/pro/executors/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/pro/executors/">Executors</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/pro/executors/ecs/" class="dd-item">
+        <div>
+          <a href="/pro/executors/ecs/">
+            AWS ECS Executor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/executors/docker/" class="dd-item">
+        <div>
+          <a href="/pro/executors/docker/">
+            Docker executor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/pro/processors/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/pro/processors/">Processors</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/pro/processors/elasticsearch/" class="dd-item">
+        <div>
+          <a href="/pro/processors/elasticsearch/">
+            Elasticsearch processor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/processors/email/" class="dd-item">
+        <div>
+          <a href="/pro/processors/email/">
+            Email processor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/processors/slack/" class="dd-item">
+        <div>
+          <a href="/pro/processors/slack/">
+            Slack processor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/products/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/products/">Products</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/products/pro/" class="dd-item">
+        <div>
+          <a href="/products/pro/">
+            Dkron Pro
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/intro/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/intro/">Intro</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/intro/dkron_vs_other_software/" class="dd-item">
+        <div>
+          <a href="/intro/dkron_vs_other_software/">
+            Dkron vs. Other Software
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/intro/license/" class="dd-item">
+        <div>
+          <a href="/intro/license/">
+            License
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/cli/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/cli/">CLI</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/cli/dkron/" class="dd-item">
+        <div>
+          <a href="/cli/dkron/">
+            dkron
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/cli/dkron_agent/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_agent/">
+            dkron agent
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/cli/dkron_doc/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_doc/">
+            dkron doc
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/cli/dkron_keygen/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_keygen/">
+            dkron keygen
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/cli/dkron_leave/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_leave/">
+            dkron leave
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/cli/dkron_raft/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_raft/">
+            dkron raft
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/cli/dkron_raft_list-peers/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_raft_list-peers/">
+            dkron raft list-peers
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/cli/dkron_raft_remove-peer/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_raft_remove-peer/">
+            dkron raft remove-peer
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/cli/dkron_version/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_version/">
+            dkron version
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/api/" class="dd-item
+        ">
+      <div>
+      <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+    </li>
+    <li data-nav-id="/upgrading/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
+        <div>
+          <a href="/upgrading/from_v1_to_v2/">
+            Upgrade from v1 to v2
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+
+
+
+
+    </ul>
+    <section><center>
+
+<a class="github-button" href="https://github.com/distribworks/dkron" data-icon="octicon-star" data-show-count="true" aria-label="Star distribworks/dkron on GitHub">Star</a>
+
+
+<a class="github-button" href="https://github.com/distribworks/dkron/fork" data-icon="octicon-repo-forked" data-show-count="true" aria-label="Fork distribworks/dkron on GitHub">Fork</a>
+
+</center>
+
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+
+    </section>
+  </aside>
+  <section class="page">
+    
+    <div class="nav-select">
+      <center>Navigation : 
+        <select onchange="javascript:location.href = this.value;">
+          
+    <option value="/basics/" >
+   Basics</option>
+    <option value="/usage/" >
+   Usage</option> 
+      <option value="/usage/target-nodes-spec/" >- Target nodes spec</option>
+      <option value="/usage/cron-spec/" >- Cron spec</option>
+    <option value="/usage/executors/" >
+  - 
+   Executors</option>
+    <option value="/usage/processors/" >
+  - 
+   Processors</option>
+      <option value="/usage/cloud-auto-join/"  selected>- Cloud Auto-join</option>
+      <option value="/usage/clustering/" >- Clustering</option>
+      <option value="/usage/concurrency/" >- Concurrency</option>
+      <option value="/usage/storage/" >- Embedded storage</option>
+      <option value="/usage/internals/" >- Internals</option>
+      <option value="/usage/chaining/" >- Job chaining</option>
+      <option value="/usage/retries/" >- Job retries</option>
+      <option value="/usage/metrics/" >- Metrics</option>
+      <option value="/usage/recovery/" >- Outage recovery</option>
+    <option value="/usage/plugins/" >
+  - 
+   Plugins</option>
+      <option value="/usage/ecs/" >- Use with AWS ECS</option>
+  
+    <option value="/pro/" >
+   Dkron Pro</option>
+    <option value="/products/" >
+   Products</option>
+    <option value="/intro/" >
+   Intro</option>
+    <option value="/cli/" >
+   CLI</option>
+    <option value="/api/" >
+   API</option>
+    <option value="/upgrading/" >
+   Upgradings</option>
+
+
+
+        </select>
+      </center>
+    </div>
+      <div>
+        <div class="searchbox">
+          <input data-search-input id="search-by" type="text" placeholder="Search...">
+        </div>
+        <script type="text/javascript" src="/js/lunr.min.js"></script>
+        <script type="text/javascript" src="/js/auto-complete.js"></script>
+        <link href="/css/auto-complete.css" rel="stylesheet">
+        <script type="text/javascript">
+          
+              var baseurl = "\/";
+          
+        </script>
+        <script type="text/javascript" src="/js/search.js"></script>
+      </div>
+    
+
+    <h1>Cloud Auto-join</h1>
+    
+    
+    
+    
+
+<h1 id="cloud-auto-joining">Cloud Auto-joining</h1>
+
+<p>As of Dkron 2.0.0, <code>retry-join</code> accepts a unified interface using the
+<a href="https://github.com/hashicorp/go-discover">go-discover</a> library for doing
+automatic cluster joining using cloud metadata. To use retry-join with a
+supported cloud provider, specify the configuration on the command line or
+configuration file as a <code>key=value key=value ...</code> string.</p>
+
+<p>If the values contain spaces, equals, backslashes or double quotes then
+they need to be double quoted and the usual escaping rules apply.</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#39;provider=my-cloud config=val config2=&#34;some other val&#34; ...&#39;</span></code></pre></div>
+<p>or via a configuration file:</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml">retry-join<span style="color:#d88200">&#34;: [&#34;</span>provider=my-cloud config=val config2=\<span style="color:#d88200">&#34;some other val\&#34; ...&#34;</span><span style="color:#111">]</span></code></pre></div>
+<p>The cloud provider-specific configurations are detailed below. This can be
+combined with static IP or DNS addresses or even multiple configurations
+for different providers.</p>
+
+<p>In order to use discovery behind a proxy, you will need to set
+<code>HTTP_PROXY</code>, <code>HTTPS_PROXY</code> and <code>NO_PROXY</code> environment variables per
+<a href="https://golang.org/pkg/net/http/#ProxyFromEnvironment">Golang <code>net/http</code> library</a>.</p>
+
+<p>The following sections give the options specific to each supported cloud
+provider.</p>
+
+<h3 id="amazon-ec2">Amazon EC2</h3>
+
+<p>This returns the first private IP address of all servers in the given
+region which have the given <code>tag_key</code> and <code>tag_value</code>.</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#34;provider=aws tag_key=... tag_value=...&#34;</span></code></pre></div><div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml">retry-join<span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=aws tag_key=... tag_value=...&#34;</span><span style="color:#111">]</span></code></pre></div>
+<ul>
+<li><code>provider</code> (required) - the name of the provider (&ldquo;aws&rdquo; in this case).</li>
+<li><code>tag_key</code> (required) - the key of the tag to auto-join on.</li>
+<li><code>tag_value</code> (required) - the value of the tag to auto-join on.</li>
+<li><code>region</code> (optional) - the AWS region to authenticate in.</li>
+<li><code>addr_type</code> (optional) - the type of address to discover: <code>private_v4</code>, <code>public_v4</code>, <code>public_v6</code>. Default is <code>private_v4</code>. (&gt;= 1.0)</li>
+<li><code>access_key_id</code> (optional) - the AWS access key for authentication (see below for more information about authenticating).</li>
+<li><code>secret_access_key</code> (optional) - the AWS secret access key for authentication (see below for more information about authenticating).</li>
+</ul>
+
+<h4 id="authentication-precedence">Authentication &amp; Precedence</h4>
+
+<ul>
+<li>Static credentials <code>access_key_id=... secret_access_key=...</code></li>
+<li>Environment variables (<code>AWS_ACCESS_KEY_ID</code> and <code>AWS_SECRET_ACCESS_KEY</code>)</li>
+<li>Shared credentials file (<code>~/.aws/credentials</code> or the path specified by <code>AWS_SHARED_CREDENTIALS_FILE</code>)</li>
+<li>ECS task role metadata (container-specific).</li>
+<li>EC2 instance role metadata.</li>
+</ul>
+
+<p>The only required IAM permission is <code>ec2:DescribeInstances</code>, and it is
+recommended that you make a dedicated key used only for auto-joining. If the
+region is omitted it will be discovered through the local instance&rsquo;s <a href="http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-identity-documents.html">EC2
+metadata
+endpoint</a>.</p>
+
+<h3 id="microsoft-azure">Microsoft Azure</h3>
+
+<p>This returns the first private IP address of all servers in the given region
+which have the given <code>tag_key</code> and <code>tag_value</code> in the tenant and subscription, or in
+the given <code>resource_group</code> of a <code>vm_scale_set</code> for Virtual Machine Scale Sets.</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#34;provider=azure tag_name=... tag_value=... tenant_id=... client_id=... subscription_id=... secret_access_key=...&#34;</span></code></pre></div><div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml">retry-join<span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=azure tag_name=... tag_value=... tenant_id=... client_id=... subscription_id=... secret_access_key=...&#34;</span><span style="color:#111">]</span></code></pre></div>
+<ul>
+<li><code>provider</code> (required) - the name of the provider (&ldquo;azure&rdquo; in this case).</li>
+<li><code>tenant_id</code> (required) - the tenant to join machines in.</li>
+<li><code>client_id</code> (required) - the client to authenticate with.</li>
+<li><code>secret_access_key</code> (required) - the secret client key. <strong>NOTE</strong> This value often may have an equals sign in it&rsquo;s value, especially if generated from the Azure Portal, so is important to wrap in single quotes eg. <code>secret_acccess_key='fpOfcHQJAQBczjAxiVpeyLmX1M0M0KPBST+GU2GvEN4='</code></li>
+</ul>
+
+<p>Variables can also be provided by environmental variables:</p>
+
+<ul>
+<li><code>ARM_SUBSCRIPTION_ID</code> for subscription</li>
+<li><code>ARM_TENANT_ID</code> for tenant</li>
+<li><code>ARM_CLIENT_ID</code> for client</li>
+<li><code>ARM_CLIENT_SECRET</code> for secret access key</li>
+</ul>
+
+<p>Use these configuration parameters when using tags:</p>
+
+<ul>
+<li><code>tag_name</code> - the name of the tag to auto-join on.</li>
+<li><code>tag_value</code> - the value of the tag to auto-join on.</li>
+</ul>
+
+<p>Use these configuration parameters (instead of <code>tag_name</code> and <code>tag_value</code>) when using Virtual Machine Scale Sets (Dkron 1.0.3 and later):</p>
+
+<ul>
+<li><code>resource_group</code> - the name of the resource group to filter on.</li>
+<li><code>vm_scale_set</code> - the name of the virtual machine scale set to filter on.</li>
+</ul>
+
+<p>When using tags the only permission needed is <code>Microsoft.Network/networkInterfaces</code>.</p>
+
+<p>When using Virtual Machine Scale Sets the only role action needed is <code>Microsoft.Compute/virtualMachineScaleSets/*/read</code>.</p>
+
+<h3 id="google-compute-engine">Google Compute Engine</h3>
+
+<p>This returns the first private IP address of all servers in the given
+project which have the given <code>tag_value</code>.</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#34;provider=gce project_name=... tag_value=...&#34;</span></code></pre></div><div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml">retry_join<span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=gce project_name=... tag_value=...&#34;</span><span style="color:#111">]</span></code></pre></div>
+<ul>
+<li><code>provider</code> (required) - the name of the provider (&ldquo;gce&rdquo; in this case).</li>
+<li><code>tag_value</code> (required) - the value of the tag to auto-join on.</li>
+<li><code>project_name</code> (optional) - the name of the project to auto-join on. Discovered if not set.</li>
+<li><code>zone_pattern</code> (optional) - the list of zones can be restricted through an RE2 compatible regular expression. If omitted, servers in all zones are returned.</li>
+<li><code>credentials_file</code> (optional) - the credentials file for authentication. Note, if you set <code>-config-dir</code> do not store the credentials.json file in the configuration directory as it will be parsed as a config file and Dkron will fail to start. See below for more information.</li>
+</ul>
+
+<h4 id="authentication-precedence-1">Authentication &amp; Precedence</h4>
+
+<ul>
+<li>Use credentials from <code>credentials_file</code>, if provided.</li>
+<li>Use JSON file from <code>GOOGLE_APPLICATION_CREDENTIALS</code> environment variable.</li>
+<li>Use JSON file in a location known to the gcloud command-line tool.
+
+<ul>
+<li>On Windows, this is <code>%APPDATA%/gcloud/application_default_credentials.json</code>.</li>
+<li>On other systems, <code>$HOME/.config/gcloud/application_default_credentials.json</code>.</li>
+</ul></li>
+<li>On Google Compute Engine, use credentials from the metadata
+server. In this final case any provided scopes are ignored.</li>
+</ul>
+
+<p>Discovery requires a <a href="https://cloud.google.com/compute/docs/access/service-accounts">GCE Service
+Account</a>.
+Credentials are searched using the following paths, in order of precedence.</p>
+
+<h3 id="ibm-softlayer">IBM SoftLayer</h3>
+
+<p>This returns the first private IP address of all servers for the given
+datacenter with the given <code>tag_value</code>.</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#34;provider=softlayer datacenter=... tag_value=... username=... api_key=...&#34;</span></code></pre></div><div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml">retry-join<span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=softlayer datacenter=... tag_value=... username=... api_key=...&#34;</span><span style="color:#111">]</span></code></pre></div>
+<ul>
+<li><code>provider</code> (required) - the name of the provider (&ldquo;softlayer&rdquo; in this case).</li>
+<li><a name="sl_datacenter"></a><a href="#sl_datacenter"><code>datacenter</code></a> (required) - the name of the datacenter to auto-join in.</li>
+<li><code>tag_value</code> (required) - the value of the tag to auto-join on.</li>
+<li><code>username</code> (required) - the username to use for auth.</li>
+<li><code>api_key</code> (required) - the api key to use for auth.</li>
+</ul>
+
+<h3 id="aliyun-alibaba-cloud">Aliyun (Alibaba Cloud)</h3>
+
+<p>This returns the first private IP address of all servers for the given
+<code>region</code> with the given <code>tag_key</code> and <code>tag_value</code>.</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#34;provider=aliyun region=... tag_key=dkron tag_value=... access_key_id=... access_key_secret=...&#34;</span></code></pre></div><div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml">retry-join<span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=aliyun region=... tag_key=dkron tag_value=... access_key_id=... access_key_secret=...&#34;</span><span style="color:#111">]</span></code></pre></div>
+<ul>
+<li><code>provider</code> (required) - the name of the provider (&ldquo;aliyun&rdquo; in this case).</li>
+<li><code>region</code> (required) - the name of the region.</li>
+<li><code>tag_key</code> (required) - the key of the tag to auto-join on.</li>
+<li><code>tag_value</code> (required) - the value of the tag to auto-join on.</li>
+<li><code>access_key_id</code> (required) -the access key to use for auth.</li>
+<li><code>access_key_secret</code> (required) - the secret key to use for auth.</li>
+</ul>
+
+<p>The required RAM permission is <code>ecs:DescribeInstances</code>.
+It is recommended you make a dedicated key used only for auto-joining.</p>
+
+<h3 id="digital-ocean">Digital Ocean</h3>
+
+<p>This returns the first private IP address of all servers for the given
+<code>region</code> with the given <code>tag_name</code>.</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#34;provider=digitalocean region=... tag_name=... api_token=...&#34;</span></code></pre></div><div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml">retry-join<span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=digitalocean region=... tag_name=... api_token=...&#34;</span><span style="color:#111">]</span></code></pre></div>
+<ul>
+<li><code>provider</code> (required) - the name of the provider (&ldquo;digitalocean&rdquo; in this case).</li>
+<li><code>region</code> (required) - the name of the region.</li>
+<li><code>tag_name</code> (required) - the value of the tag to auto-join on.</li>
+<li><code>api_token</code> (required) -the token to use for auth.</li>
+</ul>
+
+<h3 id="openstack">Openstack</h3>
+
+<p>This returns the first private IP address of all servers for the given
+<code>region</code> with the given <code>tag_key</code> and <code>tag_value</code>.</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#34;provider=os tag_key=dkron tag_value=server username=... password=... auth_url=...&#34;</span></code></pre></div><div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml">retry-join<span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=os tag_key=dkron tag_value=server username=... password=... auth_url=...&#34;</span><span style="color:#111">]</span></code></pre></div>
+<ul>
+<li><code>provider</code> (required) - the name of the provider (&ldquo;os&rdquo; in this case).</li>
+<li><code>tag_key</code> (required) - the key of the tag to auto-join on.</li>
+<li><code>tag_value</code> (required) - the value of the tag to auto-join on.</li>
+<li><code>project_id</code> (optional) - the id of the project (tenant id).</li>
+<li><code>username</code> (optional) - the username to use for auth.</li>
+<li><code>password</code> (optional) - the password to use for auth.</li>
+<li><code>token</code> (optional) - the token to use for auth.</li>
+<li><code>auth_url</code> (optional) - the identity endpoint to use for auth.</li>
+<li><code>insecure</code> (optional) - indicates whether the API certificate should not be checked. Any value means <code>true</code>.</li>
+</ul>
+
+<p>The configuration can also be provided by environment variables.</p>
+
+<h3 id="scaleway">Scaleway</h3>
+
+<p>This returns the first private IP address of all servers for the given
+<code>region</code> with the given <code>tag_name</code>.</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#34;provider=scaleway organization=my-org tag_name=dkron-server token=... region=...&#34;</span></code></pre></div><div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml">retry-join<span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=scaleway organization=my-org tag_name=dkron-server token=... region=...&#34;</span><span style="color:#111">]</span></code></pre></div>
+<ul>
+<li><code>provider</code> (required) - the name of the provider (&ldquo;scaleway&rdquo; in this case).</li>
+<li><code>region</code> (required) - the name of the region.</li>
+<li><code>tag_name</code> (required) - the name of the tag to auto-join on.</li>
+<li><code>organization</code> (required) - the organization access key to use for auth (equal to access key).</li>
+<li><code>token</code> (required) - the token to use for auth.</li>
+</ul>
+
+<h3 id="joyent-triton">Joyent Triton</h3>
+
+<p>This returns the first PrimaryIP addresses for all servers with the given <code>tag_key</code> and <code>tag_value</code>.</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#34;provider=triton account=testaccount url=https://us-sw-1.api.joyentcloud.com key_id=... tag_key=dkron-role tag_value=server&#34;</span></code></pre></div><div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml">retry-join<span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=triton account=testaccount url=https://us-sw-1.api.joyentcloud.com key_id=... tag_key=dkron-role tag_value=server&#34;</span><span style="color:#111">]</span></code></pre></div>
+<ul>
+<li><code>provider</code> (required) - the name of the provider (&ldquo;triton&rdquo; in this case).</li>
+<li><code>account</code> (required) - the name of the account.</li>
+<li><code>url</code> (required) - the URL of the Triton api endpoint to use.</li>
+<li><code>key_id</code> (required) - the key id to use.</li>
+<li><code>tag_key</code> (optional) - the instance tag key to use.</li>
+<li><code>tag_value</code> (optional) - the tag value to use.</li>
+</ul>
+
+<h3 id="vsphere">vSphere</h3>
+
+<p>This returns the first private IP address of all servers for the given region with the given <code>tag_name</code> and <code>category_name</code>.</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#34;provider=vsphere category_name=dkron-role tag_name=dkron-server host=... user=... password=... insecure_ssl=[true|false]&#34;</span></code></pre></div><div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml">retry-join<span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=vsphere category_name=dkron-role tag_name=dkron-server host=... user=... password=... insecure_ssl=[true|false]&#34;</span><span style="color:#111">]</span></code></pre></div>
+<ul>
+<li><code>provider</code> (required) -   the name of the provider (&ldquo;vsphere&rdquo; is the provider here)</li>
+<li><code>tag_name</code> (required) -    The name of the tag to look up.</li>
+<li><code>category_name</code> (required) - The category of the tag to look up.</li>
+<li><code>host</code> (required) -        The host of the vSphere server to connect to.</li>
+<li><code>user</code> (required) -         The username to connect as.</li>
+<li><code>password</code> (required) -     The password of the user to connect to vSphere as.</li>
+<li><code>insecure_ssl</code> (optional) -  Whether or not to skip SSL certificate validation.</li>
+<li><code>timeout</code> (optional) -     Discovery context timeout (default: 10m)</li>
+</ul>
+
+<h3 id="packet">Packet</h3>
+
+<p>This returns the first private IP address (or the IP address of <code>address type</code>) of all servers with the given <code>project</code> and <code>auth_token</code>.</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#34;provider=packet auth_token=token project=uuid url=... address_type=...&#34;</span></code></pre></div><div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml">retry-join<span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=packet auth_token=token project=uuid url=... address_type=...&#34;</span><span style="color:#111">]</span></code></pre></div>
+<ul>
+<li><code>provider</code> (required) -   the name of the provider (&ldquo;packet&rdquo; is the provider here)</li>
+<li><code>project</code> (required)  -   the UUID of packet project</li>
+<li><code>auth_token</code> (required) -  the authentication token for packet</li>
+<li><code>url</code> (optional) -         a REST URL for packet</li>
+<li><code>address_type</code> (optional) - the type of address to check for in this provider  (&ldquo;private_v4&rdquo;, &ldquo;public_v4&rdquo; or &ldquo;public_v6&rdquo;.                                   Defaults to &ldquo;private_v4&rdquo;)</li>
+</ul>
+
+<h3 id="kubernetes-k8s">Kubernetes (k8s)</h3>
+
+<p>The Kubernetes provider finds the IP addresses of pods with the matching
+<a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/">label or field selector</a>.
+This is useful for non-Kubernetes agents that are joining a server cluster
+running within Kubernetes.</p>
+
+<p>The pod IP is used by default, which requires that the agent connecting can
+network to the pod IP. The <code>host_network</code> boolean can be set to true to use
+the host IP instead, but this requires the agent ports (Gossip, RPC, etc.)
+to be exported to the host as well.</p>
+
+<p>By default, no port is specified. This causes Dkron to use the default
+gossip port (default behavior with all join requests). The pod may specify
+the <code>dkron.hashicorp.com/auto-join-port</code> annotation to set the port. The value
+may be an integer or a named port.</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#34;provider=k8s label_selector=\&#34;app=dkron,component=server\&#34;&#34;</span></code></pre></div><div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml">retry-join<span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=k8s label_selector=...&#34;</span><span style="color:#111">]</span></code></pre></div>
+<ul>
+<li><code>provider</code> (required) -   the name of the provider (&ldquo;k8s&rdquo; is the provider here)</li>
+<li><code>kubeconfig</code> (optional)   -   path to the kubeconfig file. If this isn&rsquo;t
+set, then in-cluster auth will be attempted. If that fails, the default
+kubeconfig paths are tried (<code>$HOME/.kube/config</code>).</li>
+<li><code>namespace</code> (optional) -  the namespace to search for pods. If this isn&rsquo;t
+set, it defaults to all namespaces.</li>
+<li><code>label_selector</code> (optional) - the label selector for matching pods.</li>
+<li><code>field_selector</code> (optional) - the field selector for matching pods.</li>
+</ul>
+
+
+    
+    
+        <div class="chevrons">
+    <div id="navigation">
+<a class="nav nav-prev" href="/usage/processors/syslog/" title="Syslog Processor"> <i class="fa fa-chevron-left"></i><label>Syslog Processor</label></a>
+    <a class="nav nav-next" href="/usage/clustering/" title="Clustering" style="margin-right: 0px;"><label>Clustering</label><i class="fa fa-chevron-right"></i></a></div>
+  </div>
+
+  </section>
+</article>
+
+<footer>
+
+<div class="footline">
+    
+
+    
+
+    
+
+    
+    <div class="github-link">
+      <a href="https://github.com/distribworks/dkron/edit/master/website/content/usage/cloud-auto-join.md" target="blank"><i class="fa fa-code-fork"></i>
+        Improve this page</a>
+    </div>
+    
+  </div>
+
+
+	<div>
+
+
+  
+    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - victor@distrib.works</p>
+
+  
+
+
+
+	</div>
+</footer>
+
+<script src="/js/clipboard.min.js"></script>
+
+<link href="/css/featherlight.min.css" rel="stylesheet">
+<script src="/js/featherlight.min.js"></script>
+
+
+
+<script src="/theme-flex/script.js"></script>
+
+
+    
+
+    
+    
+
+    
+  </body>
+</html>

@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2019-05-13T21:39:13 CEST">
+<meta name="revised" content="2019-08-26T00:14:43 CEST">
 <title>Installation :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -40,12 +40,12 @@
   <div class="burger"><a href="javascript:void(0);" style="font-size:15px;">&#9776;</a></div>
     <nav class="shortcuts">
             <li class="" role="">
-                <a href="https://github.com/victorcoder/dkron"  rel="noopener">
+                <a href="https://github.com/distribworks/dkron"  rel="noopener">
                   <i class='fa fa-github'></i> Github repo
                 </a>
             </li>
             <li class="" role="">
-                <a href="https://github.com/victorcoder/dkron/releases"  rel="noopener">
+                <a href="https://github.com/distribworks/dkron/releases"  rel="noopener">
                   <i class='fa fa-cloud-download'></i> <label>Download</label>
                 </a>
             </li>
@@ -165,6 +165,13 @@
     </li>
         </ul>
     </li>
+      <li data-nav-id="/usage/cloud-auto-join/" class="dd-item">
+        <div>
+          <a href="/usage/cloud-auto-join/">
+            Cloud Auto-join
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/usage/clustering/" class="dd-item">
         <div>
           <a href="/usage/clustering/">
@@ -176,6 +183,13 @@
         <div>
           <a href="/usage/concurrency/">
             Concurrency
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/storage/" class="dd-item">
+        <div>
+          <a href="/usage/storage/">
+            Embedded storage
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -204,6 +218,13 @@
         <div>
           <a href="/usage/metrics/">
             Metrics
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/recovery/" class="dd-item">
+        <div>
+          <a href="/usage/recovery/">
+            Outage recovery
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -237,13 +258,6 @@
       <a href="/pro/">Dkron Pro</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/pro/quick-start/" class="dd-item">
-        <div>
-          <a href="/pro/quick-start/">
-            Quick start
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
     <li data-nav-id="/pro/cli/" class="dd-item haschildren
         ">
       <div>
@@ -294,13 +308,6 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/pro/clustering/" class="dd-item">
-        <div>
-          <a href="/pro/clustering/">
-            Clustering
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
       <li data-nav-id="/pro/commercial-faq/" class="dd-item">
         <div>
           <a href="/pro/commercial-faq/">
@@ -319,13 +326,6 @@
         <div>
           <a href="/pro/configuration/">
             Configuration
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/pro/storage/" class="dd-item">
-        <div>
-          <a href="/pro/storage/">
-            Embedded storage
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -467,6 +467,27 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
+      <li data-nav-id="/cli/dkron_raft/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_raft/">
+            dkron raft
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/cli/dkron_raft_list-peers/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_raft_list-peers/">
+            dkron raft list-peers
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/cli/dkron_raft_remove-peer/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_raft_remove-peer/">
+            dkron raft remove-peer
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/cli/dkron_version/" class="dd-item">
         <div>
           <a href="/cli/dkron_version/">
@@ -482,6 +503,21 @@
       <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
       </div>
     </li>
+    <li data-nav-id="/upgrading/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
+        <div>
+          <a href="/upgrading/from_v1_to_v2/">
+            Upgrade from v1 to v2
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
 
 
 
@@ -489,10 +525,10 @@
     </ul>
     <section><center>
 
-<a class="github-button" href="https://github.com/victorcoder/dkron" data-icon="octicon-star" data-show-count="true" aria-label="Star victorcoder/dkron on GitHub">Star</a>
+<a class="github-button" href="https://github.com/distribworks/dkron" data-icon="octicon-star" data-show-count="true" aria-label="Star distribworks/dkron on GitHub">Star</a>
 
 
-<a class="github-button" href="https://github.com/victorcoder/dkron/fork" data-icon="octicon-repo-forked" data-show-count="true" aria-label="Fork victorcoder/dkron on GitHub">Fork</a>
+<a class="github-button" href="https://github.com/distribworks/dkron/fork" data-icon="octicon-repo-forked" data-show-count="true" aria-label="Fork distribworks/dkron on GitHub">Fork</a>
 
 </center>
 
@@ -524,6 +560,8 @@
    CLI</option>
     <option value="/api/" >
    API</option>
+    <option value="/upgrading/" >
+   Upgradings</option>
 
 
 
@@ -554,15 +592,11 @@
 
 <h2 id="running-the-binary">Running the binary</h2>
 
-<p>Download the packaged archive for your platform from the <a href="https://github.com/victorcoder/dkron/releases">downloads page</a> and extract the package to a shared location in your drive, like /opt/local/bin.</p>
+<p>Download the packaged archive for your platform from the <a href="https://github.com/distribworks/dkron/releases">downloads page</a> and extract the package to a shared location in your drive, like /opt/local/bin.</p>
 
 <p>Run Dkron with default setting: <code>dkron agent --server</code></p>
 
 <p>Navigate to <a href="http://localhost:8080">http://localhost:8080</a></p>
-
-<div class="notices note" ><p>By default dkron will start with a file based, embedded KV store called BoltDB, it is functional for a single node demo but does not offers clustering or HA.</p>
-</div>
-
 
 <h2 id="installing-the-package">Installing the package</h2>
 
@@ -570,7 +604,7 @@
 
 <p>APT repository:</p>
 
-<pre><code>deb [trusted=yes] https://apt.fury.io/victorcoder/ /
+<pre><code>deb [trusted=yes] https://apt.fury.io/distribworks/ /
 </code></pre>
 
 <p>Then install: <code>sudo apt-get install dkron</code></p>
@@ -581,12 +615,12 @@
 
 <pre><code>[dkron]
 name=Dkron Pro Private Repo
-baseurl=https://yum.fury.io/victorcoder/
+baseurl=https://yum.fury.io/distribworks/
 enabled=1
 gpgcheck=0
 </code></pre>
 
-<p>Then install: <code>sudo apt-get install dkron</code></p>
+<p>Then install: <code>sudo yum install dkron</code></p>
 
 <p>This will start Dkron as a system service and the place example configuration file under <code>/etc/dkron/dkron.yml</code></p>
 
@@ -610,14 +644,14 @@ gpgcheck=0
 
 <h3 id="mounting-a-mapped-file-storage-volume">Mounting a mapped file storage volume</h3>
 
-<p>In its default configuration Dkron uses the local filesystem to run a BoltDB embedded database to store its own application data. The end result is that your Dkron application data will be on disk inside your container and lost if you ever remove the container.</p>
+<p>Dkron uses the local filesystem for storing the embedded database to store its own application data and the Raft protocol log. The end result is that your Dkron data will be on disk inside your container and lost if you ever remove the container.</p>
 
-<p>To persist your data outside of the container and make it available for use between container launches we can mount a local file path inside our container.</p>
+<p>To persist your data outside of the container and make it available for use between container launches we can mount a local path inside our container.</p>
 
-<pre><code>docker run -d -p 8080:8080 -v ~/dkron.db:/dkron.db --name dkron dkron/dkron agent --server
+<pre><code>docker run -d -p 8080:8080 -v ~/dkron.data:/dkron.data --name dkron dkron/dkron agent --server
 </code></pre>
 
-<p>Now when you launch your container we are mounting that file from our local filesystem into the container.</p>
+<p>Now when you launch your container we are mounting that folder from our local filesystem into the container.</p>
 
 
     
@@ -642,7 +676,7 @@ gpgcheck=0
 
     
     <div class="github-link">
-      <a href="https://github.com/victorcoder/dkron/edit/master/website/content/basics/installation.md" target="blank"><i class="fa fa-code-fork"></i>
+      <a href="https://github.com/distribworks/dkron/edit/master/website/content/basics/installation.md" target="blank"><i class="fa fa-code-fork"></i>
         Improve this page</a>
     </div>
     

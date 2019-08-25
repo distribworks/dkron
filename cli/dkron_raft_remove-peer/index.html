@@ -5,8 +5,8 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2019-05-13T21:39:13 CEST">
-<title>Embedded storage :: Dkron - Distributed job scheduling system</title>
+<meta name="revised" content="2019-08-26T00:14:43 CEST">
+<title>dkron raft remove-peer :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
 <link href="/css/nucleus.css" rel="stylesheet">
@@ -22,7 +22,7 @@
 
     
   </head>
-  <body data-url="/pro/storage/">
+  <body data-url="/cli/dkron_raft_remove-peer/">
     
       <header>
   <div class="logo">
@@ -40,12 +40,12 @@
   <div class="burger"><a href="javascript:void(0);" style="font-size:15px;">&#9776;</a></div>
     <nav class="shortcuts">
             <li class="" role="">
-                <a href="https://github.com/victorcoder/dkron"  rel="noopener">
+                <a href="https://github.com/distribworks/dkron"  rel="noopener">
                   <i class='fa fa-github'></i> Github repo
                 </a>
             </li>
             <li class="" role="">
-                <a href="https://github.com/victorcoder/dkron/releases"  rel="noopener">
+                <a href="https://github.com/distribworks/dkron/releases"  rel="noopener">
                   <i class='fa fa-cloud-download'></i> <label>Download</label>
                 </a>
             </li>
@@ -164,6 +164,13 @@
     </li>
         </ul>
     </li>
+      <li data-nav-id="/usage/cloud-auto-join/" class="dd-item">
+        <div>
+          <a href="/usage/cloud-auto-join/">
+            Cloud Auto-join
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/usage/clustering/" class="dd-item">
         <div>
           <a href="/usage/clustering/">
@@ -175,6 +182,13 @@
         <div>
           <a href="/usage/concurrency/">
             Concurrency
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/storage/" class="dd-item">
+        <div>
+          <a href="/usage/storage/">
+            Embedded storage
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -206,6 +220,13 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
+      <li data-nav-id="/usage/recovery/" class="dd-item">
+        <div>
+          <a href="/usage/recovery/">
+            Outage recovery
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
     <li data-nav-id="/usage/plugins/" class="dd-item haschildren
         ">
       <div>
@@ -230,20 +251,12 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/pro/" class="dd-item parent haschildren
+    <li data-nav-id="/pro/" class="dd-item haschildren
         ">
       <div>
-      <a href="/pro/">Dkron Pro</a>
-            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/pro/">Dkron Pro</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/pro/quick-start/" class="dd-item">
-        <div>
-          <a href="/pro/quick-start/">
-            Quick start
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
     <li data-nav-id="/pro/cli/" class="dd-item haschildren
         ">
       <div>
@@ -294,13 +307,6 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/pro/clustering/" class="dd-item">
-        <div>
-          <a href="/pro/clustering/">
-            Clustering
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
       <li data-nav-id="/pro/commercial-faq/" class="dd-item">
         <div>
           <a href="/pro/commercial-faq/">
@@ -319,13 +325,6 @@
         <div>
           <a href="/pro/configuration/">
             Configuration
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/pro/storage/" class="dd-item active">
-        <div>
-          <a href="/pro/storage/">
-            Embedded storage
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -426,10 +425,11 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/cli/" class="dd-item haschildren
+    <li data-nav-id="/cli/" class="dd-item parent haschildren
         ">
       <div>
-      <a href="/cli/">CLI</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/cli/">CLI</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
       <li data-nav-id="/cli/dkron/" class="dd-item">
@@ -467,6 +467,27 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
+      <li data-nav-id="/cli/dkron_raft/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_raft/">
+            dkron raft
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/cli/dkron_raft_list-peers/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_raft_list-peers/">
+            dkron raft list-peers
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/cli/dkron_raft_remove-peer/" class="dd-item active">
+        <div>
+          <a href="/cli/dkron_raft_remove-peer/">
+            dkron raft remove-peer
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/cli/dkron_version/" class="dd-item">
         <div>
           <a href="/cli/dkron_version/">
@@ -482,6 +503,21 @@
       <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
       </div>
     </li>
+    <li data-nav-id="/upgrading/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
+        <div>
+          <a href="/upgrading/from_v1_to_v2/">
+            Upgrade from v1 to v2
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
 
 
 
@@ -489,10 +525,10 @@
     </ul>
     <section><center>
 
-<a class="github-button" href="https://github.com/victorcoder/dkron" data-icon="octicon-star" data-show-count="true" aria-label="Star victorcoder/dkron on GitHub">Star</a>
+<a class="github-button" href="https://github.com/distribworks/dkron" data-icon="octicon-star" data-show-count="true" aria-label="Star distribworks/dkron on GitHub">Star</a>
 
 
-<a class="github-button" href="https://github.com/victorcoder/dkron/fork" data-icon="octicon-repo-forked" data-show-count="true" aria-label="Fork victorcoder/dkron on GitHub">Fork</a>
+<a class="github-button" href="https://github.com/distribworks/dkron/fork" data-icon="octicon-repo-forked" data-show-count="true" aria-label="Fork distribworks/dkron on GitHub">Fork</a>
 
 </center>
 
@@ -511,33 +547,27 @@
     <option value="/usage/" >
    Usage</option>
     <option value="/pro/" >
-   Dkron Pro</option> 
-      <option value="/pro/quick-start/" >- Quick start</option>
-    <option value="/pro/cli/" >
-  - 
-   Pro CLI</option>
-      <option value="/pro/auth/" >- Authorization</option>
-      <option value="/pro/clustering/" >- Clustering</option>
-      <option value="/pro/commercial-faq/" >- Commercial FAQ</option>
-      <option value="/pro/commercial-support/" >- Commercial Support</option>
-      <option value="/pro/configuration/" >- Configuration</option>
-      <option value="/pro/storage/"  selected>- Embedded storage</option>
-      <option value="/pro/encryption/" >- Encryption</option>
-    <option value="/pro/executors/" >
-  - 
-   Executors</option>
-    <option value="/pro/processors/" >
-  - 
-   Processors</option>
-  
+   Dkron Pro</option>
     <option value="/products/" >
    Products</option>
     <option value="/intro/" >
    Intro</option>
     <option value="/cli/" >
-   CLI</option>
+   CLI</option> 
+      <option value="/cli/dkron/" >- dkron</option>
+      <option value="/cli/dkron_agent/" >- dkron agent</option>
+      <option value="/cli/dkron_doc/" >- dkron doc</option>
+      <option value="/cli/dkron_keygen/" >- dkron keygen</option>
+      <option value="/cli/dkron_leave/" >- dkron leave</option>
+      <option value="/cli/dkron_raft/" >- dkron raft</option>
+      <option value="/cli/dkron_raft_list-peers/" >- dkron raft list-peers</option>
+      <option value="/cli/dkron_raft_remove-peer/"  selected>- dkron raft remove-peer</option>
+      <option value="/cli/dkron_version/" >- dkron version</option>
+  
     <option value="/api/" >
    API</option>
+    <option value="/upgrading/" >
+   Upgradings</option>
 
 
 
@@ -560,21 +590,50 @@
       </div>
     
 
-    <h1>Embedded storage</h1>
+    <h1>dkron raft remove-peer</h1>
     
     
     
-    <p>Dkron Pro has an embedded distributed KV store engine based on etcd. This works out of the box on each node dkron server is started.</p>
+    
 
-<p>This ensures a dead easy install and setup, basically run dkron and you will have a full working node and at the same time provides you with a fully tested well supported store for its use with dkron.</p>
+<h2 id="dkron-raft-remove-peer">dkron raft remove-peer</h2>
+
+<p>Command to list raft peers</p>
+
+<h3 id="synopsis">Synopsis</h3>
+
+<p>Command to list raft peers</p>
+
+<pre><code>dkron raft remove-peer [flags]
+</code></pre>
+
+<h3 id="options">Options</h3>
+
+<pre><code>  -h, --help             help for remove-peer
+      --peer-id string   Remove a Dkron server with the given ID from the Raft configuration.
+</code></pre>
+
+<h3 id="options-inherited-from-parent-commands">Options inherited from parent commands</h3>
+
+<pre><code>      --config string     config file path
+      --rpc-addr string   gRPC address of the agent (default &quot;127.0.0.1:6868&quot;)
+</code></pre>
+
+<h3 id="see-also">SEE ALSO</h3>
+
+<ul>
+<li><a href="/cli/dkron_raft/">dkron raft</a>     - Command to perform some raft operations</li>
+</ul>
+
+<h6 id="auto-generated-by-spf13-cobra-on-10-jul-2019">Auto generated by spf13/cobra on 10-Jul-2019</h6>
 
 
     
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-prev" href="/pro/configuration/" title="Configuration"> <i class="fa fa-chevron-left"></i><label>Configuration</label></a>
-    <a class="nav nav-next" href="/pro/encryption/" title="Encryption" style="margin-right: 0px;"><label>Encryption</label><i class="fa fa-chevron-right"></i></a></div>
+<a class="nav nav-prev" href="/cli/dkron_raft_list-peers/" title="dkron raft list-peers"> <i class="fa fa-chevron-left"></i><label>dkron raft list-peers</label></a>
+    <a class="nav nav-next" href="/cli/dkron_version/" title="dkron version" style="margin-right: 0px;"><label>dkron version</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>
@@ -588,10 +647,14 @@
     
 
     
+    <div class="date">
+        <i class='fa fa-calendar'></i> Last update on 10/07/2019
+    </div>
+    
 
     
     <div class="github-link">
-      <a href="https://github.com/victorcoder/dkron/edit/master/website/content/pro/storage.md" target="blank"><i class="fa fa-code-fork"></i>
+      <a href="https://github.com/distribworks/dkron/edit/master/website/content/cli/dkron_raft_remove-peer.md" target="blank"><i class="fa fa-code-fork"></i>
         Improve this page</a>
     </div>
     

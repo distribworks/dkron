@@ -7,10 +7,6 @@
   </url>
   
   <url>
-    <loc>/pro/quick-start/</loc>
-  </url>
-  
-  <url>
     <loc>/usage/target-nodes-spec/</loc>
   </url>
   
@@ -52,7 +48,7 @@
   
   <url>
     <loc>/cli/</loc>
-    <lastmod>2019-03-22T00:00:00+00:00</lastmod>
+    <lastmod>2019-07-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -69,33 +65,54 @@
   </url>
   
   <url>
+    <loc>/</loc>
+    <lastmod>2019-07-10T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>/cli/dkron/</loc>
-    <lastmod>2019-03-22T00:00:00+00:00</lastmod>
+    <lastmod>2019-07-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/cli/dkron_agent/</loc>
-    <lastmod>2019-03-22T00:00:00+00:00</lastmod>
+    <lastmod>2019-07-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/cli/dkron_doc/</loc>
-    <lastmod>2019-03-22T00:00:00+00:00</lastmod>
+    <lastmod>2019-07-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/cli/dkron_keygen/</loc>
-    <lastmod>2019-03-22T00:00:00+00:00</lastmod>
+    <lastmod>2019-07-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/cli/dkron_leave/</loc>
-    <lastmod>2019-03-22T00:00:00+00:00</lastmod>
+    <lastmod>2019-07-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/cli/dkron_raft/</loc>
+    <lastmod>2019-07-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/cli/dkron_raft_list-peers/</loc>
+    <lastmod>2019-07-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/cli/dkron_raft_remove-peer/</loc>
+    <lastmod>2019-07-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/cli/dkron_version/</loc>
-    <lastmod>2019-03-22T00:00:00+00:00</lastmod>
+    <lastmod>2019-07-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -130,6 +147,7 @@
   
   <url>
     <loc>/_footer/</loc>
+    <priority>0</priority>
   </url>
   
   <url>
@@ -146,7 +164,7 @@
   </url>
   
   <url>
-    <loc>/pro/clustering/</loc>
+    <loc>/usage/cloud-auto-join/</loc>
   </url>
   
   <url>
@@ -174,12 +192,6 @@
   </url>
   
   <url>
-    <loc>/</loc>
-    <lastmod>2019-03-22T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>/products/pro/</loc>
   </url>
   
@@ -200,7 +212,7 @@
   </url>
   
   <url>
-    <loc>/pro/storage/</loc>
+    <loc>/usage/storage/</loc>
   </url>
   
   <url>
@@ -244,6 +256,10 @@
   </url>
   
   <url>
+    <loc>/usage/recovery/</loc>
+  </url>
+  
+  <url>
     <loc>/usage/plugins/</loc>
   </url>
   
@@ -265,6 +281,15 @@
   
   <url>
     <loc>/tags/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/upgrading/from_v1_to_v2/</loc>
+  </url>
+  
+  <url>
+    <loc>/upgrading/</loc>
     <priority>0</priority>
   </url>
   

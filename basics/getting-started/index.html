@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2019-05-13T21:39:13 CEST">
+<meta name="revised" content="2019-08-26T00:14:43 CEST">
 <title>Getting started :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -40,12 +40,12 @@
   <div class="burger"><a href="javascript:void(0);" style="font-size:15px;">&#9776;</a></div>
     <nav class="shortcuts">
             <li class="" role="">
-                <a href="https://github.com/victorcoder/dkron"  rel="noopener">
+                <a href="https://github.com/distribworks/dkron"  rel="noopener">
                   <i class='fa fa-github'></i> Github repo
                 </a>
             </li>
             <li class="" role="">
-                <a href="https://github.com/victorcoder/dkron/releases"  rel="noopener">
+                <a href="https://github.com/distribworks/dkron/releases"  rel="noopener">
                   <i class='fa fa-cloud-download'></i> <label>Download</label>
                 </a>
             </li>
@@ -165,6 +165,13 @@
     </li>
         </ul>
     </li>
+      <li data-nav-id="/usage/cloud-auto-join/" class="dd-item">
+        <div>
+          <a href="/usage/cloud-auto-join/">
+            Cloud Auto-join
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/usage/clustering/" class="dd-item">
         <div>
           <a href="/usage/clustering/">
@@ -176,6 +183,13 @@
         <div>
           <a href="/usage/concurrency/">
             Concurrency
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/storage/" class="dd-item">
+        <div>
+          <a href="/usage/storage/">
+            Embedded storage
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -204,6 +218,13 @@
         <div>
           <a href="/usage/metrics/">
             Metrics
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/recovery/" class="dd-item">
+        <div>
+          <a href="/usage/recovery/">
+            Outage recovery
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -237,13 +258,6 @@
       <a href="/pro/">Dkron Pro</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/pro/quick-start/" class="dd-item">
-        <div>
-          <a href="/pro/quick-start/">
-            Quick start
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
     <li data-nav-id="/pro/cli/" class="dd-item haschildren
         ">
       <div>
@@ -294,13 +308,6 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/pro/clustering/" class="dd-item">
-        <div>
-          <a href="/pro/clustering/">
-            Clustering
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
       <li data-nav-id="/pro/commercial-faq/" class="dd-item">
         <div>
           <a href="/pro/commercial-faq/">
@@ -319,13 +326,6 @@
         <div>
           <a href="/pro/configuration/">
             Configuration
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/pro/storage/" class="dd-item">
-        <div>
-          <a href="/pro/storage/">
-            Embedded storage
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -467,6 +467,27 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
+      <li data-nav-id="/cli/dkron_raft/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_raft/">
+            dkron raft
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/cli/dkron_raft_list-peers/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_raft_list-peers/">
+            dkron raft list-peers
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/cli/dkron_raft_remove-peer/" class="dd-item">
+        <div>
+          <a href="/cli/dkron_raft_remove-peer/">
+            dkron raft remove-peer
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/cli/dkron_version/" class="dd-item">
         <div>
           <a href="/cli/dkron_version/">
@@ -482,6 +503,21 @@
       <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
       </div>
     </li>
+    <li data-nav-id="/upgrading/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
+        <div>
+          <a href="/upgrading/from_v1_to_v2/">
+            Upgrade from v1 to v2
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
 
 
 
@@ -489,10 +525,10 @@
     </ul>
     <section><center>
 
-<a class="github-button" href="https://github.com/victorcoder/dkron" data-icon="octicon-star" data-show-count="true" aria-label="Star victorcoder/dkron on GitHub">Star</a>
+<a class="github-button" href="https://github.com/distribworks/dkron" data-icon="octicon-star" data-show-count="true" aria-label="Star distribworks/dkron on GitHub">Star</a>
 
 
-<a class="github-button" href="https://github.com/victorcoder/dkron/fork" data-icon="octicon-repo-forked" data-show-count="true" aria-label="Fork victorcoder/dkron on GitHub">Fork</a>
+<a class="github-button" href="https://github.com/distribworks/dkron/fork" data-icon="octicon-repo-forked" data-show-count="true" aria-label="Fork distribworks/dkron on GitHub">Fork</a>
 
 </center>
 
@@ -524,6 +560,8 @@
    CLI</option>
     <option value="/api/" >
    API</option>
+    <option value="/upgrading/" >
+   Upgradings</option>
 
 
 
@@ -570,23 +608,9 @@
 
 <p>All the execution responses will be gathered by the scheduler and stored in the database.</p>
 
-<h2 id="backend-stores">Backend stores</h2>
+<h2 id="state-storage">State storage</h2>
 
-<p>Dkron relies on the key-value store for data storage, an instance of the distributed store can be run in the same machines as Dkron or connect it to an already existing cluster.</p>
-
-<div class="notices note" ><p>By default dkron will start with a file based, embedded KV store called BoltDB, it is functional for a single node demo but does not offers clustering or HA.</p>
-</div>
-
-
-<p>It is compatible with etcd, Consul, Zookeeper, Redis, DynamoDB and BoltDB. For instructions on how to install and configure any one of these systems refer to their official sites:</p>
-
-<ul>
-<li><a href="https://coreos.com/etcd/docs/latest/">etcd</a></li>
-<li><a href="https://consul.io/intro/getting-started/install.html">Consul</a></li>
-<li><a href="https://zookeeper.apache.org/doc/r3.3.3/zookeeperStarted.html">ZooKeeper</a></li>
-<li><a href="https://redis.io/topics/quickstart">Redis</a></li>
-<li><a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/SettingUp.html">DynamoDB</a></li>
-</ul>
+<p>Dkron deployment is just a single binary, it stores the state in an internal BadgerDB instance and replicate all changes between all server nodes using the Raft protocol, it doesn&rsquo;t need any other storage system outside itself.</p>
 
 <h2 id="installation">Installation</h2>
 
@@ -601,43 +625,56 @@
 <p>By default Dkron uses the following ports:</p>
 
 <ul>
-<li><code>8946</code> for communicating between agents</li>
+<li><code>8946</code> for serf layer between agents</li>
 <li><code>8080</code> for HTTP for the API and Dashboard</li>
-<li><code>6868</code> for RPC comunication between agents.</li>
+<li><code>6868</code> for gRPC and raft layer comunication between agents.</li>
 </ul>
 
-<div class="notices note" ><p>Be sure you have opened this ports (or the ones that you configured) in your firewall or AWS security groups.</p>
+<div class="notices note" >
+Be sure you have opened this ports (or the ones that you configured) in your firewall or AWS security groups.
 </div>
 
+<h3 id="starting-a-single-node">Starting a single node</h3>
 
-<p>By default dkron will use the embedded BoltDB KV store. A different store can be specified setting <code>backend</code> and <code>backend-machines</code> flag in the config file, env variables or as a command line flag.</p>
+<p>Works out of the box, good for non HA installations.</p>
 
-<p>To start a Dkron server instance:</p>
+<ul>
+<li>System service: If no changes are done to the default config files, dkron will start as a service in single mode.</li>
 
-<pre><code>dkron agent --server
-</code></pre>
+<li><p>Command line: Running a single node with default config can be done by running: <code>dkron agent --server --bootstrap-expect=1</code></p>
 
-<p>Time to add the first job:</p>
+<pre><code>dkron agent --server --bootstrap-expect=1
+</code></pre></li>
+</ul>
 
-<div class="notices note" ><p>This job will only run in just one <code>dkron_server</code> node due to the node count in the tag. Refer to the <a href="/usage/target-nodes-spec">target node spec</a> for details.</p>
+<p>Check your server is working: <code>curl localhost:8080/v1</code></p>
+
+<p>Simple as that, now it is time to add a job:</p>
+
+<div class="notices note" >
+This job will only run in just one `server` node due to the node count in the tag. Refer to the [target node spec](/usage/target-nodes-spec) for details.
 </div>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">curl localhost:8080/v1/jobs -XPOST -d <span style="color:#d88200">&#39;{
+</span><span style="color:#d88200">  &#34;name&#34;: &#34;job1&#34;,
+</span><span style="color:#d88200">  &#34;schedule&#34;: &#34;@every 10s&#34;,
+</span><span style="color:#d88200">  &#34;timezone&#34;: &#34;Europe/Berlin&#34;,
+</span><span style="color:#d88200">  &#34;owner&#34;: &#34;Platform Team&#34;,
+</span><span style="color:#d88200">  &#34;owner_email&#34;: &#34;platform@example.com&#34;,
+</span><span style="color:#d88200">  &#34;disabled&#34;: false,
+</span><span style="color:#d88200">  &#34;tags&#34;: {
+</span><span style="color:#d88200">    &#34;server&#34;: &#34;true&#34;
+</span><span style="color:#d88200">  },
+</span><span style="color:#d88200">  &#34;metadata&#34;: {
+</span><span style="color:#d88200">    &#34;user&#34;: &#34;12345&#34;
+</span><span style="color:#d88200">  }
+</span><span style="color:#d88200">  &#34;concurrency&#34;: &#34;allow&#34;,
+</span><span style="color:#d88200">  &#34;executor&#34;: &#34;shell&#34;,
+</span><span style="color:#d88200">  &#34;executor_config&#34;: {
+</span><span style="color:#d88200">    &#34;command&#34;: &#34;date&#34;
+</span><span style="color:#d88200">  }
+</span><span style="color:#d88200">}&#39;</span></code></pre></div>
+<p>For full Job params description refer to the Job model in the <a href="/api">API guide</a></p>
 
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">curl localhost:8080/v1/jobs -XPOST -d <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">{</span>
-  <span style="color:#d88200">&#34;name&#34;</span>: <span style="color:#d88200">&#34;job1&#34;</span>,
-  <span style="color:#d88200">&#34;schedule&#34;</span>: <span style="color:#d88200">&#34;@every 10s&#34;</span>,
-  <span style="color:#d88200">&#34;timezone&#34;</span>: <span style="color:#d88200">&#34;Europe/Berlin&#34;</span>,
-  <span style="color:#d88200">&#34;owner&#34;</span>: <span style="color:#d88200">&#34;Platform Team&#34;</span>,
-  <span style="color:#d88200">&#34;owner_email&#34;</span>: <span style="color:#d88200">&#34;platform@example.com&#34;</span>,
-  <span style="color:#d88200">&#34;disabled&#34;</span>: false,
-  <span style="color:#d88200">&#34;tags&#34;</span>: <span style="color:#f92672">{</span>
-    <span style="color:#d88200">&#34;dkron_server&#34;</span>: <span style="color:#d88200">&#34;true:1&#34;</span>
-  <span style="color:#f92672">}</span>,
-  <span style="color:#d88200">&#34;concurrency&#34;</span>: <span style="color:#d88200">&#34;allow&#34;</span>,
-  <span style="color:#d88200">&#34;executor&#34;</span>: <span style="color:#d88200">&#34;shell&#34;</span>,
-  <span style="color:#d88200">&#34;executor_config&#34;</span>: <span style="color:#f92672">{</span>
-    <span style="color:#d88200">&#34;command&#34;</span>: <span style="color:#d88200">&#34;date&#34;</span>
-  <span style="color:#f92672">}</span>
-<span style="color:#f92672">}</span><span style="color:#d88200">`</span></code></pre></div>
 <p>That&rsquo;s it!</p>
 
 <h4 id="to-start-configuring-an-ha-installation-of-dkron-follow-the-clustering-guide-usage-clustering">To start configuring an HA installation of Dkron follow the <a href="/usage/clustering">clustering guide</a></h4>
@@ -665,7 +702,7 @@
 
     
     <div class="github-link">
-      <a href="https://github.com/victorcoder/dkron/edit/master/website/content/basics/getting-started.md" target="blank"><i class="fa fa-code-fork"></i>
+      <a href="https://github.com/distribworks/dkron/edit/master/website/content/basics/getting-started.md" target="blank"><i class="fa fa-code-fork"></i>
         Improve this page</a>
     </div>
     

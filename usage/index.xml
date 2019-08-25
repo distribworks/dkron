@@ -17,8 +17,7 @@
       
       <guid>/usage/target-nodes-spec/</guid>
       <description>Target nodes spec You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run.
-The target node syntax: [tag-value]:[count]
- Examples: Target all nodes with a tag:
+The target node syntax: `[tag-value]:[count]`  Examples: Target all nodes with a tag:
 { &amp;#34;name&amp;#34;: &amp;#34;job_name&amp;#34;, &amp;#34;command&amp;#34;: &amp;#34;/bin/true&amp;#34;, &amp;#34;schedule&amp;#34;: &amp;#34;@every 2m&amp;#34;, &amp;#34;tags&amp;#34;: { &amp;#34;role&amp;#34;: &amp;#34;web&amp;#34; } } mermaid.initialize({startOnLoad:true}); graph LR; J(&#34;Job tags: #quot;role#quot;: #quot;web#quot;&#34;) --|Run Job|N1[&#34;</description>
     </item>
     
@@ -33,14 +32,23 @@ Field name | Mandatory? | Allowed values | Allowed special characters ----------
     </item>
     
     <item>
+      <title>Cloud Auto-join</title>
+      <link>/usage/cloud-auto-join/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/usage/cloud-auto-join/</guid>
+      <description>Cloud Auto-joining As of Dkron 2.0.0, retry-join accepts a unified interface using the go-discover library for doing automatic cluster joining using cloud metadata. To use retry-join with a supported cloud provider, specify the configuration on the command line or configuration file as a key=value key=value ... string.
+If the values contain spaces, equals, backslashes or double quotes then they need to be double quoted and the usual escaping rules apply.</description>
+    </item>
+    
+    <item>
       <title>Clustering</title>
       <link>/usage/clustering/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/usage/clustering/</guid>
       <description>Configure a cluster Dkron can run in HA mode, avoiding SPOFs, this mode provides better scalability and better reliability for users that wants a high level of confidence in the cron jobs they need to run.
-To form a cluster, server nodes need to know the address of its peers as in the following example:
-# dkron.yml join: - 10.19.3.9 - 10.19.4.64 - 10.19.7.215 Etcd For a more in detail guide of clustering with etcd follow this guide: https://github.</description>
+Manually bootstrapping a Dkron cluster does not rely on additional tooling, but does require operator participation in the cluster formation process. When bootstrapping, Dkron servers and clients must be started and informed with the address of at least one Dkron server.</description>
     </item>
     
     <item>
@@ -53,6 +61,16 @@ To form a cluster, server nodes need to know the address of its peers as in the 
 Concurrency property accepts two option:
  allow (default): Allow concurrent job executions. forbid: If the job is already running don&amp;rsquo;t send the execution, it will skip the executions until the next schedule.  Example:
 { &amp;#34;name&amp;#34;: &amp;#34;job1&amp;#34;, &amp;#34;schedule&amp;#34;: &amp;#34;@every 10s&amp;#34;, &amp;#34;executor&amp;#34;: &amp;#34;shell&amp;#34;, &amp;#34;executor_config&amp;#34;: { &amp;#34;command&amp;#34;: &amp;#34;echo \&amp;#34;Hello from parent\&amp;#34;&amp;#34; }, &amp;#34;concurrency&amp;#34;: &amp;#34;forbid&amp;#34; }</description>
+    </item>
+    
+    <item>
+      <title>Embedded storage</title>
+      <link>/usage/storage/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/usage/storage/</guid>
+      <description>Dkron has an embedded distributed KV store engine based on BadgerDB. This works out of the box on each dkron server.
+This ensures a dead easy install and setup, basically run dkron and you will have a full working node.</description>
     </item>
     
     <item>
@@ -101,13 +119,23 @@ dog_statsd_addr: &amp;#34;localhost:8125&amp;#34; Metrics  dkron.agent.event_rec
     </item>
     
     <item>
+      <title>Outage recovery</title>
+      <link>/usage/recovery/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/usage/recovery/</guid>
+      <description>Outage Recovery Don&amp;rsquo;t panic! This is a critical first step.
+Depending on your deployment configuration, it may take only a single server failure for cluster unavailability. Recovery requires an operator to intervene, but the process is straightforward.
+This guide is for recovery from a Dkron outage due to a majority of server nodes in a datacenter being lost. If you are looking to add or remove servers, see the [clustering](/usage/clustering) guide.</description>
+    </item>
+    
+    <item>
       <title>Use with AWS ECS</title>
       <link>/usage/ecs/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/usage/ecs/</guid>
-      <description>Dkron Pro comes with a native ECS executor out of the box.
- Use with Amazon ECS To use Dkron to schedule jobs that run in containers, a wrapper ECS script is needed.
+      <description>[Dkron Pro](/products/pro) comes with a [native ECS executor](/pro/ecs) out of the box.  Use with Amazon ECS To use Dkron to schedule jobs that run in containers, a wrapper ECS script is needed.
 Install the following snippet in the node that will run the call to ECS
  Prerequisites The node that will run the call to ECS will need to have installed
  AWS cli jq  Example ecs-run --cluster cron --task-definition cron-taskdef --container-name cron --region us-east-1 --command &amp;quot;rake foo&amp;quot;</description>
