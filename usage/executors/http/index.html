@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2019-08-26T00:20:22 CEST">
+<meta name="revised" content="2019-08-26T00:37:04 CEST">
 <title>HTTP Executor :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -343,20 +343,6 @@
       <a href="/pro/executors/">Executors</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/pro/executors/ecs/" class="dd-item">
-        <div>
-          <a href="/pro/executors/ecs/">
-            AWS ECS Executor
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/pro/executors/docker/" class="dd-item">
-        <div>
-          <a href="/pro/executors/docker/">
-            Docker executor
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
         </ul>
     </li>
     <li data-nav-id="/pro/processors/" class="dd-item haschildren
@@ -484,6 +470,15 @@
    Usage</option> 
       <option value="/usage/target-nodes-spec/" >- Target nodes spec</option>
       <option value="/usage/cron-spec/" >- Cron spec</option>
+    <option value="/usage/executors/" >
+  - 
+   Executors</option> 
+      <option value="/usage/executors/http/"  selected>-- HTTP Executor</option>
+      <option value="/usage/executors/shell/" >-- Shell Executor</option>
+  
+    <option value="/usage/processors/" >
+  - 
+   Processors</option>
       <option value="/usage/cloud-auto-join/" >- Cloud Auto-join</option>
       <option value="/usage/clustering/" >- Clustering</option>
       <option value="/usage/concurrency/" >- Concurrency</option>
@@ -493,6 +488,9 @@
       <option value="/usage/retries/" >- Job retries</option>
       <option value="/usage/metrics/" >- Metrics</option>
       <option value="/usage/recovery/" >- Outage recovery</option>
+    <option value="/usage/plugins/" >
+  - 
+   Plugins</option>
       <option value="/usage/ecs/" >- Use with AWS ECS</option>
   
     <option value="/pro/" >
