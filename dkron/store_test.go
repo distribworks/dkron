@@ -179,6 +179,36 @@ func TestStore_ChildIsUpdatedAfterDeletingParentJob(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func TestStore_GetJobsWithMetadata(t *testing.T) {
+	s, dir := setupStore(t)
+	defer cleanupStore(dir, s)
+
+	metadata := make(map[string]string)
+	metadata["t1"] = "v1"
+	storeJobWithMetadata(t, s, "job1", metadata)
+
+	metadata["t2"] = "v2"
+	storeJobWithMetadata(t, s, "job2", metadata)
+
+	var options JobOptions
+	options.Metadata = make(map[string]string)
+	options.Metadata["t1"] = "v1"
+	jobs, err := s.GetJobs(&options)
+	assert.NoError(t, err)
+	assert.Equal(t, 2, len(jobs))
+
+	options.Metadata["t2"] = "v2"
+	jobs, err = s.GetJobs(&options)
+	assert.NoError(t, err)
+	assert.Equal(t, 1, len(jobs))
+	assert.Equal(t, "job2", jobs[0].Name)
+
+	options.Metadata["t3"] = "v3"
+	jobs, err = s.GetJobs(&options)
+	assert.NoError(t, err)
+	assert.Equal(t, 0, len(jobs))
+}
+
 func TestStore_GetLastExecutionGroup(t *testing.T) {
 	// This can not use time.Now() because that will include monotonic information
 	// that will cause the unmarshalled execution to differ from our generated version
@@ -320,6 +350,13 @@ func TestStore_GetLastExecutionGroup(t *testing.T) {
 func storeJob(t *testing.T, s *Store, jobName string) {
 	job := scaffoldJob()
 	job.Name = jobName
+	require.NoError(t, s.SetJob(job, false))
+}
+
+func storeJobWithMetadata(t *testing.T, s *Store, jobName string, metadata map[string]string) {
+	job := scaffoldJob()
+	job.Name = jobName
+	job.Metadata = metadata
 	require.NoError(t, s.SetJob(job, false))
 }
 
