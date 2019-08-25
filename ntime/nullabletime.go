@@ -1,6 +1,7 @@
 package ntime
 
 import (
+	"bytes"
 	"encoding/json"
 	"time"
 )
@@ -51,11 +52,23 @@ func (t *NullableTime) After(u NullableTime) bool {
 	return t.time.After(u.time)
 }
 
-// MarshalJSON serializer this struct to JSON
+// MarshalJSON serializes this struct to JSON
 // Implements json.Marshaler interface
 func (t *NullableTime) MarshalJSON() ([]byte, error) {
 	if t.hasValue {
 		return json.Marshal(t.time)
 	}
 	return json.Marshal(nil)
+}
+
+// UnmarshalJSON deserializes JSON into this struct
+// Implements json.Unmarshaler interface
+func (t *NullableTime) UnmarshalJSON(data []byte) error {
+	if bytes.Equal(data, []byte("null")) {
+		t.hasValue = false
+		return nil
+	}
+
+	t.hasValue = true
+	return json.Unmarshal(data, &t.time)
 }

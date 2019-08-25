@@ -43,8 +43,8 @@ func NewScheduler() *Scheduler {
 	return &Scheduler{Cron: c, Started: false}
 }
 
-// Start thee cron scheduler adding it's corresponding jobs and
-// executiong them on time.
+// Start the cron scheduler, adding its corresponding jobs and
+// executing them on time.
 func (s *Scheduler) Start(jobs []*Job) {
 	metrics.IncrCounter([]string{"scheduler", "start"}, 1)
 	for _, job := range jobs {
@@ -71,7 +71,7 @@ func (s *Scheduler) Start(jobs []*Job) {
 	schedulerStarted.Set(1)
 }
 
-// Stop stop the scheduler efectively not running any job.
+// Stop stops the scheduler effectively not running any job.
 func (s *Scheduler) Stop() {
 	if s.Started {
 		log.Debug("scheduler: Stopping scheduler")
@@ -87,7 +87,7 @@ func (s *Scheduler) Stop() {
 	schedulerStarted.Set(0)
 }
 
-// Restart thee scheduler
+// Restart the scheduler
 func (s *Scheduler) Restart(jobs []*Job) {
 	s.Stop()
 	s.Start(jobs)

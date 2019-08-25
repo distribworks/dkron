@@ -150,7 +150,9 @@ func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
 			if len(ej.DependentJobs) != 0 && copyDependentJobs {
 				job.DependentJobs = ej.DependentJobs
 			}
-		} else {
+		}
+
+		if job.Schedule != ej.Schedule {
 			job.Next, err = job.GetNext()
 			if err != nil {
 				return err
@@ -309,22 +311,13 @@ func (s *Store) jobHasMetadata(job *Job, metadata map[string]string) bool {
 		return false
 	}
 
-	res := true
 	for k, v := range metadata {
-		var found bool
-
-		if val, ok := job.Metadata[k]; ok && v == val {
-			found = true
-		}
-
-		res = res && found
-
-		if !res {
-			break
+		if val, ok := job.Metadata[k]; !ok || v != val {
+			return false
 		}
 	}
 
-	return res
+	return true
 }
 
 // GetJobs returns all jobs
