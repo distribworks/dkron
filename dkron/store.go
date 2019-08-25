@@ -150,7 +150,9 @@ func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
 			if len(ej.DependentJobs) != 0 && copyDependentJobs {
 				job.DependentJobs = ej.DependentJobs
 			}
-		} else {
+		}
+
+		if job.Schedule != ej.Schedule {
 			job.Next, err = job.GetNext()
 			if err != nil {
 				return err
