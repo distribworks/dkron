@@ -1,10 +1,12 @@
 # Dkron example configuration file
 # server: false
+# bind-addr: "{{ GetPrivateIP }}:8946"
 # log-level: debug
 # tags:
 #   dc: east
 # encrypt: a-valid-key-generated-with-dkron-keygen
-# join:
+# retry-join:
+#   - provider=aws region=eu-west-1 tag_key=consul tag_value=... access_key_id=... secret_access_key=...
 #   - 10.0.0.1
 #   - 10.0.0.2
 #   - 10.0.0.3
