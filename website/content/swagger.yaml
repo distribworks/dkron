@@ -65,6 +65,13 @@ paths:
           required: true
           schema:
             $ref: "#/definitions/job"
+        - in: query
+          name: runoncreate
+          description: If present, regardless of any value, causes the job to be run immediately after being succesfully created or updated.
+          required: false
+          schema:
+            type: boolean
+          allowEmptyValue: true
       responses:
         201:
           description: Successful response

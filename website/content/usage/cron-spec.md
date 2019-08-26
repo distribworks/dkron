@@ -63,6 +63,7 @@ You may use one of several pre-defined schedules in place of a cron expression.
 	@daily (or @midnight)  | Run once a day, midnight                   | 0 0 0 * * *
 	@hourly                | Run once an hour, beginning of hour        | 0 0 * * * *
 	@minutely              | Run once a minute, beginning of minute     | 0 * * * * *
+	@manually              | Never runs                                 | N/A
 
 ### Intervals
 
