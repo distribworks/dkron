@@ -3,6 +3,7 @@ package dkron
 import (
 	"errors"
 	"fmt"
+	"regexp"
 	"time"
 
 	"github.com/dgraph-io/badger"
@@ -352,4 +353,43 @@ func (j *Job) isRunnable() bool {
 	}
 
 	return true
+}
+
+// Validate validates whether all values in the job are acceptable.
+func (j *Job) Validate() error {
+	if valid, chr := isSlug(j.Name); !valid {
+		return fmt.Errorf("name contains illegal character '%s'", chr)
+	}
+
+	if j.ParentJob == j.Name {
+		return ErrSameParent
+	}
+
+	// Validate schedule, allow empty schedule if parent job set.
+	if j.Schedule != "" || j.ParentJob == "" {
+		if _, err := cron.Parse(j.Schedule); err != nil {
+			return fmt.Errorf("%s: %s", ErrScheduleParse.Error(), err)
+		}
+	}
+
+	if j.Concurrency != ConcurrencyAllow && j.Concurrency != ConcurrencyForbid && j.Concurrency != "" {
+		return ErrWrongConcurrency
+	}
+
+	// An empty string is a valid timezone for LoadLocation
+	if _, err := time.LoadLocation(j.Timezone); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// isSlug determines whether the given string is a proper value to be used as
+// key in the backend store (a "slug"). If false, the 2nd return value
+// will contain the first illegal character found.
+func isSlug(candidate string) (bool, string) {
+	// Allow only lower case letters (unicode), digits, underscore and dash.
+	illegalCharPattern, _ := regexp.Compile(`[^\p{Ll}0-9_-]`)
+	whyNot := illegalCharPattern.FindString(candidate)
+	return whyNot == "", whyNot
 }

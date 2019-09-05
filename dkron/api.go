@@ -3,12 +3,12 @@ package dkron
 import (
 	"fmt"
 	"net/http"
-	"regexp"
 
 	"github.com/dgraph-io/badger"
 	"github.com/gin-contrib/expvar"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	status "google.golang.org/grpc/status"
 )
 
 const (
@@ -147,21 +147,27 @@ func (h *HTTPTransport) jobCreateOrUpdateHandler(c *gin.Context) {
 
 	// Parse values from JSON
 	if err := c.BindJSON(&job); err != nil {
-		c.Writer.WriteString("Incorrect or unexpected parameters")
+		c.Writer.WriteString(fmt.Sprintf("Unable to parse payload: %s.", err))
 		log.Error(err)
 		return
 	}
 
-	// Validate job name
-	if b, chr := isSlug(job.Name); !b {
+	// Validate job
+	if err := job.Validate(); err != nil {
 		c.AbortWithStatus(http.StatusBadRequest)
-		c.Writer.WriteString(fmt.Sprintf("Name contains illegal character '%s'.", chr))
+		c.Writer.WriteString(fmt.Sprintf("Job contains invalid value: %s.", err))
 		return
 	}
 
 	// Call gRPC SetJob
 	if err := h.agent.GRPCClient.SetJob(&job); err != nil {
-		c.AbortWithError(422, err)
+		s := status.Convert(err)
+		if s.Message() == ErrParentJobNotFound.Error() {
+			c.AbortWithStatus(http.StatusNotFound)
+		} else {
+			c.AbortWithStatus(http.StatusInternalServerError)
+		}
+		c.Writer.WriteString(s.Message())
 		return
 	}
 
@@ -261,14 +267,4 @@ func (h *HTTPTransport) jobToggleHandler(c *gin.Context) {
 
 	c.Header("Location", c.Request.RequestURI)
 	renderJSON(c, http.StatusOK, job)
-}
-
-// isSlug determines whether the given string is a proper value to be used as
-// key in the backend store (a "slug"). If false, the 2nd return value
-// will contain the first illegal character found.
-func isSlug(candidate string) (bool, string) {
-	// Allow only lower case letters (unicode), digits, underscore and dash.
-	illegalCharPattern, _ := regexp.Compile(`[^\p{Ll}0-9_-]`)
-	whyNot := illegalCharPattern.FindString(candidate)
-	return whyNot == "", whyNot
 }

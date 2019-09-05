@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/dgraph-io/badger"
-	"github.com/distribworks/dkron/v2/cron"
 	dkronpb "github.com/distribworks/dkron/v2/proto"
 	"github.com/golang/protobuf/proto"
 	"github.com/sirupsen/logrus"
@@ -118,8 +117,15 @@ func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
 	// Init the job agent
 	job.Agent = s.agent
 
-	if err := s.validateJob(job); err != nil {
+	if err := job.Validate(); err != nil {
 		return err
+	}
+
+	// Abort if parent not found before committing job to the store
+	if job.ParentJob != "" {
+		if j, _ := s.GetJob(job.ParentJob, nil); j == nil {
+			return ErrParentJobNotFound
+		}
 	}
 
 	err := s.db.Update(func(txn *badger.Txn) error {
@@ -229,14 +235,6 @@ func (s *Store) addToParent(child *Job) error {
 	return nil
 }
 
-func (s *Store) validateTimeZone(timezone string) error {
-	if timezone == "" {
-		return nil
-	}
-	_, err := time.LoadLocation(timezone)
-	return err
-}
-
 // SetExecutionDone saves the execution and updates the job with the corresponding
 // results
 func (s *Store) SetExecutionDone(execution *Execution) (bool, error) {
@@ -282,28 +280,6 @@ func (s *Store) SetExecutionDone(execution *Execution) (bool, error) {
 	}
 
 	return true, nil
-}
-
-func (s *Store) validateJob(job *Job) error {
-	if job.ParentJob == job.Name {
-		return ErrSameParent
-	}
-
-	// Only validate the schedule if it doesn't have a parent
-	if job.ParentJob == "" {
-		if _, err := cron.Parse(job.Schedule); err != nil {
-			return fmt.Errorf("%s: %s", ErrScheduleParse.Error(), err)
-		}
-	}
-
-	if job.Concurrency != ConcurrencyAllow && job.Concurrency != ConcurrencyForbid && job.Concurrency != "" {
-		return ErrWrongConcurrency
-	}
-	if err := s.validateTimeZone(job.Timezone); err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func (s *Store) jobHasMetadata(job *Job, metadata map[string]string) bool {
