@@ -231,8 +231,9 @@ func (h *HTTPTransport) leaderHandler(c *gin.Context) {
 
 func (h *HTTPTransport) leaveHandler(c *gin.Context) {
 	if err := h.agent.Stop(); err != nil {
-		renderJSON(c, http.StatusOK, h.agent.ListServers())
+		c.AbortWithError(http.StatusInternalServerError, err)
 	}
+	renderJSON(c, http.StatusOK, h.agent.peers)
 }
 
 func (h *HTTPTransport) jobToggleHandler(c *gin.Context) {
@@ -249,7 +250,7 @@ func (h *HTTPTransport) jobToggleHandler(c *gin.Context) {
 
 	// Call gRPC SetJob
 	if err := h.agent.GRPCClient.SetJob(job); err != nil {
-		c.AbortWithError(422, err)
+		c.AbortWithError(http.StatusUnprocessableEntity, err)
 		return
 	}
 
