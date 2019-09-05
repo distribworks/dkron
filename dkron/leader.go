@@ -201,7 +201,7 @@ func (a *Agent) revokeLeadership() error {
 }
 
 // addRaftPeer is used to add a new Raft peer when a dkron server joins
-func (a *Agent) addRaftPeer(m serf.Member, parts *serverParts) error {
+func (a *Agent) addRaftPeer(m serf.Member, parts *ServerParts) error {
 	// Check for possibility of multiple bootstrap nodes
 	members := a.serf.Members()
 	if parts.Bootstrap {
@@ -273,7 +273,7 @@ func (a *Agent) addRaftPeer(m serf.Member, parts *serverParts) error {
 
 // removeRaftPeer is used to remove a Raft peer when a dkron server leaves
 // or is reaped
-func (a *Agent) removeRaftPeer(m serf.Member, parts *serverParts) error {
+func (a *Agent) removeRaftPeer(m serf.Member, parts *ServerParts) error {
 	// See if it's already in the configuration. It's harmless to re-remove it
 	// but we want to avoid doing that if possible to prevent useless Raft
 	// log entries.

@@ -78,7 +78,10 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 // like a cache store.
 func (a *Agent) selectServerByKey(key string) (string, error) {
 	ch := consistenthash.New(50, nil)
-	ch.Add(a.GetPeers()...)
+	for _, p := range a.localPeers {
+		ch.Add(p.RPCAddr.String())
+	}
+
 	peerAddress := ch.Get(key)
 	if peerAddress == "" {
 		return "", ErrNoSuitableServer
