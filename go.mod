@@ -55,3 +55,5 @@ require (
 )
 
 replace github.com/hashicorp/mdns => github.com/hashicorp/mdns v1.0.1
+
+go 1.13
