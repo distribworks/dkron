@@ -538,8 +538,30 @@ func (a *Agent) IsLeader() bool {
 	return a.raft.State() == raft.Leader
 }
 
-// ListServers returns the list of server members
-func (a *Agent) ListServers() (members []*ServerParts) {
+// Members is used to return the members of the serf cluster
+func (a *Agent) Members() []serf.Member {
+	return a.serf.Members()
+}
+
+// LocalMember is used to return the local node
+func (a *Agent) LocalMember() serf.Member {
+	return a.serf.LocalMember()
+}
+
+// Servers returns a list of known server
+func (a *Agent) Servers() (members []*ServerParts) {
+	for _, member := range a.serf.Members() {
+		ok, parts := isServer(member)
+		if !ok || member.Status != serf.StatusAlive {
+			continue
+		}
+		members = append(members, parts)
+	}
+	return members
+}
+
+// LocalServers returns a list of the local known server
+func (a *Agent) LocalServers() (members []*ServerParts) {
 	for _, member := range a.serf.Members() {
 		ok, parts := isServer(member)
 		if !ok || member.Status != serf.StatusAlive {
@@ -550,16 +572,6 @@ func (a *Agent) ListServers() (members []*ServerParts) {
 		}
 	}
 	return members
-}
-
-// GetPeers returns a list of the current serf servers peers addresses
-func (a *Agent) GetPeers() map[raft.ServerAddress]*ServerParts {
-	return a.localPeers
-}
-
-// LocalMember return the local serf member
-func (a *Agent) LocalMember() serf.Member {
-	return a.serf.LocalMember()
 }
 
 // Listens to events from Serf and handle the event.

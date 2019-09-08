@@ -78,7 +78,7 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 // like a cache store.
 func (a *Agent) selectServerByKey(key string) (string, error) {
 	ch := consistenthash.New(50, nil)
-	for _, p := range a.localPeers {
+	for _, p := range a.LocalServers() {
 		ch.Add(p.RPCAddr.String())
 	}
 
