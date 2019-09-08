@@ -311,6 +311,10 @@ func (j *Job) GetNext() (time.Time, error) {
 }
 
 func (j *Job) isRunnable() bool {
+	if j.Agent.GlobalLock {
+		return false
+	}
+
 	if j.Concurrency == ConcurrencyForbid {
 		j.Agent.RefreshJobStatus(j.Name)
 	}

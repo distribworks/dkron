@@ -21,8 +21,8 @@ func (a int64arr) Len() int           { return len(a) }
 func (a int64arr) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a int64arr) Less(i, j int) bool { return a[i] < a[j] }
 
-// serverParts is used to return the parts of a server role
-type serverParts struct {
+// ServerParts is used to return the parts of a server role
+type ServerParts struct {
 	Name         string
 	ID           string
 	Region       string
@@ -37,13 +37,15 @@ type serverParts struct {
 	Status       serf.MemberStatus
 }
 
-func (s *serverParts) String() string {
+// String returns a representation of this instance
+func (s *ServerParts) String() string {
 	return fmt.Sprintf("%s (Addr: %s) (DC: %s)",
 		s.Name, s.Addr, s.Datacenter)
 }
 
-func (s *serverParts) Copy() *serverParts {
-	ns := new(serverParts)
+// Copy returns a copy of this struct
+func (s *ServerParts) Copy() *ServerParts {
+	ns := new(ServerParts)
 	*ns = *s
 	return ns
 }
@@ -53,9 +55,9 @@ func UserAgent() string {
 	return fmt.Sprintf("Dkron/%s (+%s;)", Version, projectURL)
 }
 
-// Returns if a member is a Dkron server. Returns a boolean,
+// IsServer Returns if a member is a Dkron server. Returns a boolean,
 // and a struct with the various important components
-func isServer(m serf.Member) (bool, *serverParts) {
+func isServer(m serf.Member) (bool, *ServerParts) {
 	if m.Tags["role"] != "dkron" {
 		return false, nil
 	}
@@ -102,7 +104,7 @@ func isServer(m serf.Member) (bool, *serverParts) {
 
 	addr := &net.TCPAddr{IP: m.Addr, Port: port}
 	rpcAddr := &net.TCPAddr{IP: rpcIP, Port: port}
-	parts := &serverParts{
+	parts := &ServerParts{
 		Name:         m.Name,
 		ID:           id,
 		Region:       region,

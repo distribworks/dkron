@@ -54,6 +54,10 @@ type Agent struct {
 	GRPCClient       DkronGRPCClient
 	TLSConfig        *tls.Config
 
+	// Pro features
+	GlobalLock         bool
+	MemberEventHandler func(serf.Event)
+
 	serf        *serf.Serf
 	config      *Config
 	eventCh     chan serf.Event
@@ -80,8 +84,8 @@ type Agent struct {
 
 	// peers is used to track the known Dkron servers. This is
 	// used for region forwarding and clustering.
-	peers      map[string][]*serverParts
-	localPeers map[raft.ServerAddress]*serverParts
+	peers      map[string][]*ServerParts
+	localPeers map[raft.ServerAddress]*ServerParts
 	peerLock   sync.RWMutex
 }
 
@@ -317,8 +321,8 @@ func (a *Agent) setupSerf() (*serf.Serf, error) {
 	config := a.config
 
 	// Init peer list
-	a.localPeers = make(map[raft.ServerAddress]*serverParts)
-	a.peers = make(map[string][]*serverParts)
+	a.localPeers = make(map[raft.ServerAddress]*ServerParts)
+	a.peers = make(map[string][]*ServerParts)
 
 	bindIP, bindPort, err := config.AddrParts(config.BindAddr)
 	if err != nil {
@@ -534,8 +538,30 @@ func (a *Agent) IsLeader() bool {
 	return a.raft.State() == raft.Leader
 }
 
-// ListServers returns the list of server members
-func (a *Agent) ListServers() (members []*serverParts) {
+// Members is used to return the members of the serf cluster
+func (a *Agent) Members() []serf.Member {
+	return a.serf.Members()
+}
+
+// LocalMember is used to return the local node
+func (a *Agent) LocalMember() serf.Member {
+	return a.serf.LocalMember()
+}
+
+// Servers returns a list of known server
+func (a *Agent) Servers() (members []*ServerParts) {
+	for _, member := range a.serf.Members() {
+		ok, parts := isServer(member)
+		if !ok || member.Status != serf.StatusAlive {
+			continue
+		}
+		members = append(members, parts)
+	}
+	return members
+}
+
+// LocalServers returns a list of the local known server
+func (a *Agent) LocalServers() (members []*ServerParts) {
 	for _, member := range a.serf.Members() {
 		ok, parts := isServer(member)
 		if !ok || member.Status != serf.StatusAlive {
@@ -546,20 +572,6 @@ func (a *Agent) ListServers() (members []*serverParts) {
 		}
 	}
 	return members
-}
-
-// LocalMember return the local serf member
-func (a *Agent) LocalMember() serf.Member {
-	return a.serf.LocalMember()
-}
-
-// GetPeers returns a list of the current serf servers peers addresses
-func (a *Agent) GetPeers() (peers []string) {
-	ps := a.ListServers()
-	for _, p := range ps {
-		peers = append(peers, p.RPCAddr.String())
-	}
-	return
 }
 
 // Listens to events from Serf and handle the event.
@@ -580,6 +592,10 @@ func (a *Agent) eventLoop() {
 						"member": member.Name,
 						"event":  e.EventType(),
 					}).Debug("agent: Member event")
+				}
+
+				if a.MemberEventHandler != nil {
+					a.MemberEventHandler(e)
 				}
 
 				// serfEventHandler is used to handle events from the serf cluster

@@ -81,7 +81,7 @@ func (a *Agent) maybeBootstrap() {
 
 	// Scan for all the known servers
 	members := a.serf.Members()
-	var servers []serverParts
+	var servers []ServerParts
 	voters := 0
 	for _, member := range members {
 		valid, p := isServer(member)
