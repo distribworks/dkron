@@ -161,7 +161,7 @@ func (a *Agent) reconcile() error {
 func (a *Agent) reconcileMember(member serf.Member) error {
 	// Check if this is a member we should handle
 	valid, parts := isServer(member)
-	if !valid {
+	if !valid || parts.Region != a.config.Region {
 		return nil
 	}
 	defer metrics.MeasureSince([]string{"dkron", "leader", "reconcileMember"}, time.Now())
