@@ -225,6 +225,9 @@ func parseDescriptor(spec string) Schedule {
 			Month:  all(months),
 			Dow:    all(dow),
 		}
+
+	case "@manually":
+		return At(time.Time{})
 	}
 
 	const every = "@every "

@@ -165,6 +165,11 @@ func (h *HTTPTransport) jobCreateOrUpdateHandler(c *gin.Context) {
 		return
 	}
 
+	// Immediately run the job if so requested
+	if _, exists := c.GetQuery("runoncreate"); exists {
+		h.agent.GRPCClient.RunJob(job.Name)
+	}
+
 	c.Header("Location", fmt.Sprintf("%s/%s", c.Request.RequestURI, job.Name))
 	renderJSON(c, http.StatusCreated, &job)
 }
