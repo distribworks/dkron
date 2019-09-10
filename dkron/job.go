@@ -312,6 +312,8 @@ func (j *Job) GetNext() (time.Time, error) {
 
 func (j *Job) isRunnable() bool {
 	if j.Agent.GlobalLock {
+		log.WithField("job", j.Name).
+			Warning("job: Skipping execution because active global lock")
 		return false
 	}
 
