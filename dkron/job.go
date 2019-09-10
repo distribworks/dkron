@@ -199,13 +199,13 @@ func (j *Job) ToProto() *proto.Job {
 
 // Run the job
 func (j *Job) Run() {
-	j.running = true
-	defer func() { j.running = false }()
-
 	// Maybe we are testing or it's disabled
 	if j.Agent != nil && j.Disabled == false {
 		// Check if it's runnable
 		if j.isRunnable() {
+			j.running = true
+			defer func() { j.running = false }()
+
 			log.WithFields(logrus.Fields{
 				"job":      j.Name,
 				"schedule": j.Schedule,
@@ -332,6 +332,7 @@ func (j *Job) isRunnable() bool {
 	if j.running {
 		log.WithField("job", j.Name).
 			Warning("job: Skipping execution because last execution still broadcasting, consider increasing schedule interval")
+		return false
 	}
 
 	return true
