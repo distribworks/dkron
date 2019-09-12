@@ -70,14 +70,14 @@ func TestJobGetParent(t *testing.T) {
 
 func TestNewJobFromProto(t *testing.T) {
 	testConfig := map[string]PluginConfig{
-		"test_processor": PluginConfig{
+		"test_processor": {
 			"config_key": "config_value",
 		},
 	}
 
 	in := &proto.Job{}
 	proc := map[string]*proto.PluginConfig{
-		"test_processor": &proto.PluginConfig{
+		"test_processor": {
 			Config: map[string]string{"config_key": "config_value"},
 		},
 	}
@@ -90,13 +90,13 @@ func TestNewJobFromProto(t *testing.T) {
 func TestToProto(t *testing.T) {
 	j := &Job{
 		Processors: map[string]PluginConfig{
-			"test_processor": PluginConfig{
+			"test_processor": {
 				"config_key": "config_value",
 			},
 		},
 	}
 	proc := map[string]*proto.PluginConfig{
-		"test_processor": &proto.PluginConfig{
+		"test_processor": {
 			Config: map[string]string{"config_key": "config_value"},
 		},
 	}
