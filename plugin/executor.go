@@ -5,7 +5,7 @@ import (
 
 	"google.golang.org/grpc"
 
-	"github.com/distribworks/dkron/dkron"
+	"github.com/distribworks/dkron/v2/dkron"
 	"github.com/hashicorp/go-plugin"
 )
 

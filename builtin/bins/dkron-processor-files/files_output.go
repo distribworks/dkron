@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/distribworks/dkron/dkron"
+	"github.com/distribworks/dkron/v2/dkron"
 	log "github.com/sirupsen/logrus"
 )
 

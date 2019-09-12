@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/dgraph-io/badger"
-	"github.com/distribworks/dkron/cron"
-	dkronpb "github.com/distribworks/dkron/proto"
+	"github.com/distribworks/dkron/v2/cron"
+	dkronpb "github.com/distribworks/dkron/v2/proto"
 	"github.com/golang/protobuf/proto"
 	"github.com/sirupsen/logrus"
 )

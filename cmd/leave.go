@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/distribworks/dkron/dkron"
+	"github.com/distribworks/dkron/v2/dkron"
 	"github.com/spf13/cobra"
 )
 

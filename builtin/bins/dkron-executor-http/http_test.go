@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/distribworks/dkron/dkron"
+	"github.com/distribworks/dkron/v2/dkron"
 )
 
 func TestExecute(t *testing.T) {

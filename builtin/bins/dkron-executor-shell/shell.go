@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/armon/circbuf"
-	"github.com/distribworks/dkron/dkron"
+	"github.com/distribworks/dkron/v2/dkron"
 	"github.com/mattn/go-shellwords"
 )
 

@@ -5,7 +5,7 @@ import (
 	"expvar"
 
 	"github.com/armon/go-metrics"
-	"github.com/distribworks/dkron/cron"
+	"github.com/distribworks/dkron/v2/cron"
 	"github.com/sirupsen/logrus"
 )
 
