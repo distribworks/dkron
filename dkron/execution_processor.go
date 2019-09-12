@@ -16,4 +16,4 @@ type ExecutionProcessorArgs struct {
 }
 
 // PluginConfig holds a map of the plugin configuration data structure.
-type PluginConfig map[string]interface{}
+type PluginConfig map[string]string

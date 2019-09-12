@@ -32,6 +32,11 @@ message Job {
   NullableTime last_error = 26;
   google.protobuf.Timestamp next = 23;
   string displayname = 24;
+  map<string, PluginConfig> processors = 27;
+}
+
+message PluginConfig {
+  map<string, string> config = 1;
 }
 
 message SetJobRequest {

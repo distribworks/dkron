@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strconv"
 
 	"github.com/distribworks/dkron/dkron"
 	log "github.com/sirupsen/logrus"
@@ -39,17 +40,17 @@ func (l *FilesOutput) Process(args *dkron.ExecutionProcessorArgs) dkron.Executio
 }
 
 func (l *FilesOutput) parseConfig(config dkron.PluginConfig) {
-	forward, ok := config["forward"].(bool)
-	if ok {
-		l.forward = forward
-		log.Infof("Forwarding set to: %t", forward)
-	} else {
+	forward, err := strconv.ParseBool(config["forward"])
+	if err != nil {
 		l.forward = false
 		log.WithField("param", "forward").Warning("Incorrect format or param not found.")
+	} else {
+		l.forward = forward
+		log.Infof("Forwarding set to: %t", forward)
 	}
 
-	logDir, ok := config["log_dir"].(string)
-	if ok {
+	logDir := config["log_dir"]
+	if logDir != "" {
 		l.logDir = logDir
 		log.Infof("Log dir set to: %s", logDir)
 	} else {
