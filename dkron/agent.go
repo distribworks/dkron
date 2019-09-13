@@ -16,7 +16,7 @@ import (
 	"time"
 
 	metrics "github.com/armon/go-metrics"
-	"github.com/distribworks/dkron/proto"
+	"github.com/distribworks/dkron/v2/proto"
 	"github.com/hashicorp/memberlist"
 	"github.com/hashicorp/raft"
 	raftboltdb "github.com/hashicorp/raft-boltdb"

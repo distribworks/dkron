@@ -1,4 +1,4 @@
-module github.com/distribworks/dkron
+module github.com/distribworks/dkron/v2
 
 require (
 	github.com/DataDog/datadog-go v0.0.0-20170427165718-0ddda6bee211 // indirect
@@ -55,3 +55,5 @@ require (
 )
 
 replace github.com/hashicorp/mdns => github.com/hashicorp/mdns v1.0.1
+
+go 1.13
