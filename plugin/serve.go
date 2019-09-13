@@ -1,7 +1,7 @@
 package plugin
 
 import (
-	"github.com/distribworks/dkron/dkron"
+	"github.com/distribworks/dkron/v2/dkron"
 	"github.com/hashicorp/go-plugin"
 )
 

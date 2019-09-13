@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/dgraph-io/badger"
-	"github.com/distribworks/dkron/cron"
-	"github.com/distribworks/dkron/ntime"
-	"github.com/distribworks/dkron/proto"
+	"github.com/distribworks/dkron/v2/cron"
+	"github.com/distribworks/dkron/v2/ntime"
+	"github.com/distribworks/dkron/v2/proto"
 	"github.com/golang/protobuf/ptypes"
 	"github.com/sirupsen/logrus"
 )

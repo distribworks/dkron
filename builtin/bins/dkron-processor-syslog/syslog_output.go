@@ -2,9 +2,9 @@ package main
 
 import (
 	"strconv"
-
-	"github.com/distribworks/dkron/dkron"
-	gsyslog "github.com/hashicorp/go-syslog"
+	
+	"github.com/distribworks/dkron/v2/dkron"
+	"github.com/hashicorp/go-syslog"
 	log "github.com/sirupsen/logrus"
 )
 
