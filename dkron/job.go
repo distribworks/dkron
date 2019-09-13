@@ -125,6 +125,7 @@ type Job struct {
 // NewJobFromProto create a new Job from a PB Job struct
 func NewJobFromProto(in *proto.Job) *Job {
 	next, _ := ptypes.Timestamp(in.GetNext())
+
 	job := &Job{
 		Name:           in.Name,
 		DisplayName:    in.Displayname,
@@ -154,6 +155,13 @@ func NewJobFromProto(in *proto.Job) *Job {
 		t, _ := ptypes.Timestamp(in.GetLastError().GetTime())
 		job.LastError.Set(t)
 	}
+
+	procs := make(map[string]PluginConfig)
+	for k, v := range in.Processors {
+		procs[k] = v.Config
+	}
+	job.Processors = procs
+
 	return job
 }
 
@@ -172,6 +180,11 @@ func (j *Job) ToProto() *proto.Job {
 		lastError.Time, _ = ptypes.TimestampProto(j.LastError.Get())
 	}
 	next, _ := ptypes.TimestampProto(j.Next)
+
+	processors := make(map[string]*proto.PluginConfig)
+	for k, v := range j.Processors {
+		processors[k] = &proto.PluginConfig{Config: v}
+	}
 	return &proto.Job{
 		Name:           j.Name,
 		Displayname:    j.DisplayName,
@@ -187,6 +200,7 @@ func (j *Job) ToProto() *proto.Job {
 		DependentJobs:  j.DependentJobs,
 		ParentJob:      j.ParentJob,
 		Concurrency:    j.Concurrency,
+		Processors:     processors,
 		Executor:       j.Executor,
 		ExecutorConfig: j.ExecutorConfig,
 		Status:         j.Status,

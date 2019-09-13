@@ -1,6 +1,8 @@
 package main
 
 import (
+	"strconv"
+
 	"github.com/distribworks/dkron/v2/dkron"
 	"github.com/hashicorp/go-syslog"
 	log "github.com/sirupsen/logrus"
@@ -27,11 +29,12 @@ func (l *SyslogOutput) Process(args *dkron.ExecutionProcessorArgs) dkron.Executi
 }
 
 func (l *SyslogOutput) parseConfig(config dkron.PluginConfig) {
-	forward, ok := config["forward"].(bool)
-	if ok {
+	forward, err := strconv.ParseBool(config["forward"])
+	if err != nil {
+		l.forward = false
+		log.WithField("param", "forward").Warning("Incorrect format or param not found.")
+	} else {
 		l.forward = forward
 		log.Infof("Forwarding set to: %t", forward)
-	} else {
-		log.Error("Incorrect format in forward param")
 	}
 }
