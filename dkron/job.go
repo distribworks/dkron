@@ -44,7 +44,7 @@ var (
 	// ErrNoCommand is returned when attempting to store a job that has no command.
 	ErrNoCommand = errors.New("Unspecified command for job")
 	// ErrWrongConcurrency is returned when Concurrency is set to a non existing setting.
-	ErrWrongConcurrency = errors.New("Wrong concurrency policy value, use: allow/forbid")
+	ErrWrongConcurrency = errors.New("invalid concurrency policy value, use \"allow\" or \"forbid\"")
 )
 
 // Job descibes a scheduled Job.
