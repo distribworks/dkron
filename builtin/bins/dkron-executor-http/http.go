@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -74,7 +75,21 @@ func (s *HTTP) ExecuteImpl(args *dkron.ExecuteRequest) ([]byte, error) {
 		_timeout, _ = strconv.Atoi(args.Config["timeout"])
 	}
 
-	client := &http.Client{Timeout: time.Duration(_timeout) * time.Second}
+	tlsconf := &tls.Config{}
+	tlsconf.InsecureSkipVerify, _ = strconv.ParseBool(args.Config["tlsNoVerifyPeer"])
+	if args.Config["tlsCertificateFile"] != "" {
+		cert, err := tls.LoadX509KeyPair(args.Config["tlsCertificateFile"], args.Config["tlsCertificateKeyFile"])
+		if err == nil {
+			tlsconf.Certificates = append(tlsconf.Certificates, cert)
+		} else {
+			output.Write([]byte(fmt.Sprintf("Warning: failed to read certificate file(s): %s. Continuing without certificate.\n", err.Error())))
+		}
+	}
+
+	client := &http.Client{
+		Transport: &http.Transport{TLSClientConfig: tlsconf},
+		Timeout:   time.Duration(_timeout) * time.Second,
+	}
 	req, err := http.NewRequest(args.Config["method"], args.Config["url"], bytes.NewBuffer([]byte(args.Config["body"])))
 	if err != nil {
 		return output.Bytes(), err
@@ -83,7 +98,7 @@ func (s *HTTP) ExecuteImpl(args *dkron.ExecuteRequest) ([]byte, error) {
 	var headers []string
 	if args.Config["headers"] != "" {
 		if err := json.Unmarshal([]byte(args.Config["headers"]), &headers); err != nil {
-			output.Write([]byte("Error: headers parse fail\n"))
+			output.Write([]byte("Error: parsing headers failed\n"))
 		}
 	}
 
@@ -121,13 +136,13 @@ func (s *HTTP) ExecuteImpl(args *dkron.ExecuteRequest) ([]byte, error) {
 
 	// match response code
 	if args.Config["expectCode"] != "" && !strings.Contains(args.Config["expectCode"]+",", fmt.Sprintf("%d,", resp.StatusCode)) {
-		return output.Bytes(), errors.New("Not reach the expected code")
+		return output.Bytes(), errors.New("received response code does not match the expected code")
 	}
 
 	// match response
 	if args.Config["expectBody"] != "" {
 		if m, _ := regexp.MatchString(args.Config["expectBody"], string(out)); !m {
-			return output.Bytes(), errors.New("Not match the expected body")
+			return output.Bytes(), errors.New("received response body did not match the expected body")
 		}
 	}
 

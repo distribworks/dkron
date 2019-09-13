@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/distribworks/dkron/v2/dkron"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestExecute(t *testing.T) {
@@ -46,4 +47,42 @@ func TestExecutePost(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+}
+
+// Note: badssl.com was meant for _manual_ testing. Maybe these tests should be disabled by default.
+func TestNoVerifyPeer(t *testing.T) {
+	pa := &dkron.ExecuteRequest{
+		JobName: "testJob",
+		Config: map[string]string{
+			"method":          "GET",
+			"url":             "https://self-signed.badssl.com/",
+			"expectCode":      "200",
+			"debug":           "true",
+			"tlsNoVerifyPeer": "true",
+		},
+	}
+	http := &HTTP{}
+	output, _ := http.Execute(pa)
+	fmt.Println(string(output.Output))
+	fmt.Println(output.Error)
+	assert.Equal(t, output.Error, "")
+}
+
+func TestClientSSLCert(t *testing.T) {
+	pa := &dkron.ExecuteRequest{
+		JobName: "testJob",
+		Config: map[string]string{
+			"method":                "GET",
+			"url":                   "https://client.badssl.com/",
+			"expectCode":            "200",
+			"debug":                 "true",
+			"tlsCertificateFile":    "testdata/badssl.com-client.pem",
+			"tlsCertificateKeyFile": "testdata/badssl.com-client-key-decrypted.pem",
+		},
+	}
+	http := &HTTP{}
+	output, _ := http.Execute(pa)
+	fmt.Println(string(output.Output))
+	fmt.Println(output.Error)
+	assert.Equal(t, output.Error, "")
 }
