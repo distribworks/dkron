@@ -1,6 +1,7 @@
 package dkron
 
 import (
+	"fmt"
 	"time"
 
 	metrics "github.com/armon/go-metrics"
@@ -74,7 +75,7 @@ func (grpcc *GRPCClient) ExecutionDone(addr string, execution *Execution) error 
 	d := proto.NewDkronClient(conn)
 	edr, err := d.ExecutionDone(context.Background(), &proto.ExecutionDoneRequest{Execution: execution.ToProto()})
 	if err != nil {
-		if err == ErrNotLeader {
+		if err == fmt.Errorf("rpc error: code = Unknown desc = %s", ErrNotLeader) {
 			log.Info("grpc: ExecutionDone forwarded to the leader")
 			return nil
 		} else {
