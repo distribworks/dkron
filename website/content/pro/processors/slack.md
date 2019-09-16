@@ -25,7 +25,7 @@ Example:
     "slack": {
       "team": "team1",
       "channel": "#cron-production",
-      "onSuccess": true
+      "onSuccess": "true"
     }
   }
 }
