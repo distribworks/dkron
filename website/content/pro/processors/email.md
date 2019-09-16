@@ -27,7 +27,7 @@ Example:
     "email": {
       "provider": "provider1",
       "emails": "team@mycompany.com, owner@mycompany.com",
-      "onSuccess": true
+      "onSuccess": "true"
     }
   }
 }
