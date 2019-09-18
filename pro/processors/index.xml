@@ -46,7 +46,7 @@ Configuration of the slack processor is stored in a file named dkron-processor-s
 Example:
 team1: webhook_url: https://hooks.slack.com/services/XXXXXXXXXXXXXXXXXXX bot_name: Dkron Production Then configure each job with the following options:
 Example:
-{ &amp;#34;processors&amp;#34;: { &amp;#34;slack&amp;#34;: { &amp;#34;team&amp;#34;: &amp;#34;team1&amp;#34;, &amp;#34;channel&amp;#34;: &amp;#34;#cron-production&amp;#34;, &amp;#34;onSuccess&amp;#34;: true } } } By default the slack procesor doesn&amp;rsquo;t send notifications on job success, the onSuccess parameter, enables it, like in the previous example.</description>
+{ &amp;#34;processors&amp;#34;: { &amp;#34;slack&amp;#34;: { &amp;#34;team&amp;#34;: &amp;#34;team1&amp;#34;, &amp;#34;channel&amp;#34;: &amp;#34;#cron-production&amp;#34;, &amp;#34;onSuccess&amp;#34;: &amp;#34;true&amp;#34; } } } By default the slack procesor doesn&amp;rsquo;t send notifications on job success, the onSuccess parameter, enables it, like in the previous example.</description>
     </item>
     
   </channel>

@@ -54,6 +54,16 @@ Command line options  --etcd-config-file-path - Etcd node config --username - Au
     </item>
     
     <item>
+      <title>Cross region failover</title>
+      <link>/pro/failover/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/pro/failover/</guid>
+      <description>Dkron Pro can run federated in failover mode, this allows to have two clusters running in different regions and configure one of the clusters in an active-passive fashion, doing a failover in case the active cluster dies.
+This feature is experimental and should be handled with care.  </description>
+    </item>
+    
+    <item>
       <title>Encryption</title>
       <link>/pro/encryption/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
