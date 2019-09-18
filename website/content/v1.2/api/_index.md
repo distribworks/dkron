@@ -23,7 +23,7 @@ weight: 100
   window.onload = function () {
     // Begin Swagger UI call region
     const ui = SwaggerUIBundle({
-      url: "https://dkron.io/swagger.yaml",
+      url: "/v1.2/swagger.yaml",
       dom_id: '#swagger-ui',
       deepLinking: true,
       presets: [
