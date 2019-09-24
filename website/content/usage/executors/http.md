@@ -17,6 +17,9 @@ timeout: Request timeout, unit seconds
 expectCode: Expect response code, such as 200,206
 expectBody: Expect response body, support regexp, such as /success/
 debug: Debug option, will log everything when this option is not empty
+tlsNoVerifyPeer: false (default) or true. If true, disables verification of the remote SSL certificate's validity.
+tlsCertificateFile: Path to the PEM file containing the client certificate. Optional.
+tlsCertificateKeyFile: Path to the PEM file containing the client certificate private key. Optional.
 ```
 
 Example
