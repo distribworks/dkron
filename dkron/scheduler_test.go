@@ -25,7 +25,8 @@ func TestSchedule(t *testing.T) {
 	assert.True(t, sched.Started)
 	now := time.Now().Truncate(time.Second)
 
-	assert.Equal(t, now.Add(time.Second*2), sched.GetEntry(testJob1).Next)
+	entry, _ := sched.GetEntry(testJob1)
+	assert.Equal(t, now.Add(time.Second*2), entry.Next)
 
 	testJob2 := &Job{
 		Name:           "cron_job",

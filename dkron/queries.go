@@ -33,8 +33,7 @@ func (a *Agent) RunQuery(job *Job, ex *Execution) {
 	start := time.Now()
 	var params *serf.QueryParam
 
-	e := a.sched.GetEntry(job)
-	if e != nil {
+	if e, ok := a.sched.GetEntry(job); ok {
 		job.Next = e.Next
 	}
 	if err := a.applySetJob(job.ToProto()); err != nil {
