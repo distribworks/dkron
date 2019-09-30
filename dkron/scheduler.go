@@ -6,6 +6,7 @@ import (
 
 	"github.com/armon/go-metrics"
 	"github.com/distribworks/dkron/v2/cron"
+	"github.com/distribworks/dkron/v2/extcron"
 	"github.com/sirupsen/logrus"
 )
 
@@ -38,7 +39,7 @@ type Scheduler struct {
 
 // NewScheduler creates a new Scheduler instance
 func NewScheduler() *Scheduler {
-	c := cron.New()
+	c := extcron.New()
 	schedulerStarted.Set(0)
 	return &Scheduler{Cron: c, Started: false}
 }
@@ -77,7 +78,7 @@ func (s *Scheduler) Stop() {
 		log.Debug("scheduler: Stopping scheduler")
 		s.Cron.Stop()
 		s.Started = false
-		s.Cron = cron.New()
+		s.Cron = extcron.New()
 
 		// expvars
 		cronInspect.Do(func(kv expvar.KeyValue) {

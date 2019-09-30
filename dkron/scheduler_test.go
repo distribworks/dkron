@@ -40,3 +40,19 @@ func TestSchedule(t *testing.T) {
 	assert.True(t, sched.Started)
 	assert.Len(t, sched.Cron.Entries(), 1)
 }
+
+func TestTimezoneAwareJob(t *testing.T) {
+	sched := NewScheduler()
+
+	tzJob := &Job{
+		Name:           "cron_job",
+		Timezone:       "Europe/Amsterdam",
+		Schedule:       "@every 2s",
+		Executor:       "shell",
+		ExecutorConfig: map[string]string{"command": "echo 'test1'", "shell": "true"},
+	}
+	sched.Start([]*Job{tzJob})
+
+	assert.True(t, sched.Started)
+	assert.Len(t, sched.Cron.Entries(), 1)
+}
