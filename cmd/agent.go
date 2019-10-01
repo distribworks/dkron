@@ -55,7 +55,7 @@ func agentRun(args ...string) error {
 	if err := p.DiscoverPlugins(); err != nil {
 		log.Fatal(err)
 	}
-	plugins := &dkron.Plugins{
+	plugins := dkron.Plugins{
 		Processors: p.Processors,
 		Executors:  p.Executors,
 	}

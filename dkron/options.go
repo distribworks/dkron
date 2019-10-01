@@ -5,12 +5,10 @@ import (
 )
 
 // WithPlugins option to set plugins to the agent
-func WithPlugins(plugins *Plugins) AgentOption {
+func WithPlugins(plugins Plugins) AgentOption {
 	return func(agent *Agent) {
-		if plugins != nil {
-			agent.ProcessorPlugins = plugins.Processors
-			agent.ExecutorPlugins = plugins.Executors
-		}
+		agent.ProcessorPlugins = plugins.Processors
+		agent.ExecutorPlugins = plugins.Executors
 	}
 }
 
