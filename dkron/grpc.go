@@ -183,10 +183,6 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.E
 		return nil, err
 	}
 
-	if err := af.Error(); err != nil {
-		return nil, err
-	}
-
 	// If the execution failed, retry it until retries limit (default: don't retry)
 	if !execution.Success && execution.Attempt < job.Retries+1 {
 		execution.Attempt++
