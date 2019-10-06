@@ -46,13 +46,26 @@ var (
 
 // Agent is the main struct that represents a dkron agent
 type Agent struct {
+	// ProcessorPlugins maps processor plugins
 	ProcessorPlugins map[string]ExecutionProcessor
-	ExecutorPlugins  map[string]Executor
-	HTTPTransport    Transport
-	Store            Storage
-	GRPCServer       DkronGRPCServer
-	GRPCClient       DkronGRPCClient
-	TLSConfig        *tls.Config
+
+	//ExecutorPlugins maps executor plugins
+	ExecutorPlugins map[string]Executor
+
+	// HTTPTransport is a swappable interface for the HTTP server interface
+	HTTPTransport Transport
+
+	// Store interface to set the storage engine
+	Store Storage
+
+	// GRPCServer interface for setting the GRPC server
+	GRPCServer DkronGRPCServer
+
+	// GRPCClient interface for setting the GRPC client
+	GRPCClient DkronGRPCClient
+
+	// TLSConfig allows setting a TLS config for transport
+	TLSConfig *tls.Config
 
 	// Pro features
 	GlobalLock         bool
