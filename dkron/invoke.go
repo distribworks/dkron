@@ -9,8 +9,6 @@ import (
 )
 
 const (
-	windows = "windows"
-
 	// maxBufSize limits how much data we collect from a handler.
 	// This is to prevent Serf's memory from growing to an enormous
 	// amount due to a faulty handler.
@@ -32,7 +30,7 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 		return errors.New("invoke: No executor defined, nothing to do")
 	}
 
-	// Check if executor is exists
+	// Check if executor exists
 	if executor, ok := a.ExecutorPlugins[jex]; ok {
 		log.WithField("plugin", jex).Debug("invoke: calling executor plugin")
 		runningExecutions.Store(execution.GetGroup(), execution)
