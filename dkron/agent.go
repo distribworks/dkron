@@ -237,12 +237,13 @@ func (a *Agent) setupRaft() error {
 	config := raft.DefaultConfig()
 
 	// Raft performance
-	rm := a.config.RaftMultiplier
-	if rm > 1 && rm <= 10 {
-		config.HeartbeatTimeout = time.Duration(a.config.RaftMultiplier*1000) * time.Millisecond
-		config.ElectionTimeout = time.Duration(a.config.RaftMultiplier*1000) * time.Millisecond
-		config.LeaderLeaseTimeout = time.Duration(a.config.RaftMultiplier*500) * time.Millisecond
+	raftMultiplier := a.config.RaftMultiplier
+	if raftMultiplier < 1 && raftMultiplier > 10 {
+		return fmt.Errorf("raft-multiplier cannot be %d. Must be between 1 and 10", raftMultiplier)
 	}
+	config.HeartbeatTimeout = config.HeartbeatTimeout * time.Duration(raftMultiplier)
+	config.ElectionTimeout = config.ElectionTimeout * time.Duration(raftMultiplier)
+	config.LeaderLeaseTimeout = config.LeaderLeaseTimeout * time.Duration(a.config.RaftMultiplier)
 
 	config.LogOutput = logger
 	config.LocalID = raft.ServerID(a.config.NodeName)
