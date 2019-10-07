@@ -863,7 +863,7 @@ func (a *Agent) RefreshJobStatus(jobName string) {
 }
 
 // applySetJob is a helper method to be called when
-// a job property need to be modifeid from the leader.
+// a job property need to be modified from the leader.
 func (a *Agent) applySetJob(job *proto.Job) error {
 	cmd, err := Encode(SetJobType, job)
 	if err != nil {
