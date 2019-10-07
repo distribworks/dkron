@@ -235,6 +235,15 @@ func (a *Agent) setupRaft() error {
 	a.raftTransport = transport
 
 	config := raft.DefaultConfig()
+
+	// Raft performance
+	rm := a.config.RaftMultiplier
+	if rm > 1 && rm <= 10 {
+		config.HeartbeatTimeout = time.Duration(a.config.RaftMultiplier*1000) * time.Millisecond
+		config.ElectionTimeout = time.Duration(a.config.RaftMultiplier*1000) * time.Millisecond
+		config.LeaderLeaseTimeout = time.Duration(a.config.RaftMultiplier*500) * time.Millisecond
+	}
+
 	config.LogOutput = logger
 	config.LocalID = raft.ServerID(a.config.NodeName)
 

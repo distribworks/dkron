@@ -22,10 +22,11 @@ Settings can be specified in three ways (in order of precedence):
 # tags:
 #   dc: east
 # encrypt: a-valid-key-generated-with-dkron-keygen
-# join:
+# retry-join:
 #   - 10.0.0.1
 #   - 10.0.0.2
 #   - 10.0.0.3
+# raft-multiplier: 1
 # webhook-url: https://hooks.slack.com/services/XXXXXX/XXXXXXX/XXXXXXXXXXXXXXXXXXXX
 # webhook-payload: "payload={\"text\": \"{{.Report}}\", \"channel\": \"#foo\"}"
 # webhook-headers: Content-Type:application/x-www-form-urlencoded
