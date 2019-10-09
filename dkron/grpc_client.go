@@ -78,13 +78,13 @@ func (grpcc *GRPCClient) ExecutionDone(addr string, execution *Execution) error 
 		if err == fmt.Errorf("rpc error: code = Unknown desc = %s", ErrNotLeader) {
 			log.Info("grpc: ExecutionDone forwarded to the leader")
 			return nil
-		} else {
-			log.WithError(err).WithFields(logrus.Fields{
-				"method":      "ExecutionDone",
-				"server_addr": addr,
-			}).Error("grpc: Error calling gRPC method")
-			return err
 		}
+
+		log.WithError(err).WithFields(logrus.Fields{
+			"method":      "ExecutionDone",
+			"server_addr": addr,
+		}).Error("grpc: Error calling gRPC method")
+		return err
 	}
 	log.WithFields(logrus.Fields{
 		"method":      "ExecutionDone",
