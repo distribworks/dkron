@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/dgraph-io/badger"
-	"github.com/distribworks/dkron/v2/cron"
+	"github.com/distribworks/dkron/v2/extcron"
 	"github.com/distribworks/dkron/v2/ntime"
 	"github.com/distribworks/dkron/v2/proto"
 	"github.com/golang/protobuf/ptypes"
@@ -315,7 +315,7 @@ func (j *Job) GetParent() (*Job, error) {
 // GetNext returns the job's next schedule from now
 func (j *Job) GetNext() (time.Time, error) {
 	if j.Schedule != "" {
-		s, err := cron.Parse(j.Schedule)
+		s, err := extcron.Parse(j.Schedule)
 		if err != nil {
 			return time.Time{}, err
 		}
@@ -367,7 +367,7 @@ func (j *Job) Validate() error {
 
 	// Validate schedule, allow empty schedule if parent job set.
 	if j.Schedule != "" || j.ParentJob == "" {
-		if _, err := cron.Parse(j.Schedule); err != nil {
+		if _, err := extcron.Parse(j.Schedule); err != nil {
 			return fmt.Errorf("%s: %s", ErrScheduleParse.Error(), err)
 		}
 	}
