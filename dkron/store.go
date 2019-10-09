@@ -48,6 +48,7 @@ type JobOptions struct {
 // NewStore creates a new Storage instance.
 func NewStore(a *Agent, dir string) (*Store, error) {
 	opts := badger.DefaultOptions(dir)
+	opts.Logger = log
 
 	db, err := badger.Open(opts)
 	if err != nil {
