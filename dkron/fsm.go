@@ -32,7 +32,7 @@ type dkronFSM struct {
 }
 
 // NewFSM is used to construct a new FSM with a blank state
-func NewFSM(store Storage) *dkronFSM {
+func newFSM(store Storage) *dkronFSM {
 	return &dkronFSM{
 		store: store,
 	}
