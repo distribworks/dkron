@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2019-09-19T00:26:32 CEST">
+<meta name="revised" content="2019-10-10T22:54:42 CEST">
 <title>Usage :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -204,6 +204,13 @@
         <div>
           <a href="/usage/chaining/">
             Job chaining
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/metatags/" class="dd-item">
+        <div>
+          <a href="/usage/metatags/">
+            Job metadata
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -1012,6 +1019,7 @@
       <option value="/usage/storage/" >- Embedded storage</option>
       <option value="/usage/internals/" >- Internals</option>
       <option value="/usage/chaining/" >- Job chaining</option>
+      <option value="/usage/metatags/" >- Job metadata</option>
       <option value="/usage/retries/" >- Job retries</option>
       <option value="/usage/metrics/" >- Metrics</option>
       <option value="/usage/recovery/" >- Outage recovery</option>
@@ -1127,8 +1135,7 @@ New plugins will be added, or you can create new ones, to perform different task
         <a href="/usage/executors/http/" >HTTP Executor</a></card>
 <p>HTTP executor can send a request to an HTTP endpoint
 Configuration Params:
-method: Request method in uppercase url: Request url headers: Json string, such as &quot;[\&quot;Content-Type: application/json\&quot;]&quot; body: POST body timeout: Request timeout, unit seconds expectCode: Expect response code, such as 200,206 expectBody: Expect response body, support regexp, such as /success/ debug: Debug option, will log everything when this option is not empty  Example
-{ &#34;executor&#34;: &#34;http&#34;, &#34;executor_config&#34;: { &#34;method&#34;: &#34;GET&#34;, &#34;url&#34;: &#34;http://example.</p>
+method: Request method in uppercase url: Request url headers: Json string, such as &quot;[\&quot;Content-Type: application/json\&quot;]&quot; body: POST body timeout: Request timeout, unit seconds expectCode: Expect response code, such as 200,206 expectBody: Expect response body, support regexp, such as /success/ debug: Debug option, will log everything when this option is not empty tlsNoVerifyPeer: false (default) or true. If true, disables verification of the remote SSL certificate's validity.</p>
 </span>
 
 <span><card>
@@ -1311,6 +1318,33 @@ How it Works Dkron execution execution processors are provided via plugins.</p>
 The dependent job will be executed after the main job finished a successful execution.
 Child jobs schedule property will be ignored if it&rsquo;s present.
 Take into account that parent jobs must be created before any child job.</p>
+</span>
+
+<span><card>
+        <a href="/usage/executors/" >Executors</a></card>
+<p>Executors Executors plugins are the main mechanism of execution in Dkron. They implement different &ldquo;types&rdquo; of jobs in the sense that they can perform the most diverse actions on the target nodes.
+For example, the built-in shell executor, will run the indicated command in the target node.
+New plugins will be added, or you can create new ones, to perform different tasks, as HTTP requests, Docker runs, anything that you can imagine.</p>
+</span>
+
+<span><card>
+        <a href="/usage/processors/" >Processors</a></card>
+<p>Execution Processors Processor plugins are called when an execution response has been received. They are passed the resulting execution data and configuration parameters, this plugins can perform a variety of operations with the execution and it&rsquo;s very flexible and per Job, examples of operations this plugins can do:
+ Execution output storage, forwarding or redirection. Notification Monitoring  For example, Processor plugins can be used to redirect the output of a job execution to different targets.</p>
+</span>
+
+<span><card>
+        <a href="/usage/plugins/" >Plugins</a></card>
+<p>Intro Plugins in Dkron allow you to add funcionality that integrates with the workflow of the job execution in Dkron. It&rsquo;s a powerful system that allows you to extend and adapt Dkron to your special needs.
+This page documents the basics of how the plugin system in Dkron works, and how to setup a basic development environment for plugin development if you&rsquo;re writing a Dkron plugin.
+How it Works Dkron execution execution processors are provided via plugins.</p>
+</span>
+
+<span><card>
+        <a href="/usage/metatags/" >Job metadata</a></card>
+<p> Job metadata Jobs can have an optional extra property field called metadata that allows to set arbitrary tags to jobs and query the jobs using the API:
+{ &#34;name&#34;: &#34;job_name&#34;, &#34;command&#34;: &#34;/bin/true&#34;, &#34;schedule&#34;: &#34;@every 2m&#34;, &#34;metadata&#34;: { &#34;user_id&#34;: &#34;12345&#34; } } And then query the API to get only the results needed:
+$ curl http://localhost:8080/v1/jobs --data-urlencode &quot;metadata[user_id]=12345&quot;`  </p>
 </span>
 
 <span><card>

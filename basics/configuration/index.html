@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2019-09-19T00:26:32 CEST">
+<meta name="revised" content="2019-10-10T22:54:43 CEST">
 <title>Configuration :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -204,6 +204,13 @@
         <div>
           <a href="/usage/chaining/">
             Job chaining
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/metatags/" class="dd-item">
+        <div>
+          <a href="/usage/metatags/">
+            Job metadata
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -1063,10 +1070,11 @@
 <span style="color:#75715e"># tags:</span>
 <span style="color:#75715e">#   dc: east</span>
 <span style="color:#75715e"># encrypt: a-valid-key-generated-with-dkron-keygen</span>
-<span style="color:#75715e"># join:</span>
+<span style="color:#75715e"># retry-join:</span>
 <span style="color:#75715e">#   - 10.0.0.1</span>
 <span style="color:#75715e">#   - 10.0.0.2</span>
 <span style="color:#75715e">#   - 10.0.0.3</span>
+<span style="color:#75715e"># raft-multiplier: 1</span>
 <span style="color:#75715e"># webhook-url: https://hooks.slack.com/services/XXXXXX/XXXXXXX/XXXXXXXXXXXXXXXXXXXX</span>
 <span style="color:#75715e"># webhook-payload: &#34;payload={\&#34;text\&#34;: \&#34;{{.Report}}\&#34;, \&#34;channel\&#34;: \&#34;#foo\&#34;}&#34;</span>
 <span style="color:#75715e"># webhook-headers: Content-Type:application/x-www-form-urlencoded</span>

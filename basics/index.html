@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2019-09-19T00:26:31 CEST">
+<meta name="revised" content="2019-10-10T22:54:42 CEST">
 <title>Basics :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -204,6 +204,13 @@
         <div>
           <a href="/usage/chaining/">
             Job chaining
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/metatags/" class="dd-item">
+        <div>
+          <a href="/usage/metatags/">
+            Job metadata
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -1067,7 +1074,7 @@ The main distinction is that servers order job executions, can be used to schedu
 <span><h2>
         <a href="/basics/configuration/" >Configuration</a></h2>
 <p>Configuration sources Settings can be specified in three ways (in order of precedence):
- Command line arguments. Environment variables starting with DKRON_ dkron.yml config file  Config file example # Dkron example configuration file # server: false # bootstrap-expect: 3 # data-dir: dkron.data # log-level: debug # tags: # dc: east # encrypt: a-valid-key-generated-with-dkron-keygen # join: # - 10.0.0.1 # - 10.0.0.2 # - 10.0.0.3 # webhook-url: https://hooks.slack.com/services/XXXXXX/XXXXXXX/XXXXXXXXXXXXXXXXXXXX # webhook-payload: &#34;payload={\&#34;text\&#34;: \&#34;{{.</p>
+ Command line arguments. Environment variables starting with DKRON_ dkron.yml config file  Config file example # Dkron example configuration file # server: false # bootstrap-expect: 3 # data-dir: dkron.data # log-level: debug # tags: # dc: east # encrypt: a-valid-key-generated-with-dkron-keygen # retry-join: # - 10.0.0.1 # - 10.0.0.2 # - 10.0.0.3 # raft-multiplier: 1 # webhook-url: https://hooks.</p>
 </span>
 </ul>
 

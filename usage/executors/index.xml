@@ -18,8 +18,7 @@
       <guid>/usage/executors/http/</guid>
       <description>HTTP executor can send a request to an HTTP endpoint
 Configuration Params:
-method: Request method in uppercase url: Request url headers: Json string, such as &amp;quot;[\&amp;quot;Content-Type: application/json\&amp;quot;]&amp;quot; body: POST body timeout: Request timeout, unit seconds expectCode: Expect response code, such as 200,206 expectBody: Expect response body, support regexp, such as /success/ debug: Debug option, will log everything when this option is not empty  Example
-{ &amp;#34;executor&amp;#34;: &amp;#34;http&amp;#34;, &amp;#34;executor_config&amp;#34;: { &amp;#34;method&amp;#34;: &amp;#34;GET&amp;#34;, &amp;#34;url&amp;#34;: &amp;#34;http://example.</description>
+method: Request method in uppercase url: Request url headers: Json string, such as &amp;quot;[\&amp;quot;Content-Type: application/json\&amp;quot;]&amp;quot; body: POST body timeout: Request timeout, unit seconds expectCode: Expect response code, such as 200,206 expectBody: Expect response body, support regexp, such as /success/ debug: Debug option, will log everything when this option is not empty tlsNoVerifyPeer: false (default) or true. If true, disables verification of the remote SSL certificate&#39;s validity.</description>
     </item>
     
     <item>

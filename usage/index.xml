@@ -98,6 +98,17 @@ Take into account that parent jobs must be created before any child job.</descri
     </item>
     
     <item>
+      <title>Job metadata</title>
+      <link>/usage/metatags/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/usage/metatags/</guid>
+      <description> Job metadata Jobs can have an optional extra property field called metadata that allows to set arbitrary tags to jobs and query the jobs using the API:
+{ &amp;#34;name&amp;#34;: &amp;#34;job_name&amp;#34;, &amp;#34;command&amp;#34;: &amp;#34;/bin/true&amp;#34;, &amp;#34;schedule&amp;#34;: &amp;#34;@every 2m&amp;#34;, &amp;#34;metadata&amp;#34;: { &amp;#34;user_id&amp;#34;: &amp;#34;12345&amp;#34; } } And then query the API to get only the results needed:
+$ curl http://localhost:8080/v1/jobs --data-urlencode &amp;quot;metadata[user_id]=12345&amp;quot;`  </description>
+    </item>
+    
+    <item>
       <title>Job retries</title>
       <link>/usage/retries/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>

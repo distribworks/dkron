@@ -92,7 +92,7 @@
   
   <url>
     <loc>/cli/</loc>
-    <lastmod>2019-08-26T00:00:00+00:00</lastmod>
+    <lastmod>2019-10-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -128,21 +128,56 @@
   
   <url>
     <loc>/cli/dkron/</loc>
-    <lastmod>2019-08-26T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/pro/cli/dkron/</loc>
-    <lastmod>2019-08-26T00:00:00+00:00</lastmod>
+    <lastmod>2019-10-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/</loc>
-    <lastmod>2019-08-26T00:00:00+00:00</lastmod>
+    <lastmod>2019-10-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/cli/dkron_agent/</loc>
+    <lastmod>2019-10-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/cli/dkron_doc/</loc>
+    <lastmod>2019-10-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/cli/dkron_keygen/</loc>
+    <lastmod>2019-10-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/cli/dkron_leave/</loc>
+    <lastmod>2019-10-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/cli/dkron_raft/</loc>
+    <lastmod>2019-10-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/cli/dkron_raft_list-peers/</loc>
+    <lastmod>2019-10-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/cli/dkron_raft_remove-peer/</loc>
+    <lastmod>2019-10-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/cli/dkron_version/</loc>
+    <lastmod>2019-10-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/pro/cli/dkron/</loc>
     <lastmod>2019-08-26T00:00:00+00:00</lastmod>
   </url>
   
@@ -152,17 +187,7 @@
   </url>
   
   <url>
-    <loc>/cli/dkron_doc/</loc>
-    <lastmod>2019-08-26T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/pro/cli/dkron_doc/</loc>
-    <lastmod>2019-08-26T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/cli/dkron_keygen/</loc>
     <lastmod>2019-08-26T00:00:00+00:00</lastmod>
   </url>
   
@@ -172,17 +197,7 @@
   </url>
   
   <url>
-    <loc>/cli/dkron_leave/</loc>
-    <lastmod>2019-08-26T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/pro/cli/dkron_leave/</loc>
-    <lastmod>2019-08-26T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/cli/dkron_raft/</loc>
     <lastmod>2019-08-26T00:00:00+00:00</lastmod>
   </url>
   
@@ -192,27 +207,12 @@
   </url>
   
   <url>
-    <loc>/cli/dkron_raft_list-peers/</loc>
-    <lastmod>2019-08-26T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/pro/cli/dkron_raft_list-peers/</loc>
     <lastmod>2019-08-26T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/cli/dkron_raft_remove-peer/</loc>
-    <lastmod>2019-08-26T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/pro/cli/dkron_raft_remove-peer/</loc>
-    <lastmod>2019-08-26T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/cli/dkron_version/</loc>
     <lastmod>2019-08-26T00:00:00+00:00</lastmod>
   </url>
   
@@ -461,6 +461,10 @@
   
   <url>
     <loc>/v1.2/usage/chaining/</loc>
+  </url>
+  
+  <url>
+    <loc>/usage/metatags/</loc>
   </url>
   
   <url>

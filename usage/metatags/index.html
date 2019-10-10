@@ -6,7 +6,7 @@
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="revised" content="2019-10-10T22:54:43 CEST">
-<title>dkron version :: Dkron - Distributed job scheduling system</title>
+<title>Job metadata :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
 <link href="/css/nucleus.css" rel="stylesheet">
@@ -22,7 +22,7 @@
 
     
   </head>
-  <body data-url="/v1.2/cli/dkron_version/">
+  <body data-url="/usage/metatags/">
     
       <header>
   <div class="logo">
@@ -93,10 +93,11 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/usage/" class="dd-item haschildren
+    <li data-nav-id="/usage/" class="dd-item parent haschildren
         ">
       <div>
-      <a href="/usage/">Usage</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/usage/">Usage</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
       <li data-nav-id="/usage/target-nodes-spec/" class="dd-item">
@@ -206,7 +207,7 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/usage/metatags/" class="dd-item">
+      <li data-nav-id="/usage/metatags/" class="dd-item active">
         <div>
           <a href="/usage/metatags/">
             Job metadata
@@ -559,11 +560,10 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/v1.2/" class="dd-item parent haschildren
+    <li data-nav-id="/v1.2/" class="dd-item haschildren
         ">
       <div>
-      <a href="/v1.2/">V1.2s</a>
-            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/v1.2/">V1.2s</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
     <li data-nav-id="/v1.2/basics/" class="dd-item haschildren
@@ -732,11 +732,10 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/v1.2/pro/" class="dd-item parent haschildren
+    <li data-nav-id="/v1.2/pro/" class="dd-item haschildren
         ">
       <div>
-      <a href="/v1.2/pro/">Dkron Pro</a>
-            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/v1.2/pro/">Dkron Pro</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
       <li data-nav-id="/v1.2/pro/quick-start/" class="dd-item">
@@ -746,11 +745,10 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-    <li data-nav-id="/v1.2/pro/cli/" class="dd-item parent haschildren
+    <li data-nav-id="/v1.2/pro/cli/" class="dd-item haschildren
         ">
       <div>
-      <a href="/v1.2/pro/cli/">Pro CLI</a>
-            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/v1.2/pro/cli/">Pro CLI</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
       <li data-nav-id="/v1.2/cli/dkron/" class="dd-item">
@@ -781,7 +779,7 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/v1.2/cli/dkron_version/" class="dd-item active">
+      <li data-nav-id="/v1.2/cli/dkron_version/" class="dd-item">
         <div>
           <a href="/v1.2/cli/dkron_version/">
             dkron version
@@ -955,7 +953,7 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/v1.2/cli/dkron_version/" class="dd-item active">
+      <li data-nav-id="/v1.2/cli/dkron_version/" class="dd-item">
         <div>
           <a href="/v1.2/cli/dkron_version/">
             dkron version
@@ -1006,7 +1004,30 @@
     <option value="/basics/" >
    Basics</option>
     <option value="/usage/" >
-   Usage</option>
+   Usage</option> 
+      <option value="/usage/target-nodes-spec/" >- Target nodes spec</option>
+      <option value="/usage/cron-spec/" >- Cron spec</option>
+    <option value="/usage/executors/" >
+  - 
+   Executors</option>
+    <option value="/usage/processors/" >
+  - 
+   Processors</option>
+      <option value="/usage/cloud-auto-join/" >- Cloud Auto-join</option>
+      <option value="/usage/clustering/" >- Clustering</option>
+      <option value="/usage/concurrency/" >- Concurrency</option>
+      <option value="/usage/storage/" >- Embedded storage</option>
+      <option value="/usage/internals/" >- Internals</option>
+      <option value="/usage/chaining/" >- Job chaining</option>
+      <option value="/usage/metatags/"  selected>- Job metadata</option>
+      <option value="/usage/retries/" >- Job retries</option>
+      <option value="/usage/metrics/" >- Metrics</option>
+      <option value="/usage/recovery/" >- Outage recovery</option>
+    <option value="/usage/plugins/" >
+  - 
+   Plugins</option>
+      <option value="/usage/ecs/" >- Use with AWS ECS</option>
+  
     <option value="/pro/" >
    Dkron Pro</option>
     <option value="/products/" >
@@ -1020,51 +1041,7 @@
     <option value="/upgrading/" >
    Upgradings</option>
     <option value="/v1.2/" >
-   V1.2s</option> 
-    <option value="/v1.2/basics/" >
-  - 
-   Basics</option>
-    <option value="/v1.2/usage/" >
-  - 
-   Usage</option>
-    <option value="/v1.2/pro/" >
-  - 
-   Dkron Pro</option> 
-      <option value="/v1.2/pro/quick-start/" >-- Quick start</option>
-    <option value="/v1.2/pro/cli/" >
-  -- 
-   Pro CLI</option> 
-      <option value="/v1.2/cli/dkron/" >--- dkron</option>
-      <option value="/v1.2/cli/dkron_agent/" >--- dkron agent</option>
-      <option value="/v1.2/cli/dkron_doc/" >--- dkron doc</option>
-      <option value="/v1.2/cli/dkron_keygen/" >--- dkron keygen</option>
-      <option value="/v1.2/cli/dkron_version/"  selected>--- dkron version</option>
-  
-      <option value="/v1.2/pro/auth/" >-- Authorization</option>
-      <option value="/v1.2/pro/clustering/" >-- Clustering</option>
-      <option value="/v1.2/pro/commercial-faq/" >-- Commercial FAQ</option>
-      <option value="/v1.2/pro/commercial-support/" >-- Commercial Support</option>
-      <option value="/v1.2/pro/configuration/" >-- Configuration</option>
-      <option value="/v1.2/pro/storage/" >-- Embedded storage</option>
-      <option value="/v1.2/pro/encryption/" >-- Encryption</option>
-    <option value="/v1.2/pro/executors/" >
-  -- 
-   Executors</option>
-    <option value="/v1.2/pro/processors/" >
-  -- 
-   Processors</option>
-  
-    <option value="/v1.2/intro/" >
-  - 
-   Intro</option>
-    <option value="/v1.2/cli/" >
-  - 
-   CLI</option>
-    <option value="/v1.2/api/" >
-  - 
-   API</option>
-      <option value="/v1.2/_footer/" >- </option>
-  
+   V1.2s</option>
 
 
 
@@ -1087,48 +1064,35 @@
       </div>
     
 
-    <h1>dkron version</h1>
+    <h1>Job metadata</h1>
     
     
     
     
 
-<h2 id="dkron-version">dkron version</h2>
+<h2 id="job-metadata">Job metadata</h2>
 
-<p>Show version</p>
+<p>Jobs can have an optional extra property field called <code>metadata</code> that allows to set arbitrary tags to jobs and query the jobs using the API:</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">{</span>
+    <span style="color:#f92672">&#34;name&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;job_name&#34;</span><span style="color:#111">,</span>
+    <span style="color:#f92672">&#34;command&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;/bin/true&#34;</span><span style="color:#111">,</span>
+    <span style="color:#f92672">&#34;schedule&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;@every 2m&#34;</span><span style="color:#111">,</span>
+    <span style="color:#f92672">&#34;metadata&#34;</span><span style="color:#111">:</span> <span style="color:#111">{</span>
+        <span style="color:#f92672">&#34;user_id&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;12345&#34;</span>
+    <span style="color:#111">}</span>
+<span style="color:#111">}</span></code></pre></div>
+<p>And then query the API to get only the results needed:</p>
 
-<h3 id="synopsis">Synopsis</h3>
-
-<p>Show the version</p>
-
-<pre><code>dkron version [flags]
+<pre><code>$ curl http://localhost:8080/v1/jobs --data-urlencode &quot;metadata[user_id]=12345&quot;`
 </code></pre>
-
-<h3 id="options">Options</h3>
-
-<pre><code>  -h, --help   help for version
-</code></pre>
-
-<h3 id="options-inherited-from-parent-commands">Options inherited from parent commands</h3>
-
-<pre><code>      --config string   config file (default is /etc/dkron/dkron.yml)
-</code></pre>
-
-<h3 id="see-also">SEE ALSO</h3>
-
-<ul>
-<li><a href="/cli/dkron/">dkron</a>   - Professional distributed job scheduling system</li>
-</ul>
-
-<h6 id="auto-generated-by-spf13-cobra-on-21-jan-2019">Auto generated by spf13/cobra on 21-Jan-2019</h6>
 
 
     
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-prev" href="/v1.2/cli/dkron_leave/" title="dkron leave"> <i class="fa fa-chevron-left"></i><label>dkron leave</label></a>
-    <a class="nav nav-next" href="/v1.2/api/" title="API" style="margin-right: 0px;"><label>API</label><i class="fa fa-chevron-right"></i></a></div>
+<a class="nav nav-prev" href="/usage/plugins/develop/" title="Developing plugins"> <i class="fa fa-chevron-left"></i><label>Developing plugins</label></a>
+    <a class="nav nav-next" href="/usage/executors/" title="Executors" style="margin-right: 0px;"><label>Executors</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>
@@ -1142,14 +1106,10 @@
     
 
     
-    <div class="date">
-        <i class='fa fa-calendar'></i> Last update on 21/01/2019
-    </div>
-    
 
     
     <div class="github-link">
-      <a href="https://github.com/distribworks/dkron/edit/master/website/content/v1.2/pro/cli/dkron_version.md" target="blank"><i class="fa fa-code-fork"></i>
+      <a href="https://github.com/distribworks/dkron/edit/master/website/content/usage/metatags.md" target="blank"><i class="fa fa-code-fork"></i>
         Improve this page</a>
     </div>
     
