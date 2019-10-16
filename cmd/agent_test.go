@@ -12,7 +12,6 @@ import (
 
 var (
 	logLevel = "error"
-	etcdAddr = getEnvWithDefault()
 )
 
 func getEnvWithDefault() string {
