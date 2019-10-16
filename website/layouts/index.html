@@ -4,7 +4,7 @@
     <div class="container">
       <div class="text-wrapper col-md-5">
         <h2>Easy, Reliable Cron jobs</h2>
-        <h3>A distributed Cron service with API and easy to use dashboard.</h3>
+        <h3>A distributed Cron service with, API, no SPOF and an easy to use dashboard.</h3>
         <a href="https://github.com/distribworks/dkron/releases" class="button button">Download</a>
         <a href="/products/pro/" class="button button">Go Pro</a>
       </div>
@@ -15,9 +15,9 @@
 
 <blockquote>
   <div class="container">
-    <p>Dkron is a system service that runs scheduled jobs at given intervals or times, just like the cron unix service
-      but distributed in several machines in a cluster. If a machine fails (the leader), a follower will take over and
-      keep running the scheduled jobs without human intervention. Dkron is Open Source and freely available.</p>
+    <p>Dkron is a system service for workload automation that runs scheduled jobs, just like the cron unix service
+      but distributed in several machines in a cluster. Dkron is the only job scheduler in the market with truly no SPOF.
+      It is Open Source and freely available.</p>
   </div>
 </blockquote>
 
@@ -38,7 +38,7 @@
           <div class="col-md-4">
             <img src="img/available.png" />
             <h3>Always available</h3>
-            <p>Using the power of distributed key-value stores, Dkron is designed to be always available. If the leader
+            <p>Using the power of the Raft protocol, Dkron is designed to be always available. If the cluster leader
               node fails, a follower will replace it, all without human intervention.</p>
           </div>
 

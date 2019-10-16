@@ -9,7 +9,6 @@ Dkron Pro uses the [same parameters](/basics/configuration) as Dkron OSS and add
 
 ### Command line options
 
-* `--etcd-config-file-path` - Etcd node config
 * `--username` - Authentication username
 * `--password` - Authentication password
 * `--cert-file` - Path to the client server TLS cert file
