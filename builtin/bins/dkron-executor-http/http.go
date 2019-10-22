@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"crypto/tls"
+	"crypto/x509"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -70,26 +71,6 @@ func (s *HTTP) ExecuteImpl(args *dkron.ExecuteRequest) ([]byte, error) {
 		return output.Bytes(), errors.New("method is empty")
 	}
 
-	_timeout := timeout
-	if args.Config["timeout"] != "" {
-		_timeout, _ = strconv.Atoi(args.Config["timeout"])
-	}
-
-	tlsconf := &tls.Config{}
-	tlsconf.InsecureSkipVerify, _ = strconv.ParseBool(args.Config["tlsNoVerifyPeer"])
-	if args.Config["tlsCertificateFile"] != "" {
-		cert, err := tls.LoadX509KeyPair(args.Config["tlsCertificateFile"], args.Config["tlsCertificateKeyFile"])
-		if err == nil {
-			tlsconf.Certificates = append(tlsconf.Certificates, cert)
-		} else {
-			output.Write([]byte(fmt.Sprintf("Warning: failed to read certificate file(s): %s. Continuing without certificate.\n", err.Error())))
-		}
-	}
-
-	client := &http.Client{
-		Transport: &http.Transport{TLSClientConfig: tlsconf},
-		Timeout:   time.Duration(_timeout) * time.Second,
-	}
 	req, err := http.NewRequest(args.Config["method"], args.Config["url"], bytes.NewBuffer([]byte(args.Config["body"])))
 	if err != nil {
 		return output.Bytes(), err
@@ -110,6 +91,11 @@ func (s *HTTP) ExecuteImpl(args *dkron.ExecuteRequest) ([]byte, error) {
 	}
 	if debug {
 		log.Printf("request  %#v\n\n", req)
+	}
+
+	client, warns := createClient(args.Config)
+	for _, warn := range warns {
+		output.Write([]byte(fmt.Sprintf("Warning: %s.\n", warn.Error())))
 	}
 
 	resp, err := client.Do(req)
@@ -154,4 +140,67 @@ func (s *HTTP) ExecuteImpl(args *dkron.ExecuteRequest) ([]byte, error) {
 	}
 
 	return output.Bytes(), nil
+}
+
+// createClient always returns a new http client. Any errors returned are
+// errors in the configuration.
+func createClient(config map[string]string) (http.Client, []error) {
+	var errs []error
+
+	_timeout, err := atoiOrDefault(config["timeout"], timeout)
+	if config["timeout"] != "" && err != nil {
+		errs = append(errs, fmt.Errorf("invalid timeout value: %s", err.Error()))
+	}
+
+	tlsconf := &tls.Config{}
+	tlsconf.InsecureSkipVerify, err = strconv.ParseBool(config["tlsNoVerifyPeer"])
+	if config["tlsNoVerifyPeer"] != "" && err != nil {
+		errs = append(errs, fmt.Errorf("not disabling certificate validation: %s", err.Error()))
+	}
+
+	if config["tlsCertificateFile"] != "" {
+		cert, err := tls.LoadX509KeyPair(config["tlsCertificateFile"], config["tlsCertificateKeyFile"])
+		if err == nil {
+			tlsconf.Certificates = append(tlsconf.Certificates, cert)
+		} else {
+			errs = append(errs, fmt.Errorf("not using client certificate: %s", err.Error()))
+		}
+	}
+
+	if config["tlsRootCAsFile"] != "" {
+		tlsconf.RootCAs, err = loadCertPool(config["tlsRootCAsFile"])
+		if err != nil {
+			errs = append(errs, fmt.Errorf("using system root CAs instead of configured CAs: %s", err.Error()))
+		}
+	}
+
+	return http.Client{
+		Transport: &http.Transport{TLSClientConfig: tlsconf},
+		Timeout:   time.Duration(_timeout) * time.Second,
+	}, errs
+}
+
+// loadCertPool creates a CertPool using the given file
+func loadCertPool(filename string) (*x509.CertPool, error) {
+	certsFile, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return nil, err
+	}
+
+	roots := x509.NewCertPool()
+	if !roots.AppendCertsFromPEM(certsFile) {
+		return nil, fmt.Errorf("no certificates in file")
+	}
+
+	return roots, nil
+}
+
+// atoiOrDefault returns the integer value of s, or a default value
+// if s could not be converted, along with an error.
+func atoiOrDefault(s string, _default int) (int, error) {
+	i, err := strconv.Atoi(s)
+	if err == nil {
+		return i, nil
+	}
+	return _default, fmt.Errorf("\"%s\" not understood (%s), using default value of %d", s, err, _default)
 }
