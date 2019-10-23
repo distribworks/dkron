@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2019-10-10T22:54:42 CEST">
+<meta name="revised" content="2019-10-23T22:56:18 CEST">
 <title>Getting started :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -1003,6 +1003,9 @@
           
     <option value="/basics/" >
    Basics</option> 
+      <option value="/basics/installation/" >- Installation</option>
+      <option value="/basics/getting-started/"  selected>- Getting started</option>
+      <option value="/basics/configuration/" >- Configuration</option>
   
     <option value="/usage/" >
    Usage</option>
@@ -1099,7 +1102,7 @@ Be sure you have opened this ports (or the ones that you configured) in your fir
 <ul>
 <li>System service: If no changes are done to the default config files, dkron will start as a service in single mode.</li>
 
-<li><p>Command line: Running a single node with default config can be done by running: <code>dkron agent --server --bootstrap-expect=1</code></p>
+<li><p>Command line: Running a single node with default config can be done by running:</p>
 
 <pre><code>dkron agent --server --bootstrap-expect=1
 </code></pre></li>

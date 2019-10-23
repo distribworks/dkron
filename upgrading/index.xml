@@ -16,10 +16,9 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/upgrading/from_v1_to_v2/</guid>
-      <description>Dkron v2 brings lots of changes to the previous version. To successfully upgrade from v1 to v2 you need to take care of certain changes:
-Migrating Jobs To migrate jobs from v1 to v2, export jobs from the v1 cluster and import them into v2.
-A basic script to do that can be found here
-You can take the opportunity to update your job definitions as explained in the following section:</description>
+      <description>Dkron v2 brings lots of changes to the previous version. To successfully upgrade from v1 to v2 you need to take care of certain steps.
+Storage Dkron v2 brings native storage, no external storage engine is needed. This change can be shocking for existing users and should be carefully planned to consider Dkron as a stateful service in contrast of a stateless service as in v1.
+You must plan a backup strategy for the data directories, you can configure it using the --data-dir parameter, by default .</description>
     </item>
     
   </channel>

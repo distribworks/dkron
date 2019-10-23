@@ -40,7 +40,7 @@ What is the license?</description>
       
       <guid>/pro/commercial-support/</guid>
       <description>Dkron offers only community support. Dkro Pro offers priority support via email.
-Priority Support Covers 1 incident per quarter, with a max response time of 2 working days. Scope is limited to Dkron and Dkron Pro features and APIs, not the application or infrastructure. For support, email support AT distrib.works. Please email using the same domain as the original license email or explain your connection to the licensed company.</description>
+Priority Support Covers 1 incident per quarter, with a max response time of 2 working days. Scope is limited to Dkron and Dkron Pro features and APIs, not application integration or infrastructure. For support, email support AT distrib.works. Please email using the same domain as the original license email or explain your connection to the licensed company.</description>
     </item>
     
     <item>
@@ -50,7 +50,7 @@ Priority Support Covers 1 incident per quarter, with a max response time of 2 wo
       
       <guid>/pro/configuration/</guid>
       <description> Configuration Dkron Pro uses the same parameters as Dkron OSS and add some extra parameters.
-Command line options  --etcd-config-file-path - Etcd node config --username - Authentication username --password - Authentication password --cert-file - Path to the client server TLS cert file --key-file - Path to the client server TLS key file --client-crl-file - Path to the client certificate revocation list file --trusted-ca-file - Path to the client server TLS trusted CA cert file --client-cert-auth - Enable client cert authentication --auto-tls - Client TLS using generated certificates  </description>
+Command line options  --username - Authentication username --password - Authentication password --cert-file - Path to the client server TLS cert file --key-file - Path to the client server TLS key file --client-crl-file - Path to the client certificate revocation list file --trusted-ca-file - Path to the client server TLS trusted CA cert file --client-cert-auth - Enable client cert authentication --auto-tls - Client TLS using generated certificates  </description>
     </item>
     
     <item>

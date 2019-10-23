@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2019-10-10T22:54:43 CEST">
+<meta name="revised" content="2019-10-23T22:56:20 CEST">
 <title>Upgrade from v1 to v2 :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -1049,7 +1049,15 @@
     
     
 
-<p>Dkron v2 brings lots of changes to the previous version. To successfully upgrade from v1 to v2 you need to take care of certain changes:</p>
+<p>Dkron v2 brings lots of changes to the previous version. To successfully upgrade from v1 to v2 you need to take care of certain steps.</p>
+
+<h2 id="storage">Storage</h2>
+
+<p>Dkron v2 brings native storage, no external storage engine is needed. This change can be shocking for existing users and should be carefully planned to consider Dkron as a stateful service in contrast of a stateless service as in v1.</p>
+
+<p>You must plan a backup strategy for the data directories, you can configure it using the <code>--data-dir</code> parameter, by default <code>./dkron.data</code>.</p>
+
+<p>This will ensure that you can recover cluster data in case of an unexpected failure.</p>
 
 <h2 id="migrating-jobs">Migrating Jobs</h2>
 
@@ -1082,10 +1090,6 @@
 <p>You can not set these tags with the <code>tags</code> param. Tags <code>region</code> and <code>dc</code> can be set using the <code>region</code> and <code>datacenter</code> params, respectively.</p>
 
 <p>In Dkron 2, the job filtering API now filters on the <code>metadata</code> instead of the <code>tags</code> field. Jobs have a new param <code>metadata</code> that can be used to set any data to classify jobs. These can then be used to filter results returned by the API.</p>
-
-<h2 id="selecting-storage-dir-and-backup-strategies">Selecting storage dir and backup strategies</h2>
-
-<p>Dkron 2 implements a new param <code>data-dir</code>, which specifies the working data directory. This directory stores all working data, and it should be backed up and handled with special care.</p>
 
 
     

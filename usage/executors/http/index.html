@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2019-10-10T22:54:43 CEST">
+<meta name="revised" content="2019-10-23T22:56:19 CEST">
 <title>HTTP Executor :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -844,10 +844,17 @@
       <a href="/v1.2/pro/executors/">Executors</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/usage/plugins/develop/" class="dd-item">
+      <li data-nav-id="/v1.2/pro/executors/ecs/" class="dd-item">
         <div>
-          <a href="/usage/plugins/develop/">
-            Developing plugins
+          <a href="/v1.2/pro/executors/ecs/">
+            AWS ECS Executor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/v1.2/pro/executors/docker/" class="dd-item">
+        <div>
+          <a href="/v1.2/pro/executors/docker/">
+            Docker executor
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -1084,6 +1091,7 @@ debug: Debug option, will log everything when this option is not empty
 tlsNoVerifyPeer: false (default) or true. If true, disables verification of the remote SSL certificate's validity.
 tlsCertificateFile: Path to the PEM file containing the client certificate. Optional.
 tlsCertificateKeyFile: Path to the PEM file containing the client certificate private key. Optional.
+tlsRootCAsFile: Path to the PEM file containing certificates to use as root CAs. Optional.
 </code></pre>
 
 <p>Example</p>

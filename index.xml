@@ -18,7 +18,7 @@
       
       <guid>/basics/installation/</guid>
       <description>Running the binary Download the packaged archive for your platform from the downloads page and extract the package to a shared location in your drive, like /opt/local/bin.
-Run Dkron with default setting: dkron agent --server
+Run Dkron with default setting: dkron agent --server --bootstrap-expect=1
 Navigate to http://localhost:8080
 Installing the package Debian repo APT repository:
 deb [trusted=yes] https://apt.fury.io/distribworks/ /  Then install: sudo apt-get install dkron
@@ -598,7 +598,7 @@ What is the license?</description>
       
       <guid>/pro/commercial-support/</guid>
       <description>Dkron offers only community support. Dkro Pro offers priority support via email.
-Priority Support Covers 1 incident per quarter, with a max response time of 2 working days. Scope is limited to Dkron and Dkron Pro features and APIs, not the application or infrastructure. For support, email support AT distrib.works. Please email using the same domain as the original license email or explain your connection to the licensed company.</description>
+Priority Support Covers 1 incident per quarter, with a max response time of 2 working days. Scope is limited to Dkron and Dkron Pro features and APIs, not application integration or infrastructure. For support, email support AT distrib.works. Please email using the same domain as the original license email or explain your connection to the licensed company.</description>
     </item>
     
     <item>
@@ -652,7 +652,7 @@ Concurrency property accepts two option:
       
       <guid>/pro/configuration/</guid>
       <description> Configuration Dkron Pro uses the same parameters as Dkron OSS and add some extra parameters.
-Command line options  --etcd-config-file-path - Etcd node config --username - Authentication username --password - Authentication password --cert-file - Path to the client server TLS cert file --key-file - Path to the client server TLS key file --client-crl-file - Path to the client certificate revocation list file --trusted-ca-file - Path to the client server TLS trusted CA cert file --client-cert-auth - Enable client cert authentication --auto-tls - Client TLS using generated certificates  </description>
+Command line options  --username - Authentication username --password - Authentication password --cert-file - Path to the client server TLS cert file --key-file - Path to the client server TLS key file --client-crl-file - Path to the client certificate revocation list file --trusted-ca-file - Path to the client server TLS trusted CA cert file --client-cert-auth - Enable client cert authentication --auto-tls - Client TLS using generated certificates  </description>
     </item>
     
     <item>
@@ -1124,10 +1124,9 @@ Example
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/upgrading/from_v1_to_v2/</guid>
-      <description>Dkron v2 brings lots of changes to the previous version. To successfully upgrade from v1 to v2 you need to take care of certain changes:
-Migrating Jobs To migrate jobs from v1 to v2, export jobs from the v1 cluster and import them into v2.
-A basic script to do that can be found here
-You can take the opportunity to update your job definitions as explained in the following section:</description>
+      <description>Dkron v2 brings lots of changes to the previous version. To successfully upgrade from v1 to v2 you need to take care of certain steps.
+Storage Dkron v2 brings native storage, no external storage engine is needed. This change can be shocking for existing users and should be carefully planned to consider Dkron as a stateful service in contrast of a stateless service as in v1.
+You must plan a backup strategy for the data directories, you can configure it using the --data-dir parameter, by default .</description>
     </item>
     
     <item>

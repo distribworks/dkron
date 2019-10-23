@@ -174,7 +174,7 @@ paths:
           schema:
             $ref: '#/definitions/member'
   /leave:
-    get:
+    post:
       description: |
         Force the node to leave the cluster.
       operationId: leave
