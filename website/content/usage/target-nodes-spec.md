@@ -21,16 +21,16 @@ Target all nodes with a tag:
     "command": "/bin/true",
     "schedule": "@every 2m",
     "tags": {
-        "role": "web"
+        "my_role": "web"
     }
 }
 ```
 
 {{<mermaid align="left">}}
 graph LR;
-    J("Job tags: #quot;role#quot;: #quot;web#quot;") -->|Run Job|N1["Node1 tags: #quot;role#quot;: #quot;web#quot;"]
-    J -->|Run Job|N2["Node2 tags: #quot;role#quot;: #quot;web#quot;"]
-    J -->|Run Job|N3["Node2 tags: #quot;role#quot;: #quot;web#quot;"]
+    J("Job tags: #quot;my_role#quot;: #quot;web#quot;") -->|Run Job|N1["Node1 tags: #quot;my_role#quot;: #quot;web#quot;"]
+    J -->|Run Job|N2["Node2 tags: #quot;my_role#quot;: #quot;web#quot;"]
+    J -->|Run Job|N3["Node2 tags: #quot;my_role#quot;: #quot;web#quot;"]
 {{< /mermaid >}}
 
 Target only one nodes of a group of nodes with a tag:
@@ -41,16 +41,16 @@ Target only one nodes of a group of nodes with a tag:
     "command": "/bin/true",
     "schedule": "@every 2m",
     "tags": {
-        "role": "web:1"
+        "my_role": "web:1"
     }
 }
 ```
 
 {{<mermaid align="left">}}
 graph LR;
-    J("Job tags: #quot;role#quot;: #quot;web:1#quot;") -->|Run Job|N1["Node1 tags: #quot;role#quot;: #quot;web#quot;"]
-    J -.- N2["Node2 tags: #quot;role#quot;: #quot;web#quot;"]
-    J -.- N3["Node2 tags: #quot;role#quot;: #quot;web#quot;"]
+    J("Job tags: #quot;my_role#quot;: #quot;web:1#quot;") -->|Run Job|N1["Node1 tags: #quot;my_role#quot;: #quot;web#quot;"]
+    J -.- N2["Node2 tags: #quot;my_role#quot;: #quot;web#quot;"]
+    J -.- N3["Node2 tags: #quot;my_role#quot;: #quot;web#quot;"]
 {{< /mermaid >}}
 
 Dkron will try to run the job in the amount of nodes indicated by that count having that tag.
