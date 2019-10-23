@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2019-10-23T22:56:18 CEST">
+<meta name="revised" content="2019-10-23T23:29:08 CEST">
 <title>Target nodes spec :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -1086,16 +1086,16 @@ The target node syntax: `[tag-value]:[count]`
     <span style="color:#f92672">&#34;command&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;/bin/true&#34;</span><span style="color:#111">,</span>
     <span style="color:#f92672">&#34;schedule&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;@every 2m&#34;</span><span style="color:#111">,</span>
     <span style="color:#f92672">&#34;tags&#34;</span><span style="color:#111">:</span> <span style="color:#111">{</span>
-        <span style="color:#f92672">&#34;role&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;web&#34;</span>
+        <span style="color:#f92672">&#34;my_role&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;web&#34;</span>
     <span style="color:#111">}</span>
 <span style="color:#111">}</span></code></pre></div>
 <link href="/mermaid/mermaid.css" type="text/css" rel="stylesheet"/>
 <script defer src="/mermaid/mermaid.js">mermaid.initialize({startOnLoad:true});</script>
 <div class="mermaid" align="left" >
 graph LR;
-    J("Job tags: #quot;role#quot;: #quot;web#quot;") -->|Run Job|N1["Node1 tags: #quot;role#quot;: #quot;web#quot;"]
-    J -->|Run Job|N2["Node2 tags: #quot;role#quot;: #quot;web#quot;"]
-    J -->|Run Job|N3["Node2 tags: #quot;role#quot;: #quot;web#quot;"]
+    J("Job tags: #quot;my_role#quot;: #quot;web#quot;") -->|Run Job|N1["Node1 tags: #quot;my_role#quot;: #quot;web#quot;"]
+    J -->|Run Job|N2["Node2 tags: #quot;my_role#quot;: #quot;web#quot;"]
+    J -->|Run Job|N3["Node2 tags: #quot;my_role#quot;: #quot;web#quot;"]
 </div>
 
 <p>Target only one nodes of a group of nodes with a tag:</p>
@@ -1104,16 +1104,16 @@ graph LR;
     <span style="color:#f92672">&#34;command&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;/bin/true&#34;</span><span style="color:#111">,</span>
     <span style="color:#f92672">&#34;schedule&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;@every 2m&#34;</span><span style="color:#111">,</span>
     <span style="color:#f92672">&#34;tags&#34;</span><span style="color:#111">:</span> <span style="color:#111">{</span>
-        <span style="color:#f92672">&#34;role&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;web:1&#34;</span>
+        <span style="color:#f92672">&#34;my_role&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;web:1&#34;</span>
     <span style="color:#111">}</span>
 <span style="color:#111">}</span></code></pre></div>
 <link href="/mermaid/mermaid.css" type="text/css" rel="stylesheet"/>
 <script defer src="/mermaid/mermaid.js">mermaid.initialize({startOnLoad:true});</script>
 <div class="mermaid" align="left" >
 graph LR;
-    J("Job tags: #quot;role#quot;: #quot;web:1#quot;") -->|Run Job|N1["Node1 tags: #quot;role#quot;: #quot;web#quot;"]
-    J -.- N2["Node2 tags: #quot;role#quot;: #quot;web#quot;"]
-    J -.- N3["Node2 tags: #quot;role#quot;: #quot;web#quot;"]
+    J("Job tags: #quot;my_role#quot;: #quot;web:1#quot;") -->|Run Job|N1["Node1 tags: #quot;my_role#quot;: #quot;web#quot;"]
+    J -.- N2["Node2 tags: #quot;my_role#quot;: #quot;web#quot;"]
+    J -.- N3["Node2 tags: #quot;my_role#quot;: #quot;web#quot;"]
 </div>
 
 <p>Dkron will try to run the job in the amount of nodes indicated by that count having that tag.</p>
