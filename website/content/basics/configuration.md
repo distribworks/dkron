@@ -9,25 +9,24 @@ Settings can be specified in three ways (in order of precedence):
 
 1. Command line arguments.
 1. Environment variables starting with **`DKRON_`**
-1. **`dkron.json`** config file
+1. **`dkron.yml`** config file
 
 ### Config file example
 
 ```yaml
 # Dkron example configuration file
-# backend: etcd
-# backend-machine: 127.0.0.1:2379
 # server: false
+# bootstrap-expect: 3
+# data-dir: dkron.data
 # log-level: debug
 # tags:
-#   role: web
-#   datacenter: east
-# keyspace: dkron
+#   dc: east
 # encrypt: a-valid-key-generated-with-dkron-keygen
-# join:
+# retry-join:
 #   - 10.0.0.1
 #   - 10.0.0.2
 #   - 10.0.0.3
+# raft-multiplier: 1
 # webhook-url: https://hooks.slack.com/services/XXXXXX/XXXXXXX/XXXXXXXXXXXXXXXXXXXX
 # webhook-payload: "payload={\"text\": \"{{.Report}}\", \"channel\": \"#foo\"}"
 # webhook-headers: Content-Type:application/x-www-form-urlencoded

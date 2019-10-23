@@ -1,5 +1,3 @@
-*.consul
-*.etcd
 site/
 public
 docs/scss/Gemfile.lock
@@ -15,9 +13,10 @@ main
 *.log
 config/
 dist
-dkron.db
 static/node_modules
-
+*.db
+*.data
+*.retry
 .DS_Store
 .vscode
 tags

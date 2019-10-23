@@ -5,9 +5,10 @@ import (
 	"html/template"
 	"io/ioutil"
 	"net/http"
+	"time"
 
-	"github.com/distribworks/dkron/dkron/assets"
-	"github.com/distribworks/dkron/dkron/templates"
+	"github.com/distribworks/dkron/v2/dkron/assets"
+	"github.com/distribworks/dkron/v2/dkron/templates"
 	"github.com/gin-contrib/multitemplate"
 	"github.com/gin-gonic/gin"
 )
@@ -22,12 +23,11 @@ type commonDashboardData struct {
 	Version    string
 	LeaderName string
 	MemberName string
-	Backend    string
 	AssetsPath string
 	Path       string
 	APIPath    string
-	Keyspace   string
 	Name       string
+	Time       string
 }
 
 func newCommonDashboardData(a *Agent, nodeName, path string) *commonDashboardData {
@@ -41,16 +41,15 @@ func newCommonDashboardData(a *Agent, nodeName, path string) *commonDashboardDat
 		Version:    Version,
 		LeaderName: leaderName,
 		MemberName: nodeName,
-		Backend:    string(a.config.Backend),
 		AssetsPath: fmt.Sprintf("%s%s", path, assetsPrefix),
 		Path:       fmt.Sprintf("%s%s", path, dashboardPathPrefix),
 		APIPath:    fmt.Sprintf("%s%s", path, apiPathPrefix),
-		Keyspace:   a.config.Keyspace,
 		Name:       Name,
+		Time:       time.Now().UTC().Format("15:04:05 UTC"),
 	}
 }
 
-// dashboardRoutes registers dashboard specific routes on the gin RouterGroup.
+// DashboardRoutes registers dashboard specific routes on the gin RouterGroup.
 func (a *Agent) DashboardRoutes(r *gin.RouterGroup) {
 	// If we are visiting from a browser redirect to the dashboard
 	r.GET("/", func(c *gin.Context) {
@@ -97,16 +96,23 @@ func (a *Agent) dashboardExecutionsHandler(c *gin.Context) {
 		log.Error(err)
 	}
 
+	var count int
+	for _, v := range groups {
+		count = count + len(v)
+	}
+
 	data := struct {
 		Common  *commonDashboardData
 		Groups  map[int64][]*Execution
 		JobName string
 		ByGroup int64arr
+		Count   int
 	}{
 		Common:  newCommonDashboardData(a, a.config.NodeName, "../../../"),
 		Groups:  groups,
 		JobName: job,
 		ByGroup: byGroup,
+		Count:   count,
 	}
 
 	c.HTML(http.StatusOK, "executions", data)
@@ -128,6 +134,8 @@ func mustLoadTemplate(path string) []byte {
 	return tmpl
 }
 
+// CreateMyRender returns a new custom multitemplate renderer
+// to use with Gin.
 func CreateMyRender() multitemplate.Render {
 	r := multitemplate.New()
 

@@ -8,30 +8,36 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net"
-	"runtime"
+	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
 
-	"github.com/abronan/leadership"
-	"github.com/abronan/valkeyrie/store"
 	metrics "github.com/armon/go-metrics"
+	"github.com/distribworks/dkron/v2/proto"
 	"github.com/hashicorp/memberlist"
+	"github.com/hashicorp/raft"
+	raftboltdb "github.com/hashicorp/raft-boltdb"
 	"github.com/hashicorp/serf/serf"
 	"github.com/sirupsen/logrus"
+	"github.com/soheilhy/cmux"
 )
 
 const (
-	defaultRecoverTime = 10 * time.Second
+	raftTimeout = 10 * time.Second
+	// raftLogCacheSize is the maximum number of logs to cache in-memory.
+	// This is used to reduce disk I/O for the recently committed entries.
+	raftLogCacheSize = 512
+	minRaftProtocol  = 3
 )
 
 var (
 	expNode = expvar.NewString("node")
 
-	// ErrLeaderNotFound is returned when obtained leader from store is not found in member list
+	// ErrLeaderNotFound is returned when obtained leader is not found in member list
 	ErrLeaderNotFound = errors.New("No member leader found in member list")
-	ErrNoRPCAddress   = errors.New("No RPC address tag found in server")
 
 	defaultLeaderTTL = 20 * time.Second
 
@@ -40,51 +46,108 @@ var (
 
 // Agent is the main struct that represents a dkron agent
 type Agent struct {
+	// ProcessorPlugins maps processor plugins
 	ProcessorPlugins map[string]ExecutionProcessor
-	ExecutorPlugins  map[string]Executor
-	HTTPTransport    Transport
-	Store            Storage
-	GRPCServer       DkronGRPCServer
-	GRPCClient       DkronGRPCClient
 
-	// Set a global peer updater func
-	PeerUpdaterFunc func(...string)
+	//ExecutorPlugins maps executor plugins
+	ExecutorPlugins map[string]Executor
 
-	serf      *serf.Serf
-	config    *Config
-	eventCh   chan serf.Event
-	sched     *Scheduler
-	candidate *leadership.Candidate
-	ready     bool
+	// HTTPTransport is a swappable interface for the HTTP server interface
+	HTTPTransport Transport
+
+	// Store interface to set the storage engine
+	Store Storage
+
+	// GRPCServer interface for setting the GRPC server
+	GRPCServer DkronGRPCServer
+
+	// GRPCClient interface for setting the GRPC client
+	GRPCClient DkronGRPCClient
+
+	// TLSConfig allows setting a TLS config for transport
+	TLSConfig *tls.Config
+
+	// Pro features
+	GlobalLock         bool
+	MemberEventHandler func(serf.Event)
+
+	serf        *serf.Serf
+	config      *Config
+	eventCh     chan serf.Event
+	sched       *Scheduler
+	ready       bool
+	shutdownCh  chan struct{}
+	retryJoinCh chan error
+
+	// The raft instance is used among Dkron nodes within the
+	// region to protect operations that require strong consistency
+	leaderCh <-chan bool
+	raft     *raft.Raft
+	// raftLayer provides network layering of the raft RPC along with
+	// the Dkron gRPC transport layer.
+	raftLayer     *RaftLayer
+	raftStore     *raftboltdb.BoltStore
+	raftInmem     *raft.InmemStore
+	raftTransport *raft.NetworkTransport
+
+	// reconcileCh is used to pass events from the serf handler
+	// into the leader manager. Mostly used to handle when servers
+	// join/leave from the region.
+	reconcileCh chan serf.Member
+
+	// peers is used to track the known Dkron servers. This is
+	// used for region forwarding and clustering.
+	peers      map[string][]*ServerParts
+	localPeers map[raft.ServerAddress]*ServerParts
+	peerLock   sync.RWMutex
 }
 
 // ProcessorFactory is a function type that creates a new instance
 // of a processor.
 type ProcessorFactory func() (ExecutionProcessor, error)
 
+// Plugins struct to store loaded plugins of each type
 type Plugins struct {
 	Processors map[string]ExecutionProcessor
 	Executors  map[string]Executor
 }
 
-func NewAgent(config *Config, plugins *Plugins) *Agent {
-	a := &Agent{config: config}
+// AgentOption type that defines agent options
+type AgentOption func(agent *Agent)
 
-	if plugins != nil {
-		a.ProcessorPlugins = plugins.Processors
-		a.ExecutorPlugins = plugins.Executors
+// NewAgent return a new Agent instace capable of starting
+// and running a Dkron instance.
+func NewAgent(config *Config, options ...AgentOption) *Agent {
+	agent := &Agent{
+		config:      config,
+		retryJoinCh: make(chan error),
 	}
 
-	return a
+	for _, option := range options {
+		option(agent)
+	}
+
+	return agent
 }
 
+// Start the current agent by running all the necessary
+// checks and server or client routines.
 func (a *Agent) Start() error {
+	// Normalize configured addresses
+	a.config.normalizeAddrs()
+
 	s, err := a.setupSerf()
 	if err != nil {
 		return fmt.Errorf("agent: Can not setup serf, %s", err)
 	}
 	a.serf = s
-	a.join(a.config.StartJoin, false)
+
+	// start retry join
+	if len(a.config.RetryJoinLAN) > 0 {
+		a.retryJoinLAN()
+	} else {
+		a.join(a.config.StartJoin, true)
+	}
 
 	if err := initMetrics(a); err != nil {
 		log.Fatal("agent: Can not setup metrics")
@@ -98,17 +161,33 @@ func (a *Agent) Start() error {
 	}
 
 	if a.GRPCClient == nil {
-		a.GRPCClient = NewGRPCClient(nil)
+		a.GRPCClient = NewGRPCClient(nil, a)
 	}
 
-	if err := a.SetTags(a.config.Tags); err != nil {
-		log.WithError(err).Fatal("agent: Error setting RPC config tags")
+	tags := a.serf.LocalMember().Tags
+	if a.config.Server {
+		tags["rpc_addr"] = a.getRPCAddr() // Address that clients will use to RPC to servers
+		tags["port"] = strconv.Itoa(a.config.AdvertiseRPCPort)
 	}
+	a.serf.SetTags(tags)
 
 	go a.eventLoop()
 	a.ready = true
 
 	return nil
+}
+
+// RetryJoinCh is a channel that transports errors
+// from the retry join process.
+func (a *Agent) RetryJoinCh() <-chan error {
+	return a.retryJoinCh
+}
+
+// JoinLAN is used to have Dkron join the inner-DC pool
+// The target address should be another node inside the DC
+// listening on the Serf LAN address
+func (a *Agent) JoinLAN(addrs []string) (int, error) {
+	return a.serf.Join(addrs, true)
 }
 
 // Stop stops an agent, if the agent is a server and is running for election
@@ -120,8 +199,9 @@ func (a *Agent) Start() error {
 func (a *Agent) Stop() error {
 	log.Info("agent: Called member stop, now stopping")
 
-	if a.config.Server && a.candidate != nil {
-		a.candidate.Stop()
+	if a.config.Server {
+		a.raft.Shutdown()
+		a.Store.Shutdown()
 	}
 
 	if a.config.Server && a.sched.Started {
@@ -132,6 +212,130 @@ func (a *Agent) Stop() error {
 		return err
 	}
 
+	if err := a.serf.Shutdown(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (a *Agent) setupRaft() error {
+	if a.config.BootstrapExpect > 0 {
+		if a.config.BootstrapExpect == 1 {
+			a.config.Bootstrap = true
+		}
+	}
+
+	logger := ioutil.Discard
+	if log.Logger.Level == logrus.DebugLevel {
+		logger = log.Logger.Writer()
+	}
+
+	transport := raft.NewNetworkTransport(a.raftLayer, 3, raftTimeout, logger)
+	a.raftTransport = transport
+
+	config := raft.DefaultConfig()
+
+	// Raft performance
+	raftMultiplier := a.config.RaftMultiplier
+	if raftMultiplier < 1 && raftMultiplier > 10 {
+		return fmt.Errorf("raft-multiplier cannot be %d. Must be between 1 and 10", raftMultiplier)
+	}
+	config.HeartbeatTimeout = config.HeartbeatTimeout * time.Duration(raftMultiplier)
+	config.ElectionTimeout = config.ElectionTimeout * time.Duration(raftMultiplier)
+	config.LeaderLeaseTimeout = config.LeaderLeaseTimeout * time.Duration(a.config.RaftMultiplier)
+
+	config.LogOutput = logger
+	config.LocalID = raft.ServerID(a.config.NodeName)
+
+	// Build an all in-memory setup for dev mode, otherwise prepare a full
+	// disk-based setup.
+	var logStore raft.LogStore
+	var stableStore raft.StableStore
+	var snapshots raft.SnapshotStore
+	if a.config.DevMode {
+		store := raft.NewInmemStore()
+		a.raftInmem = store
+		stableStore = store
+		logStore = store
+		snapshots = raft.NewDiscardSnapshotStore()
+	} else {
+		var err error
+		// Create the snapshot store. This allows the Raft to truncate the log to
+		// mitigate the issue of having an unbounded replicated log.
+		snapshots, err = raft.NewFileSnapshotStore(filepath.Join(a.config.DataDir, "raft"), 3, logger)
+		if err != nil {
+			return fmt.Errorf("file snapshot store: %s", err)
+		}
+
+		// Create the BoltDB backend
+		s, err := raftboltdb.NewBoltStore(filepath.Join(a.config.DataDir, "raft", "raft.db"))
+		if err != nil {
+			return fmt.Errorf("error creating new badger store: %s", err)
+		}
+		a.raftStore = s
+		stableStore = s
+
+		// Wrap the store in a LogCache to improve performance
+		cacheStore, err := raft.NewLogCache(raftLogCacheSize, s)
+		if err != nil {
+			s.Close()
+			return err
+		}
+		logStore = cacheStore
+
+		// Check for peers.json file for recovery
+		peersFile := filepath.Join(a.config.DataDir, "raft", "peers.json")
+		if _, err := os.Stat(peersFile); err == nil {
+			log.Info("found peers.json file, recovering Raft configuration...")
+			var configuration raft.Configuration
+			configuration, err = raft.ReadConfigJSON(peersFile)
+			if err != nil {
+				return fmt.Errorf("recovery failed to parse peers.json: %v", err)
+			}
+			tmpFsm := newFSM(nil)
+			if err := raft.RecoverCluster(config, tmpFsm,
+				logStore, stableStore, snapshots, transport, configuration); err != nil {
+				return fmt.Errorf("recovery failed: %v", err)
+			}
+			if err := os.Remove(peersFile); err != nil {
+				return fmt.Errorf("recovery failed to delete peers.json, please delete manually (see peers.info for details): %v", err)
+			}
+			log.Info("deleted peers.json file after successful recovery")
+		}
+	}
+
+	// If we are in bootstrap or dev mode and the state is clean then we can
+	// bootstrap now.
+	if a.config.Bootstrap || a.config.DevMode {
+		hasState, err := raft.HasExistingState(logStore, stableStore, snapshots)
+		if err != nil {
+			return err
+		}
+		if !hasState {
+			configuration := raft.Configuration{
+				Servers: []raft.Server{
+					{
+						ID:      config.LocalID,
+						Address: transport.LocalAddr(),
+					},
+				},
+			}
+			if err := raft.BootstrapCluster(config, logStore, stableStore, snapshots, transport, configuration); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Instantiate the Raft systems. The second parameter is a finite state machine
+	// which stores the actual kv pairs and is operated upon through Apply().
+	fsm := newFSM(a.Store)
+	rft, err := raft.NewRaft(config, fsm, logStore, stableStore, snapshots, transport)
+	if err != nil {
+		return fmt.Errorf("new raft: %s", err)
+	}
+	a.leaderCh = rft.LeaderCh()
+	a.raft = rft
 	return nil
 }
 
@@ -139,81 +343,13 @@ func (a *Agent) Stop() error {
 func (a *Agent) setupSerf() (*serf.Serf, error) {
 	config := a.config
 
+	// Init peer list
+	a.localPeers = make(map[raft.ServerAddress]*ServerParts)
+	a.peers = make(map[string][]*ServerParts)
+
 	bindIP, bindPort, err := config.AddrParts(config.BindAddr)
 	if err != nil {
 		return nil, fmt.Errorf("Invalid bind address: %s", err)
-	}
-
-	// Check if we have an interface
-	if iface, _ := config.NetworkInterface(); iface != nil {
-		addrs, err := iface.Addrs()
-		if err != nil {
-			return nil, fmt.Errorf("Failed to get interface addresses: %s", err)
-		}
-		if len(addrs) == 0 {
-			return nil, fmt.Errorf("Interface '%s' has no addresses", config.Interface)
-		}
-
-		// If there is no bind IP, pick an address
-		if bindIP == "0.0.0.0" {
-			found := false
-			for _, ad := range addrs {
-				var addrIP net.IP
-				if runtime.GOOS == "windows" {
-					// Waiting for https://github.com/golang/go/issues/5395 to use IPNet only
-					addr, ok := ad.(*net.IPAddr)
-					if !ok {
-						continue
-					}
-					addrIP = addr.IP
-				} else {
-					addr, ok := ad.(*net.IPNet)
-					if !ok {
-						continue
-					}
-					addrIP = addr.IP
-				}
-
-				// Skip self-assigned IPs
-				if addrIP.IsLinkLocalUnicast() {
-					continue
-				}
-
-				// Found an IP
-				found = true
-				bindIP = addrIP.String()
-				log.Infof("Using interface '%s' address '%s'", config.Interface, bindIP)
-
-				// Update the configuration
-				bindAddr := &net.TCPAddr{
-					IP:   net.ParseIP(bindIP),
-					Port: bindPort,
-				}
-				config.BindAddr = bindAddr.String()
-				break
-			}
-			if !found {
-				return nil, fmt.Errorf("Failed to find usable address for interface '%s'", config.Interface)
-			}
-
-		} else {
-			// If there is a bind IP, ensure it is available
-			found := false
-			for _, ad := range addrs {
-				addr, ok := ad.(*net.IPNet)
-				if !ok {
-					continue
-				}
-				if addr.IP.String() == bindIP {
-					found = true
-					break
-				}
-			}
-			if !found {
-				return nil, fmt.Errorf("Interface '%s' has no '%s' address",
-					config.Interface, bindIP)
-			}
-		}
 	}
 
 	var advertiseIP string
@@ -224,10 +360,6 @@ func (a *Agent) setupSerf() (*serf.Serf, error) {
 			return nil, fmt.Errorf("Invalid advertise address: %s", err)
 		}
 	}
-	//Use the value of "RPCPort" if AdvertiseRPCPort has not been set
-	if config.AdvertiseRPCPort <= 0 {
-		config.AdvertiseRPCPort = config.RPCPort
-	}
 
 	encryptKey, err := config.EncryptBytes()
 	if err != nil {
@@ -235,6 +367,23 @@ func (a *Agent) setupSerf() (*serf.Serf, error) {
 	}
 
 	serfConfig := serf.DefaultConfig()
+	serfConfig.Init()
+
+	serfConfig.Tags = a.config.Tags
+	serfConfig.Tags["role"] = "dkron"
+	serfConfig.Tags["dc"] = a.config.Datacenter
+	serfConfig.Tags["region"] = a.config.Region
+	serfConfig.Tags["version"] = Version
+	if a.config.Server {
+		serfConfig.Tags["server"] = strconv.FormatBool(a.config.Server)
+	}
+	if a.config.Bootstrap {
+		serfConfig.Tags["bootstrap"] = "1"
+	}
+	if a.config.BootstrapExpect != 0 {
+		serfConfig.Tags["expect"] = fmt.Sprintf("%d", a.config.BootstrapExpect)
+	}
+
 	switch config.Profile {
 	case "lan":
 		serfConfig.MemberlistConfig = memberlist.DefaultLANConfig()
@@ -253,25 +402,10 @@ func (a *Agent) setupSerf() (*serf.Serf, error) {
 	serfConfig.MemberlistConfig.SecretKey = encryptKey
 	serfConfig.NodeName = config.NodeName
 	serfConfig.Tags = config.Tags
-	serfConfig.SnapshotPath = config.SnapshotPath
 	serfConfig.CoalescePeriod = 3 * time.Second
 	serfConfig.QuiescentPeriod = time.Second
 	serfConfig.UserCoalescePeriod = 3 * time.Second
 	serfConfig.UserQuiescentPeriod = time.Second
-	if config.ReconnectInterval != 0 {
-		serfConfig.ReconnectInterval = config.ReconnectInterval
-	}
-	if config.ReconnectTimeout != 0 {
-		serfConfig.ReconnectTimeout = config.ReconnectTimeout
-	}
-	if config.TombstoneTimeout != 0 {
-		serfConfig.TombstoneTimeout = config.TombstoneTimeout
-	}
-	serfConfig.EnableNameConflictResolution = !config.DisableNameResolution
-	if config.KeyringFile != "" {
-		serfConfig.KeyringFile = config.KeyringFile
-	}
-	serfConfig.RejoinAfterLeave = config.RejoinAfterLeave
 
 	// Create a channel to listen for events from Serf
 	a.eventCh = make(chan serf.Event, 64)
@@ -294,7 +428,6 @@ func (a *Agent) setupSerf() (*serf.Serf, error) {
 		log.Error(err)
 		return nil, err
 	}
-
 	return serf, nil
 }
 
@@ -303,36 +436,35 @@ func (a *Agent) Config() *Config {
 	return a.config
 }
 
-// Config returns the agent's config.
+// SetConfig sets the agent's config.
 func (a *Agent) SetConfig(c *Config) {
 	a.config = c
 }
 
+// StartServer launch a new dkron server process
 func (a *Agent) StartServer() {
+	//Use the value of "RPCPort" if AdvertiseRPCPort has not been set
+	if a.config.AdvertiseRPCPort <= 0 {
+		a.config.AdvertiseRPCPort = a.config.RPCPort
+	}
+
 	if a.Store == nil {
-		var sConfig = store.Config{}
-		backend := a.config.Backend
-		switch backend {
-		case store.BOLTDB, store.DYNAMODB:
-			sConfig.Bucket = a.config.Keyspace
-		case store.REDIS:
-			sConfig.Password = a.config.BackendPassword
-		case store.CONSUL:
-			sConfig.Token = a.config.BackendPassword
-			if a.config.BackendTLS {
-				sConfig.TLS = &tls.Config{}
-			}
-		case store.ETCD:
-			sConfig.Username = a.config.BackendUsername
-			sConfig.Password = a.config.BackendPassword
-			if a.config.BackendTLS {
-				sConfig.TLS = &tls.Config{}
+		dirExists, err := exists(a.config.DataDir)
+		if err != nil {
+			log.WithError(err).WithField("dir", a.config.DataDir).Fatal("Invalid Dir")
+		}
+		if !dirExists {
+			// Try to create the directory
+			err := os.Mkdir(a.config.DataDir, 0700)
+			if err != nil {
+				log.WithError(err).WithField("dir", a.config.DataDir).Fatal("Error Creating Dir")
 			}
 		}
-		a.Store = NewStore(a.config.Backend, a.config.BackendMachines, a, a.config.Keyspace, &sConfig)
-		if err := a.Store.Healthy(); err != nil {
-			log.WithError(err).Fatal("store: Store backend not reachable")
+		s, err := NewStore(a, filepath.Join(a.config.DataDir, a.config.NodeName))
+		if err != nil {
+			log.WithError(err).Fatal("dkron: Error initializing store")
 		}
+		a.Store = s
 	}
 
 	a.sched = NewScheduler()
@@ -342,111 +474,127 @@ func (a *Agent) StartServer() {
 	}
 	a.HTTPTransport.ServeHTTP()
 
+	// Create a listener at the desired port.
+	addr := a.getRPCAddr()
+	l, err := net.Listen("tcp", addr)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Create a cmux object.
+	tcpm := cmux.New(l)
+	var grpcl, raftl net.Listener
+	var tlsm cmux.CMux
+
+	// If RaftLayer brings TLS config listen to TLS
+	if a.TLSConfig != nil {
+		// Create a RaftLayer with TLS
+		a.raftLayer = NewTLSRaftLayer(a.TLSConfig)
+
+		// Match any connection to the recursive mux
+		tlsl := tcpm.Match(cmux.Any())
+		tlsl = tls.NewListener(tlsl, a.TLSConfig)
+
+		// Declare sub cMUX for TLS
+		tlsm = cmux.New(tlsl)
+
+		// Declare the match for TLS gRPC
+		grpcl = tlsm.MatchWithWriters(cmux.HTTP2MatchHeaderFieldSendSettings("content-type", "application/grpc"))
+
+		// Declare the match for TLS raft RPC
+		raftl = tlsm.Match(cmux.Any())
+
+		go func() {
+			if err := tlsm.Serve(); err != nil {
+				log.Fatal(err)
+			}
+		}()
+	} else {
+		// Declare a plain RaftLayer
+		a.raftLayer = NewRaftLayer()
+
+		// Declare the match for gRPC
+		grpcl = tcpm.MatchWithWriters(cmux.HTTP2MatchHeaderFieldSendSettings("content-type", "application/grpc"))
+
+		// Declare the match for raft RPC
+		raftl = tcpm.Match(cmux.Any())
+	}
+
 	if a.GRPCServer == nil {
 		a.GRPCServer = NewGRPCServer(a)
 	}
-	if err := a.GRPCServer.Serve(); err != nil {
+
+	if err := a.GRPCServer.Serve(grpcl); err != nil {
 		log.WithError(err).Fatal("agent: RPC server failed to start")
 	}
 
-	if a.config.Backend != store.BOLTDB {
-		a.participate()
-	} else {
-		a.schedule()
+	if err := a.raftLayer.Open(raftl); err != nil {
+		log.Fatal(err)
 	}
-}
 
-func (a *Agent) participate() {
-	a.candidate = leadership.NewCandidate(a.Store.Client(), a.Store.LeaderKey(), a.config.NodeName, defaultLeaderTTL)
+	if err := a.setupRaft(); err != nil {
+		log.WithError(err).Fatal("agent: Raft layer failed to start")
+	}
 
+	// Start serving everything
 	go func() {
-		for {
-			a.runForElection()
-			// retry
-			time.Sleep(defaultRecoverTime)
+		if err := tcpm.Serve(); err != nil {
+			log.Fatal(err)
 		}
 	}()
-}
-
-// Leader election routine
-func (a *Agent) runForElection() {
-	log.Info("agent: Running for election")
-	defer metrics.MeasureSince([]string{"agent", "runForElection"}, time.Now())
-	electedCh, errCh := a.candidate.RunForElection()
-
-	for {
-		select {
-		case isElected := <-electedCh:
-			if isElected {
-				log.Info("agent: Cluster leadership acquired")
-				metrics.IncrCounter([]string{"agent", "leadership_acquired"}, 1)
-				// If this server is elected as the leader, start the scheduler
-				a.schedule()
-			} else {
-				log.Info("agent: Cluster leadership lost")
-				metrics.IncrCounter([]string{"agent", "leadership_lost"}, 1)
-				// Always stop the schedule of this server to prevent multiple servers with the scheduler on
-				a.sched.Stop()
-			}
-
-		case err := <-errCh:
-			log.WithError(err).Error("Leader election failed, channel is probably closed")
-			metrics.IncrCounter([]string{"agent", "election", "failure"}, 1)
-			// Always stop the schedule of this server to prevent multiple servers with the scheduler on
-			a.sched.Stop()
-			return
-		}
-	}
+	go a.monitorLeadership()
 }
 
 // Utility method to get leader nodename
 func (a *Agent) leaderMember() (*serf.Member, error) {
-	leaderName := a.Store.GetLeader()
+	l := a.raft.Leader()
 	for _, member := range a.serf.Members() {
-		if member.Name == string(leaderName) {
+		if member.Tags["rpc_addr"] == string(l) {
 			return &member, nil
 		}
 	}
 	return nil, ErrLeaderNotFound
 }
 
-// ListServers returns the list of server members
-func (a *Agent) ListServers() []serf.Member {
-	members := []serf.Member{}
-
-	for _, member := range a.serf.Members() {
-		if key, ok := member.Tags["dkron_server"]; ok {
-			if key == "true" && member.Status == serf.StatusAlive {
-				members = append(members, member)
-			}
-		}
-	}
-	return members
+// IsLeader checks if this server is the cluster leader
+func (a *Agent) IsLeader() bool {
+	return a.raft.State() == raft.Leader
 }
 
-// LocalMember return the local serf member
+// Members is used to return the members of the serf cluster
+func (a *Agent) Members() []serf.Member {
+	return a.serf.Members()
+}
+
+// LocalMember is used to return the local node
 func (a *Agent) LocalMember() serf.Member {
 	return a.serf.LocalMember()
 }
 
-// GetBindIP returns the IP address that the agent is bound to.
-// This could be different than the originally configured address.
-func (a *Agent) GetBindIP() (string, error) {
-	bindIP, _, err := a.config.AddrParts(a.config.BindAddr)
-	return bindIP, err
+// Servers returns a list of known server
+func (a *Agent) Servers() (members []*ServerParts) {
+	for _, member := range a.serf.Members() {
+		ok, parts := isServer(member)
+		if !ok || member.Status != serf.StatusAlive {
+			continue
+		}
+		members = append(members, parts)
+	}
+	return members
 }
 
-// GetPeers returns a list of the current serf servers peers addresses
-func (a *Agent) GetPeers() (peers []string) {
-	s := a.ListServers()
-	for _, m := range s {
-		if addr, ok := m.Tags["dkron_rpc_addr"]; ok {
-			peers = append(peers, addr)
-			log.WithField("peer", addr).Debug("agent: updated peer")
+// LocalServers returns a list of the local known server
+func (a *Agent) LocalServers() (members []*ServerParts) {
+	for _, member := range a.serf.Members() {
+		ok, parts := isServer(member)
+		if !ok || member.Status != serf.StatusAlive {
+			continue
+		}
+		if a.config.Region == parts.Region {
+			members = append(members, parts)
 		}
 	}
-
-	return
+	return members
 }
 
 // Listens to events from Serf and handle the event.
@@ -456,9 +604,7 @@ func (a *Agent) eventLoop() {
 	for {
 		select {
 		case e := <-a.eventCh:
-			log.WithFields(logrus.Fields{
-				"event": e.String(),
-			}).Info("agent: Received event")
+			log.WithField("event", e.String()).Info("agent: Received event")
 			metrics.IncrCounter([]string{"agent", "event_received", e.String()}, 1)
 
 			// Log all member events
@@ -471,9 +617,23 @@ func (a *Agent) eventLoop() {
 					}).Debug("agent: Member event")
 				}
 
-				//In case of member event update peer list
-				if a.PeerUpdaterFunc != nil {
-					a.PeerUpdaterFunc(a.GetPeers()...)
+				if a.MemberEventHandler != nil {
+					a.MemberEventHandler(e)
+				}
+
+				// serfEventHandler is used to handle events from the serf cluster
+				switch e.EventType() {
+				case serf.EventMemberJoin:
+					a.nodeJoin(me)
+					a.localMemberEvent(me)
+				case serf.EventMemberLeave, serf.EventMemberFailed:
+					a.nodeFailed(me)
+					a.localMemberEvent(me)
+				case serf.EventMemberReap:
+					a.localMemberEvent(me)
+				case serf.EventMemberUpdate, serf.EventUser, serf.EventQuery: // Ignore
+				default:
+					log.WithField("event", e.String()).Warn("agent: Unhandled serf event")
 				}
 			}
 
@@ -507,7 +667,7 @@ func (a *Agent) eventLoop() {
 					// On dial error we should retry with a limit.
 					i := 0
 				RetryGetJob:
-					job, err := a.GRPCClient.CallGetJob(rqp.RPCAddr, rqp.Execution.JobName)
+					job, err := a.GRPCClient.GetJob(rqp.RPCAddr, rqp.Execution.JobName)
 					if err != nil {
 						if err == ErrRPCDialing {
 							if i < 10 {
@@ -566,7 +726,7 @@ func (a *Agent) eventLoop() {
 	}
 }
 
-// Start or restart scheduler
+// schedule Start or restart scheduler
 func (a *Agent) schedule() {
 	log.Info("agent: Restarting scheduler")
 	jobs, err := a.Store.GetJobs(nil)
@@ -597,6 +757,10 @@ func (a *Agent) processFilteredNodes(job *Job) ([]string, map[string]string, err
 	for key, val := range job.Tags {
 		tags[key] = val
 	}
+
+	// Always filter by region tag as we currently only target nodes
+	// on the same region.
+	tags["region"] = a.config.Region
 
 	for jtk, jtv := range tags {
 		var tc []string
@@ -634,9 +798,15 @@ func (a *Agent) setExecution(payload []byte) *Execution {
 		log.Fatal(err)
 	}
 
-	// Save the new execution to store
-	if _, err := a.Store.SetExecution(&ex); err != nil {
-		log.Fatal(err)
+	cmd, err := Encode(SetExecutionType, ex.ToProto())
+	if err != nil {
+		log.WithError(err).Fatal("agent: encode error in setExecution")
+		return nil
+	}
+	af := a.raft.Apply(cmd, raftTimeout)
+	if err := af.Error(); err != nil {
+		log.WithError(err).Fatal("agent: error applying SetExecutionType")
+		return nil
 	}
 
 	return &ex
@@ -647,15 +817,7 @@ func (a *Agent) setExecution(payload []byte) *Execution {
 // in marathon, it would return the host's IP and advertise RPC port
 func (a *Agent) getRPCAddr() string {
 	bindIP := a.serf.LocalMember().Addr
-
-	return fmt.Sprintf("%s:%d", bindIP, a.config.AdvertiseRPCPort)
-}
-
-func (a *Agent) SetTags(tags map[string]string) error {
-	if a.config.Server {
-		tags["dkron_rpc_addr"] = a.getRPCAddr()
-	}
-	return a.serf.SetTags(tags)
+	return net.JoinHostPort(bindIP.String(), strconv.Itoa(a.config.AdvertiseRPCPort))
 }
 
 // RefreshJobStatus asks the nodes their progress on an execution
@@ -697,12 +859,37 @@ func (a *Agent) RefreshJobStatus(jobName string) {
 				done, _ := strconv.ParseBool(s)
 				if done {
 					ex.FinishedAt = time.Now()
-					a.Store.SetExecution(ex)
 				}
 			} else {
 				ex.FinishedAt = time.Now()
-				a.Store.SetExecution(ex)
 			}
+			ej, err := json.Marshal(ex)
+			if err != nil {
+				log.WithError(err).Error("agent: Error marshaling execution")
+			}
+			a.setExecution(ej)
 		}
 	}
+}
+
+// applySetJob is a helper method to be called when
+// a job property need to be modified from the leader.
+func (a *Agent) applySetJob(job *proto.Job) error {
+	cmd, err := Encode(SetJobType, job)
+	if err != nil {
+		return err
+	}
+	af := a.raft.Apply(cmd, raftTimeout)
+	if err := af.Error(); err != nil {
+		return err
+	}
+	res := af.Response()
+	switch res {
+	case ErrParentJobNotFound:
+		return ErrParentJobNotFound
+	case ErrSameParent:
+		return ErrParentJobNotFound
+	}
+
+	return nil
 }

@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/distribworks/dkron/proto"
+	"github.com/distribworks/dkron/v2/proto"
 	"github.com/golang/protobuf/ptypes"
 )
 
@@ -46,25 +46,27 @@ func NewExecution(jobName string) *Execution {
 }
 
 // NewExecutionFromProto maps a proto.ExecutionDoneRequest to an Execution object
-func NewExecutionFromProto(edr *proto.ExecutionDoneRequest) *Execution {
-	startedAt, _ := ptypes.Timestamp(edr.GetStartedAt())
-	finishedAt, _ := ptypes.Timestamp(edr.GetFinishedAt())
+func NewExecutionFromProto(e *proto.Execution) *Execution {
+	startedAt, _ := ptypes.Timestamp(e.GetStartedAt())
+	finishedAt, _ := ptypes.Timestamp(e.GetFinishedAt())
 	return &Execution{
-		JobName:    edr.JobName,
-		Success:    edr.Success,
-		Output:     edr.Output,
-		NodeName:   edr.NodeName,
-		Group:      edr.Group,
-		Attempt:    uint(edr.Attempt),
+		JobName:    e.JobName,
+		Success:    e.Success,
+		Output:     e.Output,
+		NodeName:   e.NodeName,
+		Group:      e.Group,
+		Attempt:    uint(e.Attempt),
 		StartedAt:  startedAt,
 		FinishedAt: finishedAt,
 	}
 }
 
-func (e *Execution) ToProto() *proto.ExecutionDoneRequest {
+// ToProto returns the protobuf struct corresponding to
+// the representation of the current execution.
+func (e *Execution) ToProto() *proto.Execution {
 	startedAt, _ := ptypes.TimestampProto(e.StartedAt)
 	finishedAt, _ := ptypes.TimestampProto(e.FinishedAt)
-	return &proto.ExecutionDoneRequest{
+	return &proto.Execution{
 		JobName:    e.JobName,
 		Success:    e.Success,
 		Output:     e.Output,
@@ -81,22 +83,7 @@ func (e *Execution) Key() string {
 	return fmt.Sprintf("%d-%s", e.StartedAt.UnixNano(), e.NodeName)
 }
 
+// GetGroup is the getter for the execution group.
 func (e *Execution) GetGroup() string {
 	return strconv.FormatInt(e.Group, 10)
-}
-
-// ExecList stores a slice of Executions.
-// This slice can be sorted to provide a time ordered slice of Executions.
-type ExecList []*Execution
-
-func (el ExecList) Len() int {
-	return len(el)
-}
-
-func (el ExecList) Swap(i, j int) {
-	el[i], el[j] = el[j], el[i]
-}
-
-func (el ExecList) Less(i, j int) bool {
-	return el[i].StartedAt.Before(el[j].StartedAt)
 }

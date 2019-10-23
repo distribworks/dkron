@@ -25,7 +25,7 @@ func TestNotifier_callExecutionWebhook(t *testing.T) {
 
 	n := Notification(c, &Execution{}, []*Execution{}, &Job{})
 
-	n.Send()
+	assert.NoError(t, n.Send())
 }
 
 func TestNotifier_sendExecutionEmail(t *testing.T) {
@@ -62,7 +62,7 @@ func TestNotifier_sendExecutionEmail(t *testing.T) {
 	}
 
 	n := Notification(c, ex1, exg, job)
-	n.Send()
+	assert.NoError(t, n.Send())
 }
 
 func Test_auth(t *testing.T) {

@@ -8,7 +8,7 @@ produces:
 schemes:
   - http
 info:
-  version: 1.0
+  version: "1"
   title: Dkron REST API
   description: |
     You can communicate with Dkron using a RESTful JSON API over HTTP. Dkron nodes usually listen on port `8080` for API requests. All examples in this section assume that you've found a running leader at `localhost:8080`.
@@ -36,12 +36,12 @@ paths:
         List jobs.
       parameters:
         - in: query
-          name: tags
+          name: metadata
           type: array
           collectionFormat: multi
           items:
             type: string
-          description: Filter jobs by tags
+          description: Filter jobs by metadata
       operationId: getJobs
       tags:
         - jobs
@@ -65,6 +65,13 @@ paths:
           required: true
           schema:
             $ref: "#/definitions/job"
+        - in: query
+          name: runoncreate
+          description: If present, regardless of any value, causes the job to be run immediately after being succesfully created or updated.
+          required: false
+          schema:
+            type: boolean
+          allowEmptyValue: true
       responses:
         201:
           description: Successful response
@@ -167,7 +174,7 @@ paths:
           schema:
             $ref: '#/definitions/member'
   /leave:
-    get:
+    post:
       description: |
         Force the node to leave the cluster.
       operationId: leave
@@ -234,6 +241,10 @@ definitions:
         description: "Name for the job."
         readOnly: false
         example: "job1"
+      displayname:
+        type: string
+        description: "Nice name for the job. Optional."
+        readOnly: false
       schedule:
         type: string
         description: "Cron expression for the job."
@@ -283,7 +294,15 @@ definitions:
           type: string
         readOnly: false
         example:
-          dkron_server: "true"
+          server: "true"
+      metadata:
+        type: object
+        description: "Extra metadata tags for this job"
+        additionalProperties:
+          type: string
+        readOnly: false
+        example:
+          office: "Barcelona"
       retries:
         type: integer
         description: "Number of times to retry a failed job execution"
@@ -347,9 +366,9 @@ definitions:
         additionalProperties:
           type: string
         example:
-          dkron_rpc_addr: "192.168.1.137:6868"
-          dkron_server: "true"
-          dkron_version": "1.0.0"
+          rpc_addr: "192.168.1.137:6868"
+          server: "true"
+          version": "1.0.0"
       Status:
         type: integer
         description: "The serf status of the node see: https://godoc.org/github.com/hashicorp/serf/serf#MemberStatus"

@@ -3,24 +3,27 @@ package dkron
 import (
 	"errors"
 	"fmt"
-	"sync"
+	"regexp"
 	"time"
 
-	"github.com/abronan/valkeyrie/store"
-	"github.com/distribworks/dkron/cron"
-	"github.com/distribworks/dkron/proto"
+	"github.com/dgraph-io/badger"
+	"github.com/distribworks/dkron/v2/extcron"
+	"github.com/distribworks/dkron/v2/ntime"
+	"github.com/distribworks/dkron/v2/proto"
+	"github.com/golang/protobuf/ptypes"
 	"github.com/sirupsen/logrus"
 )
 
 const (
+	// StatusNotSet is the initial job status.
 	StatusNotSet = ""
-	// Success is status of a job whose last run was a success.
+	// StatusSuccess is status of a job whose last run was a success.
 	StatusSuccess = "success"
-	// Running is status of a job whose last run has not finished.
+	// StatusRunning is status of a job whose last run has not finished.
 	StatusRunning = "running"
-	// Failed is status of a job whose last run was not successful on any nodes.
+	// StatusFailed is status of a job whose last run was not successful on any nodes.
 	StatusFailed = "failed"
-	// PartialyFailed is status of a job whose last run was successful on only some nodes.
+	// StatusPartialyFailed is status of a job whose last run was successful on only some nodes.
 	StatusPartialyFailed = "partially_failed"
 
 	// ConcurrencyAllow allows a job to execute concurrency.
@@ -37,17 +40,20 @@ var (
 	// ErrSameParent is returned when the job's parent is itself.
 	ErrSameParent = errors.New("The job can not have itself as parent")
 	// ErrNoParent is returned when the job has no parent.
-	ErrNoParent = errors.New("The job doens't have a parent job set")
+	ErrNoParent = errors.New("The job doesn't have a parent job set")
 	// ErrNoCommand is returned when attempting to store a job that has no command.
-	ErrNoCommand = errors.New("Unespecified command for job")
+	ErrNoCommand = errors.New("Unspecified command for job")
 	// ErrWrongConcurrency is returned when Concurrency is set to a non existing setting.
-	ErrWrongConcurrency = errors.New("Wrong concurrency policy value, use: allow/forbid")
+	ErrWrongConcurrency = errors.New("invalid concurrency policy value, use \"allow\" or \"forbid\"")
 )
 
 // Job descibes a scheduled Job.
 type Job struct {
 	// Job name. Must be unique, acts as the id.
 	Name string `json:"name"`
+
+	// Display name of the job. If present, displayed instead of the name
+	DisplayName string `json:"displayname"`
 
 	// The timezone where the cron expression will be evaluated in.
 	// Empty means local time.
@@ -69,10 +75,10 @@ type Job struct {
 	ErrorCount int `json:"error_count"`
 
 	// Last time this job executed succesful.
-	LastSuccess time.Time `json:"last_success"`
+	LastSuccess ntime.NullableTime `json:"last_success"`
 
 	// Last time this job failed.
-	LastError time.Time `json:"last_error"`
+	LastError ntime.NullableTime `json:"last_error"`
 
 	// Is this job disabled?
 	Disabled bool `json:"disabled"`
@@ -80,21 +86,23 @@ type Job struct {
 	// Tags of the target servers to run this job against.
 	Tags map[string]string `json:"tags"`
 
+	// Job metadata describes the job and allows filtering from the API.
+	Metadata map[string]string `json:"metadata"`
+
 	// Pointer to the calling agent.
 	Agent *Agent `json:"-"`
 
 	// Number of times to retry a job that failed an execution.
 	Retries uint `json:"retries"`
 
-	running sync.Mutex
+	// running indicates that the Run method is still broadcasting
+	running bool
 
 	// Jobs that are dependent upon this one will be run after this job runs.
 	DependentJobs []string `json:"dependent_jobs"`
 
 	// Job id of job that this job is dependent upon.
 	ParentJob string `json:"parent_job"`
-
-	lock store.Locker
 
 	// Processors to use for this job
 	Processors map[string]PluginConfig `json:"processors"`
@@ -115,9 +123,13 @@ type Job struct {
 	Next time.Time `json:"next"`
 }
 
-func NewJobFromProto(in *proto.GetJobResponse) *Job {
-	return &Job{
+// NewJobFromProto create a new Job from a PB Job struct
+func NewJobFromProto(in *proto.Job) *Job {
+	next, _ := ptypes.Timestamp(in.GetNext())
+
+	job := &Job{
 		Name:           in.Name,
+		DisplayName:    in.Displayname,
 		Timezone:       in.Timezone,
 		Schedule:       in.Schedule,
 		Owner:          in.Owner,
@@ -133,18 +145,82 @@ func NewJobFromProto(in *proto.GetJobResponse) *Job {
 		Executor:       in.Executor,
 		ExecutorConfig: in.ExecutorConfig,
 		Status:         in.Status,
+		Metadata:       in.Metadata,
+		Next:           next,
+	}
+	if in.GetLastSuccess().GetHasValue() {
+		t, _ := ptypes.Timestamp(in.GetLastSuccess().GetTime())
+		job.LastSuccess.Set(t)
+	}
+	if in.GetLastError().GetHasValue() {
+		t, _ := ptypes.Timestamp(in.GetLastError().GetTime())
+		job.LastError.Set(t)
+	}
+
+	procs := make(map[string]PluginConfig)
+	for k, v := range in.Processors {
+		procs[k] = v.Config
+	}
+	job.Processors = procs
+
+	return job
+}
+
+// ToProto return the corresponding representation of this Job in proto struct
+func (j *Job) ToProto() *proto.Job {
+	lastSuccess := &proto.Job_NullableTime{
+		HasValue: j.LastSuccess.HasValue(),
+	}
+	if j.LastSuccess.HasValue() {
+		lastSuccess.Time, _ = ptypes.TimestampProto(j.LastSuccess.Get())
+	}
+	lastError := &proto.Job_NullableTime{
+		HasValue: j.LastError.HasValue(),
+	}
+	if j.LastError.HasValue() {
+		lastError.Time, _ = ptypes.TimestampProto(j.LastError.Get())
+	}
+	next, _ := ptypes.TimestampProto(j.Next)
+
+	processors := make(map[string]*proto.PluginConfig)
+	for k, v := range j.Processors {
+		processors[k] = &proto.PluginConfig{Config: v}
+	}
+	return &proto.Job{
+		Name:           j.Name,
+		Displayname:    j.DisplayName,
+		Timezone:       j.Timezone,
+		Schedule:       j.Schedule,
+		Owner:          j.Owner,
+		OwnerEmail:     j.OwnerEmail,
+		SuccessCount:   int32(j.SuccessCount),
+		ErrorCount:     int32(j.ErrorCount),
+		Disabled:       j.Disabled,
+		Tags:           j.Tags,
+		Retries:        uint32(j.Retries),
+		DependentJobs:  j.DependentJobs,
+		ParentJob:      j.ParentJob,
+		Concurrency:    j.Concurrency,
+		Processors:     processors,
+		Executor:       j.Executor,
+		ExecutorConfig: j.ExecutorConfig,
+		Status:         j.Status,
+		Metadata:       j.Metadata,
+		LastSuccess:    lastSuccess,
+		LastError:      lastError,
+		Next:           next,
 	}
 }
 
 // Run the job
 func (j *Job) Run() {
-	j.running.Lock()
-	defer j.running.Unlock()
-
 	// Maybe we are testing or it's disabled
 	if j.Agent != nil && j.Disabled == false {
 		// Check if it's runnable
 		if j.isRunnable() {
+			j.running = true
+			defer func() { j.running = false }()
+
 			log.WithFields(logrus.Fields{
 				"job":      j.Name,
 				"schedule": j.Schedule,
@@ -173,7 +249,7 @@ func (j *Job) String() string {
 	return fmt.Sprintf("\"Job: %s, scheduled at: %s, tags:%v\"", j.Name, j.Schedule, j.Tags)
 }
 
-// Status returns the status of a job whether it's running, succeded or failed
+// GetStatus returns the status of a job whether it's running, succeeded or failed
 func (j *Job) GetStatus() string {
 	// Maybe we are testing
 	if j.Agent == nil {
@@ -226,7 +302,7 @@ func (j *Job) GetParent() (*Job, error) {
 
 	parentJob, err := j.Agent.Store.GetJob(j.ParentJob, nil)
 	if err != nil {
-		if err == store.ErrKeyNotFound {
+		if err == badger.ErrKeyNotFound {
 			return nil, ErrParentJobNotFound
 		}
 		return nil, err
@@ -236,47 +312,10 @@ func (j *Job) GetParent() (*Job, error) {
 	return parentJob, nil
 }
 
-// Lock the job in store
-func (j *Job) Lock() error {
-	// Maybe we are testing
-	if j.Agent == nil {
-		return ErrNoAgent
-	}
-
-	lockKey := fmt.Sprintf("%s/job_locks/%s", j.Agent.Config().Keyspace, j.Name)
-	// TODO: LockOptions empty is a temporary fix until https://github.com/docker/libkv/pull/99 is fixed
-	l, err := j.Agent.Store.Client().NewLock(lockKey, &store.LockOptions{RenewLock: make(chan (struct{}))})
-	if err != nil {
-		return err
-	}
-	j.lock = l
-
-	_, err = j.lock.Lock(nil)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// Unlock the job in store
-func (j *Job) Unlock() error {
-	// Maybe we are testing
-	if j.Agent == nil {
-		return ErrNoAgent
-	}
-
-	if err := j.lock.Unlock(); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 // GetNext returns the job's next schedule from now
 func (j *Job) GetNext() (time.Time, error) {
 	if j.Schedule != "" {
-		s, err := cron.Parse(j.Schedule)
+		s, err := extcron.Parse(j.Schedule)
 		if err != nil {
 			return time.Time{}, err
 		}
@@ -287,6 +326,12 @@ func (j *Job) GetNext() (time.Time, error) {
 }
 
 func (j *Job) isRunnable() bool {
+	if j.Agent.GlobalLock {
+		log.WithField("job", j.Name).
+			Warning("job: Skipping execution because active global lock")
+		return false
+	}
+
 	if j.Concurrency == ConcurrencyForbid {
 		j.Agent.RefreshJobStatus(j.Name)
 	}
@@ -297,9 +342,54 @@ func (j *Job) isRunnable() bool {
 			"job":         j.Name,
 			"concurrency": j.Concurrency,
 			"job_status":  j.Status,
-		}).Debug("scheduler: Skipping execution")
+		}).Info("job: Skipping concurrent execution")
+		return false
+	}
+
+	if j.running {
+		log.WithField("job", j.Name).
+			Warning("job: Skipping execution because last execution still broadcasting, consider increasing schedule interval")
 		return false
 	}
 
 	return true
+}
+
+// Validate validates whether all values in the job are acceptable.
+func (j *Job) Validate() error {
+	if valid, chr := isSlug(j.Name); !valid {
+		return fmt.Errorf("name contains illegal character '%s'", chr)
+	}
+
+	if j.ParentJob == j.Name {
+		return ErrSameParent
+	}
+
+	// Validate schedule, allow empty schedule if parent job set.
+	if j.Schedule != "" || j.ParentJob == "" {
+		if _, err := extcron.Parse(j.Schedule); err != nil {
+			return fmt.Errorf("%s: %s", ErrScheduleParse.Error(), err)
+		}
+	}
+
+	if j.Concurrency != ConcurrencyAllow && j.Concurrency != ConcurrencyForbid && j.Concurrency != "" {
+		return ErrWrongConcurrency
+	}
+
+	// An empty string is a valid timezone for LoadLocation
+	if _, err := time.LoadLocation(j.Timezone); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// isSlug determines whether the given string is a proper value to be used as
+// key in the backend store (a "slug"). If false, the 2nd return value
+// will contain the first illegal character found.
+func isSlug(candidate string) (bool, string) {
+	// Allow only lower case letters (unicode), digits, underscore and dash.
+	illegalCharPattern, _ := regexp.Compile(`[^\p{Ll}0-9_-]`)
+	whyNot := illegalCharPattern.FindString(candidate)
+	return whyNot == "", whyNot
 }

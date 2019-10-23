@@ -5,7 +5,7 @@
   </div>
   <div class="row">
     <h1>Executions</h1>
-    <h2>Showing Last 100 Job executions for job {{.JobName}}
+    <h2>Showing Last {{.Count}} executions for job {{.JobName}}
       <a href="#" ng-click="runJob('{{.JobName}}')" ng-show="!running_job" title="Run"><i class="glyphicon glyphicon-play"
           aria-hidden="true"></i></a>
       <a href="#"><i class="glyphicon glyphicon-cog normal-right-spinner" ng-show="running_job"></i></a>
@@ -13,7 +13,7 @@
   </div>
 
   {{range $gk := .ByGroup}}
-  <h4>Execution: {{$gk}}</h4>
+  <h4>Execution Group: {{$gk}} ({{len (index $.Groups $gk)}})</h4>
   <table class="table table-striped">
     <tr>
       <th>Job</th>

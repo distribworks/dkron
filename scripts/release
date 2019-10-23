@@ -4,4 +4,4 @@ set -e
 
 go mod download
 docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-goreleaser release --rm-dist
+goreleaser release --rm-dist --timeout=1h

@@ -1,51 +1,28 @@
 package dkron
 
 import (
-	"os"
 	"testing"
 	"time"
 
-	"github.com/abronan/valkeyrie"
-	"github.com/abronan/valkeyrie/store"
 	"github.com/hashicorp/serf/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
 var (
-	logLevel       = "error"
-	backend        = getEnvWithDefault("DKRON_BACKEND", "etcdv3")
-	backendMachine = getEnvWithDefault("DKRON_BACKEND_MACHINE", "127.0.0.1:2379")
+	logLevel = "error"
 )
-
-func getEnvWithDefault(key, fallback string) string {
-	ea := os.Getenv(key)
-	if ea == "" {
-		return fallback
-	}
-	return ea
-}
 
 func TestAgentCommand_runForElection(t *testing.T) {
 	a1Name := "test1"
 	a2Name := "test2"
 	a1Addr := testutil.GetBindAddr().String()
 	a2Addr := testutil.GetBindAddr().String()
+
 	shutdownCh := make(chan struct{})
 	defer close(shutdownCh)
 
 	// Override leader TTL
 	defaultLeaderTTL = 2 * time.Second
-
-	client, err := valkeyrie.NewStore(store.Backend(backend), []string{backendMachine}, &store.Config{})
-	if err != nil {
-		panic(err)
-	}
-	err = client.DeleteTree("dkron")
-	if err != nil {
-		if err != store.ErrKeyNotFound {
-			panic(err)
-		}
-	}
 
 	c := DefaultConfig()
 	c.BindAddr = a1Addr
@@ -53,22 +30,23 @@ func TestAgentCommand_runForElection(t *testing.T) {
 	c.NodeName = a1Name
 	c.Server = true
 	c.LogLevel = logLevel
-	c.Backend = store.Backend(backend)
-	c.BackendMachines = []string{backendMachine}
+	c.BootstrapExpect = 3
+	c.DevMode = true
 
-	a1 := NewAgent(c, nil)
+	a1 := NewAgent(c)
 	if err := a1.Start(); err != nil {
 		t.Fatal(err)
 	}
 
-	// Wait for the first agent to start and set itself as leader
-	kv1, err := watchOrDie(client, "dkron/leader")
-	if err != nil {
-		t.Fatal(err)
+	// Wait for the first agent to start and elect itself as leader
+	if a1.IsLeader() {
+		m, err := a1.leaderMember()
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Logf("%s is the current leader", m.Name)
+		assert.Equal(t, a1Name, m.Name)
 	}
-	leaderA1 := string(kv1.Value)
-	t.Logf("%s is the current leader", leaderA1)
-	assert.Equal(t, a1Name, leaderA1)
 
 	// Start another agent
 	c = DefaultConfig()
@@ -77,54 +55,40 @@ func TestAgentCommand_runForElection(t *testing.T) {
 	c.NodeName = a2Name
 	c.Server = true
 	c.LogLevel = logLevel
-	c.Backend = store.Backend(backend)
-	c.BackendMachines = []string{backendMachine}
+	c.BootstrapExpect = 3
+	c.DevMode = true
 
-	a2 := NewAgent(c, nil)
+	a2 := NewAgent(c)
 	a2.Start()
+
+	// Start another agent
+	c = DefaultConfig()
+	c.BindAddr = testutil.GetBindAddr().String()
+	c.StartJoin = []string{a1Addr + ":8946"}
+	c.NodeName = "test3"
+	c.Server = true
+	c.LogLevel = logLevel
+	c.BootstrapExpect = 3
+	c.DevMode = true
+
+	a3 := NewAgent(c)
+	a3.Start()
+
+	time.Sleep(2 * time.Second)
 
 	// Send a shutdown request
 	a1.Stop()
 
-	// Wait until test2 steps as leader
-rewatch:
-	kv2, err := watchOrDie(client, "dkron/leader")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if len(kv2.Value) == 0 || string(kv2.Value) == a1Name {
-		goto rewatch
-	}
-	t.Logf("%s is the current leader", kv2.Value)
-	assert.Equal(t, a2Name, string(kv2.Value))
+	// Wait until a follower steps as leader
+	time.Sleep(2 * time.Second)
+	assert.True(t, (a2.IsLeader() || a3.IsLeader()))
+	log.Info(a3.IsLeader())
+
 	a2.Stop()
-}
-
-func watchOrDie(client store.Store, key string) (*store.KVPair, error) {
-	for {
-		resultCh, err := client.Watch(key, nil, nil)
-		if err != nil {
-			if err == store.ErrKeyNotFound {
-				continue
-			}
-			return nil, err
-		}
-
-		// If the channel worked, read the actual value
-		kv := <-resultCh
-		return kv, nil
-	}
+	a3.Stop()
 }
 
 func Test_processFilteredNodes(t *testing.T) {
-	client, err := valkeyrie.NewStore(store.Backend(backend), []string{backendMachine}, &store.Config{})
-	err = client.DeleteTree("dkron")
-	if err != nil {
-		if err == store.ErrNotReachable {
-			t.Fatal("backend server needed to run tests")
-		}
-	}
-
 	a1Addr := testutil.GetBindAddr().String()
 	a2Addr := testutil.GetBindAddr().String()
 
@@ -134,11 +98,10 @@ func Test_processFilteredNodes(t *testing.T) {
 	c.NodeName = "test1"
 	c.Server = true
 	c.LogLevel = logLevel
-	c.Tags = map[string]string{"role": "test"}
-	c.Backend = store.Backend(backend)
-	c.BackendMachines = []string{backendMachine}
+	c.Tags = map[string]string{"tag": "test"}
+	c.DevMode = true
 
-	a1 := NewAgent(c, nil)
+	a1 := NewAgent(c)
 	a1.Start()
 
 	time.Sleep(2 * time.Second)
@@ -150,11 +113,13 @@ func Test_processFilteredNodes(t *testing.T) {
 	c.NodeName = "test2"
 	c.Server = true
 	c.LogLevel = logLevel
-	c.Tags = map[string]string{"role": "test"}
-	c.Backend = store.Backend(backend)
-	c.BackendMachines = []string{backendMachine}
+	c.Tags = map[string]string{
+		"tag":   "test",
+		"extra": "tag",
+	}
+	c.DevMode = true
 
-	a2 := NewAgent(c, nil)
+	a2 := NewAgent(c)
 	a2.Start()
 
 	time.Sleep(2 * time.Second)
@@ -162,18 +127,19 @@ func Test_processFilteredNodes(t *testing.T) {
 	job := &Job{
 		Name: "test_job_1",
 		Tags: map[string]string{
-			"foo":  "bar:1",
-			"role": "test:2",
+			"foo": "bar:1",
+			"tag": "test:2",
 		},
 	}
 
 	nodes, tags, err := a1.processFilteredNodes(job)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	assert.Contains(t, nodes, "test1")
 	assert.Contains(t, nodes, "test2")
-	assert.Equal(t, tags["role"], "test")
-	assert.Equal(t, job.Tags["role"], "test:2")
-	assert.Equal(t, job.Tags["foo"], "bar:1")
+	assert.Equal(t, tags["tag"], "test")
 
 	a1.Stop()
 	a2.Stop()
@@ -187,10 +153,9 @@ func TestEncrypt(t *testing.T) {
 	c.Tags = map[string]string{"role": "test"}
 	c.EncryptKey = "kPpdjphiipNSsjd4QHWbkA=="
 	c.LogLevel = logLevel
-	c.Backend = store.Backend(backend)
-	c.BackendMachines = []string{backendMachine}
+	c.DevMode = true
 
-	a := NewAgent(c, nil)
+	a := NewAgent(c)
 	a.Start()
 
 	time.Sleep(2 * time.Second)
@@ -208,10 +173,9 @@ func Test_getRPCAddr(t *testing.T) {
 	c.Server = true
 	c.Tags = map[string]string{"role": "test"}
 	c.LogLevel = logLevel
-	c.Backend = store.Backend(backend)
-	c.BackendMachines = []string{backendMachine}
+	c.DevMode = true
 
-	a := NewAgent(c, nil)
+	a := NewAgent(c)
 	a.Start()
 
 	time.Sleep(2 * time.Second)
@@ -231,14 +195,14 @@ func TestAgentConfig(t *testing.T) {
 	c.AdvertiseAddr = advAddr
 	c.LogLevel = logLevel
 
-	a := NewAgent(c, nil)
+	a := NewAgent(c)
 	a.Start()
 
 	time.Sleep(2 * time.Second)
 
 	assert.NotEqual(t, a.config.AdvertiseAddr, a.config.BindAddr)
 	assert.NotEmpty(t, a.config.AdvertiseAddr)
-	assert.Equal(t, advAddr, a.config.AdvertiseAddr)
+	assert.Equal(t, advAddr+":8946", a.config.AdvertiseAddr)
 
 	a.Stop()
 }

@@ -2,6 +2,7 @@ package dkron
 
 import (
 	"bytes"
+	"io"
 	golog "log"
 
 	"github.com/hashicorp/go-hclog"
@@ -15,59 +16,71 @@ type HCLogAdapter struct {
 	Name string
 }
 
-// HCLog has one more level than we do. As such, we will never
+// Trace HCLog has one more level than we do. As such, we will never
 // set trace level.
 func (*HCLogAdapter) Trace(_ string, _ ...interface{}) {
 	return
 }
 
+// Debug logging level message
 func (a *HCLogAdapter) Debug(msg string, args ...interface{}) {
 	a.CreateEntry(args).Debug(msg)
 }
 
+// Info logging level message
 func (a *HCLogAdapter) Info(msg string, args ...interface{}) {
 	a.CreateEntry(args).Info(msg)
 }
 
+// Warn logging level message
 func (a *HCLogAdapter) Warn(msg string, args ...interface{}) {
 	a.CreateEntry(args).Warn(msg)
 }
 
+// Error logging level message
 func (a *HCLogAdapter) Error(msg string, args ...interface{}) {
 	a.CreateEntry(args).Error(msg)
 }
 
+// IsTrace check
 func (a *HCLogAdapter) IsTrace() bool {
 	return false
 }
 
+// IsDebug check
 func (a *HCLogAdapter) IsDebug() bool {
 	return a.shouldEmit(logrus.DebugLevel)
 }
 
+// IsInfo check
 func (a *HCLogAdapter) IsInfo() bool {
 	return a.shouldEmit(logrus.InfoLevel)
 }
 
+// IsWarn check
 func (a *HCLogAdapter) IsWarn() bool {
 	return a.shouldEmit(logrus.WarnLevel)
 }
 
+// IsError check
 func (a *HCLogAdapter) IsError() bool {
 	return a.shouldEmit(logrus.ErrorLevel)
 }
 
+// SetLevel noop
 func (a *HCLogAdapter) SetLevel(hclog.Level) {
 	// interface definition says it is ok for this to be a noop if
 	// implementations don't need/want to support dynamic level changing, which
 	// we don't currently.
 }
 
+// With returns a new instance with the specified options
 func (a *HCLogAdapter) With(args ...interface{}) hclog.Logger {
 	e := a.CreateEntry(args)
 	return &HCLogAdapter{Log: e}
 }
 
+// Named returns a named logger
 func (a *HCLogAdapter) Named(name string) hclog.Logger {
 	var newName bytes.Buffer
 	if a.Name != "" {
@@ -79,10 +92,16 @@ func (a *HCLogAdapter) Named(name string) hclog.Logger {
 	return a.ResetNamed(newName.String())
 }
 
+// ResetNamed returns a new logger with the default name
 func (a *HCLogAdapter) ResetNamed(name string) hclog.Logger {
 	fields := []interface{}{"subsystem_name", name}
 	e := a.CreateEntry(fields)
 	return &HCLogAdapter{Log: e, Name: name}
+}
+
+// StandardWriter return a value that conforms to io.Writer, which can be passed into log.SetOutput()
+func (a *HCLogAdapter) StandardWriter(opts *hclog.StandardLoggerOptions) io.Writer {
+	return nil
 }
 
 // StandardLogger is meant to return a stldib Logger type which wraps around
@@ -109,6 +128,7 @@ func (a *HCLogAdapter) shouldEmit(level logrus.Level) bool {
 	return false
 }
 
+// CreateEntry creates a new logrus entry
 func (a *HCLogAdapter) CreateEntry(args []interface{}) *logrus.Entry {
 	if len(args)%2 != 0 {
 		args = append(args, "<unknown>")

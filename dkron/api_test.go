@@ -3,50 +3,63 @@ package dkron
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"testing"
 	"time"
 
-	"github.com/abronan/valkeyrie/store"
 	"github.com/hashicorp/serf/testutil"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
-func setupAPITest(t *testing.T) (a *Agent) {
+func setupAPITest(t *testing.T, port string) (dir string, a *Agent) {
+	dir, err := ioutil.TempDir("", "dkron-test")
+	require.NoError(t, err)
+
 	c := DefaultConfig()
 	c.BindAddr = testutil.GetBindAddr().String()
-	c.HTTPAddr = "127.0.0.1:8090"
+	c.HTTPAddr = fmt.Sprintf("127.0.0.1:%s", port)
 	c.NodeName = "test"
 	c.Server = true
 	c.LogLevel = logLevel
-	c.Keyspace = "dkron-test"
-	c.Backend = store.Backend(backend)
-	c.BackendMachines = []string{backendMachine}
+	c.BootstrapExpect = 1
+	c.DevMode = true
+	c.DataDir = dir
 
-	a = NewAgent(c, nil)
+	a = NewAgent(c)
 	a.Start()
 
 	for {
-		if a.ready {
+		if a.IsLeader() {
 			break
 		}
 		time.Sleep(10 * time.Millisecond)
 	}
 	time.Sleep(1 * time.Second)
 
-	// clean up the keyspace to ensure clean runs
-	a.Store.Client().DeleteTree("dkron-test")
-
 	return
 }
 
 func TestAPIJobCreateUpdate(t *testing.T) {
-	a := setupAPITest(t)
+	port := "8091"
+	baseURL := fmt.Sprintf("http://localhost:%s/v1", port)
+	dir, _ := setupAPITest(t, port)
+	defer os.RemoveAll(dir)
 
-	jsonStr := []byte(`{"name": "test_job", "schedule": "@every 1m", "executor": "shell", "executor_config": {"command": "date"}, "owner": "mec", "owner_email": "foo@bar.com", "disabled": true}`)
+	jsonStr := []byte(`{
+		"name": "test_job",
+		"schedule": "@every 1m",
+		"executor": "shell",
+		"executor_config": {"command": "date"},
+		"owner": "mec",
+		"owner_email": "foo@bar.com",
+		"disabled": true
+	}`)
 
-	resp, err := http.Post("http://localhost:8090/v1/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
+	resp, err := http.Post(baseURL+"/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -59,8 +72,14 @@ func TestAPIJobCreateUpdate(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	jsonStr1 := []byte(`{"name": "test_job", "schedule": "@every 1m", "executor": "shell", "executor_config": {"command": "test"}, "disabled": false}`)
-	resp, err = http.Post("http://localhost:8090/v1/jobs", "encoding/json", bytes.NewBuffer(jsonStr1))
+	jsonStr1 := []byte(`{
+		"name": "test_job",
+		"schedule": "@every 1m",
+		"executor": "shell",
+		"executor_config": {"command": "test"},
+		"disabled": false
+	}`)
+	resp, err = http.Post(baseURL+"/jobs", "encoding/json", bytes.NewBuffer(jsonStr1))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -77,65 +96,158 @@ func TestAPIJobCreateUpdate(t *testing.T) {
 	assert.False(t, overwriteJob.Disabled)
 	assert.NotEqual(t, origJob.ExecutorConfig["command"], overwriteJob.ExecutorConfig["command"])
 	assert.Equal(t, "test", overwriteJob.ExecutorConfig["command"])
-
-	// Send a shutdown request
-	a.Stop()
 }
 
 func TestAPIJobCreateUpdateParentJob_SameParent(t *testing.T) {
-	a := setupAPITest(t)
-
-	jsonStr := []byte(`{
+	resp := postJob(t, "8092", []byte(`{
 		"name": "test_job",
 		"schedule": "@every 1m",
 		"command": "date",
 		"owner": "mec",
-		"owner_email":
-		"foo@bar.com",
+		"owner_email": "foo@bar.com",
 		"disabled": true,
 		"parent_job": "test_job"
-	}`)
+	}`))
 
-	resp, err := http.Post("http://localhost:8090/v1/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
-	if err != nil {
-		t.Fatal(err)
-	}
 	body, _ := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
 
-	assert.Equal(t, 422, resp.StatusCode)
-	errJSON, err := json.Marshal(ErrSameParent.Error())
-	assert.Contains(t, string(errJSON)+"\n", string(body))
-
-	// Send a shutdown request
-	a.Stop()
+	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
+	assert.Contains(t, string(body), ErrSameParent.Error())
 }
 
 func TestAPIJobCreateUpdateParentJob_NoParent(t *testing.T) {
-	a := setupAPITest(t)
+	resp := postJob(t, "8093", []byte(`{
+		"name": "test_job",
+		"schedule": "@every 1m",
+		"command": "date",
+		"owner": "mec",
+		"owner_email": "foo@bar.com",
+		"disabled": true,
+		"parent_job": "parent_test_job"
+	}`))
+
+	body, _ := ioutil.ReadAll(resp.Body)
+	resp.Body.Close()
+
+	assert.Equal(t, http.StatusNotFound, resp.StatusCode)
+	errJSON, _ := json.Marshal(ErrParentJobNotFound.Error())
+	assert.Contains(t, string(errJSON)+"\n", string(body))
+}
+
+func TestAPIJobCreateUpdateValidationBadName(t *testing.T) {
+	resp := postJob(t, "8094", []byte(`{
+		"name": "BAD JOB NAME!",
+		"schedule": "@every 1m",
+		"executor": "shell",
+		"executor_config": {"command": "date"},
+		"disabled": true
+	}`))
+
+	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
+}
+
+func TestAPIJobCreateUpdateValidationValidName(t *testing.T) {
+	resp := postJob(t, "8095", []byte(`{
+		"name": "abcdefghijklmnopqrstuvwxyz0123456789-_ßñëäïüøüáéíóýćàèìòùâêîôûæšłç",
+		"schedule": "@every 1m",
+		"executor": "shell",
+		"executor_config": {"command": "date"},
+		"disabled": true
+	}`))
+
+	assert.Equal(t, http.StatusCreated, resp.StatusCode)
+}
+
+func TestAPIJobCreateUpdateValidationBadSchedule(t *testing.T) {
+	resp := postJob(t, "8097", []byte(`{
+		"name": "testjob",
+		"schedule": "@at badtime",
+		"executor": "shell",
+		"executor_config": {"command": "date"},
+		"disabled": true
+	}`))
+
+	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
+}
+
+func TestAPIJobCreateUpdateValidationBadConcurrency(t *testing.T) {
+	resp := postJob(t, "8098", []byte(`{
+		"name": "testjob",
+		"schedule": "@every 1m",
+		"executor": "shell",
+		"executor_config": {"command": "date"},
+		"concurrency": "badvalue"
+		"disabled": true
+	}`))
+
+	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
+}
+
+func TestAPIJobCreateUpdateValidationBadTimezone(t *testing.T) {
+	resp := postJob(t, "8099", []byte(`{
+		"name": "testjob",
+		"schedule": "@every 1m",
+		"executor": "shell",
+		"executor_config": {"command": "date"},
+		"disabled": true,
+		"timezone": "notatimezone"
+	}`))
+
+	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
+}
+
+func TestAPIGetNonExistentJobReturnsNotFound(t *testing.T) {
+	port := "8096"
+	baseURL := fmt.Sprintf("http://localhost:%s/v1", port)
+	dir, a := setupAPITest(t, port)
+	defer os.RemoveAll(dir)
+	defer a.Stop()
+
+	resp, _ := http.Get(baseURL + "/jobs/notajob")
+
+	assert.Equal(t, http.StatusNotFound, resp.StatusCode)
+}
+
+func TestAPIJobCreateUpdateJobWithInvalidParentIsNotCreated(t *testing.T) {
+	port := "8100"
+	baseURL := fmt.Sprintf("http://localhost:%s/v1", port)
+	dir, a := setupAPITest(t, port)
+	defer os.RemoveAll(dir)
+	defer a.Stop()
 
 	jsonStr := []byte(`{
 		"name": "test_job",
 		"schedule": "@every 1m",
 		"command": "date",
 		"owner": "mec",
-		"owner_email":
-		"foo@bar.com",
+		"owner_email": "foo@bar.com",
 		"disabled": true,
 		"parent_job": "parent_test_job"
 	}`)
 
-	resp, err := http.Post("http://localhost:8090/v1/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
-	if err != nil {
-		t.Fatal(err)
-	}
+	resp, err := http.Post(baseURL+"/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
+	require.NoError(t, err, err)
+
+	assert.Equal(t, http.StatusNotFound, resp.StatusCode)
 	body, _ := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
+	assert.Equal(t, ErrParentJobNotFound.Error(), string(body))
 
-	assert.Equal(t, 422, resp.StatusCode)
-	errJSON, err := json.Marshal(ErrParentJobNotFound.Error())
-	assert.Contains(t, string(errJSON)+"\n", string(body))
+	resp, err = http.Get(baseURL + "/jobs/test_job")
+	require.NoError(t, err, err)
+	assert.Equal(t, http.StatusNotFound, resp.StatusCode)
+}
 
-	// Send a shutdown request
-	a.Stop()
+// postJob POSTs the given json to the jobs endpoint and returns the response
+func postJob(t *testing.T, port string, jsonStr []byte) *http.Response {
+	baseURL := fmt.Sprintf("http://localhost:%s/v1", port)
+	dir, a := setupAPITest(t, port)
+	defer os.RemoveAll(dir)
+	defer a.Stop()
+
+	resp, err := http.Post(baseURL+"/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
+	require.NoError(t, err, err)
+
+	return resp
 }

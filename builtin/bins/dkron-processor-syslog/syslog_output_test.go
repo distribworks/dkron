@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/distribworks/dkron/dkron"
+	"github.com/distribworks/dkron/v2/dkron"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -18,7 +18,7 @@ func TestProcess(t *testing.T) {
 			Output:    []byte("test"),
 		},
 		Config: dkron.PluginConfig{
-			"forward": true,
+			"forward": "true",
 		},
 	}
 

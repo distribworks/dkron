@@ -22,13 +22,20 @@ dkron.filter('statusClass', function () {
 
 dkron.constant('hideDelay', 2000);
 
-dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
+dkron.controller('JobListCtrl', function ($scope, $location, $http, $interval, hideDelay) {
+  $scope.searchJob = $location.search()['filter']
+
+  $scope.filter = function (filter) {
+    $scope.searchJob = filter;
+  };
+
   // pretty json func
   $scope.toJson = function (str) {
     return angular.toJson(str, true);
   }
   $scope.jobTemplate = {
     name: "job",
+    displayname: "My job",
     schedule: "",
     owner: "",
     owner_email: "",
@@ -249,10 +256,12 @@ dkron.controller('JobListCtrl', function ($scope, $http, $interval, hideDelay) {
       success_count = success_count + data[i].success_count;
       error_count = error_count + data[i].error_count;
 
-      var lastErrorDate = new Date(Date.parse(data[i].last_error));
-      if (new Date(Date.parse(data[i].last_success)) > lastErrorDate) {
+      // Compute last...Dates: they're either a date or null
+      var lastSuccessDate = data[i].last_success && new Date(Date.parse(data[i].last_success));
+      var lastErrorDate = data[i].last_error && new Date(Date.parse(data[i].last_error));
+      if ((lastSuccessDate !== null && lastErrorDate === null) || lastSuccessDate > lastErrorDate) {
         $scope.successful_jobs = $scope.successful_jobs + 1;
-      } else if (lastErrorDate.getFullYear() !== 1) {
+      } else if ((lastSuccessDate === null && lastErrorDate !== null) || lastSuccessDate < lastErrorDate) {
         $scope.failed_jobs = $scope.failed_jobs + 1;
       }
     }
@@ -290,15 +299,10 @@ dkron.controller('IndexCtrl', function ($scope, $http, $timeout, $element) {
     interpolation: 'linear'
   };
 
-  $scope.series = [{
-    name: 'Running',
-    color: 'green',
-    data: [{ x: 0, y: 0 }]
-  }];
   $scope.features = {
     hover: {
       xFormatter: function (x) {
-        return x;
+        return new Date(x*1000);
       },
       yFormatter: function (y) {
         return y;
@@ -310,12 +314,13 @@ dkron.controller('IndexCtrl', function ($scope, $http, $timeout, $element) {
     },
     yAxis: {
       tickFormat: Rickshaw.Fixtures.Number.formatKMBT
-    },
-    xAxis: {
-      tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
-      timeUnit: 'hour'
     }
   };
+
+  $scope.series = new Rickshaw.Series.FixedDuration([{name: 'Success', color: '#006f68'}, {name: 'Failed', color: '#B1003E'}], undefined, {
+    timeInterval: 2000,
+    maxDataPoints: 100
+  });
 
   updateView = function () {
     var response = $http.get(DKRON_API_PATH + '/jobs');
@@ -360,19 +365,16 @@ dkron.controller('IndexCtrl', function ($scope, $http, $timeout, $element) {
     });
   }
 
+  // Init values
   $scope.success_count = 0;
   $scope.error_count = 0;
   $scope.failed_jobs = 0;
   $scope.successful_jobs = 0;
-
   $scope.running = 0;
-
   $scope.jobs = [];
+  $scope.i = 0;
 
   $scope.updateGraph = function (data) {
-    var gdata = $scope.series[0].data;
-    var name = $scope.series[0].name;
-    var color = $scope.series[0].color;
     var success_count = 0;
     var error_count = 0;
     var running = 0;
@@ -385,10 +387,12 @@ dkron.controller('IndexCtrl', function ($scope, $http, $timeout, $element) {
       success_count = success_count + data[i].success_count;
       error_count = error_count + data[i].error_count;
 
-      var lastErrorDate = new Date(Date.parse(data[i].last_error));
-      if (new Date(Date.parse(data[i].last_success)) > lastErrorDate) {
+      // Compute last...Dates: they're either a date or null
+      var lastSuccessDate = data[i].last_success && new Date(Date.parse(data[i].last_success));
+      var lastErrorDate = data[i].last_error && new Date(Date.parse(data[i].last_error));
+      if ((lastSuccessDate !== null && lastErrorDate === null) || lastSuccessDate > lastErrorDate) {
         $scope.successful_jobs = $scope.successful_jobs + 1;
-      } else if (lastErrorDate.getFullYear() !== 1) {
+      } else if ((lastSuccessDate === null && lastErrorDate !== null) || lastSuccessDate < lastErrorDate) {
         $scope.failed_jobs = $scope.failed_jobs + 1;
       }
 
@@ -396,17 +400,30 @@ dkron.controller('IndexCtrl', function ($scope, $http, $timeout, $element) {
         running = running + 1;
       }
     }
+
+    // Store the previous data
+    if ($scope.i === 0) {
+      var successData = success_count;
+      var failedData = error_count;
+    } else {
+      var successData = $scope.success_count;
+      var failedData = $scope.error_count;
+    }
+
+    // Update panel stats
     $scope.success_count = success_count;
-
-    gdata.push({ x: gdata[gdata.length - 1].x + 1, y: running })
-
-    $scope.series[0] = {
-      name: name,
-      color: color,
-      data: gdata
-    };
-
     $scope.error_count = error_count;
+
+    // Rickshaw graph update
+    dataPoint = {}
+    dataPoint['Success'] = success_count - successData;
+    dataPoint['Failed'] = error_count - failedData;
+
+    $scope.series.addData(dataPoint);
+
+    // Broadcast a fake resize event to force render
+    $scope.$broadcast('rickshaw::resize');
+    $scope.i++;
   }
 
   updateView();

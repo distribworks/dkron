@@ -8,7 +8,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/distribworks/dkron/dkron"
+	"github.com/distribworks/dkron/v2/dkron"
 	"github.com/hashicorp/go-plugin"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -27,7 +27,7 @@ const (
 var agentCmd = &cobra.Command{
 	Use:   "agent",
 	Short: "Start a dkron agent",
-	Long: `Start a dkron agent that schedule jobs, listen for executions and run executors.
+	Long: `Start a dkron agent that schedules jobs, listens for executions and runs executors.
 It also runs a web UI.`,
 	// Run will execute the main functions of the agent command.
 	// This includes the main eventloop and starting the server if enabled.
@@ -55,12 +55,12 @@ func agentRun(args ...string) error {
 	if err := p.DiscoverPlugins(); err != nil {
 		log.Fatal(err)
 	}
-	plugins := &dkron.Plugins{
+	plugins := dkron.Plugins{
 		Processors: p.Processors,
 		Executors:  p.Executors,
 	}
 
-	agent = dkron.NewAgent(config, plugins)
+	agent = dkron.NewAgent(config, dkron.WithPlugins(plugins))
 	if err := agent.Start(); err != nil {
 		return err
 	}
@@ -84,6 +84,9 @@ WAIT:
 	select {
 	case s := <-signalCh:
 		sig = s
+	case err := <-agent.RetryJoinCh():
+		fmt.Println("[ERR] agent: Retry join failed: ", err)
+		return 1
 	case <-ShutdownCh:
 		sig = os.Interrupt
 	}
@@ -134,12 +137,6 @@ WAIT:
 func handleReload() {
 	fmt.Println("Reloading configuration...")
 	initConfig()
-
-	// Reset serf tags
-	if err := agent.SetTags(agent.Config().Tags); err != nil {
-		fmt.Printf("Failed to reload tags %v", agent.Config().Tags)
-		return
-	}
 	//Config reloading will also reload Notification settings
 }
 

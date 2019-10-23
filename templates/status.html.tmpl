@@ -11,11 +11,11 @@
           <p><small>Total Jobs</small>
         </li>
         <li class="text-center col-md-2">
-          <strong ng-bind="successful_jobs"></strong>
+          <strong><a href="jobs#?filter=success" ng-click="filter('success')" ng-bind="successful_jobs"></a></strong>
           <p><small class="status-success">Successful Jobs</small>
         </li>
         <li class="text-center col-md-2">
-          <strong ng-bind="failed_jobs"></strong>
+          <strong><a href="jobs#?filter=failed" ng-click="filter('failed')" ng-bind="failed_jobs"></a></strong>
           <p><small class="status-danger">Failed Jobs</small>
         </li>
         <li class="text-center col-md-2">

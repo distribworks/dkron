@@ -9,13 +9,14 @@ import (
 )
 
 const (
-	windows = "windows"
-
 	// maxBufSize limits how much data we collect from a handler.
 	// This is to prevent Serf's memory from growing to an enormous
 	// amount due to a faulty handler.
 	maxBufSize = 256000
 )
+
+// ErrNoSuitableServer returns an error in case no suitable server to send the request is found.
+var ErrNoSuitableServer = errors.New("no suitable server found to send the request, aborting")
 
 // invokeJob will execute the given job. Depending on the event.
 func (a *Agent) invokeJob(job *Job, execution *Execution) error {
@@ -29,7 +30,7 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 		return errors.New("invoke: No executor defined, nothing to do")
 	}
 
-	// Check if executor is exists
+	// Check if executor exists
 	if executor, ok := a.ExecutorPlugins[jex]; ok {
 		log.WithField("plugin", jex).Debug("invoke: calling executor plugin")
 		runningExecutions.Store(execution.GetGroup(), execution)
@@ -68,15 +69,21 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 
 	runningExecutions.Delete(execution.GetGroup())
 
-	return a.GRPCClient.CallExecutionDone(rpcServer, execution)
+	return a.GRPCClient.ExecutionDone(rpcServer, execution)
 }
 
 // Select a server based on key using a consistent hash key
 // like a cache store.
 func (a *Agent) selectServerByKey(key string) (string, error) {
 	ch := consistenthash.New(50, nil)
-	ch.Add(a.GetPeers()...)
+	for _, p := range a.LocalServers() {
+		ch.Add(p.RPCAddr.String())
+	}
+
 	peerAddress := ch.Get(key)
+	if peerAddress == "" {
+		return "", ErrNoSuitableServer
+	}
 
 	return peerAddress, nil
 }

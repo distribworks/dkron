@@ -6,7 +6,7 @@
       <div class="form-group">
         <div class="input-group">
           <div class="input-group-addon"><i class="glyphicon glyphicon-search"></i></div>
-          <input type="text" class="form-control" placeholder="Filter" ng-model="searchJob">
+          <input id="filter" type="text" class="form-control" placeholder="Filter" ng-model="searchJob">
           <div class="input-group-addon">
             <a href="#" data-toggle="modal" data-target="#jobTemplateModal" title="New"><i
                 class="glyphicon glyphicon-plus" aria-hidden="true"></i></a>
@@ -55,12 +55,12 @@
       </tfoot>
       <tbody>
         <tr ng-repeat="job in pagedItems[currentPage] | filter:searchJob">
-          <td><a ng-href="jobs/{{`{{ job.name }}`}}/executions" ng-bind="job.name"></a></td>
+          <td><a ng-href="jobs/{{`{{ job.name }}`}}/executions" ng-bind="job.displayname != '' ? job.displayname : job.name"></a></td>
           <td ng-bind="job.schedule"></td>
           <td ng-bind="job.success_count"></td>
           <td ng-bind="job.error_count"></td>
           <td
-            ng-bind="(job.last_success > job.last_error ? job.last_success : job.last_error) | date:'yyyy-MM-dd HH:mm:ss Z'">
+            ng-bind="(job.last_error === null || job.last_success > job.last_error ? (job.last_success === null ? 'never' : job.last_success) : job.last_error) | date:'yyyy-MM-dd HH:mm:ss Z'">
           </td>
           <td ng-bind="job.next | date:'yyyy-MM-dd HH:mm:ss Z'"></td>
           <td>

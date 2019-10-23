@@ -34,6 +34,7 @@ clean:
 
 .PHONY: doc apidoc gen test
 doc:
+	scripts/run doc --dir website/content/cli
 	cd website; hugo -d ../public
 	ghp-import -p public
 

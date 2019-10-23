@@ -1,4 +1,8 @@
-# Dkron - Distributed, fault tolerant job scheduling system [![GoDoc](https://godoc.org/github.com/distribworks/dkron?status.svg)](https://godoc.org/github.com/distribworks/dkron) [![Build Status](https://travis-ci.org/distribworks/dkron.svg?branch=master)](https://travis-ci.org/distribworks/dkron)
+<p align="center">
+<img width="400" src="docs/images/DKRON_STICKER_OK_CMYK_RGB_CONV_300.png" alt="Dkron" title="Dkron" />
+</p>
+
+# Dkron - Distributed, fault tolerant job scheduling system for cloud native environments [![GoDoc](https://godoc.org/github.com/distribworks/dkron?status.svg)](https://godoc.org/github.com/distribworks/dkron) [![Build Status](https://travis-ci.org/distribworks/dkron.svg?branch=master)](https://travis-ci.org/distribworks/dkron) [![Gitter](https://badges.gitter.im/distribworks/dkron.svg)](https://gitter.im/distribworks/dkron)
 
 Website: http://dkron.io/
 
@@ -8,7 +12,7 @@ Dkron is a distributed cron service, easy to setup and fault tolerant with focus
 - Reliable: Completely fault tolerant
 - High scalable: Able to handle high volumes of scheduled jobs and thousands of nodes
 
-Dkron is written in Go and leverage the power of distributed key-value stores and serf for providing fault tolerance, reliability and scalability while keeping simple and easily installable.
+Dkron is written in Go and leverage the power of the Raft protocol and Serf for providing fault tolerance, reliability and scalability while keeping simple and easily installable.
 
 Dkron is inspired by the google whitepaper [Reliable Cron across the Planet](https://queue.acm.org/detail.cfm?id=2745840) and by Airbnb Chronos borrowing the same features from it.
 
@@ -40,7 +44,8 @@ Next, run the included Docker Compose config:
 
 This will start Dkron instances. To add more Dkron instances to the clusters:
 
-`docker-compose scale dkron=4`
+`docker-compose up --scale dkron-server=4`
+`docker-compose up --scale dkron-agent=10`
 
 Check the port mapping using `docker-compose ps` and use the browser to navigate to the Dkron dashboard using one of the ports mapped by compose.
 

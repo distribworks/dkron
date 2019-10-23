@@ -1,56 +1,54 @@
 package dkron
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"net"
 	"time"
 
-	"github.com/abronan/valkeyrie/store"
 	metrics "github.com/armon/go-metrics"
-	"github.com/distribworks/dkron/proto"
+	"github.com/distribworks/dkron/v2/proto"
+	pb "github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes/empty"
+	"github.com/hashicorp/raft"
+	"github.com/hashicorp/serf/serf"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 )
 
 var (
+	// ErrExecutionDoneForDeletedJob is returned when an execution done
+	// is received for a non existent job.
 	ErrExecutionDoneForDeletedJob = errors.New("rpc: Received execution done for a deleted job")
-	ErrRPCDialing                 = errors.New("rpc: Error dialing, verify the network connection to the server")
+	// ErrRPCDialing is returned on dialing fail.
+	ErrRPCDialing = errors.New("rpc: Error dialing, verify the network connection to the server")
+	// ErrNotLeader is the error returned when the operation need the node to be the leader,
+	// but the current node is not the leader.
+	ErrNotLeader = errors.New("Error, server is not leader, this operation should be run on the leader")
 )
 
+// DkronGRPCServer defines the basics that a gRPC server should implement.
 type DkronGRPCServer interface {
 	proto.DkronServer
-	Serve() error
+	Serve(net.Listener) error
 }
 
+// GRPCServer is the local implementation of the gRPC server interface.
 type GRPCServer struct {
 	agent *Agent
 }
 
-// NewRPCServe creates and returns an instance of an RPCServer implementation
+// NewGRPCServer creates and returns an instance of a DkronGRPCServer implementation
 func NewGRPCServer(agent *Agent) DkronGRPCServer {
 	return &GRPCServer{
 		agent: agent,
 	}
 }
 
-func (grpcs *GRPCServer) Serve() error {
-	bindIp, err := grpcs.agent.GetBindIP()
-	if err != nil {
-		return err
-	}
-	rpca := fmt.Sprintf("%s:%d", bindIp, grpcs.agent.config.RPCPort)
-	log.WithFields(logrus.Fields{
-		"rpc_addr": rpca,
-	}).Debug("grpc: Registering GRPC server")
-
-	lis, err := net.Listen("tcp", rpca)
-	if err != nil {
-		log.Fatalf("grpc: failed to listen: %v", err)
-	}
-
+// Serve creates and start a new gRPC dkron server
+func (grpcs *GRPCServer) Serve(lis net.Listener) error {
 	grpcServer := grpc.NewServer()
 	proto.RegisterDkronServer(grpcServer, grpcs)
 	go grpcServer.Serve(lis)
@@ -58,95 +56,131 @@ func (grpcs *GRPCServer) Serve() error {
 	return nil
 }
 
+// Encode is used to encode a Protoc object with type prefix
+func Encode(t MessageType, msg interface{}) ([]byte, error) {
+	var buf bytes.Buffer
+	buf.WriteByte(uint8(t))
+	m, err := pb.Marshal(msg.(pb.Message))
+	if err != nil {
+		return nil, err
+	}
+	_, err = buf.Write(m)
+	return buf.Bytes(), err
+}
+
+// SetJob broadcast a state change to the cluster members that will store the job.
+// Then restart the scheduler
+// This only works on the leader
+func (grpcs *GRPCServer) SetJob(ctx context.Context, setJobReq *proto.SetJobRequest) (*proto.SetJobResponse, error) {
+	defer metrics.MeasureSince([]string{"grpc", "set_job"}, time.Now())
+	log.WithFields(logrus.Fields{
+		"job": setJobReq.Job.Name,
+	}).Debug("grpc: Received SetJob")
+
+	if err := grpcs.agent.applySetJob(setJobReq.Job); err != nil {
+		return nil, err
+	}
+
+	// If everything is ok, restart the scheduler
+	grpcs.agent.schedule()
+
+	return &proto.SetJobResponse{}, nil
+}
+
+// DeleteJob broadcast a state change to the cluster members that will delete the job.
+// Then restart the scheduler
+// This only works on the leader
+func (grpcs *GRPCServer) DeleteJob(ctx context.Context, delJobReq *proto.DeleteJobRequest) (*proto.DeleteJobResponse, error) {
+	defer metrics.MeasureSince([]string{"grpc", "delete_job"}, time.Now())
+	log.WithField("job", delJobReq.GetJobName()).Debug("grpc: Received DeleteJob")
+
+	cmd, err := Encode(DeleteJobType, delJobReq)
+	if err != nil {
+		return nil, err
+	}
+	af := grpcs.agent.raft.Apply(cmd, raftTimeout)
+	if err := af.Error(); err != nil {
+		return nil, err
+	}
+	res := af.Response()
+	job, ok := res.(*Job)
+	if !ok {
+		return nil, fmt.Errorf("grpc: Error wrong response from apply in DeleteJob: %v", res)
+	}
+	jpb := job.ToProto()
+
+	// If everything is ok, restart the scheduler
+	grpcs.agent.schedule()
+
+	return &proto.DeleteJobResponse{Job: jpb}, nil
+}
+
+// GetJob loads the job from the datastore
 func (grpcs *GRPCServer) GetJob(ctx context.Context, getJobReq *proto.GetJobRequest) (*proto.GetJobResponse, error) {
 	defer metrics.MeasureSince([]string{"grpc", "get_job"}, time.Now())
-	log.WithFields(logrus.Fields{
-		"job": getJobReq.JobName,
-	}).Debug("grpc: Received GetJob")
+	log.WithField("job", getJobReq.JobName).Debug("grpc: Received GetJob")
 
 	j, err := grpcs.agent.Store.GetJob(getJobReq.JobName, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	gjr := &proto.GetJobResponse{}
+	gjr := &proto.GetJobResponse{
+		Job: &proto.Job{},
+	}
 
 	// Copy the data structure
-	gjr.Name = j.Name
-	gjr.Executor = j.Executor
-	gjr.ExecutorConfig = j.ExecutorConfig
+	gjr.Job.Name = j.Name
+	gjr.Job.Executor = j.Executor
+	gjr.Job.ExecutorConfig = j.ExecutorConfig
 
 	return gjr, nil
 }
 
+// ExecutionDone saves the execution to the store
 func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.ExecutionDoneRequest) (*proto.ExecutionDoneResponse, error) {
 	defer metrics.MeasureSince([]string{"grpc", "execution_done"}, time.Now())
 	log.WithFields(logrus.Fields{
-		"group": execDoneReq.Group,
-		"job":   execDoneReq.JobName,
-		"from":  execDoneReq.NodeName,
+		"group": execDoneReq.Execution.Group,
+		"job":   execDoneReq.Execution.JobName,
+		"from":  execDoneReq.Execution.NodeName,
 	}).Debug("grpc: Received execution done")
 
-	var execution Execution
-	processed := false
+	// Get the leader address and compare with the current node address.
+	// Forward the request to the leader in case current node is not the leader.
+	if !grpcs.agent.IsLeader() {
+		addr := grpcs.agent.raft.Leader()
+		grpcs.agent.GRPCClient.ExecutionDone(string(addr), NewExecutionFromProto(execDoneReq.Execution))
+		return nil, ErrNotLeader
+	}
 
-retry:
-	// Load the job from the store
-	job, jkv, err := grpcs.agent.Store.GetJobWithKVPair(execDoneReq.JobName, &JobOptions{
-		ComputeStatus: true,
-	})
+	// This is the leader at this point, so process the execution, encode the value and apply the log to the cluster.
+	// Get the defined output types for the job, and call them
+	job, err := grpcs.agent.Store.GetJob(execDoneReq.Execution.JobName, nil)
 	if err != nil {
-		if err == store.ErrKeyNotFound {
-			log.Warning(ErrExecutionDoneForDeletedJob)
-			return nil, ErrExecutionDoneForDeletedJob
-		}
-		log.Fatal("grpc:", err)
 		return nil, err
 	}
-
-	if !processed {
-		// Get the defined output types for the job, and call them
-		origExec := *NewExecutionFromProto(execDoneReq)
-		execution = origExec
-		for k, v := range job.Processors {
-			log.WithField("plugin", k).Info("grpc: Processing execution with plugin")
-			if processor, ok := grpcs.agent.ProcessorPlugins[k]; ok {
-				v["reporting_node"] = grpcs.agent.config.NodeName
-				e := processor.Process(&ExecutionProcessorArgs{Execution: origExec, Config: v})
-				execution = e
-			} else {
-				log.WithField("plugin", k).Error("grpc: Specified plugin not found")
-			}
+	origExec := *NewExecutionFromProto(execDoneReq.Execution)
+	execution := origExec
+	for k, v := range job.Processors {
+		log.WithField("plugin", k).Info("grpc: Processing execution with plugin")
+		if processor, ok := grpcs.agent.ProcessorPlugins[k]; ok {
+			v["reporting_node"] = grpcs.agent.config.NodeName
+			e := processor.Process(&ExecutionProcessorArgs{Execution: origExec, Config: v})
+			execution = e
+		} else {
+			log.WithField("plugin", k).Error("grpc: Specified plugin not found")
 		}
-
-		// Save the execution to store
-		if _, err := grpcs.agent.Store.SetExecution(&execution); err != nil {
-			return nil, err
-		}
-
-		processed = true
 	}
 
-	if execution.Success {
-		job.LastSuccess = execution.FinishedAt
-		job.SuccessCount++
-	} else {
-		job.LastError = execution.FinishedAt
-		job.ErrorCount++
+	execDoneReq.Execution = execution.ToProto()
+	cmd, err := Encode(ExecutionDoneType, execDoneReq)
+	if err != nil {
+		return nil, err
 	}
-
-	ok, err := grpcs.agent.Store.AtomicJobPut(job, jkv)
-	if err != nil && err != store.ErrKeyModified {
-		log.WithError(err).Fatal("grpc: Error in atomic job save")
-	}
-	if !ok {
-		log.Debug("grpc: Retrying job update")
-		goto retry
-	}
-
-	execDoneResp := &proto.ExecutionDoneResponse{
-		From:    grpcs.agent.config.NodeName,
-		Payload: []byte("saved"),
+	af := grpcs.agent.raft.Apply(cmd, raftTimeout)
+	if err := af.Error(); err != nil {
+		return nil, err
 	}
 
 	// If the execution failed, retry it until retries limit (default: don't retry)
@@ -173,7 +207,9 @@ retry:
 	}
 
 	// Send notification
-	Notification(grpcs.agent.config, &execution, exg, job).Send()
+	if err := Notification(grpcs.agent.config, &execution, exg, job).Send(); err != nil {
+		return nil, err
+	}
 
 	// Jobs that have dependent jobs are a bit more expensive because we need to call the Status() method for every execution.
 	// Check first if there's dependent jobs and then check for the job status to begin execution dependent jobs on success.
@@ -188,121 +224,121 @@ retry:
 		}
 	}
 
-	return execDoneResp, nil
+	return &proto.ExecutionDoneResponse{
+		From:    grpcs.agent.config.NodeName,
+		Payload: []byte("saved"),
+	}, nil
 }
 
+// Leave calls the Stop method, stopping everything in the server
 func (grpcs *GRPCServer) Leave(ctx context.Context, in *empty.Empty) (*empty.Empty, error) {
 	return in, grpcs.agent.Stop()
 }
 
-type DkronGRPCClient interface {
-	Connect(string) (*grpc.ClientConn, error)
-	CallExecutionDone(string, *Execution) error
-	CallGetJob(string, string) (*Job, error)
-	Leave(string) error
-}
-
-type GRPCClient struct {
-	dialOpt []grpc.DialOption
-}
-
-func NewGRPCClient(dialOpt grpc.DialOption) DkronGRPCClient {
-	if dialOpt == nil {
-		dialOpt = grpc.WithInsecure()
-	}
-	return &GRPCClient{dialOpt: []grpc.DialOption{
-		dialOpt,
-		grpc.WithBlock(),
-		grpc.WithTimeout(5 * time.Second),
-	},
-	}
-}
-
-func (grpcc *GRPCClient) Connect(addr string) (*grpc.ClientConn, error) {
-	// Initiate a connection with the server
-	conn, err := grpc.Dial(addr, grpcc.dialOpt...)
+// RunJob runs a job in the cluster
+func (grpcs *GRPCServer) RunJob(ctx context.Context, req *proto.RunJobRequest) (*proto.RunJobResponse, error) {
+	job, err := grpcs.agent.Store.GetJob(req.JobName, nil)
 	if err != nil {
 		return nil, err
 	}
-	return conn, nil
+
+	ex := NewExecution(job.Name)
+	grpcs.agent.RunQuery(job, ex)
+
+	jpb := job.ToProto()
+
+	return &proto.RunJobResponse{Job: jpb}, nil
 }
 
-func (grpcc *GRPCClient) CallExecutionDone(addr string, execution *Execution) error {
-	defer metrics.MeasureSince([]string{"grpc", "call_execution_done"}, time.Now())
-	var conn *grpc.ClientConn
-
-	conn, err := grpcc.Connect(addr)
-	if err != nil {
-		log.WithFields(logrus.Fields{
-			"err":         err,
-			"server_addr": addr,
-		}).Error("grpc: error dialing.")
-	}
-	defer conn.Close()
-
-	d := proto.NewDkronClient(conn)
-	edr, err := d.ExecutionDone(context.Background(), execution.ToProto())
-	if err != nil {
-		log.WithFields(logrus.Fields{
-			"error": err,
-		}).Warning("grpc: Error calling ExecutionDone")
-		return err
-	}
-	log.Debug("grpc: from: ", edr.From)
-
-	return nil
+// ToggleJob toggle the enablement of a job
+func (grpcs *GRPCServer) ToggleJob(ctx context.Context, getJobReq *proto.ToggleJobRequest) (*proto.ToggleJobResponse, error) {
+	return nil, nil
 }
 
-func (grpcc *GRPCClient) CallGetJob(addr, jobName string) (*Job, error) {
-	defer metrics.MeasureSince([]string{"grpc", "call_get_job"}, time.Now())
-	var conn *grpc.ClientConn
-
-	// Initiate a connection with the server
-	conn, err := grpcc.Connect(addr)
-	if err != nil {
-		log.WithFields(logrus.Fields{
-			"err":         err,
-			"server_addr": addr,
-		}).Error("grpc: error dialing.")
-	}
-	defer conn.Close()
-
-	// Synchronous call
-	d := proto.NewDkronClient(conn)
-	gjr, err := d.GetJob(context.Background(), &proto.GetJobRequest{JobName: jobName})
-	if err != nil {
-		log.WithFields(logrus.Fields{
-			"error": err,
-		}).Warning("grpc: Error calling GetJob")
+// RaftGetConfiguration get raft config
+func (grpcs *GRPCServer) RaftGetConfiguration(ctx context.Context, in *empty.Empty) (*proto.RaftGetConfigurationResponse, error) {
+	// We can't fetch the leader and the configuration atomically with
+	// the current Raft API.
+	future := grpcs.agent.raft.GetConfiguration()
+	if err := future.Error(); err != nil {
 		return nil, err
 	}
 
-	return NewJobFromProto(gjr), nil
+	// Index the information about the servers.
+	serverMap := make(map[raft.ServerAddress]serf.Member)
+	for _, member := range grpcs.agent.serf.Members() {
+		valid, parts := isServer(member)
+		if !valid {
+			continue
+		}
+
+		addr := (&net.TCPAddr{IP: member.Addr, Port: parts.Port}).String()
+		serverMap[raft.ServerAddress(addr)] = member
+	}
+
+	// Fill out the reply.
+	leader := grpcs.agent.raft.Leader()
+	reply := &proto.RaftGetConfigurationResponse{}
+	reply.Index = future.Index()
+	for _, server := range future.Configuration().Servers {
+		node := "(unknown)"
+		raftProtocolVersion := "unknown"
+		if member, ok := serverMap[server.Address]; ok {
+			node = member.Name
+			if raftVsn, ok := member.Tags["raft_vsn"]; ok {
+				raftProtocolVersion = raftVsn
+			}
+		}
+
+		entry := &proto.RaftServer{
+			Id:           string(server.ID),
+			Node:         node,
+			Address:      string(server.Address),
+			Leader:       server.Address == leader,
+			Voter:        server.Suffrage == raft.Voter,
+			RaftProtocol: raftProtocolVersion,
+		}
+		reply.Servers = append(reply.Servers, entry)
+	}
+	return reply, nil
 }
 
-func (grpcc *GRPCClient) Leave(addr string) error {
-	var conn *grpc.ClientConn
-
-	// Initiate a connection with the server
-	conn, err := grpcc.Connect(addr)
-	if err != nil {
-		log.WithFields(logrus.Fields{
-			"err":         err,
-			"server_addr": addr,
-		}).Error("grpc: error dialing.")
-		return err
-	}
-	defer conn.Close()
-
-	// Synchronous call
-	d := proto.NewDkronClient(conn)
-	_, err = d.Leave(context.Background(), &empty.Empty{})
-	if err != nil {
-		log.WithFields(logrus.Fields{
-			"error": err,
-		}).Warning("grpc: Error calling Leave")
-		return err
+// RaftRemovePeerByID is used to kick a stale peer (one that is in the Raft
+// quorum but no longer known to Serf or the catalog) by address in the form of
+// "IP:port". The reply argument is not used, but is required to fulfill the RPC
+// interface.
+func (grpcs *GRPCServer) RaftRemovePeerByID(ctx context.Context, in *proto.RaftRemovePeerByIDRequest) (*empty.Empty, error) {
+	// Since this is an operation designed for humans to use, we will return
+	// an error if the supplied id isn't among the peers since it's
+	// likely they screwed up.
+	{
+		future := grpcs.agent.raft.GetConfiguration()
+		if err := future.Error(); err != nil {
+			return nil, err
+		}
+		for _, s := range future.Configuration().Servers {
+			if s.ID == raft.ServerID(in.Id) {
+				goto REMOVE
+			}
+		}
+		return nil, fmt.Errorf("id %q was not found in the Raft configuration", in.Id)
 	}
 
-	return nil
+REMOVE:
+	// The Raft library itself will prevent various forms of foot-shooting,
+	// like making a configuration with no voters. Some consideration was
+	// given here to adding more checks, but it was decided to make this as
+	// low-level and direct as possible. We've got ACL coverage to lock this
+	// down, and if you are an operator, it's assumed you know what you are
+	// doing if you are calling this. If you remove a peer that's known to
+	// Serf, for example, it will come back when the leader does a reconcile
+	// pass.
+	future := grpcs.agent.raft.RemoveServer(raft.ServerID(in.Id), 0, 0)
+	if err := future.Error(); err != nil {
+		log.WithError(err).WithField("peer", in.Id).Warn("failed to remove Raft peer")
+		return nil, err
+	}
+
+	log.WithField("peer", in.Id).Warn("removed Raft peer")
+	return nil, nil
 }

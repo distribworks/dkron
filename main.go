@@ -2,7 +2,7 @@
 package main
 
 import (
-	"github.com/distribworks/dkron/cmd"
+	"github.com/distribworks/dkron/v2/cmd"
 )
 
 func main() {

@@ -1,25 +1,25 @@
 package dkron
 
 import (
+	"io/ioutil"
+	"os"
 	"testing"
-	"time"
 
-	"github.com/abronan/valkeyrie/store"
+	"github.com/distribworks/dkron/v2/proto"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestJobGetParent(t *testing.T) {
-	s := NewStore(store.Backend(backend), []string{backendMachine}, nil, "dkron-test", nil)
-	a := &Agent{
-		Store: s,
-	}
-	s.agent = a
+	dir, err := ioutil.TempDir("", "dkron-test")
+	require.NoError(t, err)
+	defer os.RemoveAll(dir)
 
-	// Cleanup everything
-	err := s.Client().DeleteTree("dkron-test")
-	if err != nil && err != store.ErrKeyNotFound {
-		t.Logf("error cleaning up: %s", err)
-	}
+	a := &Agent{}
+	s, err := NewStore(a, dir)
+	defer s.Shutdown()
+	require.NoError(t, err)
+	a.Store = s
 
 	parentTestJob := &Job{
 		Name:           "parent_test",
@@ -65,18 +65,42 @@ func TestJobGetParent(t *testing.T) {
 
 	ptj, err = s.GetJob(parentTestJob.Name, nil)
 	assert.NoError(t, err)
-	assert.Equal(t, []string{}, ptj.DependentJobs)
+	assert.Nil(t, ptj.DependentJobs)
 }
 
-func TestJobGetNext(t *testing.T) {
-	j := Job{
-		Schedule: "@daily",
+func TestNewJobFromProto(t *testing.T) {
+	testConfig := map[string]PluginConfig{
+		"test_processor": {
+			"config_key": "config_value",
+		},
 	}
 
-	td := time.Now()
-	tonight := time.Date(td.Year(), td.Month(), td.Day()+1, 0, 0, 0, 0, td.Location())
-	n, err := j.GetNext()
+	in := &proto.Job{}
+	proc := map[string]*proto.PluginConfig{
+		"test_processor": {
+			Config: map[string]string{"config_key": "config_value"},
+		},
+	}
+	in.Processors = proc
 
-	assert.NoError(t, err)
-	assert.Equal(t, tonight, n)
+	j := NewJobFromProto(in)
+	assert.Equal(t, testConfig, j.Processors)
+}
+
+func TestToProto(t *testing.T) {
+	j := &Job{
+		Processors: map[string]PluginConfig{
+			"test_processor": {
+				"config_key": "config_value",
+			},
+		},
+	}
+	proc := map[string]*proto.PluginConfig{
+		"test_processor": {
+			Config: map[string]string{"config_key": "config_value"},
+		},
+	}
+
+	jpb := j.ToProto()
+	assert.Equal(t, jpb.Processors, proc)
 }
