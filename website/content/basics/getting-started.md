@@ -50,7 +50,7 @@ Be sure you have opened this ports (or the ones that you configured) in your fir
 Works out of the box, good for non HA installations.
 
 - System service: If no changes are done to the default config files, dkron will start as a service in single mode.
-- Command line: Running a single node with default config can be done by running: `dkron agent --server --bootstrap-expect=1`
+- Command line: Running a single node with default config can be done by running:
 
 ```
 dkron agent --server --bootstrap-expect=1

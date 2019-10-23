@@ -8,7 +8,7 @@ weight: 10
 
 Download the packaged archive for your platform from the [downloads page](https://github.com/distribworks/dkron/releases) and extract the package to a shared location in your drive, like /opt/local/bin.
 
-Run Dkron with default setting: `dkron agent --server`
+Run Dkron with default setting: `dkron agent --server --bootstrap-expect=1`
 
 Navigate to http://localhost:8080
 
@@ -48,7 +48,7 @@ Dkron provides an official Docker image vi Dockerhub that can be used for deploy
 Here’s a quick one-liner to get you off the ground (please note, we recommend further configuration for production deployments below):
 
 ```
-docker run -d -p 8080:8080 --name dkron dkron/dkron agent --server
+docker run -d -p 8080:8080 --name dkron dkron/dkron agent --server --bootstrap-expect=1
 ```
 
 This will launch a Dkron server on port 8080 by default. You can use docker logs -f dkron to follow the rest of the initialization progress. Once the Dkron startup completes you can access the app at localhost:8080
@@ -66,7 +66,7 @@ Dkron uses the local filesystem for storing the embedded database to store its o
 To persist your data outside of the container and make it available for use between container launches we can mount a local path inside our container.
 
 ```
-docker run -d -p 8080:8080 -v ~/dkron.data:/dkron.data --name dkron dkron/dkron agent --server
+docker run -d -p 8080:8080 -v ~/dkron.data:/dkron.data --name dkron dkron/dkron agent --server --bootstrap-expect=1
 ```
 
 Now when you launch your container we are mounting that folder from our local filesystem into the container.
