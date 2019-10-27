@@ -27,12 +27,12 @@ const (
 )
 
 type dkronFSM struct {
-	store Storage
+	store *Store
 	mu    sync.Mutex
 }
 
 // NewFSM is used to construct a new FSM with a blank state
-func newFSM(store Storage) *dkronFSM {
+func newFSM(store *Store) *dkronFSM {
 	return &dkronFSM{
 		store: store,
 	}
@@ -127,7 +127,7 @@ func (d *dkronFSM) Restore(r io.ReadCloser) error {
 }
 
 type dkronSnapshot struct {
-	store Storage
+	store *Store
 }
 
 func (d *dkronSnapshot) Persist(sink raft.SnapshotSink) error {

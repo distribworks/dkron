@@ -56,7 +56,7 @@ type Agent struct {
 	HTTPTransport Transport
 
 	// Store interface to set the storage engine
-	Store Storage
+	Store *Store
 
 	// GRPCServer interface for setting the GRPC server
 	GRPCServer DkronGRPCServer
