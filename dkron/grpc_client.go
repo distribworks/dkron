@@ -75,7 +75,7 @@ func (grpcc *GRPCClient) ExecutionDone(addr string, execution *Execution) error 
 	d := proto.NewDkronClient(conn)
 	edr, err := d.ExecutionDone(context.Background(), &proto.ExecutionDoneRequest{Execution: execution.ToProto()})
 	if err != nil {
-		if err == fmt.Errorf("rpc error: code = Unknown desc = %s", ErrNotLeader) {
+		if err.Error() == fmt.Sprintf("rpc error: code = Unknown desc = %s", ErrNotLeader.Error()) {
 			log.Info("grpc: ExecutionDone forwarded to the leader")
 			return nil
 		}
