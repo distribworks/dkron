@@ -13,7 +13,7 @@ tags:
 encrypt: {{ dkron_encrypt }}
 {% endif %}
 {% if dkron_servers is defined and dkron_servers %}
-join:
+retry-join:
 {{ dkron_servers | to_nice_yaml }}
 {% endif %}
 {% if dkron_webhook_url is defined and dkron_webhook_url %}
