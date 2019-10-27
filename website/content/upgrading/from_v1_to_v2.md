@@ -2,7 +2,15 @@
 title: Upgrade from v1 to v2
 ---
 
-Dkron v2 brings lots of changes to the previous version. To successfully upgrade from v1 to v2 you need to take care of certain changes:
+Dkron v2 brings lots of changes to the previous version. To successfully upgrade from v1 to v2 you need to take care of certain steps.
+
+## Storage
+
+Dkron v2 brings native storage, no external storage engine is needed. This change can be shocking for existing users and should be carefully planned to consider Dkron as a stateful service in contrast of a stateless service as in v1.
+
+You must plan a backup strategy for the data directories, you can configure it using the `--data-dir` parameter, by default `./dkron.data`.
+
+This will ensure that you can recover cluster data in case of an unexpected failure.
 
 ## Migrating Jobs
 
@@ -33,7 +41,3 @@ Tags behave different in dkron 2. There are several dkron tags that changed name
 You can not set these tags with the `tags` param. Tags `region` and `dc` can be set using the `region` and `datacenter` params, respectively.
 
 In Dkron 2, the job filtering API now filters on the `metadata` instead of the `tags` field. Jobs have a new param `metadata` that can be used to set any data to classify jobs. These can then be used to filter results returned by the API.
-
-## Selecting storage dir and backup strategies
-
-Dkron 2 implements a new param `data-dir`, which specifies the working data directory. This directory stores all working data, and it should be backed up and handled with special care.

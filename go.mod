@@ -1,6 +1,7 @@
 module github.com/distribworks/dkron/v2
 
 require (
+	github.com/BurntSushi/toml v0.3.1 // indirect
 	github.com/DataDog/datadog-go v0.0.0-20170427165718-0ddda6bee211 // indirect
 	github.com/armon/circbuf v0.0.0-20150827004946-bbbad097214e
 	github.com/armon/go-metrics v0.0.0-20180917152333-f0300d1749da

@@ -24,7 +24,7 @@ Every organization running Dkron Pro on its own servers must have a license. The
 
 ### What happens if my subscription lapses?
 
-You must have an active subscription to run Dkron Pro. After a one week grace period, you'll lose access to the package repository and priority support. You won't get any more updates or bug fixes and 'apt-get install dkron-pro' won't work anymore.
+You must have an active subscription to run Dkron Pro. After a one week grace period, you'll lose access to the package repository and priority support. You won't get any more updates or bug fixes and `apt-get install dkron-pro` won't work anymore.
 
 ### Can I distribute Dkron Pro to my customers?
 
