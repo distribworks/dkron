@@ -48,7 +48,6 @@ require (
 	google.golang.org/grpc v1.19.1
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/go-playground/validator.v8 v8.18.2 // indirect
-	launchpad.net/gocheck v0.0.0-20140225173054-000000000087 // indirect
 )
 
 replace github.com/hashicorp/mdns => github.com/hashicorp/mdns v1.0.1
