@@ -1,13 +1,12 @@
 module github.com/distribworks/dkron/v2
 
 require (
-	github.com/BurntSushi/toml v0.3.1 // indirect
 	github.com/DataDog/datadog-go v0.0.0-20170427165718-0ddda6bee211 // indirect
 	github.com/armon/circbuf v0.0.0-20150827004946-bbbad097214e
 	github.com/armon/go-metrics v0.0.0-20180917152333-f0300d1749da
 	github.com/aws/aws-sdk-go v1.16.23 // indirect
 	github.com/boltdb/bolt v1.3.1 // indirect
-	github.com/dgraph-io/badger v0.0.0-20190809121831-9d7b751e85c9
+	github.com/dgraph-io/badger/v2 v2.0.0-rc4
 	github.com/dnaeon/go-vcr v1.0.1 // indirect
 	github.com/gin-contrib/expvar v0.0.0-20180827025536-251166f58ff2
 	github.com/gin-contrib/multitemplate v0.0.0-20170922032617-bbc6daf6024b
@@ -32,27 +31,24 @@ require (
 	github.com/jordan-wright/email v0.0.0-20180115032944-94ae17dedda2
 	github.com/json-iterator/go v1.1.6 // indirect
 	github.com/kardianos/osext v0.0.0-20170510131534-ae77be60afb1
-	github.com/kr/pretty v0.1.0 // indirect
 	github.com/mattn/go-shellwords v0.0.0-20160315040826-525bedee691b
 	github.com/mitchellh/go-testing-interface v1.0.0 // indirect
 	github.com/pascaldekloe/goe v0.1.0 // indirect
 	github.com/ryanuber/columnize v2.1.0+incompatible
-	github.com/shurcooL/httpfs v0.0.0-20190707220628-8d4bc4ba7749 // indirect
-	github.com/shurcooL/vfsgen v0.0.0-20181202132449-6a9ea43bcacd // indirect
 	github.com/sirupsen/logrus v1.2.0
 	github.com/soheilhy/cmux v0.1.4
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/pflag v1.0.3
 	github.com/spf13/viper v1.3.2
-	github.com/stretchr/testify v1.3.0
+	github.com/stretchr/testify v1.4.0
 	github.com/ugorji/go v1.1.5-pre // indirect
 	golang.org/x/net v0.0.0-20190620200207-3b0461eec859
 	golang.org/x/text v0.3.1-0.20181227161524-e6919f6577db // indirect
 	google.golang.org/genproto v0.0.0-20190404172233-64821d5d2107 // indirect
 	google.golang.org/grpc v1.19.1
-	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/go-playground/validator.v8 v8.18.2 // indirect
+	launchpad.net/gocheck v0.0.0-20140225173054-000000000087 // indirect
 )
 
 replace github.com/hashicorp/mdns => github.com/hashicorp/mdns v1.0.1

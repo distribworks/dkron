@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/dgraph-io/badger"
+	"github.com/dgraph-io/badger/v2"
 	dkronpb "github.com/distribworks/dkron/v2/proto"
 	"github.com/golang/protobuf/proto"
 	"github.com/sirupsen/logrus"

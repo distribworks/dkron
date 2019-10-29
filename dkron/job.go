@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/dgraph-io/badger"
+	"github.com/dgraph-io/badger/v2"
 	"github.com/distribworks/dkron/v2/extcron"
 	"github.com/distribworks/dkron/v2/ntime"
 	"github.com/distribworks/dkron/v2/proto"
