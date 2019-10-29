@@ -484,9 +484,8 @@ func (a *Agent) StartServer() {
 	// Create a cmux object.
 	tcpm := cmux.New(l)
 	var grpcl, raftl net.Listener
-	var tlsm cmux.CMux
 
-	// If RaftLayer brings TLS config listen to TLS
+	// If TLS config present listen to TLS
 	if a.TLSConfig != nil {
 		// Create a RaftLayer with TLS
 		a.raftLayer = NewTLSRaftLayer(a.TLSConfig)
@@ -496,7 +495,7 @@ func (a *Agent) StartServer() {
 		tlsl = tls.NewListener(tlsl, a.TLSConfig)
 
 		// Declare sub cMUX for TLS
-		tlsm = cmux.New(tlsl)
+		tlsm := cmux.New(tlsl)
 
 		// Declare the match for TLS gRPC
 		grpcl = tlsm.MatchWithWriters(cmux.HTTP2MatchHeaderFieldSendSettings("content-type", "application/grpc"))
