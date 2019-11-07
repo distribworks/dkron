@@ -141,7 +141,7 @@ changelog:
 
 dockers:
   -
-    dockerfile: Dockerfile.hub
+    dockerfile: Dockerfile.release
     binaries:
       - dkron
       - dkron-executor-http
