@@ -11,6 +11,6 @@ COPY go.sum go.sum
 RUN go mod download
 
 COPY . .
-RUN go install ./...
+#RUN go install ./...
 
-CMD ["dkron"]
+#CMD ["dkron"]
