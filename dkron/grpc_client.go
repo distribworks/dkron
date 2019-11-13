@@ -17,6 +17,7 @@ import (
 type DkronGRPCClient interface {
 	Connect(string) (*grpc.ClientConn, error)
 	ExecutionDone(string, *Execution) error
+	ExecutionStatusUpdate(string, *Execution, bool) error
 	GetJob(string, string) (*Job, error)
 	SetJob(*Job) error
 	DeleteJob(string) (*Job, error)
@@ -88,6 +89,50 @@ func (grpcc *GRPCClient) ExecutionDone(addr string, execution *Execution) error 
 	}
 	log.WithFields(logrus.Fields{
 		"method":      "ExecutionDone",
+		"server_addr": addr,
+		"from":        edr.From,
+		"payload":     string(edr.Payload),
+	}).Debug("grpc: Response from method")
+
+	return nil
+}
+
+// ExecutionStatusUpdate calls the ExecutionStatusUpdate gRPC method
+func (grpcc *GRPCClient) ExecutionStatusUpdate(addr string, execution *Execution, isError bool) error {
+	var conn *grpc.ClientConn
+
+	conn, err := grpcc.Connect(addr)
+	defer conn.Close()
+	if err != nil {
+		log.WithError(err).WithFields(logrus.Fields{
+			"method":      "ExecutionUpdateStatus",
+			"server_addr": addr,
+		}).Error("grpc: error dialing.")
+		return err
+	}
+
+	d := proto.NewDkronClient(conn)
+	edr, err := d.ExecutionStatusUpdate(
+		context.Background(),
+		&proto.ExecutionStatusUpdateRequest{
+			Execution: execution.ToProto(),
+			Error:     isError,
+		},
+	)
+	if err != nil {
+		if err.Error() == fmt.Sprintf("rpc error: code = Unknown desc = %s", ErrNotLeader.Error()) {
+			log.Info("grpc: ExecutionUpdateStatus forwarded to the leader")
+			return nil
+		}
+
+		log.WithError(err).WithFields(logrus.Fields{
+			"method":      "ExecutionUpdateStatus",
+			"server_addr": addr,
+		}).Error("grpc: Error calling gRPC method")
+		return err
+	}
+	log.WithFields(logrus.Fields{
+		"method":      "ExecutionUpdateStatus",
 		"server_addr": addr,
 		"from":        edr.From,
 		"payload":     string(edr.Payload),

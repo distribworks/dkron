@@ -18,6 +18,19 @@ const (
 // ErrNoSuitableServer returns an error in case no suitable server to send the request is found.
 var ErrNoSuitableServer = errors.New("no suitable server found to send the request, aborting")
 
+type statusHelper struct {
+	server    string
+	agent     *Agent
+	execution *Execution
+}
+
+func (s *statusHelper) Update(a float32, b []byte, c bool) (int64, error) {
+	s.execution.Output = b
+	s.execution.Progress = a
+	log.Debugf("Status update: %v", s.agent.GRPCClient.ExecutionStatusUpdate(s.server, s.execution, c))
+	return 0, nil
+}
+
 // invokeJob will execute the given job. Depending on the event.
 func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 	output, _ := circbuf.NewBuffer(maxBufSize)
@@ -30,6 +43,12 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 		return errors.New("invoke: No executor defined, nothing to do")
 	}
 
+	rpcServer, err := a.selectServerByKey(execution.Key())
+	if err != nil {
+		return err
+	}
+	log.WithField("server", rpcServer).Debug("invoke: Selected a server to send result")
+
 	// Check if executor exists
 	if executor, ok := a.ExecutorPlugins[jex]; ok {
 		log.WithField("plugin", jex).Debug("invoke: calling executor plugin")
@@ -37,6 +56,10 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 		out, err := executor.Execute(&ExecuteRequest{
 			JobName: job.Name,
 			Config:  exc,
+		}, &statusHelper{
+			server:    rpcServer,
+			agent:     a,
+			execution: execution,
 		})
 
 		if err == nil && out.Error != "" {
@@ -60,12 +83,6 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 	execution.FinishedAt = time.Now()
 	execution.Success = success
 	execution.Output = output.Bytes()
-
-	rpcServer, err := a.selectServerByKey(execution.Key())
-	if err != nil {
-		return err
-	}
-	log.WithField("server", rpcServer).Debug("invoke: Selected a server to send result")
 
 	runningExecutions.Delete(execution.GetGroup())
 

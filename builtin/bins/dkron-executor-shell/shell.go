@@ -28,8 +28,9 @@ const (
 type Shell struct{}
 
 // Execute method of the plugin
-func (s *Shell) Execute(args *dkron.ExecuteRequest) (*dkron.ExecuteResponse, error) {
-	out, err := s.ExecuteImpl(args)
+func (s *Shell) Execute(args *dkron.ExecuteRequest, cb dkron.StatusHelper) (*dkron.ExecuteResponse, error) {
+	cb.Update(0.2, []byte{'a', 'b'}, false)
+	out, err := s.ExecuteImpl(args, cb)
 	resp := &dkron.ExecuteResponse{Output: out}
 	if err != nil {
 		resp.Error = err.Error()
@@ -37,8 +38,19 @@ func (s *Shell) Execute(args *dkron.ExecuteRequest) (*dkron.ExecuteResponse, err
 	return resp, nil
 }
 
+type reportingWriter struct {
+	buffer  *circbuf.Buffer
+	cb      dkron.StatusHelper
+	isError bool
+}
+
+func (p reportingWriter) Write(data []byte) (n int, err error) {
+	p.cb.Update(-1, data, p.isError)
+	return p.buffer.Write(data)
+}
+
 // ExecuteImpl do execute command
-func (s *Shell) ExecuteImpl(args *dkron.ExecuteRequest) ([]byte, error) {
+func (s *Shell) ExecuteImpl(args *dkron.ExecuteRequest, cb dkron.StatusHelper) ([]byte, error) {
 	output, _ := circbuf.NewBuffer(maxBufSize)
 
 	shell, err := strconv.ParseBool(args.Config["shell"])
@@ -57,8 +69,9 @@ func (s *Shell) ExecuteImpl(args *dkron.ExecuteRequest) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	cmd.Stderr = output
-	cmd.Stdout = output
+	// use same buffer for both channels, for the full return at the end
+	cmd.Stderr = reportingWriter{buffer: output, cb: cb, isError: true}
+	cmd.Stdout = reportingWriter{buffer: output, cb: cb}
 
 	// Start a timer to warn about slow handlers
 	slowTimer := time.AfterFunc(2*time.Hour, func() {

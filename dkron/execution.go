@@ -34,6 +34,9 @@ type Execution struct {
 
 	// Retry attempt of this execution.
 	Attempt uint `json:"attempt,omitempty"`
+
+	// Progress of an ongoing execution.
+	Progress float32 `json:"progress,omitempty"`
 }
 
 // NewExecution creates a new execution.

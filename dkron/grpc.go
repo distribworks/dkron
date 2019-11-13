@@ -230,6 +230,45 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.E
 	}, nil
 }
 
+// ExecutionStatusUpdate saves the execution status update to the store
+func (grpcs *GRPCServer) ExecutionStatusUpdate(ctx context.Context, execStatusReq *proto.ExecutionStatusUpdateRequest) (*proto.ExecutionStatusUpdateResponse, error) {
+	log.WithFields(logrus.Fields{
+		"group": execStatusReq.Execution.Group,
+		"job":   execStatusReq.Execution.JobName,
+		"from":  execStatusReq.Execution.NodeName,
+	}).Debug("grpc: Received execution done")
+
+	// Get the leader address and compare with the current node address.
+	// Forward the request to the leader in case current node is not the leader.
+	if !grpcs.agent.IsLeader() {
+		addr := grpcs.agent.raft.Leader()
+		grpcs.agent.GRPCClient.ExecutionStatusUpdate(
+			string(addr),
+			NewExecutionFromProto(execStatusReq.Execution),
+			execStatusReq.Error,
+		)
+		return nil, ErrNotLeader
+	}
+
+	// This is the leader at this point, so process the execution, encode the value and apply the log to the cluster.
+	// Get the defined output types for the job, and call them
+	execution := *NewExecutionFromProto(execStatusReq.Execution)
+	execStatusReq.Execution = execution.ToProto()
+	cmd, err := Encode(ExecutionDoneType, execStatusReq)
+	if err != nil {
+		return nil, err
+	}
+	af := grpcs.agent.raft.Apply(cmd, raftTimeout)
+	if err := af.Error(); err != nil {
+		return nil, err
+	}
+
+	return &proto.ExecutionStatusUpdateResponse{
+		From:    grpcs.agent.config.NodeName,
+		Payload: []byte("saved"),
+	}, nil
+}
+
 // Leave calls the Stop method, stopping everything in the server
 func (grpcs *GRPCServer) Leave(ctx context.Context, in *empty.Empty) (*empty.Empty, error) {
 	return in, grpcs.agent.Stop()

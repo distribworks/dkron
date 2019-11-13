@@ -44,7 +44,7 @@ type HTTP struct {
 //     "expectBody": "",            // Expect response body, support regexp, such as /success/
 //     "debug": "true"              // Debug option, will log everything when this option is not empty
 // }
-func (s *HTTP) Execute(args *dkron.ExecuteRequest) (*dkron.ExecuteResponse, error) {
+func (s *HTTP) Execute(args *dkron.ExecuteRequest, cb dkron.StatusHelper) (*dkron.ExecuteResponse, error) {
 	out, err := s.ExecuteImpl(args)
 	resp := &dkron.ExecuteResponse{Output: out}
 	if err != nil {

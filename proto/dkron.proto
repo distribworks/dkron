@@ -72,6 +72,7 @@ message Execution {
   uint32 attempt = 6;
   google.protobuf.Timestamp started_at = 7;
   google.protobuf.Timestamp finished_at = 8;
+  float progress = 9;
 }
 
 message ExecutionDoneRequest {
@@ -79,6 +80,16 @@ message ExecutionDoneRequest {
 }
 
 message ExecutionDoneResponse {
+  string from = 1;
+  bytes payload = 2;
+}
+
+message ExecutionStatusUpdateRequest {
+  Execution execution = 1;
+  bool error = 6;
+}
+
+message ExecutionStatusUpdateResponse {
   string from = 1;
   bytes payload = 2;
 }
@@ -124,6 +135,7 @@ message RaftRemovePeerByIDRequest {
 service Dkron {
   rpc GetJob (GetJobRequest) returns (GetJobResponse);
   rpc ExecutionDone (ExecutionDoneRequest) returns (ExecutionDoneResponse);
+  rpc ExecutionStatusUpdate (ExecutionStatusUpdateRequest) returns (ExecutionStatusUpdateResponse);
   rpc Leave (google.protobuf.Empty) returns (google.protobuf.Empty);
   rpc SetJob (SetJobRequest) returns (SetJobResponse);
   rpc DeleteJob (DeleteJobRequest) returns (DeleteJobResponse);

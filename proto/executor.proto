@@ -6,6 +6,7 @@ package dkron;
 message ExecuteRequest {
   string job_name = 1;
   map<string, string> config = 2;
+  uint32 status_server = 3;
 }
 
 message ExecuteResponse {
@@ -15,4 +16,18 @@ message ExecuteResponse {
 
 service Executor {
     rpc Execute (ExecuteRequest) returns (ExecuteResponse);
+}
+
+message StatusUpdateRequest {
+    float progress = 1;
+    bytes output = 2;
+    bool error = 3;
+}
+
+message StatusUpdateResponse {
+    int64 r = 1;
+}
+
+service StatusHelper {
+    rpc Update(StatusUpdateRequest) returns (StatusUpdateResponse);
 }
