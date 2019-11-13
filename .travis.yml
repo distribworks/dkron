@@ -6,4 +6,4 @@ services:
   - docker
 
 script:
-  - make test
+  - ./scripts/test
