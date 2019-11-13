@@ -1,71 +1,62 @@
 package dkron
 
-import (
-	"testing"
-	"time"
+// func TestGRPCExecutionDone(t *testing.T) {
+// 	viper.Reset()
 
-	"github.com/hashicorp/serf/testutil"
-	"github.com/spf13/viper"
-	"github.com/stretchr/testify/assert"
-)
+// 	aAddr := testutil.GetBindAddr().String()
 
-func TestGRPCExecutionDone(t *testing.T) {
-	viper.Reset()
+// 	c := DefaultConfig()
+// 	c.BindAddr = aAddr
+// 	c.NodeName = "test-grpc"
+// 	c.Server = true
+// 	c.LogLevel = logLevel
+// 	c.BootstrapExpect = 1
+// 	c.DevMode = true
 
-	aAddr := testutil.GetBindAddr().String()
+// 	a := NewAgent(c)
+// 	a.Start()
 
-	c := DefaultConfig()
-	c.BindAddr = aAddr
-	c.NodeName = "test-grpc"
-	c.Server = true
-	c.LogLevel = logLevel
-	c.BootstrapExpect = 1
-	c.DevMode = true
+// 	for {
+// 		if a.IsLeader() {
+// 			break
+// 		}
+// 		time.Sleep(10 * time.Millisecond)
+// 	}
 
-	a := NewAgent(c)
-	a.Start()
+// 	testJob := &Job{
+// 		Name:           "test",
+// 		Schedule:       "@every 1m",
+// 		Executor:       "shell",
+// 		ExecutorConfig: map[string]string{"command": "/bin/false"},
+// 		Disabled:       true,
+// 	}
 
-	for {
-		if a.IsLeader() {
-			break
-		}
-		time.Sleep(10 * time.Millisecond)
-	}
+// 	if err := a.Store.SetJob(testJob, true); err != nil {
+// 		t.Fatalf("error creating job: %s", err)
+// 	}
 
-	testJob := &Job{
-		Name:           "test",
-		Schedule:       "@every 1m",
-		Executor:       "shell",
-		ExecutorConfig: map[string]string{"command": "/bin/false"},
-		Disabled:       true,
-	}
+// 	testExecution := &Execution{
+// 		JobName:    "test",
+// 		Group:      time.Now().UnixNano(),
+// 		StartedAt:  time.Now(),
+// 		NodeName:   "testNode",
+// 		FinishedAt: time.Now(),
+// 		Success:    true,
+// 		Output:     []byte("type"),
+// 	}
 
-	if err := a.Store.SetJob(testJob, true); err != nil {
-		t.Fatalf("error creating job: %s", err)
-	}
+// 	rc := NewGRPCClient(nil, a)
+// 	rc.ExecutionDone(a.getRPCAddr(), testExecution)
+// 	execs, _ := a.Store.GetExecutions("test")
 
-	testExecution := &Execution{
-		JobName:    "test",
-		Group:      time.Now().UnixNano(),
-		StartedAt:  time.Now(),
-		NodeName:   "testNode",
-		FinishedAt: time.Now(),
-		Success:    true,
-		Output:     []byte("type"),
-	}
+// 	assert.Len(t, execs, 1)
+// 	assert.Equal(t, string(testExecution.Output), string(execs[0].Output))
 
-	rc := NewGRPCClient(nil, a)
-	rc.ExecutionDone(a.getRPCAddr(), testExecution)
-	execs, _ := a.Store.GetExecutions("test")
+// 	// Test store execution on a deleted job
+// 	a.Store.DeleteJob(testJob.Name)
 
-	assert.Len(t, execs, 1)
-	assert.Equal(t, string(testExecution.Output), string(execs[0].Output))
+// 	testExecution.FinishedAt = time.Now()
+// 	err := rc.ExecutionDone(a.getRPCAddr(), testExecution)
 
-	// Test store execution on a deleted job
-	a.Store.DeleteJob(testJob.Name)
-
-	testExecution.FinishedAt = time.Now()
-	err := rc.ExecutionDone(a.getRPCAddr(), testExecution)
-
-	assert.Error(t, err, ErrExecutionDoneForDeletedJob)
-}
+// 	assert.Error(t, err, ErrExecutionDoneForDeletedJob)
+// }
