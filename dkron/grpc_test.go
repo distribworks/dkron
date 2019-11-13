@@ -1,15 +1,22 @@
 package dkron
 
 import (
+	"io/ioutil"
+	"os"
 	"testing"
 	"time"
 
 	"github.com/hashicorp/serf/testutil"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestGRPCExecutionDone(t *testing.T) {
+	dir, err := ioutil.TempDir("", "dkron-test")
+	require.NoError(t, err)
+	defer os.RemoveAll(dir)
+
 	viper.Reset()
 
 	aAddr := testutil.GetBindAddr().String()
@@ -21,6 +28,7 @@ func TestGRPCExecutionDone(t *testing.T) {
 	c.LogLevel = logLevel
 	c.BootstrapExpect = 1
 	c.DevMode = true
+	c.DataDir = dir
 
 	a := NewAgent(c)
 	a.Start()
@@ -34,9 +42,9 @@ func TestGRPCExecutionDone(t *testing.T) {
 
 	testJob := &Job{
 		Name:           "test",
-		Schedule:       "@every 1m",
+		Schedule:       "@manually",
 		Executor:       "shell",
-		ExecutorConfig: map[string]string{"command": "/bin/false"},
+		ExecutorConfig: map[string]string{"command": "/bin/true"},
 		Disabled:       true,
 	}
 
@@ -65,7 +73,7 @@ func TestGRPCExecutionDone(t *testing.T) {
 	a.Store.DeleteJob(testJob.Name)
 
 	testExecution.FinishedAt = time.Now()
-	err := rc.ExecutionDone(a.getRPCAddr(), testExecution)
+	err = rc.ExecutionDone(a.getRPCAddr(), testExecution)
 
 	assert.Error(t, err, ErrExecutionDoneForDeletedJob)
 }

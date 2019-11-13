@@ -19,9 +19,8 @@ const (
 	// MaxExecutions to maintain in the storage
 	MaxExecutions = 100
 
-	defaultUpdateMaxAttempts = 5
-	defaultGCInterval        = 5 * time.Minute
-	defaultGCDiscardRatio    = 0.7
+	defaultGCInterval     = 5 * time.Minute
+	defaultGCDiscardRatio = 0.7
 )
 
 var (
@@ -47,8 +46,8 @@ type JobOptions struct {
 
 // NewStore creates a new Storage instance.
 func NewStore(a *Agent, dir string) (*Store, error) {
-	opts := badger.DefaultOptions(dir)
-	opts.Logger = log
+	opts := badger.DefaultOptions(dir).
+		WithLogger(log)
 
 	db, err := badger.Open(opts)
 	if err != nil {
