@@ -226,7 +226,7 @@ func TestAPIJobCreateUpdateJobWithInvalidParentIsNotCreated(t *testing.T) {
 		"parent_job": "parent_test_job"
 	}`)
 
-	resp, err := http.Post(baseURL+"/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
+	resp, _ := http.Post(baseURL+"/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
 	//require.NoError(t, err)
 
 	assert.Equal(t, http.StatusNotFound, resp.StatusCode)
@@ -234,7 +234,7 @@ func TestAPIJobCreateUpdateJobWithInvalidParentIsNotCreated(t *testing.T) {
 	resp.Body.Close()
 	assert.Equal(t, ErrParentJobNotFound.Error(), string(body))
 
-	resp, err = http.Get(baseURL + "/jobs/test_job")
+	resp, _ = http.Get(baseURL + "/jobs/test_job")
 	//require.NoError(t, err)
 	assert.Equal(t, http.StatusNotFound, resp.StatusCode)
 }
