@@ -6,7 +6,7 @@ require (
 	github.com/armon/go-metrics v0.0.0-20180917152333-f0300d1749da
 	github.com/aws/aws-sdk-go v1.16.23 // indirect
 	github.com/boltdb/bolt v1.3.1 // indirect
-	github.com/dgraph-io/badger/v2 v2.0.0-rc4
+	github.com/dgraph-io/badger/v2 v2.0.0
 	github.com/dnaeon/go-vcr v1.0.1 // indirect
 	github.com/gin-contrib/expvar v0.0.0-20180827025536-251166f58ff2
 	github.com/gin-contrib/multitemplate v0.0.0-20170922032617-bbc6daf6024b
