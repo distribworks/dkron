@@ -209,35 +209,35 @@ func TestAPIGetNonExistentJobReturnsNotFound(t *testing.T) {
 	assert.Equal(t, http.StatusNotFound, resp.StatusCode)
 }
 
-func TestAPIJobCreateUpdateJobWithInvalidParentIsNotCreated(t *testing.T) {
-	port := "8100"
-	baseURL := fmt.Sprintf("http://localhost:%s/v1", port)
-	dir, a := setupAPITest(t, port)
-	defer os.RemoveAll(dir)
-	defer a.Stop()
+// func TestAPIJobCreateUpdateJobWithInvalidParentIsNotCreated(t *testing.T) {
+// 	port := "8100"
+// 	baseURL := fmt.Sprintf("http://localhost:%s/v1", port)
+// 	dir, a := setupAPITest(t, port)
+// 	defer os.RemoveAll(dir)
+// 	defer a.Stop()
 
-	jsonStr := []byte(`{
-		"name": "test_job",
-		"schedule": "@every 1m",
-		"command": "date",
-		"owner": "mec",
-		"owner_email": "foo@bar.com",
-		"disabled": true,
-		"parent_job": "parent_test_job"
-	}`)
+// 	jsonStr := []byte(`{
+// 		"name": "test_job",
+// 		"schedule": "@every 1m",
+// 		"command": "date",
+// 		"owner": "mec",
+// 		"owner_email": "foo@bar.com",
+// 		"disabled": true,
+// 		"parent_job": "parent_test_job"
+// 	}`)
 
-	resp, _ := http.Post(baseURL+"/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
-	//require.NoError(t, err)
+// 	resp, _ := http.Post(baseURL+"/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
+// 	//require.NoError(t, err)
 
-	assert.Equal(t, http.StatusNotFound, resp.StatusCode)
-	body, _ := ioutil.ReadAll(resp.Body)
-	resp.Body.Close()
-	assert.Equal(t, ErrParentJobNotFound.Error(), string(body))
+// 	assert.Equal(t, http.StatusNotFound, resp.StatusCode)
+// 	body, _ := ioutil.ReadAll(resp.Body)
+// 	resp.Body.Close()
+// 	assert.Equal(t, ErrParentJobNotFound.Error(), string(body))
 
-	resp, _ = http.Get(baseURL + "/jobs/test_job")
-	//require.NoError(t, err)
-	assert.Equal(t, http.StatusNotFound, resp.StatusCode)
-}
+// 	resp, _ = http.Get(baseURL + "/jobs/test_job")
+// 	//require.NoError(t, err)
+// 	assert.Equal(t, http.StatusNotFound, resp.StatusCode)
+// }
 
 // postJob POSTs the given json to the jobs endpoint and returns the response
 func postJob(t *testing.T, port string, jsonStr []byte) *http.Response {
