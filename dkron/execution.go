@@ -21,7 +21,7 @@ type Execution struct {
 	FinishedAt time.Time `json:"finished_at,omitempty"`
 
 	// If this execution executed succesfully.
-	Success bool `json:"success,omitempty"`
+	Success bool `json:"success"`
 
 	// Partial output of the execution.
 	Output []byte `json:"output,omitempty"`
