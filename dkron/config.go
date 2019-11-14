@@ -226,7 +226,7 @@ func ConfigFlagSet() *flag.FlagSet {
 
 	cmdFlags.String("webhook-url", "", "Webhook url to call for notifications")
 	cmdFlags.String("webhook-payload", "", "Body of the POST request to send on webhook call")
-	cmdFlags.StringSlice("webhook-header", []string{}, "Headers to use when calling the webhook URL. Can be specified multiple times")
+	cmdFlags.StringSlice("webhook-headers", []string{}, "Headers to use when calling the webhook URL. Can be specified multiple times")
 
 	cmdFlags.String("dog-statsd-addr", "", "DataDog Agent address")
 	cmdFlags.StringSlice("dog-statsd-tags", []string{}, "Datadog tags, specified as key:value")
