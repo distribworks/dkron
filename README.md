@@ -44,8 +44,10 @@ Next, run the included Docker Compose config:
 
 This will start Dkron instances. To add more Dkron instances to the clusters:
 
-`docker-compose up --scale dkron-server=4`
-`docker-compose up --scale dkron-agent=10`
+```
+docker-compose up --scale dkron-server=4
+docker-compose up --scale dkron-agent=10
+```
 
 Check the port mapping using `docker-compose ps` and use the browser to navigate to the Dkron dashboard using one of the ports mapped by compose.
 
