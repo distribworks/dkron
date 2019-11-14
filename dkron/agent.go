@@ -133,6 +133,8 @@ func NewAgent(config *Config, options ...AgentOption) *Agent {
 // Start the current agent by running all the necessary
 // checks and server or client routines.
 func (a *Agent) Start() error {
+	InitLogger(a.config.LogLevel, a.config.NodeName)
+
 	// Normalize configured addresses
 	a.config.normalizeAddrs()
 

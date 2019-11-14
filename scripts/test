@@ -4,4 +4,4 @@ set -e
 docker build -t dkron .
 docker run dkron scripts/validate-gofmt
 docker run dkron go vet
-docker run --rm dkron go test -v -timeout 120s ./... $1
+docker run --rm dkron go test -v ./... $1
