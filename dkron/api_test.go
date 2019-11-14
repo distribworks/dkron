@@ -177,7 +177,7 @@ func TestAPIJobCreateUpdateValidationBadConcurrency(t *testing.T) {
 		"schedule": "@every 1m",
 		"executor": "shell",
 		"executor_config": {"command": "date"},
-		"concurrency": "badvalue"
+		"concurrency": "badvalue",
 		"disabled": true
 	}`))
 

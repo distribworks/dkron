@@ -1,11 +1,14 @@
 package dkron
 
 import (
+	"io/ioutil"
+	"os"
 	"testing"
 	"time"
 
 	"github.com/hashicorp/serf/testutil"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 var (
@@ -13,6 +16,10 @@ var (
 )
 
 func TestAgentCommand_runForElection(t *testing.T) {
+	dir, err := ioutil.TempDir("", "dkron-test")
+	require.NoError(t, err)
+	defer os.RemoveAll(dir)
+
 	a1Name := "test1"
 	a2Name := "test2"
 	a1Addr := testutil.GetBindAddr().String()
@@ -32,6 +39,7 @@ func TestAgentCommand_runForElection(t *testing.T) {
 	c.LogLevel = logLevel
 	c.BootstrapExpect = 3
 	c.DevMode = true
+	c.DataDir = dir
 
 	a1 := NewAgent(c)
 	if err := a1.Start(); err != nil {
@@ -57,6 +65,7 @@ func TestAgentCommand_runForElection(t *testing.T) {
 	c.LogLevel = logLevel
 	c.BootstrapExpect = 3
 	c.DevMode = true
+	c.DataDir = dir
 
 	a2 := NewAgent(c)
 	a2.Start()
@@ -70,6 +79,7 @@ func TestAgentCommand_runForElection(t *testing.T) {
 	c.LogLevel = logLevel
 	c.BootstrapExpect = 3
 	c.DevMode = true
+	c.DataDir = dir
 
 	a3 := NewAgent(c)
 	a3.Start()
@@ -89,6 +99,10 @@ func TestAgentCommand_runForElection(t *testing.T) {
 }
 
 func Test_processFilteredNodes(t *testing.T) {
+	dir, err := ioutil.TempDir("", "dkron-test")
+	require.NoError(t, err)
+	defer os.RemoveAll(dir)
+
 	a1Addr := testutil.GetBindAddr().String()
 	a2Addr := testutil.GetBindAddr().String()
 
@@ -100,6 +114,7 @@ func Test_processFilteredNodes(t *testing.T) {
 	c.LogLevel = logLevel
 	c.Tags = map[string]string{"tag": "test"}
 	c.DevMode = true
+	c.DataDir = dir
 
 	a1 := NewAgent(c)
 	a1.Start()
@@ -118,6 +133,7 @@ func Test_processFilteredNodes(t *testing.T) {
 		"extra": "tag",
 	}
 	c.DevMode = true
+	c.DataDir = dir
 
 	a2 := NewAgent(c)
 	a2.Start()
@@ -146,6 +162,10 @@ func Test_processFilteredNodes(t *testing.T) {
 }
 
 func TestEncrypt(t *testing.T) {
+	dir, err := ioutil.TempDir("", "dkron-test")
+	require.NoError(t, err)
+	defer os.RemoveAll(dir)
+
 	c := DefaultConfig()
 	c.BindAddr = testutil.GetBindAddr().String()
 	c.NodeName = "test1"
@@ -154,6 +174,7 @@ func TestEncrypt(t *testing.T) {
 	c.EncryptKey = "kPpdjphiipNSsjd4QHWbkA=="
 	c.LogLevel = logLevel
 	c.DevMode = true
+	c.DataDir = dir
 
 	a := NewAgent(c)
 	a.Start()
@@ -165,6 +186,10 @@ func TestEncrypt(t *testing.T) {
 }
 
 func Test_getRPCAddr(t *testing.T) {
+	dir, err := ioutil.TempDir("", "dkron-test")
+	require.NoError(t, err)
+	defer os.RemoveAll(dir)
+
 	a1Addr := testutil.GetBindAddr()
 
 	c := DefaultConfig()
@@ -174,6 +199,7 @@ func Test_getRPCAddr(t *testing.T) {
 	c.Tags = map[string]string{"role": "test"}
 	c.LogLevel = logLevel
 	c.DevMode = true
+	c.DataDir = dir
 
 	a := NewAgent(c)
 	a.Start()
@@ -188,12 +214,17 @@ func Test_getRPCAddr(t *testing.T) {
 }
 
 func TestAgentConfig(t *testing.T) {
+	dir, err := ioutil.TempDir("", "dkron-test")
+	require.NoError(t, err)
+	defer os.RemoveAll(dir)
+
 	advAddr := testutil.GetBindAddr().String()
 
 	c := DefaultConfig()
 	c.BindAddr = testutil.GetBindAddr().String()
 	c.AdvertiseAddr = advAddr
 	c.LogLevel = logLevel
+	c.DataDir = dir
 
 	a := NewAgent(c)
 	a.Start()

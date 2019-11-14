@@ -1,4 +1,4 @@
-FROM golang:1.12
+FROM golang:1.13
 LABEL maintainer="Victor Castell <victor@victorcastell.com>"
 
 EXPOSE 8080 8946
@@ -12,6 +12,6 @@ COPY go.sum go.sum
 RUN go mod download
 
 COPY . .
-RUN go install ./...
+#RUN go install ./...
 
-CMD ["dkron"]
+#CMD ["dkron"]
