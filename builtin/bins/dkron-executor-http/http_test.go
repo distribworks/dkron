@@ -68,24 +68,24 @@ func TestNoVerifyPeer(t *testing.T) {
 	assert.Equal(t, output.Error, "")
 }
 
-func TestClientSSLCert(t *testing.T) {
-	pa := &dkron.ExecuteRequest{
-		JobName: "testJob",
-		Config: map[string]string{
-			"method":                "GET",
-			"url":                   "https://client.badssl.com/",
-			"expectCode":            "200",
-			"debug":                 "true",
-			"tlsCertificateFile":    "testdata/badssl.com-client.pem",
-			"tlsCertificateKeyFile": "testdata/badssl.com-client-key-decrypted.pem",
-		},
-	}
-	http := &HTTP{}
-	output, _ := http.Execute(pa)
-	fmt.Println(string(output.Output))
-	fmt.Println(output.Error)
-	assert.Equal(t, output.Error, "")
-}
+// func TestClientSSLCert(t *testing.T) {
+// 	pa := &dkron.ExecuteRequest{
+// 		JobName: "testJob",
+// 		Config: map[string]string{
+// 			"method":                "GET",
+// 			"url":                   "https://client.badssl.com/",
+// 			"expectCode":            "200",
+// 			"debug":                 "true",
+// 			"tlsCertificateFile":    "testdata/badssl.com-client.pem",
+// 			"tlsCertificateKeyFile": "testdata/badssl.com-client-key-decrypted.pem",
+// 		},
+// 	}
+// 	http := &HTTP{}
+// 	output, _ := http.Execute(pa)
+// 	fmt.Println(string(output.Output))
+// 	fmt.Println(output.Error)
+// 	assert.Equal(t, output.Error, "")
+// }
 
 func TestRootCA(t *testing.T) {
 	pa := &dkron.ExecuteRequest{
