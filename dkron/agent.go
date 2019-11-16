@@ -641,10 +641,6 @@ func (a *Agent) eventLoop() {
 			if e.EventType() == serf.EventQuery {
 				query := e.(*serf.Query)
 
-				if query.Name == QuerySchedulerRestart && a.config.Server {
-					a.schedule()
-				}
-
 				if query.Name == QueryRunJob {
 					log.WithFields(logrus.Fields{
 						"query":   query.Name,
@@ -725,16 +721,6 @@ func (a *Agent) eventLoop() {
 			return
 		}
 	}
-}
-
-// schedule Start or restart scheduler
-func (a *Agent) schedule() {
-	log.Info("agent: Restarting scheduler")
-	jobs, err := a.Store.GetJobs(nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-	a.sched.Restart(jobs)
 }
 
 // Join asks the Serf instance to join. See the Serf.Join function.

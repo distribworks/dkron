@@ -22,49 +22,35 @@ var (
 // Scheduler represents a dkron scheduler instance, it stores the cron engine
 // and the related parameters.
 type Scheduler struct {
-	Cron    *cron.Cron
-	Started bool
+	Cron        *cron.Cron
+	Started     bool
+	EntryJobMap map[string]cron.EntryID
 }
 
 // NewScheduler creates a new Scheduler instance
 func NewScheduler() *Scheduler {
 	schedulerStarted.Set(0)
-	return &Scheduler{Cron: nil, Started: false}
+	return &Scheduler{
+		Cron:        nil,
+		Started:     false,
+		EntryJobMap: make(map[string]cron.EntryID),
+	}
 }
 
 // Start the cron scheduler, adding its corresponding jobs and
 // executing them on time.
-func (s *Scheduler) Start(jobs []*Job) {
+func (s *Scheduler) Start(jobs []*Job) error {
 	s.Cron = cron.New(cron.WithParser(extcron.NewParser()))
+
 	metrics.IncrCounter([]string{"scheduler", "start"}, 1)
 	for _, job := range jobs {
-		if job.Disabled || job.ParentJob != "" {
-			continue
-		}
-
-		log.WithFields(logrus.Fields{
-			"job": job.Name,
-		}).Debug("scheduler: Adding job to cron")
-
-		cronInspect.Set(job.Name, job)
-		metrics.EmitKey([]string{"scheduler", "job", "add", job.Name}, 1)
-
-		// If Timezone is set on the job, and not explicitly in its schedule,
-		// AND its not a descriptor (that don't support timezones), add the
-		// timezone to the schedule so robfig/cron knows about it.
-		schedule := job.Schedule
-		if job.Timezone != "" &&
-			!strings.HasPrefix(schedule, "@") &&
-			!strings.HasPrefix(schedule, "TZ=") &&
-			!strings.HasPrefix(schedule, "CRON_TZ=") {
-			schedule = "CRON_TZ=" + job.Timezone + " " + schedule
-		}
-		s.Cron.AddJob(schedule, job)
+		s.AddJob(job)
 	}
 	s.Cron.Start()
 	s.Started = true
-
 	schedulerStarted.Set(1)
+
+	return nil
 }
 
 // Stop stops the scheduler effectively not running any job.
@@ -99,4 +85,45 @@ func (s *Scheduler) GetEntry(job *Job) (cron.Entry, bool) {
 		}
 	}
 	return cron.Entry{}, false
+}
+
+// AddJob Adds a job to the cron scheduler
+func (s *Scheduler) AddJob(job *Job) error {
+	if job.Disabled || job.ParentJob != "" {
+		return nil
+	}
+
+	log.WithFields(logrus.Fields{
+		"job": job.Name,
+	}).Debug("scheduler: Adding job to cron")
+
+	cronInspect.Set(job.Name, job)
+	metrics.EmitKey([]string{"scheduler", "job", "add", job.Name}, 1)
+
+	// If Timezone is set on the job, and not explicitly in its schedule,
+	// AND its not a descriptor (that don't support timezones), add the
+	// timezone to the schedule so robfig/cron knows about it.
+	schedule := job.Schedule
+	if job.Timezone != "" &&
+		!strings.HasPrefix(schedule, "@") &&
+		!strings.HasPrefix(schedule, "TZ=") &&
+		!strings.HasPrefix(schedule, "CRON_TZ=") {
+		schedule = "CRON_TZ=" + job.Timezone + " " + schedule
+	}
+	id, err := s.Cron.AddJob(schedule, job)
+	if err != nil {
+		return err
+	}
+	s.EntryJobMap[job.Name] = id
+
+	return nil
+}
+
+// RemoveJob removes a job from the cron scheduler
+func (s *Scheduler) RemoveJob(job *Job) {
+	log.WithFields(logrus.Fields{
+		"job": job.Name,
+	}).Debug("scheduler: Removing job from cron")
+	s.Cron.Remove(s.EntryJobMap[job.Name])
+	delete(s.EntryJobMap, job.Name)
 }

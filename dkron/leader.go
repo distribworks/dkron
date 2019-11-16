@@ -186,7 +186,13 @@ func (a *Agent) reconcileMember(member serf.Member) error {
 // state is up-to-date.
 func (a *Agent) establishLeadership(stopCh chan struct{}) error {
 	defer metrics.MeasureSince([]string{"dkron", "leader", "establish_leadership"}, time.Now())
-	a.schedule()
+
+	log.Info("agent: Starting scheduler")
+	jobs, err := a.Store.GetJobs(nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	a.sched.Start(jobs)
 
 	return nil
 }
