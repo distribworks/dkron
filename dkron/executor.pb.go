@@ -4,10 +4,12 @@
 package dkron
 
 import (
+	context "context"
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
-	context "golang.org/x/net/context"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -20,7 +22,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type ExecuteRequest struct {
 	JobName              string            `protobuf:"bytes,1,opt,name=job_name,json=jobName,proto3" json:"job_name,omitempty"`
@@ -178,6 +180,14 @@ func (c *executorClient) Execute(ctx context.Context, in *ExecuteRequest, opts .
 // ExecutorServer is the server API for Executor service.
 type ExecutorServer interface {
 	Execute(context.Context, *ExecuteRequest) (*ExecuteResponse, error)
+}
+
+// UnimplementedExecutorServer can be embedded to have forward compatible implementations.
+type UnimplementedExecutorServer struct {
+}
+
+func (*UnimplementedExecutorServer) Execute(ctx context.Context, req *ExecuteRequest) (*ExecuteResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Execute not implemented")
 }
 
 func RegisterExecutorServer(s *grpc.Server, srv ExecutorServer) {
