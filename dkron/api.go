@@ -117,7 +117,7 @@ func (h *HTTPTransport) indexHandler(c *gin.Context) {
 func (h *HTTPTransport) jobsHandler(c *gin.Context) {
 	metadata := c.QueryMap("metadata")
 
-	jobs, err := h.agent.Store.GetJobs(&JobOptions{ComputeStatus: true, Metadata: metadata})
+	jobs, err := h.agent.Store.GetJobs(&JobOptions{Metadata: metadata})
 	if err != nil {
 		log.WithError(err).Error("api: Unable to get jobs, store not reachable.")
 		return
@@ -128,7 +128,7 @@ func (h *HTTPTransport) jobsHandler(c *gin.Context) {
 func (h *HTTPTransport) jobGetHandler(c *gin.Context) {
 	jobName := c.Param("job")
 
-	job, err := h.agent.Store.GetJob(jobName, &JobOptions{ComputeStatus: true})
+	job, err := h.agent.Store.GetJob(jobName, nil)
 	if err != nil {
 		log.Error(err)
 	}
