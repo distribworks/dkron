@@ -14,6 +14,8 @@ dkron.filter('statusClass', function () {
         return 'status-warning glyphicon-exclamation-sign'
       case 'running':
         return 'status-running glyphicon-play-circle'
+      default:
+        return 'glyphicon-question-sign'
     }
     return input;
   };

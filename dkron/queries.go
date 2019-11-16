@@ -33,6 +33,7 @@ func (a *Agent) RunQuery(job *Job, ex *Execution) {
 
 	if e, ok := a.sched.GetEntry(job); ok {
 		job.Next = e.Next
+		job.Status = StatusRunning
 	}
 	if err := a.applySetJob(job.ToProto()); err != nil {
 		log.WithError(err).WithFields(logrus.Fields{

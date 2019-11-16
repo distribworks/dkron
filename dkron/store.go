@@ -40,8 +40,7 @@ type Store struct {
 
 // JobOptions additional options to apply when loading a Job.
 type JobOptions struct {
-	ComputeStatus bool
-	Metadata      map[string]string `json:"tags"`
+	Metadata map[string]string `json:"tags"`
 }
 
 // NewStore creates a new Storage instance.
@@ -268,6 +267,12 @@ func (s *Store) SetExecutionDone(execution *Execution) (bool, error) {
 			pbj.ErrorCount++
 		}
 
+		status, err := s.computeStatus(pbj, pbe, txn)
+		if err != nil {
+			return err
+		}
+		pbj.Status = status
+
 		if err := s.setJobTxnFunc(&pbj)(txn); err != nil {
 			return err
 		}
@@ -322,9 +327,6 @@ func (s *Store) GetJobs(options *JobOptions) ([]*Job, error) {
 				if options.Metadata != nil && len(options.Metadata) > 0 && !s.jobHasMetadata(job, options.Metadata) {
 					continue
 				}
-				if options.ComputeStatus {
-					job.Status = job.GetStatus()
-				}
 			}
 
 			jobs = append(jobs, job)
@@ -346,9 +348,6 @@ func (s *Store) GetJob(name string, options *JobOptions) (*Job, error) {
 
 	job := NewJobFromProto(&pbj)
 	job.Agent = s.agent
-	if options != nil && options.ComputeStatus {
-		job.Status = job.GetStatus()
-	}
 
 	return job, nil
 }
@@ -426,7 +425,7 @@ func (s *Store) GetExecutions(jobName string) ([]*Execution, error) {
 		return nil, err
 	}
 
-	return s.unmarshalExecutions(kvs, jobName)
+	return s.unmarshalExecutions(kvs)
 }
 
 type kv struct {
@@ -434,18 +433,27 @@ type kv struct {
 	Value []byte
 }
 
-func (s *Store) list(prefix string, checkRoot bool) ([]*kv, error) {
-	kvs := []*kv{}
-	found := false
+func (s *Store) list(prefix string, checkRoot bool) ([]kv, error) {
+	var found bool
+	kvs := []kv{}
 
-	err := s.db.View(func(tx *badger.Txn) error {
-		it := tx.NewIterator(badger.DefaultIteratorOptions)
+	err := s.db.View(s.listTxnFunc(prefix, &kvs, &found))
+	if err == nil && !found && checkRoot {
+		return nil, badger.ErrKeyNotFound
+	}
+
+	return kvs, err
+}
+
+func (*Store) listTxnFunc(prefix string, kvs *[]kv, found *bool) func(txn *badger.Txn) error {
+	return func(txn *badger.Txn) error {
+		it := txn.NewIterator(badger.DefaultIteratorOptions)
 		defer it.Close()
 
 		prefix := []byte(prefix)
 
 		for it.Seek(prefix); it.ValidForPrefix(prefix); it.Next() {
-			found = true
+			*found = true
 			item := it.Item()
 			k := item.Key()
 
@@ -459,18 +467,12 @@ func (s *Store) list(prefix string, checkRoot bool) ([]*kv, error) {
 				return err
 			}
 
-			kv := &kv{Key: string(k), Value: body}
-			kvs = append(kvs, kv)
+			kv := kv{Key: string(k), Value: body}
+			*kvs = append(*kvs, kv)
 		}
 
 		return nil
-	})
-
-	if err == nil && !found && checkRoot {
-		return nil, badger.ErrKeyNotFound
 	}
-
-	return kvs, err
 }
 
 // GetLastExecutionGroup get last execution group given the Job name.
@@ -636,7 +638,7 @@ func (s *Store) Restore(r io.ReadCloser) error {
 	return s.db.Load(r, 256)
 }
 
-func (s *Store) unmarshalExecutions(items []*kv, stopWord string) ([]*Execution, error) {
+func (s *Store) unmarshalExecutions(items []kv) ([]*Execution, error) {
 	var executions []*Execution
 	for _, item := range items {
 		var pbe dkronpb.Execution
@@ -649,6 +651,56 @@ func (s *Store) unmarshalExecutions(items []*kv, stopWord string) ([]*Execution,
 		executions = append(executions, execution)
 	}
 	return executions, nil
+}
+
+func (s *Store) computeStatus(job dkronpb.Job, pbe *dkronpb.Execution, txn *badger.Txn) (string, error) {
+	// compute job status based on execution group
+	kvs := []kv{}
+	found := false
+	prefix := fmt.Sprintf("executions/%s/", job.Name)
+
+	if err := s.listTxnFunc(prefix, &kvs, &found)(txn); err != nil {
+		return "", err
+	}
+
+	execs, err := s.unmarshalExecutions(kvs)
+	if err != nil {
+		return "", err
+	}
+
+	var executions []*Execution
+	for _, ex := range execs {
+		if ex.Group == pbe.Group {
+			executions = append(executions, ex)
+		}
+	}
+
+	success := 0
+	failed := 0
+	for _, ex := range execs {
+		if ex.FinishedAt.IsZero() {
+			return StatusRunning, nil
+		}
+	}
+
+	var status string
+	for _, ex := range execs {
+		if ex.Success {
+			success = success + 1
+		} else {
+			failed = failed + 1
+		}
+	}
+
+	if failed == 0 {
+		status = StatusSuccess
+	} else if failed > 0 && success == 0 {
+		status = StatusFailed
+	} else if failed > 0 && success > 0 {
+		status = StatusPartialyFailed
+	}
+
+	return status, nil
 }
 
 func trimDirectoryKey(key []byte) []byte {
