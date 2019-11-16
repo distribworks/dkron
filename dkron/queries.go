@@ -10,8 +10,6 @@ import (
 )
 
 const (
-	// QuerySchedulerRestart define the string to be sent
-	QuerySchedulerRestart = "scheduler:restart"
 	// QueryRunJob define a run job query string
 	QueryRunJob = "run:job"
 	// QueryExecutionDone define the execution done query string

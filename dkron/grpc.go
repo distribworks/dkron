@@ -81,8 +81,12 @@ func (grpcs *GRPCServer) SetJob(ctx context.Context, setJobReq *proto.SetJobRequ
 		return nil, err
 	}
 
-	// If everything is ok, restart the scheduler
-	grpcs.agent.schedule()
+	// If everything is ok, add the job to the scheduler
+	job := NewJobFromProto(setJobReq.Job)
+	job.Agent = grpcs.agent
+	if err := grpcs.agent.sched.AddJob(job); err != nil {
+		return nil, err
+	}
 
 	return &proto.SetJobResponse{}, nil
 }
@@ -110,7 +114,7 @@ func (grpcs *GRPCServer) DeleteJob(ctx context.Context, delJobReq *proto.DeleteJ
 	jpb := job.ToProto()
 
 	// If everything is ok, restart the scheduler
-	grpcs.agent.schedule()
+	grpcs.agent.sched.RemoveJob(job)
 
 	return &proto.DeleteJobResponse{Job: jpb}, nil
 }
