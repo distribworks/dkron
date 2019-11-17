@@ -20,9 +20,9 @@
 Run Dkron with default setting: dkron agent --server --bootstrap-expect=1
 Navigate to http://localhost:8080
 Installing the package Debian repo APT repository:
-deb [trusted=yes] https://apt.fury.io/victorcoder/ /  Then install: sudo apt-get install dkron
+deb [trusted=yes] https://apt.fury.io/distribworks/ /  Then install: sudo apt-get install dkron
 YUM repo YUM repository:
-[dkron] name=Dkron Repo baseurl=https://yum.fury.io/victorcoder/ enabled=1 gpgcheck=0  Then install: sudo yum install dkron</description>
+[dkron] name=Dkron Pro Private Repo baseurl=https://yum.fury.io/distribworks/ enabled=1 gpgcheck=0  Then install: sudo yum install dkron</description>
     </item>
     
     <item>

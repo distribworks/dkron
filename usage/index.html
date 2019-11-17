@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2019-11-17T22:30:43 CET">
+<meta name="revised" content="2019-11-17T22:47:59 CET">
 <title>Usage :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -120,14 +120,6 @@
       <a href="/usage/executors/">Executors</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-        </ul>
-    </li>
-    <li data-nav-id="/usage/processors/" class="dd-item haschildren
-        ">
-      <div>
-      <a href="/usage/processors/">Processors</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
       <li data-nav-id="/usage/executors/http/" class="dd-item">
         <div>
           <a href="/usage/executors/http/">
@@ -139,6 +131,35 @@
         <div>
           <a href="/usage/executors/shell/">
             Shell Executor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/usage/processors/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/usage/processors/">Processors</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/usage/processors/file/" class="dd-item">
+        <div>
+          <a href="/usage/processors/file/">
+            File Processor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/processors/log/" class="dd-item">
+        <div>
+          <a href="/usage/processors/log/">
+            Log Processor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/processors/syslog/" class="dd-item">
+        <div>
+          <a href="/usage/processors/syslog/">
+            Syslog Processor
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -1121,33 +1142,6 @@ shell: Run this command using a shell environment command: The command to run en
         <a href="/usage/processors/" >Processors</a></card>
 <p>Execution Processors Processor plugins are called when an execution response has been received. They are passed the resulting execution data and configuration parameters, this plugins can perform a variety of operations with the execution and it&rsquo;s very flexible and per Job, examples of operations this plugins can do:
  Execution output storage, forwarding or redirection. Notification Monitoring  For example, Processor plugins can be used to redirect the output of a job execution to different targets.</p>
-</span>
-
-<span><card>
-        <a href="/usage/processors/file/" >File Processor</a></card>
-<p> File processor saves the execution output to a single log file in the specified directory
-Configuration Parameters
-log_dir: Path to the location where the log files will be saved forward: Forward log output to the next processor  Example
-{ &#34;name&#34;: &#34;job_name&#34;, &#34;command&#34;: &#34;echo &#39;Hello files&#39;&#34;, &#34;schedule&#34;: &#34;@every 2m&#34;, &#34;tags&#34;: { &#34;role&#34;: &#34;web&#34; }, &#34;processors&#34;: { &#34;files&#34;: { &#34;log_dir&#34;: &#34;/var/log/mydir&#34;, &#34;forward&#34;: true } } }</p>
-</span>
-
-<span><card>
-        <a href="/usage/processors/log/" >Log Processor</a></card>
-<p> Log processor writes the execution output to stdout/stderr
-Configuration Parameters
-forward: Forward the output to the next processor
-Example
-{ &#34;name&#34;: &#34;job_name&#34;, &#34;command&#34;: &#34;echo &#39;Hello log&#39;&#34;, &#34;schedule&#34;: &#34;@every 2m&#34;, &#34;tags&#34;: { &#34;role&#34;: &#34;web&#34; }, &#34;processors&#34;: { &#34;log&#34;: { &#34;forward&#34;: true } } }</p>
-</span>
-
-<span><card>
-        <a href="/usage/processors/syslog/" >Syslog Processor</a></card>
-<p> Syslog processor writes the execution output to the system syslog daemon
-Note: Only work on linux systems
-Configuration Parameters
-forward: Forward the output to the next processor
-Example
-{ &#34;name&#34;: &#34;job_name&#34;, &#34;command&#34;: &#34;echo &#39;Hello syslog&#39;&#34;, &#34;schedule&#34;: &#34;@every 2m&#34;, &#34;tags&#34;: { &#34;role&#34;: &#34;web&#34; }, &#34;processors&#34;: { &#34;syslog&#34;: { &#34;forward&#34;: true } } }</p>
 </span>
 
 <span><card>
