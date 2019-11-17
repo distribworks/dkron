@@ -18,7 +18,7 @@ Navigate to http://localhost:8080
 
 APT repository: 
 ```
-deb [trusted=yes] https://apt.fury.io/victorcoder/ /
+deb [trusted=yes] https://apt.fury.io/distribworks/ /
 ```
 
 Then install: `sudo apt-get install dkron`
@@ -29,8 +29,8 @@ YUM repository:
 
 ```
 [dkron]
-name=Dkron Repo
-baseurl=https://yum.fury.io/victorcoder/
+name=Dkron Pro Private Repo
+baseurl=https://yum.fury.io/distribworks/
 enabled=1
 gpgcheck=0
 ```
