@@ -267,7 +267,7 @@ func (s *Store) SetExecutionDone(execution *Execution) (bool, error) {
 			pbj.ErrorCount++
 		}
 
-		status, err := s.computeStatus(pbj, pbe, txn)
+		status, err := s.computeStatus(pbj.Name, pbe.Group, txn)
 		if err != nil {
 			return err
 		}
@@ -653,11 +653,11 @@ func (s *Store) unmarshalExecutions(items []kv) ([]*Execution, error) {
 	return executions, nil
 }
 
-func (s *Store) computeStatus(job dkronpb.Job, pbe *dkronpb.Execution, txn *badger.Txn) (string, error) {
+func (s *Store) computeStatus(jobName string, exGroup int64, txn *badger.Txn) (string, error) {
 	// compute job status based on execution group
 	kvs := []kv{}
 	found := false
-	prefix := fmt.Sprintf("executions/%s/", job.Name)
+	prefix := fmt.Sprintf("executions/%s/", jobName)
 
 	if err := s.listTxnFunc(prefix, &kvs, &found)(txn); err != nil {
 		return "", err
@@ -670,21 +670,21 @@ func (s *Store) computeStatus(job dkronpb.Job, pbe *dkronpb.Execution, txn *badg
 
 	var executions []*Execution
 	for _, ex := range execs {
-		if ex.Group == pbe.Group {
+		if ex.Group == exGroup {
 			executions = append(executions, ex)
 		}
 	}
 
 	success := 0
 	failed := 0
-	for _, ex := range execs {
+	for _, ex := range executions {
 		if ex.FinishedAt.IsZero() {
 			return StatusRunning, nil
 		}
 	}
 
 	var status string
-	for _, ex := range execs {
+	for _, ex := range executions {
 		if ex.Success {
 			success = success + 1
 		} else {
