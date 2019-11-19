@@ -89,6 +89,11 @@ func (s *Scheduler) GetEntry(job *Job) (cron.Entry, bool) {
 
 // AddJob Adds a job to the cron scheduler
 func (s *Scheduler) AddJob(job *Job) error {
+	// Check if the job is already set and remove it if exists
+	if _, ok := s.EntryJobMap[job.Name]; ok {
+		s.RemoveJob(job)
+	}
+
 	if job.Disabled || job.ParentJob != "" {
 		return nil
 	}
@@ -98,7 +103,7 @@ func (s *Scheduler) AddJob(job *Job) error {
 	}).Debug("scheduler: Adding job to cron")
 
 	cronInspect.Set(job.Name, job)
-	metrics.EmitKey([]string{"scheduler", "job", "add", job.Name}, 1)
+	metrics.EmitKey([]string{"scheduler", "job/update", "add", job.Name}, 1)
 
 	// If Timezone is set on the job, and not explicitly in its schedule,
 	// AND its not a descriptor (that don't support timezones), add the
@@ -110,6 +115,7 @@ func (s *Scheduler) AddJob(job *Job) error {
 		!strings.HasPrefix(schedule, "CRON_TZ=") {
 		schedule = "CRON_TZ=" + job.Timezone + " " + schedule
 	}
+
 	id, err := s.Cron.AddJob(schedule, job)
 	if err != nil {
 		return err
