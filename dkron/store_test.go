@@ -335,6 +335,99 @@ func TestStore_GetLastExecutionGroup(t *testing.T) {
 	}
 }
 
+func Test_computeStatus(t *testing.T) {
+	dir, err := ioutil.TempDir("", "dkron-test")
+	require.NoError(t, err)
+	defer os.RemoveAll(dir)
+
+	s, err := NewStore(nil, dir)
+	require.NoError(t, err)
+
+	n := time.Now()
+
+	// Prepare executions
+	ex1 := &Execution{
+		JobName:    "test",
+		StartedAt:  n,
+		FinishedAt: n,
+		Success:    true,
+		Output:     []byte("type"),
+		NodeName:   "testNode1",
+		Group:      1,
+	}
+	s.SetExecution(ex1)
+
+	ex2 := &Execution{
+		JobName:    "test",
+		StartedAt:  n.Add(10 * time.Millisecond),
+		FinishedAt: n,
+		Success:    false,
+		Output:     []byte("type"),
+		NodeName:   "testNode2",
+		Group:      1,
+	}
+	s.SetExecution(ex2)
+
+	ex3 := &Execution{
+		JobName:    "test",
+		StartedAt:  n.Add(20 * time.Millisecond),
+		FinishedAt: n,
+		Success:    true,
+		Output:     []byte("type"),
+		NodeName:   "testNode1",
+		Group:      2,
+	}
+	s.SetExecution(ex3)
+
+	ex4 := &Execution{
+		JobName:    "test",
+		StartedAt:  n.Add(30 * time.Millisecond),
+		FinishedAt: n,
+		Success:    true,
+		Output:     []byte("type"),
+		NodeName:   "testNode1",
+		Group:      2,
+	}
+	s.SetExecution(ex4)
+
+	ex5 := &Execution{
+		JobName:   "test",
+		StartedAt: n.Add(40 * time.Millisecond),
+		Success:   false,
+		Output:    []byte("type"),
+		NodeName:  "testNode1",
+		Group:     3,
+	}
+	s.SetExecution(ex5)
+
+	ex6 := &Execution{
+		JobName:  "test",
+		Success:  false,
+		Output:   []byte("type"),
+		NodeName: "testNode1",
+		Group:    4,
+	}
+	s.SetExecution(ex6)
+
+	// Tests status
+	err = s.db.View(func(txn *badger.Txn) error {
+		status, _ := s.computeStatus("test", 1, txn)
+		assert.Equal(t, StatusPartialyFailed, status)
+
+		status, _ = s.computeStatus("test", 2, txn)
+		assert.Equal(t, StatusSuccess, status)
+
+		status, _ = s.computeStatus("test", 3, txn)
+		assert.Equal(t, StatusRunning, status)
+
+		status, _ = s.computeStatus("test", 4, txn)
+		assert.Equal(t, StatusRunning, status)
+
+		return nil
+	})
+	require.NoError(t, err)
+}
+
 // Following are supporting functions for the tests
 
 func storeJob(t *testing.T, s *Store, jobName string) {
