@@ -92,121 +92,115 @@ func TestStore(t *testing.T) {
 }
 
 func TestStore_AddDependentJobToParent(t *testing.T) {
-	s, dir := setupStore(t)
-	defer cleanupStore(dir, s)
+	runBadgerTest(t, func(t *testing.T, s *Store) {
+		storeJob(t, s, "parent1")
+		storeChildJob(t, s, "child1", "parent1")
+		parent := loadJob(t, s, "parent1")
 
-	storeJob(t, s, "parent1")
-	storeChildJob(t, s, "child1", "parent1")
-	parent := loadJob(t, s, "parent1")
-
-	assert.Equal(t, "child1", parent.DependentJobs[0])
+		assert.Equal(t, "child1", parent.DependentJobs[0])
+	})
 }
 
 func TestStore_ParentIsUpdatedAfterDeletingDependentJob(t *testing.T) {
-	s, dir := setupStore(t)
-	defer cleanupStore(dir, s)
+	runBadgerTest(t, func(t *testing.T, s *Store) {
+		storeJob(t, s, "parent1")
+		storeChildJob(t, s, "child1", "parent1")
+		parent := loadJob(t, s, "parent1")
 
-	storeJob(t, s, "parent1")
-	storeChildJob(t, s, "child1", "parent1")
-	parent := loadJob(t, s, "parent1")
+		assert.Equal(t, "child1", parent.DependentJobs[0])
 
-	assert.Equal(t, "child1", parent.DependentJobs[0])
+		deleteJob(t, s, "child1")
+		parent = loadJob(t, s, "parent1")
 
-	deleteJob(t, s, "child1")
-	parent = loadJob(t, s, "parent1")
-
-	// Child has to have been removed from the parent (nr. of dependent jobs is 0)
-	assert.Equal(t, 0, len(parent.DependentJobs))
+		// Child has to have been removed from the parent (nr. of dependent jobs is 0)
+		assert.Equal(t, 0, len(parent.DependentJobs))
+	})
 }
 
 func TestStore_DependentJobsUpdatedAfterSwappingParent(t *testing.T) {
-	s, dir := setupStore(t)
-	defer cleanupStore(dir, s)
+	runBadgerTest(t, func(t *testing.T, s *Store) {
+		storeJob(t, s, "parent1")
+		storeChildJob(t, s, "child1", "parent1")
+		parent1 := loadJob(t, s, "parent1")
 
-	storeJob(t, s, "parent1")
-	storeChildJob(t, s, "child1", "parent1")
-	parent1 := loadJob(t, s, "parent1")
+		assert.Equal(t, parent1.DependentJobs[0], "child1")
 
-	assert.Equal(t, parent1.DependentJobs[0], "child1")
+		storeJob(t, s, "parent2")
+		storeChildJob(t, s, "child1", "parent2")
+		parent1 = loadJob(t, s, "parent1")
 
-	storeJob(t, s, "parent2")
-	storeChildJob(t, s, "child1", "parent2")
-	parent1 = loadJob(t, s, "parent1")
+		assert.Equal(t, 0, len(parent1.DependentJobs))
 
-	assert.Equal(t, 0, len(parent1.DependentJobs))
+		parent2 := loadJob(t, s, "parent2")
 
-	parent2 := loadJob(t, s, "parent2")
-
-	assert.Equal(t, "child1", parent2.DependentJobs[0])
+		assert.Equal(t, "child1", parent2.DependentJobs[0])
+	})
 }
 
 func TestStore_JobBecomesDependentJob(t *testing.T) {
-	s, dir := setupStore(t)
-	defer cleanupStore(dir, s)
+	runBadgerTest(t, func(t *testing.T, s *Store) {
+		storeJob(t, s, "child1")
+		storeJob(t, s, "parent1")
+		storeChildJob(t, s, "child1", "parent1")
+		parent := loadJob(t, s, "parent1")
 
-	storeJob(t, s, "child1")
-	storeJob(t, s, "parent1")
-	storeChildJob(t, s, "child1", "parent1")
-	parent := loadJob(t, s, "parent1")
-
-	assert.Equal(t, "child1", parent.DependentJobs[0])
+		assert.Equal(t, "child1", parent.DependentJobs[0])
+	})
 }
 
 func TestStore_JobBecomesIndependentJob(t *testing.T) {
-	s, dir := setupStore(t)
-	defer cleanupStore(dir, s)
+	runBadgerTest(t, func(t *testing.T, s *Store) {
+		storeJob(t, s, "parent1")
+		storeChildJob(t, s, "child1", "parent1")
+		storeJob(t, s, "child1")
+		parent := loadJob(t, s, "parent1")
 
-	storeJob(t, s, "parent1")
-	storeChildJob(t, s, "child1", "parent1")
-	storeJob(t, s, "child1")
-	parent := loadJob(t, s, "parent1")
-
-	assert.Equal(t, 0, len(parent.DependentJobs))
+		assert.Equal(t, 0, len(parent.DependentJobs))
+	})
 }
 
 func TestStore_ChildIsUpdatedAfterDeletingParentJob(t *testing.T) {
-	s, dir := setupStore(t)
-	defer cleanupStore(dir, s)
+	runBadgerTest(t, func(t *testing.T, s *Store) {
+		storeJob(t, s, "parent1")
+		storeChildJob(t, s, "child1", "parent1")
 
-	storeJob(t, s, "parent1")
-	storeChildJob(t, s, "child1", "parent1")
+		_, err := s.DeleteJob("parent1")
+		assert.EqualError(t, err, ErrDependentJobs.Error())
 
-	_, err := s.DeleteJob("parent1")
-	assert.EqualError(t, err, ErrDependentJobs.Error())
-
-	deleteJob(t, s, "child1")
-	_, err = s.DeleteJob("parent1")
-	assert.NoError(t, err)
+		deleteJob(t, s, "child1")
+		_, err = s.DeleteJob("parent1")
+		assert.NoError(t, err)
+	})
 }
 
 func TestStore_GetJobsWithMetadata(t *testing.T) {
-	s, dir := setupStore(t)
-	defer cleanupStore(dir, s)
+	runBadgerTest(t, func(t *testing.T, s *Store) {
 
-	metadata := make(map[string]string)
-	metadata["t1"] = "v1"
-	storeJobWithMetadata(t, s, "job1", metadata)
+		metadata := make(map[string]string)
+		metadata["t1"] = "v1"
+		storeJobWithMetadata(t, s, "job1", metadata)
 
-	metadata["t2"] = "v2"
-	storeJobWithMetadata(t, s, "job2", metadata)
+		metadata["t2"] = "v2"
+		storeJobWithMetadata(t, s, "job2", metadata)
 
-	var options JobOptions
-	options.Metadata = make(map[string]string)
-	options.Metadata["t1"] = "v1"
-	jobs, err := s.GetJobs(&options)
-	assert.NoError(t, err)
-	assert.Equal(t, 2, len(jobs))
+		var options JobOptions
+		options.Metadata = make(map[string]string)
+		options.Metadata["t1"] = "v1"
+		jobs, err := s.GetJobs(&options)
+		assert.NoError(t, err)
+		assert.Equal(t, 2, len(jobs))
 
-	options.Metadata["t2"] = "v2"
-	jobs, err = s.GetJobs(&options)
-	assert.NoError(t, err)
-	assert.Equal(t, 1, len(jobs))
-	assert.Equal(t, "job2", jobs[0].Name)
+		options.Metadata["t2"] = "v2"
+		jobs, err = s.GetJobs(&options)
+		assert.NoError(t, err)
+		assert.Equal(t, 1, len(jobs))
+		assert.Equal(t, "job2", jobs[0].Name)
 
-	options.Metadata["t3"] = "v3"
-	jobs, err = s.GetJobs(&options)
-	assert.NoError(t, err)
-	assert.Equal(t, 0, len(jobs))
+		options.Metadata["t3"] = "v3"
+		jobs, err = s.GetJobs(&options)
+		assert.NoError(t, err)
+		assert.Equal(t, 0, len(jobs))
+	})
 }
 
 func TestStore_GetLastExecutionGroup(t *testing.T) {
@@ -319,28 +313,24 @@ func TestStore_GetLastExecutionGroup(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			dir, err := ioutil.TempDir("", "dkron-test")
-			require.NoError(t, err)
-			s, err := NewStore(nil, dir)
-			require.NoError(t, err)
+			runBadgerTest(t, func(t *testing.T, s *Store) {
 
-			for _, e := range tt.addExecutions {
-				s.SetExecution(e)
-			}
+				for _, e := range tt.addExecutions {
+					s.SetExecution(e)
+				}
 
-			got, err := s.GetLastExecutionGroup(tt.jobName)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Store.GetLastExecutionGroup() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			for _, w := range tt.want {
-				assert.Contains(t, got, w)
-			}
+				got, err := s.GetLastExecutionGroup(tt.jobName)
+				if (err != nil) != tt.wantErr {
+					t.Errorf("Store.GetLastExecutionGroup() error = %v, wantErr %v", err, tt.wantErr)
+					return
+				}
+				for _, w := range tt.want {
+					assert.Contains(t, got, w)
+				}
 
-			err = s.Shutdown()
-			require.NoError(t, err)
-			err = os.RemoveAll(dir)
-			require.NoError(t, err)
+				err = s.Shutdown()
+				require.NoError(t, err)
+			})
 		})
 	}
 }
@@ -377,23 +367,6 @@ func scaffoldJob() *Job {
 	}
 }
 
-func setupStore(t *testing.T) (*Store, string) {
-	dir, err := ioutil.TempDir("", "dkron-test")
-	require.NoError(t, err)
-
-	a := NewAgent(nil)
-	s, err := NewStore(a, dir)
-	require.NoError(t, err)
-	a.Store = s
-
-	return s, dir
-}
-
-func cleanupStore(dir string, s *Store) {
-	s.Shutdown()
-	os.RemoveAll(dir)
-}
-
 func loadJob(t *testing.T, s *Store, name string) *Job {
 	job, err := s.GetJob(name, nil)
 	require.NoError(t, err)
@@ -403,4 +376,30 @@ func loadJob(t *testing.T, s *Store, name string) *Job {
 func deleteJob(t *testing.T, s *Store, name string) {
 	_, err := s.DeleteJob(name)
 	require.NoError(t, err)
+}
+
+// Opens a badger db and runs a a test on it.
+func runBadgerTest(t *testing.T, test func(t *testing.T, s *Store)) {
+	dir, err := ioutil.TempDir("", "dkron-test")
+	require.NoError(t, err)
+	defer removeDir(dir)
+
+	a := NewAgent(nil)
+	s, err := NewStore(a, dir)
+	require.NoError(t, err)
+	a.Store = s
+	require.NoError(t, err)
+
+	defer func() {
+		require.NoError(t, s.Shutdown())
+	}()
+	test(t, s)
+}
+
+func removeDir(dir string) func() {
+	return func() {
+		if err := os.RemoveAll(dir); err != nil {
+			panic(err)
+		}
+	}
 }
