@@ -224,6 +224,7 @@ func TestAgentConfig(t *testing.T) {
 	c.BindAddr = testutil.GetBindAddr().String()
 	c.AdvertiseAddr = advAddr
 	c.LogLevel = logLevel
+	c.DevMode = true
 	c.DataDir = dir
 
 	a := NewAgent(c)
