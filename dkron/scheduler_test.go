@@ -25,7 +25,7 @@ func TestSchedule(t *testing.T) {
 	assert.True(t, sched.Started)
 	now := time.Now().Truncate(time.Second)
 
-	entry, _ := sched.GetEntry(testJob1)
+	entry, _ := sched.GetEntry(testJob1.Name)
 	assert.Equal(t, now.Add(time.Second*2), entry.Next)
 
 	testJob2 := &Job{

@@ -200,8 +200,11 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.E
 			"execution": execution,
 		}).Debug("grpc: Retrying execution")
 
-		grpcs.agent.RunQuery(job, &execution)
-		return nil, nil
+		_ = grpcs.agent.RunQuery(job.Name, &execution)
+		return &proto.ExecutionDoneResponse{
+			From:    grpcs.agent.config.NodeName,
+			Payload: []byte("retry"),
+		}, nil
 	}
 
 	exg, err := grpcs.agent.Store.GetExecutionGroup(&execution)
@@ -241,14 +244,8 @@ func (grpcs *GRPCServer) Leave(ctx context.Context, in *empty.Empty) (*empty.Emp
 
 // RunJob runs a job in the cluster
 func (grpcs *GRPCServer) RunJob(ctx context.Context, req *proto.RunJobRequest) (*proto.RunJobResponse, error) {
-	job, err := grpcs.agent.Store.GetJob(req.JobName, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	ex := NewExecution(job.Name)
-	grpcs.agent.RunQuery(job, ex)
-
+	ex := NewExecution(req.JobName)
+	job := grpcs.agent.RunQuery(req.JobName, ex)
 	jpb := job.ToProto()
 
 	return &proto.RunJobResponse{Job: jpb}, nil

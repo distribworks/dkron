@@ -230,16 +230,7 @@ func (j *Job) Run() {
 
 			// Simple execution wrapper
 			ex := NewExecution(j.Name)
-
-			// This should be only called on the actual scheduler execution
-			n, err := j.GetNext()
-			if err != nil {
-				log.WithError(err).WithField("job", j.Name).
-					Fatal("agent: Error computing next execution")
-			}
-			j.Next = n
-
-			j.Agent.RunQuery(j, ex)
+			_ = j.Agent.RunQuery(j.Name, ex)
 		}
 	}
 }

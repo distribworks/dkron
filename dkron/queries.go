@@ -16,8 +16,6 @@ const (
 	QueryExecutionDone = "execution:done"
 )
 
-var rescheduleThrotle *time.Timer
-
 // RunQueryParam defines the struct used to send a Run query
 // using serf.
 type RunQueryParam struct {
@@ -27,14 +25,29 @@ type RunQueryParam struct {
 
 // RunQuery sends a serf run query to the cluster, this is used to ask a node or nodes
 // to run a Job.
-func (a *Agent) RunQuery(job *Job, ex *Execution) {
+func (a *Agent) RunQuery(jobName string, ex *Execution) *Job {
 	start := time.Now()
 	var params *serf.QueryParam
 
-	if e, ok := a.sched.GetEntry(job); ok {
+	job, err := a.Store.GetJob(jobName, nil)
+	if err != nil {
+		log.WithError(err).WithFields(logrus.Fields{
+			"job":    job.Name,
+			"method": "RunQuery",
+		}).Fatal("queries: Error retrieveing job from store")
+		return nil
+	}
+
+	if e, ok := a.sched.GetEntry(jobName); ok {
 		job.Next = e.Next
 		job.Status = StatusRunning
+	} else {
+		log.WithError(err).WithFields(logrus.Fields{
+			"job":    job.Name,
+			"method": "RunQuery",
+		}).Fatal("queries: Error retrieveing job from scheduler")
 	}
+
 	if err := a.applySetJob(job.ToProto()); err != nil {
 		log.WithError(err).WithFields(logrus.Fields{
 			"job":    job.Name,
@@ -128,6 +141,8 @@ func (a *Agent) RunQuery(job *Job, ex *Execution) {
 		"time":  time.Since(start),
 		"query": QueryRunJob,
 	}).Debug("agent: Done receiving acks and responses")
+
+	return job
 }
 
 // Broadcast a ExecutionDone to the cluster.
