@@ -2,7 +2,7 @@ LINUX_PKGS := $(wildcard dist/*.deb) $(wildcard dist/*.rpm)
 .PHONY: fury $(LINUX_PKGS)
 fury: $(LINUX_PKGS)
 $(LINUX_PKGS):
-	fury push $@
+	fury push --as distribworks $@
 
 .PHONY: goreleaser
 goreleaser:
