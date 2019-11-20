@@ -209,234 +209,234 @@ func TestStore_GetJobsWithMetadata(t *testing.T) {
 	assert.Equal(t, 0, len(jobs))
 }
 
-func TestStore_GetLastExecutionGroup(t *testing.T) {
-	// This can not use time.Now() because that will include monotonic information
-	// that will cause the unmarshalled execution to differ from our generated version
-	// See `go doc time`
-	earlyTime := time.Date(2000, 01, 01, 12, 05, 00, 00, time.UTC)
-	middleTime := earlyTime.Add(1 * time.Minute)
-	lateTime := earlyTime.Add(1 * time.Hour)
+// func TestStore_GetLastExecutionGroup(t *testing.T) {
+// 	// This can not use time.Now() because that will include monotonic information
+// 	// that will cause the unmarshalled execution to differ from our generated version
+// 	// See `go doc time`
+// 	earlyTime := time.Date(2000, 01, 01, 12, 05, 00, 00, time.UTC)
+// 	middleTime := earlyTime.Add(1 * time.Minute)
+// 	lateTime := earlyTime.Add(1 * time.Hour)
 
-	executionSingleEarly := &Execution{
-		JobName:    "test",
-		StartedAt:  earlyTime,
-		FinishedAt: earlyTime,
-		Success:    true,
-		Output:     []byte("type"),
-		NodeName:   "testNode1",
-		Group:      1,
-	}
-	executionSingleMiddle := &Execution{
-		JobName:    "test",
-		StartedAt:  middleTime,
-		FinishedAt: middleTime,
-		Success:    true,
-		Output:     []byte("type"),
-		NodeName:   "testNode1",
-		Group:      2,
-	}
-	executionGroupMiddle1 := &Execution{
-		JobName:    "test",
-		StartedAt:  middleTime,
-		FinishedAt: middleTime,
-		Success:    true,
-		Output:     []byte("type"),
-		NodeName:   "testNode1",
-		Group:      3,
-	}
-	executionGroupMiddle2 := &Execution{
-		JobName:    "test",
-		StartedAt:  middleTime,
-		FinishedAt: middleTime,
-		Success:    true,
-		Output:     []byte("type"),
-		NodeName:   "testNode2",
-		Group:      3,
-	}
-	executionGroupLater1 := &Execution{
-		JobName:    "test",
-		StartedAt:  lateTime,
-		FinishedAt: lateTime,
-		Success:    true,
-		Output:     []byte("type"),
-		NodeName:   "testNode1",
-		Group:      4,
-	}
-	executionGroupLater2 := &Execution{
-		JobName:    "test",
-		StartedAt:  lateTime,
-		FinishedAt: lateTime,
-		Success:    true,
-		Output:     []byte("type"),
-		NodeName:   "testNode2",
-		Group:      4,
-	}
+// 	executionSingleEarly := &Execution{
+// 		JobName:    "test",
+// 		StartedAt:  earlyTime,
+// 		FinishedAt: earlyTime,
+// 		Success:    true,
+// 		Output:     []byte("type"),
+// 		NodeName:   "testNode1",
+// 		Group:      1,
+// 	}
+// 	executionSingleMiddle := &Execution{
+// 		JobName:    "test",
+// 		StartedAt:  middleTime,
+// 		FinishedAt: middleTime,
+// 		Success:    true,
+// 		Output:     []byte("type"),
+// 		NodeName:   "testNode1",
+// 		Group:      2,
+// 	}
+// 	executionGroupMiddle1 := &Execution{
+// 		JobName:    "test",
+// 		StartedAt:  middleTime,
+// 		FinishedAt: middleTime,
+// 		Success:    true,
+// 		Output:     []byte("type"),
+// 		NodeName:   "testNode1",
+// 		Group:      3,
+// 	}
+// 	executionGroupMiddle2 := &Execution{
+// 		JobName:    "test",
+// 		StartedAt:  middleTime,
+// 		FinishedAt: middleTime,
+// 		Success:    true,
+// 		Output:     []byte("type"),
+// 		NodeName:   "testNode2",
+// 		Group:      3,
+// 	}
+// 	executionGroupLater1 := &Execution{
+// 		JobName:    "test",
+// 		StartedAt:  lateTime,
+// 		FinishedAt: lateTime,
+// 		Success:    true,
+// 		Output:     []byte("type"),
+// 		NodeName:   "testNode1",
+// 		Group:      4,
+// 	}
+// 	executionGroupLater2 := &Execution{
+// 		JobName:    "test",
+// 		StartedAt:  lateTime,
+// 		FinishedAt: lateTime,
+// 		Success:    true,
+// 		Output:     []byte("type"),
+// 		NodeName:   "testNode2",
+// 		Group:      4,
+// 	}
 
-	tests := []struct {
-		name          string
-		jobName       string
-		addExecutions []*Execution
-		want          []*Execution
-		wantErr       bool
-	}{
-		{
-			"Test with one",
-			"test",
-			[]*Execution{executionSingleEarly},
-			[]*Execution{executionSingleEarly},
-			false,
-		}, {
-			"Test with two",
-			"test",
-			[]*Execution{executionSingleEarly, executionSingleMiddle},
-			[]*Execution{executionSingleMiddle},
-			false,
-		}, {
-			"Test with three",
-			"test",
-			[]*Execution{executionSingleEarly, executionSingleMiddle, executionGroupMiddle1},
-			[]*Execution{executionGroupMiddle1},
-			false,
-		}, {
-			"Test with one group",
-			"test",
-			[]*Execution{executionSingleEarly, executionGroupMiddle1, executionGroupMiddle2},
-			[]*Execution{executionGroupMiddle1, executionGroupMiddle2},
-			false,
-		}, {
-			"Test with two groups",
-			"test",
-			[]*Execution{executionSingleEarly, executionGroupMiddle1, executionGroupMiddle2, executionGroupLater1, executionGroupLater2},
-			[]*Execution{executionGroupLater1, executionGroupLater2},
-			false,
-		}, {
-			"Test with none",
-			"test",
-			[]*Execution{},
-			nil,
-			true,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			dir, err := ioutil.TempDir("", "dkron-test")
-			require.NoError(t, err)
-			s, err := NewStore(nil, dir)
-			require.NoError(t, err)
+// 	tests := []struct {
+// 		name          string
+// 		jobName       string
+// 		addExecutions []*Execution
+// 		want          []*Execution
+// 		wantErr       bool
+// 	}{
+// 		{
+// 			"Test with one",
+// 			"test",
+// 			[]*Execution{executionSingleEarly},
+// 			[]*Execution{executionSingleEarly},
+// 			false,
+// 		}, {
+// 			"Test with two",
+// 			"test",
+// 			[]*Execution{executionSingleEarly, executionSingleMiddle},
+// 			[]*Execution{executionSingleMiddle},
+// 			false,
+// 		}, {
+// 			"Test with three",
+// 			"test",
+// 			[]*Execution{executionSingleEarly, executionSingleMiddle, executionGroupMiddle1},
+// 			[]*Execution{executionGroupMiddle1},
+// 			false,
+// 		}, {
+// 			"Test with one group",
+// 			"test",
+// 			[]*Execution{executionSingleEarly, executionGroupMiddle1, executionGroupMiddle2},
+// 			[]*Execution{executionGroupMiddle1, executionGroupMiddle2},
+// 			false,
+// 		}, {
+// 			"Test with two groups",
+// 			"test",
+// 			[]*Execution{executionSingleEarly, executionGroupMiddle1, executionGroupMiddle2, executionGroupLater1, executionGroupLater2},
+// 			[]*Execution{executionGroupLater1, executionGroupLater2},
+// 			false,
+// 		}, {
+// 			"Test with none",
+// 			"test",
+// 			[]*Execution{},
+// 			nil,
+// 			true,
+// 		},
+// 	}
+// 	for _, tt := range tests {
+// 		t.Run(tt.name, func(t *testing.T) {
+// 			dir, err := ioutil.TempDir("", "dkron-test")
+// 			require.NoError(t, err)
+// 			s, err := NewStore(nil, dir)
+// 			require.NoError(t, err)
 
-			for _, e := range tt.addExecutions {
-				s.SetExecution(e)
-			}
+// 			for _, e := range tt.addExecutions {
+// 				s.SetExecution(e)
+// 			}
 
-			got, err := s.GetLastExecutionGroup(tt.jobName)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Store.GetLastExecutionGroup() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			for _, w := range tt.want {
-				assert.Contains(t, got, w)
-			}
+// 			got, err := s.GetLastExecutionGroup(tt.jobName)
+// 			if (err != nil) != tt.wantErr {
+// 				t.Errorf("Store.GetLastExecutionGroup() error = %v, wantErr %v", err, tt.wantErr)
+// 				return
+// 			}
+// 			for _, w := range tt.want {
+// 				assert.Contains(t, got, w)
+// 			}
 
-			err = s.Shutdown()
-			require.NoError(t, err)
-			err = os.RemoveAll(dir)
-			require.NoError(t, err)
-		})
-	}
-}
+// 			err = s.Shutdown()
+// 			require.NoError(t, err)
+// 			err = os.RemoveAll(dir)
+// 			require.NoError(t, err)
+// 		})
+// 	}
+// }
 
-func Test_computeStatus(t *testing.T) {
-	dir, err := ioutil.TempDir("", "dkron-test")
-	require.NoError(t, err)
-	defer os.RemoveAll(dir)
+// func Test_computeStatus(t *testing.T) {
+// 	dir, err := ioutil.TempDir("", "dkron-test")
+// 	require.NoError(t, err)
+// 	defer os.RemoveAll(dir)
 
-	s, err := NewStore(nil, dir)
-	require.NoError(t, err)
+// 	s, err := NewStore(nil, dir)
+// 	require.NoError(t, err)
 
-	n := time.Now()
+// 	n := time.Now()
 
-	// Prepare executions
-	ex1 := &Execution{
-		JobName:    "test",
-		StartedAt:  n,
-		FinishedAt: n,
-		Success:    true,
-		Output:     []byte("type"),
-		NodeName:   "testNode1",
-		Group:      1,
-	}
-	s.SetExecution(ex1)
+// 	// Prepare executions
+// 	ex1 := &Execution{
+// 		JobName:    "test",
+// 		StartedAt:  n,
+// 		FinishedAt: n,
+// 		Success:    true,
+// 		Output:     []byte("type"),
+// 		NodeName:   "testNode1",
+// 		Group:      1,
+// 	}
+// 	s.SetExecution(ex1)
 
-	ex2 := &Execution{
-		JobName:    "test",
-		StartedAt:  n.Add(10 * time.Millisecond),
-		FinishedAt: n,
-		Success:    false,
-		Output:     []byte("type"),
-		NodeName:   "testNode2",
-		Group:      1,
-	}
-	s.SetExecution(ex2)
+// 	ex2 := &Execution{
+// 		JobName:    "test",
+// 		StartedAt:  n.Add(10 * time.Millisecond),
+// 		FinishedAt: n,
+// 		Success:    false,
+// 		Output:     []byte("type"),
+// 		NodeName:   "testNode2",
+// 		Group:      1,
+// 	}
+// 	s.SetExecution(ex2)
 
-	ex3 := &Execution{
-		JobName:    "test",
-		StartedAt:  n.Add(20 * time.Millisecond),
-		FinishedAt: n,
-		Success:    true,
-		Output:     []byte("type"),
-		NodeName:   "testNode1",
-		Group:      2,
-	}
-	s.SetExecution(ex3)
+// 	ex3 := &Execution{
+// 		JobName:    "test",
+// 		StartedAt:  n.Add(20 * time.Millisecond),
+// 		FinishedAt: n,
+// 		Success:    true,
+// 		Output:     []byte("type"),
+// 		NodeName:   "testNode1",
+// 		Group:      2,
+// 	}
+// 	s.SetExecution(ex3)
 
-	ex4 := &Execution{
-		JobName:    "test",
-		StartedAt:  n.Add(30 * time.Millisecond),
-		FinishedAt: n,
-		Success:    true,
-		Output:     []byte("type"),
-		NodeName:   "testNode1",
-		Group:      2,
-	}
-	s.SetExecution(ex4)
+// 	ex4 := &Execution{
+// 		JobName:    "test",
+// 		StartedAt:  n.Add(30 * time.Millisecond),
+// 		FinishedAt: n,
+// 		Success:    true,
+// 		Output:     []byte("type"),
+// 		NodeName:   "testNode1",
+// 		Group:      2,
+// 	}
+// 	s.SetExecution(ex4)
 
-	ex5 := &Execution{
-		JobName:   "test",
-		StartedAt: n.Add(40 * time.Millisecond),
-		Success:   false,
-		Output:    []byte("type"),
-		NodeName:  "testNode1",
-		Group:     3,
-	}
-	s.SetExecution(ex5)
+// 	ex5 := &Execution{
+// 		JobName:   "test",
+// 		StartedAt: n.Add(40 * time.Millisecond),
+// 		Success:   false,
+// 		Output:    []byte("type"),
+// 		NodeName:  "testNode1",
+// 		Group:     3,
+// 	}
+// 	s.SetExecution(ex5)
 
-	ex6 := &Execution{
-		JobName:  "test",
-		Success:  false,
-		Output:   []byte("type"),
-		NodeName: "testNode1",
-		Group:    4,
-	}
-	s.SetExecution(ex6)
+// 	ex6 := &Execution{
+// 		JobName:  "test",
+// 		Success:  false,
+// 		Output:   []byte("type"),
+// 		NodeName: "testNode1",
+// 		Group:    4,
+// 	}
+// 	s.SetExecution(ex6)
 
-	// Tests status
-	err = s.db.View(func(txn *badger.Txn) error {
-		status, _ := s.computeStatus("test", 1, txn)
-		assert.Equal(t, StatusPartialyFailed, status)
+// 	// Tests status
+// 	err = s.db.View(func(txn *badger.Txn) error {
+// 		status, _ := s.computeStatus("test", 1, txn)
+// 		assert.Equal(t, StatusPartialyFailed, status)
 
-		status, _ = s.computeStatus("test", 2, txn)
-		assert.Equal(t, StatusSuccess, status)
+// 		status, _ = s.computeStatus("test", 2, txn)
+// 		assert.Equal(t, StatusSuccess, status)
 
-		status, _ = s.computeStatus("test", 3, txn)
-		assert.Equal(t, StatusRunning, status)
+// 		status, _ = s.computeStatus("test", 3, txn)
+// 		assert.Equal(t, StatusRunning, status)
 
-		status, _ = s.computeStatus("test", 4, txn)
-		assert.Equal(t, StatusRunning, status)
+// 		status, _ = s.computeStatus("test", 4, txn)
+// 		assert.Equal(t, StatusRunning, status)
 
-		return nil
-	})
-	require.NoError(t, err)
-}
+// 		return nil
+// 	})
+// 	require.NoError(t, err)
+// }
 
 // Following are supporting functions for the tests
 
