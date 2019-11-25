@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/dgraph-io/badger/v2/options"
 	"github.com/dgraph-io/badger/v2"
 	dkronpb "github.com/distribworks/dkron/v2/proto"
 	"github.com/golang/protobuf/proto"
@@ -46,7 +47,10 @@ type JobOptions struct {
 // NewStore creates a new Storage instance.
 func NewStore(a *Agent, dir string) (*Store, error) {
 	opts := badger.DefaultOptions(dir).
-		WithLogger(log)
+		WithLogger(log).
+		WithTableLoadingMode(options.MemoryMap).
+		WithValueLogLoadingMode(options.FileIO).
+		WithValueThreshold(1 << 11) // LSM mode)
 
 	db, err := badger.Open(opts)
 	if err != nil {

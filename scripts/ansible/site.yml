@@ -37,6 +37,7 @@
   tasks:
     - set_fact:
         dkron_servers: "{{ groups['packet'] }}"
+      tags: config
 
     - name: Copy package
       copy:
@@ -59,6 +60,7 @@
       template: src={{ item }}.yml.j2 dest=/etc/dkron/{{ item }}.yml
       loop:
         - dkron
+      tags: config
 
     - name: ensure service is running and enabled
       systemd:

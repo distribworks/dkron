@@ -16,10 +16,10 @@ import (
 	"time"
 
 	metrics "github.com/armon/go-metrics"
+	raftbadger "github.com/bbva/raft-badger"
 	"github.com/distribworks/dkron/v2/proto"
 	"github.com/hashicorp/memberlist"
 	"github.com/hashicorp/raft"
-	raftboltdb "github.com/hashicorp/raft-boltdb"
 	"github.com/hashicorp/serf/serf"
 	"github.com/sirupsen/logrus"
 	"github.com/soheilhy/cmux"
@@ -86,7 +86,7 @@ type Agent struct {
 	// raftLayer provides network layering of the raft RPC along with
 	// the Dkron gRPC transport layer.
 	raftLayer     *RaftLayer
-	raftStore     *raftboltdb.BoltStore
+	raftStore     *raftbadger.BadgerStore
 	raftInmem     *raft.InmemStore
 	raftTransport *raft.NetworkTransport
 
@@ -271,7 +271,7 @@ func (a *Agent) setupRaft() error {
 		}
 
 		// Create the BoltDB backend
-		s, err := raftboltdb.NewBoltStore(filepath.Join(a.config.DataDir, "raft", "raft.db"))
+		s, err := raftbadger.NewBadgerStore(filepath.Join(a.config.DataDir, "raft", "raft.db"))
 		if err != nil {
 			return fmt.Errorf("error creating new badger store: %s", err)
 		}
