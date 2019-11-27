@@ -17,8 +17,8 @@
       
       <guid>/products/pro/</guid>
       <description>Dkron Pro Improved security, features and reliability for your scheduled jobs  Buy      Get additional features and commercial support from the creator of Dkron
- Key features Embedded storage  When it comes to choosing a storage you could be making a wrong decision. Easy of use comes from having a well tested and supported storage.
-The embedded etcd storage is tuned for use with dkron out of the box.</description>
+ Key features Security  Pro has enhanced security using industry standard SSL encryption for communication between all components of the application, the embedded storage engine and nodes.
+You can also enable basic authentication to restrict access to the WebUI and the API.</description>
     </item>
     
   </channel>

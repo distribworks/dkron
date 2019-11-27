@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2019-11-17T22:47:59 CET">
+<meta name="revised" content="2019-11-27T23:32:16 CET">
 <title>Basics :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -1072,46 +1072,6 @@
 Run Dkron with default setting: dkron agent --server
 Navigate to http://localhost:8080
 By default dkron will start with a file based, embedded KV store called BoltDB, it is functional for a single node demo but does not offers clustering or HA.  Installing the package Debian repo APT repository:</p>
-</span>
-
-<span><h3>
-        <a href="/basics/installation/" >Installation</a></h3>
-<p>Running the binary Download the packaged archive for your platform from the downloads page and extract the package to a shared location in your drive, like /opt/local/bin.
-Run Dkron with default setting: dkron agent --server --bootstrap-expect=1
-Navigate to http://localhost:8080
-Installing the package Debian repo APT repository:
-deb [trusted=yes] https://apt.fury.io/distribworks/ /  Then install: sudo apt-get install dkron
-YUM repo YUM repository:
-[dkron] name=Dkron Pro Private Repo baseurl=https://yum.fury.io/distribworks/ enabled=1 gpgcheck=0  Then install: sudo yum install dkron</p>
-</span>
-
-<span><h4>
-        <a href="/usage/executors/http/" >HTTP Executor</a></h4>
-<p>HTTP executor can send a request to an HTTP endpoint
-Configuration Params:
-method: Request method in uppercase url: Request url headers: Json string, such as &quot;[\&quot;Content-Type: application/json\&quot;]&quot; body: POST body timeout: Request timeout, unit seconds expectCode: Expect response code, such as 200,206 expectBody: Expect response body, support regexp, such as /success/ debug: Debug option, will log everything when this option is not empty tlsNoVerifyPeer: false (default) or true. If true, disables verification of the remote SSL certificate's validity.</p>
-</span>
-
-<span><h4>
-        <a href="/usage/executors/shell/" >Shell Executor</a></h4>
-<p> Shell executor runs a system command
-Configuration Params
-shell: Run this command using a shell environment command: The command to run env: Env vars separated by comma cwd: Chdir before command run  Example
-{ &#34;executor&#34;: &#34;shell&#34;, &#34;executor_config&#34;: { &#34;shell&#34;: &#34;true&#34;, &#34;command&#34;: &#34;my_command&#34;, &#34;env&#34;: &#34;ENV_VAR=va1,ANOTHER_ENV_VAR=var2&#34;, &#34;cwd&#34;: &#34;/app&#34; } }</p>
-</span>
-
-<span><h3>
-        <a href="/basics/getting-started/" >Getting started</a></h3>
-<p>Introduction Dkron nodes can work in two modes, agents or servers.
-A Dkron agent is a cluster member that can handle job executions, run your scripts and return the resulting output to the server.
-A Dkron server is also a cluster member that send job execution queries to agents or other servers, so servers can execute jobs too.
-The main distinction is that servers order job executions, can be used to schedule jobs, handles data storage and participate on leader election.</p>
-</span>
-
-<span><h3>
-        <a href="/basics/configuration/" >Configuration</a></h3>
-<p>Configuration sources Settings can be specified in three ways (in order of precedence):
- Command line arguments. Environment variables starting with DKRON_ dkron.yml config file  Config file example # Dkron example configuration file # server: false # bootstrap-expect: 3 # data-dir: dkron.data # log-level: debug # tags: # dc: east # encrypt: a-valid-key-generated-with-dkron-keygen # retry-join: # - 10.0.0.1 # - 10.0.0.2 # - 10.0.0.3 # raft-multiplier: 1 # webhook-url: https://hooks.</p>
 </span>
 
 <span><h2>
