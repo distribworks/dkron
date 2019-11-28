@@ -2,6 +2,7 @@ module github.com/distribworks/dkron/v2
 
 require (
 	github.com/DataDog/datadog-go v0.0.0-20170427165718-0ddda6bee211 // indirect
+	github.com/Shopify/sarama v1.24.1
 	github.com/armon/circbuf v0.0.0-20150827004946-bbbad097214e
 	github.com/armon/go-metrics v0.0.0-20180917152333-f0300d1749da
 	github.com/aws/aws-sdk-go v1.16.23 // indirect
@@ -33,6 +34,7 @@ require (
 	github.com/kardianos/osext v0.0.0-20170510131534-ae77be60afb1
 	github.com/mattn/go-shellwords v0.0.0-20160315040826-525bedee691b
 	github.com/mitchellh/go-testing-interface v1.0.0 // indirect
+	github.com/nats-io/nats.go v1.9.1
 	github.com/pascaldekloe/goe v0.1.0 // indirect
 	github.com/ryanuber/columnize v2.1.0+incompatible
 	github.com/sirupsen/logrus v1.2.0
