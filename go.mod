@@ -34,6 +34,7 @@ require (
 	github.com/mattn/go-shellwords v0.0.0-20160315040826-525bedee691b
 	github.com/mitchellh/go-testing-interface v1.0.0 // indirect
 	github.com/pascaldekloe/goe v0.1.0 // indirect
+	github.com/robfig/cron/v3 v3.0.1-0.20191125210756-b7cc47d857a8
 	github.com/ryanuber/columnize v2.1.0+incompatible
 	github.com/sirupsen/logrus v1.2.0
 	github.com/soheilhy/cmux v0.1.4
