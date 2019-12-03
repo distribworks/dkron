@@ -10,11 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Child jobs not being executed due to running Job status
+- Child jobs not being executed due to running Job status (#651)
 
 ### Refactored
 
-- Remove copied cron lib and add as dependency 
+- Remove copied cron lib and add as dependency (#646)
 
 ## [2.0.0] - 2019-11-27
 
