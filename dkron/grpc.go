@@ -187,6 +187,13 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.E
 		return nil, err
 	}
 
+	// Retrieve the fresh, updated job from the store to work on stored values
+	job, err = grpcs.agent.Store.GetJob(job.Name, nil)
+	if err != nil {
+		log.WithError(err).WithField("job", job.Name).Error("grpc: Error retrieving job from store")
+		return nil, err
+	}
+
 	// If the execution failed, retry it until retries limit (default: don't retry)
 	if !execution.Success && execution.Attempt < job.Retries+1 {
 		execution.Attempt++
