@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/armon/go-metrics"
-	"github.com/distribworks/dkron/v2/cron"
+	"github.com/robfig/cron/v3"
 	"github.com/distribworks/dkron/v2/extcron"
 	"github.com/sirupsen/logrus"
 )
