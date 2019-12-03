@@ -187,6 +187,13 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.E
 		return nil, err
 	}
 
+	// Retrieve the fresh, updated job from the store to work on stored values
+	job, err = grpcs.agent.Store.GetJob(job.Name, nil)
+	if err != nil {
+		log.WithError(err).WithField("job", job.Name).Error("grpc: Error retrieving job from store")
+		return nil, err
+	}
+
 	// If the execution failed, retry it until retries limit (default: don't retry)
 	if !execution.Success && execution.Attempt < job.Retries+1 {
 		execution.Attempt++
@@ -200,7 +207,9 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.E
 			"execution": execution,
 		}).Debug("grpc: Retrying execution")
 
-		_ = grpcs.agent.RunQuery(job.Name, &execution)
+		if _, err := grpcs.agent.RunQuery(job.Name, &execution); err != nil {
+			return nil, err
+		}
 		return &proto.ExecutionDoneResponse{
 			From:    grpcs.agent.config.NodeName,
 			Payload: []byte("retry"),
@@ -245,7 +254,10 @@ func (grpcs *GRPCServer) Leave(ctx context.Context, in *empty.Empty) (*empty.Emp
 // RunJob runs a job in the cluster
 func (grpcs *GRPCServer) RunJob(ctx context.Context, req *proto.RunJobRequest) (*proto.RunJobResponse, error) {
 	ex := NewExecution(req.JobName)
-	job := grpcs.agent.RunQuery(req.JobName, ex)
+	job, err := grpcs.agent.RunQuery(req.JobName, ex)
+	if err != nil {
+		return nil, err
+	}
 	jpb := job.ToProto()
 
 	return &proto.RunJobResponse{Job: jpb}, nil

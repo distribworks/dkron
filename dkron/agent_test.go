@@ -225,6 +225,7 @@ func TestAgentConfig(t *testing.T) {
 	c.AdvertiseAddr = advAddr
 	c.LogLevel = logLevel
 	c.DataDir = dir
+	c.DevMode = true
 
 	a := NewAgent(c)
 	a.Start()
