@@ -4,5 +4,5 @@ package assets
 
 import "net/http"
 
-// Templates contains project templates.
+// Assets contains project assets.
 var Assets http.FileSystem = http.Dir("../../static")
