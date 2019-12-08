@@ -54,7 +54,7 @@
         </td>
       </tfoot>
       <tbody>
-        <tr ng-repeat="job in pagedItems[currentPage] | filter:searchJob">
+        <tr ng-repeat="job in jobs | filter:searchJob | startFrom:(currentPage)*itemsPerPage | limitTo:itemsPerPage">
           <td><a ng-href="jobs/{{`{{ job.name }}`}}/executions" ng-bind="job.displayname != '' ? job.displayname : job.name"></a></td>
           <td ng-bind="job.schedule"></td>
           <td ng-bind="job.success_count"></td>
@@ -91,7 +91,7 @@
     </table>
 
     <!-- Modal Delete -->
-    <div ng-repeat="job in pagedItems[currentPage] | filter:searchJob" class="modal fade"
+    <div ng-repeat="job in jobs | filter:searchJob" class="modal fade"
       id="{{`{{ $index }}`}}-modal-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -108,7 +108,7 @@
     </div>
 
     <!-- Modal -->
-    <div ng-repeat="job in pagedItems[currentPage] | filter:searchJob" class="modal fade" id="{{`{{ $index }}`}}-modal"
+    <div ng-repeat="job in jobs | filter:searchJob" class="modal fade" id="{{`{{ $index }}`}}-modal"
       tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
