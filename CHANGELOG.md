@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Features
+
+- Search all jobs in dashboards with the search box
+
 ## [2.0.1] - 2019-12-03
 
 ### Fixed
