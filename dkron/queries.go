@@ -3,6 +3,7 @@ package dkron
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/hashicorp/serf/serf"
@@ -16,8 +17,6 @@ const (
 	QueryExecutionDone = "execution:done"
 )
 
-var rescheduleThrotle *time.Timer
-
 // RunQueryParam defines the struct used to send a Run query
 // using serf.
 type RunQueryParam struct {
@@ -27,19 +26,28 @@ type RunQueryParam struct {
 
 // RunQuery sends a serf run query to the cluster, this is used to ask a node or nodes
 // to run a Job.
-func (a *Agent) RunQuery(job *Job, ex *Execution) {
+func (a *Agent) RunQuery(jobName string, ex *Execution) (*Job, error) {
 	start := time.Now()
 	var params *serf.QueryParam
 
-	if e, ok := a.sched.GetEntry(job); ok {
-		job.Next = e.Next
-		job.Status = StatusRunning
+	job, err := a.Store.GetJob(jobName, nil)
+	if err != nil {
+		return nil, fmt.Errorf("agent: RunQuery error retrieving job: %s from store: %w", jobName, err)
 	}
+
+	// In case the job is not a child job
+	if job.ParentJob == "" {
+		if e, ok := a.sched.GetEntry(jobName); ok {
+			job.Next = e.Next
+		} else {
+			return nil, fmt.Errorf("agent: RunQuery error retrieving job: %s from scheduler", jobName)
+		}
+	}
+
+	job.Status = StatusRunning
+
 	if err := a.applySetJob(job.ToProto()); err != nil {
-		log.WithError(err).WithFields(logrus.Fields{
-			"job":    job.Name,
-			"method": "RunQuery",
-		}).Fatal("agent: Error storing job before running")
+		return nil, fmt.Errorf("agent: RunQuery error storing job %s before running: %w", jobName, err)
 	}
 
 	// In the first execution attempt we build and filter the target nodes
@@ -47,9 +55,7 @@ func (a *Agent) RunQuery(job *Job, ex *Execution) {
 	if ex.Attempt <= 1 {
 		filterNodes, filterTags, err := a.processFilteredNodes(job)
 		if err != nil {
-			log.WithError(err).WithFields(logrus.Fields{
-				"job": job.Name,
-			}).Fatal("agent: Error processing filtered nodes")
+			return nil, fmt.Errorf("agent: RunQuery error processing filtered nodes: %w", err)
 		}
 		log.Debug("agent: Filtered nodes to run: ", filterNodes)
 		log.Debug("agent: Filtered tags to run: ", filterTags)
@@ -95,7 +101,7 @@ func (a *Agent) RunQuery(job *Job, ex *Execution) {
 
 	qr, err := a.serf.Query(QueryRunJob, rqpJSON, params)
 	if err != nil {
-		log.WithField("query", QueryRunJob).WithError(err).Fatal("agent: Sending query error")
+		return nil, fmt.Errorf("agent: RunQuery sending query error: %w", err)
 	}
 	defer qr.Close()
 
@@ -128,6 +134,8 @@ func (a *Agent) RunQuery(job *Job, ex *Execution) {
 		"time":  time.Since(start),
 		"query": QueryRunJob,
 	}).Debug("agent: Done receiving acks and responses")
+
+	return job, nil
 }
 
 // Broadcast a ExecutionDone to the cluster.

@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/armon/go-metrics"
-	"github.com/distribworks/dkron/v2/cron"
+	"github.com/robfig/cron/v3"
 	"github.com/distribworks/dkron/v2/extcron"
 	"github.com/sirupsen/logrus"
 )
@@ -77,10 +77,10 @@ func (s *Scheduler) Restart(jobs []*Job) {
 
 // GetEntry returns a scheduler entry from a snapshot in
 // the current time, and whether or not the entry was found.
-func (s *Scheduler) GetEntry(job *Job) (cron.Entry, bool) {
+func (s *Scheduler) GetEntry(jobName string) (cron.Entry, bool) {
 	for _, e := range s.Cron.Entries() {
 		j, _ := e.Job.(*Job)
-		if j.Name == job.Name {
+		if j.Name == jobName {
 			return e, true
 		}
 	}
