@@ -24,6 +24,16 @@ dkron.filter('statusClass', function () {
 
 dkron.constant('hideDelay', 2000);
 
+dkron.filter('startFrom', function () {
+  return function (input, start) {
+      if (input) {
+          start = +start; //parse to int
+          return input.slice(start);
+      }
+      return [];
+  }
+});
+
 dkron.controller('JobListCtrl', function ($scope, $location, $http, $interval, hideDelay) {
   $scope.searchJob = $location.search()['filter']
 
