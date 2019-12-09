@@ -64,18 +64,15 @@ dkron.controller('JobListCtrl', function ($scope, $location, $http, $interval, h
   $scope.runJob = function (jobName) {
     let i = $scope.pagedItems[$scope.currentPage].findIndex(j => j.name === jobName);
     $scope["running_" + i] = true;
-    var response = $http.post(DKRON_API_PATH + '/jobs/' + jobName);
-    response.success(function (data, status, headers, config) {
-      $('#message').html('<div class="alert alert-success fade in">Success running job ' + jobName + '</div>');
-      updateView();
-      $scope["running_" + i] = false;
-
-      $(".alert-success").delay(hideDelay).slideUp(200, function () {
-        $(".alert").alert('close');
-      });
-    });
-
-    response.error(function (data, status, headers, config) {
+    $http.post(DKRON_API_PATH + '/jobs/' + jobName).
+      then(function (response) {
+        $('#message').html('<div class="alert alert-success fade in">Success running job ' + jobName + '</div>');
+        updateView();
+        $scope["running_" + i] = false;
+        $(".alert-success").delay(hideDelay).slideUp(200, function () {
+          $(".alert").alert('close');
+        });
+    }, function (response) {
       $('#message').html('<div class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Error running job ' + jobName + '</div>');
     });
   };
@@ -87,17 +84,16 @@ dkron.controller('JobListCtrl', function ($scope, $location, $http, $interval, h
       window.alert('Json Format Error');
       return
     }
-    var response = $http.post(DKRON_API_PATH + '/jobs', job);
-    response.success(function (data, status, headers, config) {
-      $('#message').html('<div class="alert alert-success fade in">Success created job ' + job.name + '</div>');
-      updateView();
+    
+    $http.post(DKRON_API_PATH + '/jobs', job).
+      then(function (response) {
+        $('#message').html('<div class="alert alert-success fade in">Success created job ' + job.name + '</div>');
+        updateView();
 
-      $(".alert-success").delay(hideDelay).slideUp(200, function () {
-        $(".alert").alert('close');
-      });
-    });
-
-    response.error(function (data, status, headers, config) {
+        $(".alert-success").delay(hideDelay).slideUp(200, function () {
+          $(".alert").alert('close');
+        });
+    }, function (response) {
       $('#message').html('<div class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Error creating job ' + job.name + '</div>');
     });
   };
@@ -109,17 +105,16 @@ dkron.controller('JobListCtrl', function ($scope, $location, $http, $interval, h
       window.alert('Json Format Error');
       return
     }
-    var response = $http.post(DKRON_API_PATH + '/jobs', job);
-    response.success(function (data, status, headers, config) {
-      $('#message').html('<div class="alert alert-success fade in">Success updating job ' + job.name + '</div>');
-      updateView();
+    
+    $http.post(DKRON_API_PATH + '/jobs', job).
+      then(function (response) {
+        $('#message').html('<div class="alert alert-success fade in">Success updating job ' + job.name + '</div>');
+        updateView();
 
-      $(".alert-success").delay(hideDelay).slideUp(200, function () {
-        $(".alert").alert('close');
-      });
-    });
-
-    response.error(function (data, status, headers, config) {
+        $(".alert-success").delay(hideDelay).slideUp(200, function () {
+          $(".alert").alert('close');
+        });
+    }, function (response) {
       $('#message').html('<div class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Error updating job ' + job.name + '</div>');
     });
   };
@@ -127,48 +122,43 @@ dkron.controller('JobListCtrl', function ($scope, $location, $http, $interval, h
   $scope.deleteJob = function (jobName) {
     let i = $scope.pagedItems[$scope.currentPage].findIndex(j => j.name === jobName);
     $scope["deleting_" + i] = true;
-    var response = $http.delete(DKRON_API_PATH + '/jobs/' + jobName);
-    response.success(function (data, status, headers, config) {
-      $('#message').html('<div class="alert alert-success fade in">Successfully removed job ' + jobName + '</div>');
-      updateView();
+    
+    $http.delete(DKRON_API_PATH + '/jobs/' + jobName).
+      then(function (response) {
+        $('#message').html('<div class="alert alert-success fade in">Successfully removed job ' + jobName + '</div>');
+        updateView();
 
-      $(".alert-success").delay(hideDelay).slideUp(200, function () {
-        $(".alert").alert('close');
-      });
-    });
-
-    response.error(function (data, status, headers, config) {
+        $(".alert-success").delay(hideDelay).slideUp(200, function () {
+          $(".alert").alert('close');
+        });
+    }, function (response) {
       $('#message').html('<div class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Error removing job ' + jobName + '</div>');
     });
   };
 
   $scope.toggleJob = function (jobName) {
-    var response = $http.post(DKRON_API_PATH + '/jobs/' + jobName + '/toggle');
-    response.success(function (data, status, headers, config) {
-      $('#message').html('<div class="alert alert-success fade in">Successfully toggled job ' + jobName + '</div>');
-      updateView();
+    $http.post(DKRON_API_PATH + '/jobs/' + jobName + '/toggle').
+      then(function (response) {
+        $('#message').html('<div class="alert alert-success fade in">Successfully toggled job ' + jobName + '</div>');
+        updateView();
 
-      $(".alert-success").delay(hideDelay).slideUp(200, function () {
-        $(".alert").alert('close');
-      });
-    });
-
-    response.error(function (data, status, headers, config) {
+        $(".alert-success").delay(hideDelay).slideUp(200, function () {
+          $(".alert").alert('close');
+        });
+    }, function (response) {
       $('#message').html('<div class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Error toggle job ' + jobName + '</div>');
     });
   }
 
   var updateView = function () {
-    var response = $http.get(DKRON_API_PATH + '/jobs');
-    response.success(function (data, status, headers, config) {
-      $scope.updateStatus(data);
+    $http.get(DKRON_API_PATH + '/jobs').
+      then(function (response) {
+        $scope.updateStatus(response.data);
 
-      $("#conn-error").delay(hideDelay).slideUp(200, function () {
-        $("#conn-error").alert('close');
-      });
-    });
-
-    response.error(function (data, status, headers, config) {
+        $("#conn-error").delay(hideDelay).slideUp(200, function () {
+          $("#conn-error").alert('close');
+        });
+    }, function (response) {
       $('#message').html('<div id="conn-error" class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Error getting data</div>');
     });
   }
@@ -278,18 +268,16 @@ dkron.controller('JobListCtrl', function ($scope, $location, $http, $interval, h
 dkron.controller('ExecutionsCtrl', function ($scope, $http, $interval, hideDelay) {
   $scope.runJob = function (jobName) {
     $scope["running_job"] = true;
-    var response = $http.post(DKRON_API_PATH + '/jobs/' + jobName);
-    response.success(function (data, status, headers, config) {
-      $('#message').html('<div class="alert alert-success fade in">Success running job ' + jobName + '</div>');
-      $scope["running_job"] = false;
+    $http.post(DKRON_API_PATH + '/jobs/' + jobName).
+      then(function (response) {
+        $('#message').html('<div class="alert alert-success fade in">Success running job ' + jobName + '</div>');
+        $scope["running_job"] = false;
 
-      $(".alert-success").delay(hideDelay).slideUp(200, function () {
-        $(".alert").alert('close');
-        window.location.reload();
-      });
-    });
-
-    response.error(function (data, status, headers, config) {
+        $(".alert-success").delay(hideDelay).slideUp(200, function () {
+          $(".alert").alert('close');
+          window.location.reload();
+        });
+    }, function (response) {
       $('#message').html('<div class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Error running job ' + jobName + '</div>');
     });
   };
@@ -325,44 +313,41 @@ dkron.controller('IndexCtrl', function ($scope, $http, $timeout, $element) {
   });
 
   updateView = function () {
-    var response = $http.get(DKRON_API_PATH + '/jobs');
-    response.success(function (data, status, headers, config) {
-      $scope.updateGraph(data);
+    $http.get(DKRON_API_PATH + '/jobs').
+      then(function (response) {
+        $scope.updateGraph(response.data);
 
-      $timeout(function () {
-        updateView();
-      }, 2000);
-    });
-
-    response.error(function (data, status, headers, config) {
+        $timeout(function () {
+          updateView();
+        }, 2000);
+    }, function (response) {
       $('#message').html('<div class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Error getting data</div>');
     });
 
-    var mq = $http.get(DKRON_API_PATH + '/members');
-    mq.success(function (data, status, headers, config) {
-      angular.forEach(data, function (val, key) {
-        switch (val.Status) {
-          case 0:
-            data[key].Status = "none";
-            break;
-          case 1:
-            data[key].Status = "alive";
-            break;
-          case 2:
-            data[key].Status = "leaving";
-            break;
-          case 3:
-            data[key].Status = "left";
-            break;
-          case 4:
-            data[key].Status = "failed";
-            break;
-        }
-      });
-      $scope.members = data;
-    });
-
-    mq.error(function (data, status, headers, config) {
+    $http.get(DKRON_API_PATH + '/members').
+      then(function (response) {
+        var data = response.data;
+        angular.forEach(data, function (val, key) {
+          switch (val.Status) {
+            case 0:
+              data[key].Status = "none";
+              break;
+            case 1:
+              data[key].Status = "alive";
+              break;
+            case 2:
+              data[key].Status = "leaving";
+              break;
+            case 3:
+              data[key].Status = "left";
+              break;
+            case 4:
+              data[key].Status = "failed";
+              break;
+          }
+        });
+        $scope.members = data;
+    }, function (response) {
       $('#message').html('<div class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Error getting data</div>');
     });
   }
