@@ -1,7 +1,9 @@
 package dkron
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/gin-contrib/expvar"
@@ -69,6 +71,7 @@ func (h *HTTPTransport) APIRoutes(r *gin.RouterGroup, middleware ...gin.HandlerF
 	v1.GET("/leader", h.leaderHandler)
 	v1.GET("/isleader", h.isLeaderHandler)
 	v1.POST("/leave", h.leaveHandler)
+	v1.POST("/restore", h.restoreHandler)
 
 	v1.GET("/busy", h.busyHandler)
 
@@ -216,6 +219,42 @@ func (h *HTTPTransport) jobRunHandler(c *gin.Context) {
 	c.Header("Location", c.Request.RequestURI)
 	c.Status(http.StatusAccepted)
 	renderJSON(c, http.StatusOK, job)
+}
+
+// Restore jobs from file.
+// Overwrite job if the job is exist.
+func (h *HTTPTransport) restoreHandler(c *gin.Context) {
+	file, _, err := c.Request.FormFile("file")
+	if err != nil {
+		c.AbortWithError(http.StatusNotFound, err)
+		return
+	}
+
+	data, err := ioutil.ReadAll(file)
+	if err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+	var jobs []*Job
+	err = json.Unmarshal(data, &jobs)
+
+	if err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	jobTree, err := generateJobTree(jobs)
+	if err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+	result := h.agent.recursiveSetJob(jobTree)
+	resp, err := json.Marshal(result)
+	if err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+	renderJSON(c, http.StatusOK, string(resp))
 }
 
 func (h *HTTPTransport) executionsHandler(c *gin.Context) {

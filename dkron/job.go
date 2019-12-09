@@ -102,6 +102,9 @@ type Job struct {
 	// Jobs that are dependent upon this one will be run after this job runs.
 	DependentJobs []string `json:"dependent_jobs"`
 
+	// Job pointer that are dependent upon this one
+	ChildJobs []*Job `json:"-"`
+
 	// Job id of job that this job is dependent upon.
 	ParentJob string `json:"parent_job"`
 
@@ -364,4 +367,69 @@ func isSlug(candidate string) (bool, string) {
 	illegalCharPattern, _ := regexp.Compile(`[^\p{Ll}0-9_-]`)
 	whyNot := illegalCharPattern.FindString(candidate)
 	return whyNot == "", whyNot
+}
+
+// generate Job Tree
+func generateJobTree(jobs []*Job) ([]*Job, error) {
+	length := len(jobs)
+	j := 0
+	for i := 0; i < length; i++ {
+		rejobs, isTopParentNodeFlag, err := findParentJobAndValidateJob(jobs, j)
+		if err != nil {
+			return nil, err
+		}
+		if isTopParentNodeFlag {
+			j++
+		}
+		jobs = rejobs
+	}
+	return jobs, nil
+}
+
+// findParentJobAndValidateJob...
+func findParentJobAndValidateJob(jobs []*Job, index int) ([]*Job, bool, error) {
+	childJob := jobs[index]
+	// Validate job
+	if err := childJob.Validate(); err != nil {
+		return nil, false, err
+	}
+	if childJob.ParentJob == "" {
+		return jobs, true, nil
+	}
+	for _, parentJob := range jobs {
+		if parentJob.Name == childJob.Name {
+			continue
+		}
+		if childJob.ParentJob == parentJob.Name {
+			parentJob.ChildJobs = append(parentJob.ChildJobs, childJob)
+			jobs = append(jobs[:index], jobs[index+1:]...)
+			return jobs, false, nil
+		}
+		if len(parentJob.ChildJobs) > 0 {
+			flag := findParentJobInChildJobs(parentJob.ChildJobs, childJob)
+			if flag {
+				jobs = append(jobs[:index], jobs[index+1:]...)
+				return jobs, false, nil
+			}
+		}
+	}
+	return nil, false, ErrNoParent
+}
+
+func findParentJobInChildJobs(jobs []*Job, job *Job) bool {
+	for _, parentJob := range jobs {
+		if job.ParentJob == parentJob.Name {
+			parentJob.ChildJobs = append(parentJob.ChildJobs, job)
+			return true
+		} else {
+			if len(parentJob.ChildJobs) > 0 {
+				flag := findParentJobInChildJobs(parentJob.ChildJobs, job)
+				if flag {
+					return true
+				}
+			}
+
+		}
+	}
+	return false
 }
