@@ -242,6 +242,42 @@ func (j *Job) String() string {
 	return fmt.Sprintf("\"Job: %s, scheduled at: %s, tags:%v\"", j.Name, j.Schedule, j.Tags)
 }
 
+// GetStatus returns the status of a job whether it's running, succeeded or failed
+func (j *Job) GetStatus() string {
+	// Maybe we are testing
+	if j.Agent == nil {
+		return StatusNotSet
+	}
+
+	execs, _ := j.Agent.Store.GetLastExecutionGroup(j.Name)
+	success := 0
+	failed := 0
+	for _, ex := range execs {
+		if ex.FinishedAt.IsZero() {
+			return StatusRunning
+		}
+	}
+
+	var status string
+	for _, ex := range execs {
+		if ex.Success {
+			success = success + 1
+		} else {
+			failed = failed + 1
+		}
+	}
+
+	if failed == 0 {
+		status = StatusSuccess
+	} else if failed > 0 && success == 0 {
+		status = StatusFailed
+	} else if failed > 0 && success > 0 {
+		status = StatusPartialyFailed
+	}
+
+	return status
+}
+
 // GetParent returns the parent job of a job
 func (j *Job) GetParent() (*Job, error) {
 	// Maybe we are testing
@@ -291,6 +327,7 @@ func (j *Job) isRunnable() bool {
 
 	if j.Concurrency == ConcurrencyForbid {
 		j.Agent.RefreshJobStatus(j.Name)
+		j.Status = j.GetStatus()
 	}
 
 	if j.Status == StatusRunning && j.Concurrency == ConcurrencyForbid {
