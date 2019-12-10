@@ -34,7 +34,13 @@ type ExecutorClient struct {
 
 func (m *ExecutorClient) Execute(args *dkron.ExecuteRequest) (*dkron.ExecuteResponse, error) {
 	// This is where the magic conversion to Proto happens
-	return m.client.Execute(context.Background(), args)
+	r, err := m.client.Execute(context.Background(), args)
+	if err != nil {
+		// You usually want your interfaces to return errors. If they don't,
+		// there isn't much other choice here.
+		panic(err)
+	}
+	return r, nil
 }
 
 // Here is the gRPC server that GRPCClient talks to.
