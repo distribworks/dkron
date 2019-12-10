@@ -25,7 +25,7 @@ type RunQueryParam struct {
 }
 
 // RunQuery sends a serf run query to the cluster, this is used to ask a node or nodes
-// to run a Job.
+// to run a Job. Returns a job with it's new status and next schedule.
 func (a *Agent) RunQuery(jobName string, ex *Execution) (*Job, error) {
 	start := time.Now()
 	var params *serf.QueryParam
@@ -43,7 +43,6 @@ func (a *Agent) RunQuery(jobName string, ex *Execution) (*Job, error) {
 			return nil, fmt.Errorf("agent: RunQuery error retrieving job: %s from scheduler", jobName)
 		}
 	}
-
 	job.Status = StatusRunning
 
 	if err := a.applySetJob(job.ToProto()); err != nil {
