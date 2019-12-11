@@ -159,6 +159,39 @@ func TestAPIJobCreateUpdateValidationValidName(t *testing.T) {
 	assert.Equal(t, http.StatusCreated, resp.StatusCode)
 }
 
+func TestAPIJobCreateUpdateValidationEmptyName(t *testing.T) {
+	port := "8101"
+	baseURL := fmt.Sprintf("http://localhost:%s/v1", port)
+	dir, a := setupAPITest(t, port)
+	defer os.RemoveAll(dir)
+	defer a.Stop()
+
+	jsonStr := []byte(`{
+		"name": "testjob1",
+		"schedule": "@every 1m",
+		"executor": "shell",
+		"executor_config": {"command": "date"},
+		"disabled": true
+	}`)
+
+	resp, err := http.Post(baseURL+"/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
+	require.NoError(t, err, err)
+	assert.Equal(t, http.StatusCreated, resp.StatusCode)
+
+	jsonStr = []byte(`{
+		"name": "",
+		"parent_job": "testjob1",
+		"schedule": "@every 1m",
+		"executor": "shell",
+		"executor_config": {"command": "date"},
+		"disabled": true
+	}`)
+
+	resp, err = http.Post(baseURL+"/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
+	require.NoError(t, err, err)
+	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
+}
+
 func TestAPIJobCreateUpdateValidationBadSchedule(t *testing.T) {
 	resp := postJob(t, "8097", []byte(`{
 		"name": "testjob",

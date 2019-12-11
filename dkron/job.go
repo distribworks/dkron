@@ -350,6 +350,10 @@ func (j *Job) isRunnable() bool {
 
 // Validate validates whether all values in the job are acceptable.
 func (j *Job) Validate() error {
+	if j.Name == "" {
+		return fmt.Errorf("name cannot be empty")
+	}
+
 	if valid, chr := isSlug(j.Name); !valid {
 		return fmt.Errorf("name contains illegal character '%s'", chr)
 	}

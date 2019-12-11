@@ -92,7 +92,6 @@ func (grpcs *GRPCServer) SetJob(ctx context.Context, setJobReq *proto.SetJobRequ
 }
 
 // DeleteJob broadcast a state change to the cluster members that will delete the job.
-// Then restart the scheduler
 // This only works on the leader
 func (grpcs *GRPCServer) DeleteJob(ctx context.Context, delJobReq *proto.DeleteJobRequest) (*proto.DeleteJobResponse, error) {
 	defer metrics.MeasureSince([]string{"grpc", "delete_job"}, time.Now())
@@ -113,7 +112,7 @@ func (grpcs *GRPCServer) DeleteJob(ctx context.Context, delJobReq *proto.DeleteJ
 	}
 	jpb := job.ToProto()
 
-	// If everything is ok, restart the scheduler
+	// If everything is ok, remove the job
 	grpcs.agent.sched.RemoveJob(job)
 
 	return &proto.DeleteJobResponse{Job: jpb}, nil
