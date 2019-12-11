@@ -6,9 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.0.2] - 2019-12-11
+
 ### Features
 
-- Search all jobs in dashboards with the search box
+- Search all jobs in dashboards with the search box (#653)
+
+### Fixes
+
+- Validate empty job names (#659)
+- Die on plugin communication error (#658)
+- Revert GetStatus with concurrency forbid (#655)
+
+### Changes
+
+- Upgrade Angular to latest (#641)
 
 ## [2.0.1] - 2019-12-03
 
