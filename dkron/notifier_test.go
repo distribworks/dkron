@@ -146,12 +146,12 @@ var templateTestCases = func(n *Notifier) []templateTestCase {
 		},
 		{
 			desc:     "StartTime template variable",
-			exp:      fmt.Sprintf("%s", n.Execution.StartedAt),
+			exp:      n.Execution.StartedAt.String(),
 			template: "{{.StartTime}}",
 		},
 		{
 			desc:     "FinishedAt template variable",
-			exp:      fmt.Sprintf("%s", n.Execution.FinishedAt),
+			exp:      n.Execution.FinishedAt.String(),
 			template: "{{.FinishedAt}}",
 		},
 		{

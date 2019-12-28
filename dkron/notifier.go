@@ -9,6 +9,7 @@ import (
 	"net/textproto"
 	"strings"
 	"text/template"
+	"time"
 
 	"github.com/jordan-wright/email"
 	"github.com/sirupsen/logrus"
@@ -74,8 +75,8 @@ func (n *Notifier) buildTemplate(templ string) *bytes.Buffer {
 		Report        string
 		JobName       string
 		ReportingNode string
-		StartTime     string
-		FinishedAt    string
+		StartTime     time.Time
+		FinishedAt    time.Time
 		Success       string
 		NodeName      string
 		Output        string
@@ -83,8 +84,8 @@ func (n *Notifier) buildTemplate(templ string) *bytes.Buffer {
 		n.report(),
 		n.Execution.JobName,
 		n.Config.NodeName,
-		fmt.Sprintf("%s", n.Execution.StartedAt),
-		fmt.Sprintf("%s", n.Execution.FinishedAt),
+		n.Execution.StartedAt,
+		n.Execution.FinishedAt,
 		fmt.Sprintf("%t", n.Execution.Success),
 		n.Execution.NodeName,
 		fmt.Sprintf("%s", n.Execution.Output),
