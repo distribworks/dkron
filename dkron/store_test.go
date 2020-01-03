@@ -16,7 +16,7 @@ func TestStore(t *testing.T) {
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
 
-	s, err := NewStore(nil, dir)
+	s, err := NewStore(dir)
 	require.NoError(t, err)
 	defer s.Shutdown()
 
@@ -475,7 +475,7 @@ func setupStore(t *testing.T) (*Store, string) {
 	require.NoError(t, err)
 
 	a := NewAgent(nil)
-	s, err := NewStore(a, dir)
+	s, err := NewStore(dir)
 	require.NoError(t, err)
 	a.Store = s
 

@@ -6,8 +6,8 @@ import (
 	"strings"
 
 	"github.com/armon/go-metrics"
-	"github.com/robfig/cron/v3"
 	"github.com/distribworks/dkron/v2/extcron"
+	"github.com/robfig/cron/v3"
 	"github.com/sirupsen/logrus"
 )
 
@@ -39,11 +39,12 @@ func NewScheduler() *Scheduler {
 
 // Start the cron scheduler, adding its corresponding jobs and
 // executing them on time.
-func (s *Scheduler) Start(jobs []*Job) error {
+func (s *Scheduler) Start(jobs []*Job, agent *Agent) error {
 	s.Cron = cron.New(cron.WithParser(extcron.NewParser()))
 
 	metrics.IncrCounter([]string{"scheduler", "start"}, 1)
 	for _, job := range jobs {
+		job.Agent = agent
 		s.AddJob(job)
 	}
 	s.Cron.Start()
@@ -70,9 +71,9 @@ func (s *Scheduler) Stop() {
 }
 
 // Restart the scheduler
-func (s *Scheduler) Restart(jobs []*Job) {
+func (s *Scheduler) Restart(jobs []*Job, agent *Agent) {
 	s.Stop()
-	s.Start(jobs)
+	s.Start(jobs, agent)
 }
 
 // GetEntry returns a scheduler entry from a snapshot in

@@ -20,7 +20,7 @@ func TestSchedule(t *testing.T) {
 		Owner:          "John Dough",
 		OwnerEmail:     "foo@bar.com",
 	}
-	sched.Start([]*Job{testJob1})
+	sched.Start([]*Job{testJob1}, &Agent{})
 
 	assert.True(t, sched.Started)
 	now := time.Now().Truncate(time.Second)
@@ -36,10 +36,11 @@ func TestSchedule(t *testing.T) {
 		Owner:          "John Dough",
 		OwnerEmail:     "foo@bar.com",
 	}
-	sched.Restart([]*Job{testJob2})
+	sched.Restart([]*Job{testJob2}, &Agent{})
 
 	assert.True(t, sched.Started)
 	assert.Len(t, sched.Cron.Entries(), 1)
+	sched.Stop()
 }
 
 func TestTimezoneAwareJob(t *testing.T) {
@@ -52,8 +53,9 @@ func TestTimezoneAwareJob(t *testing.T) {
 		Executor:       "shell",
 		ExecutorConfig: map[string]string{"command": "echo 'test1'", "shell": "true"},
 	}
-	sched.Start([]*Job{tzJob})
+	sched.Start([]*Job{tzJob}, &Agent{})
 
 	assert.True(t, sched.Started)
 	assert.Len(t, sched.Cron.Entries(), 1)
+	sched.Stop()
 }

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"os"
 	"sort"
 	"sync"
 	"time"
@@ -32,7 +33,6 @@ var (
 // It gives dkron the ability to manipulate its embedded storage
 // BadgerDB.
 type Store struct {
-	agent  *Agent
 	db     *badger.DB
 	lock   *sync.Mutex // for
 	closed bool
@@ -44,7 +44,19 @@ type JobOptions struct {
 }
 
 // NewStore creates a new Storage instance.
-func NewStore(a *Agent, dir string) (*Store, error) {
+func NewStore(dir string) (*Store, error) {
+	dirExists, err := exists(dir)
+	if err != nil {
+		return nil, fmt.Errorf("Ivalid directory %s: %w", dir, err)
+	}
+	if !dirExists {
+		// Try to create the directory
+		err := os.MkdirAll(dir, 0700)
+		if err != nil {
+			return nil, fmt.Errorf("Error creating directory %s: %w", dir, err)
+		}
+	}
+
 	opts := badger.DefaultOptions(dir).
 		WithLogger(log)
 
@@ -58,9 +70,8 @@ func NewStore(a *Agent, dir string) (*Store, error) {
 	}
 
 	store := &Store{
-		db:    db,
-		agent: a,
-		lock:  &sync.Mutex{},
+		db:   db,
+		lock: &sync.Mutex{},
 	}
 
 	go store.runGcLoop()
@@ -108,13 +119,15 @@ func (s *Store) setJobTxnFunc(pbj *dkronpb.Job) func(txn *badger.Txn) error {
 	}
 }
 
+// DB is the getter for the BadgerDB instance
+func (s *Store) DB() *badger.DB {
+	return s.db
+}
+
 // SetJob stores a job in the storage
 func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
 	var pbej dkronpb.Job
 	var ej *Job
-
-	// Init the job agent
-	job.Agent = s.agent
 
 	if err := job.Validate(); err != nil {
 		return err
@@ -135,7 +148,6 @@ func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
 		}
 
 		ej = NewJobFromProto(&pbej)
-		ej.Agent = s.agent
 
 		if ej.Name != "" {
 			// When the job runs, these status vars are updated
@@ -193,7 +205,7 @@ func (s *Store) removeFromParent(child *Job) error {
 		return nil
 	}
 
-	parent, err := child.GetParent()
+	parent, err := child.GetParent(s)
 	if err != nil {
 		return err
 	}
@@ -221,7 +233,7 @@ func (s *Store) addToParent(child *Job) error {
 		return nil
 	}
 
-	parent, err := child.GetParent()
+	parent, err := child.GetParent(s)
 	if err != nil {
 		return err
 	}
@@ -322,7 +334,6 @@ func (s *Store) GetJobs(options *JobOptions) ([]*Job, error) {
 			}
 			job := NewJobFromProto(&pbj)
 
-			job.Agent = s.agent
 			if options != nil {
 				if options.Metadata != nil && len(options.Metadata) > 0 && !s.jobHasMetadata(job, options.Metadata) {
 					continue
@@ -347,7 +358,6 @@ func (s *Store) GetJob(name string, options *JobOptions) (*Job, error) {
 	}
 
 	job := NewJobFromProto(&pbj)
-	job.Agent = s.agent
 
 	return job, nil
 }
@@ -394,7 +404,6 @@ func (s *Store) DeleteJob(name string) (*Job, error) {
 			return ErrDependentJobs
 		}
 		job = NewJobFromProto(&pbj)
-		job.Agent = s.agent
 
 		if err := s.DeleteExecutions(name); err != nil {
 			return err
