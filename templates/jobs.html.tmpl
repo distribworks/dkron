@@ -91,7 +91,7 @@
     </table>
 
     <!-- Modal Delete -->
-    <div ng-repeat="job in jobs | filter:searchJob" class="modal fade"
+    <div ng-repeat="job in jobs | filter:searchJob | startFrom:(currentPage)*itemsPerPage | limitTo:itemsPerPage" class="modal fade"
       id="{{`{{ $index }}`}}-modal-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -108,7 +108,7 @@
     </div>
 
     <!-- Modal -->
-    <div ng-repeat="job in jobs | filter:searchJob" class="modal fade" id="{{`{{ $index }}`}}-modal"
+    <div ng-repeat="job in jobs | filter:searchJob | startFrom:(currentPage)*itemsPerPage | limitTo:itemsPerPage" class="modal fade" id="{{`{{ $index }}`}}-modal"
       tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
