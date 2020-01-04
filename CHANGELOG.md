@@ -10,11 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixes
 
-- Fix modal indexing in UI
+- Fix modal indexing in UI (#666)
 
 ### Changes
 
-- Bump BadgerDB to 2.0.1
+- Bump BadgerDB to 2.0.1 (#667)
+- Allow templating of time format in notifications webhook (#665)
 
 ## [2.0.2] - 2019-12-11
 
