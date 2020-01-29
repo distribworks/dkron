@@ -15,11 +15,9 @@ func TestJobGetParent(t *testing.T) {
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
 
-	a := &Agent{}
-	s, err := NewStore(a, dir)
+	s, err := NewStore(dir)
 	defer s.Shutdown()
 	require.NoError(t, err)
-	a.Store = s
 
 	parentTestJob := &Job{
 		Name:           "parent_test",
@@ -42,11 +40,11 @@ func TestJobGetParent(t *testing.T) {
 	err = s.SetJob(dependentTestJob, true)
 	assert.NoError(t, err)
 
-	parentTestJob, err = dependentTestJob.GetParent()
+	parentTestJob, err = dependentTestJob.GetParent(s)
 	assert.NoError(t, err)
 	assert.Equal(t, []string{dependentTestJob.Name}, parentTestJob.DependentJobs)
 
-	ptj, err := dependentTestJob.GetParent()
+	ptj, err := dependentTestJob.GetParent(s)
 	assert.NoError(t, err)
 	assert.Equal(t, parentTestJob.Name, ptj.Name)
 
@@ -60,7 +58,7 @@ func TestJobGetParent(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, "", dtj.ParentJob)
 
-	ptj, err = dtj.GetParent()
+	ptj, err = dtj.GetParent(s)
 	assert.EqualError(t, ErrNoParent, err.Error())
 
 	ptj, err = s.GetJob(parentTestJob.Name, nil)
@@ -110,9 +108,10 @@ func Test_isRunnable(t *testing.T) {
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
 
-	a := &Agent{}
-	s, err := NewStore(a, dir)
-	a.Store = s
+	s, err := NewStore(dir)
+	a := &Agent{
+		Store: s,
+	}
 	defer s.Shutdown()
 	require.NoError(t, err)
 

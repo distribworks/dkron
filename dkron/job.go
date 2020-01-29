@@ -279,12 +279,7 @@ func (j *Job) GetStatus() string {
 }
 
 // GetParent returns the parent job of a job
-func (j *Job) GetParent() (*Job, error) {
-	// Maybe we are testing
-	if j.Agent == nil {
-		return nil, ErrNoAgent
-	}
-
+func (j *Job) GetParent(store *Store) (*Job, error) {
 	if j.Name == j.ParentJob {
 		return nil, ErrSameParent
 	}
@@ -293,7 +288,7 @@ func (j *Job) GetParent() (*Job, error) {
 		return nil, ErrNoParent
 	}
 
-	parentJob, err := j.Agent.Store.GetJob(j.ParentJob, nil)
+	parentJob, err := store.GetJob(j.ParentJob, nil)
 	if err != nil {
 		if err == badger.ErrKeyNotFound {
 			return nil, ErrParentJobNotFound

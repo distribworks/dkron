@@ -26,15 +26,26 @@ const (
 	ExecutionDoneType
 )
 
+// LogApplier is the definition of a function that can apply a Raft log
+type LogApplier func(buf []byte, index uint64) interface{}
+
+// LogAppliers is a mapping of the Raft MessageType to the appropriate log
+// applier
+type LogAppliers map[MessageType]LogApplier
+
 type dkronFSM struct {
 	store Storage
 	mu    sync.Mutex
+
+	// proAppliers holds the set of pro only LogAppliers
+	proAppliers LogAppliers
 }
 
 // NewFSM is used to construct a new FSM with a blank state
-func newFSM(store Storage) *dkronFSM {
+func newFSM(store Storage, logAppliers LogAppliers) *dkronFSM {
 	return &dkronFSM{
-		store: store,
+		store:       store,
+		proAppliers: logAppliers,
 	}
 }
 
@@ -54,6 +65,11 @@ func (d *dkronFSM) Apply(l *raft.Log) interface{} {
 		return d.applyExecutionDone(buf[1:])
 	case SetExecutionType:
 		return d.applySetExecution(buf[1:])
+	}
+
+	// Check enterprise only message types.
+	if applier, ok := d.proAppliers[msgType]; ok {
+		return applier(buf[1:], l.Index)
 	}
 
 	return nil

@@ -18,3 +18,10 @@ func WithTransportCredentials(tls *tls.Config) AgentOption {
 		agent.TLSConfig = tls
 	}
 }
+
+// WithStore set store in the agent
+func WithStore(store Storage) AgentOption {
+	return func(agent *Agent) {
+		agent.Store = store
+	}
+}

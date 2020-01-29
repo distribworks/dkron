@@ -192,7 +192,7 @@ func (a *Agent) establishLeadership(stopCh chan struct{}) error {
 	if err != nil {
 		log.Fatal(err)
 	}
-	a.sched.Start(jobs)
+	a.sched.Start(jobs, a)
 
 	return nil
 }
