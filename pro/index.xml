@@ -11,7 +11,17 @@
     
     
     <item>
-      <title>Authorization</title>
+      <title>Access Control</title>
+      <link>/pro/acls/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/pro/acls/</guid>
+      <description>Access Control (Preview) This feature is in preview and is subject to big changes  Dkron provides an optional Access Control List (ACL) system which can be used to control access to data and APIs. The ACL is Capability-based, relying on policies to determine which fine grained rules can be applied. Dkron&amp;rsquo;s capability based ACL system is very similar to common ACL systems you are used to.
+ACL System Overview Dkron&amp;rsquo;s ACL system is implemented with the CNCF Open Policy Agent bringing a powerful system to suit your needs.</description>
+    </item>
+    
+    <item>
+      <title>Authentication</title>
       <link>/pro/auth/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       

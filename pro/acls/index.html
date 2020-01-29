@@ -5,8 +5,8 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-01-29T23:46:44 CET">
-<title>Getting started :: Dkron - Distributed job scheduling system</title>
+<meta name="revised" content="2020-01-29T23:46:45 CET">
+<title>Access Control :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
 <link href="/css/nucleus.css" rel="stylesheet">
@@ -22,7 +22,7 @@
 
     
   </head>
-  <body data-url="/basics/getting-started/">
+  <body data-url="/pro/acls/">
     
       <header>
   <div class="logo">
@@ -64,11 +64,10 @@
             <i class="fa fa-fw fa-home"></i>
           </a>
           </li>
-    <li data-nav-id="/basics/" class="dd-item parent haschildren
+    <li data-nav-id="/basics/" class="dd-item haschildren
         ">
       <div>
-      <a href="/basics/">Basics</a>
-            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/basics/">Basics</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
       <li data-nav-id="/basics/installation/" class="dd-item">
@@ -78,7 +77,7 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/basics/getting-started/" class="dd-item active">
+      <li data-nav-id="/basics/getting-started/" class="dd-item">
         <div>
           <a href="/basics/getting-started/">
             Getting started
@@ -252,10 +251,11 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/pro/" class="dd-item haschildren
+    <li data-nav-id="/pro/" class="dd-item parent haschildren
         ">
       <div>
-      <a href="/pro/">Dkron Pro</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/pro/">Dkron Pro</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
     <li data-nav-id="/pro/cli/" class="dd-item haschildren
@@ -329,7 +329,7 @@
     </li>
         </ul>
     </li>
-      <li data-nav-id="/pro/acls/" class="dd-item">
+      <li data-nav-id="/pro/acls/" class="dd-item active">
         <div>
           <a href="/pro/acls/">
             Access Control
@@ -1002,15 +1002,28 @@
         <select onchange="javascript:location.href = this.value;">
           
     <option value="/basics/" >
-   Basics</option> 
-      <option value="/basics/installation/" >- Installation</option>
-      <option value="/basics/getting-started/"  selected>- Getting started</option>
-      <option value="/basics/configuration/" >- Configuration</option>
-  
+   Basics</option>
     <option value="/usage/" >
    Usage</option>
     <option value="/pro/" >
-   Dkron Pro</option>
+   Dkron Pro</option> 
+    <option value="/pro/cli/" >
+  - 
+   Pro CLI</option>
+      <option value="/pro/acls/"  selected>- Access Control</option>
+      <option value="/pro/auth/" >- Authentication</option>
+      <option value="/pro/commercial-faq/" >- Commercial FAQ</option>
+      <option value="/pro/commercial-support/" >- Commercial Support</option>
+      <option value="/pro/configuration/" >- Configuration</option>
+      <option value="/pro/failover/" >- Cross region failover</option>
+      <option value="/pro/encryption/" >- Encryption</option>
+    <option value="/pro/executors/" >
+  - 
+   Executors</option>
+    <option value="/pro/processors/" >
+  - 
+   Processors</option>
+  
     <option value="/products/" >
    Products</option>
     <option value="/intro/" >
@@ -1045,108 +1058,111 @@
       </div>
     
 
-    <h1>Getting started</h1>
+    <h1>Access Control</h1>
     
     
     
     
 
-<h2 id="introduction">Introduction</h2>
+<h1 id="access-control-preview">Access Control (Preview)</h1>
 
-<p>Dkron nodes can work in two modes, agents or servers.</p>
+<div class="notices info" >
+This feature is in preview and is subject to big changes
+</div>
 
-<p>A Dkron agent is a cluster member that can handle job executions, run your scripts and return the resulting output to the server.</p>
+<p>Dkron provides an optional Access Control List (ACL) system which can be used to control access to data and APIs. The ACL is Capability-based, relying on policies to determine which fine grained rules can be applied. Dkron&rsquo;s capability based ACL system is very similar to common ACL systems you are used to.</p>
 
-<p>A Dkron server is also a cluster member that send job execution queries to agents or other servers, so servers can execute jobs too.</p>
+<h2 id="acl-system-overview">ACL System Overview</h2>
 
-<p>The main distinction is that servers order job executions, can be used to schedule jobs, handles data storage and participate on leader election.</p>
+<p>Dkron&rsquo;s ACL system is implemented with the CNCF <a href="https://www.openpolicyagent.org/">Open Policy Agent</a> bringing a powerful system to suit your needs.</p>
 
-<p>Dkron clusters have a leader, the leader is responsible of starting job execution queries in the cluster.</p>
-
-<p>Any Dkron agent or server acts as a cluster member and it&rsquo;s available to run scheduled jobs.</p>
-
-<p>You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run. This gives an unprecedented level of flexibility in runnig jobs across a cluster of any size and with any combination of machines you need.</p>
-
-<p>All the execution responses will be gathered by the scheduler and stored in the database.</p>
-
-<h2 id="state-storage">State storage</h2>
-
-<p>Dkron deployment is just a single binary, it stores the state in an internal BadgerDB instance and replicate all changes between all server nodes using the Raft protocol, it doesn&rsquo;t need any other storage system outside itself.</p>
-
-<h2 id="installation">Installation</h2>
-
-<p>See the <a href="/basics/installation">installation</a>.</p>
-
-<h2 id="configuration">Configuration</h2>
-
-<p>See the <a href="/basics/configuration">configuration</a>.</p>
-
-<h2 id="usage">Usage</h2>
-
-<p>By default Dkron uses the following ports:</p>
+<p>The ACL system is designed to be easy to use and fast to enforce while providing administrative insight. At the highest level, there are two major components to the ACL system:</p>
 
 <ul>
-<li><code>8946</code> for serf layer between agents</li>
-<li><code>8080</code> for HTTP for the API and Dashboard</li>
-<li><code>6868</code> for gRPC and raft layer comunication between agents.</li>
+<li><p><strong>OPA policy engine.</strong> OPA provices policy decission making <a href="https://www.openpolicyagent.org/docs/latest/philosophy/#policy-decoupling">decoupling</a> Dkron integrates OPA as a library and provides a default policy rules written in the OPA Policy language that implements a set of enforcing rules on request params to the API that are ready to use for most use cases. You don not need to learn the OPA Policy language to start using Dkron&rsquo;s ACL system, but you can modify the default policy rules to adapt to your use case if you need to. Read more in <a href="https://www.openpolicyagent.org/docs/latest/">OPA Docs</a></p></li>
+
+<li><p><strong>ACL Policies.</strong> Dkron&rsquo;s ACL policies are simple JSON documents that define patterns to allow access to resources. You can find below an example ACL policy that works with the default OPA policy. The ACL JSON structure is not rigid you can adapt it to add new features in combination with the OPA Policy rules.</p></li>
 </ul>
 
 <div class="notices note" >
-Be sure you have opened this ports (or the ones that you configured) in your firewall or AWS security groups.
+This guide is based on the usage of the default OPA Rego Policy
 </div>
 
-<h3 id="starting-a-single-node">Starting a single node</h3>
+<h2 id="configuring-acls">Configuring ACLs</h2>
 
-<p>Works out of the box, good for non HA installations.</p>
+<p>ACLs are not enabled by default and must be enabled. To enable ACLs simply create an ACL policy using the API. Below you can find the most basic example of an ACL policy:</p>
 
-<ul>
-<li>System service: If no changes are done to the default config files, dkron will start as a service in single mode.</li>
+<p>Basic example policy:</p>
 
-<li><p>Command line: Running a single node with default config can be done by running:</p>
+<pre><code>curl localhost:8080/v1/acl/policies -d '{
+    &quot;path&quot;: {
+        &quot;/v1&quot;: {
+            &quot;capabilities&quot;: [
+                &quot;read&quot;,
+            ]
+        },
+        &quot;/v1/**&quot;: {
+            &quot;capabilities&quot;: [
+                &quot;create&quot;,
+                &quot;read&quot;,
+                &quot;update&quot;,
+                &quot;delete&quot;,
+                &quot;list&quot;
+            ]
+        }
+    }
+}'
+</code></pre>
 
-<pre><code>dkron agent --server --bootstrap-expect=1
-</code></pre></li>
-</ul>
+<p>This policy allows any request to the API. As you can see paths uses glob patterns, and capabilities allow operations on resources.</p>
 
-<p>Check your server is working: <code>curl localhost:8080/v1</code></p>
+<p>ACLs also allows templating, providing the ability to allow or deny operations to certain resource by patterns without having to hardcode values in policies.</p>
 
-<p>Simple as that, now it is time to add a job:</p>
+<p>For example, we can for limit job actions on certain resources based on the provided token via the accepted header <code>X-Dkron-Token</code> on the request:</p>
 
-<div class="notices note" >
-This job will only run in just one `server` node due to the node count in the tag. Refer to the [target node spec](/usage/target-nodes-spec) for details.
-</div>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">curl localhost:8080/v1/jobs -XPOST -d <span style="color:#d88200">&#39;{
-</span><span style="color:#d88200">  &#34;name&#34;: &#34;job1&#34;,
-</span><span style="color:#d88200">  &#34;schedule&#34;: &#34;@every 10s&#34;,
-</span><span style="color:#d88200">  &#34;timezone&#34;: &#34;Europe/Berlin&#34;,
-</span><span style="color:#d88200">  &#34;owner&#34;: &#34;Platform Team&#34;,
-</span><span style="color:#d88200">  &#34;owner_email&#34;: &#34;platform@example.com&#34;,
-</span><span style="color:#d88200">  &#34;disabled&#34;: false,
-</span><span style="color:#d88200">  &#34;tags&#34;: {
-</span><span style="color:#d88200">    &#34;server&#34;: &#34;true&#34;
-</span><span style="color:#d88200">  },
-</span><span style="color:#d88200">  &#34;metadata&#34;: {
-</span><span style="color:#d88200">    &#34;user&#34;: &#34;12345&#34;
-</span><span style="color:#d88200">  }
-</span><span style="color:#d88200">  &#34;concurrency&#34;: &#34;allow&#34;,
-</span><span style="color:#d88200">  &#34;executor&#34;: &#34;shell&#34;,
-</span><span style="color:#d88200">  &#34;executor_config&#34;: {
-</span><span style="color:#d88200">    &#34;command&#34;: &#34;date&#34;
-</span><span style="color:#d88200">  }
-</span><span style="color:#d88200">}&#39;</span></code></pre></div>
-<p>For full Job params description refer to the Job model in the <a href="/api">API guide</a></p>
+<p>Example policy:</p>
 
-<p>That&rsquo;s it!</p>
+<pre><code>curl localhost:8080/v1/acl/policies -d '{
+    &quot;path&quot;: {
+        &quot;/v1/members&quot;: {
+            &quot;capabilities&quot;: [&quot;read&quot;]
+        },
+        &quot;/v1/jobs&quot;: {
+            &quot;capabilities&quot;: [
+                &quot;list&quot;,
+                &quot;read&quot;
+            ]
+        },
+        &quot;/v1/jobs/{{.Token}}-*&quot;: {
+            &quot;capabilities&quot;: [
+                &quot;create&quot;,
+                &quot;read&quot;,
+                &quot;update&quot;,
+                &quot;delete&quot;
+            ]
+        }
+    }
+}'
+</code></pre>
 
-<h4 id="to-start-configuring-an-ha-installation-of-dkron-follow-the-clustering-guide-usage-clustering">To start configuring an HA installation of Dkron follow the <a href="/usage/clustering">clustering guide</a></h4>
+<p>This policy will allow all operations on jobs starting with <code>[Token]-job_name</code>, but will deny manipulation of jobs that doesn&rsquo;t match the pattern.</p>
+
+<h2 id="disable-acls">Disable ACLs</h2>
+
+<p>As an administrator you will need to edit policies. Currently to be able to edit ACLs if you get locked out, you need to edit the default Rego file and disable enforcement completely. Edit the file located in <code>policies/main.rego</code> and change the <code>default allow</code> directive to <code>true</code>:</p>
+
+<pre><code>default allow = false -&gt; true
+</code></pre>
+
+<p>This way the policy engine always evaluates to true, allowing any operation again. To restore ACL enforcemen, edit again the <code>default allow</code> line and set it back to <code>false</code>.</p>
 
 
     
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-prev" href="/basics/installation/" title="Installation"> <i class="fa fa-chevron-left"></i><label>Installation</label></a>
-    <a class="nav nav-next" href="/basics/configuration/" title="Configuration" style="margin-right: 0px;"><label>Configuration</label><i class="fa fa-chevron-right"></i></a></div>
+<a class="nav nav-prev" href="/pro/cli/dkron_version/" title="dkron version"> <i class="fa fa-chevron-left"></i><label>dkron version</label></a>
+    <a class="nav nav-next" href="/pro/cli/" title="Pro CLI" style="margin-right: 0px;"><label>Pro CLI</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>
@@ -1163,7 +1179,7 @@ This job will only run in just one `server` node due to the node count in the ta
 
     
     <div class="github-link">
-      <a href="https://github.com/distribworks/dkron/edit/master/website/content/basics/getting-started.md" target="blank"><i class="fa fa-code-fork"></i>
+      <a href="https://github.com/distribworks/dkron/edit/master/website/content/pro/acls.md" target="blank"><i class="fa fa-code-fork"></i>
         Improve this page</a>
     </div>
     

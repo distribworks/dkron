@@ -92,7 +92,7 @@
   
   <url>
     <loc>/cli/</loc>
-    <lastmod>2019-10-10T00:00:00+00:00</lastmod>
+    <lastmod>2020-01-29T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -128,52 +128,52 @@
   
   <url>
     <loc>/cli/dkron/</loc>
-    <lastmod>2019-10-10T00:00:00+00:00</lastmod>
+    <lastmod>2020-01-29T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/</loc>
-    <lastmod>2019-10-10T00:00:00+00:00</lastmod>
+    <lastmod>2020-01-29T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/cli/dkron_agent/</loc>
-    <lastmod>2019-10-10T00:00:00+00:00</lastmod>
+    <lastmod>2020-01-29T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/cli/dkron_doc/</loc>
-    <lastmod>2019-10-10T00:00:00+00:00</lastmod>
+    <lastmod>2020-01-29T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/cli/dkron_keygen/</loc>
-    <lastmod>2019-10-10T00:00:00+00:00</lastmod>
+    <lastmod>2020-01-29T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/cli/dkron_leave/</loc>
-    <lastmod>2019-10-10T00:00:00+00:00</lastmod>
+    <lastmod>2020-01-29T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/cli/dkron_raft/</loc>
-    <lastmod>2019-10-10T00:00:00+00:00</lastmod>
+    <lastmod>2020-01-29T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/cli/dkron_raft_list-peers/</loc>
-    <lastmod>2019-10-10T00:00:00+00:00</lastmod>
+    <lastmod>2020-01-29T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/cli/dkron_raft_remove-peer/</loc>
-    <lastmod>2019-10-10T00:00:00+00:00</lastmod>
+    <lastmod>2020-01-29T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/cli/dkron_version/</loc>
-    <lastmod>2019-10-10T00:00:00+00:00</lastmod>
+    <lastmod>2020-01-29T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -289,6 +289,10 @@
   <url>
     <loc>/v1.2/_footer/</loc>
     <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/pro/acls/</loc>
   </url>
   
   <url>
