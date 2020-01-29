@@ -52,7 +52,7 @@ func (h *HTTPTransport) ServeHTTP() {
 }
 
 // APIRoutes registers the api routes on the gin RouterGroup.
-func (h *HTTPTransport) APIRoutes(r *gin.RouterGroup) {
+func (h *HTTPTransport) APIRoutes(r *gin.RouterGroup, middleware ...gin.HandlerFunc) {
 	r.GET("/debug/vars", expvar.Handler())
 
 	h.Engine.GET("/health", func(c *gin.Context) {
@@ -63,6 +63,7 @@ func (h *HTTPTransport) APIRoutes(r *gin.RouterGroup) {
 
 	r.GET("/v1", h.indexHandler)
 	v1 := r.Group("/v1")
+	v1.Use(middleware...)
 	v1.GET("/", h.indexHandler)
 	v1.GET("/members", h.membersHandler)
 	v1.GET("/leader", h.leaderHandler)
