@@ -11,6 +11,14 @@ Settings can be specified in three ways (in order of precedence):
 1. Environment variables starting with **`DKRON_`**
 1. **`dkron.yml`** config file
 
+## Config file location
+
+Config file will be loaded from the following paths:
+
+- `/etc/dkron`
+- `$HOME/.dkron`
+- `./config`
+
 ### Config file example
 
 ```yaml
