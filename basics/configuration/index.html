@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-01-29T23:46:45 CET">
+<meta name="revised" content="2020-02-05T22:03:29 CET">
 <title>Configuration :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -1060,6 +1060,16 @@
 <li>Environment variables starting with <strong><code>DKRON_</code></strong></li>
 <li><strong><code>dkron.yml</code></strong> config file</li>
 </ol>
+
+<h2 id="config-file-location">Config file location</h2>
+
+<p>Config file will be loaded from the following paths:</p>
+
+<ul>
+<li><code>/etc/dkron</code></li>
+<li><code>$HOME/.dkron</code></li>
+<li><code>./config</code></li>
+</ul>
 
 <h3 id="config-file-example">Config file example</h3>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#75715e"># Dkron example configuration file</span>
