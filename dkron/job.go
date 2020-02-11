@@ -214,25 +214,28 @@ func (j *Job) ToProto() *proto.Job {
 
 // Run the job
 func (j *Job) Run() {
-	// Maybe we are testing or it's disabled
-	if j.Agent != nil && j.Disabled == false {
-		// Check if it's runnable
-		if j.isRunnable() {
-			j.running = true
-			defer func() { j.running = false }()
+	// As this function should comply with the Job interface of the cron package we will use
+	// the aget property on execution, this is why it need to check if it's set and otherwise fail.
+	if j.Agent == nil {
+		log.Fatal("job: agent not set")
+	}
 
-			log.WithFields(logrus.Fields{
-				"job":      j.Name,
-				"schedule": j.Schedule,
-			}).Debug("scheduler: Run job")
+	// Check if it's runnable
+	if j.isRunnable() {
+		j.running = true
+		defer func() { j.running = false }()
 
-			cronInspect.Set(j.Name, j)
+		log.WithFields(logrus.Fields{
+			"job":      j.Name,
+			"schedule": j.Schedule,
+		}).Debug("scheduler: Run job")
 
-			// Simple execution wrapper
-			ex := NewExecution(j.Name)
-			if _, err := j.Agent.RunQuery(j.Name, ex); err != nil {
-				log.WithError(err).Fatal("job: Error sending Run query to serf cluster")
-			}
+		cronInspect.Set(j.Name, j)
+
+		// Simple execution wrapper
+		ex := NewExecution(j.Name)
+		if _, err := j.Agent.RunQuery(j.Name, ex); err != nil {
+			log.WithError(err).Fatal("job: Error sending Run query to serf cluster")
 		}
 	}
 }
@@ -314,6 +317,10 @@ func (j *Job) GetNext() (time.Time, error) {
 }
 
 func (j *Job) isRunnable() bool {
+	if j.Disabled == true {
+		return false
+	}
+
 	if j.Agent.GlobalLock {
 		log.WithField("job", j.Name).
 			Warning("job: Skipping execution because active global lock")
