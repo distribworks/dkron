@@ -240,9 +240,13 @@ func (h *HTTPTransport) membersHandler(c *gin.Context) {
 
 func (h *HTTPTransport) leaderHandler(c *gin.Context) {
 	member, err := h.agent.leaderMember()
-	if err == nil {
-		renderJSON(c, http.StatusOK, member)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
 	}
+	if member == nil {
+		c.AbortWithStatus(http.StatusNotFound)
+	}
+	renderJSON(c, http.StatusOK, member)
 }
 
 func (h *HTTPTransport) leaveHandler(c *gin.Context) {
