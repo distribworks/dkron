@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.0.5] - 2020-02-12
+
+### Fixes
+
+fix: Set the agent on dependent run (#675)
+fix: Return the correct status code on leader endpoint (#671)
+
+### Changes
+
+refactor: Check for missing agent (#675)
+docs: Add code comment (#675)
+
 ## [2.0.4] - 2020-01-31
 
 * refactor: Remove dependency of the agent in store and reduce usage in Job (#669)
