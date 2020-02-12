@@ -231,6 +231,7 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.E
 	if len(job.DependentJobs) > 0 && job.Status == StatusSuccess {
 		for _, djn := range job.DependentJobs {
 			dj, err := grpcs.agent.Store.GetJob(djn, nil)
+			dj.Agent = grpcs.agent
 			if err != nil {
 				return nil, err
 			}
