@@ -10,22 +10,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixes
 
-fix: Set the agent on dependent run (#675)
-fix: Return the correct status code on leader endpoint (#671)
+- fix: Set the agent on dependent run (#675)
+- fix: Return the correct status code on leader endpoint (#671)
 
 ### Changes
 
-refactor: Check for missing agent (#675)
-docs: Add code comment (#675)
+- refactor: Check for missing agent (#675)
+- docs: Add code comment (#675)
 
 ## [2.0.4] - 2020-01-31
 
-* refactor: Remove dependency of the agent in store and reduce usage in Job (#669)
-* chore: Upgrade gin (#669)
-* chore: Add helper methods (#669)
-* refactor: Move directory creation to the Store instantiation (#669)
-* feat: Accept middlewares for API routes (#669)
-* doc: ACL
+- refactor: Remove dependency of the agent in store and reduce usage in Job (#669)
+- chore: Upgrade gin (#669)
+- chore: Add helper methods (#669)
+- refactor: Move directory creation to the Store instantiation (#669)
+- feat: Accept middlewares for API routes (#669)
+- doc: ACL
 
 ## [2.0.3] - 2020-01-04
 
