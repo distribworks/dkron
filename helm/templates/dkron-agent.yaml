@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: {{ .Chart.Name }}-agent
+    namespace: {{ .Release.Namespace }}
+    labels:
+        app: dkron
+        component: agent
+spec:
+    replicas: {{ .Values.agent.replicas }}
+    selector:
+        matchLabels:
+            app: dkron
+            component: agent
+    template:
+        metadata:
+            name: dkron-agent
+            labels:
+                app: dkron
+                component: agent
+        spec:
+            serviceAccountName: dkron
+            terminationGracePeriodSeconds: 30
+            nodeSelector: {{ toYaml .Values.nodeSelector | nindent 16 }}
+            tolerations: {{ toYaml .Values.tolerations | nindent 16 }}
+            volumes:
+                -     name: data
+                      emptyDir: {}
+            containers:
+                -   name: dkron
+                    image: "dkron/dkron:{{ .Values.version }}"
+                    imagePullPolicy: Always
+                    command: ["./dkron"]
+                    args:
+                        - "agent"
+                        - "--config=/etc/dkron/dkron.yaml"
+                        - "--data-dir=/dkron"
+                        - "--tag=\"type=scrapfly\""
+                        - "--retry-join=\"provider=k8s label_selector=\"\"app=dkron\"\" namespace=\"\"{{ .Release.Namespace }}\"\"\""
+                        - "--log-level={{ .Values.log.level }}"
+                    volumeMounts:
+                        -   name: data
+                            mountPath: /dkron
+                    ports:
+                        -   name: serf
+                            containerPort: 8946
+                        -   name: grpc
+                            containerPort: 6868

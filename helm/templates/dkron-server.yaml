@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: {{ .Chart.Name }}-server
+    namespace: {{ .Release.Namespace }}
+    labels:
+        app: dkron
+        component: server
+spec:
+    replicas: {{ .Values.server.replicas }}
+    selector:
+        matchLabels:
+            app: dkron
+            component: server
+    template:
+        metadata:
+            name: dkron-server
+            labels:
+                app: dkron
+                component: server
+        spec:
+            serviceAccountName: dkron
+            terminationGracePeriodSeconds: 30
+            nodeSelector: {{ toYaml .Values.nodeSelector | nindent 16 }}
+            tolerations: {{ toYaml .Values.tolerations | nindent 16 }}
+            volumes:
+              -     name: data
+                    emptyDir: {}
+            containers:
+                -   name: dkron-server
+                    image: "dkron/dkron:{{ .Values.version }}"
+                    imagePullPolicy: Always
+                    command: ["./dkron"]
+                    args:
+                        - "agent"
+                        - "--server"
+                        - "--config=/etc/dkron/dkron.yaml"
+                        - "--data-dir=/dkron"
+                        - "--retry-join=\"provider=k8s label_selector=\"\"app=dkron\"\" namespace=\"\"{{ .Release.Namespace }}\"\"\""
+                        - "--log-level={{ .Values.log.level }}"
+                        - "--bootstrap-expect={{ .Values.server.bootstrapExpected }}"
+                    volumeMounts:
+                        -   name: "data"
+                            mountPath: "/dkron"
+                    ports:
+                        -   name: http
+                            containerPort: 8080
+                        -   name: serf
+                            containerPort: 8946
+                        -   name: grpc
+                            containerPort: 6868
+                    livenessProbe:
+                        httpGet:
+                            path: "/health"
+                            port: 8080
+                        failureThreshold: 2
+                        periodSeconds: 10
+                        initialDelaySeconds: 5
+                        successThreshold: 1
+                        timeoutSeconds: 5
+                    readinessProbe:
+                        httpGet:
+                            path: "/health"
+                            port: 8080
+                        failureThreshold: 5
+                        periodSeconds: 10
+                        initialDelaySeconds: 10
+                        successThreshold: 1
+                        timeoutSeconds: 5

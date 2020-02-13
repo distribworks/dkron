@@ -1,0 +1,6 @@
+apiVersion: v2
+appVersion: "2.0.3"
+description: "Cron manager"
+name: dkron
+version: 1.0.0
+icon: "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"

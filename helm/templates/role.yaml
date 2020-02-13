@@ -1,0 +1,10 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+    namespace: {{ .Release.Namespace}}
+    name: dkron-discovery-manager
+rules:
+    -   apiGroups: [""]
+        resources: ["pods"]
+        verbs: ["list"]
+
