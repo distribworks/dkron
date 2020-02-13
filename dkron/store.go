@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/dgraph-io/badger/v2"
+	"github.com/dgraph-io/badger/v2/options"
 	dkronpb "github.com/distribworks/dkron/v2/proto"
 	"github.com/golang/protobuf/proto"
 	"github.com/sirupsen/logrus"
@@ -49,23 +50,25 @@ func NewStore(dir string) (*Store, error) {
 	if err != nil {
 		return nil, fmt.Errorf("Ivalid directory %s: %w", dir, err)
 	}
-	if !dirExists {
-		// Try to create the directory
-		err := os.MkdirAll(dir, 0700)
-		if err != nil {
-			return nil, fmt.Errorf("Error creating directory %s: %w", dir, err)
+
+	// Remove previous existing Badger dir as we don't reuse data there
+	if dirExists {
+		if err := os.RemoveAll(dir); err != nil {
+			return nil, fmt.Errorf("error deleting directory %s: %w", dir, err)
 		}
 	}
 
+	// Try to create the data directory
+	if err := os.MkdirAll(dir, 0700); err != nil {
+		return nil, fmt.Errorf("Error creating directory %s: %w", dir, err)
+	}
+
 	opts := badger.DefaultOptions(dir).
+		WithValueLogLoadingMode(options.FileIO).
 		WithLogger(log)
 
 	db, err := badger.Open(opts)
 	if err != nil {
-		return nil, err
-	}
-
-	if err := db.DropAll(); err != nil {
 		return nil, err
 	}
 
