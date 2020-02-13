@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.0.6] - 2020-02-14
+
+### Fixes
+
+- fix: Memory consumption on startup (#682)
+
 ## [2.0.5] - 2020-02-12
 
 ### Fixes
