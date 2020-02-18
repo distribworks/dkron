@@ -8,7 +8,8 @@ import (
 	"time"
 
 	metrics "github.com/armon/go-metrics"
-	"github.com/distribworks/dkron/v2/proto"
+	"github.com/distribworks/dkron/v2/plugin"
+	proto "github.com/distribworks/dkron/v2/plugin/types"
 	pb "github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/raft"
@@ -169,7 +170,7 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.E
 		log.WithField("plugin", k).Info("grpc: Processing execution with plugin")
 		if processor, ok := grpcs.agent.ProcessorPlugins[k]; ok {
 			v["reporting_node"] = grpcs.agent.config.NodeName
-			e := processor.Process(&ExecutionProcessorArgs{Execution: origExec, Config: v})
+			e := processor.Process(&plugin.ExecutionProcessorArgs{Execution: origExec, Config: v})
 			execution = e
 		} else {
 			log.WithField("plugin", k).Error("grpc: Specified plugin not found")

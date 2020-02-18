@@ -3,12 +3,12 @@ package plugin
 import (
 	"net/rpc"
 
-	"github.com/distribworks/dkron/v2/dkron"
+	"github.com/distribworks/dkron/v2/plugin/types"
 	"github.com/hashicorp/go-plugin"
 )
 
 type ExecutionProcessorPlugin struct {
-	Processor dkron.ExecutionProcessor
+	Processor ExecutionProcessor
 }
 
 func (p *ExecutionProcessorPlugin) Server(b *plugin.MuxBroker) (interface{}, error) {
@@ -19,6 +19,17 @@ func (p *ExecutionProcessorPlugin) Client(b *plugin.MuxBroker, c *rpc.Client) (i
 	return &ExecutionProcessor{Broker: b, Client: c}, nil
 }
 
+// ExecutionProcessorArgs holds the Execution and PluginConfig for an ExecutionProcessor.
+type ExecutionProcessorArgs struct {
+	// The execution to pass to the processor
+	Execution types.Execution
+	// The configuration for this plugin call
+	Config PluginConfig
+}
+
+// PluginConfig holds a map of the plugin configuration data structure.
+type PluginConfig map[string]string
+
 // Here is an implementation that talks over RPC
 type ExecutionProcessor struct {
 	Broker *plugin.MuxBroker
@@ -26,8 +37,8 @@ type ExecutionProcessor struct {
 }
 
 // The Process method that actually call the plugin Process method.
-func (e *ExecutionProcessor) Process(args *dkron.ExecutionProcessorArgs) dkron.Execution {
-	var resp dkron.Execution
+func (e *ExecutionProcessor) Process(args *ExecutionProcessorArgs) types.Execution {
+	var resp types.Execution
 	err := e.Client.Call("Plugin.Process", args, &resp)
 	if err != nil {
 		// You usually want your interfaces to return errors. If they don't,
@@ -43,10 +54,10 @@ func (e *ExecutionProcessor) Process(args *dkron.ExecutionProcessorArgs) dkron.E
 type ExecutionProcessorServer struct {
 	// This is the real implementation
 	Broker    *plugin.MuxBroker
-	Processor dkron.ExecutionProcessor
+	Processor ExecutionProcessor
 }
 
-func (e *ExecutionProcessorServer) Process(args *dkron.ExecutionProcessorArgs, resp *dkron.Execution) error {
+func (e *ExecutionProcessorServer) Process(args *ExecutionProcessorArgs, resp *types.Execution) error {
 	*resp = e.Processor.Process(args)
 	return nil
 }

@@ -16,7 +16,8 @@ import (
 	"time"
 
 	metrics "github.com/armon/go-metrics"
-	"github.com/distribworks/dkron/v2/proto"
+	"github.com/distribworks/dkron/v2/plugin"
+	proto "github.com/distribworks/dkron/v2/plugin/types"
 	"github.com/hashicorp/memberlist"
 	"github.com/hashicorp/raft"
 	raftboltdb "github.com/hashicorp/raft-boltdb"
@@ -50,7 +51,7 @@ type Agent struct {
 	ProcessorPlugins map[string]ExecutionProcessor
 
 	//ExecutorPlugins maps executor plugins
-	ExecutorPlugins map[string]Executor
+	ExecutorPlugins map[string]plugin.Executor
 
 	// HTTPTransport is a swappable interface for the HTTP server interface
 	HTTPTransport Transport
@@ -110,7 +111,7 @@ type ProcessorFactory func() (ExecutionProcessor, error)
 // Plugins struct to store loaded plugins of each type
 type Plugins struct {
 	Processors map[string]ExecutionProcessor
-	Executors  map[string]Executor
+	Executors  map[string]plugin.Executor
 }
 
 // AgentOption type that defines agent options
