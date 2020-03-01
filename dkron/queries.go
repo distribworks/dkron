@@ -45,7 +45,11 @@ func (a *Agent) RunQuery(jobName string, ex *Execution) (*Job, error) {
 	}
 	job.Status = StatusRunning
 
-	if err := a.applySetJob(job.ToProto()); err != nil {
+	// TODO change
+	// if err := a.applySetJob(job.ToProto()); err != nil {
+	// 	return nil, fmt.Errorf("agent: RunQuery error storing job %s before running: %w", jobName, err)
+	// }
+	if err := a.Store.SetJob(job, false); err != nil {
 		return nil, fmt.Errorf("agent: RunQuery error storing job %s before running: %w", jobName, err)
 	}
 

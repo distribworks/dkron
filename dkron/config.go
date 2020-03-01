@@ -153,6 +153,18 @@ type Config struct {
 
 	// StatsdAddr is the statsd standard server to be used for sending metrics.
 	StatsdAddr string `mapstructure:"statsd-addr"`
+
+	// DBHost is host of mysql
+	DBHost string `mapstructure:"db-host"`
+
+	// DBName is Database name
+	DBName string `mapstructure:"db-name"`
+
+	// DBUsername username of mysql
+	DBUsername string `mapstructure:"db-username"`
+
+	// DBPassword passowrd of mysql
+	DBPassword string `mapstructure:"db-password"`
 }
 
 // DefaultBindPort is the default port that dkron will use for Serf communication

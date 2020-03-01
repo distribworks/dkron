@@ -453,7 +453,8 @@ func (a *Agent) StartServer() {
 	}
 
 	if a.Store == nil {
-		s, err := NewStore(filepath.Join(a.config.DataDir, a.config.NodeName))
+		// s, err := NewStore(filepath.Join(a.config.DataDir, a.config.NodeName))
+		s, err := NewDBStore(a.config.DBHost, a.config.DBName, a.config.DBUsername, a.config.DBPassword)
 		if err != nil {
 			log.WithError(err).Fatal("dkron: Error initializing store")
 		}
@@ -781,14 +782,19 @@ func (a *Agent) setExecution(payload []byte) *Execution {
 		log.Fatal(err)
 	}
 
-	cmd, err := Encode(SetExecutionType, ex.ToProto())
-	if err != nil {
-		log.WithError(err).Fatal("agent: encode error in setExecution")
-		return nil
-	}
-	af := a.raft.Apply(cmd, raftTimeout)
-	if err := af.Error(); err != nil {
-		log.WithError(err).Fatal("agent: error applying SetExecutionType")
+	// cmd, err := Encode(SetExecutionType, ex.ToProto())
+	// if err != nil {
+	// 	log.WithError(err).Fatal("agent: encode error in setExecution")
+	// 	return nil
+	// }
+	// af := a.raft.Apply(cmd, raftTimeout)
+	// if err := af.Error(); err != nil {
+	// 	log.WithError(err).Fatal("agent: error applying SetExecutionType")
+	// 	return nil
+	// }
+
+	// store to db directly
+	if _, err := a.Store.SetExecution(&ex); err != nil {
 		return nil
 	}
 

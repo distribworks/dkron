@@ -77,12 +77,16 @@ func (grpcs *GRPCServer) SetJob(ctx context.Context, setJobReq *proto.SetJobRequ
 		"job": setJobReq.Job.Name,
 	}).Debug("grpc: Received SetJob")
 
-	if err := grpcs.agent.applySetJob(setJobReq.Job); err != nil {
-		return nil, err
-	}
+	// if err := grpcs.agent.applySetJob(setJobReq.Job); err != nil {
+	// 	return nil, err
+	// }
 
 	// If everything is ok, add the job to the scheduler
 	job := NewJobFromProto(setJobReq.Job)
+	if err := grpcs.agent.Store.SetJob(job, false); err != nil {
+		return nil, err
+	}
+
 	job.Agent = grpcs.agent
 	if err := grpcs.agent.sched.AddJob(job); err != nil {
 		return nil, err
@@ -97,18 +101,22 @@ func (grpcs *GRPCServer) DeleteJob(ctx context.Context, delJobReq *proto.DeleteJ
 	defer metrics.MeasureSince([]string{"grpc", "delete_job"}, time.Now())
 	log.WithField("job", delJobReq.GetJobName()).Debug("grpc: Received DeleteJob")
 
-	cmd, err := Encode(DeleteJobType, delJobReq)
+	// cmd, err := Encode(DeleteJobType, delJobReq)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// af := grpcs.agent.raft.Apply(cmd, raftTimeout)
+	// if err := af.Error(); err != nil {
+	// 	return nil, err
+	// }
+	// res := af.Response()
+	// job, ok := res.(*Job)
+	// if !ok {
+	// 	return nil, fmt.Errorf("grpc: Error wrong response from apply in DeleteJob: %v", res)
+	// }
+	job, err := grpcs.agent.Store.DeleteJob(delJobReq.JobName)
 	if err != nil {
-		return nil, err
-	}
-	af := grpcs.agent.raft.Apply(cmd, raftTimeout)
-	if err := af.Error(); err != nil {
-		return nil, err
-	}
-	res := af.Response()
-	job, ok := res.(*Job)
-	if !ok {
-		return nil, fmt.Errorf("grpc: Error wrong response from apply in DeleteJob: %v", res)
+		return nil, fmt.Errorf("grpc: Error wrong response from apply in DeleteJob: %v", err)
 	}
 	jpb := job.ToProto()
 
@@ -176,13 +184,16 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.E
 		}
 	}
 
-	execDoneReq.Execution = execution.ToProto()
-	cmd, err := Encode(ExecutionDoneType, execDoneReq)
-	if err != nil {
-		return nil, err
-	}
-	af := grpcs.agent.raft.Apply(cmd, raftTimeout)
-	if err := af.Error(); err != nil {
+	// execDoneReq.Execution = execution.ToProto()
+	// cmd, err := Encode(ExecutionDoneType, execDoneReq)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// af := grpcs.agent.raft.Apply(cmd, raftTimeout)
+	// if err := af.Error(); err != nil {
+	// 	return nil, err
+	// }
+	if ok, err := grpcs.agent.Store.SetExecutionDone(&execution); err != nil && ok {
 		return nil, err
 	}
 
