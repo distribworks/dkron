@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Plugins on Dkron - Distributed job scheduling system</title>
@@ -16,7 +16,7 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/usage/plugins/develop/</guid>
-      <description>Developing a Plugin **Advanced topic!** Plugin development is a highly advanced topic, and is not required knowledge for day-to-day usage. If you don&#39;t plan on writing any plugins, we recommend not reading the following section of the documentation. Developing a plugin is simple. The only knowledge necessary to write a plugin is basic command-line skills and basic knowledge of the Go programming language.
+      <description>Developing a Plugin role=&amp;quot;alert&amp;quot;&amp;gt;Advanced topic! Plugin development is a highly advanced topic, and is not required knowledge for day-to-day usage. If you don&amp;rsquo;t plan on writing any plugins, we recommend not reading the following section of the documentation.Developing a plugin is simple. The only knowledge necessary to write a plugin is basic command-line skills and basic knowledge of the Go programming language.
 Note: A common pitfall is not properly setting up a $GOPATH.</description>
     </item>
     

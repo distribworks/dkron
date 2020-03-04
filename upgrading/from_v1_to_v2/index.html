@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-02-05T22:03:29 CET">
+<meta name="revised" content="2020-03-04T09:28:28 CET">
 <title>Upgrade from v1 to v2 :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -29,9 +29,7 @@
     
 	
   
-    <div class="brand">
-  <a class="logo" href="/"><img src="/img/dkron-logo.png"/></a>
-</div>
+    <!-- raw HTML omitted -->
 
   
 
@@ -544,22 +542,6 @@
       <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
       </div>
     </li>
-    <li data-nav-id="/upgrading/" class="dd-item parent haschildren
-        ">
-      <div>
-      <a href="/upgrading/">Upgradings</a>
-            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item active">
-        <div>
-          <a href="/upgrading/from_v1_to_v2/">
-            Upgrade from v1 to v2
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
     <li data-nav-id="/v1.2/" class="dd-item haschildren
         ">
       <div>
@@ -977,6 +959,22 @@
     </li>
         </ul>
     </li>
+    <li data-nav-id="/upgrading/" class="dd-item parent haschildren
+        ">
+      <div>
+      <a href="/upgrading/">Upgradings</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item active">
+        <div>
+          <a href="/upgrading/from_v1_to_v2/">
+            Upgrade from v1 to v2
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
 
 
 
@@ -1015,12 +1013,12 @@
    CLI</option>
     <option value="/api/" >
    API</option>
+    <option value="/v1.2/" >
+   V1.2s</option>
     <option value="/upgrading/" >
    Upgradings</option> 
       <option value="/upgrading/from_v1_to_v2/"  selected>- Upgrade from v1 to v2</option>
   
-    <option value="/v1.2/" >
-   V1.2s</option>
 
 
 
@@ -1047,34 +1045,19 @@
     
     
     
-    
-
-<p>Dkron v2 brings lots of changes to the previous version. To successfully upgrade from v1 to v2 you need to take care of certain steps.</p>
-
+    <p>Dkron v2 brings lots of changes to the previous version. To successfully upgrade from v1 to v2 you need to take care of certain steps.</p>
 <h2 id="storage">Storage</h2>
-
 <p>Dkron v2 brings native storage, no external storage engine is needed. This change can be shocking for existing users and should be carefully planned to consider Dkron as a stateful service in contrast of a stateless service as in v1.</p>
-
 <p>You must plan a backup strategy for the data directories, you can configure it using the <code>--data-dir</code> parameter, by default <code>./dkron.data</code>.</p>
-
 <p>This will ensure that you can recover cluster data in case of an unexpected failure.</p>
-
 <h2 id="migrating-jobs">Migrating Jobs</h2>
-
 <p>To migrate jobs from v1 to v2, export jobs from the v1 cluster and import them into v2.</p>
-
 <p>A basic script to do that can be found <a href="https://gist.github.com/pjz/94f4bd81a0897fd64db44593078e2156">here</a></p>
-
 <p>You can take the opportunity to update your job definitions as explained in the following section:</p>
-
 <h2 id="change-job-name">Change job name</h2>
-
 <p>In v2 dkron doesn&rsquo;t accept jobs with invalid naming, adapt your scripts or api calls if necessary to set the job name with valid characters.</p>
-
 <h2 id="changing-tags-and-metadata">Changing tags and metadata</h2>
-
 <p>Tags behave different in dkron 2. There are several dkron tags that changed names and have become reserved. The reserved tags are:</p>
-
 <ul>
 <li>dc</li>
 <li>region</li>
@@ -1086,9 +1069,7 @@
 <li>rpc_addr</li>
 <li>port</li>
 </ul>
-
 <p>You can not set these tags with the <code>tags</code> param. Tags <code>region</code> and <code>dc</code> can be set using the <code>region</code> and <code>datacenter</code> params, respectively.</p>
-
 <p>In Dkron 2, the job filtering API now filters on the <code>metadata</code> instead of the <code>tags</code> field. Jobs have a new param <code>metadata</code> that can be used to set any data to classify jobs. These can then be used to filter results returned by the API.</p>
 
 
@@ -1097,7 +1078,7 @@
         <div class="chevrons">
     <div id="navigation">
 <a class="nav nav-prev" href="/upgrading/" title="Upgradings"> <i class="fa fa-chevron-left"></i><label>Upgradings</label></a>
-    <a class="nav nav-next" href="/v1.2/" title="V1.2s" style="margin-right: 0px;"><label>V1.2s</label><i class="fa fa-chevron-right"></i></a></div>
+    <a class="nav nav-next" href="/basics/" title="Basics" style="margin-right: 0px;"><label>Basics</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>
@@ -1125,7 +1106,7 @@
 
 
   
-    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - victor@distrib.works</p>
+    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - <a href="mailto:victor@distrib.works">victor@distrib.works</a></p>
 
   
 

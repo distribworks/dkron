@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-02-05T22:03:29 CET">
+<meta name="revised" content="2020-03-04T09:28:28 CET">
 <title>Configuration :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -29,9 +29,7 @@
     
 	
   
-    <div class="brand">
-  <a class="logo" href="/"><img src="/img/dkron-logo.png"/></a>
-</div>
+    <!-- raw HTML omitted -->
 
   
 
@@ -544,21 +542,6 @@
       <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
       </div>
     </li>
-    <li data-nav-id="/upgrading/" class="dd-item haschildren
-        ">
-      <div>
-      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
-        <div>
-          <a href="/upgrading/from_v1_to_v2/">
-            Upgrade from v1 to v2
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
     <li data-nav-id="/v1.2/" class="dd-item parent haschildren
         ">
       <div>
@@ -978,6 +961,21 @@
     </li>
         </ul>
     </li>
+    <li data-nav-id="/upgrading/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
+        <div>
+          <a href="/upgrading/from_v1_to_v2/">
+            Upgrade from v1 to v2
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
 
 
 
@@ -1016,8 +1014,6 @@
    CLI</option>
     <option value="/api/" >
    API</option>
-    <option value="/upgrading/" >
-   Upgradings</option>
     <option value="/v1.2/" >
    V1.2s</option> 
     <option value="/v1.2/basics/" >
@@ -1044,6 +1040,8 @@
    API</option>
       <option value="/v1.2/_footer/" >- </option>
   
+    <option value="/upgrading/" >
+   Upgradings</option>
 
 
 
@@ -1070,18 +1068,13 @@
     
     
     
-    
-
-<h2 id="configuration-sources">Configuration sources</h2>
-
+    <h2 id="configuration-sources">Configuration sources</h2>
 <p>Settings can be specified in three ways (in order of precedence):</p>
-
 <ol>
 <li>Command line arguments.</li>
 <li>Environment variables starting with <strong><code>DKRON_</code></strong></li>
 <li><strong><code>dkron.json</code></strong> config file</li>
 </ol>
-
 <h3 id="config-file-example">Config file example</h3>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#75715e"># Dkron example configuration file</span>
 <span style="color:#75715e"># backend: etcd</span>
@@ -1105,14 +1098,13 @@
 <span style="color:#75715e"># mail-username&#34;: mailuser</span>
 <span style="color:#75715e"># mail-password&#34;: mailpassword</span>
 <span style="color:#75715e"># mail-from&#34;: cron@example.com</span>
-<span style="color:#75715e"># mail-subject_prefix: [Dkron]</span></code></pre></div>
-<h3 id="see-also">SEE ALSO</h3>
-
+<span style="color:#75715e"># mail-subject_prefix: [Dkron]</span>
+</code></pre></div><h3 id="see-also">SEE ALSO</h3>
 <ul>
-<li><a href="/cli/dkron_agent/">dkron agent</a>   - Start a dkron agent</li>
-<li><a href="/cli/dkron_doc/">dkron doc</a>   - Generate Markdown documentation for the Dkron CLI.</li>
-<li><a href="/cli/dkron_keygen/">dkron keygen</a>     - Generates a new encryption key</li>
-<li><a href="/cli/dkron_version/">dkron version</a>   - Show version</li>
+<li><a href="/cli/dkron_agent/">dkron agent</a>	 - Start a dkron agent</li>
+<li><a href="/cli/dkron_doc/">dkron doc</a>	 - Generate Markdown documentation for the Dkron CLI.</li>
+<li><a href="/cli/dkron_keygen/">dkron keygen</a>	 - Generates a new encryption key</li>
+<li><a href="/cli/dkron_version/">dkron version</a>	 - Show version</li>
 </ul>
 
 
@@ -1149,7 +1141,7 @@
 
 
   
-    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - victor@distrib.works</p>
+    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - <a href="mailto:victor@distrib.works">victor@distrib.works</a></p>
 
   
 

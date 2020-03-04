@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Usage on Dkron - Distributed job scheduling system</title>
@@ -17,8 +17,8 @@
       
       <guid>/v1.2/usage/target-nodes-spec/</guid>
       <description>Target nodes spec You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run.
-The target node syntax: `[tag-value]:[count]`  Examples: Target all nodes with a tag:
-{ &amp;#34;name&amp;#34;: &amp;#34;job_name&amp;#34;, &amp;#34;command&amp;#34;: &amp;#34;/bin/true&amp;#34;, &amp;#34;schedule&amp;#34;: &amp;#34;@every 2m&amp;#34;, &amp;#34;tags&amp;#34;: { &amp;#34;role&amp;#34;: &amp;#34;web&amp;#34; } } mermaid.initialize({startOnLoad:true}); graph LR; J(&#34;Job tags: #quot;role#quot;: #quot;web#quot;&#34;) --|Run Job|N1[&#34;</description>
+Examples: Target all nodes with a tag:
+{ &amp;#34;name&amp;#34;: &amp;#34;job_name&amp;#34;, &amp;#34;command&amp;#34;: &amp;#34;/bin/true&amp;#34;, &amp;#34;schedule&amp;#34;: &amp;#34;@every 2m&amp;#34;, &amp;#34;tags&amp;#34;: { &amp;#34;role&amp;#34;: &amp;#34;web&amp;#34; } } mermaid.initialize({startOnLoad:true}); graph LR; J(&#34;Job tags: #quot;role#quot;: #quot;web#quot;&#34;) --|Run Job|N1[&#34;Node1 tags: #quot;role#quot;: #quot;web#quot;&#34;] J --|Run Job|N2[&#34;</description>
     </item>
     
     <item>
@@ -48,10 +48,10 @@ To form a cluster, server nodes need to know the address of its peers as in the 
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/v1.2/usage/concurrency/</guid>
-      <description> Concurrency Jobs can be configured to allow overlapping executions or forbid them.
+      <description>Concurrency Jobs can be configured to allow overlapping executions or forbid them.
 Concurrency property accepts two option:
  allow (default): Allow concurrent job executions. forbid: If the job is already running don&amp;rsquo;t send the execution, it will skip the executions until the next schedule.  Example:
-{ &amp;#34;name&amp;#34;: &amp;#34;job1&amp;#34;, &amp;#34;schedule&amp;#34;: &amp;#34;@every 10s&amp;#34;, &amp;#34;executor&amp;#34;: &amp;#34;shell&amp;#34;, &amp;#34;executor_config&amp;#34;: { &amp;#34;command&amp;#34;: &amp;#34;echo \&amp;#34;Hello from parent\&amp;#34;&amp;#34; }, &amp;#34;concurrency&amp;#34;: &amp;#34;forbid&amp;#34; }</description>
+{ &amp;#34;name&amp;#34;: &amp;#34;job1&amp;#34;, &amp;#34;schedule&amp;#34;: &amp;#34;@every 10s&amp;#34;, &amp;#34;executor&amp;#34;: &amp;#34;shell&amp;#34;, &amp;#34;executor_config&amp;#34;: { &amp;#34;command&amp;#34;: &amp;#34;echo \&amp;#34;Hello from parent\&amp;#34;&amp;#34; }, &amp;#34;concurrency&amp;#34;: &amp;#34;forbid&amp;#34; } </description>
     </item>
     
     <item>
@@ -96,7 +96,7 @@ Configuration { &amp;#34;name&amp;#34;: &amp;#34;job1&amp;#34;, &amp;#34;schedul
       <guid>/v1.2/usage/metrics/</guid>
       <description>Dkron has the ability to send metrics to Statsd for dashboards and historical reporting. It sends job processing metrics and golang, serf metrics too.
 Configuration Add this in your yaml config file
-dog_statsd_addr: &amp;#34;localhost:8125&amp;#34; Metrics  dkron.agent.event_received.query_execution_done dkron.agent.event_received.query_run_job dkron.memberlist.gossip dkron.memberlist.probeNode dkron.memberlist.pushPullNode dkron.memberlist.tcp.accept dkron.memberlist.tcp.connect dkron.memberlist.tcp.sent dkron.memberlist.udp.received dkron.memberlist.udp.sent dkron.grpc.call_execution_done dkron.grpc.call_get_job dkron.grpc.execution_done dkron.grpc.get_job dkron.runtime.alloc_bytes dkron.runtime.free_count dkron.runtime.gc_pause_ns dkron.runtime.heap_objects dkron.runtime.malloc_count dkron.runtime.num_goroutines dkron.runtime.sys_bytes dkron.runtime.total_gc_pause_ns dkron.runtime.total_gc_runs dkron.serf.coordinate.adjustment_ms dkron.serf.msgs.received dkron.serf.msgs.sent dkron.serf.queries dkron.serf.queries.execution_done dkron.serf.queries.run_job dkron.serf.query_acks dkron.serf.query_responses dkron.serf.queue.Event dkron.serf.queue.Intent dkron.</description>
+dog_statsd_addr: &amp;#34;localhost:8125&amp;#34; Metrics  dkron.agent.event_received.query_execution_done dkron.agent.event_received.query_run_job dkron.memberlist.gossip dkron.memberlist.probeNode dkron.memberlist.pushPullNode dkron.memberlist.tcp.accept dkron.memberlist.tcp.connect dkron.memberlist.tcp.sent dkron.memberlist.udp.received dkron.memberlist.udp.sent dkron.grpc.call_execution_done dkron.grpc.call_get_job dkron.grpc.execution_done dkron.grpc.get_job dkron.runtime.alloc_bytes dkron.runtime.free_count dkron.runtime.gc_pause_ns dkron.runtime.heap_objects dkron.runtime.malloc_count dkron.runtime.num_goroutines dkron.runtime.sys_bytes dkron.runtime.total_gc_pause_ns dkron.runtime.total_gc_runs dkron.serf.coordinate.adjustment_ms dkron.serf.msgs.received dkron.serf.msgs.sent dkron.serf.queries dkron.serf.queries.execution_done dkron.serf.queries.run_job dkron.serf.query_acks dkron.serf.query_responses dkron.serf.queue.Event dkron.serf.queue.Intent dkron.serf.queue.Query  </description>
     </item>
     
     <item>
@@ -105,9 +105,9 @@ dog_statsd_addr: &amp;#34;localhost:8125&amp;#34; Metrics  dkron.agent.event_rec
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/v1.2/usage/ecs/</guid>
-      <description>[Dkron Pro](/products/pro) comes with a [native ECS executor](/pro/ecs) out of the box.  Use with Amazon ECS To use Dkron to schedule jobs that run in containers, a wrapper ECS script is needed.
+      <description>Use with Amazon ECS To use Dkron to schedule jobs that run in containers, a wrapper ECS script is needed.
 Install the following snippet in the node that will run the call to ECS
- Prerequisites The node that will run the call to ECS will need to have installed
+Prerequisites The node that will run the call to ECS will need to have installed
  AWS cli jq  Example ecs-run --cluster cron --task-definition cron-taskdef --container-name cron --region us-east-1 --command &amp;quot;rake foo&amp;quot;</description>
     </item>
     

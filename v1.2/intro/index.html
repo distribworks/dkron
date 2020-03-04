@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-02-05T22:03:28 CET">
+<meta name="revised" content="2020-03-04T09:28:28 CET">
 <title>Intro :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -29,9 +29,7 @@
     
 	
   
-    <div class="brand">
-  <a class="logo" href="/"><img src="/img/dkron-logo.png"/></a>
-</div>
+    <!-- raw HTML omitted -->
 
   
 
@@ -544,21 +542,6 @@
       <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
       </div>
     </li>
-    <li data-nav-id="/upgrading/" class="dd-item haschildren
-        ">
-      <div>
-      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
-        <div>
-          <a href="/upgrading/from_v1_to_v2/">
-            Upgrade from v1 to v2
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
     <li data-nav-id="/v1.2/" class="dd-item parent haschildren
         ">
       <div>
@@ -978,6 +961,21 @@
     </li>
         </ul>
     </li>
+    <li data-nav-id="/upgrading/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
+        <div>
+          <a href="/upgrading/from_v1_to_v2/">
+            Upgrade from v1 to v2
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
 
 
 
@@ -1016,8 +1014,6 @@
    CLI</option>
     <option value="/api/" >
    API</option>
-    <option value="/upgrading/" >
-   Upgradings</option>
     <option value="/v1.2/" >
    V1.2s</option> 
     <option value="/v1.2/basics/" >
@@ -1043,6 +1039,8 @@
    API</option>
       <option value="/v1.2/_footer/" >- </option>
   
+    <option value="/upgrading/" >
+   Upgradings</option>
 
 
 
@@ -1070,42 +1068,24 @@
     
     
 
-
-
-<h2 id="dkron-distributed-fault-tolerant-job-scheduling-system">Dkron - Distributed, fault tolerant job scheduling system</h2>
-
+<h2 id="dkron---distributed-fault-tolerant-job-scheduling-system">Dkron - Distributed, fault tolerant job scheduling system</h2>
 <p>Welcome to the Dkron documentation! This is the reference guide on how to use Dkron. If you want a getting started guide refer to the <a href="getting-started">getting started guide</a>.</p>
-
 <h2 id="what-is-dkron">What is Dkron</h2>
-
 <p>Dkron is a distributed system to run scheduled jobs against a server or a group of servers of any size. One of the machines is the leader and the others will be followers. If the leader fails or becomes unreachable, any other one will take over and reschedule all jobs to keep the system healthy.</p>
-
 <p>In case the old leader becomes alive again, it&rsquo;ll become a follower.</p>
-
 <p>Dkron is a distributed cron drop-in replacement, easy to setup and fault tolerant with focus in:</p>
-
 <ul>
 <li>Easy: Easy to use with a great UI</li>
 <li>Reliable: Completely fault tolerant</li>
 <li>Highly scalable: Able to handle high volumes of scheduled jobs and thousands of nodes</li>
 </ul>
-
 <p>Dkron is written in Go and leverages the power of distributed key value stores and <a href="https://www.serfdom.io/">Serf</a> for providing fault tolerance, reliability and scalability while remaining simple and easily installable.</p>
-
 <p>Dkron is inspired by the google whitepaper <a href="https://queue.acm.org/detail.cfm?id=2745840">Reliable Cron across the Planet</a></p>
-
 <p>Dkron runs on Linux, OSX and Windows. It can be used to run scheduled commands on a server cluster using any combination of servers for each job. It has no single points of failure due to the use of the fault tolerant distributed databases and can work at large scale thanks to the efficient and lightweight gossip protocol.</p>
-
 <p>Dkron uses the efficient and lightweight <a href="https://www.serfdom.io/docs/internals/gossip.html">gossip protocol</a> underneath to communicate with nodes. Failure notification and task handling are run efficiently across an entire cluster of any size.</p>
-
 <h2 id="web-ui">Web UI</h2>
-
-<p><center class="hidden-xs">
-<img src="/img/screenshot1.png" alt="" />
-</center></p>
-
+<!-- raw HTML omitted -->
 <h2 id="dkron-design">Dkron design</h2>
-
 <p>Dkron is designed to solve one problem well, executing commands in given intervals. Following the unix philosophy of doing one thing and doing it well (like the battle-tested cron) but with the given addition of being designed for the cloud era, removing single points of failure in environments where scheduled jobs are needed to be run in multiple servers.</p>
 
 
@@ -1143,7 +1123,7 @@
 
 
   
-    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - victor@distrib.works</p>
+    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - <a href="mailto:victor@distrib.works">victor@distrib.works</a></p>
 
   
 

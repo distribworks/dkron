@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-02-05T22:03:28 CET">
+<meta name="revised" content="2020-03-04T09:28:28 CET">
 <title>AWS ECS Executor :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -29,9 +29,7 @@
     
 	
   
-    <div class="brand">
-  <a class="logo" href="/"><img src="/img/dkron-logo.png"/></a>
-</div>
+    <!-- raw HTML omitted -->
 
   
 
@@ -546,21 +544,6 @@
       <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
       </div>
     </li>
-    <li data-nav-id="/upgrading/" class="dd-item haschildren
-        ">
-      <div>
-      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
-        <div>
-          <a href="/upgrading/from_v1_to_v2/">
-            Upgrade from v1 to v2
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
     <li data-nav-id="/v1.2/" class="dd-item haschildren
         ">
       <div>
@@ -978,6 +961,21 @@
     </li>
         </ul>
     </li>
+    <li data-nav-id="/upgrading/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
+        <div>
+          <a href="/upgrading/from_v1_to_v2/">
+            Upgrade from v1 to v2
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
 
 
 
@@ -1036,10 +1034,10 @@
    CLI</option>
     <option value="/api/" >
    API</option>
-    <option value="/upgrading/" >
-   Upgradings</option>
     <option value="/v1.2/" >
    V1.2s</option>
+    <option value="/upgrading/" >
+   Upgradings</option>
 
 
 
@@ -1067,9 +1065,7 @@
     
     
     <p>The ECS exeutor is capable of launching tasks in ECS clusters, then listen to a stream of CloudWatch Logs and return the output.</p>
-
 <p>To configure a job to be run in ECS, the executor needs a JSON Task definition template or an already defined task in ECS.</p>
-
 <p>To allow the ECS Task runner to run tasks, the machine running Dkron needs to have the appropriate permissions configured in AWS IAM:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">{</span>
     <span style="color:#f92672">&#34;Version&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;2012-10-17&#34;</span><span style="color:#111">,</span>
@@ -1090,9 +1086,8 @@
             <span style="color:#111">]</span>
         <span style="color:#111">}</span>
     <span style="color:#111">]</span>
-<span style="color:#111">}</span></code></pre></div>
-<p>To configure a job to be run with the ECS executor:</p>
-
+<span style="color:#111">}</span>
+</code></pre></div><p>To configure a job to be run with the ECS executor:</p>
 <p>Example using an existing taskdef</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">{</span>
   <span style="color:#f92672">&#34;executor&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;ecs&#34;</span><span style="color:#111">,</span>
@@ -1104,8 +1099,8 @@
     <span style="color:#f92672">&#34;service&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;mycontainer&#34;</span><span style="color:#111">,</span>
     <span style="color:#f92672">&#34;overrides&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;echo,\&#34;Hello from dkron\&#34;&#34;</span>
   <span style="color:#111">}</span>
-<span style="color:#111">}</span></code></pre></div>
-<p>Example using a provided taskdef</p>
+<span style="color:#111">}</span>
+</code></pre></div><p>Example using a provided taskdef</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">{</span>
   <span style="color:#f92672">&#34;executor&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;ecs&#34;</span><span style="color:#111">,</span>
   <span style="color:#f92672">&#34;executor_config&#34;</span><span style="color:#111">:</span> <span style="color:#111">{</span>
@@ -1116,9 +1111,8 @@
     <span style="color:#f92672">&#34;env&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;ENVIRONMENT=variable&#34;</span><span style="color:#111">,</span>
     <span style="color:#f92672">&#34;maxAttempts&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;5000&#34;</span>
   <span style="color:#111">}</span>
-<span style="color:#111">}</span></code></pre></div>
-<p>This is the complete list of configuration parameters of the plugin:</p>
-
+<span style="color:#111">}</span>
+</code></pre></div><p>This is the complete list of configuration parameters of the plugin:</p>
 <pre><code>taskdefBody
 taskdefName
 region
@@ -1132,7 +1126,6 @@ service
 overrides
 maxAttempts // Defaults to 2000, will perform a check every 6s * 2000 times waiting a total of 12000s or 3.3h
 </code></pre>
-
 
     
     
@@ -1167,7 +1160,7 @@ maxAttempts // Defaults to 2000, will perform a check every 6s * 2000 times wait
 
 
   
-    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - victor@distrib.works</p>
+    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - <a href="mailto:victor@distrib.works">victor@distrib.works</a></p>
 
   
 

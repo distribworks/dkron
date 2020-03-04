@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-02-05T22:03:27 CET">
+<meta name="revised" content="2020-03-04T09:28:28 CET">
 <title>Basics :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -29,9 +29,7 @@
     
 	
   
-    <div class="brand">
-  <a class="logo" href="/"><img src="/img/dkron-logo.png"/></a>
-</div>
+    <!-- raw HTML omitted -->
 
   
 
@@ -544,21 +542,6 @@
       <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
       </div>
     </li>
-    <li data-nav-id="/upgrading/" class="dd-item haschildren
-        ">
-      <div>
-      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
-        <div>
-          <a href="/upgrading/from_v1_to_v2/">
-            Upgrade from v1 to v2
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
     <li data-nav-id="/v1.2/" class="dd-item parent haschildren
         ">
       <div>
@@ -978,6 +961,21 @@
     </li>
         </ul>
     </li>
+    <li data-nav-id="/upgrading/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
+        <div>
+          <a href="/upgrading/from_v1_to_v2/">
+            Upgrade from v1 to v2
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
 
 
 
@@ -1016,8 +1014,6 @@
    CLI</option>
     <option value="/api/" >
    API</option>
-    <option value="/upgrading/" >
-   Upgradings</option>
     <option value="/v1.2/" >
    V1.2s</option> 
     <option value="/v1.2/basics/"  selected>
@@ -1044,6 +1040,8 @@
    API</option>
       <option value="/v1.2/_footer/" >- </option>
   
+    <option value="/upgrading/" >
+   Upgradings</option>
 
 
 
@@ -1071,30 +1069,16 @@
     
     
 
-<ul class="children children-h2">
-
-<span><h2>
-        <a href="/v1.2/basics/installation/" >Installation</a></h2>
-<p>Running the binary Download the packaged archive for your platform from the downloads page and extract the package to a shared location in your drive, like /opt/local/bin.
-Run Dkron with default setting: dkron agent --server
-Navigate to http://localhost:8080
-By default dkron will start with a file based, embedded KV store called BoltDB, it is functional for a single node demo but does not offers clustering or HA.  Installing the package Debian repo APT repository:</p>
-</span>
-
-<span><h2>
-        <a href="/v1.2/basics/getting-started/" >Getting started</a></h2>
-<p>Introduction Dkron nodes can work in two modes, agents or servers.
-A Dkron agent is a cluster member that can handle job executions, run your scripts and return the resulting output to the server.
-A Dkron server is also a cluster member that send job execution queries to agents or other servers, so servers can execute jobs too.
-The main distinction is that servers order job executions, can be used to schedule jobs, handles data storage and participate on leader election.</p>
-</span>
-
-<span><h2>
-        <a href="/v1.2/basics/configuration/" >Configuration</a></h2>
-<p>Configuration sources Settings can be specified in three ways (in order of precedence):
- Command line arguments. Environment variables starting with DKRON_ dkron.json config file  Config file example # Dkron example configuration file # backend: etcd # backend-machine: 127.0.0.1:2379 # server: false # log-level: debug # tags: # role: web # datacenter: east # keyspace: dkron # encrypt: a-valid-key-generated-with-dkron-keygen # join: # - 10.0.0.1 # - 10.0.0.2 # - 10.</p>
-</span>
-</ul>
+<!-- raw HTML omitted -->
+<p><!-- raw HTML omitted --><!-- raw HTML omitted -->
+<!-- raw HTML omitted -->Installation<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<!-- raw HTML omitted -->
+<p><!-- raw HTML omitted --><!-- raw HTML omitted -->
+<!-- raw HTML omitted -->Getting started<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<!-- raw HTML omitted -->
+<p><!-- raw HTML omitted --><!-- raw HTML omitted -->
+<!-- raw HTML omitted -->Configuration<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<!-- raw HTML omitted -->
 
 
 
@@ -1102,7 +1086,7 @@ The main distinction is that servers order job executions, can be used to schedu
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-prev" href="/v1.2/_footer/" title=""> <i class="fa fa-chevron-left"></i><label></label></a>
+<a class="nav nav-prev" href="/v1.2/" title="V1.2s"> <i class="fa fa-chevron-left"></i><label>V1.2s</label></a>
     <a class="nav nav-next" href="/v1.2/basics/installation/" title="Installation" style="margin-right: 0px;"><label>Installation</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
@@ -1131,7 +1115,7 @@ The main distinction is that servers order job executions, can be used to schedu
 
 
   
-    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - victor@distrib.works</p>
+    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - <a href="mailto:victor@distrib.works">victor@distrib.works</a></p>
 
   
 

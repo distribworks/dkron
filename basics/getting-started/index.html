@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-02-05T22:03:28 CET">
+<meta name="revised" content="2020-03-04T09:28:28 CET">
 <title>Getting started :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -29,9 +29,7 @@
     
 	
   
-    <div class="brand">
-  <a class="logo" href="/"><img src="/img/dkron-logo.png"/></a>
-</div>
+    <!-- raw HTML omitted -->
 
   
 
@@ -545,21 +543,6 @@
       <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
       </div>
     </li>
-    <li data-nav-id="/upgrading/" class="dd-item haschildren
-        ">
-      <div>
-      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
-        <div>
-          <a href="/upgrading/from_v1_to_v2/">
-            Upgrade from v1 to v2
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
     <li data-nav-id="/v1.2/" class="dd-item haschildren
         ">
       <div>
@@ -977,6 +960,21 @@
     </li>
         </ul>
     </li>
+    <li data-nav-id="/upgrading/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
+        <div>
+          <a href="/upgrading/from_v1_to_v2/">
+            Upgrade from v1 to v2
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
 
 
 
@@ -1019,10 +1017,10 @@
    CLI</option>
     <option value="/api/" >
    API</option>
-    <option value="/upgrading/" >
-   Upgradings</option>
     <option value="/v1.2/" >
    V1.2s</option>
+    <option value="/upgrading/" >
+   Upgradings</option>
 
 
 
@@ -1049,72 +1047,39 @@
     
     
     
-    
-
-<h2 id="introduction">Introduction</h2>
-
+    <h2 id="introduction">Introduction</h2>
 <p>Dkron nodes can work in two modes, agents or servers.</p>
-
 <p>A Dkron agent is a cluster member that can handle job executions, run your scripts and return the resulting output to the server.</p>
-
 <p>A Dkron server is also a cluster member that send job execution queries to agents or other servers, so servers can execute jobs too.</p>
-
 <p>The main distinction is that servers order job executions, can be used to schedule jobs, handles data storage and participate on leader election.</p>
-
 <p>Dkron clusters have a leader, the leader is responsible of starting job execution queries in the cluster.</p>
-
 <p>Any Dkron agent or server acts as a cluster member and it&rsquo;s available to run scheduled jobs.</p>
-
 <p>You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run. This gives an unprecedented level of flexibility in runnig jobs across a cluster of any size and with any combination of machines you need.</p>
-
 <p>All the execution responses will be gathered by the scheduler and stored in the database.</p>
-
 <h2 id="state-storage">State storage</h2>
-
 <p>Dkron deployment is just a single binary, it stores the state in an internal BadgerDB instance and replicate all changes between all server nodes using the Raft protocol, it doesn&rsquo;t need any other storage system outside itself.</p>
-
 <h2 id="installation">Installation</h2>
-
 <p>See the <a href="/basics/installation">installation</a>.</p>
-
 <h2 id="configuration">Configuration</h2>
-
 <p>See the <a href="/basics/configuration">configuration</a>.</p>
-
 <h2 id="usage">Usage</h2>
-
 <p>By default Dkron uses the following ports:</p>
-
 <ul>
 <li><code>8946</code> for serf layer between agents</li>
 <li><code>8080</code> for HTTP for the API and Dashboard</li>
 <li><code>6868</code> for gRPC and raft layer comunication between agents.</li>
 </ul>
-
-<div class="notices note" >
-Be sure you have opened this ports (or the ones that you configured) in your firewall or AWS security groups.
-</div>
-
+<!-- raw HTML omitted -->
 <h3 id="starting-a-single-node">Starting a single node</h3>
-
 <p>Works out of the box, good for non HA installations.</p>
-
 <ul>
 <li>System service: If no changes are done to the default config files, dkron will start as a service in single mode.</li>
-
-<li><p>Command line: Running a single node with default config can be done by running:</p>
-
-<pre><code>dkron agent --server --bootstrap-expect=1
-</code></pre></li>
+<li>Command line: Running a single node with default config can be done by running:</li>
 </ul>
-
-<p>Check your server is working: <code>curl localhost:8080/v1</code></p>
-
+<pre><code>dkron agent --server --bootstrap-expect=1
+</code></pre><p>Check your server is working: <code>curl localhost:8080/v1</code></p>
 <p>Simple as that, now it is time to add a job:</p>
-
-<div class="notices note" >
-This job will only run in just one `server` node due to the node count in the tag. Refer to the [target node spec](/usage/target-nodes-spec) for details.
-</div>
+<!-- raw HTML omitted -->
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">curl localhost:8080/v1/jobs -XPOST -d <span style="color:#d88200">&#39;{
 </span><span style="color:#d88200">  &#34;name&#34;: &#34;job1&#34;,
 </span><span style="color:#d88200">  &#34;schedule&#34;: &#34;@every 10s&#34;,
@@ -1127,18 +1092,16 @@ This job will only run in just one `server` node due to the node count in the ta
 </span><span style="color:#d88200">  },
 </span><span style="color:#d88200">  &#34;metadata&#34;: {
 </span><span style="color:#d88200">    &#34;user&#34;: &#34;12345&#34;
-</span><span style="color:#d88200">  }
+</span><span style="color:#d88200">  },
 </span><span style="color:#d88200">  &#34;concurrency&#34;: &#34;allow&#34;,
 </span><span style="color:#d88200">  &#34;executor&#34;: &#34;shell&#34;,
 </span><span style="color:#d88200">  &#34;executor_config&#34;: {
 </span><span style="color:#d88200">    &#34;command&#34;: &#34;date&#34;
 </span><span style="color:#d88200">  }
-</span><span style="color:#d88200">}&#39;</span></code></pre></div>
-<p>For full Job params description refer to the Job model in the <a href="/api">API guide</a></p>
-
+</span><span style="color:#d88200">}&#39;</span>
+</code></pre></div><p>For full Job params description refer to the Job model in the <a href="/api">API guide</a></p>
 <p>That&rsquo;s it!</p>
-
-<h4 id="to-start-configuring-an-ha-installation-of-dkron-follow-the-clustering-guide-usage-clustering">To start configuring an HA installation of Dkron follow the <a href="/usage/clustering">clustering guide</a></h4>
+<h4 id="to-start-configuring-an-ha-installation-of-dkron-follow-the-clustering-guideusageclustering">To start configuring an HA installation of Dkron follow the <a href="/usage/clustering">clustering guide</a></h4>
 
 
     
@@ -1174,7 +1137,7 @@ This job will only run in just one `server` node due to the node count in the ta
 
 
   
-    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - victor@distrib.works</p>
+    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - <a href="mailto:victor@distrib.works">victor@distrib.works</a></p>
 
   
 

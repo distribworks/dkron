@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-02-05T22:03:29 CET">
+<meta name="revised" content="2020-03-04T09:28:28 CET">
 <title>Clustering :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -29,9 +29,7 @@
     
 	
   
-    <div class="brand">
-  <a class="logo" href="/"><img src="/img/dkron-logo.png"/></a>
-</div>
+    <!-- raw HTML omitted -->
 
   
 
@@ -544,21 +542,6 @@
       <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
       </div>
     </li>
-    <li data-nav-id="/upgrading/" class="dd-item haschildren
-        ">
-      <div>
-      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
-        <div>
-          <a href="/upgrading/from_v1_to_v2/">
-            Upgrade from v1 to v2
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
     <li data-nav-id="/v1.2/" class="dd-item parent haschildren
         ">
       <div>
@@ -978,6 +961,21 @@
     </li>
         </ul>
     </li>
+    <li data-nav-id="/upgrading/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
+        <div>
+          <a href="/upgrading/from_v1_to_v2/">
+            Upgrade from v1 to v2
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
 
 
 
@@ -1016,8 +1014,6 @@
    CLI</option>
     <option value="/api/" >
    API</option>
-    <option value="/upgrading/" >
-   Upgradings</option>
     <option value="/v1.2/" >
    V1.2s</option> 
     <option value="/v1.2/basics/" >
@@ -1058,6 +1054,8 @@
    API</option>
       <option value="/v1.2/_footer/" >- </option>
   
+    <option value="/upgrading/" >
+   Upgradings</option>
 
 
 
@@ -1084,18 +1082,13 @@
     
     
     
-    
-
-<h2 id="configure-a-cluster">Configure a cluster</h2>
-
+    <h2 id="configure-a-cluster">Configure a cluster</h2>
 <p>First follow the Dkron <a href="/usage/clustering">clustering guide</a> then you can continue with this guide.</p>
-
 <p>The embedded store also needs to know its peers, it needs its own configuration as in the following example:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#75715e"># etcd.conf.yaml</span>
 <span style="color:#75715e"># Initial cluster configuration for bootstrapping.</span>
-initial-cluster<span style="color:#111">:</span> dkron1=https<span style="color:#111">:</span>//<span style="color:#ae81ff">10.19.3.9</span><span style="color:#111">:</span><span style="color:#ae81ff">2380</span><span style="color:#111">,</span>dkron2=https<span style="color:#111">:</span>//<span style="color:#ae81ff">10.19.4.64</span><span style="color:#111">:</span><span style="color:#ae81ff">2380</span><span style="color:#111">,</span>dkron3=https<span style="color:#111">:</span>//<span style="color:#ae81ff">10.19.7.215</span><span style="color:#111">:</span><span style="color:#ae81ff">2380</span></code></pre></div>
-<p>With this configuration Dkron Pro should start in cluster mode with embedded storage.</p>
-
+<span style="color:#00a8c8">initial-cluster</span><span style="color:#111">:</span> dkron1=https<span style="color:#111">:</span>//<span style="color:#ae81ff">10.19.3.9</span><span style="color:#111">:</span><span style="color:#ae81ff">2380</span><span style="color:#111">,</span>dkron2=https<span style="color:#111">:</span>//<span style="color:#ae81ff">10.19.4.64</span><span style="color:#111">:</span><span style="color:#ae81ff">2380</span><span style="color:#111">,</span>dkron3=https<span style="color:#111">:</span>//<span style="color:#ae81ff">10.19.7.215</span><span style="color:#111">:</span><span style="color:#ae81ff">2380</span>
+</code></pre></div><p>With this configuration Dkron Pro should start in cluster mode with embedded storage.</p>
 <p>For a more in detail guide of clustering with etcd follow this guide: <a href="https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/clustering.md">https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/clustering.md</a></p>
 
 
@@ -1103,8 +1096,8 @@ initial-cluster<span style="color:#111">:</span> dkron1=https<span style="color:
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-prev" href="/v1.2/pro/processors/slack/" title="Slack processor"> <i class="fa fa-chevron-left"></i><label>Slack processor</label></a>
-    <a class="nav nav-next" href="/v1.2/pro/cli/" title="Pro CLI" style="margin-right: 0px;"><label>Pro CLI</label><i class="fa fa-chevron-right"></i></a></div>
+<a class="nav nav-prev" href="/v1.2/pro/auth/" title="Authorization"> <i class="fa fa-chevron-left"></i><label>Authorization</label></a>
+    <a class="nav nav-next" href="/v1.2/pro/commercial-faq/" title="Commercial FAQ" style="margin-right: 0px;"><label>Commercial FAQ</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>
@@ -1132,7 +1125,7 @@ initial-cluster<span style="color:#111">:</span> dkron1=https<span style="color:
 
 
   
-    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - victor@distrib.works</p>
+    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - <a href="mailto:victor@distrib.works">victor@distrib.works</a></p>
 
   
 

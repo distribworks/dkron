@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-02-05T22:03:28 CET">
+<meta name="revised" content="2020-03-04T09:28:28 CET">
 <title>Processors :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -29,9 +29,7 @@
     
 	
   
-    <div class="brand">
-  <a class="logo" href="/"><img src="/img/dkron-logo.png"/></a>
-</div>
+    <!-- raw HTML omitted -->
 
   
 
@@ -544,21 +542,6 @@
       <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
       </div>
     </li>
-    <li data-nav-id="/upgrading/" class="dd-item haschildren
-        ">
-      <div>
-      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
-        <div>
-          <a href="/upgrading/from_v1_to_v2/">
-            Upgrade from v1 to v2
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
     <li data-nav-id="/v1.2/" class="dd-item parent haschildren
         ">
       <div>
@@ -979,6 +962,21 @@
     </li>
         </ul>
     </li>
+    <li data-nav-id="/upgrading/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
+        <div>
+          <a href="/upgrading/from_v1_to_v2/">
+            Upgrade from v1 to v2
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
 
 
 
@@ -1017,8 +1015,6 @@
    CLI</option>
     <option value="/api/" >
    API</option>
-    <option value="/upgrading/" >
-   Upgradings</option>
     <option value="/v1.2/" >
    V1.2s</option> 
     <option value="/v1.2/basics/" >
@@ -1064,6 +1060,8 @@
    API</option>
       <option value="/v1.2/_footer/" >- </option>
   
+    <option value="/upgrading/" >
+   Upgradings</option>
 
 
 
@@ -1091,51 +1089,36 @@
     
     
 
-
-
 <h2 id="execution-processors">Execution Processors</h2>
-
 <p>Processor plugins are called when an execution response has been received. They are passed the resulting execution data and configuration parameters, this plugins can perform a variety of operations with the execution and it&rsquo;s very flexible and per Job, examples of operations this plugins can do:</p>
-
 <ul>
 <li>Execution output storage, forwarding or redirection.</li>
 <li>Notification</li>
 <li>Monitoring</li>
 </ul>
-
 <p>For example, Processor plugins can be used to redirect the output of a job execution to different targets.</p>
-
 <p>Currently Dkron provides you with some built-in plugins but the list keeps growing. Some of the features previously implemented in the application will be progessively moved to plugins.</p>
-
 <h3 id="built-in-processors">Built-in processors</h3>
-
 <p>Dkron provides the following built-in processors:</p>
-
-<ol>
+<ol start="0">
 <li>not specified - Store the output in the key value store (Slow performance, good for testing, default method)</li>
 <li>log - Output the execution log to Dkron stdout (Good performance, needs parsing)</li>
 <li>syslog - Output to the syslog (Good performance, needs parsing)</li>
 <li>files - Output to multiple files (Good performance, needs parsing)</li>
 </ol>
-
 <p><a href="/products/pro/">Dkro Pro</a> provides you with several more processors.</p>
-
 <p>All plugins accepts one configuration option: <code>forward</code> Indicated if the plugin must forward the original execution output. This allows for chaining plugins and sending output to different targets at the same time.</p>
-
-<ul class="children children-li">
-
-<span><li>
-        <a href="/v1.2/usage/processors/file/" >File Processor</a></li>
-</span>
-
-<span><li>
-        <a href="/v1.2/usage/processors/log/" >Log Processor</a></li>
-</span>
-
-<span><li>
-        <a href="/v1.2/usage/processors/syslog/" >Syslog Processor</a></li>
-</span>
-</ul>
+<!-- raw HTML omitted -->
+<p><!-- raw HTML omitted --><!-- raw HTML omitted -->
+<!-- raw HTML omitted -->File Processor<!-- raw HTML omitted --><!-- raw HTML omitted -->
+<!-- raw HTML omitted --></p>
+<p><!-- raw HTML omitted --><!-- raw HTML omitted -->
+<!-- raw HTML omitted -->Log Processor<!-- raw HTML omitted --><!-- raw HTML omitted -->
+<!-- raw HTML omitted --></p>
+<p><!-- raw HTML omitted --><!-- raw HTML omitted -->
+<!-- raw HTML omitted -->Syslog Processor<!-- raw HTML omitted --><!-- raw HTML omitted -->
+<!-- raw HTML omitted --></p>
+<!-- raw HTML omitted -->
 
 
 
@@ -1172,7 +1155,7 @@
 
 
   
-    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - victor@distrib.works</p>
+    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - <a href="mailto:victor@distrib.works">victor@distrib.works</a></p>
 
   
 

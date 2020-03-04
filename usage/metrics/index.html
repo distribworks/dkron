@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-02-05T22:03:29 CET">
+<meta name="revised" content="2020-03-04T09:28:28 CET">
 <title>Metrics :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -29,9 +29,7 @@
     
 	
   
-    <div class="brand">
-  <a class="logo" href="/"><img src="/img/dkron-logo.png"/></a>
-</div>
+    <!-- raw HTML omitted -->
 
   
 
@@ -545,21 +543,6 @@
       <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
       </div>
     </li>
-    <li data-nav-id="/upgrading/" class="dd-item haschildren
-        ">
-      <div>
-      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
-        <div>
-          <a href="/upgrading/from_v1_to_v2/">
-            Upgrade from v1 to v2
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
     <li data-nav-id="/v1.2/" class="dd-item haschildren
         ">
       <div>
@@ -977,6 +960,21 @@
     </li>
         </ul>
     </li>
+    <li data-nav-id="/upgrading/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
+        <div>
+          <a href="/upgrading/from_v1_to_v2/">
+            Upgrade from v1 to v2
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
 
 
 
@@ -1037,10 +1035,10 @@
    CLI</option>
     <option value="/api/" >
    API</option>
-    <option value="/upgrading/" >
-   Upgradings</option>
     <option value="/v1.2/" >
    V1.2s</option>
+    <option value="/upgrading/" >
+   Upgradings</option>
 
 
 
@@ -1067,16 +1065,11 @@
     
     
     
-    
-
-<p>Dkron has the ability to send metrics to Statsd for dashboards and historical reporting. It sends job processing metrics and golang, serf metrics too.</p>
-
+    <p>Dkron has the ability to send metrics to Statsd for dashboards and historical reporting. It sends job processing metrics and golang, serf metrics too.</p>
 <h2 id="configuration">Configuration</h2>
-
 <p>Add this in your yaml config file</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">dog_statsd_addr<span style="color:#111">:</span> <span style="color:#d88200">&#34;localhost:8125&#34;</span></code></pre></div>
-<h2 id="metrics">Metrics</h2>
-
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#00a8c8">dog_statsd_addr</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;localhost:8125&#34;</span>
+</code></pre></div><h2 id="metrics">Metrics</h2>
 <ul>
 <li>dkron.agent.event_received.query_execution_done</li>
 <li>dkron.agent.event_received.query_run_job</li>
@@ -1119,8 +1112,8 @@
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-prev" href="/usage/plugins/develop/" title="Developing plugins"> <i class="fa fa-chevron-left"></i><label>Developing plugins</label></a>
-    <a class="nav nav-next" href="/usage/executors/" title="Executors" style="margin-right: 0px;"><label>Executors</label><i class="fa fa-chevron-right"></i></a></div>
+<a class="nav nav-prev" href="/usage/retries/" title="Job retries"> <i class="fa fa-chevron-left"></i><label>Job retries</label></a>
+    <a class="nav nav-next" href="/usage/recovery/" title="Outage recovery" style="margin-right: 0px;"><label>Outage recovery</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>
@@ -1148,7 +1141,7 @@
 
 
   
-    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - victor@distrib.works</p>
+    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - <a href="mailto:victor@distrib.works">victor@distrib.works</a></p>
 
   
 

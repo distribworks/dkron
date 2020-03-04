@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-02-05T22:03:29 CET">
+<meta name="revised" content="2020-03-04T09:28:28 CET">
 <title>Executors :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -29,9 +29,7 @@
     
 	
   
-    <div class="brand">
-  <a class="logo" href="/"><img src="/img/dkron-logo.png"/></a>
-</div>
+    <!-- raw HTML omitted -->
 
   
 
@@ -546,21 +544,6 @@
       <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
       </div>
     </li>
-    <li data-nav-id="/upgrading/" class="dd-item haschildren
-        ">
-      <div>
-      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
-        <div>
-          <a href="/upgrading/from_v1_to_v2/">
-            Upgrade from v1 to v2
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
     <li data-nav-id="/v1.2/" class="dd-item haschildren
         ">
       <div>
@@ -978,6 +961,21 @@
     </li>
         </ul>
     </li>
+    <li data-nav-id="/upgrading/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
+        <div>
+          <a href="/upgrading/from_v1_to_v2/">
+            Upgrade from v1 to v2
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
 
 
 
@@ -1036,10 +1034,10 @@
    CLI</option>
     <option value="/api/" >
    API</option>
-    <option value="/upgrading/" >
-   Upgradings</option>
     <option value="/v1.2/" >
    V1.2s</option>
+    <option value="/upgrading/" >
+   Upgradings</option>
 
 
 
@@ -1067,23 +1065,13 @@
     
     
 
-<ul class="children children-h3">
-
-<span><h3>
-        <a href="/pro/executors/ecs/" >AWS ECS Executor</a></h3>
-<p>The ECS exeutor is capable of launching tasks in ECS clusters, then listen to a stream of CloudWatch Logs and return the output.
-To configure a job to be run in ECS, the executor needs a JSON Task definition template or an already defined task in ECS.
-To allow the ECS Task runner to run tasks, the machine running Dkron needs to have the appropriate permissions configured in AWS IAM:</p>
-</span>
-
-<span><h3>
-        <a href="/pro/executors/docker/" >Docker executor</a></h3>
-<p> Docker executor can launch docker based cron jobs using the docker command of the target node.
-This executor needs a recent version of docker to be available and configured in the target node.
-Configuration To run a docker job create a job config with the docker executor as in this example:
-{ &#34;executor&#34;: &#34;docker&#34;, &#34;executor_config&#34;: { &#34;image&#34;: &#34;alpine&#34;, //docker image to use &#34;volumes&#34;: &#34;/logs:/var/log/&#34;, //comma separated list of volume mappings &#34;command&#34;: &#34;echo \&#34;Hello from dkron\&#34;&#34;, //command to pass to run on container &#34;env&#34;: &#34;ENVIRONMENT=variable&#34; //environment variables to pass to the container } }</p>
-</span>
-</ul>
+<!-- raw HTML omitted -->
+<p><!-- raw HTML omitted --><!-- raw HTML omitted -->
+<!-- raw HTML omitted -->AWS ECS Executor<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<!-- raw HTML omitted -->
+<p><!-- raw HTML omitted --><!-- raw HTML omitted -->
+<!-- raw HTML omitted -->Docker executor<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<!-- raw HTML omitted -->
 
 
 
@@ -1091,7 +1079,7 @@ Configuration To run a docker job create a job config with the docker executor a
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-prev" href="/pro/processors/slack/" title="Slack processor"> <i class="fa fa-chevron-left"></i><label>Slack processor</label></a>
+<a class="nav nav-prev" href="/pro/encryption/" title="Encryption"> <i class="fa fa-chevron-left"></i><label>Encryption</label></a>
     <a class="nav nav-next" href="/pro/executors/ecs/" title="AWS ECS Executor" style="margin-right: 0px;"><label>AWS ECS Executor</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
@@ -1120,7 +1108,7 @@ Configuration To run a docker job create a job config with the docker executor a
 
 
   
-    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - victor@distrib.works</p>
+    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - <a href="mailto:victor@distrib.works">victor@distrib.works</a></p>
 
   
 

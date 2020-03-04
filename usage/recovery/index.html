@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-02-05T22:03:29 CET">
+<meta name="revised" content="2020-03-04T09:28:28 CET">
 <title>Outage recovery :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -29,9 +29,7 @@
     
 	
   
-    <div class="brand">
-  <a class="logo" href="/"><img src="/img/dkron-logo.png"/></a>
-</div>
+    <!-- raw HTML omitted -->
 
   
 
@@ -545,21 +543,6 @@
       <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
       </div>
     </li>
-    <li data-nav-id="/upgrading/" class="dd-item haschildren
-        ">
-      <div>
-      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
-        <div>
-          <a href="/upgrading/from_v1_to_v2/">
-            Upgrade from v1 to v2
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
     <li data-nav-id="/v1.2/" class="dd-item haschildren
         ">
       <div>
@@ -977,6 +960,21 @@
     </li>
         </ul>
     </li>
+    <li data-nav-id="/upgrading/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
+        <div>
+          <a href="/upgrading/from_v1_to_v2/">
+            Upgrade from v1 to v2
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
 
 
 
@@ -1037,10 +1035,10 @@
    CLI</option>
     <option value="/api/" >
    API</option>
-    <option value="/upgrading/" >
-   Upgradings</option>
     <option value="/v1.2/" >
    V1.2s</option>
+    <option value="/upgrading/" >
+   Upgradings</option>
 
 
 
@@ -1067,63 +1065,34 @@
     
     
     
-    
-
-<h2 id="outage-recovery">Outage Recovery</h2>
-
+    <h2 id="outage-recovery">Outage Recovery</h2>
 <p>Don&rsquo;t panic! This is a critical first step.</p>
-
 <p>Depending on your deployment configuration, it may take only a single server failure for cluster unavailability. Recovery requires an operator to intervene, but the process is straightforward.</p>
-
-<div class="notices note" >
-This guide is for recovery from a Dkron outage due to a majority of server nodes in a datacenter being lost. If you are looking to add or remove servers, see the [clustering](/usage/clustering) guide.
-</div>
-
+<!-- raw HTML omitted -->
 <h2 id="failure-of-a-single-server-cluster">Failure of a Single Server Cluster</h2>
-
 <p>If you had only a single server and it has failed, simply restart it. A single server configuration requires the -bootstrap-expect=1 flag. If the server cannot be recovered, you need to bring up a new server. See the <a href="/usage/clustering">clustering</a> guide for more detail.</p>
-
 <p>In the case of an unrecoverable server failure in a single server cluster, data loss is inevitable since data was not replicated to any other servers. This is why a single server deploy is never recommended.</p>
-
 <h2 id="failure-of-a-server-in-a-multi-server-cluster">Failure of a Server in a Multi-Server Cluster</h2>
-
 <p>If you think the failed server is recoverable, the easiest option is to bring it back online and have it rejoin the cluster with the same IP address, returning the cluster to a fully healthy state. Similarly, even if you need to rebuild a new Dkron server to replace the failed node, you may wish to do that immediately. Keep in mind that the rebuilt server needs to have the same IP address as the failed server. Again, once this server is online and has rejoined, the cluster will return to a fully healthy state.</p>
-
 <p>Both of these strategies involve a potentially lengthy time to reboot or rebuild a failed server. If this is impractical or if building a new server with the same IP isn&rsquo;t an option, you need to remove the failed server.</p>
-
 <p>Both of these strategies involve a potentially lengthy time to reboot or rebuild a failed server. If this is impractical or if building a new server with the same IP isn&rsquo;t an option, you need to remove the failed server. Usually, you can issue a <code>dkron leave</code> command to remove the failed server if it&rsquo;s still a member of the cluster.</p>
-
 <p>If <code>dkron leave</code> isn&rsquo;t able to remove the server, you can use the <code>dkron raft remove-peer</code> command to remove the stale peer server on the fly with no downtime.</p>
-
 <p>You can use the <code>dkron raft list-peers</code> command to inspect the Raft configuration:</p>
-
 <pre><code>$ dkron raft list-peers
 Node                   ID               Address          State     Voter
 dkron-server01.global  10.10.11.5:4647  10.10.11.5:4647  follower  true
 dkron-server02.global  10.10.11.6:4647  10.10.11.6:4647  leader    true
 dkron-server03.global  10.10.11.7:4647  10.10.11.7:4647  follower  true
-</code></pre>
-
-<h2 id="failure-of-multiple-servers-in-a-multi-server-cluster">Failure of Multiple Servers in a Multi-Server Cluster</h2>
-
+</code></pre><h2 id="failure-of-multiple-servers-in-a-multi-server-cluster">Failure of Multiple Servers in a Multi-Server Cluster</h2>
 <p>In the event that multiple servers are lost, causing a loss of quorum and a complete outage, partial recovery is possible using data on the remaining servers in the cluster. There may be data loss in this situation because multiple servers were lost, so information about what&rsquo;s committed could be incomplete. The recovery process implicitly commits all outstanding Raft log entries, so it&rsquo;s also possible to commit data that was uncommitted before the failure.</p>
-
 <p>See the section below for details of the recovery procedure. You simply include just the remaining servers in the raft/peers.json recovery file. The cluster should be able to elect a leader once the remaining servers are all restarted with an identical raft/peers.json configuration.</p>
-
 <p>Any new servers you introduce later can be fresh with totally clean data directories.</p>
-
 <p>In extreme cases, it should be possible to recover with just a single remaining server by starting that single server with itself as the only peer in the raft/peers.json recovery file.</p>
-
 <p>The raft/peers.json recovery file is final, and a snapshot is taken after it is ingested, so you are guaranteed to start with your recovered configuration. This does implicitly commit all Raft log entries, so should only be used to recover from an outage, but it should allow recovery from any situation where there&rsquo;s some cluster data available.</p>
-
-<h2 id="manual-recovery-using-peers-json">Manual Recovery Using peers.json</h2>
-
+<h2 id="manual-recovery-using-peersjson">Manual Recovery Using peers.json</h2>
 <p>To begin, stop all remaining servers. You can attempt a graceful leave, but it will not work in most cases. Do not worry if the leave exits with an error. The cluster is in an unhealthy state, so this is expected.</p>
-
 <p>The peers.json file will be deleted after Dkron starts and ingests this file.</p>
-
 <p>Using raft/peers.json for recovery can cause uncommitted Raft log entries to be implicitly committed, so this should only be used after an outage where no other option is available to recover a lost server. Make sure you don&rsquo;t have any automated processes that will put the peers file in place on a periodic basis.</p>
-
 <p>The next step is to go to the <code>data-dir</code> of each Dkron server. Inside that directory, there will be a raft/ sub-directory. We need to create a raft/peers.json file. It should look something like:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">[</span>
   <span style="color:#111">{</span>
@@ -1138,33 +1107,26 @@ dkron-server03.global  10.10.11.7:4647  10.10.11.7:4647  follower  true
     <span style="color:#f92672">&#34;id&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;node3&#34;</span><span style="color:#111">,</span>
     <span style="color:#f92672">&#34;address&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;10.1.0.3:4647&#34;</span>
   <span style="color:#111">}</span>
-<span style="color:#111">]</span></code></pre></div>
-<p>Simply create entries for all remaining servers. You must confirm that servers you do not include here have indeed failed and will not later rejoin the cluster. Ensure that this file is the same across all remaining server nodes.</p>
-
+<span style="color:#111">]</span>
+</code></pre></div><p>Simply create entries for all remaining servers. You must confirm that servers you do not include here have indeed failed and will not later rejoin the cluster. Ensure that this file is the same across all remaining server nodes.</p>
 <p>At this point, you can restart all the remaining servers. In Dkron 0.5.5 and later you will see them ingest recovery file:</p>
-
 <pre><code>Recovery log placeholder
-</code></pre>
-
-<p>It should be noted that any existing member can be used to rejoin the cluster as the gossip protocol will take care of discovering the server nodes.</p>
-
+</code></pre><p>It should be noted that any existing member can be used to rejoin the cluster as the gossip protocol will take care of discovering the server nodes.</p>
 <p>At this point, the cluster should be in an operable state again. One of the nodes should claim leadership and emit a log like:</p>
-
 <p><code>[INFO] Dkron: cluster leadership acquired</code></p>
-
 <p>You can use the <code>dkron raft list-peers</code> command to inspect the Raft configuration:</p>
-
 <pre><code>$ dkron raft list-peers
 Node   ID     Address          State     Voter
 node1  node1  10.10.11.5:4647  follower  true
 node2  node2  10.10.11.6:4647  leader    true
 node3  node3  10.10.11.7:4647  follower  true
-</code></pre>
-
-<ul>
-<li><p>id (string: <required>) - Specifies the node ID of the server. This is the <code>name</code> of the node.</p></li>
-
-<li><p>address (string: <required>) - Specifies the IP and port of the server in ip:port format. The port is the server&rsquo;s gRPC port used for cluster communications, typically <code>6868</code>.</p></li>
+</code></pre><ul>
+<li>
+<p>id (string: <!-- raw HTML omitted -->) - Specifies the node ID of the server. This is the <code>name</code> of the node.</p>
+</li>
+<li>
+<p>address (string: <!-- raw HTML omitted -->) - Specifies the IP and port of the server in ip:port format. The port is the server&rsquo;s gRPC port used for cluster communications, typically <code>6868</code>.</p>
+</li>
 </ul>
 
 
@@ -1172,8 +1134,8 @@ node3  node3  10.10.11.7:4647  follower  true
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-prev" href="/usage/plugins/develop/" title="Developing plugins"> <i class="fa fa-chevron-left"></i><label>Developing plugins</label></a>
-    <a class="nav nav-next" href="/usage/executors/" title="Executors" style="margin-right: 0px;"><label>Executors</label><i class="fa fa-chevron-right"></i></a></div>
+<a class="nav nav-prev" href="/usage/metrics/" title="Metrics"> <i class="fa fa-chevron-left"></i><label>Metrics</label></a>
+    <a class="nav nav-next" href="/usage/plugins/" title="Plugins" style="margin-right: 0px;"><label>Plugins</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>
@@ -1201,7 +1163,7 @@ node3  node3  10.10.11.7:4647  follower  true
 
 
   
-    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - victor@distrib.works</p>
+    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - <a href="mailto:victor@distrib.works">victor@distrib.works</a></p>
 
   
 

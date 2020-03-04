@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Dkron Pro on Dkron - Distributed job scheduling system</title>
@@ -6,6 +6,7 @@
     <description>Recent content in Dkron Pro on Dkron - Distributed job scheduling system</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
+    <lastBuildDate>Mon, 21 Jan 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/v1.2/pro/index.xml" rel="self" type="application/rss+xml" />
     
@@ -54,7 +55,7 @@ For a more in detail guide of clustering with etcd follow this guide: https://gi
       <description>What is Dkron Pro? Dkron Pro is a flavor of Dkron which add more functionality and provide additional support options for customers.
 Is there a trial version? There&amp;rsquo;s no free trial but we do offer a 14 day period with full refund if it does not work for you.
 Can I get a discount? I&amp;rsquo;m sure you&amp;rsquo;re very nice but no. Everyone pays the same price.
-What is the license?</description>
+What is the license? See COMM-LICENSE.</description>
     </item>
     
     <item>
@@ -73,7 +74,7 @@ Priority Support Covers 1 incident per quarter, with a max response time of 2 wo
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/v1.2/pro/configuration/</guid>
-      <description> Configuration Dkron Pro uses the same parameters as Dkron OSS and add some extra parameters.
+      <description>Configuration Dkron Pro uses the same parameters as Dkron OSS and add some extra parameters.
 Command line options  --etcd-config-file-path - Etcd node config --username - Authentication username --password - Authentication password --cert-file - Path to the client server TLS cert file --key-file - Path to the client server TLS key file --client-crl-file - Path to the client certificate revocation list file --trusted-ca-file - Path to the client server TLS trusted CA cert file --client-cert-auth - Enable client cert authentication --auto-tls - Client TLS using generated certificates  </description>
     </item>
     

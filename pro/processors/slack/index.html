@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-02-05T22:03:29 CET">
+<meta name="revised" content="2020-03-04T09:28:28 CET">
 <title>Slack processor :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -29,9 +29,7 @@
     
 	
   
-    <div class="brand">
-  <a class="logo" href="/"><img src="/img/dkron-logo.png"/></a>
-</div>
+    <!-- raw HTML omitted -->
 
   
 
@@ -546,21 +544,6 @@
       <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
       </div>
     </li>
-    <li data-nav-id="/upgrading/" class="dd-item haschildren
-        ">
-      <div>
-      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
-        <div>
-          <a href="/upgrading/from_v1_to_v2/">
-            Upgrade from v1 to v2
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
     <li data-nav-id="/v1.2/" class="dd-item haschildren
         ">
       <div>
@@ -978,6 +961,21 @@
     </li>
         </ul>
     </li>
+    <li data-nav-id="/upgrading/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
+        <div>
+          <a href="/upgrading/from_v1_to_v2/">
+            Upgrade from v1 to v2
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
 
 
 
@@ -1024,6 +1022,9 @@
     <option value="/pro/processors/" >
   - 
    Processors</option> 
+      <option value="/pro/processors/elasticsearch/" >-- Elasticsearch processor</option>
+      <option value="/pro/processors/email/" >-- Email processor</option>
+      <option value="/pro/processors/slack/"  selected>-- Slack processor</option>
   
   
     <option value="/products/" >
@@ -1034,10 +1035,10 @@
    CLI</option>
     <option value="/api/" >
    API</option>
-    <option value="/upgrading/" >
-   Upgradings</option>
     <option value="/v1.2/" >
    V1.2s</option>
+    <option value="/upgrading/" >
+   Upgradings</option>
 
 
 
@@ -1065,17 +1066,13 @@
     
     
     <p>The Slack processor provides slack notifications with multiple configurations and rich format.</p>
-
 <p>Configuration of the slack processor is stored in a file named <code>dkron-processor-slack.yml</code> in the same locations as <code>dkron.yml</code>, and should include a list of teams, it can include any number of teams.</p>
-
-<p><img src="/img/slack.png" alt="" /></p>
-
+<p><img src="/img/slack.png" alt=""></p>
 <p>Example:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">team1<span style="color:#111">:</span>
-  webhook_url<span style="color:#111">:</span> https<span style="color:#111">:</span>//hooks.slack.com/services/XXXXXXXXXXXXXXXXXXX
-  bot_name<span style="color:#111">:</span> Dkron Production</code></pre></div>
-<p>Then configure each job with the following options:</p>
-
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#00a8c8">team1</span><span style="color:#111">:</span>
+  <span style="color:#00a8c8">webhook_url</span><span style="color:#111">:</span> https<span style="color:#111">:</span>//hooks.slack.com/services/XXXXXXXXXXXXXXXXXXX
+  <span style="color:#00a8c8">bot_name</span><span style="color:#111">:</span> Dkron Production
+</code></pre></div><p>Then configure each job with the following options:</p>
 <p>Example:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">{</span>
   <span style="color:#f92672">&#34;processors&#34;</span><span style="color:#111">:</span> <span style="color:#111">{</span>
@@ -1085,8 +1082,8 @@
       <span style="color:#f92672">&#34;onSuccess&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;true&#34;</span>
     <span style="color:#111">}</span>
   <span style="color:#111">}</span>
-<span style="color:#111">}</span></code></pre></div>
-<p>By default the slack procesor doesn&rsquo;t send notifications on job success, the <code>onSuccess</code> parameter, enables it, like in the previous example.</p>
+<span style="color:#111">}</span>
+</code></pre></div><p>By default the slack procesor doesn&rsquo;t send notifications on job success, the <code>onSuccess</code> parameter, enables it, like in the previous example.</p>
 
 
     
@@ -1122,7 +1119,7 @@
 
 
   
-    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - victor@distrib.works</p>
+    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - <a href="mailto:victor@distrib.works">victor@distrib.works</a></p>
 
   
 

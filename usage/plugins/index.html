@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-02-05T22:03:29 CET">
+<meta name="revised" content="2020-03-04T09:28:28 CET">
 <title>Plugins :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -29,9 +29,7 @@
     
 	
   
-    <div class="brand">
-  <a class="logo" href="/"><img src="/img/dkron-logo.png"/></a>
-</div>
+    <!-- raw HTML omitted -->
 
   
 
@@ -546,21 +544,6 @@
       <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
       </div>
     </li>
-    <li data-nav-id="/upgrading/" class="dd-item haschildren
-        ">
-      <div>
-      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
-        <div>
-          <a href="/upgrading/from_v1_to_v2/">
-            Upgrade from v1 to v2
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
     <li data-nav-id="/v1.2/" class="dd-item haschildren
         ">
       <div>
@@ -978,6 +961,21 @@
     </li>
         </ul>
     </li>
+    <li data-nav-id="/upgrading/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
+        <div>
+          <a href="/upgrading/from_v1_to_v2/">
+            Upgrade from v1 to v2
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
 
 
 
@@ -1040,10 +1038,10 @@
    CLI</option>
     <option value="/api/" >
    API</option>
-    <option value="/upgrading/" >
-   Upgradings</option>
     <option value="/v1.2/" >
    V1.2s</option>
+    <option value="/upgrading/" >
+   Upgradings</option>
 
 
 
@@ -1071,35 +1069,23 @@
     
     
 
-
-
 <h2 id="intro">Intro</h2>
-
 <p>Plugins in Dkron allow you to add funcionality that integrates with the workflow of the job execution in Dkron. It&rsquo;s a powerful system that allows you to extend and adapt Dkron to your special needs.</p>
-
 <p>This page documents the basics of how the plugin system in Dkron works, and how to setup a basic development environment for plugin development if you&rsquo;re writing a Dkron plugin.</p>
-
 <h2 id="how-it-works">How it Works</h2>
-
 <p>Dkron execution execution processors are provided via plugins. Each plugin exposes functionality for modifying the execution. Plugins are executed as a separate process and communicate with the main Dkron binary over an RPC interface.</p>
-
 <p>The code within the binaries must adhere to certain interfaces. The network communication and RPC is handled automatically by higher-level libraries. The exact interface to implement is documented in its respective documentation section.</p>
-
 <h2 id="installing-a-plugin">Installing a Plugin</h2>
-
 <p>Dkron searches for plugins at startup, to install a plugin just drop the binary in one of the following locations:</p>
-
 <ol>
 <li>/etc/dkron/plugins</li>
 <li>Dkron executable directory</li>
 </ol>
-
-<ul class="children children-li">
-
-<span><li>
-        <a href="/usage/plugins/develop/" >Developing plugins</a></li>
-</span>
-</ul>
+<!-- raw HTML omitted -->
+<p><!-- raw HTML omitted --><!-- raw HTML omitted -->
+<!-- raw HTML omitted -->Developing plugins<!-- raw HTML omitted --><!-- raw HTML omitted -->
+<!-- raw HTML omitted --></p>
+<!-- raw HTML omitted -->
 
 
 
@@ -1107,7 +1093,7 @@
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-prev" href="/usage/processors/syslog/" title="Syslog Processor"> <i class="fa fa-chevron-left"></i><label>Syslog Processor</label></a>
+<a class="nav nav-prev" href="/usage/recovery/" title="Outage recovery"> <i class="fa fa-chevron-left"></i><label>Outage recovery</label></a>
     <a class="nav nav-next" href="/usage/plugins/develop/" title="Developing plugins" style="margin-right: 0px;"><label>Developing plugins</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
@@ -1136,7 +1122,7 @@
 
 
   
-    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - victor@distrib.works</p>
+    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - <a href="mailto:victor@distrib.works">victor@distrib.works</a></p>
 
   
 

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Intro on Dkron - Distributed job scheduling system</title>
@@ -27,7 +27,7 @@ Dkron vs. Rundeck Rundeck is a popular and mature platform to automate operation
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/intro/license/</guid>
-      <description>Copyright &amp;copy; Victor Castell
+      <description>Copyright (c) Victor Castell
 Dkron is an Open Source project licensed under the terms of the LGPLv3 license. Please see http://www.gnu.org/licenses/lgpl-3.0.html for license text.</description>
     </item>
     

@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-02-05T22:03:28 CET">
+<meta name="revised" content="2020-03-04T09:28:28 CET">
 <title>Access Control :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -29,9 +29,7 @@
     
 	
   
-    <div class="brand">
-  <a class="logo" href="/"><img src="/img/dkron-logo.png"/></a>
-</div>
+    <!-- raw HTML omitted -->
 
   
 
@@ -545,21 +543,6 @@
       <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
       </div>
     </li>
-    <li data-nav-id="/upgrading/" class="dd-item haschildren
-        ">
-      <div>
-      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
-        <div>
-          <a href="/upgrading/from_v1_to_v2/">
-            Upgrade from v1 to v2
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
     <li data-nav-id="/v1.2/" class="dd-item haschildren
         ">
       <div>
@@ -977,6 +960,21 @@
     </li>
         </ul>
     </li>
+    <li data-nav-id="/upgrading/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
+        <div>
+          <a href="/upgrading/from_v1_to_v2/">
+            Upgrade from v1 to v2
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
 
 
 
@@ -1032,10 +1030,10 @@
    CLI</option>
     <option value="/api/" >
    API</option>
-    <option value="/upgrading/" >
-   Upgradings</option>
     <option value="/v1.2/" >
    V1.2s</option>
+    <option value="/upgrading/" >
+   Upgradings</option>
 
 
 
@@ -1062,38 +1060,24 @@
     
     
     
-    
-
-<h1 id="access-control-preview">Access Control (Preview)</h1>
-
-<div class="notices info" >
-This feature is in preview and is subject to big changes
-</div>
-
+    <h1 id="access-control-preview">Access Control (Preview)</h1>
+<!-- raw HTML omitted -->
 <p>Dkron provides an optional Access Control List (ACL) system which can be used to control access to data and APIs. The ACL is Capability-based, relying on policies to determine which fine grained rules can be applied. Dkron&rsquo;s capability based ACL system is very similar to common ACL systems you are used to.</p>
-
 <h2 id="acl-system-overview">ACL System Overview</h2>
-
 <p>Dkron&rsquo;s ACL system is implemented with the CNCF <a href="https://www.openpolicyagent.org/">Open Policy Agent</a> bringing a powerful system to suit your needs.</p>
-
 <p>The ACL system is designed to be easy to use and fast to enforce while providing administrative insight. At the highest level, there are two major components to the ACL system:</p>
-
 <ul>
-<li><p><strong>OPA policy engine.</strong> OPA provices policy decission making <a href="https://www.openpolicyagent.org/docs/latest/philosophy/#policy-decoupling">decoupling</a> Dkron integrates OPA as a library and provides a default policy rules written in the OPA Policy language that implements a set of enforcing rules on request params to the API that are ready to use for most use cases. You don not need to learn the OPA Policy language to start using Dkron&rsquo;s ACL system, but you can modify the default policy rules to adapt to your use case if you need to. Read more in <a href="https://www.openpolicyagent.org/docs/latest/">OPA Docs</a></p></li>
-
-<li><p><strong>ACL Policies.</strong> Dkron&rsquo;s ACL policies are simple JSON documents that define patterns to allow access to resources. You can find below an example ACL policy that works with the default OPA policy. The ACL JSON structure is not rigid you can adapt it to add new features in combination with the OPA Policy rules.</p></li>
+<li>
+<p><strong>OPA policy engine.</strong> OPA provices policy decission making <a href="https://www.openpolicyagent.org/docs/latest/philosophy/#policy-decoupling">decoupling</a> Dkron integrates OPA as a library and provides a default policy rules written in the OPA Policy language that implements a set of enforcing rules on request params to the API that are ready to use for most use cases. You don not need to learn the OPA Policy language to start using Dkron&rsquo;s ACL system, but you can modify the default policy rules to adapt to your use case if you need to. Read more in <a href="https://www.openpolicyagent.org/docs/latest/">OPA Docs</a></p>
+</li>
+<li>
+<p><strong>ACL Policies.</strong> Dkron&rsquo;s ACL policies are simple JSON documents that define patterns to allow access to resources. You can find below an example ACL policy that works with the default OPA policy. The ACL JSON structure is not rigid you can adapt it to add new features in combination with the OPA Policy rules.</p>
+</li>
 </ul>
-
-<div class="notices note" >
-This guide is based on the usage of the default OPA Rego Policy
-</div>
-
+<!-- raw HTML omitted -->
 <h2 id="configuring-acls">Configuring ACLs</h2>
-
 <p>ACLs are not enabled by default and must be enabled. To enable ACLs simply create an ACL policy using the API. Below you can find the most basic example of an ACL policy:</p>
-
 <p>Basic example policy:</p>
-
 <pre><code>curl localhost:8080/v1/acl/policies -d '{
     &quot;path&quot;: {
         &quot;/v1&quot;: {
@@ -1112,16 +1096,10 @@ This guide is based on the usage of the default OPA Rego Policy
         }
     }
 }'
-</code></pre>
-
-<p>This policy allows any request to the API. As you can see paths uses glob patterns, and capabilities allow operations on resources.</p>
-
+</code></pre><p>This policy allows any request to the API. As you can see paths uses glob patterns, and capabilities allow operations on resources.</p>
 <p>ACLs also allows templating, providing the ability to allow or deny operations to certain resource by patterns without having to hardcode values in policies.</p>
-
 <p>For example, we can for limit job actions on certain resources based on the provided token via the accepted header <code>X-Dkron-Token</code> on the request:</p>
-
 <p>Example policy:</p>
-
 <pre><code>curl localhost:8080/v1/acl/policies -d '{
     &quot;path&quot;: {
         &quot;/v1/members&quot;: {
@@ -1143,18 +1121,11 @@ This guide is based on the usage of the default OPA Rego Policy
         }
     }
 }'
-</code></pre>
-
-<p>This policy will allow all operations on jobs starting with <code>[Token]-job_name</code>, but will deny manipulation of jobs that doesn&rsquo;t match the pattern.</p>
-
+</code></pre><p>This policy will allow all operations on jobs starting with <code>[Token]-job_name</code>, but will deny manipulation of jobs that doesn&rsquo;t match the pattern.</p>
 <h2 id="disable-acls">Disable ACLs</h2>
-
 <p>As an administrator you will need to edit policies. Currently to be able to edit ACLs if you get locked out, you need to edit the default Rego file and disable enforcement completely. Edit the file located in <code>policies/main.rego</code> and change the <code>default allow</code> directive to <code>true</code>:</p>
-
 <pre><code>default allow = false -&gt; true
-</code></pre>
-
-<p>This way the policy engine always evaluates to true, allowing any operation again. To restore ACL enforcemen, edit again the <code>default allow</code> line and set it back to <code>false</code>.</p>
+</code></pre><p>This way the policy engine always evaluates to true, allowing any operation again. To restore ACL enforcemen, edit again the <code>default allow</code> line and set it back to <code>false</code>.</p>
 
 
     
@@ -1162,7 +1133,7 @@ This guide is based on the usage of the default OPA Rego Policy
         <div class="chevrons">
     <div id="navigation">
 <a class="nav nav-prev" href="/pro/cli/dkron_version/" title="dkron version"> <i class="fa fa-chevron-left"></i><label>dkron version</label></a>
-    <a class="nav nav-next" href="/pro/cli/" title="Pro CLI" style="margin-right: 0px;"><label>Pro CLI</label><i class="fa fa-chevron-right"></i></a></div>
+    <a class="nav nav-next" href="/pro/auth/" title="Authentication" style="margin-right: 0px;"><label>Authentication</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>
@@ -1190,7 +1161,7 @@ This guide is based on the usage of the default OPA Rego Policy
 
 
   
-    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - victor@distrib.works</p>
+    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - <a href="mailto:victor@distrib.works">victor@distrib.works</a></p>
 
   
 

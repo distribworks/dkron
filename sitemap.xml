@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
@@ -72,10 +72,12 @@
   
   <url>
     <loc>/pro/</loc>
+    <lastmod>2019-08-26T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/v1.2/pro/</loc>
+    <lastmod>2019-01-21T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -128,11 +130,6 @@
   
   <url>
     <loc>/cli/dkron/</loc>
-    <lastmod>2019-10-10T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/</loc>
     <lastmod>2019-10-10T00:00:00+00:00</lastmod>
   </url>
   
@@ -252,6 +249,11 @@
   </url>
   
   <url>
+    <loc>/v1.2/</loc>
+    <lastmod>2019-03-22T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/v1.2/cli/dkron/</loc>
     <lastmod>2019-01-21T00:00:00+00:00</lastmod>
   </url>
@@ -277,6 +279,11 @@
   </url>
   
   <url>
+    <loc>/</loc>
+    <lastmod>2017-04-24T18:36:24+02:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/_header/</loc>
     <lastmod>2017-04-24T18:36:24+02:00</lastmod>
   </url>
@@ -288,7 +295,6 @@
   
   <url>
     <loc>/v1.2/_footer/</loc>
-    <priority>0</priority>
   </url>
   
   <url>
@@ -561,10 +567,6 @@
   
   <url>
     <loc>/v1.2/usage/ecs/</loc>
-  </url>
-  
-  <url>
-    <loc>/v1.2/</loc>
   </url>
   
 </urlset>

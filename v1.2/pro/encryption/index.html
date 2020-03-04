@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-02-05T22:03:29 CET">
+<meta name="revised" content="2020-03-04T09:28:28 CET">
 <title>Encryption :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -29,9 +29,7 @@
     
 	
   
-    <div class="brand">
-  <a class="logo" href="/"><img src="/img/dkron-logo.png"/></a>
-</div>
+    <!-- raw HTML omitted -->
 
   
 
@@ -544,21 +542,6 @@
       <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
       </div>
     </li>
-    <li data-nav-id="/upgrading/" class="dd-item haschildren
-        ">
-      <div>
-      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
-        <div>
-          <a href="/upgrading/from_v1_to_v2/">
-            Upgrade from v1 to v2
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
     <li data-nav-id="/v1.2/" class="dd-item parent haschildren
         ">
       <div>
@@ -978,6 +961,21 @@
     </li>
         </ul>
     </li>
+    <li data-nav-id="/upgrading/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
+        <div>
+          <a href="/upgrading/from_v1_to_v2/">
+            Upgrade from v1 to v2
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
 
 
 
@@ -1016,8 +1014,6 @@
    CLI</option>
     <option value="/api/" >
    API</option>
-    <option value="/upgrading/" >
-   Upgradings</option>
     <option value="/v1.2/" >
    V1.2s</option> 
     <option value="/v1.2/basics/" >
@@ -1058,6 +1054,8 @@
    API</option>
       <option value="/v1.2/_footer/" >- </option>
   
+    <option value="/upgrading/" >
+   Upgradings</option>
 
 
 
@@ -1085,31 +1083,25 @@
     
     
     <p>SSL encryption is used for communicating dkron pro and the embedded store, and between storage nodes itself. Also if client auth is enabled, only dkron pro clients can talk to the embedded store. This means that no other software running on your local network will be able to talk to dkron&rsquo;s etcd server.</p>
-
 <p>This ensures that no unexpected usage of the Dkron&rsquo;s store will happen, unless it is another Dkron pro instance.</p>
-
 <p>SSL encryption is enabled by default in Dkron Pro and can not be disabled, you don&rsquo;t need to do nothing to use it.</p>
-
 <p>By default Dkron Pro runs with automatically generated SSL certificates, this is enough for using it in a trusted environment but to have a better grade of confidence, it is recommended to run Dkron Pro with custom SSL certificates.</p>
-
 <p>Follow <a href="https://coreos.com/os/docs/latest/generate-self-signed-certificates.html">this tutorial</a> to generate autosigned SSL certificates for your instances.</p>
-
-<div class="notices note" >
-You don't need a client certificate for Dkron server, just add "client auth" usage to your server cert.
-</div>
+<!-- raw HTML omitted -->
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#75715e"># dkron.yaml</span>
-auto-tls<span style="color:#111">:</span> <span style="color:#00a8c8">false</span> <span style="color:#75715e"># Set to false to use custom certs</span>
-key-file<span style="color:#111">:</span> server-key.pem
-cert-file<span style="color:#111">:</span> server.pem
-trusted-ca-file<span style="color:#111">:</span> ca.pem
-client-cert-auth<span style="color:#111">:</span> <span style="color:#00a8c8">true</span> <span style="color:#75715e"># Enable it to only allow certs signed by the same CA</span></code></pre></div>
+<span style="color:#00a8c8">auto-tls</span><span style="color:#111">:</span> <span style="color:#00a8c8">false</span> <span style="color:#75715e"># Set to false to use custom certs</span>
+<span style="color:#00a8c8">key-file</span><span style="color:#111">:</span> server-key.pem
+<span style="color:#00a8c8">cert-file</span><span style="color:#111">:</span> server.pem
+<span style="color:#00a8c8">trusted-ca-file</span><span style="color:#111">:</span> ca.pem
+<span style="color:#00a8c8">client-cert-auth</span><span style="color:#111">:</span> <span style="color:#00a8c8">true</span> <span style="color:#75715e"># Enable it to only allow certs signed by the same CA</span>
+</code></pre></div>
 
     
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-prev" href="/v1.2/pro/processors/slack/" title="Slack processor"> <i class="fa fa-chevron-left"></i><label>Slack processor</label></a>
-    <a class="nav nav-next" href="/v1.2/pro/cli/" title="Pro CLI" style="margin-right: 0px;"><label>Pro CLI</label><i class="fa fa-chevron-right"></i></a></div>
+<a class="nav nav-prev" href="/v1.2/pro/storage/" title="Embedded storage"> <i class="fa fa-chevron-left"></i><label>Embedded storage</label></a>
+    <a class="nav nav-next" href="/v1.2/pro/executors/" title="Executors" style="margin-right: 0px;"><label>Executors</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>
@@ -1137,7 +1129,7 @@ client-cert-auth<span style="color:#111">:</span> <span style="color:#00a8c8">tr
 
 
   
-    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - victor@distrib.works</p>
+    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - <a href="mailto:victor@distrib.works">victor@distrib.works</a></p>
 
   
 

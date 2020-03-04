@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-02-05T22:03:28 CET">
+<meta name="revised" content="2020-03-04T09:28:28 CET">
 <title>Developing plugins :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -29,9 +29,7 @@
     
 	
   
-    <div class="brand">
-  <a class="logo" href="/"><img src="/img/dkron-logo.png"/></a>
-</div>
+    <!-- raw HTML omitted -->
 
   
 
@@ -263,6 +261,69 @@
       <a href="/pro/cli/">Pro CLI</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
+      <li data-nav-id="/pro/cli/dkron/" class="dd-item">
+        <div>
+          <a href="/pro/cli/dkron/">
+            dkron
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/cli/dkron_agent/" class="dd-item">
+        <div>
+          <a href="/pro/cli/dkron_agent/">
+            dkron agent
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/cli/dkron_doc/" class="dd-item">
+        <div>
+          <a href="/pro/cli/dkron_doc/">
+            dkron doc
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/cli/dkron_keygen/" class="dd-item">
+        <div>
+          <a href="/pro/cli/dkron_keygen/">
+            dkron keygen
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/cli/dkron_leave/" class="dd-item">
+        <div>
+          <a href="/pro/cli/dkron_leave/">
+            dkron leave
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/cli/dkron_raft/" class="dd-item">
+        <div>
+          <a href="/pro/cli/dkron_raft/">
+            dkron raft
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/cli/dkron_raft_list-peers/" class="dd-item">
+        <div>
+          <a href="/pro/cli/dkron_raft_list-peers/">
+            dkron raft list-peers
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/cli/dkron_raft_remove-peer/" class="dd-item">
+        <div>
+          <a href="/pro/cli/dkron_raft_remove-peer/">
+            dkron raft remove-peer
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/cli/dkron_version/" class="dd-item">
+        <div>
+          <a href="/pro/cli/dkron_version/">
+            dkron version
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
         </ul>
     </li>
       <li data-nav-id="/pro/acls/" class="dd-item">
@@ -480,21 +541,6 @@
       <div>
       <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
       </div>
-    </li>
-    <li data-nav-id="/upgrading/" class="dd-item haschildren
-        ">
-      <div>
-      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
-        <div>
-          <a href="/upgrading/from_v1_to_v2/">
-            Upgrade from v1 to v2
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
     </li>
     <li data-nav-id="/v1.2/" class="dd-item parent haschildren
         ">
@@ -916,6 +962,21 @@
     </li>
         </ul>
     </li>
+    <li data-nav-id="/upgrading/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
+        <div>
+          <a href="/upgrading/from_v1_to_v2/">
+            Upgrade from v1 to v2
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
 
 
 
@@ -954,8 +1015,6 @@
    CLI</option>
     <option value="/api/" >
    API</option>
-    <option value="/upgrading/" >
-   Upgradings</option>
     <option value="/v1.2/" >
    V1.2s</option> 
     <option value="/v1.2/basics/" >
@@ -999,6 +1058,8 @@
    API</option>
       <option value="/v1.2/_footer/" >- </option>
   
+    <option value="/upgrading/" >
+   Upgradings</option>
 
 
 
@@ -1025,21 +1086,12 @@
     
     
     
-    
-
-<h2 id="developing-a-plugin">Developing a Plugin</h2>
-
-<div class="alert 
-alert-warning"
- 
-role="alert">**Advanced topic!** Plugin development is a highly advanced topic, and is not required knowledge for day-to-day usage. If you don't plan on writing any plugins, we recommend not reading the following section of the documentation.</div>
-
+    <h2 id="developing-a-plugin">Developing a Plugin</h2>
+<!-- raw HTML omitted -->
+<p>role=&quot;alert&quot;&gt;<strong>Advanced topic!</strong> Plugin development is a highly advanced topic, and is not required knowledge for day-to-day usage. If you don&rsquo;t plan on writing any plugins, we recommend not reading the following section of the documentation.<!-- raw HTML omitted --></p>
 <p>Developing a plugin is simple. The only knowledge necessary to write a plugin is basic command-line skills and basic knowledge of the Go programming language.</p>
-
 <p>Note: A common pitfall is not properly setting up a <code>$GOPATH</code>. This can lead to strange errors. You can read more about this here to familiarize yourself.</p>
-
 <p>Create a new Go project somewhere in your <code>$GOPATH</code>. If you&rsquo;re a GitHub user, we recommend creating the project in the directory <code>$GOPATH/src/github.com/USERNAME/dkron-NAME-TYPE</code>, where <code>USERNAME</code> is your GitHub username and <code>NAME</code> is the name of the plugin you&rsquo;re developing. This structure is what Go expects and simplifies things down the road.</p>
-
 <p>With the directory made, create a main.go file. This project will be a binary so the package is &ldquo;main&rdquo;:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">package</span> <span style="color:#75af00">main</span>
 
@@ -1051,9 +1103,8 @@ role="alert">**Advanced topic!** Plugin development is a highly advanced topic, 
 	<span style="color:#75af00">plugin</span><span style="color:#111">.</span><span style="color:#75af00">Serve</span><span style="color:#111">(</span><span style="color:#f92672">&amp;</span><span style="color:#75af00">plugin</span><span style="color:#111">.</span><span style="color:#75af00">ServeOpts</span><span style="color:#111">{</span>
 		<span style="color:#75af00">Processor</span><span style="color:#111">:</span> <span style="color:#111">new</span><span style="color:#111">(</span><span style="color:#75af00">MyPlugin</span><span style="color:#111">),</span>
 	<span style="color:#111">})</span>
-<span style="color:#111">}</span></code></pre></div>
-<p>And that&rsquo;s basically it! You&rsquo;ll have to change the argument given to plugin.Serve to be your actual plugin, but that is the only change you&rsquo;ll have to make. The argument should be a structure implementing one of the plugin interfaces (depending on what sort of plugin you&rsquo;re creating).</p>
-
+<span style="color:#111">}</span>
+</code></pre></div><p>And that&rsquo;s basically it! You&rsquo;ll have to change the argument given to plugin.Serve to be your actual plugin, but that is the only change you&rsquo;ll have to make. The argument should be a structure implementing one of the plugin interfaces (depending on what sort of plugin you&rsquo;re creating).</p>
 <p>Dkron plugins must follow a very specific naming convention of <code>dkron-TYPE-NAME</code>. For example, <code>dkron-processor-files</code>, which tells Dkron that the plugin is a processor that can be referenced as &ldquo;files&rdquo;.</p>
 
 
@@ -1062,7 +1113,7 @@ role="alert">**Advanced topic!** Plugin development is a highly advanced topic, 
         <div class="chevrons">
     <div id="navigation">
 <a class="nav nav-prev" href="/v1.2/usage/plugins/" title="Plugins"> <i class="fa fa-chevron-left"></i><label>Plugins</label></a>
-    <a class="nav nav-next" href="/v1.2/pro/" title="Dkron Pro" style="margin-right: 0px;"><label>Dkron Pro</label><i class="fa fa-chevron-right"></i></a></div>
+    <a class="nav nav-next" href="/v1.2/usage/ecs/" title="Use with AWS ECS" style="margin-right: 0px;"><label>Use with AWS ECS</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>
@@ -1090,7 +1141,7 @@ role="alert">**Advanced topic!** Plugin development is a highly advanced topic, 
 
 
   
-    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - victor@distrib.works</p>
+    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - <a href="mailto:victor@distrib.works">victor@distrib.works</a></p>
 
   
 

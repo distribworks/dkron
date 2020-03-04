@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Basics on Dkron - Distributed job scheduling system</title>
@@ -20,9 +20,9 @@
 Run Dkron with default setting: dkron agent --server --bootstrap-expect=1
 Navigate to http://localhost:8080
 Installing the package Debian repo APT repository:
-deb [trusted=yes] https://apt.fury.io/distribworks/ /  Then install: sudo apt-get install dkron
+deb [trusted=yes] https://apt.fury.io/distribworks/ / Then install: sudo apt-get install dkron
 YUM repo YUM repository:
-[dkron] name=Dkron Pro Private Repo baseurl=https://yum.fury.io/distribworks/ enabled=1 gpgcheck=0  Then install: sudo yum install dkron</description>
+[dkron] name=Dkron Pro Private Repo baseurl=https://yum.fury.io/distribworks/ enabled=1 gpgcheck=0 Then install: sudo yum install dkron</description>
     </item>
     
     <item>

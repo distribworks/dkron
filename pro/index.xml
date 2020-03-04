@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Dkron Pro on Dkron - Distributed job scheduling system</title>
@@ -6,6 +6,7 @@
     <description>Recent content in Dkron Pro on Dkron - Distributed job scheduling system</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
+    <lastBuildDate>Mon, 26 Aug 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/pro/index.xml" rel="self" type="application/rss+xml" />
     
@@ -16,7 +17,7 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/pro/acls/</guid>
-      <description>Access Control (Preview) This feature is in preview and is subject to big changes  Dkron provides an optional Access Control List (ACL) system which can be used to control access to data and APIs. The ACL is Capability-based, relying on policies to determine which fine grained rules can be applied. Dkron&amp;rsquo;s capability based ACL system is very similar to common ACL systems you are used to.
+      <description>Access Control (Preview) Dkron provides an optional Access Control List (ACL) system which can be used to control access to data and APIs. The ACL is Capability-based, relying on policies to determine which fine grained rules can be applied. Dkron&amp;rsquo;s capability based ACL system is very similar to common ACL systems you are used to.
 ACL System Overview Dkron&amp;rsquo;s ACL system is implemented with the CNCF Open Policy Agent bringing a powerful system to suit your needs.</description>
     </item>
     
@@ -40,7 +41,7 @@ Authentication can be set using these parameters in the dkron config file:
       <description>What is Dkron Pro? Dkron Pro is a flavor of Dkron which add more functionality and provide additional support options for customers.
 Is there a trial version? There&amp;rsquo;s no free trial but we do offer a 14 day period with full refund if it does not work for you.
 Can I get a discount? I&amp;rsquo;m sure you&amp;rsquo;re very nice but no. Everyone pays the same price.
-What is the license?</description>
+What is the license? See COMM-LICENSE.</description>
     </item>
     
     <item>
@@ -59,7 +60,7 @@ Priority Support Covers 1 incident per quarter, with a max response time of 2 wo
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/pro/configuration/</guid>
-      <description> Configuration Dkron Pro uses the same parameters as Dkron OSS and add some extra parameters.
+      <description>Configuration Dkron Pro uses the same parameters as Dkron OSS and add some extra parameters.
 Command line options  --username - Authentication username --password - Authentication password --cert-file - Path to the client server TLS cert file --key-file - Path to the client server TLS key file --client-crl-file - Path to the client certificate revocation list file --trusted-ca-file - Path to the client server TLS trusted CA cert file --client-cert-auth - Enable client cert authentication --auto-tls - Client TLS using generated certificates  </description>
     </item>
     
@@ -69,8 +70,7 @@ Command line options  --username - Authentication username --password - Authenti
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/pro/failover/</guid>
-      <description>Dkron Pro can run federated in failover mode, this allows to have two clusters running in different regions and configure one of the clusters in an active-passive fashion, doing a failover in case the active cluster dies.
-This feature is experimental and should be handled with care.  </description>
+      <description>Dkron Pro can run federated in failover mode, this allows to have two clusters running in different regions and configure one of the clusters in an active-passive fashion, doing a failover in case the active cluster dies.</description>
     </item>
     
     <item>

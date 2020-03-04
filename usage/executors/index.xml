@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Executors on Dkron - Distributed job scheduling system</title>
@@ -27,10 +27,10 @@ method: Request method in uppercase url: Request url headers: Json string, such 
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/usage/executors/shell/</guid>
-      <description> Shell executor runs a system command
+      <description>Shell executor runs a system command
 Configuration Params
-shell: Run this command using a shell environment command: The command to run env: Env vars separated by comma cwd: Chdir before command run  Example
-{ &amp;#34;executor&amp;#34;: &amp;#34;shell&amp;#34;, &amp;#34;executor_config&amp;#34;: { &amp;#34;shell&amp;#34;: &amp;#34;true&amp;#34;, &amp;#34;command&amp;#34;: &amp;#34;my_command&amp;#34;, &amp;#34;env&amp;#34;: &amp;#34;ENV_VAR=va1,ANOTHER_ENV_VAR=var2&amp;#34;, &amp;#34;cwd&amp;#34;: &amp;#34;/app&amp;#34; } }</description>
+shell: Run this command using a shell environment command: The command to run env: Env vars separated by comma cwd: Chdir before command run Example
+{ &amp;#34;executor&amp;#34;: &amp;#34;shell&amp;#34;, &amp;#34;executor_config&amp;#34;: { &amp;#34;shell&amp;#34;: &amp;#34;true&amp;#34;, &amp;#34;command&amp;#34;: &amp;#34;my_command&amp;#34;, &amp;#34;env&amp;#34;: &amp;#34;ENV_VAR=va1,ANOTHER_ENV_VAR=var2&amp;#34;, &amp;#34;cwd&amp;#34;: &amp;#34;/app&amp;#34; } } </description>
     </item>
     
   </channel>

@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-02-05T22:03:27 CET">
+<meta name="revised" content="2020-03-04T09:28:28 CET">
 <title>Quick start :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -29,9 +29,7 @@
     
 	
   
-    <div class="brand">
-  <a class="logo" href="/"><img src="/img/dkron-logo.png"/></a>
-</div>
+    <!-- raw HTML omitted -->
 
   
 
@@ -544,21 +542,6 @@
       <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
       </div>
     </li>
-    <li data-nav-id="/upgrading/" class="dd-item haschildren
-        ">
-      <div>
-      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
-        <div>
-          <a href="/upgrading/from_v1_to_v2/">
-            Upgrade from v1 to v2
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
     <li data-nav-id="/v1.2/" class="dd-item parent haschildren
         ">
       <div>
@@ -978,6 +961,21 @@
     </li>
         </ul>
     </li>
+    <li data-nav-id="/upgrading/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
+        <div>
+          <a href="/upgrading/from_v1_to_v2/">
+            Upgrade from v1 to v2
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
 
 
 
@@ -1016,8 +1014,6 @@
    CLI</option>
     <option value="/api/" >
    API</option>
-    <option value="/upgrading/" >
-   Upgradings</option>
     <option value="/v1.2/" >
    V1.2s</option> 
     <option value="/v1.2/basics/" >
@@ -1058,6 +1054,8 @@
    API</option>
       <option value="/v1.2/_footer/" >- </option>
   
+    <option value="/upgrading/" >
+   Upgradings</option>
 
 
 
@@ -1084,27 +1082,17 @@
     
     
     
-    
-
-<h2 id="getting-started">Getting started</h2>
-
+    <h2 id="getting-started">Getting started</h2>
 <p>Dkron Pro provides a clustering backend store out of the box based on etcd.</p>
-
 <p>To configure the storage a sample <code>etcd.conf.yaml</code> file is provided in <code>/etc/dkron</code> path. Editing the file, allows to configure several options for the embedded store.</p>
-
 <p>The location of the store configuration can be set in the command line or in the dkron config file <code>/etc/dkron/dkron.yml</code> using <code>etcd-config-file-path</code> parameter.</p>
-
 <h3 id="starting-a-single-node">Starting a single node</h3>
-
 <p>Works out of the box, good for non HA installations.</p>
-
 <ul>
 <li>System service: If no changes are done to the default config files, dkron will start as a service in single mode.</li>
 <li>Command line: Running a single node with default config can be done by running: <code>dkron agent --server</code></li>
 </ul>
-
 <p>Check your server is working: <code>curl localhost:8080/v1</code></p>
-
 <p>Simple as that, now it is time to add some jobs:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">curl localhost:8080/v1/jobs -XPOST -d <span style="color:#d88200">&#39;{
 </span><span style="color:#d88200">  &#34;name&#34;: &#34;job1&#34;,
@@ -1121,7 +1109,8 @@
 </span><span style="color:#d88200">  &#34;executor_config&#34;: {
 </span><span style="color:#d88200">    &#34;command&#34;: &#34;date&#34;
 </span><span style="color:#d88200">  }
-</span><span style="color:#d88200">}&#39;</span></code></pre></div>
+</span><span style="color:#d88200">}&#39;</span>
+</code></pre></div>
 
     
     
@@ -1156,7 +1145,7 @@
 
 
   
-    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - victor@distrib.works</p>
+    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - <a href="mailto:victor@distrib.works">victor@distrib.works</a></p>
 
   
 

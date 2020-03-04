@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-02-05T22:03:29 CET">
+<meta name="revised" content="2020-03-04T09:28:28 CET">
 <title>Internals :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -29,9 +29,7 @@
     
 	
   
-    <div class="brand">
-  <a class="logo" href="/"><img src="/img/dkron-logo.png"/></a>
-</div>
+    <!-- raw HTML omitted -->
 
   
 
@@ -544,21 +542,6 @@
       <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
       </div>
     </li>
-    <li data-nav-id="/upgrading/" class="dd-item haschildren
-        ">
-      <div>
-      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
-        <div>
-          <a href="/upgrading/from_v1_to_v2/">
-            Upgrade from v1 to v2
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
     <li data-nav-id="/v1.2/" class="dd-item parent haschildren
         ">
       <div>
@@ -978,6 +961,21 @@
     </li>
         </ul>
     </li>
+    <li data-nav-id="/upgrading/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
+        <div>
+          <a href="/upgrading/from_v1_to_v2/">
+            Upgrade from v1 to v2
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
 
 
 
@@ -1016,8 +1014,6 @@
    CLI</option>
     <option value="/api/" >
    API</option>
-    <option value="/upgrading/" >
-   Upgradings</option>
     <option value="/v1.2/" >
    V1.2s</option> 
     <option value="/v1.2/basics/" >
@@ -1059,6 +1055,8 @@
    API</option>
       <option value="/v1.2/_footer/" >- </option>
   
+    <option value="/upgrading/" >
+   Upgradings</option>
 
 
 
@@ -1085,32 +1083,23 @@
     
     
     
-    
-
-<p>This document is a WIP, it&rsquo;s intended to describe the reasons that lead to design decisions in Dkron.</p>
-
+    <p>This document is a WIP, it&rsquo;s intended to describe the reasons that lead to design decisions in Dkron.</p>
 <h2 id="execution-results">Execution results</h2>
-
 <p>Dkron store the result of each job execution in each node.</p>
-
 <p>Every time dkron executes a job it assigns it an execution group, generating a new uuid and send a serf query to target machines and waits for a response.</p>
-
 <p>Each target machine that will run the job, then responds with an execution object saying it started to run the job.</p>
-
 <p>This allows dkron to know how many machines will be running the job.</p>
-
 <p>The design takes into account the differences of how the different storage backends work.</p>
-
 <p>Due to this issue <a href="https://github.com/docker/libkv/issues/20">https://github.com/docker/libkv/issues/20</a> executions are grouped using the group id in the execution object.</p>
-
 <h2 id="executions-commands-output">Executions commands output</h2>
-
 <p>When a node has finished executing a job it gathers the output of the executed command and sends it back to the a server using an RPC call. This is designed after two main reasons:</p>
-
 <ol>
-<li><p>Scallability, in case of thousands of nodes responding to job the responses are sent to dkron servers in an evenly way selecting a random Dkron server of the ones that are available at the moment and send the response. In the future, Dkron should retry sending the command result with an exponential backoff.</p></li>
-
-<li><p>Due to the limitations of Serf the queries payload can&rsquo;t be bigger that 1KB, this renders impossible to send a minimal command output togheter with the execution metadata.</p></li>
+<li>
+<p>Scallability, in case of thousands of nodes responding to job the responses are sent to dkron servers in an evenly way selecting a random Dkron server of the ones that are available at the moment and send the response. In the future, Dkron should retry sending the command result with an exponential backoff.</p>
+</li>
+<li>
+<p>Due to the limitations of Serf the queries payload can&rsquo;t be bigger that 1KB, this renders impossible to send a minimal command output togheter with the execution metadata.</p>
+</li>
 </ol>
 
 
@@ -1118,8 +1107,8 @@
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-prev" href="/v1.2/usage/plugins/develop/" title="Developing plugins"> <i class="fa fa-chevron-left"></i><label>Developing plugins</label></a>
-    <a class="nav nav-next" href="/v1.2/usage/executors/" title="Executors" style="margin-right: 0px;"><label>Executors</label><i class="fa fa-chevron-right"></i></a></div>
+<a class="nav nav-prev" href="/v1.2/usage/concurrency/" title="Concurrency"> <i class="fa fa-chevron-left"></i><label>Concurrency</label></a>
+    <a class="nav nav-next" href="/v1.2/usage/chaining/" title="Job chaining" style="margin-right: 0px;"><label>Job chaining</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>
@@ -1147,7 +1136,7 @@
 
 
   
-    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - victor@distrib.works</p>
+    <p><a href="http://www.distrib.works/">Distributed Works</a> © 2015 Victor Castell - <a href="mailto:victor@distrib.works">victor@distrib.works</a></p>
 
   
 

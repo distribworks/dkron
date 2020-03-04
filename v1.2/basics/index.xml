@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Basics on Dkron - Distributed job scheduling system</title>
@@ -19,7 +19,10 @@
       <description>Running the binary Download the packaged archive for your platform from the downloads page and extract the package to a shared location in your drive, like /opt/local/bin.
 Run Dkron with default setting: dkron agent --server
 Navigate to http://localhost:8080
-By default dkron will start with a file based, embedded KV store called BoltDB, it is functional for a single node demo but does not offers clustering or HA.  Installing the package Debian repo APT repository:</description>
+Installing the package Debian repo APT repository:
+deb [trusted=yes] https://apt.fury.io/distribworks/ / Then install: sudo apt-get install dkron
+YUM repo YUM repository:
+[dkron] name=Dkron Pro Private Repo baseurl=https://yum.fury.io/distribworks/ enabled=1 gpgcheck=0 Then install: sudo yum install dkron</description>
     </item>
     
     <item>
