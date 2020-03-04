@@ -53,7 +53,11 @@ If you purchased Dkron Pro ([settings](https://gumroad.com/settings)) with a cre
 
 ## Can I request a change to the license terms?
 
-Dkron Pro customers purchasing the Appliance license can ask for changes to the terms and conditions. Email your concerns and we can negotiate something.
+Dkron Pro customers purchasing the Appliance license can ask for changes to the terms and conditions.
+
+If you don't need the Appliance license but wants to ask for changes to the terms and conditions you will need to purchase a Dkron Pro standard license per production server.
+
+Email your concerns and we can negotiate something.
 
 ## Can I pay via invoice and purchase order?
 
