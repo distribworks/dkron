@@ -77,7 +77,7 @@ curl localhost:8080/v1/jobs -XPOST -d '{
   },
   "metadata": {
     "user": "12345"
-  }
+  },
   "concurrency": "allow",
   "executor": "shell",
   "executor_config": {
