@@ -855,7 +855,7 @@ This ensures that no unexpected usage of the Dkron&amp;rsquo;s store will happen
       <description>File processor saves the execution output to a single log file in the specified directory
 Configuration Parameters
 log_dir: Path to the location where the log files will be saved forward: Forward log output to the next processor Example
-{ &amp;#34;name&amp;#34;: &amp;#34;job_name&amp;#34;, &amp;#34;command&amp;#34;: &amp;#34;echo &amp;#39;Hello files&amp;#39;&amp;#34;, &amp;#34;schedule&amp;#34;: &amp;#34;@every 2m&amp;#34;, &amp;#34;tags&amp;#34;: { &amp;#34;role&amp;#34;: &amp;#34;web&amp;#34; }, &amp;#34;processors&amp;#34;: { &amp;#34;files&amp;#34;: { &amp;#34;log_dir&amp;#34;: &amp;#34;/var/log/mydir&amp;#34;, &amp;#34;forward&amp;#34;: true } } } </description>
+{ &amp;#34;name&amp;#34;: &amp;#34;job_name&amp;#34;, &amp;#34;command&amp;#34;: &amp;#34;echo &amp;#39;Hello files&amp;#39;&amp;#34;, &amp;#34;schedule&amp;#34;: &amp;#34;@every 2m&amp;#34;, &amp;#34;tags&amp;#34;: { &amp;#34;role&amp;#34;: &amp;#34;web&amp;#34; }, &amp;#34;processors&amp;#34;: { &amp;#34;files&amp;#34;: { &amp;#34;log_dir&amp;#34;: &amp;#34;/var/log/mydir&amp;#34;, &amp;#34;forward&amp;#34;: &amp;#34;true&amp;#34; } } } </description>
     </item>
     
     <item>
@@ -990,7 +990,7 @@ Dkron is an Open Source project licensed under the terms of the LGPLv3 license. 
 Configuration Parameters
 forward: Forward the output to the next processor
 Example
-{ &amp;#34;name&amp;#34;: &amp;#34;job_name&amp;#34;, &amp;#34;command&amp;#34;: &amp;#34;echo &amp;#39;Hello log&amp;#39;&amp;#34;, &amp;#34;schedule&amp;#34;: &amp;#34;@every 2m&amp;#34;, &amp;#34;tags&amp;#34;: { &amp;#34;role&amp;#34;: &amp;#34;web&amp;#34; }, &amp;#34;processors&amp;#34;: { &amp;#34;log&amp;#34;: { &amp;#34;forward&amp;#34;: true } } } </description>
+{ &amp;#34;name&amp;#34;: &amp;#34;job_name&amp;#34;, &amp;#34;command&amp;#34;: &amp;#34;echo &amp;#39;Hello log&amp;#39;&amp;#34;, &amp;#34;schedule&amp;#34;: &amp;#34;@every 2m&amp;#34;, &amp;#34;tags&amp;#34;: { &amp;#34;role&amp;#34;: &amp;#34;web&amp;#34; }, &amp;#34;processors&amp;#34;: { &amp;#34;log&amp;#34;: { &amp;#34;forward&amp;#34;: &amp;#34;true&amp;#34; } } } </description>
     </item>
     
     <item>
@@ -1102,7 +1102,7 @@ Note: Only work on linux systems
 Configuration Parameters
 forward: Forward the output to the next processor
 Example
-{ &amp;#34;name&amp;#34;: &amp;#34;job_name&amp;#34;, &amp;#34;command&amp;#34;: &amp;#34;echo &amp;#39;Hello syslog&amp;#39;&amp;#34;, &amp;#34;schedule&amp;#34;: &amp;#34;@every 2m&amp;#34;, &amp;#34;tags&amp;#34;: { &amp;#34;role&amp;#34;: &amp;#34;web&amp;#34; }, &amp;#34;processors&amp;#34;: { &amp;#34;syslog&amp;#34;: { &amp;#34;forward&amp;#34;: true } } } </description>
+{ &amp;#34;name&amp;#34;: &amp;#34;job_name&amp;#34;, &amp;#34;command&amp;#34;: &amp;#34;echo &amp;#39;Hello syslog&amp;#39;&amp;#34;, &amp;#34;schedule&amp;#34;: &amp;#34;@every 2m&amp;#34;, &amp;#34;tags&amp;#34;: { &amp;#34;role&amp;#34;: &amp;#34;web&amp;#34; }, &amp;#34;processors&amp;#34;: { &amp;#34;syslog&amp;#34;: { &amp;#34;forward&amp;#34;: &amp;#34;true&amp;#34; } } } </description>
     </item>
     
     <item>

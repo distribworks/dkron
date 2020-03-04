@@ -704,7 +704,7 @@
 	"title": "File Processor",
 	"tags": [],
 	"description": "",
-	"content": "File processor saves the execution output to a single log file in the specified directory\nConfiguration Parameters\nlog_dir: Path to the location where the log files will be saved forward: Forward log output to the next processor Example\n{ \u0026#34;name\u0026#34;: \u0026#34;job_name\u0026#34;, \u0026#34;command\u0026#34;: \u0026#34;echo \u0026#39;Hello files\u0026#39;\u0026#34;, \u0026#34;schedule\u0026#34;: \u0026#34;@every 2m\u0026#34;, \u0026#34;tags\u0026#34;: { \u0026#34;role\u0026#34;: \u0026#34;web\u0026#34; }, \u0026#34;processors\u0026#34;: { \u0026#34;files\u0026#34;: { \u0026#34;log_dir\u0026#34;: \u0026#34;/var/log/mydir\u0026#34;, \u0026#34;forward\u0026#34;: true } } } "
+	"content": "File processor saves the execution output to a single log file in the specified directory\nConfiguration Parameters\nlog_dir: Path to the location where the log files will be saved forward: Forward log output to the next processor Example\n{ \u0026#34;name\u0026#34;: \u0026#34;job_name\u0026#34;, \u0026#34;command\u0026#34;: \u0026#34;echo \u0026#39;Hello files\u0026#39;\u0026#34;, \u0026#34;schedule\u0026#34;: \u0026#34;@every 2m\u0026#34;, \u0026#34;tags\u0026#34;: { \u0026#34;role\u0026#34;: \u0026#34;web\u0026#34; }, \u0026#34;processors\u0026#34;: { \u0026#34;files\u0026#34;: { \u0026#34;log_dir\u0026#34;: \u0026#34;/var/log/mydir\u0026#34;, \u0026#34;forward\u0026#34;: \u0026#34;true\u0026#34; } } } "
 },
 {
 	"uri": "/v1.2/usage/processors/file/",
@@ -788,7 +788,7 @@
 	"title": "Log Processor",
 	"tags": [],
 	"description": "",
-	"content": "Log processor writes the execution output to stdout/stderr\nConfiguration Parameters\nforward: Forward the output to the next processor\nExample\n{ \u0026#34;name\u0026#34;: \u0026#34;job_name\u0026#34;, \u0026#34;command\u0026#34;: \u0026#34;echo \u0026#39;Hello log\u0026#39;\u0026#34;, \u0026#34;schedule\u0026#34;: \u0026#34;@every 2m\u0026#34;, \u0026#34;tags\u0026#34;: { \u0026#34;role\u0026#34;: \u0026#34;web\u0026#34; }, \u0026#34;processors\u0026#34;: { \u0026#34;log\u0026#34;: { \u0026#34;forward\u0026#34;: true } } } "
+	"content": "Log processor writes the execution output to stdout/stderr\nConfiguration Parameters\nforward: Forward the output to the next processor\nExample\n{ \u0026#34;name\u0026#34;: \u0026#34;job_name\u0026#34;, \u0026#34;command\u0026#34;: \u0026#34;echo \u0026#39;Hello log\u0026#39;\u0026#34;, \u0026#34;schedule\u0026#34;: \u0026#34;@every 2m\u0026#34;, \u0026#34;tags\u0026#34;: { \u0026#34;role\u0026#34;: \u0026#34;web\u0026#34; }, \u0026#34;processors\u0026#34;: { \u0026#34;log\u0026#34;: { \u0026#34;forward\u0026#34;: \u0026#34;true\u0026#34; } } } "
 },
 {
 	"uri": "/v1.2/usage/processors/log/",
@@ -879,7 +879,7 @@
 	"title": "Syslog Processor",
 	"tags": [],
 	"description": "",
-	"content": "Syslog processor writes the execution output to the system syslog daemon\nNote: Only work on linux systems\nConfiguration Parameters\nforward: Forward the output to the next processor\nExample\n{ \u0026#34;name\u0026#34;: \u0026#34;job_name\u0026#34;, \u0026#34;command\u0026#34;: \u0026#34;echo \u0026#39;Hello syslog\u0026#39;\u0026#34;, \u0026#34;schedule\u0026#34;: \u0026#34;@every 2m\u0026#34;, \u0026#34;tags\u0026#34;: { \u0026#34;role\u0026#34;: \u0026#34;web\u0026#34; }, \u0026#34;processors\u0026#34;: { \u0026#34;syslog\u0026#34;: { \u0026#34;forward\u0026#34;: true } } } "
+	"content": "Syslog processor writes the execution output to the system syslog daemon\nNote: Only work on linux systems\nConfiguration Parameters\nforward: Forward the output to the next processor\nExample\n{ \u0026#34;name\u0026#34;: \u0026#34;job_name\u0026#34;, \u0026#34;command\u0026#34;: \u0026#34;echo \u0026#39;Hello syslog\u0026#39;\u0026#34;, \u0026#34;schedule\u0026#34;: \u0026#34;@every 2m\u0026#34;, \u0026#34;tags\u0026#34;: { \u0026#34;role\u0026#34;: \u0026#34;web\u0026#34; }, \u0026#34;processors\u0026#34;: { \u0026#34;syslog\u0026#34;: { \u0026#34;forward\u0026#34;: \u0026#34;true\u0026#34; } } } "
 },
 {
 	"uri": "/v1.2/usage/processors/syslog/",
