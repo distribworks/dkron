@@ -67,6 +67,7 @@ func (h *HTTPTransport) APIRoutes(r *gin.RouterGroup, middleware ...gin.HandlerF
 	v1.GET("/", h.indexHandler)
 	v1.GET("/members", h.membersHandler)
 	v1.GET("/leader", h.leaderHandler)
+	v1.GET("/isleader", h.isLeaderHandler)
 	v1.POST("/leave", h.leaveHandler)
 
 	v1.POST("/jobs", h.jobCreateOrUpdateHandler)
@@ -247,6 +248,15 @@ func (h *HTTPTransport) leaderHandler(c *gin.Context) {
 		c.AbortWithStatus(http.StatusNotFound)
 	}
 	renderJSON(c, http.StatusOK, member)
+}
+
+func (h *HTTPTransport) isLeaderHandler(c *gin.Context) {
+	isleader := h.agent.IsLeader()
+	if isleader {
+		renderJSON(c, http.StatusOK, "I am a leader")
+	} else {
+		renderJSON(c, http.StatusNotFound, "I am not a leader")
+	}
 }
 
 func (h *HTTPTransport) leaveHandler(c *gin.Context) {
