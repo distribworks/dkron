@@ -2,6 +2,7 @@ package dkron
 
 import (
 	"errors"
+	"net"
 	"time"
 
 	"github.com/armon/circbuf"
@@ -61,7 +62,7 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 	execution.Success = success
 	execution.Output = output.Bytes()
 
-	rpcServer, err := a.selectServerByKey(execution.Key())
+	rpcServer, err := a.checkAndSelectServer()
 	if err != nil {
 		return err
 	}
@@ -86,4 +87,22 @@ func (a *Agent) selectServerByKey(key string) (string, error) {
 	}
 
 	return peerAddress, nil
+}
+
+func (a *Agent) checkAndSelectServer() (string, error) {
+	var peers []string
+	for _, p := range a.LocalServers() {
+		peers = append(peers, p.RPCAddr.String())
+	}
+
+	for _, peer := range peers {
+		log.Debugf("Checking peer: %v", peer)
+		conn, err := net.DialTimeout("tcp", peer, 5*time.Second)
+		if err == nil {
+			conn.Close()
+			log.Debugf("Found good peer: %v", peer)
+			return peer, nil
+		}
+	}
+	return "", ErrNoSuitableServer
 }
