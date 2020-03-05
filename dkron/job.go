@@ -159,6 +159,9 @@ func NewJobFromProto(in *proto.Job) *Job {
 
 	procs := make(map[string]PluginConfig)
 	for k, v := range in.Processors {
+		if len(v.Config) == 0 {
+			v.Config = make(map[string]string)
+		}
 		procs[k] = v.Config
 	}
 	job.Processors = procs
