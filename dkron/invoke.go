@@ -73,22 +73,7 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 	return a.GRPCClient.ExecutionDone(rpcServer, execution)
 }
 
-// Select a server based on key using a consistent hash key
-// like a cache store.
-func (a *Agent) selectServerByKey(key string) (string, error) {
-	ch := consistenthash.New(50, nil)
-	for _, p := range a.LocalServers() {
-		ch.Add(p.RPCAddr.String())
-	}
-
-	peerAddress := ch.Get(key)
-	if peerAddress == "" {
-		return "", ErrNoSuitableServer
-	}
-
-	return peerAddress, nil
-}
-
+// Check if the server is alive and select it
 func (a *Agent) checkAndSelectServer() (string, error) {
 	var peers []string
 	for _, p := range a.LocalServers() {
