@@ -7,37 +7,47 @@ import (
 	"github.com/hashicorp/go-plugin"
 )
 
-type ExecutionProcessorPlugin struct {
-	Processor ExecutionProcessor
+// Processor is an interface that wraps the Process method.
+// Plugins must implement this interface.
+type Processor interface {
+	// Main plugin method, will be called when an execution is done.
+	Process(args *ProcessorArgs) types.Execution
 }
 
-func (p *ExecutionProcessorPlugin) Server(b *plugin.MuxBroker) (interface{}, error) {
-	return &ExecutionProcessorServer{Broker: b, Processor: p.Processor}, nil
+// ProcessorPlugin RPC implementation
+type ProcessorPlugin struct {
+	Processor Processor
 }
 
-func (p *ExecutionProcessorPlugin) Client(b *plugin.MuxBroker, c *rpc.Client) (interface{}, error) {
-	return &ExecutionProcessor{Broker: b, Client: c}, nil
+// Server implements the RPC server
+func (p *ProcessorPlugin) Server(b *plugin.MuxBroker) (interface{}, error) {
+	return &ProcessorServer{Broker: b, Processor: p.Processor}, nil
 }
 
-// ExecutionProcessorArgs holds the Execution and PluginConfig for an ExecutionProcessor.
-type ExecutionProcessorArgs struct {
+// Client implements the RPC client
+func (p *ProcessorPlugin) Client(b *plugin.MuxBroker, c *rpc.Client) (interface{}, error) {
+	return &ProcessorClient{Broker: b, Client: c}, nil
+}
+
+// ProcessorArgs holds the Execution and PluginConfig for a Processor.
+type ProcessorArgs struct {
 	// The execution to pass to the processor
 	Execution types.Execution
 	// The configuration for this plugin call
-	Config PluginConfig
+	Config Config
 }
 
-// PluginConfig holds a map of the plugin configuration data structure.
-type PluginConfig map[string]string
+// Config holds a map of the plugin configuration data structure.
+type Config map[string]string
 
-// Here is an implementation that talks over RPC
-type ExecutionProcessor struct {
+// ProcessorClient is an implementation that talks over RPC
+type ProcessorClient struct {
 	Broker *plugin.MuxBroker
 	Client *rpc.Client
 }
 
-// The Process method that actually call the plugin Process method.
-func (e *ExecutionProcessor) Process(args *ExecutionProcessorArgs) types.Execution {
+// Process method that actually call the plugin Process method.
+func (e *ProcessorClient) Process(args *ProcessorArgs) types.Execution {
 	var resp types.Execution
 	err := e.Client.Call("Plugin.Process", args, &resp)
 	if err != nil {
@@ -49,15 +59,16 @@ func (e *ExecutionProcessor) Process(args *ExecutionProcessorArgs) types.Executi
 	return resp
 }
 
-// Here is the RPC server that client talks to, conforming to
+// ProcessorServer is the RPC server that client talks to, conforming to
 // the requirements of net/rpc
-type ExecutionProcessorServer struct {
+type ProcessorServer struct {
 	// This is the real implementation
 	Broker    *plugin.MuxBroker
-	Processor ExecutionProcessor
+	Processor Processor
 }
 
-func (e *ExecutionProcessorServer) Process(args *ExecutionProcessorArgs, resp *types.Execution) error {
+// Process will call the actuall Process method of the plugin
+func (e *ProcessorServer) Process(args *ProcessorArgs, resp *types.Execution) error {
 	*resp = e.Processor.Process(args)
 	return nil
 }

@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/distribworks/dkron/v2/dkron"
+	"github.com/distribworks/dkron/v2/plugin/types"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestExecute(t *testing.T) {
-	pa := &dkron.ExecuteRequest{
+	pa := &types.ExecuteRequest{
 		JobName: "testJob",
 		Config: map[string]string{
 			"method":     "GET",
@@ -28,7 +28,7 @@ func TestExecute(t *testing.T) {
 }
 
 func TestExecutePost(t *testing.T) {
-	pa := &dkron.ExecuteRequest{
+	pa := &types.ExecuteRequest{
 		JobName: "testJob",
 		Config: map[string]string{
 			"method":     "POST",
@@ -51,7 +51,7 @@ func TestExecutePost(t *testing.T) {
 
 // Note: badssl.com was meant for _manual_ testing. Maybe these tests should be disabled by default.
 func TestNoVerifyPeer(t *testing.T) {
-	pa := &dkron.ExecuteRequest{
+	pa := &types.ExecuteRequest{
 		JobName: "testJob",
 		Config: map[string]string{
 			"method":          "GET",
@@ -70,7 +70,7 @@ func TestNoVerifyPeer(t *testing.T) {
 
 func TestClientSSLCert(t *testing.T) {
 	// client certs: https://badssl.com/download/
-	pa := &dkron.ExecuteRequest{
+	pa := &types.ExecuteRequest{
 		JobName: "testJob",
 		Config: map[string]string{
 			"method":                "GET",
@@ -90,7 +90,7 @@ func TestClientSSLCert(t *testing.T) {
 
 func TestRootCA(t *testing.T) {
 	// untrusted root ca cert: https://badssl.com/certs/ca-untrusted-root.crt
-	pa := &dkron.ExecuteRequest{
+	pa := &types.ExecuteRequest{
 		JobName: "testJob",
 		Config: map[string]string{
 			"method":         "GET",

@@ -5,6 +5,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/distribworks/dkron/v2/plugin"
 	proto "github.com/distribworks/dkron/v2/plugin/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -67,7 +68,7 @@ func TestJobGetParent(t *testing.T) {
 }
 
 func TestNewJobFromProto(t *testing.T) {
-	testConfig := map[string]PluginConfig{
+	testConfig := map[string]plugin.Config{
 		"test_processor": {
 			"config_key": "config_value",
 		},
@@ -87,7 +88,7 @@ func TestNewJobFromProto(t *testing.T) {
 
 func TestToProto(t *testing.T) {
 	j := &Job{
-		Processors: map[string]PluginConfig{
+		Processors: map[string]plugin.Config{
 			"test_processor": {
 				"config_key": "config_value",
 			},

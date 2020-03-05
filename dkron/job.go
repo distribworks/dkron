@@ -106,7 +106,7 @@ type Job struct {
 	ParentJob string `json:"parent_job"`
 
 	// Processors to use for this job
-	Processors map[string]plugin.PluginConfig `json:"processors"`
+	Processors map[string]plugin.Config `json:"processors"`
 
 	// Concurrency policy for this job (allow, forbid)
 	Concurrency string `json:"concurrency"`
@@ -158,7 +158,7 @@ func NewJobFromProto(in *proto.Job) *Job {
 		job.LastError.Set(t)
 	}
 
-	procs := make(map[string]plugin.PluginConfig)
+	procs := make(map[string]plugin.Config)
 	for k, v := range in.Processors {
 		procs[k] = v.Config
 	}

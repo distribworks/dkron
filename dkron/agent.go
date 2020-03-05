@@ -48,7 +48,7 @@ var (
 // Agent is the main struct that represents a dkron agent
 type Agent struct {
 	// ProcessorPlugins maps processor plugins
-	ProcessorPlugins map[string]ExecutionProcessor
+	ProcessorPlugins map[string]plugin.Processor
 
 	//ExecutorPlugins maps executor plugins
 	ExecutorPlugins map[string]plugin.Executor
@@ -106,11 +106,11 @@ type Agent struct {
 
 // ProcessorFactory is a function type that creates a new instance
 // of a processor.
-type ProcessorFactory func() (ExecutionProcessor, error)
+type ProcessorFactory func() (plugin.Processor, error)
 
 // Plugins struct to store loaded plugins of each type
 type Plugins struct {
-	Processors map[string]ExecutionProcessor
+	Processors map[string]plugin.Processor
 	Executors  map[string]plugin.Executor
 }
 

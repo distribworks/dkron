@@ -164,20 +164,19 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.E
 	if err != nil {
 		return nil, err
 	}
-	origExec := *NewExecutionFromProto(execDoneReq.Execution)
-	execution := origExec
+
+	pbex := *execDoneReq.Execution
 	for k, v := range job.Processors {
 		log.WithField("plugin", k).Info("grpc: Processing execution with plugin")
 		if processor, ok := grpcs.agent.ProcessorPlugins[k]; ok {
 			v["reporting_node"] = grpcs.agent.config.NodeName
-			e := processor.Process(&plugin.ExecutionProcessorArgs{Execution: origExec, Config: v})
-			execution = e
+			pbex = processor.Process(&plugin.ProcessorArgs{Execution: pbex, Config: v})
 		} else {
 			log.WithField("plugin", k).Error("grpc: Specified plugin not found")
 		}
 	}
 
-	execDoneReq.Execution = execution.ToProto()
+	execDoneReq.Execution = &pbex
 	cmd, err := Encode(ExecutionDoneType, execDoneReq)
 	if err != nil {
 		return nil, err
@@ -195,7 +194,8 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.E
 	}
 
 	// If the execution failed, retry it until retries limit (default: don't retry)
-	if !execution.Success && execution.Attempt < job.Retries+1 {
+	execution := NewExecutionFromProto(&pbex)
+	if !execution.Success && uint(execution.Attempt) < job.Retries+1 {
 		execution.Attempt++
 
 		// Keep all execution properties intact except the last output
@@ -207,7 +207,7 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.E
 			"execution": execution,
 		}).Debug("grpc: Retrying execution")
 
-		if _, err := grpcs.agent.RunQuery(job.Name, &execution); err != nil {
+		if _, err := grpcs.agent.RunQuery(job.Name, execution); err != nil {
 			return nil, err
 		}
 		return &proto.ExecutionDoneResponse{
@@ -216,14 +216,14 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.E
 		}, nil
 	}
 
-	exg, err := grpcs.agent.Store.GetExecutionGroup(&execution)
+	exg, err := grpcs.agent.Store.GetExecutionGroup(execution)
 	if err != nil {
 		log.WithError(err).WithField("group", execution.Group).Error("grpc: Error getting execution group.")
 		return nil, err
 	}
 
 	// Send notification
-	if err := Notification(grpcs.agent.config, &execution, exg, job).Send(); err != nil {
+	if err := Notification(grpcs.agent.config, execution, exg, job).Send(); err != nil {
 		return nil, err
 	}
 

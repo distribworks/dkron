@@ -4,20 +4,21 @@ import (
 	"testing"
 	"time"
 
-	"github.com/distribworks/dkron/v2/dkron"
+	"github.com/distribworks/dkron/v2/plugin"
+	"github.com/distribworks/dkron/v2/plugin/types"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestProcess(t *testing.T) {
 	now := time.Now()
 
-	pa := &dkron.ExecutionProcessorArgs{
-		Execution: dkron.Execution{
-			StartedAt: now,
-			NodeName:  "testNode",
-			Output:    []byte("test"),
+	pa := &plugin.ProcessorArgs{
+		Execution: types.Execution{
+			Group:    now.UnixNano(),
+			NodeName: "testNode",
+			Output:   []byte("test"),
 		},
-		Config: dkron.PluginConfig{
+		Config: plugin.Config{
 			"forward": "false",
 		},
 	}
