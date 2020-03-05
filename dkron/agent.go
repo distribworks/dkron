@@ -7,6 +7,7 @@ import (
 	"expvar"
 	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"net"
 	"os"
 	"path/filepath"
@@ -735,6 +736,7 @@ func (a *Agent) join(addrs []string, replay bool) (n int, err error) {
 
 func (a *Agent) processFilteredNodes(job *Job) ([]string, map[string]string, error) {
 	var nodes []string
+	var candidates []string
 	tags := make(map[string]string)
 
 	// Actually copy the map
@@ -763,13 +765,24 @@ func (a *Agent) processFilteredNodes(job *Job) ([]string, map[string]string, err
 				if member.Status == serf.StatusAlive {
 					for mtk, mtv := range member.Tags {
 						if mtk == jtk && mtv == tv {
-							if len(nodes) < count {
-								nodes = append(nodes, member.Name)
-							}
+							candidates = append(candidates, member.Name)
 						}
 					}
 				}
 			}
+			rand.Seed(time.Now().UnixNano())
+			rand.Shuffle(len(candidates), func(i, j int) {
+				candidates[i], candidates[j] = candidates[j], candidates[i]
+			})
+
+			for i := 1; i <= count; i++ {
+				if len(candidates) == 0 {
+					break
+				}
+				nodes = append(nodes, candidates[0])
+				candidates = candidates[:1]
+			}
+
 		}
 	}
 
