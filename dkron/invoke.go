@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/armon/circbuf"
-	"github.com/golang/groupcache/consistenthash"
 )
 
 const (
