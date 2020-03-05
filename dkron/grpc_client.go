@@ -5,7 +5,7 @@ import (
 	"time"
 
 	metrics "github.com/armon/go-metrics"
-	"github.com/distribworks/dkron/v2/proto"
+	proto "github.com/distribworks/dkron/v2/plugin/types"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"

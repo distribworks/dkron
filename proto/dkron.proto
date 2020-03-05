@@ -1,7 +1,7 @@
-// protoc -I proto/ proto/dkron.proto --go_out=plugins=grpc:proto/
+// protoc -I proto/ proto/dkron.proto --go_out=plugins=grpc:plugin/types/
 syntax = "proto3";
 
-package proto;
+package types;
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";

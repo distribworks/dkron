@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/distribworks/dkron/v2/proto"
+	proto "github.com/distribworks/dkron/v2/plugin/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

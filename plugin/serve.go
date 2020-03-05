@@ -1,7 +1,6 @@
 package plugin
 
 import (
-	"github.com/distribworks/dkron/v2/dkron"
 	"github.com/hashicorp/go-plugin"
 )
 
@@ -21,8 +20,8 @@ var Handshake = plugin.HandshakeConfig{
 
 // ServeOpts are the configurations to serve a plugin.
 type ServeOpts struct {
-	Processor dkron.ExecutionProcessor
-	Executor  dkron.Executor
+	Processor ExecutionProcessor
+	Executor  Executor
 }
 
 // Serve serves a plugin. This function never returns and should be the final
