@@ -881,3 +881,13 @@ func (a *Agent) applySetJob(job *proto.Job) error {
 func (a *Agent) RaftApply(cmd []byte) raft.ApplyFuture {
 	return a.raft.Apply(cmd, raftTimeout)
 }
+
+// GetRunningJobs returns amount of active jobs
+func (a *Agent) GetRunningJobs() int {
+	job := 0
+	runningExecutions.Range(func(k, v interface{}) bool {
+		job = job + 1
+		return true
+	})
+	return job
+}
