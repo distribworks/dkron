@@ -18,9 +18,6 @@ import (
 )
 
 const (
-	// MaxExecutions to maintain in the storage
-	MaxExecutions = 100
-
 	defaultGCInterval     = 5 * time.Minute
 	defaultGCDiscardRatio = 0.7
 )
@@ -45,7 +42,7 @@ type JobOptions struct {
 }
 
 // NewStore creates a new Storage instance.
-func NewStore(dir string) (*Store, error) {
+func NewStore(dir string, ...options StorageOption) (*Store, error) {
 	dirExists, err := exists(dir)
 	if err != nil {
 		return nil, fmt.Errorf("Ivalid directory %s: %w", dir, err)

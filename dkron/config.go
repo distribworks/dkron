@@ -87,6 +87,9 @@ type Config struct {
 	// Region is the region this Dkron server belongs to.
 	Region string
 
+	// Max executions stored for ech job.
+	MaxExecutions int
+
 	// Bootstrap mode is used to bring up the first Dkron server.  It is
 	// required so that it can elect a leader without any other nodes
 	// being present
@@ -186,6 +189,7 @@ func DefaultConfig() *Config {
 		Region:            "global",
 		ReconcileInterval: 60 * time.Second,
 		RaftMultiplier:    1,
+		MaxExecutions:     100,
 	}
 }
 
@@ -214,6 +218,7 @@ func ConfigFlagSet() *flag.FlagSet {
 	cmdFlags.String("data-dir", c.DataDir, "Specifies the directory to use for server-specific data, including the replicated log. By default, this is the top-level data-dir, like [/var/lib/dkron]")
 	cmdFlags.String("datacenter", c.Datacenter, "Specifies the data center of the local agent. All members of a datacenter should share a local LAN connection.")
 	cmdFlags.String("region", c.Region, "Specifies the region the Dkron agent is a member of. A region typically maps to a geographic region, for example us, with potentially multiple zones, which map to datacenters such as us-west and us-east")
+	cmdFlags.Int("max-executions", c.MaxExecutions, "Limit the number of executions stored for each job")
 
 	// Notifications
 	cmdFlags.String("mail-host", "", "Mail server host address to use for notifications")
