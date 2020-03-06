@@ -5,15 +5,18 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/distribworks/dkron/v2/dkron"
+	"github.com/distribworks/dkron/v2/plugin"
+	"github.com/distribworks/dkron/v2/plugin/types"
 	log "github.com/sirupsen/logrus"
 )
 
+// LogOutput represent a LogOutputter
 type LogOutput struct {
 	forward bool
 }
 
-func (l *LogOutput) Process(args *dkron.ExecutionProcessorArgs) dkron.Execution {
+// Process method prints the execution output to the stdout
+func (l *LogOutput) Process(args *plugin.ProcessorArgs) types.Execution {
 	log.SetFormatter(&log.TextFormatter{FullTimestamp: true})
 
 	l.parseConfig(args.Config)
@@ -37,7 +40,7 @@ func (l *LogOutput) Process(args *dkron.ExecutionProcessorArgs) dkron.Execution 
 	return args.Execution
 }
 
-func (l *LogOutput) parseConfig(config dkron.PluginConfig) {
+func (l *LogOutput) parseConfig(config plugin.Config) {
 	forward, err := strconv.ParseBool(config["forward"])
 	if err != nil {
 		l.forward = false

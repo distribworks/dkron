@@ -16,7 +16,8 @@ import (
 	"time"
 
 	metrics "github.com/armon/go-metrics"
-	"github.com/distribworks/dkron/v2/proto"
+	"github.com/distribworks/dkron/v2/plugin"
+	proto "github.com/distribworks/dkron/v2/plugin/types"
 	"github.com/hashicorp/memberlist"
 	"github.com/hashicorp/raft"
 	raftboltdb "github.com/hashicorp/raft-boltdb"
@@ -47,10 +48,10 @@ var (
 // Agent is the main struct that represents a dkron agent
 type Agent struct {
 	// ProcessorPlugins maps processor plugins
-	ProcessorPlugins map[string]ExecutionProcessor
+	ProcessorPlugins map[string]plugin.Processor
 
 	//ExecutorPlugins maps executor plugins
-	ExecutorPlugins map[string]Executor
+	ExecutorPlugins map[string]plugin.Executor
 
 	// HTTPTransport is a swappable interface for the HTTP server interface
 	HTTPTransport Transport
@@ -105,12 +106,12 @@ type Agent struct {
 
 // ProcessorFactory is a function type that creates a new instance
 // of a processor.
-type ProcessorFactory func() (ExecutionProcessor, error)
+type ProcessorFactory func() (plugin.Processor, error)
 
 // Plugins struct to store loaded plugins of each type
 type Plugins struct {
-	Processors map[string]ExecutionProcessor
-	Executors  map[string]Executor
+	Processors map[string]plugin.Processor
+	Executors  map[string]plugin.Executor
 }
 
 // AgentOption type that defines agent options

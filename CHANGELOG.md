@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Breaking Changes
+
+- Decrease plugin size by 75%, refactored plugin coding interface could affect new plugins development and require adaptations for existing plugin. (#696)
+
 ## [2.0.6] - 2020-02-14
 
 ### Fixes

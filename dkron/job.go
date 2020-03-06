@@ -9,7 +9,8 @@ import (
 	"github.com/dgraph-io/badger/v2"
 	"github.com/distribworks/dkron/v2/extcron"
 	"github.com/distribworks/dkron/v2/ntime"
-	"github.com/distribworks/dkron/v2/proto"
+	"github.com/distribworks/dkron/v2/plugin"
+	proto "github.com/distribworks/dkron/v2/plugin/types"
 	"github.com/golang/protobuf/ptypes"
 	"github.com/sirupsen/logrus"
 )
@@ -105,7 +106,7 @@ type Job struct {
 	ParentJob string `json:"parent_job"`
 
 	// Processors to use for this job
-	Processors map[string]PluginConfig `json:"processors"`
+	Processors map[string]plugin.Config `json:"processors"`
 
 	// Concurrency policy for this job (allow, forbid)
 	Concurrency string `json:"concurrency"`
@@ -114,7 +115,7 @@ type Job struct {
 	Executor string `json:"executor"`
 
 	// Executor args
-	ExecutorConfig ExecutorPluginConfig `json:"executor_config"`
+	ExecutorConfig plugin.ExecutorPluginConfig `json:"executor_config"`
 
 	// Computed job status
 	Status string `json:"status"`
@@ -157,7 +158,7 @@ func NewJobFromProto(in *proto.Job) *Job {
 		job.LastError.Set(t)
 	}
 
-	procs := make(map[string]PluginConfig)
+	procs := make(map[string]plugin.Config)
 	for k, v := range in.Processors {
 		if len(v.Config) == 0 {
 			v.Config = make(map[string]string)

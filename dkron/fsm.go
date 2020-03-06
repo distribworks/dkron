@@ -4,7 +4,7 @@ import (
 	"io"
 	"sync"
 
-	dkronpb "github.com/distribworks/dkron/v2/proto"
+	dkronpb "github.com/distribworks/dkron/v2/plugin/types"
 	"github.com/golang/protobuf/proto"
 	"github.com/hashicorp/raft"
 )
