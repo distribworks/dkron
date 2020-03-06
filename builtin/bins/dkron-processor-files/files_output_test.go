@@ -7,17 +7,19 @@ import (
 
 	"github.com/distribworks/dkron/v2/plugin"
 	"github.com/distribworks/dkron/v2/plugin/types"
+	"github.com/golang/protobuf/ptypes"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestProcess(t *testing.T) {
 	now := time.Now()
+	n, _ := ptypes.TimestampProto(now)
 
 	pa := &plugin.ProcessorArgs{
 		Execution: types.Execution{
-			Group:    now.UnixNano(),
-			NodeName: "testNode",
-			Output:   []byte("test"),
+			StartedAt: n,
+			NodeName:  "testNode",
+			Output:    []byte("test"),
 		},
 		Config: plugin.Config{
 			"forward": "false",
@@ -28,5 +30,5 @@ func TestProcess(t *testing.T) {
 	fo := &FilesOutput{}
 	ex := fo.Process(pa)
 
-	assert.Equal(t, fmt.Sprintf("/tmp/%d.log", ex.Group), string(ex.Output))
+	assert.Equal(t, fmt.Sprintf("/tmp/%s.log", ex.Key()), string(ex.Output))
 }

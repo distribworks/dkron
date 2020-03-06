@@ -26,7 +26,7 @@ func (l *FilesOutput) Process(args *plugin.ProcessorArgs) types.Execution {
 	l.parseConfig(args.Config)
 
 	out := args.Execution.Output
-	filePath := fmt.Sprintf("%s/%d.log", l.logDir, args.Execution.Group)
+	filePath := fmt.Sprintf("%s/%s.log", l.logDir, args.Execution.Key())
 
 	log.WithField("file", filePath).Info("files: Writing file")
 	if err := ioutil.WriteFile(filePath, out, 0644); err != nil {

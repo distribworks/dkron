@@ -23,11 +23,11 @@ func (l *LogOutput) Process(args *plugin.ProcessorArgs) types.Execution {
 
 	// Output to stdout in case of success or to stderr on failure
 	if args.Execution.Success {
-		fmt.Printf("----- BEGIN OUTPUT job=%s execution=%d -----\n", args.Execution.JobName, args.Execution.Group)
+		fmt.Printf("----- BEGIN OUTPUT job=%s execution=%s -----\n", args.Execution.JobName, args.Execution.Key())
 		fmt.Print(string(args.Execution.Output))
 		fmt.Printf("\n----- END OUTPUT -----\n")
 	} else {
-		fmt.Fprintf(os.Stderr, "----- BEGIN OUTPUT job=%s execution=%d -----\n", args.Execution.JobName, args.Execution.Group)
+		fmt.Fprintf(os.Stderr, "----- BEGIN OUTPUT job=%s execution=%s -----\n", args.Execution.JobName, args.Execution.Key())
 		fmt.Fprint(os.Stderr, string(args.Execution.Output))
 		fmt.Fprintf(os.Stderr, "\n----- END OUTPUT -----\n")
 	}
