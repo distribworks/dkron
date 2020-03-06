@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/distribworks/dkron/v2/dkron"
-        "github.com/hashicorp/go-plugin"
+	"github.com/hashicorp/go-plugin"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -130,7 +130,7 @@ WAIT:
 		time.Sleep(1 * time.Second)
 	}
 
-        plugin.CleanupClients()
+	plugin.CleanupClients()
 
 	close(gracefulCh)
 
