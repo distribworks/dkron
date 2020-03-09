@@ -1,5 +1,14 @@
 # Dkron example configuration file
-# server: false
+
+# This node is running in server mode
+server: true
+
+# Provides the number of expected servers in the datacenter.
+# Either this value should not be provided or the value must agree with other servers in the cluster.
+# When provided, Dkron waits until the specified number of servers are available and then bootstraps the cluster.
+# This allows an initial leader to be elected automatically. This flag requires server mode.
+bootstrap-expect: 1
+
 # bind-addr: "{{ GetPrivateIP }}:8946"
 # log-level: debug
 # tags:

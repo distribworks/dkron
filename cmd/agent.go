@@ -20,7 +20,7 @@ var agent *dkron.Agent
 
 const (
 	// gracefulTimeout controls how long we wait before forcefully terminating
-	gracefulTimeout = 3 * time.Second
+	gracefulTimeout = 3 * time.Hour
 )
 
 // agentCmd represents the agent command
@@ -110,17 +110,29 @@ WAIT:
 	}
 
 	// Attempt a graceful leave
-	gracefulCh := make(chan struct{})
 	log.Info("agent: Gracefully shutting down agent...")
 	go func() {
-		plugin.CleanupClients()
 		if err := agent.Stop(); err != nil {
 			fmt.Printf("Error: %s", err)
 			log.Error(fmt.Sprintf("Error: %s", err))
 			return
 		}
-		close(gracefulCh)
 	}()
+
+	gracefulCh := make(chan struct{})
+
+	for {
+		log.Info("Waiting for jobs to finish...")
+		if agent.GetRunningJobs() < 1 {
+			log.Info("No jobs left. Exiting.")
+			break
+		}
+		time.Sleep(1 * time.Second)
+	}
+
+	plugin.CleanupClients()
+
+	close(gracefulCh)
 
 	// Wait for leave or another signal
 	select {

@@ -12,7 +12,7 @@ import (
 
 	"github.com/dgraph-io/badger/v2"
 	"github.com/dgraph-io/badger/v2/options"
-	dkronpb "github.com/distribworks/dkron/v2/proto"
+	dkronpb "github.com/distribworks/dkron/v2/plugin/types"
 	"github.com/golang/protobuf/proto"
 	"github.com/sirupsen/logrus"
 )

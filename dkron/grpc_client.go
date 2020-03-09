@@ -5,7 +5,7 @@ import (
 	"time"
 
 	metrics "github.com/armon/go-metrics"
-	"github.com/distribworks/dkron/v2/proto"
+	proto "github.com/distribworks/dkron/v2/plugin/types"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
@@ -63,7 +63,6 @@ func (grpcc *GRPCClient) ExecutionDone(addr string, execution *Execution) error 
 	var conn *grpc.ClientConn
 
 	conn, err := grpcc.Connect(addr)
-	defer conn.Close()
 	if err != nil {
 		log.WithError(err).WithFields(logrus.Fields{
 			"method":      "ExecutionDone",
@@ -77,6 +76,7 @@ func (grpcc *GRPCClient) ExecutionDone(addr string, execution *Execution) error 
 	if err != nil {
 		if err.Error() == fmt.Sprintf("rpc error: code = Unknown desc = %s", ErrNotLeader.Error()) {
 			log.Info("grpc: ExecutionDone forwarded to the leader")
+			conn.Close()
 			return nil
 		}
 
@@ -92,7 +92,7 @@ func (grpcc *GRPCClient) ExecutionDone(addr string, execution *Execution) error 
 		"from":        edr.From,
 		"payload":     string(edr.Payload),
 	}).Debug("grpc: Response from method")
-
+	conn.Close()
 	return nil
 }
 
