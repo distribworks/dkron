@@ -6,9 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixes
+
+- fix: Graceful shutdown (#690) @andreygolev
+- fix: Fixes crash when plugin configuration is not defined in a job (#689) @andreygolev
+- fix: Defer panic fix in ExecutionDone gRPC call (#691) @andreygolev
+
+### Changes
+
+- chore: Default config will start and bootstrap a server
+- feat: isLeader handler added (#695)
+
 ### Breaking Changes
 
-- Decrease plugin size by 75%, refactored plugin coding interface could affect new plugins development and require adaptations for existing plugin. (#696)
+- refactor: Decrease plugin size by 75%, refactored plugin coding interface could affect new plugins development and require adaptations for existing plugin. (#696)
 
 ## [2.0.6] - 2020-02-14
 
