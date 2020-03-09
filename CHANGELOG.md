@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - chore: Default config will start and bootstrap a server
 - feat: isLeader handler added (#695)
+- Compile with go 1.14
 
 ### Breaking Changes
 
