@@ -69,8 +69,7 @@ paths:
           name: runoncreate
           description: If present, regardless of any value, causes the job to be run immediately after being succesfully created or updated.
           required: false
-          schema:
-            type: boolean
+          type: boolean
           allowEmptyValue: true
       responses:
         201:
