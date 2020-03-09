@@ -19,7 +19,7 @@ GEM
       sass (>= 3.2, < 3.5)
     compass-normalize (1.5)
       compass (>= 0.12.0)
-    ffi (1.9.10)
+    ffi (1.12.2)
     font-awesome-sass (4.3.2.1)
       sass (~> 3.2)
     multi_json (1.11.2)
