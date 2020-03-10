@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.1.0] - 2020-03-11
+
 ### Fixes
 
 - fix: Graceful shutdown (#690) @andreygolev
@@ -17,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - chore: Default config will start and bootstrap a server
 - feat: isLeader handler added (#695)
 - Compile with go 1.14
+- Execution load balancing (#692) @andreygolev
+- Update Bootstrap and JQuery (#700)
 
 ### Breaking Changes
 
