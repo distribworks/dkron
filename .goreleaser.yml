@@ -99,34 +99,35 @@ builds:
     ldflags:
       - -s -w -X github.com/distribworks/dkron/v2/dkron.Version={{.Version}}
 
-nfpm:
-  vendor: Distributed Works
-  homepage: https://dkron.io
-  maintainer: Victor Castell <victor@distrib.works>
-  description: Distributed, fault tolerant job scheduling system
-  license: LGPL 3.0
+nfpms:
+  -
+    vendor: Distributed Works
+    homepage: https://dkron.io
+    maintainer: Victor Castell <victor@distrib.works>
+    description: Distributed, fault tolerant job scheduling system
+    license: LGPL 3.0
 
-  formats:
-    - deb
-    - rpm
+    formats:
+      - deb
+      - rpm
 
-  # Override default /usr/local/bin destination for binaries
-  bindir: /usr/bin
+    # Override default /usr/local/bin destination for binaries
+    bindir: /usr/bin
 
-  empty_folders:
-    - /var/log/dkron
+    empty_folders:
+      - /var/log/dkron
 
-  #files:
-  #  "builder/files/": "/etc/init.d"
-  #  "path/**/glob": "/var/foo/glob"
-  config_files:
-    "builder/files/dkron.yml": "/etc/dkron/dkron.yml"
-    "builder/files/dkron.service": "/lib/systemd/system/dkron.service"
+    #files:
+    #  "builder/files/": "/etc/init.d"
+    #  "path/**/glob": "/var/foo/glob"
+    config_files:
+      "builder/files/dkron.yml": "/etc/dkron/dkron.yml"
+      "builder/files/dkron.service": "/lib/systemd/system/dkron.service"
 
-  overrides:
-    rpm:
-      replacements:
-        amd64: x86_64
+    overrides:
+      rpm:
+        replacements:
+          amd64: x86_64
 
 snapshot:
   name_template: "{{ .Tag }}-next"
