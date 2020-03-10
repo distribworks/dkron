@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"testing"
-	"time"
 
 	"github.com/distribworks/dkron/v2/plugin"
 	"github.com/distribworks/dkron/v2/plugin/types"
@@ -12,12 +11,11 @@ import (
 )
 
 func TestProcess(t *testing.T) {
-	now := time.Now()
-	n, _ := ptypes.TimestampProto(now)
+	now := ptypes.TimestampNow()
 
 	pa := &plugin.ProcessorArgs{
 		Execution: types.Execution{
-			StartedAt: n,
+			StartedAt: now,
 			NodeName:  "testNode",
 			Output:    []byte("test"),
 		},
