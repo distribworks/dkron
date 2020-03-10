@@ -780,8 +780,9 @@ func (a *Agent) processFilteredNodes(job *Job) ([]string, map[string]string, err
 					break
 				}
 				nodes = append(nodes, candidates[0])
-				candidates = candidates[:1]
+				candidates = candidates[1:]
 			}
+			candidates = nil
 
 		}
 	}
