@@ -82,7 +82,7 @@ func (a *Agent) checkAndSelectServer() (string, error) {
 
 	for _, peer := range peers {
 		log.Debugf("Checking peer: %v", peer)
-		conn, err := net.DialTimeout("tcp", peer, 5*time.Second)
+		conn, err := net.DialTimeout("tcp", peer, 1*time.Second)
 		if err == nil {
 			conn.Close()
 			log.Debugf("Found good peer: %v", peer)
