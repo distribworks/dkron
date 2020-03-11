@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-03-04T14:19:03 CET">
+<meta name="revised" content="2020-03-11T12:45:40 CET">
 <title>Installation :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -29,7 +29,9 @@
     
 	
   
-    <!-- raw HTML omitted -->
+    <div class="brand">
+  <a class="logo" href="/"><img src="/img/dkron-logo.png"/></a>
+</div>
 
   
 
@@ -1072,7 +1074,9 @@
 <p>Download the packaged archive for your platform from the <a href="https://github.com/distribworks/dkron/releases">downloads page</a> and extract the package to a shared location in your drive, like /opt/local/bin.</p>
 <p>Run Dkron with default setting: <code>dkron agent --server</code></p>
 <p>Navigate to http://localhost:8080</p>
-<!-- raw HTML omitted -->
+<div class="notices note" >
+By default dkron will start with a file based, embedded KV store called BoltDB, it is functional for a single node demo but does not offers clustering or HA.
+</div>
 <h2 id="installing-the-package">Installing the package</h2>
 <h3 id="debian-repo">Debian repo</h3>
 <p>APT repository:</p>

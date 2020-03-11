@@ -35,10 +35,7 @@ YUM repo YUM repository:
       <description>Running the binary Download the packaged archive for your platform from the downloads page and extract the package to a shared location in your drive, like /opt/local/bin.
 Run Dkron with default setting: dkron agent --server
 Navigate to http://localhost:8080
-Installing the package Debian repo APT repository:
-deb [trusted=yes] https://apt.fury.io/distribworks/ / Then install: sudo apt-get install dkron
-YUM repo YUM repository:
-[dkron] name=Dkron Pro Private Repo baseurl=https://yum.fury.io/distribworks/ enabled=1 gpgcheck=0 Then install: sudo yum install dkron</description>
+By default dkron will start with a file based, embedded KV store called BoltDB, it is functional for a single node demo but does not offers clustering or HA.  Installing the package Debian repo APT repository:</description>
     </item>
     
     <item>
@@ -60,8 +57,8 @@ Starting a single node Works out of the box, good for non HA installations.</des
       
       <guid>/usage/target-nodes-spec/</guid>
       <description>Target nodes spec You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run.
-Examples: Target all nodes with a tag:
-{ &amp;#34;name&amp;#34;: &amp;#34;job_name&amp;#34;, &amp;#34;command&amp;#34;: &amp;#34;/bin/true&amp;#34;, &amp;#34;schedule&amp;#34;: &amp;#34;@every 2m&amp;#34;, &amp;#34;tags&amp;#34;: { &amp;#34;my_role&amp;#34;: &amp;#34;web&amp;#34; } } mermaid.initialize({startOnLoad:true}); graph LR; J(&#34;Job tags: #quot;my_role#quot;: #quot;web#quot;&#34;) --|Run Job|N1[&#34;Node1 tags: #quot;my_role#quot;: #quot;web#quot;&#34;] J --|Run Job|N2[&#34;</description>
+The target node syntax: `[tag-value]:[count]`  Examples: Target all nodes with a tag:
+{ &amp;#34;name&amp;#34;: &amp;#34;job_name&amp;#34;, &amp;#34;command&amp;#34;: &amp;#34;/bin/true&amp;#34;, &amp;#34;schedule&amp;#34;: &amp;#34;@every 2m&amp;#34;, &amp;#34;tags&amp;#34;: { &amp;#34;my_role&amp;#34;: &amp;#34;web&amp;#34; } } mermaid.initialize({startOnLoad:true}); graph LR; J(&#34;Job tags: #quot;my_role#quot;: #quot;web#quot;&#34;) --|Run Job|N1[&#34;</description>
     </item>
     
     <item>
@@ -71,8 +68,8 @@ Examples: Target all nodes with a tag:
       
       <guid>/v1.2/usage/target-nodes-spec/</guid>
       <description>Target nodes spec You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run.
-Examples: Target all nodes with a tag:
-{ &amp;#34;name&amp;#34;: &amp;#34;job_name&amp;#34;, &amp;#34;command&amp;#34;: &amp;#34;/bin/true&amp;#34;, &amp;#34;schedule&amp;#34;: &amp;#34;@every 2m&amp;#34;, &amp;#34;tags&amp;#34;: { &amp;#34;role&amp;#34;: &amp;#34;web&amp;#34; } } mermaid.initialize({startOnLoad:true}); graph LR; J(&#34;Job tags: #quot;role#quot;: #quot;web#quot;&#34;) --|Run Job|N1[&#34;Node1 tags: #quot;role#quot;: #quot;web#quot;&#34;] J --|Run Job|N2[&#34;</description>
+The target node syntax: `[tag-value]:[count]`  Examples: Target all nodes with a tag:
+{ &amp;#34;name&amp;#34;: &amp;#34;job_name&amp;#34;, &amp;#34;command&amp;#34;: &amp;#34;/bin/true&amp;#34;, &amp;#34;schedule&amp;#34;: &amp;#34;@every 2m&amp;#34;, &amp;#34;tags&amp;#34;: { &amp;#34;role&amp;#34;: &amp;#34;web&amp;#34; } } mermaid.initialize({startOnLoad:true}); graph LR; J(&#34;Job tags: #quot;role#quot;: #quot;web#quot;&#34;) --|Run Job|N1[&#34;</description>
     </item>
     
     <item>
@@ -125,7 +122,8 @@ The main distinction is that servers order job executions, can be used to schedu
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/usage/plugins/develop/</guid>
-      <description>Developing a Plugin role=&amp;quot;alert&amp;quot;&amp;gt;Advanced topic! Plugin development is a highly advanced topic, and is not required knowledge for day-to-day usage. If you don&amp;rsquo;t plan on writing any plugins, we recommend not reading the following section of the documentation.Developing a plugin is simple. The only knowledge necessary to write a plugin is basic command-line skills and basic knowledge of the Go programming language.
+      <description>Developing a Plugin role=&amp;quot;alert&amp;quot;&amp;gt;Advanced topic! Plugin development is a highly advanced topic, and is not required knowledge for day-to-day usage. If you don&amp;rsquo;t plan on writing any plugins, we recommend not reading the following section of the documentation.
+Developing a plugin is simple. The only knowledge necessary to write a plugin is basic command-line skills and basic knowledge of the Go programming language.
 Note: A common pitfall is not properly setting up a $GOPATH.</description>
     </item>
     
@@ -135,7 +133,8 @@ Note: A common pitfall is not properly setting up a $GOPATH.</description>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/v1.2/usage/plugins/develop/</guid>
-      <description>Developing a Plugin role=&amp;quot;alert&amp;quot;&amp;gt;Advanced topic! Plugin development is a highly advanced topic, and is not required knowledge for day-to-day usage. If you don&amp;rsquo;t plan on writing any plugins, we recommend not reading the following section of the documentation.Developing a plugin is simple. The only knowledge necessary to write a plugin is basic command-line skills and basic knowledge of the Go programming language.
+      <description>Developing a Plugin role=&amp;quot;alert&amp;quot;&amp;gt;Advanced topic! Plugin development is a highly advanced topic, and is not required knowledge for day-to-day usage. If you don&amp;rsquo;t plan on writing any plugins, we recommend not reading the following section of the documentation.
+Developing a plugin is simple. The only knowledge necessary to write a plugin is basic command-line skills and basic knowledge of the Go programming language.
 Note: A common pitfall is not properly setting up a $GOPATH.</description>
     </item>
     
@@ -462,7 +461,7 @@ dkron version [flags] Options  -h, --help help for version Options inherited fro
       <pubDate>Mon, 24 Apr 2017 18:36:24 +0200</pubDate>
       
       <guid>/_header/</guid>
-      <description></description>
+      <description>  </description>
     </item>
     
     <item>
@@ -489,7 +488,7 @@ dkron version [flags] Options  -h, --help help for version Options inherited fro
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/pro/acls/</guid>
-      <description>Access Control (Preview) Dkron provides an optional Access Control List (ACL) system which can be used to control access to data and APIs. The ACL is Capability-based, relying on policies to determine which fine grained rules can be applied. Dkron&amp;rsquo;s capability based ACL system is very similar to common ACL systems you are used to.
+      <description>Access Control (Preview) This feature is in preview and is subject to big changes  Dkron provides an optional Access Control List (ACL) system which can be used to control access to data and APIs. The ACL is Capability-based, relying on policies to determine which fine grained rules can be applied. Dkron&amp;rsquo;s capability based ACL system is very similar to common ACL systems you are used to.
 ACL System Overview Dkron&amp;rsquo;s ACL system is implemented with the CNCF Open Policy Agent bringing a powerful system to suit your needs.</description>
     </item>
     
@@ -695,7 +694,8 @@ Command line options  --etcd-config-file-path - Etcd node config --username - Au
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/pro/failover/</guid>
-      <description>Dkron Pro can run federated in failover mode, this allows to have two clusters running in different regions and configure one of the clusters in an active-passive fashion, doing a failover in case the active cluster dies.</description>
+      <description>Dkron Pro can run federated in failover mode, this allows to have two clusters running in different regions and configure one of the clusters in an active-passive fashion, doing a failover in case the active cluster dies.
+This feature is experimental and should be handled with care.  </description>
     </item>
     
     <item>
@@ -1036,7 +1036,7 @@ dog_statsd_addr: &amp;#34;localhost:8125&amp;#34; Metrics  dkron.agent.event_rec
       <guid>/usage/recovery/</guid>
       <description>Outage Recovery Don&amp;rsquo;t panic! This is a critical first step.
 Depending on your deployment configuration, it may take only a single server failure for cluster unavailability. Recovery requires an operator to intervene, but the process is straightforward.
-Failure of a Single Server Cluster If you had only a single server and it has failed, simply restart it. A single server configuration requires the -bootstrap-expect=1 flag. If the server cannot be recovered, you need to bring up a new server.</description>
+This guide is for recovery from a Dkron outage due to a majority of server nodes in a datacenter being lost. If you are looking to add or remove servers, see the [clustering](/usage/clustering) guide.</description>
     </item>
     
     <item>
@@ -1136,9 +1136,9 @@ You must plan a backup strategy for the data directories, you can configure it u
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/usage/ecs/</guid>
-      <description>Use with Amazon ECS To use Dkron to schedule jobs that run in containers, a wrapper ECS script is needed.
+      <description>[Dkron Pro](/products/pro) comes with a [native ECS executor](/pro/ecs) out of the box.  Use with Amazon ECS To use Dkron to schedule jobs that run in containers, a wrapper ECS script is needed.
 Install the following snippet in the node that will run the call to ECS
-Prerequisites The node that will run the call to ECS will need to have installed
+ Prerequisites The node that will run the call to ECS will need to have installed
  AWS cli jq  Example ecs-run --cluster cron --task-definition cron-taskdef --container-name cron --region us-east-1 --command &amp;quot;rake foo&amp;quot;</description>
     </item>
     
@@ -1148,9 +1148,9 @@ Prerequisites The node that will run the call to ECS will need to have installed
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/v1.2/usage/ecs/</guid>
-      <description>Use with Amazon ECS To use Dkron to schedule jobs that run in containers, a wrapper ECS script is needed.
+      <description>[Dkron Pro](/products/pro) comes with a [native ECS executor](/pro/ecs) out of the box.  Use with Amazon ECS To use Dkron to schedule jobs that run in containers, a wrapper ECS script is needed.
 Install the following snippet in the node that will run the call to ECS
-Prerequisites The node that will run the call to ECS will need to have installed
+ Prerequisites The node that will run the call to ECS will need to have installed
  AWS cli jq  Example ecs-run --cluster cron --task-definition cron-taskdef --container-name cron --region us-east-1 --command &amp;quot;rake foo&amp;quot;</description>
     </item>
     

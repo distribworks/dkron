@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-03-04T14:19:03 CET">
+<meta name="revised" content="2020-03-11T12:45:40 CET">
 <title>Access Control :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -29,7 +29,9 @@
     
 	
   
-    <!-- raw HTML omitted -->
+    <div class="brand">
+  <a class="logo" href="/"><img src="/img/dkron-logo.png"/></a>
+</div>
 
   
 
@@ -1061,7 +1063,9 @@
     
     
     <h1 id="access-control-preview">Access Control (Preview)</h1>
-<!-- raw HTML omitted -->
+<div class="notices info" >
+This feature is in preview and is subject to big changes
+</div>
 <p>Dkron provides an optional Access Control List (ACL) system which can be used to control access to data and APIs. The ACL is Capability-based, relying on policies to determine which fine grained rules can be applied. Dkron&rsquo;s capability based ACL system is very similar to common ACL systems you are used to.</p>
 <h2 id="acl-system-overview">ACL System Overview</h2>
 <p>Dkron&rsquo;s ACL system is implemented with the CNCF <a href="https://www.openpolicyagent.org/">Open Policy Agent</a> bringing a powerful system to suit your needs.</p>
@@ -1074,7 +1078,9 @@
 <p><strong>ACL Policies.</strong> Dkron&rsquo;s ACL policies are simple JSON documents that define patterns to allow access to resources. You can find below an example ACL policy that works with the default OPA policy. The ACL JSON structure is not rigid you can adapt it to add new features in combination with the OPA Policy rules.</p>
 </li>
 </ul>
-<!-- raw HTML omitted -->
+<div class="notices note" >
+This guide is based on the usage of the default OPA Rego Policy
+</div>
 <h2 id="configuring-acls">Configuring ACLs</h2>
 <p>ACLs are not enabled by default and must be enabled. To enable ACLs simply create an ACL policy using the API. Below you can find the most basic example of an ACL policy:</p>
 <p>Basic example policy:</p>

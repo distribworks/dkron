@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-03-04T14:19:03 CET">
+<meta name="revised" content="2020-03-11T12:45:40 CET">
 <title>Processors :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -29,7 +29,9 @@
     
 	
   
-    <!-- raw HTML omitted -->
+    <div class="brand">
+  <a class="logo" href="/"><img src="/img/dkron-logo.png"/></a>
+</div>
 
   
 
@@ -1066,16 +1068,32 @@
     
     
 
-<!-- raw HTML omitted -->
-<p><!-- raw HTML omitted --><!-- raw HTML omitted -->
-<!-- raw HTML omitted -->Elasticsearch processor<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
-<!-- raw HTML omitted -->
-<p><!-- raw HTML omitted --><!-- raw HTML omitted -->
-<!-- raw HTML omitted -->Email processor<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
-<!-- raw HTML omitted -->
-<p><!-- raw HTML omitted --><!-- raw HTML omitted -->
-<!-- raw HTML omitted -->Slack processor<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
-<!-- raw HTML omitted -->
+<ul class="children children-h3">
+<p><span><h3>
+<a href="/pro/processors/elasticsearch/" >Elasticsearch processor</a></h3></p>
+<p>The Elasticsearch processor can fordward execution logs to an ES cluster. It need an already available Elasticsearch installation that is visible in the same network of the target node.
+The output logs of the job execution will be stored in the indicated ES instace.
+Configuration { &#34;processors&#34;: { &#34;elasticsearch&#34;: { &#34;url&#34;: &#34;http://localhost:9200&#34;, //comma separated list of Elasticsearch hosts urls (default: http://localhost:9200) &#34;index&#34;: &#34;dkron_logs&#34;, //desired index name (default: dkron_logs) &#34;forward&#34;: &#34;false&#34; //forward logs to the next processor (default: false) } } } </p>
+</span>
+<p><span><h3>
+<a href="/pro/processors/email/" >Email processor</a></h3></p>
+<p>The Email processor provides flexibility to job email notifications.
+Configuration of the email processor is stored in a file named dkron-processor-email.yml in the same locations as dkron.yml, and should include a list of providers, it can include any number of providers.
+Example:
+provider1: host: smtp.myprovider.com port: 25 username: myusername password: mypassword from: cron@mycompany.com subjectPrefix: &#39;[Staging] &#39; Then configure each job with the following options:
+Example:
+{ &#34;processors&#34;: { &#34;email&#34;: { &#34;provider&#34;: &#34;provider1&#34;, &#34;emails&#34;: &#34;team@mycompany.</p>
+</span>
+<p><span><h3>
+<a href="/pro/processors/slack/" >Slack processor</a></h3></p>
+<p>The Slack processor provides slack notifications with multiple configurations and rich format.
+Configuration of the slack processor is stored in a file named dkron-processor-slack.yml in the same locations as dkron.yml, and should include a list of teams, it can include any number of teams.
+Example:
+team1: webhook_url: https://hooks.slack.com/services/XXXXXXXXXXXXXXXXXXX bot_name: Dkron Production Then configure each job with the following options:
+Example:
+{ &#34;processors&#34;: { &#34;slack&#34;: { &#34;team&#34;: &#34;team1&#34;, &#34;channel&#34;: &#34;#cron-production&#34;, &#34;onSuccess&#34;: &#34;true&#34; } } } By default the slack procesor doesn&rsquo;t send notifications on job success, the onSuccess parameter, enables it, like in the previous example.</p>
+</span>
+</ul>
 
 
 

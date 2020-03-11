@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-03-04T14:19:03 CET">
+<meta name="revised" content="2020-03-11T12:45:40 CET">
 <title>Encryption :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -29,7 +29,9 @@
     
 	
   
-    <!-- raw HTML omitted -->
+    <div class="brand">
+  <a class="logo" href="/"><img src="/img/dkron-logo.png"/></a>
+</div>
 
   
 
@@ -1087,7 +1089,9 @@
 <p>SSL encryption is enabled by default in Dkron Pro and can not be disabled, you don&rsquo;t need to do nothing to use it.</p>
 <p>By default Dkron Pro runs with automatically generated SSL certificates, this is enough for using it in a trusted environment but to have a better grade of confidence, it is recommended to run Dkron Pro with custom SSL certificates.</p>
 <p>Follow <a href="https://coreos.com/os/docs/latest/generate-self-signed-certificates.html">this tutorial</a> to generate autosigned SSL certificates for your instances.</p>
-<!-- raw HTML omitted -->
+<div class="notices note" >
+You don't need a client certificate for Dkron server, just add "client auth" usage to your server cert.
+</div>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#75715e"># dkron.yaml</span>
 <span style="color:#00a8c8">auto-tls</span><span style="color:#111">:</span> <span style="color:#00a8c8">false</span> <span style="color:#75715e"># Set to false to use custom certs</span>
 <span style="color:#00a8c8">key-file</span><span style="color:#111">:</span> server-key.pem

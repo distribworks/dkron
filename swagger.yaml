@@ -69,8 +69,7 @@ paths:
           name: runoncreate
           description: If present, regardless of any value, causes the job to be run immediately after being succesfully created or updated.
           required: false
-          schema:
-            type: boolean
+          type: boolean
           allowEmptyValue: true
       responses:
         201:
@@ -173,6 +172,18 @@ paths:
           description: Successful response
           schema:
             $ref: '#/definitions/member'
+  /isleader:
+    get:
+      description: |
+        Check if node is a leader or follower.
+      operationId: getIsLeader
+      tags:
+        - default
+      responses:
+        200:
+          description: Node is a leader
+        404:
+          description: Node is a follower
   /leave:
     post:
       description: |

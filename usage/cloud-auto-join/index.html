@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-03-04T14:19:03 CET">
+<meta name="revised" content="2020-03-11T12:45:40 CET">
 <title>Cloud Auto-join :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -29,7 +29,9 @@
     
 	
   
-    <!-- raw HTML omitted -->
+    <div class="brand">
+  <a class="logo" href="/"><img src="/img/dkron-logo.png"/></a>
+</div>
 
   
 
@@ -1177,7 +1179,7 @@ datacenter with the given <code>tag_value</code>.</p>
 </code></pre></div><div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml"><span style="color:#00a8c8">retry-join</span><span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=softlayer datacenter=... tag_value=... username=... api_key=...&#34;</span><span style="color:#111">]</span>
 </code></pre></div><ul>
 <li><code>provider</code> (required) - the name of the provider (&ldquo;softlayer&rdquo; in this case).</li>
-<li><!-- raw HTML omitted --><!-- raw HTML omitted --><!-- raw HTML omitted --><!-- raw HTML omitted -->datacenter<!-- raw HTML omitted --><!-- raw HTML omitted --> (required) - the name of the datacenter to auto-join in.</li>
+<li><a name="sl_datacenter"></a><a href="#sl_datacenter"><code>datacenter</code></a> (required) - the name of the datacenter to auto-join in.</li>
 <li><code>tag_value</code> (required) - the value of the tag to auto-join on.</li>
 <li><code>username</code> (required) - the username to use for auth.</li>
 <li><code>api_key</code> (required) - the api key to use for auth.</li>

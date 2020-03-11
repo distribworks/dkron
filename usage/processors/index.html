@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-03-04T14:19:03 CET">
+<meta name="revised" content="2020-03-11T12:45:40 CET">
 <title>Processors :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -29,7 +29,9 @@
     
 	
   
-    <!-- raw HTML omitted -->
+    <div class="brand">
+  <a class="logo" href="/"><img src="/img/dkron-logo.png"/></a>
+</div>
 
   
 
@@ -263,69 +265,6 @@
       <a href="/pro/cli/">Pro CLI</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/pro/cli/dkron/" class="dd-item">
-        <div>
-          <a href="/pro/cli/dkron/">
-            dkron
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/pro/cli/dkron_agent/" class="dd-item">
-        <div>
-          <a href="/pro/cli/dkron_agent/">
-            dkron agent
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/pro/cli/dkron_doc/" class="dd-item">
-        <div>
-          <a href="/pro/cli/dkron_doc/">
-            dkron doc
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/pro/cli/dkron_keygen/" class="dd-item">
-        <div>
-          <a href="/pro/cli/dkron_keygen/">
-            dkron keygen
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/pro/cli/dkron_leave/" class="dd-item">
-        <div>
-          <a href="/pro/cli/dkron_leave/">
-            dkron leave
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/pro/cli/dkron_raft/" class="dd-item">
-        <div>
-          <a href="/pro/cli/dkron_raft/">
-            dkron raft
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/pro/cli/dkron_raft_list-peers/" class="dd-item">
-        <div>
-          <a href="/pro/cli/dkron_raft_list-peers/">
-            dkron raft list-peers
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/pro/cli/dkron_raft_remove-peer/" class="dd-item">
-        <div>
-          <a href="/pro/cli/dkron_raft_remove-peer/">
-            dkron raft remove-peer
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/pro/cli/dkron_version/" class="dd-item">
-        <div>
-          <a href="/pro/cli/dkron_version/">
-            dkron version
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
         </ul>
     </li>
       <li data-nav-id="/pro/acls/" class="dd-item">
@@ -405,6 +344,27 @@
       <a href="/pro/processors/">Processors</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
+      <li data-nav-id="/pro/processors/elasticsearch/" class="dd-item">
+        <div>
+          <a href="/pro/processors/elasticsearch/">
+            Elasticsearch processor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/processors/email/" class="dd-item">
+        <div>
+          <a href="/pro/processors/email/">
+            Email processor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/processors/slack/" class="dd-item">
+        <div>
+          <a href="/pro/processors/slack/">
+            Slack processor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
         </ul>
     </li>
         </ul>
@@ -1069,17 +1029,17 @@
 </ol>
 <p><a href="/products/pro/">Dkro Pro</a> provides you with several more processors.</p>
 <p>All plugins accepts one configuration option: <code>forward</code> Indicated if the plugin must forward the original execution output. This allows for chaining plugins and sending output to different targets at the same time.</p>
-<!-- raw HTML omitted -->
-<p><!-- raw HTML omitted --><!-- raw HTML omitted -->
-<!-- raw HTML omitted -->File Processor<!-- raw HTML omitted --><!-- raw HTML omitted -->
-<!-- raw HTML omitted --></p>
-<p><!-- raw HTML omitted --><!-- raw HTML omitted -->
-<!-- raw HTML omitted -->Log Processor<!-- raw HTML omitted --><!-- raw HTML omitted -->
-<!-- raw HTML omitted --></p>
-<p><!-- raw HTML omitted --><!-- raw HTML omitted -->
-<!-- raw HTML omitted -->Syslog Processor<!-- raw HTML omitted --><!-- raw HTML omitted -->
-<!-- raw HTML omitted --></p>
-<!-- raw HTML omitted -->
+<ul class="children children-li">
+<p><span><li>
+<a href="/usage/processors/file/" >File Processor</a></li>
+</span></p>
+<p><span><li>
+<a href="/usage/processors/log/" >Log Processor</a></li>
+</span></p>
+<p><span><li>
+<a href="/usage/processors/syslog/" >Syslog Processor</a></li>
+</span></p>
+</ul>
 
 
 

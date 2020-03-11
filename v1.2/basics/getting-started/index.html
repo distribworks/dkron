@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-03-04T14:19:03 CET">
+<meta name="revised" content="2020-03-11T12:45:40 CET">
 <title>Getting started :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -29,7 +29,9 @@
     
 	
   
-    <!-- raw HTML omitted -->
+    <div class="brand">
+  <a class="logo" href="/"><img src="/img/dkron-logo.png"/></a>
+</div>
 
   
 
@@ -1079,7 +1081,9 @@
 <p>All the execution responses will be gathered by the scheduler and stored in the database.</p>
 <h2 id="backend-stores">Backend stores</h2>
 <p>Dkron relies on the key-value store for data storage, an instance of the distributed store can be run in the same machines as Dkron or connect it to an already existing cluster.</p>
-<!-- raw HTML omitted -->
+<div class="notices note" >
+By default dkron will start with a file based, embedded KV store called BoltDB, it is functional for a single node demo but does not offers clustering or HA.
+</div>
 <p>It is compatible with etcd, Consul, Zookeeper, Redis, DynamoDB and BoltDB. For instructions on how to install and configure any one of these systems refer to their official sites:</p>
 <ul>
 <li><a href="https://coreos.com/etcd/docs/latest/">etcd</a></li>
@@ -1099,12 +1103,16 @@
 <li><code>8080</code> for HTTP for the API and Dashboard</li>
 <li><code>6868</code> for RPC comunication between agents.</li>
 </ul>
-<!-- raw HTML omitted -->
+<div class="notices note" >
+Be sure you have opened this ports (or the ones that you configured) in your firewall or AWS security groups.
+</div>
 <p>By default dkron will use the embedded BoltDB KV store. A different store can be specified setting <code>backend</code> and <code>backend-machines</code> flag in the config file, env variables or as a command line flag.</p>
 <p>To start a Dkron server instance:</p>
 <pre><code>dkron agent --server
 </code></pre><p>Time to add the first job:</p>
-<!-- raw HTML omitted -->
+<div class="notices note" >
+This job will only run in just one `dkron_server` node due to the node count in the tag. Refer to the [target node spec](/usage/target-nodes-spec) for details.
+</div>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">curl localhost:8080/v1/jobs -XPOST -d <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">{</span>
   <span style="color:#d88200">&#34;name&#34;</span>: <span style="color:#d88200">&#34;job1&#34;</span>,
   <span style="color:#d88200">&#34;schedule&#34;</span>: <span style="color:#d88200">&#34;@every 10s&#34;</span>,

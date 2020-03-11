@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-03-04T14:19:03 CET">
+<meta name="revised" content="2020-03-11T12:45:40 CET">
 <title>Outage recovery :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -29,7 +29,9 @@
     
 	
   
-    <!-- raw HTML omitted -->
+    <div class="brand">
+  <a class="logo" href="/"><img src="/img/dkron-logo.png"/></a>
+</div>
 
   
 
@@ -1068,7 +1070,9 @@
     <h2 id="outage-recovery">Outage Recovery</h2>
 <p>Don&rsquo;t panic! This is a critical first step.</p>
 <p>Depending on your deployment configuration, it may take only a single server failure for cluster unavailability. Recovery requires an operator to intervene, but the process is straightforward.</p>
-<!-- raw HTML omitted -->
+<div class="notices note" >
+This guide is for recovery from a Dkron outage due to a majority of server nodes in a datacenter being lost. If you are looking to add or remove servers, see the [clustering](/usage/clustering) guide.
+</div>
 <h2 id="failure-of-a-single-server-cluster">Failure of a Single Server Cluster</h2>
 <p>If you had only a single server and it has failed, simply restart it. A single server configuration requires the -bootstrap-expect=1 flag. If the server cannot be recovered, you need to bring up a new server. See the <a href="/usage/clustering">clustering</a> guide for more detail.</p>
 <p>In the case of an unrecoverable server failure in a single server cluster, data loss is inevitable since data was not replicated to any other servers. This is why a single server deploy is never recommended.</p>
@@ -1122,10 +1126,10 @@ node2  node2  10.10.11.6:4647  leader    true
 node3  node3  10.10.11.7:4647  follower  true
 </code></pre><ul>
 <li>
-<p>id (string: <!-- raw HTML omitted -->) - Specifies the node ID of the server. This is the <code>name</code> of the node.</p>
+<p>id (string: <required>) - Specifies the node ID of the server. This is the <code>name</code> of the node.</p>
 </li>
 <li>
-<p>address (string: <!-- raw HTML omitted -->) - Specifies the IP and port of the server in ip:port format. The port is the server&rsquo;s gRPC port used for cluster communications, typically <code>6868</code>.</p>
+<p>address (string: <required>) - Specifies the IP and port of the server in ip:port format. The port is the server&rsquo;s gRPC port used for cluster communications, typically <code>6868</code>.</p>
 </li>
 </ul>
 

@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-03-04T14:19:03 CET">
+<meta name="revised" content="2020-03-11T12:45:40 CET">
 <title>Use with AWS ECS :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -29,7 +29,9 @@
     
 	
   
-    <!-- raw HTML omitted -->
+    <div class="brand">
+  <a class="logo" href="/"><img src="/img/dkron-logo.png"/></a>
+</div>
 
   
 
@@ -1065,11 +1067,13 @@
     
     
     
-    <!-- raw HTML omitted -->
+    <div class="notices note" >
+[Dkron Pro](/products/pro) comes with a [native ECS executor](/pro/ecs) out of the box.
+</div>
 <h2 id="use-with-amazon-ecs">Use with Amazon ECS</h2>
 <p>To use Dkron to schedule jobs that run in containers, a wrapper ECS script is needed.</p>
 <p>Install the following snippet in the node that will run the call to ECS</p>
-<!-- raw HTML omitted -->
+<script src="https://gist.github.com/distribworks/3ac4aae9279d7c68c486fecccc2546cc.js"></script>
 <h3 id="prerequisites">Prerequisites</h3>
 <p>The node that will run the call to ECS will need to have installed</p>
 <ul>

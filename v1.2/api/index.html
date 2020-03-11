@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-03-04T14:19:03 CET">
+<meta name="revised" content="2020-03-11T12:45:40 CET">
 <title>API :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -29,7 +29,9 @@
     
 	
   
-    <!-- raw HTML omitted -->
+    <div class="brand">
+  <a class="logo" href="/"><img src="/img/dkron-logo.png"/></a>
+</div>
 
   
 
@@ -1015,26 +1017,8 @@
    API</option>
     <option value="/v1.2/" >
    V1.2s</option> 
-    <option value="/v1.2/basics/" >
-  - 
-   Basics</option>
-    <option value="/v1.2/usage/" >
-  - 
-   Usage</option>
-    <option value="/v1.2/pro/" >
-  - 
-   Dkron Pro</option>
-    <option value="/v1.2/intro/" >
-  - 
-   Intro</option>
-    <option value="/v1.2/cli/" >
-  - 
-   CLI</option>
-    <option value="/v1.2/api/"  selected>
-  - 
-   API</option> 
-  
-      <option value="/v1.2/_footer/" >- </option>
+      <option value="/v1.2/pro/executors/ecs/" >- AWS ECS Executor</option>
+      <option value="/v1.2/pro/executors/docker/" >- Docker executor</option>
   
     <option value="/upgrading/" >
    Upgradings</option>
@@ -1065,12 +1049,41 @@
     
     
 
-<!-- raw HTML omitted -->
-<!-- raw HTML omitted -->
-<!-- raw HTML omitted -->
-<!-- raw HTML omitted -->
-<!-- raw HTML omitted -->
-<!-- raw HTML omitted -->
+<link rel="stylesheet" type="text/css" href="/css/swagger-ui.css">
+<style>
+  body {
+    line-height: 1.7;
+  }
+  .swagger-ui .info .title small pre {
+    background-color: inherit;
+    padding: inherit;
+  }
+  .swagger-ui .scheme-container { display: none !important; } 
+</style>
+<div id="swagger-ui"></div>
+<script src="/js/swagger-ui-bundle.js"> </script>
+<script src="/js/swagger-ui-standalone-preset.js"> </script>
+<script>
+  window.onload = function () {
+    // Begin Swagger UI call region
+    const ui = SwaggerUIBundle({
+      url: "/v1.2/swagger.yaml",
+      dom_id: '#swagger-ui',
+      deepLinking: true,
+      presets: [
+        SwaggerUIBundle.presets.apis,
+        SwaggerUIStandalonePreset
+      ],
+      plugins: [
+        SwaggerUIBundle.plugins.DownloadUrl
+      ],
+      layout: "BaseLayout"
+    })
+    // End Swagger UI call region
+
+    window.ui = ui
+  }
+</script>
 
 
 

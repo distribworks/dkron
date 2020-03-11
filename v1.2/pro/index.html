@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-03-04T14:19:03 CET">
+<meta name="revised" content="2020-03-11T12:45:40 CET">
 <title>Dkron Pro :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -29,7 +29,9 @@
     
 	
   
-    <!-- raw HTML omitted -->
+    <div class="brand">
+  <a class="logo" href="/"><img src="/img/dkron-logo.png"/></a>
+</div>
 
   
 
@@ -1016,6 +1018,43 @@
    API</option>
     <option value="/v1.2/" >
    V1.2s</option> 
+    <option value="/v1.2/basics/" >
+  - 
+   Basics</option>
+    <option value="/v1.2/usage/" >
+  - 
+   Usage</option>
+    <option value="/v1.2/pro/"  selected>
+  - 
+   Dkron Pro</option> 
+      <option value="/v1.2/pro/quick-start/" >-- Quick start</option>
+    <option value="/v1.2/pro/cli/" >
+  -- 
+   Pro CLI</option>
+      <option value="/v1.2/pro/auth/" >-- Authorization</option>
+      <option value="/v1.2/pro/clustering/" >-- Clustering</option>
+      <option value="/v1.2/pro/commercial-faq/" >-- Commercial FAQ</option>
+      <option value="/v1.2/pro/commercial-support/" >-- Commercial Support</option>
+      <option value="/v1.2/pro/configuration/" >-- Configuration</option>
+      <option value="/v1.2/pro/storage/" >-- Embedded storage</option>
+      <option value="/v1.2/pro/encryption/" >-- Encryption</option>
+    <option value="/v1.2/pro/executors/" >
+  -- 
+   Executors</option>
+    <option value="/v1.2/pro/processors/" >
+  -- 
+   Processors</option>
+  
+    <option value="/v1.2/intro/" >
+  - 
+   Intro</option>
+    <option value="/v1.2/cli/" >
+  - 
+   CLI</option>
+    <option value="/v1.2/api/" >
+  - 
+   API</option>
+      <option value="/v1.2/_footer/" >- </option>
   
     <option value="/upgrading/" >
    Upgradings</option>
@@ -1046,40 +1085,69 @@
     
     
 
-<!-- raw HTML omitted -->
-<p><!-- raw HTML omitted --><!-- raw HTML omitted -->
-<!-- raw HTML omitted -->Quick start<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
-<!-- raw HTML omitted -->
-<p><!-- raw HTML omitted --><!-- raw HTML omitted -->
-<!-- raw HTML omitted -->Pro CLI<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
-<!-- raw HTML omitted -->
-<p><!-- raw HTML omitted --><!-- raw HTML omitted -->
-<!-- raw HTML omitted -->Authorization<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
-<!-- raw HTML omitted -->
-<p><!-- raw HTML omitted --><!-- raw HTML omitted -->
-<!-- raw HTML omitted -->Clustering<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
-<!-- raw HTML omitted -->
-<p><!-- raw HTML omitted --><!-- raw HTML omitted -->
-<!-- raw HTML omitted -->Commercial FAQ<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
-<!-- raw HTML omitted -->
-<p><!-- raw HTML omitted --><!-- raw HTML omitted -->
-<!-- raw HTML omitted -->Commercial Support<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
-<!-- raw HTML omitted -->
-<p><!-- raw HTML omitted --><!-- raw HTML omitted -->
-<!-- raw HTML omitted -->Configuration<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
-<!-- raw HTML omitted -->
-<p><!-- raw HTML omitted --><!-- raw HTML omitted -->
-<!-- raw HTML omitted -->Embedded storage<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
-<!-- raw HTML omitted -->
-<p><!-- raw HTML omitted --><!-- raw HTML omitted -->
-<!-- raw HTML omitted -->Encryption<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
-<!-- raw HTML omitted -->
-<p><!-- raw HTML omitted --><!-- raw HTML omitted -->
-<!-- raw HTML omitted -->Executors<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
-<!-- raw HTML omitted -->
-<p><!-- raw HTML omitted --><!-- raw HTML omitted -->
-<!-- raw HTML omitted -->Processors<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
-<!-- raw HTML omitted -->
+<ul class="children children-h3">
+<p><span><h3>
+<a href="/v1.2/pro/quick-start/" >Quick start</a></h3></p>
+<p>Getting started Dkron Pro provides a clustering backend store out of the box based on etcd.
+To configure the storage a sample etcd.conf.yaml file is provided in /etc/dkron path. Editing the file, allows to configure several options for the embedded store.
+The location of the store configuration can be set in the command line or in the dkron config file /etc/dkron/dkron.yml using etcd-config-file-path parameter.
+Starting a single node Works out of the box, good for non HA installations.</p>
+</span>
+<p><span><h3>
+<a href="/v1.2/pro/cli/" >Pro CLI</a></h3></p>
+<p>dkron
+dkron Professional distributed job scheduling system Synopsis Dkron is a system service that runs scheduled jobs at given intervals or times, just like the cron unix service but distributed in several machines in a cluster. If a machine fails (the leader), a follower will take over and keep running the scheduled jobs without human intervention. Options --config string config file (default is /etc/dkron/dkron.yml) -h, --help help for dkron SEE ALSO dkron agent	- Start a dkron agent dkron doc	- Generate Markdown documentation for the Dkron CLI.</p>
+</span>
+<p><span><h3>
+<a href="/v1.2/pro/auth/" >Authorization</a></h3></p>
+<p>Dkron Pro has the ability to be configured to use HTTP basic auth.
+Authentication can be set using these parameters in the dkron config file:
+# dkron.yml username: dkron_admin password: adminpassword This will enable auth on the WebUI and for the API.</p>
+</span>
+<p><span><h3>
+<a href="/v1.2/pro/clustering/" >Clustering</a></h3></p>
+<p>Configure a cluster First follow the Dkron clustering guide then you can continue with this guide.
+The embedded store also needs to know its peers, it needs its own configuration as in the following example:
+# etcd.conf.yaml # Initial cluster configuration for bootstrapping. initial-cluster: dkron1=https://10.19.3.9:2380,dkron2=https://10.19.4.64:2380,dkron3=https://10.19.7.215:2380 With this configuration Dkron Pro should start in cluster mode with embedded storage.
+For a more in detail guide of clustering with etcd follow this guide: https://github.</p>
+</span>
+<p><span><h3>
+<a href="/v1.2/pro/commercial-faq/" >Commercial FAQ</a></h3></p>
+<p>What is Dkron Pro? Dkron Pro is a flavor of Dkron which add more functionality and provide additional support options for customers.
+Is there a trial version? There&rsquo;s no free trial but we do offer a 14 day period with full refund if it does not work for you.
+Can I get a discount? I&rsquo;m sure you&rsquo;re very nice but no. Everyone pays the same price.
+What is the license? See COMM-LICENSE.</p>
+</span>
+<p><span><h3>
+<a href="/v1.2/pro/commercial-support/" >Commercial Support</a></h3></p>
+<p>Dkron offers only community support. Dkro Pro offers priority support via email.
+Priority Support Covers 1 incident per quarter, with a max response time of 2 working days. Scope is limited to Dkron and Dkron Pro features and APIs, not the application or infrastructure. For support, email support AT distrib.works. Please email using the same domain as the original license email or explain your connection to the licensed company.</p>
+</span>
+<p><span><h3>
+<a href="/v1.2/pro/configuration/" >Configuration</a></h3></p>
+<p>Configuration Dkron Pro uses the same parameters as Dkron OSS and add some extra parameters.
+Command line options  --etcd-config-file-path - Etcd node config --username - Authentication username --password - Authentication password --cert-file - Path to the client server TLS cert file --key-file - Path to the client server TLS key file --client-crl-file - Path to the client certificate revocation list file --trusted-ca-file - Path to the client server TLS trusted CA cert file --client-cert-auth - Enable client cert authentication --auto-tls - Client TLS using generated certificates  </p>
+</span>
+<p><span><h3>
+<a href="/v1.2/pro/storage/" >Embedded storage</a></h3></p>
+<p>Dkron Pro has an embedded distributed KV store engine based on etcd. This works out of the box on each node dkron server is started.
+This ensures a dead easy install and setup, basically run dkron and you will have a full working node and at the same time provides you with a fully tested well supported store for its use with dkron.</p>
+</span>
+<p><span><h3>
+<a href="/v1.2/pro/encryption/" >Encryption</a></h3></p>
+<p>SSL encryption is used for communicating dkron pro and the embedded store, and between storage nodes itself. Also if client auth is enabled, only dkron pro clients can talk to the embedded store. This means that no other software running on your local network will be able to talk to dkron&rsquo;s etcd server.
+This ensures that no unexpected usage of the Dkron&rsquo;s store will happen, unless it is another Dkron pro instance.</p>
+</span>
+<p><span><h3>
+<a href="/v1.2/pro/executors/" >Executors</a></h3></p>
+<p></p>
+</span>
+<p><span><h3>
+<a href="/v1.2/pro/processors/" >Processors</a></h3></p>
+<p>Elasticsearch processor
+The Elasticsearch processor can fordward execution logs to an ES cluster. It need an already available Elasticsearch installation that is visible in the same network of the target node. The output logs of the job execution will be stored in the indicated ES instace. Configuration { &#34;processors&#34;: { &#34;elasticsearch&#34;: { &#34;url&#34;: &#34;http://localhost:9200&#34;, //comma separated list of Elasticsearch hosts urls (default: http://localhost:9200) &#34;index&#34;: &#34;dkron_logs&#34;, //desired index name (default: dkron_logs) &#34;forward&#34;: &#34;false&#34; //forward logs to the next processor (default: false) } } }   Email processor</p>
+</span>
+</ul>
 
 
 
