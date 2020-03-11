@@ -6,13 +6,13 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/dgraph-io/badger/v2"
 	"github.com/distribworks/dkron/v2/extcron"
 	"github.com/distribworks/dkron/v2/ntime"
 	"github.com/distribworks/dkron/v2/plugin"
 	proto "github.com/distribworks/dkron/v2/plugin/types"
 	"github.com/golang/protobuf/ptypes"
 	"github.com/sirupsen/logrus"
+	"github.com/tidwall/buntdb"
 )
 
 const (
@@ -297,7 +297,7 @@ func (j *Job) GetParent(store *Store) (*Job, error) {
 
 	parentJob, err := store.GetJob(j.ParentJob, nil)
 	if err != nil {
-		if err == badger.ErrKeyNotFound {
+		if err == buntdb.ErrNotFound {
 			return nil, ErrParentJobNotFound
 		}
 		return nil, err

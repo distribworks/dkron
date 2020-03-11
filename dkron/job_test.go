@@ -1,8 +1,6 @@
 package dkron
 
 import (
-	"io/ioutil"
-	"os"
 	"testing"
 
 	"github.com/distribworks/dkron/v2/plugin"
@@ -12,11 +10,7 @@ import (
 )
 
 func TestJobGetParent(t *testing.T) {
-	dir, err := ioutil.TempDir("", "dkron-test")
-	require.NoError(t, err)
-	defer os.RemoveAll(dir)
-
-	s, err := NewStore(dir)
+	s, err := NewStore(nil)
 	defer s.Shutdown()
 	require.NoError(t, err)
 
@@ -105,11 +99,7 @@ func TestToProto(t *testing.T) {
 }
 
 func Test_isRunnable(t *testing.T) {
-	dir, err := ioutil.TempDir("", "dkron-test")
-	require.NoError(t, err)
-	defer os.RemoveAll(dir)
-
-	s, err := NewStore(dir)
+	s, err := NewStore(nil)
 	a := &Agent{
 		Store: s,
 	}

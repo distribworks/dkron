@@ -276,7 +276,7 @@ func (a *Agent) setupRaft() error {
 		// Create the BoltDB backend
 		s, err := raftboltdb.NewBoltStore(filepath.Join(a.config.DataDir, "raft", "raft.db"))
 		if err != nil {
-			return fmt.Errorf("error creating new badger store: %s", err)
+			return fmt.Errorf("error creating new raft store: %s", err)
 		}
 		a.raftStore = s
 		stableStore = s
@@ -455,7 +455,7 @@ func (a *Agent) StartServer() {
 	}
 
 	if a.Store == nil {
-		s, err := NewStore(filepath.Join(a.config.DataDir, a.config.NodeName))
+		s, err := NewStore(a)
 		if err != nil {
 			log.WithError(err).Fatal("dkron: Error initializing store")
 		}
