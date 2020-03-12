@@ -572,12 +572,12 @@ func (s *Store) Shutdown() error {
 	return s.db.Close()
 }
 
-// Snapshot stub for Raft
+// Snapshot creates a backup of the data stored in BuntDB
 func (s *Store) Snapshot(w io.WriteCloser) error {
 	return s.db.Save(w)
 }
 
-// Restore stub for Raft
+// Restore load data created with backup in to Bunt	
 func (s *Store) Restore(r io.ReadCloser) error {
 	return s.db.Load(r)
 }
