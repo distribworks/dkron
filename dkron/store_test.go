@@ -1,22 +1,16 @@
 package dkron
 
 import (
-	"io/ioutil"
-	"os"
 	"testing"
 	"time"
 
-	"github.com/dgraph-io/badger/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/tidwall/buntdb"
 )
 
 func TestStore(t *testing.T) {
-	dir, err := ioutil.TempDir("", "dkron-test")
-	require.NoError(t, err)
-	defer os.RemoveAll(dir)
-
-	s, err := NewStore(dir)
+	s, err := NewStore()
 	require.NoError(t, err)
 	defer s.Shutdown()
 
@@ -85,15 +79,14 @@ func TestStore(t *testing.T) {
 	assert.NoError(t, err)
 
 	_, err = s.DeleteJob("test")
-	assert.EqualError(t, err, badger.ErrKeyNotFound.Error())
+	assert.EqualError(t, err, buntdb.ErrNotFound.Error())
 
 	_, err = s.DeleteJob("test2")
 	assert.NoError(t, err)
 }
 
 func TestStore_AddDependentJobToParent(t *testing.T) {
-	s, dir := setupStore(t)
-	defer cleanupStore(dir, s)
+	s := setupStore(t)
 
 	storeJob(t, s, "parent1")
 	storeChildJob(t, s, "child1", "parent1")
@@ -103,8 +96,7 @@ func TestStore_AddDependentJobToParent(t *testing.T) {
 }
 
 func TestStore_ParentIsUpdatedAfterDeletingDependentJob(t *testing.T) {
-	s, dir := setupStore(t)
-	defer cleanupStore(dir, s)
+	s := setupStore(t)
 
 	storeJob(t, s, "parent1")
 	storeChildJob(t, s, "child1", "parent1")
@@ -120,8 +112,7 @@ func TestStore_ParentIsUpdatedAfterDeletingDependentJob(t *testing.T) {
 }
 
 func TestStore_DependentJobsUpdatedAfterSwappingParent(t *testing.T) {
-	s, dir := setupStore(t)
-	defer cleanupStore(dir, s)
+	s := setupStore(t)
 
 	storeJob(t, s, "parent1")
 	storeChildJob(t, s, "child1", "parent1")
@@ -141,8 +132,7 @@ func TestStore_DependentJobsUpdatedAfterSwappingParent(t *testing.T) {
 }
 
 func TestStore_JobBecomesDependentJob(t *testing.T) {
-	s, dir := setupStore(t)
-	defer cleanupStore(dir, s)
+	s := setupStore(t)
 
 	storeJob(t, s, "child1")
 	storeJob(t, s, "parent1")
@@ -153,8 +143,7 @@ func TestStore_JobBecomesDependentJob(t *testing.T) {
 }
 
 func TestStore_JobBecomesIndependentJob(t *testing.T) {
-	s, dir := setupStore(t)
-	defer cleanupStore(dir, s)
+	s := setupStore(t)
 
 	storeJob(t, s, "parent1")
 	storeChildJob(t, s, "child1", "parent1")
@@ -165,8 +154,7 @@ func TestStore_JobBecomesIndependentJob(t *testing.T) {
 }
 
 func TestStore_ChildIsUpdatedAfterDeletingParentJob(t *testing.T) {
-	s, dir := setupStore(t)
-	defer cleanupStore(dir, s)
+	s := setupStore(t)
 
 	storeJob(t, s, "parent1")
 	storeChildJob(t, s, "child1", "parent1")
@@ -180,8 +168,7 @@ func TestStore_ChildIsUpdatedAfterDeletingParentJob(t *testing.T) {
 }
 
 func TestStore_GetJobsWithMetadata(t *testing.T) {
-	s, dir := setupStore(t)
-	defer cleanupStore(dir, s)
+	s := setupStore(t)
 
 	metadata := make(map[string]string)
 	metadata["t1"] = "v1"
@@ -470,21 +457,10 @@ func scaffoldJob() *Job {
 	}
 }
 
-func setupStore(t *testing.T) (*Store, string) {
-	dir, err := ioutil.TempDir("", "dkron-test")
+func setupStore(t *testing.T) *Store {
+	s, err := NewStore()
 	require.NoError(t, err)
-
-	a := NewAgent(nil)
-	s, err := NewStore(dir)
-	require.NoError(t, err)
-	a.Store = s
-
-	return s, dir
-}
-
-func cleanupStore(dir string, s *Store) {
-	s.Shutdown()
-	os.RemoveAll(dir)
+	return s
 }
 
 func loadJob(t *testing.T, s *Store, name string) *Job {
