@@ -7,10 +7,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/dgraph-io/badger/v2"
 	"github.com/hashicorp/serf/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/tidwall/buntdb"
 )
 
 func TestRunQuery(t *testing.T) {
@@ -37,7 +37,7 @@ func TestRunQuery(t *testing.T) {
 
 	// Test error with no job
 	_, err = a.RunQuery("foo", &Execution{})
-	assert.True(t, errors.Is(err, badger.ErrKeyNotFound))
+	assert.True(t, errors.Is(err, buntdb.ErrNotFound))
 
 	j1 := &Job{
 		Name:     "test_job",

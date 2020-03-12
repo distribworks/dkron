@@ -6,7 +6,6 @@ require (
 	github.com/armon/go-metrics v0.0.0-20180917152333-f0300d1749da
 	github.com/aws/aws-sdk-go v1.16.23 // indirect
 	github.com/boltdb/bolt v1.3.1 // indirect
-	github.com/dgraph-io/badger/v2 v2.0.1
 	github.com/dnaeon/go-vcr v1.0.1 // indirect
 	github.com/gin-contrib/expvar v0.0.0-20180827025536-251166f58ff2
 	github.com/gin-contrib/multitemplate v0.0.0-20170922032617-bbc6daf6024b
@@ -40,12 +39,14 @@ require (
 	github.com/spf13/pflag v1.0.3
 	github.com/spf13/viper v1.3.2
 	github.com/stretchr/testify v1.4.0
+	github.com/tidwall/buntdb v1.1.2
 	golang.org/x/net v0.0.0-20200301022130-244492dfa37a
 	golang.org/x/sys v0.0.0-20200302150141-5c8b2ff67527 // indirect
 	golang.org/x/text v0.3.2 // indirect
 	google.golang.org/genproto v0.0.0-20190404172233-64821d5d2107 // indirect
 	google.golang.org/grpc v1.19.1
 	gopkg.in/go-playground/validator.v8 v8.18.2 // indirect
+	launchpad.net/gocheck v0.0.0-20140225173054-000000000087 // indirect
 )
 
 replace github.com/hashicorp/mdns => github.com/hashicorp/mdns v1.0.1

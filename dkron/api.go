@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/dgraph-io/badger/v2"
 	"github.com/gin-contrib/expvar"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"github.com/tidwall/buntdb"
 	status "google.golang.org/grpc/status"
 )
 
@@ -224,7 +224,7 @@ func (h *HTTPTransport) executionsHandler(c *gin.Context) {
 
 	executions, err := h.agent.Store.GetExecutions(job.Name)
 	if err != nil {
-		if err == badger.ErrKeyNotFound {
+		if err == buntdb.ErrNotFound {
 			renderJSON(c, http.StatusOK, &[]Execution{})
 			return
 		}
