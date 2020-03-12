@@ -18,7 +18,9 @@ func TestRunQuery(t *testing.T) {
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
 
-	advAddr := testutil.GetBindAddr().String()
+	ip1, returnFn1 := testutil.TakeIP()
+	defer returnFn1()
+	advAddr := ip1.String()
 
 	c := DefaultConfig()
 	c.BindAddr = advAddr + ":5000"

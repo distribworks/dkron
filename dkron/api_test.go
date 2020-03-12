@@ -19,8 +19,11 @@ func setupAPITest(t *testing.T, port string) (dir string, a *Agent) {
 	dir, err := ioutil.TempDir("", "dkron-test")
 	require.NoError(t, err)
 
+	ip1, returnFn1 := testutil.TakeIP()
+	defer returnFn1()
+
 	c := DefaultConfig()
-	c.BindAddr = testutil.GetBindAddr().String()
+	c.BindAddr = ip1.String()
 	c.HTTPAddr = fmt.Sprintf("127.0.0.1:%s", port)
 	c.NodeName = "test"
 	c.Server = true

@@ -116,7 +116,7 @@ func (p *Plugins) pluginFactory(path string, pluginType string) (interface{}, er
 	config.Plugins = dkplugin.PluginMap
 	config.SyncStdout = os.Stdout
 	config.SyncStderr = os.Stderr
-	config.Logger = &dkron.HCLogAdapter{Log: dkron.InitLogger(p.LogLevel, p.NodeName), Name: "plugins"}
+	config.Logger = &dkron.HCLogAdapter{Logger: dkron.InitLogger(p.LogLevel, p.NodeName), LoggerName: "plugins"}
 
 	switch pluginType {
 	case dkplugin.ProcessorPluginName:
