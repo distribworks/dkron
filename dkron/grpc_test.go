@@ -19,7 +19,9 @@ func TestGRPCExecutionDone(t *testing.T) {
 
 	viper.Reset()
 
-	aAddr := testutil.GetBindAddr().String()
+	ip1, returnFn1 := testutil.TakeIP()
+	defer returnFn1()
+	aAddr := ip1.String()
 
 	c := DefaultConfig()
 	c.BindAddr = aAddr

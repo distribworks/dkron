@@ -22,8 +22,12 @@ func TestAgentCommand_runForElection(t *testing.T) {
 
 	a1Name := "test1"
 	a2Name := "test2"
-	a1Addr := testutil.GetBindAddr().String()
-	a2Addr := testutil.GetBindAddr().String()
+	ip1, returnFn1 := testutil.TakeIP()
+	a1Addr := ip1.String()
+	defer returnFn1()
+	ip2, returnFn2 := testutil.TakeIP()
+	a2Addr := ip2.String()
+	defer returnFn2()
 
 	shutdownCh := make(chan struct{})
 	defer close(shutdownCh)
@@ -72,7 +76,9 @@ func TestAgentCommand_runForElection(t *testing.T) {
 
 	// Start another agent
 	c = DefaultConfig()
-	c.BindAddr = testutil.GetBindAddr().String()
+	ip3, returnFn3 := testutil.TakeIP()
+	defer returnFn3()
+	c.BindAddr = ip3.String()
 	c.StartJoin = []string{a1Addr + ":8946"}
 	c.NodeName = "test3"
 	c.Server = true
@@ -103,8 +109,13 @@ func Test_processFilteredNodes(t *testing.T) {
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
 
-	a1Addr := testutil.GetBindAddr().String()
-	a2Addr := testutil.GetBindAddr().String()
+	ip1, returnFn1 := testutil.TakeIP()
+	defer returnFn1()
+	a1Addr := ip1.String()
+
+	ip2, returnFn2 := testutil.TakeIP()
+	defer returnFn2()
+	a2Addr := ip2.String()
 
 	c := DefaultConfig()
 	c.BindAddr = a1Addr
@@ -166,8 +177,11 @@ func TestEncrypt(t *testing.T) {
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
 
+	ip1, returnFn1 := testutil.TakeIP()
+	defer returnFn1()
+
 	c := DefaultConfig()
-	c.BindAddr = testutil.GetBindAddr().String()
+	c.BindAddr = ip1.String()
 	c.NodeName = "test1"
 	c.Server = true
 	c.Tags = map[string]string{"role": "test"}
@@ -190,10 +204,12 @@ func Test_getRPCAddr(t *testing.T) {
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
 
-	a1Addr := testutil.GetBindAddr()
+	ip1, returnFn1 := testutil.TakeIP()
+	defer returnFn1()
+	a1Addr := ip1.String()
 
 	c := DefaultConfig()
-	c.BindAddr = a1Addr.String() + ":5000"
+	c.BindAddr = a1Addr + ":5000"
 	c.NodeName = "test1"
 	c.Server = true
 	c.Tags = map[string]string{"role": "test"}
@@ -207,7 +223,7 @@ func Test_getRPCAddr(t *testing.T) {
 	time.Sleep(2 * time.Second)
 
 	getRPCAddr := a.getRPCAddr()
-	exRPCAddr := a1Addr.String() + ":6868"
+	exRPCAddr := a1Addr + ":6868"
 
 	assert.Equal(t, exRPCAddr, getRPCAddr)
 	a.Stop()
@@ -218,10 +234,15 @@ func TestAgentConfig(t *testing.T) {
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
 
-	advAddr := testutil.GetBindAddr().String()
+	ip1, returnFn1 := testutil.TakeIP()
+	defer returnFn1()
+	advAddr := ip1.String()
+
+	ip2, returnFn2 := testutil.TakeIP()
+	defer returnFn2()
 
 	c := DefaultConfig()
-	c.BindAddr = testutil.GetBindAddr().String()
+	c.BindAddr = ip2.String()
 	c.AdvertiseAddr = advAddr
 	c.LogLevel = logLevel
 	c.DataDir = dir
