@@ -455,7 +455,7 @@ func (a *Agent) StartServer() {
 	}
 
 	if a.Store == nil {
-		s, err := NewStore(a)
+		s, err := NewStore()
 		if err != nil {
 			log.WithError(err).Fatal("dkron: Error initializing store")
 		}

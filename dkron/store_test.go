@@ -10,8 +10,7 @@ import (
 )
 
 func TestStore(t *testing.T) {
-	a := NewAgent(nil)
-	s, err := NewStore(a)
+	s, err := NewStore()
 	require.NoError(t, err)
 	defer s.Shutdown()
 
@@ -459,10 +458,8 @@ func scaffoldJob() *Job {
 }
 
 func setupStore(t *testing.T) *Store {
-	a := NewAgent(nil)
-	s, err := NewStore(a)
+	s, err := NewStore()
 	require.NoError(t, err)
-	a.Store = s
 	return s
 }
 

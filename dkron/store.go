@@ -45,7 +45,7 @@ type kv struct {
 }
 
 // NewStore creates a new Storage instance.
-func NewStore(a *Agent) (*Store, error) {
+func NewStore() (*Store, error) {
 	db, err := buntdb.Open(":memory:")
 	if err != nil {
 		return nil, err

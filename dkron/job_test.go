@@ -10,7 +10,7 @@ import (
 )
 
 func TestJobGetParent(t *testing.T) {
-	s, err := NewStore(nil)
+	s, err := NewStore()
 	defer s.Shutdown()
 	require.NoError(t, err)
 
@@ -99,7 +99,7 @@ func TestToProto(t *testing.T) {
 }
 
 func Test_isRunnable(t *testing.T) {
-	s, err := NewStore(nil)
+	s, err := NewStore()
 	a := &Agent{
 		Store: s,
 	}
