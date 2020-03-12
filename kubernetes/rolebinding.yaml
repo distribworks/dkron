@@ -1,0 +1,14 @@
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: dkron-server
+  labels:
+    app: dkron-server
+subjects:
+  - kind: ServiceAccount
+    name: dkron
+    namespace: default
+roleRef:
+  kind: ClusterRole
+  name: dkron-server
+  apiGroup: rbac.authorization.k8s.io

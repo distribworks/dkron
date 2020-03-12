@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: dkron-server-leader
+  labels:
+    app: dkron-server
+spec:
+  ports:
+  - name: web
+    port: 8080
+  clusterIP: None
+  selector:
+    app: dkron-server
+    leader: "true"

@@ -153,6 +153,10 @@ type Config struct {
 
 	// StatsdAddr is the statsd standard server to be used for sending metrics.
 	StatsdAddr string `mapstructure:"statsd-addr"`
+
+	// Kubernetes is used to set faster reap timeout, as node won't come back with same
+	// IP after pod restart
+	Kubernetes bool
 }
 
 // DefaultBindPort is the default port that dkron will use for Serf communication
@@ -214,6 +218,7 @@ func ConfigFlagSet() *flag.FlagSet {
 	cmdFlags.String("data-dir", c.DataDir, "Specifies the directory to use for server-specific data, including the replicated log. By default, this is the top-level data-dir, like [/var/lib/dkron]")
 	cmdFlags.String("datacenter", c.Datacenter, "Specifies the data center of the local agent. All members of a datacenter should share a local LAN connection.")
 	cmdFlags.String("region", c.Region, "Specifies the region the Dkron agent is a member of. A region typically maps to a geographic region, for example us, with potentially multiple zones, which map to datacenters such as us-west and us-east")
+	cmdFlags.Bool("kubernetes", false, "Set this to true if you run in Kubernetes. Reconnect timeout is set to 5 seconds instead of 24h. This is the amount of time to attempt to reconnect to a failed node before giving up and considering it completely gone. As we run in Kubernetes and the pod will come back with a new IP, there is no reason to try reconnects for 24h. Also Raft behaves oddly if node is not reaped, but returned with same ID, but different IP.")
 
 	// Notifications
 	cmdFlags.String("mail-host", "", "Mail server host address to use for notifications")

@@ -1,0 +1,11 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: dkron-worker
+data:
+  dkron.yml: |-
+    kubernetes: true
+    retry-join: ["provider=k8s label_selector=\"app=dkron-server\""]
+    # Uncomment below to set a tag for a worker
+    tags:
+      worker: cron

@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+  labels:
+    app: dkron-worker
+    component: worker
+  name: dkron-worker
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: dkron-worker
+      component: worker
+  template:
+    metadata:
+      labels:
+        app: dkron-worker
+        component: worker
+      name: dkron-worker
+    spec:
+      containers:
+      - args:
+        - agent
+        volumeMounts:
+        - name: dkron-worker
+          mountPath: /opt/local/dkron/config
+        image: dkron/dkron
+        name: dkron
+        ports:
+        - containerPort: 8080
+          name: web
+          protocol: TCP
+        - containerPort: 8946
+          name: rpc
+          protocol: TCP
+        - containerPort: 6868
+          name: raft
+          protocol: TCP
+      serviceAccount: dkron
+      terminationGracePeriodSeconds: 3600 # Max wait time for jobs to be finished, then force kill the pod.
+      volumes:
+      - name: dkron-worker
+        configMap:
+          name: dkron-worker

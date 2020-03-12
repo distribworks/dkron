@@ -1,0 +1,170 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: dkron-server
+  labels:
+    app: dkron-server
+    component: server
+spec:
+  podManagementPolicy: Parallel
+  updateStrategy:
+    type: OnDelete # During rolling upgrade kuberenetes don't know who's leader and restarting pods in an order. That may cause multiple failovers. Maybe it's better to check who's leader and manually restart followers, then leader, to have a single failover.
+  serviceName: dkron-server
+  replicas: 3
+  selector:
+    matchLabels:
+      app: dkron-server
+      component: server
+  template:
+    metadata:
+      name: dkron-server
+      labels:
+        app: dkron-server
+        component: server
+    spec:
+      terminationGracePeriodSeconds: 300
+      serviceAccount: dkron-server
+      securityContext:
+        runAsUser: 0 # TODO. Running as root is a bad idea
+      containers:
+      - name: labelupdater
+        image: bitnami/kubectl:1.17
+        command:
+          - "/bin/bash"
+          - "-c"
+          - |
+            _term() {
+              echo "Caught SIGTERM. Forcing leader pod label to false"
+              kubectl label pods $(hostname) leader=false --overwrite=true
+              exit 0
+              }
+
+            trap _term SIGTERM
+
+            touch /tmp/status
+            while true; do
+              curl -s -o - --connect-timeout 10 http://127.0.0.1:8080/v1/isleader| tr -d '"' > /tmp/status_tmp
+
+              if [[ `cat /tmp/status_tmp` == `cat /tmp/status` ]]; then
+                echo "No status changed. Skipping"
+              elif [[ `cat /tmp/status_tmp` == "I am a leader" ]]; then
+                kubectl label pods $(hostname) leader=true --overwrite=true
+                echo "I am a leader" > /tmp/status
+              elif [[ `cat /tmp/status_tmp` == "I am follower" ]]; then
+                kubectl label pods $(hostname) leader=false --overwrite=true
+                echo "I am a follower" > /tmp/status
+              else
+                echo "Error parsing the output"
+              fi
+
+              echo "sleeping 5 sec"
+              sleep 5
+            done
+      - name: dkron
+        image: dkron/dkron
+        ports:
+        - name: web
+          containerPort: 8080
+        - name: rpc
+          containerPort: 8946
+        - name: raft
+          containerPort: 6868
+        env:
+        - name: INITIAL_CLUSTER_SIZE
+          value: "3"
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: STATEFULSET_NAME
+          value: dkron-server
+        - name: STATEFULSET_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        command:
+          - "/bin/sh"
+          - "-c"
+          - |
+            set -o pipefail
+
+            _term() {
+               echo "Caught SIGTERM"
+               kill -TERM "$child"
+               echo "Waiting for 75 seconds, as it the approximate time to reap left node"
+               sleep 75
+               echo "Removing self from Raft"
+               /opt/local/dkron/dkron raft remove-peer --peer-id=$(hostname) --rpc-addr="$(wget -q -O - http://dkron-server-leader:8080/v1/leader?pretty=true|jq .Tags.rpc_addr -r)"
+               echo "Done"
+               exit 0
+             }
+
+            if [ -z "$POD_IP" ]; then
+              POD_IP=$(hostname -i)
+            fi
+
+            FQDN_SUFFIX="${STATEFULSET_NAME}.${STATEFULSET_NAMESPACE}.svc.cluster.local"
+            NODE_NAME="$(hostname -s).${FQDN_SUFFIX}"
+
+            JOIN_PEERS=""
+            for i in $( seq 0 $((${INITIAL_CLUSTER_SIZE} - 1)) ); do
+              JOIN_PEERS="${JOIN_PEERS}${JOIN_PEERS:+ }${STATEFULSET_NAME}-${i}.${FQDN_SUFFIX}"
+            done
+
+            # Require multiple loops in the case of unstable DNS resolution
+            SUCCESS_LOOPS=5
+            while [ "$SUCCESS_LOOPS" -gt 0 ]; do
+              ALL_READY=true
+              JOIN_LAN=""
+              for THIS_PEER in $JOIN_PEERS; do
+                  # Make sure we can resolve hostname and ping IP
+                  if PEER_IP="$( ( ping -c 1 $THIS_PEER || true ) | awk -F'[()]' '/PING/{print $2}')" && [ "$PEER_IP" != "" ]; then
+                    if [ "${PEER_IP}" != "${POD_IP}" ]; then
+                      JOIN_LAN="${JOIN_LAN}${JOIN_LAN:+ } --retry-join=$THIS_PEER"
+                    fi
+                  else
+                    ALL_READY=false
+                    break
+                  fi
+              done
+              if $ALL_READY; then
+                SUCCESS_LOOPS=$(( SUCCESS_LOOPS - 1 ))
+                echo "LAN peers appear ready, $SUCCESS_LOOPS verifications left"
+              else
+                echo "Waiting for LAN peer $THIS_PEER..."
+              fi
+              sleep 1s
+            done
+
+            LEADER=$(wget -q -O - http://dkron-server-leader:8080/v1/leader?pretty=true|jq .Tags.rpc_addr -r)
+
+            if [ -z "${LEADER}" ]; then
+                BOOTSTRAP_EXPECT="--bootstrap-expect $( echo "$JOIN_PEERS" | wc -w )"
+            else
+                BOOTSTRAP_EXPECT=""
+            fi
+
+            trap _term SIGTERM
+            /opt/local/dkron/dkron agent \
+              --server \
+              --kubernetes \
+              ${BOOTSTRAP_EXPECT} \
+              ${JOIN_LAN} &
+
+            child=$!
+            wait "$child"
+
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          periodSeconds: 30
+          failureThreshold: 3
+          initialDelaySeconds: 120 # Sometimes it takes a lot to rejoin node to a cluster. Pausing there in case we do rolling pod update.
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          periodSeconds: 30
+          failureThreshold: 3
+          initialDelaySeconds: 120
