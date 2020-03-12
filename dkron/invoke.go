@@ -2,11 +2,11 @@ package dkron
 
 import (
 	"errors"
+	"net"
 	"time"
 
 	"github.com/armon/circbuf"
 	"github.com/distribworks/dkron/v2/plugin/types"
-	"github.com/golang/groupcache/consistenthash"
 )
 
 const (
@@ -62,7 +62,7 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 	execution.Success = success
 	execution.Output = output.Bytes()
 
-	rpcServer, err := a.selectServerByKey(execution.Key())
+	rpcServer, err := a.checkAndSelectServer()
 	if err != nil {
 		return err
 	}
@@ -73,18 +73,21 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 	return a.GRPCClient.ExecutionDone(rpcServer, execution)
 }
 
-// Select a server based on key using a consistent hash key
-// like a cache store.
-func (a *Agent) selectServerByKey(key string) (string, error) {
-	ch := consistenthash.New(50, nil)
+// Check if the server is alive and select it
+func (a *Agent) checkAndSelectServer() (string, error) {
+	var peers []string
 	for _, p := range a.LocalServers() {
-		ch.Add(p.RPCAddr.String())
+		peers = append(peers, p.RPCAddr.String())
 	}
 
-	peerAddress := ch.Get(key)
-	if peerAddress == "" {
-		return "", ErrNoSuitableServer
+	for _, peer := range peers {
+		log.Debugf("Checking peer: %v", peer)
+		conn, err := net.DialTimeout("tcp", peer, 1*time.Second)
+		if err == nil {
+			conn.Close()
+			log.Debugf("Found good peer: %v", peer)
+			return peer, nil
+		}
 	}
-
-	return peerAddress, nil
+	return "", ErrNoSuitableServer
 }

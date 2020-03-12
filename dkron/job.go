@@ -239,7 +239,7 @@ func (j *Job) Run() {
 		// Simple execution wrapper
 		ex := NewExecution(j.Name)
 		if _, err := j.Agent.RunQuery(j.Name, ex); err != nil {
-			log.WithError(err).Fatal("job: Error sending Run query to serf cluster")
+			log.WithError(err).Error("job: Error sending Run query to serf cluster")
 		}
 	}
 }
