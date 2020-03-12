@@ -29,7 +29,6 @@ var (
 // It gives dkron the ability to manipulate its embedded storage
 // BuntDB.
 type Store struct {
-	agent  *Agent
 	db     *buntdb.DB
 	lock   *sync.Mutex // for
 	closed bool
@@ -54,7 +53,6 @@ func NewStore(a *Agent) (*Store, error) {
 
 	store := &Store{
 		db:    db,
-		agent: a,
 		lock:  &sync.Mutex{},
 	}
 
@@ -77,6 +75,11 @@ func (s *Store) setJobTxFunc(pbj *dkronpb.Job) func(tx *buntdb.Tx) error {
 
 		return nil
 	}
+}
+
+// DB is the getter for the BuntDB instance
+func (s *Store) DB() *buntdb.DB {
+	return s.db
 }
 
 // SetJob stores a job in the storage
@@ -571,12 +574,12 @@ func (s *Store) Shutdown() error {
 
 // Snapshot stub for Raft
 func (s *Store) Snapshot(w io.WriteCloser) error {
-	return nil
+	return s.db.Save(w)
 }
 
 // Restore stub for Raft
 func (s *Store) Restore(r io.ReadCloser) error {
-	return nil
+	return s.db.Load(r)
 }
 
 func (s *Store) unmarshalExecutions(items []kv) ([]*Execution, error) {
