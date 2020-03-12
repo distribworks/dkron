@@ -6,8 +6,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-## [2.1.0] - 2020-03-11
-
 ### Fixes
 
 - fix: Graceful shutdown (#690) @andreygolev
@@ -21,10 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Compile with go 1.14
 - Execution load balancing (#692) @andreygolev
 - Update Bootstrap and JQuery (#700)
+- chore: Upgrade all dependencies (#703)
 
 ### Breaking Changes
 
 - refactor: Decrease plugin size by 75%, refactored plugin coding interface could affect new plugins development and require adaptations for existing plugin. (#696)
+- refactor: Use BuntDB for local storage, fixes [#687](https://github.com/distribworks/dkron/issues/687), require rolling upgrade. (#702) @andreygolev
 
 ## [2.0.6] - 2020-02-14
 
