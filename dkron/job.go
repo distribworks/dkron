@@ -348,7 +348,6 @@ func (j *Job) isRunnable() bool {
 	if j.running {
 		log.WithField("job", j.Name).
 			Warning("job: Skipping execution because last execution still broadcasting, consider increasing schedule interval")
-		return false
 	}
 
 	return true
