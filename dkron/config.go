@@ -239,7 +239,7 @@ func ConfigFlagSet() *flag.FlagSet {
 // initialized and have sane defaults.
 func (c *Config) normalizeAddrs() error {
 	if c.BindAddr != "" {
-		ipStr, err := parseSingleIPTemplate(c.BindAddr)
+		ipStr, err := ParseSingleIPTemplate(c.BindAddr)
 		if err != nil {
 			return fmt.Errorf("Bind address resolution failed: %v", err)
 		}
@@ -247,7 +247,7 @@ func (c *Config) normalizeAddrs() error {
 	}
 
 	if c.HTTPAddr != "" {
-		ipStr, err := parseSingleIPTemplate(c.HTTPAddr)
+		ipStr, err := ParseSingleIPTemplate(c.HTTPAddr)
 		if err != nil {
 			return fmt.Errorf("Bind address resolution failed: %v", err)
 		}
@@ -265,7 +265,7 @@ func (c *Config) normalizeAddrs() error {
 
 // parseSingleIPTemplate is used as a helper function to parse out a single IP
 // address from a config parameter.
-func parseSingleIPTemplate(ipTmpl string) (string, error) {
+func ParseSingleIPTemplate(ipTmpl string) (string, error) {
 	out, err := template.Parse(ipTmpl)
 	if err != nil {
 		return "", fmt.Errorf("unable to parse address template %q: %v", ipTmpl, err)
@@ -295,7 +295,7 @@ func parseSingleIPTemplate(ipTmpl string) (string, error) {
 //
 // Loopback is only considered a valid advertise address in dev mode.
 func normalizeAdvertise(addr string, bind string, defport int, dev bool) (string, error) {
-	addr, err := parseSingleIPTemplate(addr)
+	addr, err := ParseSingleIPTemplate(addr)
 	if err != nil {
 		return "", fmt.Errorf("Error parsing advertise address template: %v", err)
 	}
@@ -336,7 +336,7 @@ func normalizeAdvertise(addr string, bind string, defport int, dev bool) (string
 	}
 
 	// Bind is not localhost but not a valid advertise IP, use first private IP
-	addr, err = parseSingleIPTemplate("{{ GetPrivateIP }}")
+	addr, err = ParseSingleIPTemplate("{{ GetPrivateIP }}")
 	if err != nil {
 		return "", fmt.Errorf("Unable to parse default advertise address: %v", err)
 	}
