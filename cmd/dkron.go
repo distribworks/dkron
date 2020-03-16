@@ -14,6 +14,9 @@ import (
 var cfgFile string
 var config = dkron.DefaultConfig()
 
+var rpcAddr string
+var ip string
+
 // dkronCmd represents the dkron command
 var dkronCmd = &cobra.Command{
 	Use:   "dkron",
