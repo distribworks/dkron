@@ -811,7 +811,7 @@ Example:
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/usage/storage/</guid>
-      <description>Dkron has an embedded distributed KV store engine based on BadgerDB. This works out of the box on each dkron server.
+      <description>Dkron has an embedded distributed KV store engine based on BuntDB. This works out of the box on each dkron server.
 This ensures a dead easy install and setup, basically run dkron and you will have a full working node.</description>
     </item>
     
@@ -1037,6 +1037,16 @@ dog_statsd_addr: &amp;#34;localhost:8125&amp;#34; Metrics  dkron.agent.event_rec
       <description>Outage Recovery Don&amp;rsquo;t panic! This is a critical first step.
 Depending on your deployment configuration, it may take only a single server failure for cluster unavailability. Recovery requires an operator to intervene, but the process is straightforward.
 This guide is for recovery from a Dkron outage due to a majority of server nodes in a datacenter being lost. If you are looking to add or remove servers, see the [clustering](/usage/clustering) guide.</description>
+    </item>
+    
+    <item>
+      <title>Rolling upgrade</title>
+      <link>/usage/upgrade/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/usage/upgrade/</guid>
+      <description>Use the following procedure to rotate all cluster nodes, one server at a time:
+ Add a new servers to the cluster with a configuration that joins them to the existing cluter. Stop dkron service in one of the old servers, if it was the leader allow a new leader to be ellected, note that it is better to remove the current leader at the end, to ensure a leader is elected between the new nodes.</description>
     </item>
     
     <item>

@@ -526,6 +526,10 @@
   </url>
   
   <url>
+    <loc>/usage/upgrade/</loc>
+  </url>
+  
+  <url>
     <loc>/usage/executors/shell/</loc>
   </url>
   

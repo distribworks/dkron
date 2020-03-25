@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-03-11T12:45:40 CET">
+<meta name="revised" content="2020-03-25T12:25:10 CET">
 <title>Getting started :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -242,6 +242,13 @@
         </div>
     </li>
         </ul>
+    </li>
+      <li data-nav-id="/usage/upgrade/" class="dd-item">
+        <div>
+          <a href="/usage/upgrade/">
+            Rolling upgrade
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
     </li>
       <li data-nav-id="/usage/ecs/" class="dd-item">
         <div>
@@ -1059,7 +1066,7 @@
 <p>You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run. This gives an unprecedented level of flexibility in runnig jobs across a cluster of any size and with any combination of machines you need.</p>
 <p>All the execution responses will be gathered by the scheduler and stored in the database.</p>
 <h2 id="state-storage">State storage</h2>
-<p>Dkron deployment is just a single binary, it stores the state in an internal BadgerDB instance and replicate all changes between all server nodes using the Raft protocol, it doesn&rsquo;t need any other storage system outside itself.</p>
+<p>Dkron deployment is just a single binary, it stores the state in an internal BuntDB instance and replicate all changes between all server nodes using the Raft protocol, it doesn&rsquo;t need any other storage system outside itself.</p>
 <h2 id="installation">Installation</h2>
 <p>See the <a href="/basics/installation">installation</a>.</p>
 <h2 id="configuration">Configuration</h2>

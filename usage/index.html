@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-03-11T12:45:40 CET">
+<meta name="revised" content="2020-03-25T12:25:11 CET">
 <title>Usage :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -242,6 +242,13 @@
         </div>
     </li>
         </ul>
+    </li>
+      <li data-nav-id="/usage/upgrade/" class="dd-item">
+        <div>
+          <a href="/usage/upgrade/">
+            Rolling upgrade
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
     </li>
       <li data-nav-id="/usage/ecs/" class="dd-item">
         <div>
@@ -1025,6 +1032,7 @@
     <option value="/usage/plugins/" >
   - 
    Plugins</option>
+      <option value="/usage/upgrade/" >- Rolling upgrade</option>
       <option value="/usage/ecs/" >- Use with AWS ECS</option>
   
     <option value="/pro/" >
@@ -1146,7 +1154,7 @@ Concurrency property accepts two option:
 </span>
 <p><span><card>
 <a href="/usage/storage/" >Embedded storage</a></card></p>
-<p>Dkron has an embedded distributed KV store engine based on BadgerDB. This works out of the box on each dkron server.
+<p>Dkron has an embedded distributed KV store engine based on BuntDB. This works out of the box on each dkron server.
 This ensures a dead easy install and setup, basically run dkron and you will have a full working node.</p>
 </span>
 <p><span><card>
@@ -1190,6 +1198,11 @@ How it Works Dkron execution execution processors are provided via plugins.</p>
 <p>Developing a Plugin role=&quot;alert&quot;&gt;Advanced topic! Plugin development is a highly advanced topic, and is not required knowledge for day-to-day usage. If you don&rsquo;t plan on writing any plugins, we recommend not reading the following section of the documentation.
 Developing a plugin is simple. The only knowledge necessary to write a plugin is basic command-line skills and basic knowledge of the Go programming language.
 Note: A common pitfall is not properly setting up a $GOPATH.</p>
+</span>
+<p><span><card>
+<a href="/usage/upgrade/" >Rolling upgrade</a></card></p>
+<p>Use the following procedure to rotate all cluster nodes, one server at a time:
+ Add a new servers to the cluster with a configuration that joins them to the existing cluter. Stop dkron service in one of the old servers, if it was the leader allow a new leader to be ellected, note that it is better to remove the current leader at the end, to ensure a leader is elected between the new nodes.</p>
 </span>
 <p><span><card>
 <a href="/usage/ecs/" >Use with AWS ECS</a></card></p>

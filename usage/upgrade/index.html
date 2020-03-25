@@ -5,8 +5,8 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-03-25T12:25:10 CET">
-<title>dkron version :: Dkron - Distributed job scheduling system</title>
+<meta name="revised" content="2020-03-25T12:25:11 CET">
+<title>Rolling upgrade :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
 <link href="/css/nucleus.css" rel="stylesheet">
@@ -22,7 +22,7 @@
 
     
   </head>
-  <body data-url="/pro/cli/dkron_version/">
+  <body data-url="/usage/upgrade/">
     
       <header>
   <div class="logo">
@@ -93,10 +93,11 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/usage/" class="dd-item haschildren
+    <li data-nav-id="/usage/" class="dd-item parent haschildren
         ">
       <div>
-      <a href="/usage/">Usage</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/usage/">Usage</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
       <li data-nav-id="/usage/target-nodes-spec/" class="dd-item">
@@ -242,7 +243,7 @@
     </li>
         </ul>
     </li>
-      <li data-nav-id="/usage/upgrade/" class="dd-item">
+      <li data-nav-id="/usage/upgrade/" class="dd-item active">
         <div>
           <a href="/usage/upgrade/">
             Rolling upgrade
@@ -258,18 +259,16 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/pro/" class="dd-item parent haschildren
+    <li data-nav-id="/pro/" class="dd-item haschildren
         ">
       <div>
-      <a href="/pro/">Dkron Pro</a>
-            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/pro/">Dkron Pro</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-    <li data-nav-id="/pro/cli/" class="dd-item parent haschildren
+    <li data-nav-id="/pro/cli/" class="dd-item haschildren
         ">
       <div>
-      <a href="/pro/cli/">Pro CLI</a>
-            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/pro/cli/">Pro CLI</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
       <li data-nav-id="/pro/cli/dkron/" class="dd-item">
@@ -328,7 +327,7 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/pro/cli/dkron_version/" class="dd-item active">
+      <li data-nav-id="/pro/cli/dkron_version/" class="dd-item">
         <div>
           <a href="/pro/cli/dkron_version/">
             dkron version
@@ -1012,36 +1011,32 @@
     <option value="/basics/" >
    Basics</option>
     <option value="/usage/" >
-   Usage</option>
-    <option value="/pro/" >
-   Dkron Pro</option> 
-    <option value="/pro/cli/" >
-  - 
-   Pro CLI</option> 
-      <option value="/pro/cli/dkron/" >-- dkron</option>
-      <option value="/pro/cli/dkron_agent/" >-- dkron agent</option>
-      <option value="/pro/cli/dkron_doc/" >-- dkron doc</option>
-      <option value="/pro/cli/dkron_keygen/" >-- dkron keygen</option>
-      <option value="/pro/cli/dkron_leave/" >-- dkron leave</option>
-      <option value="/pro/cli/dkron_raft/" >-- dkron raft</option>
-      <option value="/pro/cli/dkron_raft_list-peers/" >-- dkron raft list-peers</option>
-      <option value="/pro/cli/dkron_raft_remove-peer/" >-- dkron raft remove-peer</option>
-      <option value="/pro/cli/dkron_version/"  selected>-- dkron version</option>
-  
-      <option value="/pro/acls/" >- Access Control</option>
-      <option value="/pro/auth/" >- Authentication</option>
-      <option value="/pro/commercial-faq/" >- Commercial FAQ</option>
-      <option value="/pro/commercial-support/" >- Commercial Support</option>
-      <option value="/pro/configuration/" >- Configuration</option>
-      <option value="/pro/failover/" >- Cross region failover</option>
-      <option value="/pro/encryption/" >- Encryption</option>
-    <option value="/pro/executors/" >
+   Usage</option> 
+      <option value="/usage/target-nodes-spec/" >- Target nodes spec</option>
+      <option value="/usage/cron-spec/" >- Cron spec</option>
+    <option value="/usage/executors/" >
   - 
    Executors</option>
-    <option value="/pro/processors/" >
+    <option value="/usage/processors/" >
   - 
    Processors</option>
+      <option value="/usage/cloud-auto-join/" >- Cloud Auto-join</option>
+      <option value="/usage/clustering/" >- Clustering</option>
+      <option value="/usage/concurrency/" >- Concurrency</option>
+      <option value="/usage/storage/" >- Embedded storage</option>
+      <option value="/usage/chaining/" >- Job chaining</option>
+      <option value="/usage/metatags/" >- Job metadata</option>
+      <option value="/usage/retries/" >- Job retries</option>
+      <option value="/usage/metrics/" >- Metrics</option>
+      <option value="/usage/recovery/" >- Outage recovery</option>
+    <option value="/usage/plugins/" >
+  - 
+   Plugins</option>
+      <option value="/usage/upgrade/"  selected>- Rolling upgrade</option>
+      <option value="/usage/ecs/" >- Use with AWS ECS</option>
   
+    <option value="/pro/" >
+   Dkron Pro</option>
     <option value="/products/" >
    Products</option>
     <option value="/intro/" >
@@ -1076,32 +1071,26 @@
       </div>
     
 
-    <h1>dkron version</h1>
+    <h1>Rolling upgrade</h1>
     
     
     
-    <h2 id="dkron-version">dkron version</h2>
-<p>Show version</p>
-<h3 id="synopsis">Synopsis</h3>
-<p>Show the version</p>
-<pre><code>dkron version [flags]
-</code></pre><h3 id="options">Options</h3>
-<pre><code>  -h, --help   help for version
-</code></pre><h3 id="options-inherited-from-parent-commands">Options inherited from parent commands</h3>
-<pre><code>      --config string   config file (default is /etc/dkron/dkron.yml)
-</code></pre><h3 id="see-also">SEE ALSO</h3>
-<ul>
-<li><a href="/pro/cli/dkron/">dkron</a>	 - Professional distributed job scheduling system</li>
-</ul>
-<h6 id="auto-generated-by-spf13cobra-on-26-aug-2019">Auto generated by spf13/cobra on 26-Aug-2019</h6>
+    <p>Use the following procedure to rotate all cluster nodes, one server at a time:</p>
+<ol>
+<li>Add a new servers to the cluster with a configuration that joins them to the existing cluter.</li>
+<li>Stop dkron service in one of the old servers, if it was the leader allow a new leader to be ellected, note that it is better to remove the current leader at the end, to ensure a leader is elected between the new nodes.</li>
+<li>Use <code>dkron raft list-peers</code> to list current cluster nodes</li>
+<li>Use <code>dkron raft remove-peer</code> to forcefully remove the old server</li>
+<li>Repeat steps util all old cluster nodes has been rotated</li>
+</ol>
 
 
     
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-prev" href="/pro/cli/dkron_raft_remove-peer/" title="dkron raft remove-peer"> <i class="fa fa-chevron-left"></i><label>dkron raft remove-peer</label></a>
-    <a class="nav nav-next" href="/pro/acls/" title="Access Control" style="margin-right: 0px;"><label>Access Control</label><i class="fa fa-chevron-right"></i></a></div>
+<a class="nav nav-prev" href="/usage/plugins/develop/" title="Developing plugins"> <i class="fa fa-chevron-left"></i><label>Developing plugins</label></a>
+    <a class="nav nav-next" href="/usage/ecs/" title="Use with AWS ECS" style="margin-right: 0px;"><label>Use with AWS ECS</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>
@@ -1115,14 +1104,10 @@
     
 
     
-    <div class="date">
-        <i class='fa fa-calendar'></i> Last update on 26/08/2019
-    </div>
-    
 
     
     <div class="github-link">
-      <a href="https://github.com/distribworks/dkron/edit/master/website/content/pro/cli/dkron_version.md" target="blank"><i class="fa fa-code-fork"></i>
+      <a href="https://github.com/distribworks/dkron/edit/master/website/content/usage/upgrade.md" target="blank"><i class="fa fa-code-fork"></i>
         Improve this page</a>
     </div>
     
