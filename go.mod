@@ -7,7 +7,7 @@ require (
 	github.com/aws/aws-sdk-go v1.29.22 // indirect
 	github.com/gin-contrib/expvar v0.0.1
 	github.com/gin-contrib/multitemplate v0.0.0-20200226145339-3e397ee01bc6
-	github.com/gin-gonic/gin v1.5.0
+	github.com/gin-gonic/gin v1.6.2
 	github.com/gogo/protobuf v1.3.1 // indirect
 	github.com/golang/protobuf v1.3.4
 	github.com/hashicorp/go-discover v0.0.0-20200108194735-7698de1390a1
