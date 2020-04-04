@@ -232,7 +232,7 @@ func (j *Job) Run() {
 		log.WithFields(logrus.Fields{
 			"job":      j.Name,
 			"schedule": j.Schedule,
-		}).Debug("scheduler: Run job")
+		}).Debug("job: Run job")
 
 		cronInspect.Set(j.Name, j)
 

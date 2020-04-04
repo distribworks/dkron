@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"io"
 	"net"
+	"sync"
 	"time"
 
 	metrics "github.com/armon/go-metrics"
@@ -38,7 +40,8 @@ type DkronGRPCServer interface {
 
 // GRPCServer is the local implementation of the gRPC server interface.
 type GRPCServer struct {
-	agent *Agent
+	agent            *Agent
+	activeExecutions sync.Map
 }
 
 // NewGRPCServer creates and returns an instance of a DkronGRPCServer implementation
@@ -355,4 +358,62 @@ REMOVE:
 
 	log.WithField("peer", in.Id).Warn("removed Raft peer")
 	return nil, nil
+}
+
+// AgentRun is called when an agent starts running a job and lasts all execution,
+// the agent will stream execution progress to the server.
+func (grpcs *GRPCServer) AgentRun(stream proto.Dkron_AgentRunServer) error {
+	defer metrics.MeasureSince([]string{"grpc", "agent_run"}, time.Now())
+
+	var execution *Execution
+	for {
+		ars, err := stream.Recv()
+
+		// Stream ends
+		if err == io.EOF {
+			addr := grpcs.agent.raft.Leader()
+			if err := grpcs.agent.GRPCClient.ExecutionDone(string(addr), execution); err != nil {
+				return err
+			}
+			return stream.SendAndClose(&proto.AgentRunResponse{})
+		}
+
+		// Error receiving from stream
+		if err != nil {
+			// At this point the execution is unknown
+			execution.FinishedAt = time.Now()
+
+			addr := grpcs.agent.raft.Leader()
+			if err := grpcs.agent.GRPCClient.ExecutionDone(string(addr), execution); err != nil {
+				return err
+			}
+			return err
+		}
+
+		// Store the received exeuction in the raft log and store
+		_ = grpcs.agent.setExecution(ars.Execution)
+
+		// Registers an active stream
+		grpcs.activeExecutions.Store(ars.Execution.Key(), ars.Execution)
+		log.Debug("grpc: received execution stream: ", string(ars.Execution.Output))
+
+		execution = NewExecutionFromProto(ars.Execution)
+		defer grpcs.activeExecutions.Delete(execution.Key())
+	}
+}
+
+// GetActiveExecutions returns the active executions on the server node
+func (grpcs *GRPCServer) GetActiveExecutions(ctx context.Context, in *empty.Empty) (*proto.GetActiveExecutionsResponse, error) {
+	defer metrics.MeasureSince([]string{"grpc", "agent_run"}, time.Now())
+
+	var executions []*proto.Execution
+	grpcs.activeExecutions.Range(func(k, v interface{}) bool {
+		e := v.(*proto.Execution)
+		executions = append(executions, e)
+		return true
+	})
+
+	return &proto.GetActiveExecutionsResponse{
+		Executions: executions,
+	}, nil
 }

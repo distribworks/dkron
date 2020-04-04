@@ -790,13 +790,8 @@ func (a *Agent) processFilteredNodes(job *Job) ([]string, map[string]string, err
 	return nodes, tags, nil
 }
 
-func (a *Agent) setExecution(payload []byte) *Execution {
-	var ex Execution
-	if err := json.Unmarshal(payload, &ex); err != nil {
-		log.Fatal(err)
-	}
-
-	cmd, err := Encode(SetExecutionType, ex.ToProto())
+func (a *Agent) setExecution(execution *proto.Execution) error {
+	cmd, err := Encode(SetExecutionType, execution)
 	if err != nil {
 		log.WithError(err).Fatal("agent: encode error in setExecution")
 		return nil
@@ -807,7 +802,7 @@ func (a *Agent) setExecution(payload []byte) *Execution {
 		return nil
 	}
 
-	return &ex
+	return nil
 }
 
 // This function is called when a client request the RPCAddress
@@ -861,11 +856,7 @@ func (a *Agent) RefreshJobStatus(jobName string) {
 			} else {
 				ex.FinishedAt = time.Now()
 			}
-			ej, err := json.Marshal(ex)
-			if err != nil {
-				log.WithError(err).Error("agent: Error marshaling execution")
-			}
-			a.setExecution(ej)
+			_ = a.setExecution(ex.ToProto())
 		}
 	}
 }

@@ -43,11 +43,6 @@ func (a *Agent) RunQuery(jobName string, ex *Execution) (*Job, error) {
 			return nil, fmt.Errorf("agent: RunQuery error retrieving job: %s from scheduler", jobName)
 		}
 	}
-	job.Status = StatusRunning
-
-	if err := a.applySetJob(job.ToProto()); err != nil {
-		return nil, fmt.Errorf("agent: RunQuery error storing job %s before running: %w", jobName, err)
-	}
 
 	// In the first execution attempt we build and filter the target nodes
 	// but we use the existing node target in case of retry.
@@ -124,8 +119,11 @@ func (a *Agent) RunQuery(jobName string, ex *Execution) (*Job, error) {
 					"response": string(resp.Payload),
 				}).Debug("agent: Received response")
 
-				// Save execution to store
-				a.setExecution(resp.Payload)
+				// Save execution to store and set running status
+				//_ = a.setExecution(resp.Payload)
+
+				// The job really started running on the nodes
+				//job.Status = StatusRunning
 			}
 		}
 	}
@@ -133,6 +131,10 @@ func (a *Agent) RunQuery(jobName string, ex *Execution) (*Job, error) {
 		"time":  time.Since(start),
 		"query": QueryRunJob,
 	}).Debug("agent: Done receiving acks and responses")
+
+	if err := a.applySetJob(job.ToProto()); err != nil {
+		return nil, fmt.Errorf("agent: RunQuery error storing job %s before running: %w", jobName, err)
+	}
 
 	return job, nil
 }

@@ -1,12 +1,15 @@
 package dkron
 
 import (
+	"context"
 	"errors"
 	"net"
 	"time"
 
 	"github.com/armon/circbuf"
 	"github.com/distribworks/dkron/v2/plugin/types"
+	proto "github.com/distribworks/dkron/v2/plugin/types"
+	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -29,6 +32,38 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 	exc := job.ExecutorConfig
 	if jex == "" {
 		return errors.New("invoke: No executor defined, nothing to do")
+	}
+
+	// ***********************************
+	rpcServer, err := a.checkAndSelectServer()
+	if err != nil {
+		return err
+	}
+	log.WithField("server", rpcServer).Debug("invoke: Selected a server to send result")
+
+	conn, err := a.GRPCClient.Connect(rpcServer)
+	if err != nil {
+		log.WithError(err).WithFields(logrus.Fields{
+			"method":      "Invoke",
+			"server_addr": rpcServer,
+		}).Error("grpc: error dialing.")
+		return err
+	}
+	defer conn.Close()
+	client := proto.NewDkronClient(conn)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	stream, err := client.AgentRun(ctx)
+	if err != nil {
+		return err
+	}
+
+	if err := stream.Send(&proto.AgentRunStream{
+		Execution: execution.ToProto(),
+	}); err != nil {
+		return err
 	}
 
 	// Check if executor exists
@@ -62,15 +97,20 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 	execution.Success = success
 	execution.Output = output.Bytes()
 
-	rpcServer, err := a.checkAndSelectServer()
-	if err != nil {
-		return err
-	}
-	log.WithField("server", rpcServer).Debug("invoke: Selected a server to send result")
-
 	runningExecutions.Delete(execution.GetGroup())
 
-	return a.GRPCClient.ExecutionDone(rpcServer, execution)
+	//************************************
+	// **************************
+	if err := stream.Send(&proto.AgentRunStream{
+		Execution: execution.ToProto(),
+	}); err != nil {
+		return err
+	}
+
+	reply, err := stream.CloseAndRecv()
+	log.Infof("agent: AgentRun reply: %v", reply)
+
+	return err
 }
 
 // Check if the server is alive and select it

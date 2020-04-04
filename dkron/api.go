@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	proto "github.com/distribworks/dkron/v2/plugin/types"
 	"github.com/gin-contrib/expvar"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -70,6 +71,8 @@ func (h *HTTPTransport) APIRoutes(r *gin.RouterGroup, middleware ...gin.HandlerF
 	v1.GET("/isleader", h.isLeaderHandler)
 	v1.POST("/leave", h.leaveHandler)
 
+	v1.GET("/busy", h.busyHandler)
+
 	v1.POST("/jobs", h.jobCreateOrUpdateHandler)
 	v1.PATCH("/jobs", h.jobCreateOrUpdateHandler)
 	// Place fallback routes last
@@ -128,6 +131,9 @@ func (h *HTTPTransport) jobsHandler(c *gin.Context) {
 		log.WithError(err).Error("api: Unable to get jobs, store not reachable.")
 		return
 	}
+	// Ask all server peers for connections
+	// Range through jobs and assing running based on peers connections
+
 	renderJSON(c, http.StatusOK, jobs)
 }
 
@@ -286,4 +292,22 @@ func (h *HTTPTransport) jobToggleHandler(c *gin.Context) {
 
 	c.Header("Location", c.Request.RequestURI)
 	renderJSON(c, http.StatusOK, job)
+}
+
+func (h *HTTPTransport) busyHandler(c *gin.Context) {
+	var executions []*proto.Execution
+
+	for _, s := range h.agent.LocalServers() {
+		exs, err := h.agent.GRPCClient.GetActiveExecutions(s.RPCAddr.String())
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+
+		for _, e := range exs {
+			executions = append(executions, e)
+		}
+	}
+
+	renderJSON(c, http.StatusOK, executions)
 }
