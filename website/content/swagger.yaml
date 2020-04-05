@@ -218,6 +218,20 @@ paths:
             type: array
             items:
               $ref: '#/definitions/execution'
+  /busy:
+    post:
+      description: |
+        Returns the running executions.
+      operationId: busy
+      tags:
+        - default
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/execution'
 
 definitions:
   status:
