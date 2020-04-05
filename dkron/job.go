@@ -285,7 +285,7 @@ func (j *Job) GetNext() (time.Time, error) {
 }
 
 func (j *Job) isRunnable() bool {
-	if j.Disabled == true {
+	if j.Disabled {
 		return false
 	}
 
@@ -295,7 +295,7 @@ func (j *Job) isRunnable() bool {
 		return false
 	}
 
-	if j.Concurrency == ConcurrencyForbid || j.Status == StatusNotSet {
+	if j.Concurrency == ConcurrencyForbid {
 		exs, err := j.Agent.GetActiveExecutions()
 		if err != nil {
 			log.WithError(err).Error("job: Error quering for running executions")
