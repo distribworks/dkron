@@ -34,7 +34,7 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 		return errors.New("invoke: No executor defined, nothing to do")
 	}
 
-	// ***********************************
+	// Connect to a server to stream the execution
 	rpcServer, err := a.checkAndSelectServer()
 	if err != nil {
 		return err
@@ -99,18 +99,23 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 
 	runningExecutions.Delete(execution.GetGroup())
 
-	//************************************
-	// **************************
+	// Send the final execution
 	if err := stream.Send(&proto.AgentRunStream{
 		Execution: execution.ToProto(),
 	}); err != nil {
-		return err
+		// In case of error means that maybe the server is gone so fallback to ExecutionDone
+		return a.GRPCClient.ExecutionDone(rpcServer, execution)
 	}
 
+	// Close the stream
 	reply, err := stream.CloseAndRecv()
-	log.Infof("agent: AgentRun reply: %v", reply)
+	if err != nil {
+		// In case of error means that maybe the server is gone so fallback to ExecutionDone
+		return a.GRPCClient.ExecutionDone(rpcServer, execution)
+	}
+	log.Debugf("agent: AgentRun reply: %v", reply)
 
-	return err
+	return nil
 }
 
 // Check if the server is alive and select it

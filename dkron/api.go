@@ -296,16 +296,14 @@ func (h *HTTPTransport) jobToggleHandler(c *gin.Context) {
 func (h *HTTPTransport) busyHandler(c *gin.Context) {
 	var executions []*Execution
 
-	for _, s := range h.agent.LocalServers() {
-		exs, err := h.agent.GRPCClient.GetActiveExecutions(s.RPCAddr.String())
-		if err != nil {
-			c.AbortWithError(http.StatusInternalServerError, err)
-			return
-		}
+	exs, err := h.agent.GetActiveExecutions()
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
 
-		for _, e := range exs {
-			executions = append(executions, NewExecutionFromProto(e))
-		}
+	for _, e := range exs {
+		executions = append(executions, NewExecutionFromProto(e))
 	}
 
 	renderJSON(c, http.StatusOK, executions)

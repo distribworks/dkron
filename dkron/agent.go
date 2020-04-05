@@ -686,31 +686,9 @@ func (a *Agent) eventLoop() {
 						}
 					}()
 
+					// Respond with the execution JSON though it is not used in the destination
 					exJSON, _ := json.Marshal(ex)
 					query.Respond(exJSON)
-				}
-
-				if query.Name == QueryExecutionDone {
-					group := string(query.Payload)
-
-					log.WithFields(logrus.Fields{
-						"query":   query.Name,
-						"payload": group,
-						"at":      query.LTime,
-					}).Debug("agent: Execution done requested")
-
-					// Find if the indicated execution is done processing
-					var err error
-					if _, ok := runningExecutions.Load(group); ok {
-						log.WithField("group", group).Debug("agent: Execution is still running")
-						err = query.Respond([]byte("false"))
-					} else {
-						log.WithField("group", group).Debug("agent: Execution is not running")
-						err = query.Respond([]byte("true"))
-					}
-					if err != nil {
-						log.WithError(err).Error("agent: query.Respond")
-					}
 				}
 			}
 
@@ -813,54 +791,6 @@ func (a *Agent) getRPCAddr() string {
 	return net.JoinHostPort(bindIP.String(), strconv.Itoa(a.config.AdvertiseRPCPort))
 }
 
-// RefreshJobStatus asks the nodes their progress on an execution
-func (a *Agent) RefreshJobStatus(jobName string) {
-	var group string
-
-	execs, _ := a.Store.GetLastExecutionGroup(jobName)
-	nodes := []string{}
-
-	unfinishedExecutions := []*Execution{}
-	for _, ex := range execs {
-		if ex.FinishedAt.IsZero() {
-			unfinishedExecutions = append(unfinishedExecutions, ex)
-		}
-	}
-
-	for _, ex := range unfinishedExecutions {
-		// Ignore executions that we know are finished
-		log.WithFields(logrus.Fields{
-			"member":        ex.NodeName,
-			"execution_key": ex.Key(),
-		}).Info("agent: Asking member for pending execution")
-
-		nodes = append(nodes, ex.NodeName)
-		group = strconv.FormatInt(ex.Group, 10)
-		log.WithField("group", group).Debug("agent: Pending execution group")
-	}
-
-	// If there is pending executions to finish ask if they are really pending.
-	if len(nodes) > 0 && group != "" {
-		statuses := a.executionDoneQuery(nodes, group)
-
-		log.WithFields(logrus.Fields{
-			"statuses": statuses,
-		}).Debug("agent: Received pending executions response")
-
-		for _, ex := range unfinishedExecutions {
-			if s, ok := statuses[ex.NodeName]; ok {
-				done, _ := strconv.ParseBool(s)
-				if done {
-					ex.FinishedAt = time.Now()
-				}
-			} else {
-				ex.FinishedAt = time.Now()
-			}
-			_ = a.setExecution(ex.ToProto())
-		}
-	}
-}
-
 // applySetJob is a helper method to be called when
 // a job property need to be modified from the leader.
 func (a *Agent) applySetJob(job *proto.Job) error {
@@ -888,7 +818,7 @@ func (a *Agent) RaftApply(cmd []byte) raft.ApplyFuture {
 	return a.raft.Apply(cmd, raftTimeout)
 }
 
-// GetRunningJobs returns amount of active jobs
+// GetRunningJobs returns amount of active jobs of the local agent
 func (a *Agent) GetRunningJobs() int {
 	job := 0
 	runningExecutions.Range(func(k, v interface{}) bool {
@@ -896,4 +826,20 @@ func (a *Agent) GetRunningJobs() int {
 		return true
 	})
 	return job
+}
+
+// GetActiveExecutions returns running executions globally
+func (a *Agent) GetActiveExecutions() ([]*proto.Execution, error) {
+	var executions []*proto.Execution
+
+	for _, s := range a.LocalServers() {
+		exs, err := a.GRPCClient.GetActiveExecutions(s.RPCAddr.String())
+		if err != nil {
+			return nil, err
+		}
+
+		executions = append(executions, exs...)
+	}
+
+	return executions, nil
 }
