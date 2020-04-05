@@ -425,3 +425,18 @@ dkron.controller('IndexCtrl', function ($scope, $http, $timeout, $element) {
 
   updateView();
 });
+
+dkron.controller('BusyCtrl', function ($scope, $http, $timeout, $element) {
+  busy = function () {
+    $http.get(DKRON_API_PATH + '/busy').then(function (response) {
+      $scope.executions = response.data
+
+      $timeout(function () {
+        busy();
+      }, 500);
+    }, function (response) {
+      $('#message').html('<div class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Error running job ' + jobName + '</div>');
+    });
+  };
+  busy();
+});

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 
-	proto "github.com/distribworks/dkron/v2/plugin/types"
 	"github.com/gin-contrib/expvar"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -295,7 +294,7 @@ func (h *HTTPTransport) jobToggleHandler(c *gin.Context) {
 }
 
 func (h *HTTPTransport) busyHandler(c *gin.Context) {
-	var executions []*proto.Execution
+	var executions []*Execution
 
 	for _, s := range h.agent.LocalServers() {
 		exs, err := h.agent.GRPCClient.GetActiveExecutions(s.RPCAddr.String())
@@ -305,7 +304,7 @@ func (h *HTTPTransport) busyHandler(c *gin.Context) {
 		}
 
 		for _, e := range exs {
-			executions = append(executions, e)
+			executions = append(executions, NewExecutionFromProto(e))
 		}
 	}
 
