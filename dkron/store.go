@@ -29,9 +29,8 @@ var (
 // It gives dkron the ability to manipulate its embedded storage
 // BuntDB.
 type Store struct {
-	db     *buntdb.DB
-	lock   *sync.Mutex // for
-	closed bool
+	db   *buntdb.DB
+	lock *sync.Mutex // for
 }
 
 // JobOptions additional options to apply when loading a Job.
@@ -52,8 +51,8 @@ func NewStore() (*Store, error) {
 	}
 
 	store := &Store{
-		db:    db,
-		lock:  &sync.Mutex{},
+		db:   db,
+		lock: &sync.Mutex{},
 	}
 
 	return store, nil
@@ -577,7 +576,7 @@ func (s *Store) Snapshot(w io.WriteCloser) error {
 	return s.db.Save(w)
 }
 
-// Restore load data created with backup in to Bunt	
+// Restore load data created with backup in to Bunt
 func (s *Store) Restore(r io.ReadCloser) error {
 	return s.db.Load(r)
 }
