@@ -2,7 +2,6 @@ package dkron
 
 import (
 	"io"
-	"sync"
 
 	dkronpb "github.com/distribworks/dkron/v2/plugin/types"
 	"github.com/golang/protobuf/proto"
@@ -35,7 +34,6 @@ type LogAppliers map[MessageType]LogApplier
 
 type dkronFSM struct {
 	store Storage
-	mu    sync.Mutex
 
 	// proAppliers holds the set of pro only LogAppliers
 	proAppliers LogAppliers

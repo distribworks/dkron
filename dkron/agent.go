@@ -39,9 +39,7 @@ var (
 	expNode = expvar.NewString("node")
 
 	// ErrLeaderNotFound is returned when obtained leader is not found in member list
-	ErrLeaderNotFound = errors.New("No member leader found in member list")
-
-	defaultLeaderTTL = 20 * time.Second
+	ErrLeaderNotFound = errors.New("no member leader found in member list")
 
 	runningExecutions sync.Map
 )
@@ -355,7 +353,7 @@ func (a *Agent) setupSerf() (*serf.Serf, error) {
 
 	bindIP, bindPort, err := config.AddrParts(config.BindAddr)
 	if err != nil {
-		return nil, fmt.Errorf("Invalid bind address: %s", err)
+		return nil, fmt.Errorf("invalid bind address: %s", err)
 	}
 
 	var advertiseIP string
@@ -363,13 +361,13 @@ func (a *Agent) setupSerf() (*serf.Serf, error) {
 	if config.AdvertiseAddr != "" {
 		advertiseIP, advertisePort, err = config.AddrParts(config.AdvertiseAddr)
 		if err != nil {
-			return nil, fmt.Errorf("Invalid advertise address: %s", err)
+			return nil, fmt.Errorf("invalid advertise address: %s", err)
 		}
 	}
 
 	encryptKey, err := config.EncryptBytes()
 	if err != nil {
-		return nil, fmt.Errorf("Invalid encryption key: %s", err)
+		return nil, fmt.Errorf("invalid encryption key: %s", err)
 	}
 
 	serfConfig := serf.DefaultConfig()
@@ -398,7 +396,7 @@ func (a *Agent) setupSerf() (*serf.Serf, error) {
 	case "local":
 		serfConfig.MemberlistConfig = memberlist.DefaultLocalConfig()
 	default:
-		return nil, fmt.Errorf("Unknown profile: %s", config.Profile)
+		return nil, fmt.Errorf("unknown profile: %s", config.Profile)
 	}
 
 	serfConfig.MemberlistConfig.BindAddr = bindIP

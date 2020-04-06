@@ -241,7 +241,7 @@ func (c *Config) normalizeAddrs() error {
 	if c.BindAddr != "" {
 		ipStr, err := ParseSingleIPTemplate(c.BindAddr)
 		if err != nil {
-			return fmt.Errorf("Bind address resolution failed: %v", err)
+			return fmt.Errorf("bind address resolution failed: %v", err)
 		}
 		c.BindAddr = ipStr
 	}
@@ -249,14 +249,14 @@ func (c *Config) normalizeAddrs() error {
 	if c.HTTPAddr != "" {
 		ipStr, err := ParseSingleIPTemplate(c.HTTPAddr)
 		if err != nil {
-			return fmt.Errorf("Bind address resolution failed: %v", err)
+			return fmt.Errorf("bind address resolution failed: %v", err)
 		}
 		c.HTTPAddr = ipStr
 	}
 
 	addr, err := normalizeAdvertise(c.AdvertiseAddr, c.BindAddr, DefaultBindPort, c.DevMode)
 	if err != nil {
-		return fmt.Errorf("Failed to parse HTTP advertise address (%v, %v, %v, %v): %v", c.AdvertiseAddr, c.BindAddr, DefaultBindPort, c.DevMode, err)
+		return fmt.Errorf("failed to parse HTTP advertise address (%v, %v, %v, %v): %v", c.AdvertiseAddr, c.BindAddr, DefaultBindPort, c.DevMode, err)
 	}
 	c.AdvertiseAddr = addr
 
@@ -331,14 +331,14 @@ func normalizeAdvertise(addr string, bind string, defport int, dev bool) (string
 				// loopback is fine for dev mode
 				return net.JoinHostPort(ip.String(), strconv.Itoa(defport)), nil
 			}
-			return "", fmt.Errorf("Defaulting advertise to localhost is unsafe, please set advertise manually")
+			return "", fmt.Errorf("defaulting advertise to localhost is unsafe, please set advertise manually")
 		}
 	}
 
 	// Bind is not localhost but not a valid advertise IP, use first private IP
 	addr, err = ParseSingleIPTemplate("{{ GetPrivateIP }}")
 	if err != nil {
-		return "", fmt.Errorf("Unable to parse default advertise address: %v", err)
+		return "", fmt.Errorf("unable to parse default advertise address: %v", err)
 	}
 	return net.JoinHostPort(addr, strconv.Itoa(defport)), nil
 }

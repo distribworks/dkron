@@ -19,7 +19,7 @@ func initMetrics(a *Agent) error {
 	if a.config.StatsdAddr != "" {
 		sink, err := metrics.NewStatsdSink(a.config.StatsdAddr)
 		if err != nil {
-			return fmt.Errorf("Failed to start statsd sink. Got: %s", err)
+			return fmt.Errorf("failed to start statsd sink. Got: %s", err)
 		}
 		fanout = append(fanout, sink)
 	}
@@ -34,7 +34,7 @@ func initMetrics(a *Agent) error {
 
 		sink, err := datadog.NewDogStatsdSink(a.config.DogStatsdAddr, a.config.NodeName)
 		if err != nil {
-			return fmt.Errorf("Failed to start DogStatsd sink. Got: %s", err)
+			return fmt.Errorf("failed to start DogStatsd sink. Got: %s", err)
 		}
 		sink.SetTags(tags)
 		fanout = append(fanout, sink)
