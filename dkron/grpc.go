@@ -366,6 +366,7 @@ func (grpcs *GRPCServer) AgentRun(stream proto.Dkron_AgentRunServer) error {
 	defer metrics.MeasureSince([]string{"grpc", "agent_run"}, time.Now())
 
 	var execution *Execution
+	var first bool
 	for {
 		ars, err := stream.Recv()
 
@@ -375,7 +376,9 @@ func (grpcs *GRPCServer) AgentRun(stream proto.Dkron_AgentRunServer) error {
 			if err := grpcs.agent.GRPCClient.ExecutionDone(string(addr), execution); err != nil {
 				return err
 			}
-			return stream.SendAndClose(&proto.AgentRunResponse{})
+			return stream.SendAndClose(&proto.AgentRunResponse{
+				From: grpcs.agent.Config().NodeName,
+			})
 		}
 
 		// Error receiving from stream
@@ -391,11 +394,14 @@ func (grpcs *GRPCServer) AgentRun(stream proto.Dkron_AgentRunServer) error {
 		}
 
 		// Store the received exeuction in the raft log and store
-		_ = grpcs.agent.setExecution(ars.Execution)
+		if !first {
+			_ = grpcs.agent.setExecution(ars.Execution)
+			first = true
+		}
 
 		// Registers an active stream
 		grpcs.activeExecutions.Store(ars.Execution.Key(), ars.Execution)
-		log.Debug("grpc: received execution stream: ", string(ars.Execution.Output))
+		log.WithField("key", ars.Execution.Key()).Debug("grpc: received execution stream")
 
 		execution = NewExecutionFromProto(ars.Execution)
 		defer grpcs.activeExecutions.Delete(execution.Key())

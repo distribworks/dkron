@@ -22,6 +22,22 @@ const (
 // ErrNoSuitableServer returns an error in case no suitable server to send the request is found.
 var ErrNoSuitableServer = errors.New("no suitable server found to send the request, aborting")
 
+type statusHelper struct {
+	execution *Execution
+	stream    proto.Dkron_AgentRunClient
+}
+
+func (s *statusHelper) Update(b []byte, c bool) (int64, error) {
+	s.execution.Output = b
+	// Send partial execution
+	if err := s.stream.Send(&proto.AgentRunStream{
+		Execution: s.execution.ToProto(),
+	}); err != nil {
+		return 0, err
+	}
+	return 0, nil
+}
+
 // invokeJob will execute the given job. Depending on the event.
 func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 	output, _ := circbuf.NewBuffer(maxBufSize)
@@ -60,6 +76,7 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 		return err
 	}
 
+	// Send the first update with the initial execution state to be stored in the server
 	if err := stream.Send(&proto.AgentRunStream{
 		Execution: execution.ToProto(),
 	}); err != nil {
@@ -73,6 +90,9 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 		out, err := executor.Execute(&types.ExecuteRequest{
 			JobName: job.Name,
 			Config:  exc,
+		}, &statusHelper{
+			stream:    stream,
+			execution: execution,
 		})
 
 		if err == nil && out.Error != "" {
@@ -113,7 +133,7 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 		// In case of error means that maybe the server is gone so fallback to ExecutionDone
 		return a.GRPCClient.ExecutionDone(rpcServer, execution)
 	}
-	log.Debugf("agent: AgentRun reply: %v", reply)
+	log.WithField("from", reply.From).Debug("agent: AgentRun reply")
 
 	return nil
 }

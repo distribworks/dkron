@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/armon/circbuf"
+	dkplugin "github.com/distribworks/dkron/v2/plugin"
 	"github.com/distribworks/dkron/v2/plugin/types"
 )
 
@@ -44,7 +45,7 @@ type HTTP struct {
 //     "expectBody": "",            // Expect response body, support regexp, such as /success/
 //     "debug": "true"              // Debug option, will log everything when this option is not empty
 // }
-func (s *HTTP) Execute(args *types.ExecuteRequest) (*types.ExecuteResponse, error) {
+func (s *HTTP) Execute(args *types.ExecuteRequest, cb dkplugin.StatusHelper) (*types.ExecuteResponse, error) {
 	out, err := s.ExecuteImpl(args)
 	resp := &types.ExecuteResponse{Output: out}
 	if err != nil {
