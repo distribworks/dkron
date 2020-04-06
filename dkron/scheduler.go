@@ -16,7 +16,7 @@ var (
 	schedulerStarted = expvar.NewInt("scheduler_started")
 
 	// ErrScheduleParse is the error returned when the schdule parsing fails.
-	ErrScheduleParse = errors.New("Can't parse job schedule")
+	ErrScheduleParse = errors.New("can't parse job schedule")
 )
 
 // Scheduler represents a dkron scheduler instance, it stores the cron engine

@@ -96,7 +96,7 @@ func (r *retryJoiner) retryJoin() error {
 		}
 
 		if len(addrs) == 0 {
-			err = fmt.Errorf("No servers to join")
+			err = fmt.Errorf("no servers to join")
 		}
 
 		attempt++

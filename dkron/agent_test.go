@@ -32,9 +32,6 @@ func TestAgentCommand_runForElection(t *testing.T) {
 	shutdownCh := make(chan struct{})
 	defer close(shutdownCh)
 
-	// Override leader TTL
-	defaultLeaderTTL = 2 * time.Second
-
 	c := DefaultConfig()
 	c.BindAddr = a1Addr
 	c.StartJoin = []string{a2Addr}

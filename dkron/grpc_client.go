@@ -42,7 +42,6 @@ func NewGRPCClient(dialOpt grpc.DialOption, agent *Agent) DkronGRPCClient {
 		dialOpt: []grpc.DialOption{
 			dialOpt,
 			grpc.WithBlock(),
-			grpc.WithTimeout(5 * time.Second),
 		},
 		agent: agent,
 	}
@@ -51,7 +50,9 @@ func NewGRPCClient(dialOpt grpc.DialOption, agent *Agent) DkronGRPCClient {
 // Connect dialing to a gRPC server
 func (grpcc *GRPCClient) Connect(addr string) (*grpc.ClientConn, error) {
 	// Initiate a connection with the server
-	conn, err := grpc.Dial(addr, grpcc.dialOpt...)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	conn, err := grpc.DialContext(ctx, addr, grpcc.dialOpt...)
 	if err != nil {
 		return nil, err
 	}
@@ -104,7 +105,6 @@ func (grpcc *GRPCClient) GetJob(addr, jobName string) (*Job, error) {
 
 	// Initiate a connection with the server
 	conn, err := grpcc.Connect(addr)
-	defer conn.Close()
 	if err != nil {
 		log.WithError(err).WithFields(logrus.Fields{
 			"method":      "GetJob",
@@ -112,6 +112,7 @@ func (grpcc *GRPCClient) GetJob(addr, jobName string) (*Job, error) {
 		}).Error("grpc: error dialing.")
 		return nil, err
 	}
+	defer conn.Close()
 
 	// Synchronous call
 	d := proto.NewDkronClient(conn)

@@ -8,7 +8,6 @@ import (
 
 	"github.com/armon/circbuf"
 	"github.com/distribworks/dkron/v2/plugin/types"
-	proto "github.com/distribworks/dkron/v2/plugin/types"
 	"github.com/sirupsen/logrus"
 )
 
@@ -24,13 +23,13 @@ var ErrNoSuitableServer = errors.New("no suitable server found to send the reque
 
 type statusHelper struct {
 	execution *Execution
-	stream    proto.Dkron_AgentRunClient
+	stream    types.Dkron_AgentRunClient
 }
 
 func (s *statusHelper) Update(b []byte, c bool) (int64, error) {
 	s.execution.Output = b
 	// Send partial execution
-	if err := s.stream.Send(&proto.AgentRunStream{
+	if err := s.stream.Send(&types.AgentRunStream{
 		Execution: s.execution.ToProto(),
 	}); err != nil {
 		return 0, err
@@ -66,7 +65,7 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 		return err
 	}
 	defer conn.Close()
-	client := proto.NewDkronClient(conn)
+	client := types.NewDkronClient(conn)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -77,7 +76,7 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 	}
 
 	// Send the first update with the initial execution state to be stored in the server
-	if err := stream.Send(&proto.AgentRunStream{
+	if err := stream.Send(&types.AgentRunStream{
 		Execution: execution.ToProto(),
 	}); err != nil {
 		return err
@@ -120,7 +119,7 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 	runningExecutions.Delete(execution.GetGroup())
 
 	// Send the final execution
-	if err := stream.Send(&proto.AgentRunStream{
+	if err := stream.Send(&types.AgentRunStream{
 		Execution: execution.ToProto(),
 	}); err != nil {
 		// In case of error means that maybe the server is gone so fallback to ExecutionDone

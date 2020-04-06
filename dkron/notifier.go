@@ -136,6 +136,9 @@ func (n *Notifier) auth() smtp.Auth {
 func (n *Notifier) callExecutionWebhook() error {
 	out := n.buildTemplate(n.Config.WebhookPayload)
 	req, err := http.NewRequest("POST", n.Config.WebhookURL, out)
+	if err != nil {
+		return err
+	}
 	for _, h := range n.Config.WebhookHeaders {
 		if h != "" {
 			kv := strings.Split(h, ":")

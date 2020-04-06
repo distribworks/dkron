@@ -22,9 +22,7 @@ func (*HCLogAdapter) Log(level hclog.Level, msg string, args ...interface{}) {
 
 // Trace HCLog has one more level than we do. As such, we will never
 // set trace level.
-func (*HCLogAdapter) Trace(_ string, _ ...interface{}) {
-	return
-}
+func (*HCLogAdapter) Trace(_ string, _ ...interface{}) {}
 
 // Debug logging level message
 func (a *HCLogAdapter) Debug(msg string, args ...interface{}) {
@@ -130,11 +128,7 @@ func (a *HCLogAdapter) StandardLogger(opts *hclog.StandardLoggerOptions) *golog.
 
 func (a *HCLogAdapter) shouldEmit(level logrus.Level) bool {
 	currentLevel := a.Logger.WithFields(logrus.Fields{}).Level
-	if currentLevel >= level {
-		return true
-	}
-
-	return false
+	return currentLevel >= level
 }
 
 // CreateEntry creates a new logrus entry
@@ -145,9 +139,7 @@ func (a *HCLogAdapter) CreateEntry(args []interface{}) *logrus.Entry {
 
 	fields := make(logrus.Fields)
 	for i := 0; i < len(args); i = i + 2 {
-		k, ok := args[i].(string)
-		if !ok {
-		}
+		k := args[i].(string)
 		v := args[i+1]
 		fields[k] = v
 	}
