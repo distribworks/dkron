@@ -18,6 +18,9 @@ import (
 const (
 	// MaxExecutions to maintain in the storage
 	MaxExecutions = 100
+
+	jobsPrefix       = "jobs"
+	executionsPrefix = "executions"
 )
 
 var (
@@ -52,8 +55,8 @@ func NewStore() (*Store, error) {
 	}
 
 	store := &Store{
-		db:    db,
-		lock:  &sync.Mutex{},
+		db:   db,
+		lock: &sync.Mutex{},
 	}
 
 	return store, nil
@@ -61,7 +64,7 @@ func NewStore() (*Store, error) {
 
 func (s *Store) setJobTxFunc(pbj *dkronpb.Job) func(tx *buntdb.Tx) error {
 	return func(tx *buntdb.Tx) error {
-		jobKey := fmt.Sprintf("jobs:%s", pbj.Name)
+		jobKey := fmt.Sprintf("%s:%s", jobsPrefix, pbj.Name)
 
 		jb, err := proto.Marshal(pbj)
 		if err != nil {
@@ -219,7 +222,7 @@ func (s *Store) SetExecutionDone(execution *Execution) (bool, error) {
 			return err
 		}
 
-		key := fmt.Sprintf("executions/%s/%s", execution.JobName, execution.Key())
+		key := fmt.Sprintf("%s:%s:%s", executionsPrefix, execution.JobName, execution.Key())
 
 		// Save the execution to store
 		pbe := execution.ToProto()
@@ -275,10 +278,9 @@ func (s *Store) jobHasMetadata(job *Job, metadata map[string]string) bool {
 func (s *Store) GetJobs(options *JobOptions) ([]*Job, error) {
 	jobs := make([]*Job, 0)
 
-	prefix := "jobs:"
 	err := s.db.View(func(tx *buntdb.Tx) error {
 		err := tx.Ascend("", func(key, value string) bool {
-			if strings.HasPrefix(key, prefix) {
+			if strings.HasPrefix(key, jobsPrefix+":") {
 				var pbj dkronpb.Job
 				_ = proto.Unmarshal([]byte(value), &pbj)
 				job := NewJobFromProto(&pbj)
@@ -312,7 +314,7 @@ func (s *Store) GetJob(name string, options *JobOptions) (*Job, error) {
 // This will allow reuse this code to avoid nesting transactions
 func (s *Store) getJobTxFunc(name string, pbj *dkronpb.Job) func(tx *buntdb.Tx) error {
 	return func(tx *buntdb.Tx) error {
-		item, err := tx.Get("jobs:" + name)
+		item, err := tx.Get(fmt.Sprintf("%s:%s", jobsPrefix, name))
 		if err != nil {
 			return err
 		}
@@ -351,7 +353,7 @@ func (s *Store) DeleteJob(name string) (*Job, error) {
 			return err
 		}
 
-		_, err := tx.Delete("jobs:" + name)
+		_, err := tx.Delete(fmt.Sprintf("%s:%s", jobsPrefix, name))
 		return err
 	})
 	if err != nil {
@@ -370,7 +372,7 @@ func (s *Store) DeleteJob(name string) (*Job, error) {
 
 // GetExecutions returns the exections given a Job name.
 func (s *Store) GetExecutions(jobName string) ([]*Execution, error) {
-	prefix := fmt.Sprintf("executions/%s/", jobName)
+	prefix := fmt.Sprintf("%s:%s:", executionsPrefix, jobName)
 
 	kvs, err := s.list(prefix, true)
 	if err != nil {
@@ -494,7 +496,7 @@ func (*Store) setExecutionTxFunc(key string, pbe *dkronpb.Execution) func(tx *bu
 // SetExecution Save a new execution and returns the key of the new saved item or an error.
 func (s *Store) SetExecution(execution *Execution) (string, error) {
 	pbe := execution.ToProto()
-	key := fmt.Sprintf("executions/%s/%s", execution.JobName, execution.Key())
+	key := fmt.Sprintf("%s:%s:%s", executionsPrefix, execution.JobName, execution.Key())
 
 	log.WithFields(logrus.Fields{
 		"job":       execution.JobName,
@@ -532,7 +534,7 @@ func (s *Store) SetExecution(execution *Execution) (string, error) {
 				"execution": execs[i].Key(),
 			}).Debug("store: to detele key")
 			err = s.db.Update(func(tx *buntdb.Tx) error {
-				k := fmt.Sprintf("executions/%s/%s", execs[i].JobName, execs[i].Key())
+				k := fmt.Sprintf("%s:%s:%s", executionsPrefix, execs[i].JobName, execs[i].Key())
 				_, err := tx.Delete(k)
 				return err
 			})
@@ -551,7 +553,7 @@ func (s *Store) SetExecution(execution *Execution) (string, error) {
 func (s *Store) deleteExecutionsTxFunc(jobName string) func(tx *buntdb.Tx) error {
 	return func(tx *buntdb.Tx) error {
 		var delkeys []string
-		prefix := fmt.Sprintf("executions/%s", jobName)
+		prefix := fmt.Sprintf("%s:%s", executionsPrefix, jobName)
 		tx.Ascend("", func(key, value string) bool {
 			if strings.HasPrefix(key, prefix) {
 				delkeys = append(delkeys, key)
@@ -577,7 +579,7 @@ func (s *Store) Snapshot(w io.WriteCloser) error {
 	return s.db.Save(w)
 }
 
-// Restore load data created with backup in to Bunt	
+// Restore load data created with backup in to Bunt
 func (s *Store) Restore(r io.ReadCloser) error {
 	return s.db.Load(r)
 }
@@ -601,7 +603,7 @@ func (s *Store) computeStatus(jobName string, exGroup int64, tx *buntdb.Tx) (str
 	// compute job status based on execution group
 	kvs := []kv{}
 	found := false
-	prefix := fmt.Sprintf("executions/%s/", jobName)
+	prefix := fmt.Sprintf("%s:%s:", executionsPrefix, jobName)
 
 	if err := s.listTxFunc(prefix, &kvs, &found)(tx); err != nil {
 		return "", err
@@ -656,5 +658,5 @@ func trimDirectoryKey(key []byte) []byte {
 }
 
 func isDirectoryKey(key []byte) bool {
-	return len(key) > 0 && key[len(key)-1] == '/'
+	return len(key) > 0 && key[len(key)-1] == ':'
 }
