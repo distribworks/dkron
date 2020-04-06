@@ -76,6 +76,7 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 		return err
 	}
 
+	// Send the first update with the initial execution state to be stored in the server
 	if err := stream.Send(&proto.AgentRunStream{
 		Execution: execution.ToProto(),
 	}); err != nil {
