@@ -6,52 +6,54 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.1.1] - 2020-03-20
+
 ### Fixes
 
-- fix: Graceful shutdown (#690) @andreygolev
-- fix: Fixes crash when plugin configuration is not defined in a job (#689) @andreygolev
-- fix: Defer panic fix in ExecutionDone gRPC call (#691) @andreygolev
+- Graceful shutdown (#690) @andreygolev
+- Fixes crash when plugin configuration is not defined in a job (#689) @andreygolev
+- Defer panic fix in ExecutionDone gRPC call (#691) @andreygolev
 
 ### Changes
 
-- chore: Default config will start and bootstrap a server
-- feat: isLeader handler added (#695)
+- Default config will start and bootstrap a server
+- isLeader handler added (#695)
 - Compile with go 1.14
 - Execution load balancing (#692) @andreygolev
 - Update Bootstrap and JQuery (#700)
-- chore: Upgrade all dependencies (#703)
+- Upgrade all dependencies (#703)
 
 ### Breaking Changes
 
-- refactor: Decrease plugin size by 75%, refactored plugin coding interface could affect new plugins development and require adaptations for existing plugin. (#696)
-- refactor: Use BuntDB for local storage, fixes [#687](https://github.com/distribworks/dkron/issues/687), require rolling upgrade. (#702) @andreygolev
+- Decrease plugin size by 75%, refactored plugin coding interface could affect new plugins development and require adaptations for existing plugin. (#696)
+- Use BuntDB for local storage, fixes [#687](https://github.com/distribworks/dkron/issues/687), require rolling upgrade. (#702) @andreygolev
 
 ## [2.0.6] - 2020-02-14
 
 ### Fixes
 
-- fix: Memory consumption on startup (#682)
+- Memory consumption on startup (#682)
 
 ## [2.0.5] - 2020-02-12
 
 ### Fixes
 
-- fix: Set the agent on dependent run (#675)
-- fix: Return the correct status code on leader endpoint (#671)
+- Set the agent on dependent run (#675)
+- Return the correct status code on leader endpoint (#671)
 
 ### Changes
 
-- refactor: Check for missing agent (#675)
-- docs: Add code comment (#675)
+- Check for missing agent (#675)
+- Add code comment (#675)
 
 ## [2.0.4] - 2020-01-31
 
-- refactor: Remove dependency of the agent in store and reduce usage in Job (#669)
-- chore: Upgrade gin (#669)
-- chore: Add helper methods (#669)
-- refactor: Move directory creation to the Store instantiation (#669)
-- feat: Accept middlewares for API routes (#669)
-- doc: ACL
+- Remove dependency of the agent in store and reduce usage in Job (#669)
+- Upgrade gin (#669)
+- Add helper methods (#669)
+- Move directory creation to the Store instantiation (#669)
+- Accept middlewares for API routes (#669)
+- ACL docs
 
 ## [2.0.3] - 2020-01-04
 
