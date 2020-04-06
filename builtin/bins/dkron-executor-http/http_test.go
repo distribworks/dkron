@@ -19,7 +19,7 @@ func TestExecute(t *testing.T) {
 		},
 	}
 	http := &HTTP{}
-	output, err := http.Execute(pa)
+	output, err := http.Execute(pa, nil)
 	fmt.Println(string(output.Output))
 	fmt.Println(err)
 	if err != nil {
@@ -41,7 +41,7 @@ func TestExecutePost(t *testing.T) {
 		},
 	}
 	http := &HTTP{}
-	output, err := http.Execute(pa)
+	output, err := http.Execute(pa, nil)
 	fmt.Println(string(output.Output))
 	fmt.Println(err)
 	if err != nil {
@@ -62,7 +62,7 @@ func TestNoVerifyPeer(t *testing.T) {
 		},
 	}
 	http := &HTTP{}
-	output, _ := http.Execute(pa)
+	output, _ := http.Execute(pa, nil)
 	fmt.Println(string(output.Output))
 	fmt.Println(output.Error)
 	assert.Equal(t, "", output.Error)
@@ -82,7 +82,7 @@ func TestClientSSLCert(t *testing.T) {
 		},
 	}
 	http := &HTTP{}
-	output, _ := http.Execute(pa)
+	output, _ := http.Execute(pa, nil)
 	fmt.Println(string(output.Output))
 	fmt.Println(output.Error)
 	assert.Equal(t, "", output.Error)
@@ -101,7 +101,7 @@ func TestRootCA(t *testing.T) {
 		},
 	}
 	http := &HTTP{}
-	output, _ := http.Execute(pa)
+	output, _ := http.Execute(pa, nil)
 	fmt.Println(string(output.Output))
 	fmt.Println(output.Error)
 	assert.Equal(t, "", output.Error)
