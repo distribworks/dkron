@@ -375,7 +375,9 @@ func (grpcs *GRPCServer) AgentRun(stream proto.Dkron_AgentRunServer) error {
 			if err := grpcs.agent.GRPCClient.ExecutionDone(string(addr), execution); err != nil {
 				return err
 			}
-			return stream.SendAndClose(&proto.AgentRunResponse{})
+			return stream.SendAndClose(&proto.AgentRunResponse{
+				From: grpcs.agent.Config().NodeName,
+			})
 		}
 
 		// Error receiving from stream
