@@ -11,7 +11,7 @@ require (
 	github.com/gogo/protobuf v1.3.1 // indirect
 	github.com/golang/protobuf v1.3.5
 	github.com/hashicorp/go-discover v0.0.0-20200108194735-7698de1390a1
-	github.com/hashicorp/go-hclog v0.12.1
+	github.com/hashicorp/go-hclog v0.12.2
 	github.com/hashicorp/go-immutable-radix v1.1.0 // indirect
 	github.com/hashicorp/go-plugin v1.2.0
 	github.com/hashicorp/go-sockaddr v1.0.2
