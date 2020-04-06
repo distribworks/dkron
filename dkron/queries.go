@@ -43,11 +43,6 @@ func (a *Agent) RunQuery(jobName string, ex *Execution) (*Job, error) {
 			return nil, fmt.Errorf("agent: RunQuery error retrieving job: %s from scheduler", jobName)
 		}
 	}
-	job.Status = StatusRunning
-
-	if err := a.applySetJob(job.ToProto()); err != nil {
-		return nil, fmt.Errorf("agent: RunQuery error storing job %s before running: %w", jobName, err)
-	}
 
 	// In the first execution attempt we build and filter the target nodes
 	// but we use the existing node target in case of retry.
@@ -124,8 +119,8 @@ func (a *Agent) RunQuery(jobName string, ex *Execution) (*Job, error) {
 					"response": string(resp.Payload),
 				}).Debug("agent: Received response")
 
-				// Save execution to store
-				a.setExecution(resp.Payload)
+				// Set the job status to unknown at this point
+				job.Status = StatusNotSet
 			}
 		}
 	}
@@ -134,53 +129,9 @@ func (a *Agent) RunQuery(jobName string, ex *Execution) (*Job, error) {
 		"query": QueryRunJob,
 	}).Debug("agent: Done receiving acks and responses")
 
+	if err := a.applySetJob(job.ToProto()); err != nil {
+		return nil, fmt.Errorf("agent: RunQuery error storing job %s before running: %w", jobName, err)
+	}
+
 	return job, nil
-}
-
-// Broadcast a ExecutionDone to the cluster.
-func (a *Agent) executionDoneQuery(nodes []string, group string) map[string]string {
-	params := &serf.QueryParam{
-		FilterNodes: nodes,
-		RequestAck:  true,
-	}
-
-	log.WithFields(logrus.Fields{
-		"query":   QueryExecutionDone,
-		"members": nodes,
-	}).Info("agent: Sending query")
-
-	qr, err := a.serf.Query(QueryExecutionDone, []byte(group), params)
-	if err != nil {
-		log.WithError(err).Fatal("agent: Error sending the execution done query")
-	}
-	defer qr.Close()
-
-	statuses := make(map[string]string)
-	ackCh := qr.AckCh()
-	respCh := qr.ResponseCh()
-
-	for !qr.Finished() {
-		select {
-		case ack, ok := <-ackCh:
-			if ok {
-				log.WithFields(logrus.Fields{
-					"from": ack,
-				}).Debug("agent: Received ack")
-			}
-		case resp, ok := <-respCh:
-			if ok {
-				log.WithFields(logrus.Fields{
-					"from":    resp.From,
-					"payload": string(resp.Payload),
-				}).Debug("agent: Received response")
-
-				statuses[resp.From] = string(resp.Payload)
-			}
-		}
-	}
-	log.WithField("query", QueryExecutionDone).Debug("agent: Done receiving acks and responses")
-
-	// In case the query finishes by deadline without receiving a response from the node
-	// set the execution as finished, maybe the node is gone by now.
-	return statuses
 }

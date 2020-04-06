@@ -3,7 +3,6 @@ package dkron
 import (
 	"fmt"
 	"net"
-	"os"
 	"strconv"
 
 	version "github.com/hashicorp/go-version"
@@ -118,15 +117,4 @@ func isServer(m serf.Member) (bool, *ServerParts) {
 		Status:       m.Status,
 	}
 	return true, parts
-}
-
-func exists(path string) (bool, error) {
-	_, err := os.Stat(path)
-	if err == nil {
-		return true, nil
-	}
-	if os.IsNotExist(err) {
-		return false, nil
-	}
-	return true, err
 }

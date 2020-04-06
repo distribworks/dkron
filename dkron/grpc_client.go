@@ -24,6 +24,7 @@ type DkronGRPCClient interface {
 	RunJob(string) (*Job, error)
 	RaftGetConfiguration(string) (*proto.RaftGetConfigurationResponse, error)
 	RaftRemovePeerByID(string, string) error
+	GetActiveExecutions(string) ([]*proto.Execution, error)
 }
 
 // GRPCClient is the local implementation of the DkronGRPCClient interface.
@@ -315,4 +316,33 @@ func (grpcc *GRPCClient) RaftRemovePeerByID(addr, peerID string) error {
 	}
 
 	return nil
+}
+
+// GetActiveExecutions returns the active executions of a server node
+func (grpcc *GRPCClient) GetActiveExecutions(addr string) ([]*proto.Execution, error) {
+	var conn *grpc.ClientConn
+
+	// Initiate a connection with the server
+	conn, err := grpcc.Connect(addr)
+	if err != nil {
+		log.WithError(err).WithFields(logrus.Fields{
+			"method":      "GetActiveExecutions",
+			"server_addr": addr,
+		}).Error("grpc: error dialing.")
+		return nil, err
+	}
+	defer conn.Close()
+
+	// Synchronous call
+	d := proto.NewDkronClient(conn)
+	gaer, err := d.GetActiveExecutions(context.Background(), &empty.Empty{})
+	if err != nil {
+		log.WithError(err).WithFields(logrus.Fields{
+			"method":      "GetActiveExecutions",
+			"server_addr": addr,
+		}).Error("grpc: Error calling gRPC method")
+		return nil, err
+	}
+
+	return gaer.Executions, nil
 }

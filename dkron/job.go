@@ -232,7 +232,7 @@ func (j *Job) Run() {
 		log.WithFields(logrus.Fields{
 			"job":      j.Name,
 			"schedule": j.Schedule,
-		}).Debug("scheduler: Run job")
+		}).Debug("job: Run job")
 
 		cronInspect.Set(j.Name, j)
 
@@ -247,42 +247,6 @@ func (j *Job) Run() {
 // Friendly format a job
 func (j *Job) String() string {
 	return fmt.Sprintf("\"Job: %s, scheduled at: %s, tags:%v\"", j.Name, j.Schedule, j.Tags)
-}
-
-// GetStatus returns the status of a job whether it's running, succeeded or failed
-func (j *Job) GetStatus() string {
-	// Maybe we are testing
-	if j.Agent == nil {
-		return StatusNotSet
-	}
-
-	execs, _ := j.Agent.Store.GetLastExecutionGroup(j.Name)
-	success := 0
-	failed := 0
-	for _, ex := range execs {
-		if ex.FinishedAt.IsZero() {
-			return StatusRunning
-		}
-	}
-
-	var status string
-	for _, ex := range execs {
-		if ex.Success {
-			success = success + 1
-		} else {
-			failed = failed + 1
-		}
-	}
-
-	if failed == 0 {
-		status = StatusSuccess
-	} else if failed > 0 && success == 0 {
-		status = StatusFailed
-	} else if failed > 0 && success > 0 {
-		status = StatusPartialyFailed
-	}
-
-	return status
 }
 
 // GetParent returns the parent job of a job
@@ -321,7 +285,7 @@ func (j *Job) GetNext() (time.Time, error) {
 }
 
 func (j *Job) isRunnable() bool {
-	if j.Disabled == true {
+	if j.Disabled {
 		return false
 	}
 
@@ -332,17 +296,22 @@ func (j *Job) isRunnable() bool {
 	}
 
 	if j.Concurrency == ConcurrencyForbid {
-		j.Agent.RefreshJobStatus(j.Name)
-		j.Status = j.GetStatus()
-	}
+		exs, err := j.Agent.GetActiveExecutions()
+		if err != nil {
+			log.WithError(err).Error("job: Error quering for running executions")
+			return false
+		}
 
-	if j.Status == StatusRunning && j.Concurrency == ConcurrencyForbid {
-		log.WithFields(logrus.Fields{
-			"job":         j.Name,
-			"concurrency": j.Concurrency,
-			"job_status":  j.Status,
-		}).Info("job: Skipping concurrent execution")
-		return false
+		for _, e := range exs {
+			if e.JobName == j.Name {
+				log.WithFields(logrus.Fields{
+					"job":         j.Name,
+					"concurrency": j.Concurrency,
+					"job_status":  j.Status,
+				}).Info("job: Skipping concurrent execution")
+				return false
+			}
+		}
 	}
 
 	if j.running {

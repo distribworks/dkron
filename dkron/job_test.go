@@ -2,11 +2,14 @@ package dkron
 
 import (
 	"testing"
+	"time"
 
 	"github.com/distribworks/dkron/v2/plugin"
 	proto "github.com/distribworks/dkron/v2/plugin/types"
+	"github.com/hashicorp/serf/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"google.golang.org/grpc"
 )
 
 func TestJobGetParent(t *testing.T) {
@@ -99,12 +102,20 @@ func TestToProto(t *testing.T) {
 }
 
 func Test_isRunnable(t *testing.T) {
-	s, err := NewStore()
-	a := &Agent{
-		Store: s,
-	}
-	defer s.Shutdown()
-	require.NoError(t, err)
+	ip1, returnFn1 := testutil.TakeIP()
+	defer returnFn1()
+
+	c := DefaultConfig()
+	c.BindAddr = ip1.String()
+	c.NodeName = "test1"
+	c.Server = true
+	c.LogLevel = logLevel
+	c.DevMode = true
+
+	a := NewAgent(c)
+	a.GRPCClient = &gRPCClientMock{}
+	a.Start()
+	time.Sleep(2 * time.Second)
 
 	testCases := []struct {
 		name string
@@ -114,34 +125,26 @@ func Test_isRunnable(t *testing.T) {
 		{
 			name: "global lock",
 			job: &Job{
+				Name: "test_job",
 				Agent: &Agent{
 					GlobalLock: true,
-					Store:      s,
 				},
 			},
 			want: false,
 		},
-		// {
-		// 	name: "running forbid",
-		// 	job: &Job{
-		// 		Agent:       a,
-		// 		Status:      StatusRunning,
-		// 		Concurrency: ConcurrencyForbid,
-		// 	},
-		// 	want: false,
-		// },
-		// {
-		// 	name: "success forbid",
-		// 	job: &Job{
-		// 		Agent:       a,
-		// 		Status:      StatusRunning,
-		// 		Concurrency: ConcurrencyForbid,
-		// 	},
-		// 	want: false,
-		// },
+		{
+			name: "running forbid",
+			job: &Job{
+				Name:        "test_job",
+				Agent:       a,
+				Concurrency: ConcurrencyForbid,
+			},
+			want: false,
+		},
 		{
 			name: "running true",
 			job: &Job{
+				Name:    "test_job",
 				Agent:   a,
 				running: true,
 			},
@@ -150,6 +153,7 @@ func Test_isRunnable(t *testing.T) {
 		{
 			name: "should run",
 			job: &Job{
+				Name:  "test_job",
 				Agent: a,
 			},
 			want: true,
@@ -161,4 +165,27 @@ func Test_isRunnable(t *testing.T) {
 			assert.Equal(t, tt.want, tt.job.isRunnable())
 		})
 	}
+}
+
+type gRPCClientMock struct {
+}
+
+func (gRPCClientMock) Connect(s string) (*grpc.ClientConn, error) { return nil, nil }
+func (gRPCClientMock) ExecutionDone(s string, e *Execution) error { return nil }
+func (gRPCClientMock) GetJob(s string, a string) (*Job, error)    { return nil, nil }
+func (gRPCClientMock) SetJob(j *Job) error                        { return nil }
+func (gRPCClientMock) DeleteJob(s string) (*Job, error)           { return nil, nil }
+func (gRPCClientMock) Leave(s string) error                       { return nil }
+func (gRPCClientMock) RunJob(s string) (*Job, error)              { return nil, nil }
+func (gRPCClientMock) RaftGetConfiguration(s string) (*proto.RaftGetConfigurationResponse, error) {
+	return nil, nil
+}
+func (gRPCClientMock) RaftRemovePeerByID(s string, a string) error { return nil }
+
+func (gRPCClientMock) GetActiveExecutions(s string) ([]*proto.Execution, error) {
+	return []*proto.Execution{
+		&proto.Execution{
+			JobName: "test_job",
+		},
+	}, nil
 }
