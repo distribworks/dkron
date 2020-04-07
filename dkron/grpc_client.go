@@ -25,6 +25,7 @@ type DkronGRPCClient interface {
 	RaftGetConfiguration(string) (*proto.RaftGetConfigurationResponse, error)
 	RaftRemovePeerByID(string, string) error
 	GetActiveExecutions(string) ([]*proto.Execution, error)
+	SetExecution(execution *proto.Execution) error
 }
 
 // GRPCClient is the local implementation of the DkronGRPCClient interface.
@@ -77,7 +78,7 @@ func (grpcc *GRPCClient) ExecutionDone(addr string, execution *Execution) error 
 	edr, err := d.ExecutionDone(context.Background(), &proto.ExecutionDoneRequest{Execution: execution.ToProto()})
 	if err != nil {
 		if err.Error() == fmt.Sprintf("rpc error: code = Unknown desc = %s", ErrNotLeader.Error()) {
-			log.Info("grpc: ExecutionDone forwarded to the leader")
+			log.Info("grpc: ExecutionDone forwarded to the leader") //TODO
 			conn.Close()
 			return nil
 		}
@@ -346,4 +347,34 @@ func (grpcc *GRPCClient) GetActiveExecutions(addr string) ([]*proto.Execution, e
 	}
 
 	return gaer.Executions, nil
+}
+
+// SetExecution calls the leader passing the execution
+func (grpcc *GRPCClient) SetExecution(execution *proto.Execution) error {
+	var conn *grpc.ClientConn
+
+	addr := grpcc.agent.raft.Leader()
+
+	// Initiate a connection with the server
+	conn, err := grpcc.Connect(string(addr))
+	if err != nil {
+		log.WithError(err).WithFields(logrus.Fields{
+			"method":      "SetExecution",
+			"server_addr": addr,
+		}).Error("grpc: error dialing.")
+		return err
+	}
+	defer conn.Close()
+
+	// Synchronous call
+	d := proto.NewDkronClient(conn)
+	_, err = d.SetExecution(context.Background(), execution)
+	if err != nil {
+		log.WithError(err).WithFields(logrus.Fields{
+			"method":      "SetExecution",
+			"server_addr": addr,
+		}).Error("grpc: Error calling gRPC method")
+		return err
+	}
+	return nil
 }

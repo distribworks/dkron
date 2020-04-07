@@ -294,7 +294,7 @@ func (h *HTTPTransport) jobToggleHandler(c *gin.Context) {
 }
 
 func (h *HTTPTransport) busyHandler(c *gin.Context) {
-	var executions []*Execution
+	executions := []*Execution{}
 
 	exs, err := h.agent.GetActiveExecutions()
 	if err != nil {

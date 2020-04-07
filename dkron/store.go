@@ -622,11 +622,6 @@ func (s *Store) computeStatus(jobName string, exGroup int64, tx *buntdb.Tx) (str
 
 	success := 0
 	failed := 0
-	for _, ex := range executions {
-		if ex.FinishedAt.IsZero() {
-			return StatusRunning, nil
-		}
-	}
 
 	var status string
 	for _, ex := range executions {

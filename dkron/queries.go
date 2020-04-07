@@ -35,10 +35,13 @@ func (a *Agent) RunQuery(jobName string, ex *Execution) (*Job, error) {
 		return nil, fmt.Errorf("agent: RunQuery error retrieving job: %s from store: %w", jobName, err)
 	}
 
-	// In case the job is not a child job
+	// In case the job is not a child job, compute the next execution time
 	if job.ParentJob == "" {
 		if e, ok := a.sched.GetEntry(jobName); ok {
 			job.Next = e.Next
+			if err := a.applySetJob(job.ToProto()); err != nil {
+				return nil, fmt.Errorf("agent: RunQuery error storing job %s before running: %w", jobName, err)
+			}
 		} else {
 			return nil, fmt.Errorf("agent: RunQuery error retrieving job: %s from scheduler", jobName)
 		}
@@ -118,9 +121,6 @@ func (a *Agent) RunQuery(jobName string, ex *Execution) (*Job, error) {
 					"from":     resp.From,
 					"response": string(resp.Payload),
 				}).Debug("agent: Received response")
-
-				// Set the job status to unknown at this point
-				job.Status = StatusNotSet
 			}
 		}
 	}
@@ -128,10 +128,6 @@ func (a *Agent) RunQuery(jobName string, ex *Execution) (*Job, error) {
 		"time":  time.Since(start),
 		"query": QueryRunJob,
 	}).Debug("agent: Done receiving acks and responses")
-
-	if err := a.applySetJob(job.ToProto()); err != nil {
-		return nil, fmt.Errorf("agent: RunQuery error storing job %s before running: %w", jobName, err)
-	}
 
 	return job, nil
 }

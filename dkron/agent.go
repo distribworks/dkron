@@ -766,21 +766,6 @@ func (a *Agent) processFilteredNodes(job *Job) ([]string, map[string]string, err
 	return nodes, tags, nil
 }
 
-func (a *Agent) setExecution(execution *proto.Execution) error {
-	cmd, err := Encode(SetExecutionType, execution)
-	if err != nil {
-		log.WithError(err).Fatal("agent: encode error in setExecution")
-		return nil
-	}
-	af := a.raft.Apply(cmd, raftTimeout)
-	if err := af.Error(); err != nil {
-		log.WithError(err).Fatal("agent: error applying SetExecutionType")
-		return nil
-	}
-
-	return nil
-}
-
 // This function is called when a client request the RPCAddress
 // of the current member.
 // in marathon, it would return the host's IP and advertise RPC port
