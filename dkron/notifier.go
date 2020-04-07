@@ -105,7 +105,7 @@ func (n *Notifier) sendExecutionEmail() error {
 	if n.Config.MailPayload != "" {
 		data = n.buildTemplate(n.Config.MailPayload)
 	} else {
-		data = bytes.NewBuffer(n.Execution.Output)
+		data = bytes.NewBuffer([]byte(n.Execution.Output))
 	}
 	e := &email.Email{
 		To:      []string{n.Job.OwnerEmail},

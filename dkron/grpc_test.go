@@ -71,7 +71,7 @@ func TestGRPCExecutionDone(t *testing.T) {
 		NodeName:   "testNode",
 		FinishedAt: time.Now(),
 		Success:    true,
-		Output:     []byte("type"),
+		Output:     "test",
 	}
 
 	rc := NewGRPCClient(nil, a)
