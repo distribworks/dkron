@@ -24,7 +24,7 @@ type Execution struct {
 	Success bool `json:"success"`
 
 	// Partial output of the execution.
-	Output []byte `json:"output,omitempty"`
+	Output string `json:"output,omitempty"`
 
 	// Node name of the node that run this execution.
 	NodeName string `json:"node_name,omitempty"`
@@ -52,7 +52,7 @@ func NewExecutionFromProto(e *proto.Execution) *Execution {
 	return &Execution{
 		JobName:    e.JobName,
 		Success:    e.Success,
-		Output:     e.Output,
+		Output:     string(e.Output),
 		NodeName:   e.NodeName,
 		Group:      e.Group,
 		Attempt:    uint(e.Attempt),
@@ -69,7 +69,7 @@ func (e *Execution) ToProto() *proto.Execution {
 	return &proto.Execution{
 		JobName:    e.JobName,
 		Success:    e.Success,
-		Output:     e.Output,
+		Output:     []byte(e.Output),
 		NodeName:   e.NodeName,
 		Group:      e.Group,
 		Attempt:    uint32(e.Attempt),

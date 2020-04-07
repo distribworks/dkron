@@ -18,12 +18,12 @@
         headers:
           Content-Type: "application/json"
         body: '{"name": "10-min-shell-success",
-          "schedule": "0 10 0 * * *",
+          "schedule": "0 */10 0 * * *",
           "owner": "Dkron test",
           "disabled": false,
           "concurrency": "allow",
           "tags": {
-            "role": "dkron:1"
+            "role": "dkron"
           },
           "executor": "shell",
           "executor_config": {
@@ -40,7 +40,7 @@
         headers:
           Content-Type: "application/json"
         body: '{"name": "disabled-shell",
-          "schedule": "0 10 0 * * *",
+          "schedule": "0 */10 0 * * *",
           "owner": "Dkron test",
           "disabled": true,
           "concurrency": "allow",
@@ -67,7 +67,7 @@
           "disabled": false,
           "concurrency": "allow",
           "tags": {
-            "role": "dkron:1"
+            "role": "dkron"
           },
           "executor": "shell",
           "executor_config": {
@@ -155,7 +155,7 @@
           "disabled": false,
           "concurrency": "allow",
           "tags": {
-            "role": "dkron:1"
+            "role": "dkron"
           },
           "executor": "shell",
           "executor_config": {
@@ -164,24 +164,24 @@
         }'
         status_code: 201
 
-    - name: every-120s-concurrency-forbid-shell-success
+    - name: every-60s-concurrency-forbid-shell-success
       run_once: true
       uri:
         url: http://localhost:8080/v1/jobs
         method: POST
         headers:
           Content-Type: "application/json"
-        body: '{"name": "every-120-concurrency-forbid-shell-success",
-          "schedule": "@every 120s",
+        body: '{"name": "every-60-concurrency-forbid-shell-success",
+          "schedule": "@every 60s",
           "owner": "Dkron test",
           "disabled": false,
           "concurrency": "forbid",
           "tags": {
-            "role": "dkron:1"
+            "role": "dkron"
           },
           "executor": "shell",
           "executor_config": {
-            "command": "echo \"every-120-concurrency-forbid-shell-success\" && sleep 125",
+            "command": "echo \"every-60-concurrency-forbid-shell-success\" && sleep 65",
             "shell": "true"
           }
         }'
@@ -195,7 +195,7 @@
         headers:
           Content-Type: "application/json"
         body: '{"name": "child-concurrency-forbid-shell-success",
-          "parent_job": "every-120-concurrency-forbid-shell-success",
+          "parent_job": "every-60-concurrency-forbid-shell-success",
           "owner": "Dkron test",
           "disabled": false,
           "concurrency": "forbid",
@@ -246,7 +246,7 @@
           "disabled": false,
           "concurrency": "allow",
           "tags": {
-            "role": "dkron:1"
+            "role": "dkron"
           },
           "executor": "http",
           "executor_config": {

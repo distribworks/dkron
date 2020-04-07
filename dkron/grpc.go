@@ -203,7 +203,7 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.E
 
 		// Keep all execution properties intact except the last output
 		// as it could exceed serf query limits.
-		execution.Output = []byte{}
+		execution.Output = ""
 
 		log.WithFields(logrus.Fields{
 			"attempt":   execution.Attempt,
@@ -357,7 +357,7 @@ REMOVE:
 	}
 
 	log.WithField("peer", in.Id).Warn("removed Raft peer")
-	return nil, nil
+	return new(empty.Empty), nil
 }
 
 // AgentRun is called when an agent starts running a job and lasts all execution,
@@ -393,18 +393,20 @@ func (grpcs *GRPCServer) AgentRun(stream proto.Dkron_AgentRunServer) error {
 			return err
 		}
 
-		// Store the received exeuction in the raft log and store
-		if !first {
-			_ = grpcs.agent.setExecution(ars.Execution)
-			first = true
-		}
-
 		// Registers an active stream
 		grpcs.activeExecutions.Store(ars.Execution.Key(), ars.Execution)
 		log.WithField("key", ars.Execution.Key()).Debug("grpc: received execution stream")
 
 		execution = NewExecutionFromProto(ars.Execution)
 		defer grpcs.activeExecutions.Delete(execution.Key())
+
+		// Store the received exeuction in the raft log and store
+		if !first {
+			if err := grpcs.agent.GRPCClient.SetExecution(ars.Execution); err != nil {
+				return err
+			}
+			first = true
+		}
 	}
 }
 
@@ -422,4 +424,26 @@ func (grpcs *GRPCServer) GetActiveExecutions(ctx context.Context, in *empty.Empt
 	return &proto.GetActiveExecutionsResponse{
 		Executions: executions,
 	}, nil
+}
+
+// SetExecution broadcast a state change to the cluster members that will store the execution.
+// This only works on the leader
+func (grpcs *GRPCServer) SetExecution(ctx context.Context, execution *proto.Execution) (*empty.Empty, error) {
+	defer metrics.MeasureSince([]string{"grpc", "set_execution"}, time.Now())
+	log.WithFields(logrus.Fields{
+		"execution": execution.Key(),
+	}).Debug("grpc: Received SetExecution")
+
+	cmd, err := Encode(SetExecutionType, execution)
+	if err != nil {
+		log.WithError(err).Fatal("agent: encode error in SetExecution")
+		return nil, err
+	}
+	af := grpcs.agent.raft.Apply(cmd, raftTimeout)
+	if err := af.Error(); err != nil {
+		log.WithError(err).Fatal("agent: error applying SetExecutionType")
+		return nil, err
+	}
+
+	return new(empty.Empty), nil
 }

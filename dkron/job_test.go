@@ -56,7 +56,7 @@ func TestJobGetParent(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, "", dtj.ParentJob)
 
-	ptj, err = dtj.GetParent(s)
+	_, err = dtj.GetParent(s)
 	assert.EqualError(t, ErrNoParent, err.Error())
 
 	ptj, err = s.GetJob(parentTestJob.Name, nil)
@@ -181,7 +181,6 @@ func (gRPCClientMock) RaftGetConfiguration(s string) (*proto.RaftGetConfiguratio
 	return nil, nil
 }
 func (gRPCClientMock) RaftRemovePeerByID(s string, a string) error { return nil }
-
 func (gRPCClientMock) GetActiveExecutions(s string) ([]*proto.Execution, error) {
 	return []*proto.Execution{
 		&proto.Execution{
@@ -189,3 +188,4 @@ func (gRPCClientMock) GetActiveExecutions(s string) ([]*proto.Execution, error) 
 		},
 	}, nil
 }
+func (gRPCClientMock) SetExecution(execution *proto.Execution) error { return nil }

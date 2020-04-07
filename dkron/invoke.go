@@ -13,8 +13,6 @@ import (
 
 const (
 	// maxBufSize limits how much data we collect from a handler.
-	// This is to prevent Serf's memory from growing to an enormous
-	// amount due to a faulty handler.
 	maxBufSize = 256000
 )
 
@@ -27,7 +25,7 @@ type statusHelper struct {
 }
 
 func (s *statusHelper) Update(b []byte, c bool) (int64, error) {
-	s.execution.Output = b
+	s.execution.Output = string(b)
 	// Send partial execution
 	if err := s.stream.Send(&types.AgentRunStream{
 		Execution: s.execution.ToProto(),
@@ -114,7 +112,7 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 
 	execution.FinishedAt = time.Now()
 	execution.Success = success
-	execution.Output = output.Bytes()
+	execution.Output = output.String()
 
 	runningExecutions.Delete(execution.GetGroup())
 

@@ -53,7 +53,7 @@ func TestStore(t *testing.T) {
 		StartedAt:  time.Now().UTC(),
 		FinishedAt: time.Now().UTC(),
 		Success:    true,
-		Output:     []byte("type"),
+		Output:     "test",
 		NodeName:   "testNode",
 	}
 
@@ -65,7 +65,7 @@ func TestStore(t *testing.T) {
 		StartedAt:  time.Now().UTC(),
 		FinishedAt: time.Now().UTC(),
 		Success:    true,
-		Output:     []byte("type"),
+		Output:     "test",
 		NodeName:   "testNode",
 	}
 	_, err = s.SetExecution(testExecution2)
@@ -211,7 +211,7 @@ func TestStore_GetLastExecutionGroup(t *testing.T) {
 		StartedAt:  earlyTime,
 		FinishedAt: earlyTime,
 		Success:    true,
-		Output:     []byte("type"),
+		Output:     "test",
 		NodeName:   "testNode1",
 		Group:      1,
 	}
@@ -220,7 +220,7 @@ func TestStore_GetLastExecutionGroup(t *testing.T) {
 		StartedAt:  middleTime,
 		FinishedAt: middleTime,
 		Success:    true,
-		Output:     []byte("type"),
+		Output:     "test",
 		NodeName:   "testNode1",
 		Group:      2,
 	}
@@ -229,7 +229,7 @@ func TestStore_GetLastExecutionGroup(t *testing.T) {
 		StartedAt:  middleTime,
 		FinishedAt: middleTime,
 		Success:    true,
-		Output:     []byte("type"),
+		Output:     "test",
 		NodeName:   "testNode1",
 		Group:      3,
 	}
@@ -238,7 +238,7 @@ func TestStore_GetLastExecutionGroup(t *testing.T) {
 		StartedAt:  middleTime,
 		FinishedAt: middleTime,
 		Success:    true,
-		Output:     []byte("type"),
+		Output:     "test",
 		NodeName:   "testNode2",
 		Group:      3,
 	}
@@ -247,7 +247,7 @@ func TestStore_GetLastExecutionGroup(t *testing.T) {
 		StartedAt:  lateTime,
 		FinishedAt: lateTime,
 		Success:    true,
-		Output:     []byte("type"),
+		Output:     "test",
 		NodeName:   "testNode1",
 		Group:      4,
 	}
@@ -256,7 +256,7 @@ func TestStore_GetLastExecutionGroup(t *testing.T) {
 		StartedAt:  lateTime,
 		FinishedAt: lateTime,
 		Success:    true,
-		Output:     []byte("type"),
+		Output:     "test",
 		NodeName:   "testNode2",
 		Group:      4,
 	}
@@ -346,7 +346,7 @@ func Test_computeStatus(t *testing.T) {
 		StartedAt:  n,
 		FinishedAt: n,
 		Success:    true,
-		Output:     []byte("type"),
+		Output:     "test",
 		NodeName:   "testNode1",
 		Group:      1,
 	}
@@ -357,7 +357,7 @@ func Test_computeStatus(t *testing.T) {
 		StartedAt:  n.Add(10 * time.Millisecond),
 		FinishedAt: n,
 		Success:    false,
-		Output:     []byte("type"),
+		Output:     "test",
 		NodeName:   "testNode2",
 		Group:      1,
 	}
@@ -368,7 +368,7 @@ func Test_computeStatus(t *testing.T) {
 		StartedAt:  n.Add(20 * time.Millisecond),
 		FinishedAt: n,
 		Success:    true,
-		Output:     []byte("type"),
+		Output:     "test",
 		NodeName:   "testNode1",
 		Group:      2,
 	}
@@ -379,7 +379,7 @@ func Test_computeStatus(t *testing.T) {
 		StartedAt:  n.Add(30 * time.Millisecond),
 		FinishedAt: n,
 		Success:    true,
-		Output:     []byte("type"),
+		Output:     "test",
 		NodeName:   "testNode1",
 		Group:      2,
 	}
@@ -389,7 +389,7 @@ func Test_computeStatus(t *testing.T) {
 		JobName:   "test",
 		StartedAt: n.Add(40 * time.Millisecond),
 		Success:   false,
-		Output:    []byte("type"),
+		Output:    "test",
 		NodeName:  "testNode1",
 		Group:     3,
 	}
@@ -398,7 +398,7 @@ func Test_computeStatus(t *testing.T) {
 	ex6 := &Execution{
 		JobName:  "test",
 		Success:  false,
-		Output:   []byte("type"),
+		Output:   "test",
 		NodeName: "testNode1",
 		Group:    4,
 	}
@@ -413,10 +413,10 @@ func Test_computeStatus(t *testing.T) {
 		assert.Equal(t, StatusSuccess, status)
 
 		status, _ = s.computeStatus("test", 3, tx)
-		assert.Equal(t, StatusRunning, status)
+		assert.Equal(t, StatusFailed, status)
 
 		status, _ = s.computeStatus("test", 4, tx)
-		assert.Equal(t, StatusRunning, status)
+		assert.Equal(t, StatusFailed, status)
 
 		return nil
 	})
