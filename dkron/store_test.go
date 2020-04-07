@@ -413,10 +413,10 @@ func Test_computeStatus(t *testing.T) {
 		assert.Equal(t, StatusSuccess, status)
 
 		status, _ = s.computeStatus("test", 3, tx)
-		assert.Equal(t, StatusRunning, status)
+		assert.Equal(t, StatusFailed, status)
 
 		status, _ = s.computeStatus("test", 4, tx)
-		assert.Equal(t, StatusRunning, status)
+		assert.Equal(t, StatusFailed, status)
 
 		return nil
 	})
