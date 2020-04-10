@@ -65,10 +65,7 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 	defer conn.Close()
 	client := types.NewDkronClient(conn)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	stream, err := client.AgentRun(ctx)
+	stream, err := client.AgentRun(context.Background())
 	if err != nil {
 		return err
 	}
