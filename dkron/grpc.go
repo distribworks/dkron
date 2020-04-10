@@ -24,12 +24,14 @@ import (
 var (
 	// ErrExecutionDoneForDeletedJob is returned when an execution done
 	// is received for a non existent job.
-	ErrExecutionDoneForDeletedJob = errors.New("rpc: Received execution done for a deleted job")
+	ErrExecutionDoneForDeletedJob = errors.New("grpc: Received execution done for a deleted job")
 	// ErrRPCDialing is returned on dialing fail.
-	ErrRPCDialing = errors.New("rpc: Error dialing, verify the network connection to the server")
+	ErrRPCDialing = errors.New("grpc: Error dialing, verify the network connection to the server")
 	// ErrNotLeader is the error returned when the operation need the node to be the leader,
 	// but the current node is not the leader.
-	ErrNotLeader = errors.New("Error, server is not leader, this operation should be run on the leader")
+	ErrNotLeader = errors.New("grpc: Error, server is not leader, this operation should be run on the leader")
+	// ErrBrokenStream is the error that indicates a sudden disconnection of the agent streaming an execution
+	ErrBrokenStream = errors.New("grpc: Error on execution streaming, agent connection was abruptly terminated")
 )
 
 // DkronGRPCServer defines the basics that a gRPC server should implement.
@@ -383,8 +385,11 @@ func (grpcs *GRPCServer) AgentRun(stream proto.Dkron_AgentRunServer) error {
 
 		// Error receiving from stream
 		if err != nil {
-			// At this point the execution is unknown
+			// At this point the execution status will be unknown, set the FinshedAt time and an explanatory message
 			execution.FinishedAt = time.Now()
+			execution.Output = ErrBrokenStream.Error()
+
+			log.WithError(err).Error(ErrBrokenStream)
 
 			addr := grpcs.agent.raft.Leader()
 			if err := grpcs.agent.GRPCClient.ExecutionDone(string(addr), execution); err != nil {
