@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changes
+
+- Bump dependencies
+- Change Execution output type from []byte -> string, this works as we need with Go's JSON Marshal
+
+### Breaking Changes
+
+- Streaming executions: Implement persistent gRPC connections from agents to server during executions, refactored plugins interface to provide ability to stream output to the server and implement the new `/busy` endpoint to display running executions. Also refactored the Job status compute, to simplify it by removing the `running` status, this could be computed by the user using the `/busy` endpoint. (#716, #719, #720, #721, #723)
+
 ## [2.1.1] - 2020-03-20
 
 ### Fixes
