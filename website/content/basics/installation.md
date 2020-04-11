@@ -18,7 +18,7 @@ Navigate to http://localhost:8080
 
 APT repository: 
 ```
-deb [trusted=yes] https://apt.fury.io/distribworks/ /
+deb [trusted=yes] https://repo.distrib.works/apt/ /
 ```
 
 Then install: `sudo apt-get install dkron`
@@ -30,7 +30,7 @@ YUM repository:
 ```
 [dkron]
 name=Dkron Pro Private Repo
-baseurl=https://yum.fury.io/distribworks/
+baseurl=https://repo.distrib.works/yum/
 enabled=1
 gpgcheck=0
 ```
@@ -43,7 +43,7 @@ This will start Dkron as a system service and the place example configuration fi
 
 Dkron provides an official Docker image vi Dockerhub that can be used for deployment on any system running Docker.
 
-### Launching Dkron on a new container
+### Launching Dkron as a new container
 
 Here’s a quick one-liner to get you off the ground (please note, we recommend further configuration for production deployments below):
 
