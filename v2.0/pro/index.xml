@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Dkron Pro on Dkron - Distributed job scheduling system</title>
+    <link>/v2.0/pro/</link>
+    <description>Recent content in Dkron Pro on Dkron - Distributed job scheduling system</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 26 Aug 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/v2.0/pro/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Access Control</title>
+      <link>/v2.0/pro/acls/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/pro/acls/</guid>
+      <description>Access Control (Preview) This feature is in preview and is subject to big changes  Dkron provides an optional Access Control List (ACL) system which can be used to control access to data and APIs. The ACL is Capability-based, relying on policies to determine which fine grained rules can be applied. Dkron&amp;rsquo;s capability based ACL system is very similar to common ACL systems you are used to.
+ACL System Overview Dkron&amp;rsquo;s ACL system is implemented with the CNCF Open Policy Agent bringing a powerful system to suit your needs.</description>
+    </item>
+    
+    <item>
+      <title>Authentication</title>
+      <link>/v2.0/pro/auth/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/pro/auth/</guid>
+      <description>Dkron Pro has the ability to be configured to use HTTP basic auth.
+Authentication can be set using these parameters in the dkron config file:
+# dkron.yml username: dkron_admin password: adminpassword This will enable auth on the WebUI and for the API.</description>
+    </item>
+    
+    <item>
+      <title>Commercial FAQ</title>
+      <link>/v2.0/pro/commercial-faq/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/pro/commercial-faq/</guid>
+      <description>What is Dkron Pro? Dkron Pro is a flavor of Dkron which add more functionality and provide additional support options for customers.
+Is there a trial version? There&amp;rsquo;s no free trial but we do offer a 14 day period with full refund if it does not work for you.
+Can I get a discount? I&amp;rsquo;m sure you&amp;rsquo;re very nice but no. Everyone pays the same price.
+What is the license? See COMM-LICENSE.</description>
+    </item>
+    
+    <item>
+      <title>Commercial Support</title>
+      <link>/v2.0/pro/commercial-support/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/pro/commercial-support/</guid>
+      <description>Dkron offers only community support. Dkro Pro offers priority support via email.
+Priority Support Covers 1 incident per quarter, with a max response time of 2 working days. Scope is limited to Dkron and Dkron Pro features and APIs, not application integration or infrastructure. For support, email support AT distrib.works. Please email using the same domain as the original license email or explain your connection to the licensed company.</description>
+    </item>
+    
+    <item>
+      <title>Configuration</title>
+      <link>/v2.0/pro/configuration/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/pro/configuration/</guid>
+      <description>Configuration Dkron Pro uses the same parameters as Dkron OSS and add some extra parameters.
+Command line options  --username - Authentication username --password - Authentication password --cert-file - Path to the client server TLS cert file --key-file - Path to the client server TLS key file --client-crl-file - Path to the client certificate revocation list file --trusted-ca-file - Path to the client server TLS trusted CA cert file --client-cert-auth - Enable client cert authentication --auto-tls - Client TLS using generated certificates  </description>
+    </item>
+    
+    <item>
+      <title>Cross region failover</title>
+      <link>/v2.0/pro/failover/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/pro/failover/</guid>
+      <description>Dkron Pro can run federated in failover mode, this allows to have two clusters running in different regions and configure one of the clusters in an active-passive fashion, doing a failover in case the active cluster dies.
+This feature is experimental and should be handled with care.  </description>
+    </item>
+    
+    <item>
+      <title>Encryption</title>
+      <link>/v2.0/pro/encryption/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/pro/encryption/</guid>
+      <description>SSL encryption is used for communicating dkron pro nodes. Also if client auth is enabled. This means that no other software running on your local network will be able to talk to dkron servers.
+This ensures that no unexpected usage of the Dkron&amp;rsquo;s store will happen, unless it is another Dkron pro instance.
+SSL encryption is enabled by default in Dkron Pro and can not be disabled, you don&amp;rsquo;t need to do nothing to use it.</description>
+    </item>
+    
+  </channel>
+</rss>

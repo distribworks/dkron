@@ -39,6 +39,21 @@ By default dkron will start with a file based, embedded KV store called BoltDB, 
     </item>
     
     <item>
+      <title>Installation</title>
+      <link>/v2.0/basics/installation/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/basics/installation/</guid>
+      <description>Running the binary Download the packaged archive for your platform from the downloads page and extract the package to a shared location in your drive, like /opt/local/bin.
+Run Dkron with default setting: dkron agent --server --bootstrap-expect=1
+Navigate to http://localhost:8080
+Installing the package Debian repo APT repository:
+deb [trusted=yes] https://apt.fury.io/distribworks/ / Then install: sudo apt-get install dkron
+YUM repo YUM repository:
+[dkron] name=Dkron Pro Private Repo baseurl=https://yum.fury.io/distribworks/ enabled=1 gpgcheck=0 Then install: sudo yum install dkron</description>
+    </item>
+    
+    <item>
       <title>Quick start</title>
       <link>/v1.2/pro/quick-start/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -73,6 +88,17 @@ The target node syntax: `[tag-value]:[count]`  Examples: Target all nodes with a
     </item>
     
     <item>
+      <title>Target nodes spec</title>
+      <link>/v2.0/usage/target-nodes-spec/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/usage/target-nodes-spec/</guid>
+      <description>Target nodes spec You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run.
+The target node syntax: `[tag-value]:[count]`  Examples: Target all nodes with a tag:
+{ &amp;#34;name&amp;#34;: &amp;#34;job_name&amp;#34;, &amp;#34;command&amp;#34;: &amp;#34;/bin/true&amp;#34;, &amp;#34;schedule&amp;#34;: &amp;#34;@every 2m&amp;#34;, &amp;#34;tags&amp;#34;: { &amp;#34;my_role&amp;#34;: &amp;#34;web&amp;#34; } } mermaid.initialize({startOnLoad:true}); graph LR; J(&#34;Job tags: #quot;my_role#quot;: #quot;web#quot;&#34;) --|Run Job|N1[&#34;</description>
+    </item>
+    
+    <item>
       <title>Cron spec</title>
       <link>/usage/cron-spec/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -88,6 +114,16 @@ Field name | Mandatory? | Allowed values | Allowed special characters ----------
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/v1.2/usage/cron-spec/</guid>
+      <description>CRON Expression Format A cron expression represents a set of times, using 6 space-separated fields.
+Field name | Mandatory? | Allowed values | Allowed special characters ---------- | ---------- | -------------- | -------------------------- Seconds | Yes | 0-59 | * / , - Minutes | Yes | 0-59 | * / , - Hours | Yes | 0-23 | * / , - Day of month | Yes | 1-31 | * / , - ?</description>
+    </item>
+    
+    <item>
+      <title>Cron spec</title>
+      <link>/v2.0/usage/cron-spec/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/usage/cron-spec/</guid>
       <description>CRON Expression Format A cron expression represents a set of times, using 6 space-separated fields.
 Field name | Mandatory? | Allowed values | Allowed special characters ---------- | ---------- | -------------- | -------------------------- Seconds | Yes | 0-59 | * / , - Minutes | Yes | 0-59 | * / , - Hours | Yes | 0-23 | * / , - Day of month | Yes | 1-31 | * / , - ?</description>
     </item>
@@ -117,6 +153,18 @@ The main distinction is that servers order job executions, can be used to schedu
     </item>
     
     <item>
+      <title>Getting started</title>
+      <link>/v2.0/basics/getting-started/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/basics/getting-started/</guid>
+      <description>Introduction Dkron nodes can work in two modes, agents or servers.
+A Dkron agent is a cluster member that can handle job executions, run your scripts and return the resulting output to the server.
+A Dkron server is also a cluster member that send job execution queries to agents or other servers, so servers can execute jobs too.
+The main distinction is that servers order job executions, can be used to schedule jobs, handles data storage and participate on leader election.</description>
+    </item>
+    
+    <item>
       <title>Developing plugins</title>
       <link>/usage/plugins/develop/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -136,6 +184,28 @@ Note: A common pitfall is not properly setting up a $GOPATH.</description>
       <description>Developing a Plugin role=&amp;quot;alert&amp;quot;&amp;gt;Advanced topic! Plugin development is a highly advanced topic, and is not required knowledge for day-to-day usage. If you don&amp;rsquo;t plan on writing any plugins, we recommend not reading the following section of the documentation.
 Developing a plugin is simple. The only knowledge necessary to write a plugin is basic command-line skills and basic knowledge of the Go programming language.
 Note: A common pitfall is not properly setting up a $GOPATH.</description>
+    </item>
+    
+    <item>
+      <title>Developing plugins</title>
+      <link>/v2.0/usage/plugins/develop/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/usage/plugins/develop/</guid>
+      <description>Developing a Plugin role=&amp;quot;alert&amp;quot;&amp;gt;Advanced topic! Plugin development is a highly advanced topic, and is not required knowledge for day-to-day usage. If you don&amp;rsquo;t plan on writing any plugins, we recommend not reading the following section of the documentation.
+Developing a plugin is simple. The only knowledge necessary to write a plugin is basic command-line skills and basic knowledge of the Go programming language.
+Note: A common pitfall is not properly setting up a $GOPATH.</description>
+    </item>
+    
+    <item>
+      <title>dkron</title>
+      <link>/cli/dkron/</link>
+      <pubDate>Thu, 10 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/cli/dkron/</guid>
+      <description>dkron Open source distributed job scheduling system
+Synopsis Dkron is a system service that runs scheduled jobs at given intervals or times, just like the cron unix service but distributed in several machines in a cluster. If a machine fails (the leader), a follower will take over and keep running the scheduled jobs without human intervention.
+Options  --config string config file path -h, --help help for dkron SEE ALSO  dkron agent	- Start a dkron agent dkron doc	- Generate Markdown documentation for the Dkron CLI.</description>
     </item>
     
     <item>
@@ -161,6 +231,17 @@ dkron agent [flags] Options  --advertise-addr string Address used to advertise t
     </item>
     
     <item>
+      <title>dkron agent</title>
+      <link>/cli/dkron_agent/</link>
+      <pubDate>Thu, 10 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/cli/dkron_agent/</guid>
+      <description>dkron agent Start a dkron agent
+Synopsis Start a dkron agent that schedules jobs, listens for executions and runs executors. It also runs a web UI.
+dkron agent [flags] Options  --advertise-addr string Address used to advertise to other nodes in the cluster. By default, the bind address is advertised. The value supports go-sockaddr/template format. --advertise-rpc-port int Use the value of rpc-port by default --bind-addr string Specifies which address the agent should bind to for network services, including the internal gossip protocol and RPC mechanism.</description>
+    </item>
+    
+    <item>
       <title>dkron doc</title>
       <link>/cli/dkron_doc/</link>
       <pubDate>Thu, 10 Oct 2019 00:00:00 +0000</pubDate>
@@ -169,6 +250,28 @@ dkron agent [flags] Options  --advertise-addr string Address used to advertise t
       <description>dkron doc Generate Markdown documentation for the Dkron CLI.
 Synopsis Generate Markdown documentation for the Dkron CLI. This command is, mostly, used to create up-to-date documentation of Dkron&amp;rsquo;s command-line interface for http://dkron.io/. It creates one Markdown file per command with front matter suitable for rendering in Hugo.
 dkron doc [flags] Options  --dir string the directory to write the doc. (default &amp;quot;/tmp/dkrondoc/&amp;quot;) -h, --help help for doc Options inherited from parent commands  --config string config file path SEE ALSO  dkron	- Open source distributed job scheduling system  Auto generated by spf13/cobra on 10-Oct-2019 </description>
+    </item>
+    
+    <item>
+      <title>dkron doc</title>
+      <link>/cli/dkron_doc/</link>
+      <pubDate>Thu, 10 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/cli/dkron_doc/</guid>
+      <description>dkron doc Generate Markdown documentation for the Dkron CLI.
+Synopsis Generate Markdown documentation for the Dkron CLI. This command is, mostly, used to create up-to-date documentation of Dkron&amp;rsquo;s command-line interface for http://dkron.io/. It creates one Markdown file per command with front matter suitable for rendering in Hugo.
+dkron doc [flags] Options  --dir string the directory to write the doc. (default &amp;quot;/tmp/dkrondoc/&amp;quot;) -h, --help help for doc Options inherited from parent commands  --config string config file path SEE ALSO  dkron	- Open source distributed job scheduling system  Auto generated by spf13/cobra on 10-Oct-2019 </description>
+    </item>
+    
+    <item>
+      <title>dkron keygen</title>
+      <link>/cli/dkron_keygen/</link>
+      <pubDate>Thu, 10 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/cli/dkron_keygen/</guid>
+      <description>dkron keygen Generates a new encryption key
+Synopsis Generates a new encryption key that can be used to configure the agent to encrypt traffic. The output of this command is already in the proper format that the agent expects.
+dkron keygen [flags] Options  -h, --help help for keygen Options inherited from parent commands  --config string config file path SEE ALSO  dkron	- Open source distributed job scheduling system  Auto generated by spf13/cobra on 10-Oct-2019 </description>
     </item>
     
     <item>
@@ -194,6 +297,17 @@ dkron leave [flags] Options  -h, --help help for leave --rpc-addr string gRPC ad
     </item>
     
     <item>
+      <title>dkron leave</title>
+      <link>/cli/dkron_leave/</link>
+      <pubDate>Thu, 10 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/cli/dkron_leave/</guid>
+      <description>dkron leave Force an agent to leave the cluster
+Synopsis Stop stops an agent, if the agent is a server and is running for election stop running for election, if this server was the leader this will force the cluster to elect a new leader and start a new scheduler.
+dkron leave [flags] Options  -h, --help help for leave --rpc-addr string gRPC address of the agent (default &amp;quot;127.0.0.1:6868&amp;quot;) Options inherited from parent commands  --config string config file path SEE ALSO  dkron	- Open source distributed job scheduling system  Auto generated by spf13/cobra on 10-Oct-2019 </description>
+    </item>
+    
+    <item>
       <title>dkron raft</title>
       <link>/cli/dkron_raft/</link>
       <pubDate>Thu, 10 Oct 2019 00:00:00 +0000</pubDate>
@@ -202,6 +316,28 @@ dkron leave [flags] Options  -h, --help help for leave --rpc-addr string gRPC ad
       <description>dkron raft Command to perform some raft operations
 Synopsis Command to perform some raft operations
 Options  -h, --help help for raft --rpc-addr string gRPC address of the agent (default &amp;quot;127.0.0.1:6868&amp;quot;) Options inherited from parent commands  --config string config file path SEE ALSO  dkron	- Open source distributed job scheduling system dkron raft list-peers	- Command to list raft peers dkron raft remove-peer	- Command to list raft peers  Auto generated by spf13/cobra on 10-Oct-2019 </description>
+    </item>
+    
+    <item>
+      <title>dkron raft</title>
+      <link>/cli/dkron_raft/</link>
+      <pubDate>Thu, 10 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/cli/dkron_raft/</guid>
+      <description>dkron raft Command to perform some raft operations
+Synopsis Command to perform some raft operations
+Options  -h, --help help for raft --rpc-addr string gRPC address of the agent (default &amp;quot;127.0.0.1:6868&amp;quot;) Options inherited from parent commands  --config string config file path SEE ALSO  dkron	- Open source distributed job scheduling system dkron raft list-peers	- Command to list raft peers dkron raft remove-peer	- Command to list raft peers  Auto generated by spf13/cobra on 10-Oct-2019 </description>
+    </item>
+    
+    <item>
+      <title>dkron raft list-peers</title>
+      <link>/cli/dkron_raft_list-peers/</link>
+      <pubDate>Thu, 10 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/cli/dkron_raft_list-peers/</guid>
+      <description>dkron raft list-peers Command to list raft peers
+Synopsis Command to list raft peers
+dkron raft list-peers [flags] Options  -h, --help help for list-peers Options inherited from parent commands  --config string config file path --rpc-addr string gRPC address of the agent (default &amp;quot;127.0.0.1:6868&amp;quot;) SEE ALSO  dkron raft	- Command to perform some raft operations  Auto generated by spf13/cobra on 10-Oct-2019 </description>
     </item>
     
     <item>
@@ -227,6 +363,17 @@ dkron raft remove-peer [flags] Options  -h, --help help for remove-peer --peer-i
     </item>
     
     <item>
+      <title>dkron raft remove-peer</title>
+      <link>/cli/dkron_raft_remove-peer/</link>
+      <pubDate>Thu, 10 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/cli/dkron_raft_remove-peer/</guid>
+      <description>dkron raft remove-peer Command to list raft peers
+Synopsis Command to list raft peers
+dkron raft remove-peer [flags] Options  -h, --help help for remove-peer --peer-id string Remove a Dkron server with the given ID from the Raft configuration. Options inherited from parent commands  --config string config file path --rpc-addr string gRPC address of the agent (default &amp;quot;127.0.0.1:6868&amp;quot;) SEE ALSO  dkron raft	- Command to perform some raft operations  Auto generated by spf13/cobra on 10-Oct-2019 </description>
+    </item>
+    
+    <item>
       <title>dkron version</title>
       <link>/cli/dkron_version/</link>
       <pubDate>Thu, 10 Oct 2019 00:00:00 +0000</pubDate>
@@ -235,6 +382,28 @@ dkron raft remove-peer [flags] Options  -h, --help help for remove-peer --peer-i
       <description>dkron version Show version
 Synopsis Show the version
 dkron version [flags] Options  -h, --help help for version Options inherited from parent commands  --config string config file path SEE ALSO  dkron	- Open source distributed job scheduling system  Auto generated by spf13/cobra on 10-Oct-2019 </description>
+    </item>
+    
+    <item>
+      <title>dkron version</title>
+      <link>/cli/dkron_version/</link>
+      <pubDate>Thu, 10 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/cli/dkron_version/</guid>
+      <description>dkron version Show version
+Synopsis Show the version
+dkron version [flags] Options  -h, --help help for version Options inherited from parent commands  --config string config file path SEE ALSO  dkron	- Open source distributed job scheduling system  Auto generated by spf13/cobra on 10-Oct-2019 </description>
+    </item>
+    
+    <item>
+      <title>dkron</title>
+      <link>/pro/cli/dkron/</link>
+      <pubDate>Mon, 26 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/pro/cli/dkron/</guid>
+      <description>dkron Professional distributed job scheduling system
+Synopsis Dkron is a system service that runs scheduled jobs at given intervals or times, just like the cron unix service but distributed in several machines in a cluster. If a machine fails (the leader), a follower will take over and keep running the scheduled jobs without human intervention.
+Options  --config string config file (default is /etc/dkron/dkron.yml) -h, --help help for dkron SEE ALSO  dkron agent	- Start a dkron agent dkron doc	- Generate Markdown documentation for the Dkron CLI.</description>
     </item>
     
     <item>
@@ -260,6 +429,28 @@ dkron agent [flags] Options  --advertise-addr string Address used to advertise t
     </item>
     
     <item>
+      <title>dkron agent</title>
+      <link>/pro/cli/dkron_agent/</link>
+      <pubDate>Mon, 26 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/pro/cli/dkron_agent/</guid>
+      <description>dkron agent Start a dkron agent
+Synopsis Start a dkron agent that schedule jobs, listen for executions and run executors. It also runs a web UI.
+dkron agent [flags] Options  --advertise-addr string Address used to advertise to other nodes in the cluster. By default, the bind address is advertised. The value supports go-sockaddr/template format. --advertise-rpc-port int Use the value of rpc-port by default --auto-tls Client TLS using generated certificates (default true) --bind-addr string Specifies which address the agent should bind to for network services, including the internal gossip protocol and RPC mechanism.</description>
+    </item>
+    
+    <item>
+      <title>dkron doc</title>
+      <link>/pro/cli/dkron_doc/</link>
+      <pubDate>Mon, 26 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/pro/cli/dkron_doc/</guid>
+      <description>dkron doc Generate Markdown documentation for the Dkron CLI.
+Synopsis Generate Markdown documentation for the Dkron CLI. This command is, mostly, used to create up-to-date documentation of Dkron&amp;rsquo;s command-line interface for http://dkron.io/. It creates one Markdown file per command with front matter suitable for rendering in Hugo.
+dkron doc [flags] Options  --dir string the directory to write the doc. (default &amp;quot;/tmp/dkrondoc/&amp;quot;) -h, --help help for doc Options inherited from parent commands  --config string config file (default is /etc/dkron/dkron.</description>
+    </item>
+    
+    <item>
       <title>dkron doc</title>
       <link>/pro/cli/dkron_doc/</link>
       <pubDate>Mon, 26 Aug 2019 00:00:00 +0000</pubDate>
@@ -282,6 +473,17 @@ dkron keygen [flags] Options  -h, --help help for keygen Options inherited from 
     </item>
     
     <item>
+      <title>dkron keygen</title>
+      <link>/pro/cli/dkron_keygen/</link>
+      <pubDate>Mon, 26 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/pro/cli/dkron_keygen/</guid>
+      <description>dkron keygen Generates a new encryption key
+Synopsis Generates a new encryption key that can be used to configure the agent to encrypt traffic. The output of this command is already in the proper format that the agent expects.
+dkron keygen [flags] Options  -h, --help help for keygen Options inherited from parent commands  --config string config file (default is /etc/dkron/dkron.yml) SEE ALSO  dkron	- Professional distributed job scheduling system  Auto generated by spf13/cobra on 26-Aug-2019 </description>
+    </item>
+    
+    <item>
       <title>dkron leave</title>
       <link>/pro/cli/dkron_leave/</link>
       <pubDate>Mon, 26 Aug 2019 00:00:00 +0000</pubDate>
@@ -289,6 +491,27 @@ dkron keygen [flags] Options  -h, --help help for keygen Options inherited from 
       <guid>/pro/cli/dkron_leave/</guid>
       <description>dkron leave Force an agent to leave the cluster
 Synopsis Stop stops an agent, if the agent is a server and is running for election stop running for election, if this server was the leader this will force the cluster to elect a new leader and start a new scheduler. If this is a server and has the scheduler started stop it, ignoring if this server was participating in leader election or not (local storage).</description>
+    </item>
+    
+    <item>
+      <title>dkron leave</title>
+      <link>/pro/cli/dkron_leave/</link>
+      <pubDate>Mon, 26 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/pro/cli/dkron_leave/</guid>
+      <description>dkron leave Force an agent to leave the cluster
+Synopsis Stop stops an agent, if the agent is a server and is running for election stop running for election, if this server was the leader this will force the cluster to elect a new leader and start a new scheduler. If this is a server and has the scheduler started stop it, ignoring if this server was participating in leader election or not (local storage).</description>
+    </item>
+    
+    <item>
+      <title>dkron raft</title>
+      <link>/pro/cli/dkron_raft/</link>
+      <pubDate>Mon, 26 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/pro/cli/dkron_raft/</guid>
+      <description>dkron raft Command to perform some raft operations
+Synopsis Command to perform some raft operations
+Options  --cert-file string Path to the client server TLS cert file -h, --help help for raft --key-file string Path to the client server TLS key file --rpc-addr string gRPC address of the agent (default &amp;quot;127.0.0.1:6868&amp;quot;) --trusted-ca-file string Path to the client server TLS trusted CA cert file Options inherited from parent commands  --config string config file (default is /etc/dkron/dkron.</description>
     </item>
     
     <item>
@@ -314,6 +537,17 @@ dkron raft list-peers [flags] Options  -h, --help help for list-peers Options in
     </item>
     
     <item>
+      <title>dkron raft list-peers</title>
+      <link>/pro/cli/dkron_raft_list-peers/</link>
+      <pubDate>Mon, 26 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/pro/cli/dkron_raft_list-peers/</guid>
+      <description>dkron raft list-peers Command to list raft peers
+Synopsis Command to list raft peers
+dkron raft list-peers [flags] Options  -h, --help help for list-peers Options inherited from parent commands  --cert-file string Path to the client server TLS cert file --config string config file (default is /etc/dkron/dkron.yml) --key-file string Path to the client server TLS key file --rpc-addr string gRPC address of the agent (default &amp;quot;127.0.0.1:6868&amp;quot;) --trusted-ca-file string Path to the client server TLS trusted CA cert file SEE ALSO  dkron raft	- Command to perform some raft operations  Auto generated by spf13/cobra on 26-Aug-2019 </description>
+    </item>
+    
+    <item>
       <title>dkron raft remove-peer</title>
       <link>/pro/cli/dkron_raft_remove-peer/</link>
       <pubDate>Mon, 26 Aug 2019 00:00:00 +0000</pubDate>
@@ -322,6 +556,28 @@ dkron raft list-peers [flags] Options  -h, --help help for list-peers Options in
       <description>dkron raft remove-peer Command to list raft peers
 Synopsis Command to list raft peers
 dkron raft remove-peer [flags] Options  -h, --help help for remove-peer --peer-id string Remove a Dkron server with the given ID from the Raft configuration. Options inherited from parent commands  --cert-file string Path to the client server TLS cert file --config string config file (default is /etc/dkron/dkron.yml) --key-file string Path to the client server TLS key file --rpc-addr string gRPC address of the agent (default &amp;quot;127.</description>
+    </item>
+    
+    <item>
+      <title>dkron raft remove-peer</title>
+      <link>/pro/cli/dkron_raft_remove-peer/</link>
+      <pubDate>Mon, 26 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/pro/cli/dkron_raft_remove-peer/</guid>
+      <description>dkron raft remove-peer Command to list raft peers
+Synopsis Command to list raft peers
+dkron raft remove-peer [flags] Options  -h, --help help for remove-peer --peer-id string Remove a Dkron server with the given ID from the Raft configuration. Options inherited from parent commands  --cert-file string Path to the client server TLS cert file --config string config file (default is /etc/dkron/dkron.yml) --key-file string Path to the client server TLS key file --rpc-addr string gRPC address of the agent (default &amp;quot;127.</description>
+    </item>
+    
+    <item>
+      <title>dkron version</title>
+      <link>/pro/cli/dkron_version/</link>
+      <pubDate>Mon, 26 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/pro/cli/dkron_version/</guid>
+      <description>dkron version Show version
+Synopsis Show the version
+dkron version [flags] Options  -h, --help help for version Options inherited from parent commands  --config string config file (default is /etc/dkron/dkron.yml) SEE ALSO  dkron	- Professional distributed job scheduling system  Auto generated by spf13/cobra on 26-Aug-2019 </description>
     </item>
     
     <item>
@@ -470,7 +726,7 @@ dkron version [flags] Options  -h, --help help for version Options inherited fro
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/_footer/</guid>
-      <description>Distributed Works © 2015 Victor Castell - victor@distrib.works</description>
+      <description>Distributed Works © 2015 - 2020 Victor Castell - victor@distrib.works</description>
     </item>
     
     <item>
@@ -479,7 +735,16 @@ dkron version [flags] Options  -h, --help help for version Options inherited fro
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/v1.2/_footer/</guid>
-      <description>Distributed Works © 2015 Victor Castell - victor@distrib.works</description>
+      <description>Distributed Works © 2015 - 2019 Victor Castell - victor@distrib.works</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/v2.0/_footer/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/_footer/</guid>
+      <description>Distributed Works © 2015 - 2020 Victor Castell - victor@distrib.works</description>
     </item>
     
     <item>
@@ -493,11 +758,32 @@ ACL System Overview Dkron&amp;rsquo;s ACL system is implemented with the CNCF Op
     </item>
     
     <item>
+      <title>Access Control</title>
+      <link>/v2.0/pro/acls/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/pro/acls/</guid>
+      <description>Access Control (Preview) This feature is in preview and is subject to big changes  Dkron provides an optional Access Control List (ACL) system which can be used to control access to data and APIs. The ACL is Capability-based, relying on policies to determine which fine grained rules can be applied. Dkron&amp;rsquo;s capability based ACL system is very similar to common ACL systems you are used to.
+ACL System Overview Dkron&amp;rsquo;s ACL system is implemented with the CNCF Open Policy Agent bringing a powerful system to suit your needs.</description>
+    </item>
+    
+    <item>
       <title>Authentication</title>
       <link>/pro/auth/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/pro/auth/</guid>
+      <description>Dkron Pro has the ability to be configured to use HTTP basic auth.
+Authentication can be set using these parameters in the dkron config file:
+# dkron.yml username: dkron_admin password: adminpassword This will enable auth on the WebUI and for the API.</description>
+    </item>
+    
+    <item>
+      <title>Authentication</title>
+      <link>/v2.0/pro/auth/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/pro/auth/</guid>
       <description>Dkron Pro has the ability to be configured to use HTTP basic auth.
 Authentication can be set using these parameters in the dkron config file:
 # dkron.yml username: dkron_admin password: adminpassword This will enable auth on the WebUI and for the API.</description>
@@ -537,11 +823,32 @@ To allow the ECS Task runner to run tasks, the machine running Dkron needs to ha
     </item>
     
     <item>
+      <title>AWS ECS Executor</title>
+      <link>/v2.0/pro/executors/ecs/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/pro/executors/ecs/</guid>
+      <description>The ECS exeutor is capable of launching tasks in ECS clusters, then listen to a stream of CloudWatch Logs and return the output.
+To configure a job to be run in ECS, the executor needs a JSON Task definition template or an already defined task in ECS.
+To allow the ECS Task runner to run tasks, the machine running Dkron needs to have the appropriate permissions configured in AWS IAM:</description>
+    </item>
+    
+    <item>
       <title>Cloud Auto-join</title>
       <link>/usage/cloud-auto-join/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/usage/cloud-auto-join/</guid>
+      <description>Cloud Auto-joining As of Dkron 2.0.0, retry-join accepts a unified interface using the go-discover library for doing automatic cluster joining using cloud metadata. To use retry-join with a supported cloud provider, specify the configuration on the command line or configuration file as a key=value key=value ... string.
+If the values contain spaces, equals, backslashes or double quotes then they need to be double quoted and the usual escaping rules apply.</description>
+    </item>
+    
+    <item>
+      <title>Cloud Auto-join</title>
+      <link>/v2.0/usage/cloud-auto-join/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/usage/cloud-auto-join/</guid>
       <description>Cloud Auto-joining As of Dkron 2.0.0, retry-join accepts a unified interface using the go-discover library for doing automatic cluster joining using cloud metadata. To use retry-join with a supported cloud provider, specify the configuration on the command line or configuration file as a key=value key=value ... string.
 If the values contain spaces, equals, backslashes or double quotes then they need to be double quoted and the usual escaping rules apply.</description>
     </item>
@@ -580,6 +887,16 @@ To form a cluster, server nodes need to know the address of its peers as in the 
     </item>
     
     <item>
+      <title>Clustering</title>
+      <link>/v2.0/usage/clustering/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/usage/clustering/</guid>
+      <description>Configure a cluster Dkron can run in HA mode, avoiding SPOFs, this mode provides better scalability and better reliability for users that wants a high level of confidence in the cron jobs they need to run.
+Manually bootstrapping a Dkron cluster does not rely on additional tooling, but does require operator participation in the cluster formation process. When bootstrapping, Dkron servers and clients must be started and informed with the address of at least one Dkron server.</description>
+    </item>
+    
+    <item>
       <title>Commercial FAQ</title>
       <link>/pro/commercial-faq/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -597,6 +914,18 @@ What is the license? See COMM-LICENSE.</description>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/v1.2/pro/commercial-faq/</guid>
+      <description>What is Dkron Pro? Dkron Pro is a flavor of Dkron which add more functionality and provide additional support options for customers.
+Is there a trial version? There&amp;rsquo;s no free trial but we do offer a 14 day period with full refund if it does not work for you.
+Can I get a discount? I&amp;rsquo;m sure you&amp;rsquo;re very nice but no. Everyone pays the same price.
+What is the license? See COMM-LICENSE.</description>
+    </item>
+    
+    <item>
+      <title>Commercial FAQ</title>
+      <link>/v2.0/pro/commercial-faq/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/pro/commercial-faq/</guid>
       <description>What is Dkron Pro? Dkron Pro is a flavor of Dkron which add more functionality and provide additional support options for customers.
 Is there a trial version? There&amp;rsquo;s no free trial but we do offer a 14 day period with full refund if it does not work for you.
 Can I get a discount? I&amp;rsquo;m sure you&amp;rsquo;re very nice but no. Everyone pays the same price.
@@ -624,6 +953,16 @@ Priority Support Covers 1 incident per quarter, with a max response time of 2 wo
     </item>
     
     <item>
+      <title>Commercial Support</title>
+      <link>/v2.0/pro/commercial-support/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/pro/commercial-support/</guid>
+      <description>Dkron offers only community support. Dkro Pro offers priority support via email.
+Priority Support Covers 1 incident per quarter, with a max response time of 2 working days. Scope is limited to Dkron and Dkron Pro features and APIs, not application integration or infrastructure. For support, email support AT distrib.works. Please email using the same domain as the original license email or explain your connection to the licensed company.</description>
+    </item>
+    
+    <item>
       <title>Concurrency</title>
       <link>/usage/concurrency/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -641,6 +980,18 @@ Concurrency property accepts two option:
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/v1.2/usage/concurrency/</guid>
+      <description>Concurrency Jobs can be configured to allow overlapping executions or forbid them.
+Concurrency property accepts two option:
+ allow (default): Allow concurrent job executions. forbid: If the job is already running don&amp;rsquo;t send the execution, it will skip the executions until the next schedule.  Example:
+{ &amp;#34;name&amp;#34;: &amp;#34;job1&amp;#34;, &amp;#34;schedule&amp;#34;: &amp;#34;@every 10s&amp;#34;, &amp;#34;executor&amp;#34;: &amp;#34;shell&amp;#34;, &amp;#34;executor_config&amp;#34;: { &amp;#34;command&amp;#34;: &amp;#34;echo \&amp;#34;Hello from parent\&amp;#34;&amp;#34; }, &amp;#34;concurrency&amp;#34;: &amp;#34;forbid&amp;#34; } </description>
+    </item>
+    
+    <item>
+      <title>Concurrency</title>
+      <link>/v2.0/usage/concurrency/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/usage/concurrency/</guid>
       <description>Concurrency Jobs can be configured to allow overlapping executions or forbid them.
 Concurrency property accepts two option:
  allow (default): Allow concurrent job executions. forbid: If the job is already running don&amp;rsquo;t send the execution, it will skip the executions until the next schedule.  Example:
@@ -689,6 +1040,27 @@ Command line options  --etcd-config-file-path - Etcd node config --username - Au
     </item>
     
     <item>
+      <title>Configuration</title>
+      <link>/v2.0/basics/configuration/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/basics/configuration/</guid>
+      <description>Configuration sources Settings can be specified in three ways (in order of precedence):
+ Command line arguments. Environment variables starting with DKRON_ dkron.yml config file  Config file location Config file will be loaded from the following paths:
+ /etc/dkron $HOME/.dkron ./config  Config file example # Dkron example configuration file # server: false # bootstrap-expect: 3 # data-dir: dkron.data # log-level: debug # tags: # dc: east # encrypt: a-valid-key-generated-with-dkron-keygen # retry-join: # - 10.</description>
+    </item>
+    
+    <item>
+      <title>Configuration</title>
+      <link>/v2.0/pro/configuration/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/pro/configuration/</guid>
+      <description>Configuration Dkron Pro uses the same parameters as Dkron OSS and add some extra parameters.
+Command line options  --username - Authentication username --password - Authentication password --cert-file - Path to the client server TLS cert file --key-file - Path to the client server TLS key file --client-crl-file - Path to the client certificate revocation list file --trusted-ca-file - Path to the client server TLS trusted CA cert file --client-cert-auth - Enable client cert authentication --auto-tls - Client TLS using generated certificates  </description>
+    </item>
+    
+    <item>
       <title>Cross region failover</title>
       <link>/pro/failover/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -699,11 +1071,32 @@ This feature is experimental and should be handled with care.  </description>
     </item>
     
     <item>
+      <title>Cross region failover</title>
+      <link>/v2.0/pro/failover/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/pro/failover/</guid>
+      <description>Dkron Pro can run federated in failover mode, this allows to have two clusters running in different regions and configure one of the clusters in an active-passive fashion, doing a failover in case the active cluster dies.
+This feature is experimental and should be handled with care.  </description>
+    </item>
+    
+    <item>
       <title>Dkron Pro</title>
       <link>/products/pro/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/products/pro/</guid>
+      <description>Dkron Pro Improved security, features and reliability for your scheduled jobs  Buy      Get additional features and commercial support from the creator of Dkron
+ Key features Security  Pro has enhanced security using industry standard SSL encryption for communication between all components of the application, the embedded storage engine and nodes.
+You can also enable basic authentication to restrict access to the WebUI and the API.</description>
+    </item>
+    
+    <item>
+      <title>Dkron Pro</title>
+      <link>/v2.0/products/pro/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/products/pro/</guid>
       <description>Dkron Pro Improved security, features and reliability for your scheduled jobs  Buy      Get additional features and commercial support from the creator of Dkron
  Key features Security  Pro has enhanced security using industry standard SSL encryption for communication between all components of the application, the embedded storage engine and nodes.
 You can also enable basic authentication to restrict access to the WebUI and the API.</description>
@@ -726,6 +1119,17 @@ Dkron vs. Rundeck Rundeck is a popular and mature platform to automate operation
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/v1.2/intro/dkron_vs_other_software/</guid>
+      <description>Dkron vs. Chronos Airbnb&amp;rsquo;s Chronos is a job scheduler that is similar to dkron, it&amp;rsquo;s distributed and fault tolerant thanks to the use of Zookeeper and Apache Mesos.
+If you don&amp;rsquo;t have/want to run a Mesos cluster and deal with the not easy configuration and maintenance of Zookeeper and you want something lighter, Dkron could help you.
+Dkron vs. Rundeck Rundeck is a popular and mature platform to automate operations and schedule jobs.</description>
+    </item>
+    
+    <item>
+      <title>Dkron vs. Other Software</title>
+      <link>/v2.0/intro/dkron_vs_other_software/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/intro/dkron_vs_other_software/</guid>
       <description>Dkron vs. Chronos Airbnb&amp;rsquo;s Chronos is a job scheduler that is similar to dkron, it&amp;rsquo;s distributed and fault tolerant thanks to the use of Zookeeper and Apache Mesos.
 If you don&amp;rsquo;t have/want to run a Mesos cluster and deal with the not easy configuration and maintenance of Zookeeper and you want something lighter, Dkron could help you.
 Dkron vs. Rundeck Rundeck is a popular and mature platform to automate operations and schedule jobs.</description>
@@ -756,6 +1160,18 @@ Configuration To run a docker job create a job config with the docker executor a
     </item>
     
     <item>
+      <title>Docker executor</title>
+      <link>/v2.0/pro/executors/docker/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/pro/executors/docker/</guid>
+      <description>Docker executor can launch docker based cron jobs using the docker command of the target node.
+This executor needs a recent version of docker to be available and configured in the target node.
+Configuration To run a docker job create a job config with the docker executor as in this example:
+{ &amp;#34;executor&amp;#34;: &amp;#34;docker&amp;#34;, &amp;#34;executor_config&amp;#34;: { &amp;#34;image&amp;#34;: &amp;#34;alpine&amp;#34;, //docker image to use &amp;#34;volumes&amp;#34;: &amp;#34;/logs:/var/log/&amp;#34;, //comma separated list of volume mappings &amp;#34;command&amp;#34;: &amp;#34;echo \&amp;#34;Hello from dkron\&amp;#34;&amp;#34;, //command to pass to run on container &amp;#34;env&amp;#34;: &amp;#34;ENVIRONMENT=variable&amp;#34; //environment variables to pass to the container } } </description>
+    </item>
+    
+    <item>
       <title>Elasticsearch processor</title>
       <link>/pro/processors/elasticsearch/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -772,6 +1188,17 @@ Configuration { &amp;#34;processors&amp;#34;: { &amp;#34;elasticsearch&amp;#34;:
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/v1.2/pro/processors/elasticsearch/</guid>
+      <description>The Elasticsearch processor can fordward execution logs to an ES cluster. It need an already available Elasticsearch installation that is visible in the same network of the target node.
+The output logs of the job execution will be stored in the indicated ES instace.
+Configuration { &amp;#34;processors&amp;#34;: { &amp;#34;elasticsearch&amp;#34;: { &amp;#34;url&amp;#34;: &amp;#34;http://localhost:9200&amp;#34;, //comma separated list of Elasticsearch hosts urls (default: http://localhost:9200) &amp;#34;index&amp;#34;: &amp;#34;dkron_logs&amp;#34;, //desired index name (default: dkron_logs) &amp;#34;forward&amp;#34;: &amp;#34;false&amp;#34; //forward logs to the next processor (default: false) } } } </description>
+    </item>
+    
+    <item>
+      <title>Elasticsearch processor</title>
+      <link>/v2.0/pro/processors/elasticsearch/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/pro/processors/elasticsearch/</guid>
       <description>The Elasticsearch processor can fordward execution logs to an ES cluster. It need an already available Elasticsearch installation that is visible in the same network of the target node.
 The output logs of the job execution will be stored in the indicated ES instace.
 Configuration { &amp;#34;processors&amp;#34;: { &amp;#34;elasticsearch&amp;#34;: { &amp;#34;url&amp;#34;: &amp;#34;http://localhost:9200&amp;#34;, //comma separated list of Elasticsearch hosts urls (default: http://localhost:9200) &amp;#34;index&amp;#34;: &amp;#34;dkron_logs&amp;#34;, //desired index name (default: dkron_logs) &amp;#34;forward&amp;#34;: &amp;#34;false&amp;#34; //forward logs to the next processor (default: false) } } } </description>
@@ -806,6 +1233,20 @@ Example:
     </item>
     
     <item>
+      <title>Email processor</title>
+      <link>/v2.0/pro/processors/email/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/pro/processors/email/</guid>
+      <description>The Email processor provides flexibility to job email notifications.
+Configuration of the email processor is stored in a file named dkron-processor-email.yml in the same locations as dkron.yml, and should include a list of providers, it can include any number of providers.
+Example:
+provider1: host: smtp.myprovider.com port: 25 username: myusername password: mypassword from: cron@mycompany.com subjectPrefix: &amp;#39;[Staging] &amp;#39; Then configure each job with the following options:
+Example:
+{ &amp;#34;processors&amp;#34;: { &amp;#34;email&amp;#34;: { &amp;#34;provider&amp;#34;: &amp;#34;provider1&amp;#34;, &amp;#34;emails&amp;#34;: &amp;#34;team@mycompany.</description>
+    </item>
+    
+    <item>
       <title>Embedded storage</title>
       <link>/usage/storage/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -823,6 +1264,16 @@ This ensures a dead easy install and setup, basically run dkron and you will hav
       <guid>/v1.2/pro/storage/</guid>
       <description>Dkron Pro has an embedded distributed KV store engine based on etcd. This works out of the box on each node dkron server is started.
 This ensures a dead easy install and setup, basically run dkron and you will have a full working node and at the same time provides you with a fully tested well supported store for its use with dkron.</description>
+    </item>
+    
+    <item>
+      <title>Embedded storage</title>
+      <link>/v2.0/usage/storage/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/usage/storage/</guid>
+      <description>Dkron has an embedded distributed KV store engine based on BadgerDB. This works out of the box on each dkron server.
+This ensures a dead easy install and setup, basically run dkron and you will have a full working node.</description>
     </item>
     
     <item>
@@ -844,6 +1295,17 @@ SSL encryption is enabled by default in Dkron Pro and can not be disabled, you d
       <guid>/v1.2/pro/encryption/</guid>
       <description>SSL encryption is used for communicating dkron pro and the embedded store, and between storage nodes itself. Also if client auth is enabled, only dkron pro clients can talk to the embedded store. This means that no other software running on your local network will be able to talk to dkron&amp;rsquo;s etcd server.
 This ensures that no unexpected usage of the Dkron&amp;rsquo;s store will happen, unless it is another Dkron pro instance.</description>
+    </item>
+    
+    <item>
+      <title>Encryption</title>
+      <link>/v2.0/pro/encryption/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/pro/encryption/</guid>
+      <description>SSL encryption is used for communicating dkron pro nodes. Also if client auth is enabled. This means that no other software running on your local network will be able to talk to dkron servers.
+This ensures that no unexpected usage of the Dkron&amp;rsquo;s store will happen, unless it is another Dkron pro instance.
+SSL encryption is enabled by default in Dkron Pro and can not be disabled, you don&amp;rsquo;t need to do nothing to use it.</description>
     </item>
     
     <item>
@@ -871,6 +1333,18 @@ log_dir: Path to the location where the log files will be saved forward: Forward
     </item>
     
     <item>
+      <title>File Processor</title>
+      <link>/v2.0/usage/processors/file/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/usage/processors/file/</guid>
+      <description>File processor saves the execution output to a single log file in the specified directory
+Configuration Parameters
+log_dir: Path to the location where the log files will be saved forward: Forward log output to the next processor Example
+{ &amp;#34;name&amp;#34;: &amp;#34;job_name&amp;#34;, &amp;#34;command&amp;#34;: &amp;#34;echo &amp;#39;Hello files&amp;#39;&amp;#34;, &amp;#34;schedule&amp;#34;: &amp;#34;@every 2m&amp;#34;, &amp;#34;tags&amp;#34;: { &amp;#34;role&amp;#34;: &amp;#34;web&amp;#34; }, &amp;#34;processors&amp;#34;: { &amp;#34;files&amp;#34;: { &amp;#34;log_dir&amp;#34;: &amp;#34;/var/log/mydir&amp;#34;, &amp;#34;forward&amp;#34;: true } } } </description>
+    </item>
+    
+    <item>
       <title>HTTP Executor</title>
       <link>/usage/executors/http/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -891,6 +1365,17 @@ method: Request method in uppercase url: Request url headers: Json string, such 
 Configuration Params:
 method: Request method in uppercase url: Request url headers: Json string, such as &amp;quot;[\&amp;quot;Content-Type: application/json\&amp;quot;]&amp;quot; body: POST body timeout: Request timeout, unit seconds expectCode: Expect response code, such as 200,206 expectBody: Expect response body, support regexp, such as /success/ debug: Debug option, will log everything when this option is not empty Example
 { &amp;#34;executor&amp;#34;: &amp;#34;http&amp;#34;, &amp;#34;executor_config&amp;#34;: { &amp;#34;method&amp;#34;: &amp;#34;GET&amp;#34;, &amp;#34;url&amp;#34;: &amp;#34;http://example.</description>
+    </item>
+    
+    <item>
+      <title>HTTP Executor</title>
+      <link>/v2.0/usage/executors/http/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/usage/executors/http/</guid>
+      <description>HTTP executor can send a request to an HTTP endpoint
+Configuration Params:
+method: Request method in uppercase url: Request url headers: Json string, such as &amp;quot;[\&amp;quot;Content-Type: application/json\&amp;quot;]&amp;quot; body: POST body timeout: Request timeout, unit seconds expectCode: Expect response code, such as 200,206 expectBody: Expect response body, support regexp, such as /success/ debug: Debug option, will log everything when this option is not empty tlsNoVerifyPeer: false (default) or true. If true, disables verification of the remote SSL certificate&#39;s validity.</description>
     </item>
     
     <item>
@@ -930,11 +1415,34 @@ Take into account that parent jobs must be created before any child job.</descri
     </item>
     
     <item>
+      <title>Job chaining</title>
+      <link>/v2.0/usage/chaining/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/usage/chaining/</guid>
+      <description>Job chaining You can set some jobs to run after other job is executed. To setup a job that will be executed after any other given job, just set the parent_job property when saving the new job.
+The dependent job will be executed after the main job finished a successful execution.
+Child jobs schedule property will be ignored if it&amp;rsquo;s present.
+Take into account that parent jobs must be created before any child job.</description>
+    </item>
+    
+    <item>
       <title>Job metadata</title>
       <link>/usage/metatags/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/usage/metatags/</guid>
+      <description>Job metadata Jobs can have an optional extra property field called metadata that allows to set arbitrary tags to jobs and query the jobs using the API:
+{ &amp;#34;name&amp;#34;: &amp;#34;job_name&amp;#34;, &amp;#34;command&amp;#34;: &amp;#34;/bin/true&amp;#34;, &amp;#34;schedule&amp;#34;: &amp;#34;@every 2m&amp;#34;, &amp;#34;metadata&amp;#34;: { &amp;#34;user_id&amp;#34;: &amp;#34;12345&amp;#34; } } And then query the API to get only the results needed:
+$ curl http://localhost:8080/v1/jobs --data-urlencode &amp;quot;metadata[user_id]=12345&amp;quot;` </description>
+    </item>
+    
+    <item>
+      <title>Job metadata</title>
+      <link>/v2.0/usage/metatags/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/usage/metatags/</guid>
       <description>Job metadata Jobs can have an optional extra property field called metadata that allows to set arbitrary tags to jobs and query the jobs using the API:
 { &amp;#34;name&amp;#34;: &amp;#34;job_name&amp;#34;, &amp;#34;command&amp;#34;: &amp;#34;/bin/true&amp;#34;, &amp;#34;schedule&amp;#34;: &amp;#34;@every 2m&amp;#34;, &amp;#34;metadata&amp;#34;: { &amp;#34;user_id&amp;#34;: &amp;#34;12345&amp;#34; } } And then query the API to get only the results needed:
 $ curl http://localhost:8080/v1/jobs --data-urlencode &amp;quot;metadata[user_id]=12345&amp;quot;` </description>
@@ -961,6 +1469,16 @@ Configuration { &amp;#34;name&amp;#34;: &amp;#34;job1&amp;#34;, &amp;#34;schedul
     </item>
     
     <item>
+      <title>Job retries</title>
+      <link>/v2.0/usage/retries/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/usage/retries/</guid>
+      <description>Jobs can be configured to retry in case of failure.
+Configuration { &amp;#34;name&amp;#34;: &amp;#34;job1&amp;#34;, &amp;#34;schedule&amp;#34;: &amp;#34;@every 10s&amp;#34;, &amp;#34;executor&amp;#34;: &amp;#34;shell&amp;#34;, &amp;#34;executor_config&amp;#34;: { &amp;#34;command&amp;#34;: &amp;#34;echo \&amp;#34;Hello from parent\&amp;#34;&amp;#34; }, &amp;#34;retries&amp;#34;: 5 } In case of failure to run the job in one node, it will try to run the job again in that node until the retries count reaches the limit.</description>
+    </item>
+    
+    <item>
       <title>License</title>
       <link>/intro/license/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -976,6 +1494,16 @@ Dkron is an Open Source project licensed under the terms of the LGPLv3 license. 
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/v1.2/intro/license/</guid>
+      <description>Copyright (c) Victor Castell
+Dkron is an Open Source project licensed under the terms of the LGPLv3 license. Please see http://www.gnu.org/licenses/lgpl-3.0.html for license text.</description>
+    </item>
+    
+    <item>
+      <title>License</title>
+      <link>/v2.0/intro/license/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/intro/license/</guid>
       <description>Copyright (c) Victor Castell
 Dkron is an Open Source project licensed under the terms of the LGPLv3 license. Please see http://www.gnu.org/licenses/lgpl-3.0.html for license text.</description>
     </item>
@@ -1007,6 +1535,19 @@ Example
     </item>
     
     <item>
+      <title>Log Processor</title>
+      <link>/v2.0/usage/processors/log/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/usage/processors/log/</guid>
+      <description>Log processor writes the execution output to stdout/stderr
+Configuration Parameters
+forward: Forward the output to the next processor
+Example
+{ &amp;#34;name&amp;#34;: &amp;#34;job_name&amp;#34;, &amp;#34;command&amp;#34;: &amp;#34;echo &amp;#39;Hello log&amp;#39;&amp;#34;, &amp;#34;schedule&amp;#34;: &amp;#34;@every 2m&amp;#34;, &amp;#34;tags&amp;#34;: { &amp;#34;role&amp;#34;: &amp;#34;web&amp;#34; }, &amp;#34;processors&amp;#34;: { &amp;#34;log&amp;#34;: { &amp;#34;forward&amp;#34;: true } } } </description>
+    </item>
+    
+    <item>
       <title>Metrics</title>
       <link>/usage/metrics/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -1029,11 +1570,33 @@ dog_statsd_addr: &amp;#34;localhost:8125&amp;#34; Metrics  dkron.agent.event_rec
     </item>
     
     <item>
+      <title>Metrics</title>
+      <link>/v2.0/usage/metrics/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/usage/metrics/</guid>
+      <description>Dkron has the ability to send metrics to Statsd for dashboards and historical reporting. It sends job processing metrics and golang, serf metrics too.
+Configuration Add this in your yaml config file
+dog_statsd_addr: &amp;#34;localhost:8125&amp;#34; Metrics  dkron.agent.event_received.query_execution_done dkron.agent.event_received.query_run_job dkron.memberlist.gossip dkron.memberlist.probeNode dkron.memberlist.pushPullNode dkron.memberlist.tcp.accept dkron.memberlist.tcp.connect dkron.memberlist.tcp.sent dkron.memberlist.udp.received dkron.memberlist.udp.sent dkron.grpc.call_execution_done dkron.grpc.call_get_job dkron.grpc.execution_done dkron.grpc.get_job dkron.runtime.alloc_bytes dkron.runtime.free_count dkron.runtime.gc_pause_ns dkron.runtime.heap_objects dkron.runtime.malloc_count dkron.runtime.num_goroutines dkron.runtime.sys_bytes dkron.runtime.total_gc_pause_ns dkron.runtime.total_gc_runs dkron.serf.coordinate.adjustment_ms dkron.serf.msgs.received dkron.serf.msgs.sent dkron.serf.queries dkron.serf.queries.execution_done dkron.serf.queries.run_job dkron.serf.query_acks dkron.serf.query_responses dkron.serf.queue.Event dkron.serf.queue.Intent dkron.serf.queue.Query  </description>
+    </item>
+    
+    <item>
       <title>Outage recovery</title>
       <link>/usage/recovery/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/usage/recovery/</guid>
+      <description>Outage Recovery Don&amp;rsquo;t panic! This is a critical first step.
+Depending on your deployment configuration, it may take only a single server failure for cluster unavailability. Recovery requires an operator to intervene, but the process is straightforward.
+This guide is for recovery from a Dkron outage due to a majority of server nodes in a datacenter being lost. If you are looking to add or remove servers, see the [clustering](/usage/clustering) guide.</description>
+    </item>
+    
+    <item>
+      <title>Outage recovery</title>
+      <link>/v2.0/usage/recovery/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/usage/recovery/</guid>
       <description>Outage Recovery Don&amp;rsquo;t panic! This is a critical first step.
 Depending on your deployment configuration, it may take only a single server failure for cluster unavailability. Recovery requires an operator to intervene, but the process is straightforward.
 This guide is for recovery from a Dkron outage due to a majority of server nodes in a datacenter being lost. If you are looking to add or remove servers, see the [clustering](/usage/clustering) guide.</description>
@@ -1074,6 +1637,18 @@ shell: Run this command using a shell environment command: The command to run en
     </item>
     
     <item>
+      <title>Shell Executor</title>
+      <link>/v2.0/usage/executors/shell/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/usage/executors/shell/</guid>
+      <description>Shell executor runs a system command
+Configuration Params
+shell: Run this command using a shell environment command: The command to run env: Env vars separated by comma cwd: Chdir before command run Example
+{ &amp;#34;executor&amp;#34;: &amp;#34;shell&amp;#34;, &amp;#34;executor_config&amp;#34;: { &amp;#34;shell&amp;#34;: &amp;#34;true&amp;#34;, &amp;#34;command&amp;#34;: &amp;#34;my_command&amp;#34;, &amp;#34;env&amp;#34;: &amp;#34;ENV_VAR=va1,ANOTHER_ENV_VAR=var2&amp;#34;, &amp;#34;cwd&amp;#34;: &amp;#34;/app&amp;#34; } } </description>
+    </item>
+    
+    <item>
       <title>Slack processor</title>
       <link>/pro/processors/slack/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -1099,6 +1674,20 @@ Example:
 team1: webhook_url: https://hooks.slack.com/services/XXXXXXXXXXXXXXXXXXX bot_name: Dkron Production Then configure each job with the following options:
 Example:
 { &amp;#34;processors&amp;#34;: { &amp;#34;slack&amp;#34;: { &amp;#34;team&amp;#34;: &amp;#34;team1&amp;#34;, &amp;#34;channel&amp;#34;: &amp;#34;#cron-production&amp;#34;, &amp;#34;onSuccess&amp;#34;: true } } } By default the slack procesor doesn&amp;rsquo;t send notifications on job success, the onSuccess parameter, enables it, like in the previous example.</description>
+    </item>
+    
+    <item>
+      <title>Slack processor</title>
+      <link>/v2.0/pro/processors/slack/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/pro/processors/slack/</guid>
+      <description>The Slack processor provides slack notifications with multiple configurations and rich format.
+Configuration of the slack processor is stored in a file named dkron-processor-slack.yml in the same locations as dkron.yml, and should include a list of teams, it can include any number of teams.
+Example:
+team1: webhook_url: https://hooks.slack.com/services/XXXXXXXXXXXXXXXXXXX bot_name: Dkron Production Then configure each job with the following options:
+Example:
+{ &amp;#34;processors&amp;#34;: { &amp;#34;slack&amp;#34;: { &amp;#34;team&amp;#34;: &amp;#34;team1&amp;#34;, &amp;#34;channel&amp;#34;: &amp;#34;#cron-production&amp;#34;, &amp;#34;onSuccess&amp;#34;: &amp;#34;true&amp;#34; } } } By default the slack procesor doesn&amp;rsquo;t send notifications on job success, the onSuccess parameter, enables it, like in the previous example.</description>
     </item>
     
     <item>
@@ -1130,6 +1719,20 @@ Example
     </item>
     
     <item>
+      <title>Syslog Processor</title>
+      <link>/v2.0/usage/processors/syslog/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/usage/processors/syslog/</guid>
+      <description>Syslog processor writes the execution output to the system syslog daemon
+Note: Only work on linux systems
+Configuration Parameters
+forward: Forward the output to the next processor
+Example
+{ &amp;#34;name&amp;#34;: &amp;#34;job_name&amp;#34;, &amp;#34;command&amp;#34;: &amp;#34;echo &amp;#39;Hello syslog&amp;#39;&amp;#34;, &amp;#34;schedule&amp;#34;: &amp;#34;@every 2m&amp;#34;, &amp;#34;tags&amp;#34;: { &amp;#34;role&amp;#34;: &amp;#34;web&amp;#34; }, &amp;#34;processors&amp;#34;: { &amp;#34;syslog&amp;#34;: { &amp;#34;forward&amp;#34;: true } } } </description>
+    </item>
+    
+    <item>
       <title>Upgrade from v1 to v2</title>
       <link>/upgrading/from_v1_to_v2/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -1138,6 +1741,27 @@ Example
       <description>Dkron v2 brings lots of changes to the previous version. To successfully upgrade from v1 to v2 you need to take care of certain steps.
 Storage Dkron v2 brings native storage, no external storage engine is needed. This change can be shocking for existing users and should be carefully planned to consider Dkron as a stateful service in contrast of a stateless service as in v1.
 You must plan a backup strategy for the data directories, you can configure it using the --data-dir parameter, by default .</description>
+    </item>
+    
+    <item>
+      <title>Upgrade from v1 to v2</title>
+      <link>/v2.0/upgrading/from_v1_to_v2/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/upgrading/from_v1_to_v2/</guid>
+      <description>Dkron v2 brings lots of changes to the previous version. To successfully upgrade from v1 to v2 you need to take care of certain steps.
+Storage Dkron v2 brings native storage, no external storage engine is needed. This change can be shocking for existing users and should be carefully planned to consider Dkron as a stateful service in contrast of a stateless service as in v1.
+You must plan a backup strategy for the data directories, you can configure it using the --data-dir parameter, by default .</description>
+    </item>
+    
+    <item>
+      <title>Upgrade from v2.0.x to v2.2.x</title>
+      <link>/upgrading/from_v2_0_to_v2_2/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/upgrading/from_v2_0_to_v2_2/</guid>
+      <description>Migrating Jobs To migrate jobs from v2.0.x to v2.2.x, export jobs from the v2.0.x cluster and import them into v2.2.x
+A basic script to do that can be found here</description>
     </item>
     
     <item>
@@ -1158,6 +1782,18 @@ Install the following snippet in the node that will run the call to ECS
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/v1.2/usage/ecs/</guid>
+      <description>[Dkron Pro](/products/pro) comes with a [native ECS executor](/pro/ecs) out of the box.  Use with Amazon ECS To use Dkron to schedule jobs that run in containers, a wrapper ECS script is needed.
+Install the following snippet in the node that will run the call to ECS
+ Prerequisites The node that will run the call to ECS will need to have installed
+ AWS cli jq  Example ecs-run --cluster cron --task-definition cron-taskdef --container-name cron --region us-east-1 --command &amp;quot;rake foo&amp;quot;</description>
+    </item>
+    
+    <item>
+      <title>Use with AWS ECS</title>
+      <link>/v2.0/usage/ecs/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/v2.0/usage/ecs/</guid>
       <description>[Dkron Pro](/products/pro) comes with a [native ECS executor](/pro/ecs) out of the box.  Use with Amazon ECS To use Dkron to schedule jobs that run in containers, a wrapper ECS script is needed.
 Install the following snippet in the node that will run the call to ECS
  Prerequisites The node that will run the call to ECS will need to have installed

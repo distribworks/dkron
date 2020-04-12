@@ -21,5 +21,15 @@ Storage Dkron v2 brings native storage, no external storage engine is needed. Th
 You must plan a backup strategy for the data directories, you can configure it using the --data-dir parameter, by default .</description>
     </item>
     
+    <item>
+      <title>Upgrade from v2.0.x to v2.2.x</title>
+      <link>/upgrading/from_v2_0_to_v2_2/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/upgrading/from_v2_0_to_v2_2/</guid>
+      <description>Migrating Jobs To migrate jobs from v2.0.x to v2.2.x, export jobs from the v2.0.x cluster and import them into v2.2.x
+A basic script to do that can be found here</description>
+    </item>
+    
   </channel>
 </rss>
