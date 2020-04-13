@@ -33,7 +33,7 @@ require (
 	github.com/soheilhy/cmux v0.1.4
 	github.com/spf13/cobra v0.0.7
 	github.com/spf13/pflag v1.0.5
-	github.com/spf13/viper v1.6.2
+	github.com/spf13/viper v1.6.3
 	github.com/stretchr/testify v1.5.1
 	github.com/tidwall/buntdb v1.1.2
 	golang.org/x/crypto v0.0.0-20200311171314-f7b00557c8c4 // indirect
