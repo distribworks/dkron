@@ -146,6 +146,26 @@ paths:
           description: Successful response
           schema:
             $ref: '#/definitions/job'
+  /restore:
+    post:
+      description: |
+        Restore jobs from json file.
+      operationId: restore
+      tags:
+        - jobs
+      parameters:
+        - in: formData
+          name: file
+          description: Json file that needs to be restored.
+          required: true
+          type: file
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/restore'
   /members:
     get:
       description: |
@@ -459,3 +479,9 @@ definitions:
     example:
       files:
         forward: true
+
+  restore:
+    type: string
+    description: Each job restore result.
+    example: "success create job_1"
+        

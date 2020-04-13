@@ -1,6 +1,7 @@
 package dkron
 
 import (
+	"encoding/json"
 	"testing"
 	"time"
 
@@ -189,3 +190,282 @@ func (gRPCClientMock) GetActiveExecutions(s string) ([]*proto.Execution, error) 
 	}, nil
 }
 func (gRPCClientMock) SetExecution(execution *proto.Execution) error { return nil }
+
+func Test_generateJobTree(t *testing.T) {
+	jsonString := `[
+		{
+			"name": "task1",
+			"displayname": "",
+			"timezone": "",
+			"schedule": "0 0 17 * * *",
+			"owner": "",
+			"owner_email": "",
+			"success_count": 26,
+			"error_count": 6,
+			"last_success": "2019-11-04T04:37:12.396866367Z",
+			"last_error": "2019-11-27T15:17:47.925761Z",
+			"disabled": false,
+			"tags": null,
+			"metadata": null,
+			"retries": 0,
+			"dependent_jobs": null,
+			"parent_job": "",
+			"processors": {},
+			"concurrency": "forbid",
+			"executor": "http",
+			"executor_config": {
+				"body": "{\"partner_id\": \"3123\",\"user_id\": \"14123\"}",
+				"debug": "true",
+				"expectBody": "",
+				"expectCode": "200",
+				"headers": "[]",
+				"method": "POST",
+				"timeout": "30",
+				"url": "xxxxxxxxxxxxx"
+			},
+			"status": "success",
+			"next": "2019-11-28T09:00:00Z"
+		},
+		{
+			"name": "task2",
+			"displayname": "",
+			"timezone": "",
+			"schedule": "0 0 17 * * *",
+			"owner": "",
+			"owner_email": "",
+			"success_count": 26,
+			"error_count": 6,
+			"last_success": "2019-11-04T04:37:12.396866367Z",
+			"last_error": "2019-11-27T15:17:47.925761Z",
+			"disabled": false,
+			"tags": null,
+			"metadata": null,
+			"retries": 0,
+			"dependent_jobs": null,
+			"parent_job": "",
+			"processors": {},
+			"concurrency": "forbid",
+			"executor": "http",
+			"executor_config": {
+				"body": "{\"partner_id\": \"3123\",\"user_id\": \"14123\"}",
+				"debug": "true",
+				"expectBody": "",
+				"expectCode": "200",
+				"headers": "[]",
+				"method": "POST",
+				"timeout": "30",
+				"url": "xxxxxxxxxxxxx"
+			},
+			"status": "success",
+			"next": "2019-11-28T09:00:00Z"
+		},
+		{
+			"name": "task3",
+			"displayname": "",
+			"timezone": "",
+			"schedule": "0 0 17 * * *",
+			"owner": "",
+			"owner_email": "",
+			"success_count": 26,
+			"error_count": 6,
+			"last_success": "2019-11-04T04:37:12.396866367Z",
+			"last_error": "2019-11-27T15:17:47.925761Z",
+			"disabled": false,
+			"tags": null,
+			"metadata": null,
+			"retries": 0,
+			"dependent_jobs": null,
+			"parent_job": "task2",
+			"processors": {},
+			"concurrency": "forbid",
+			"executor": "http",
+			"executor_config": {
+				"body": "{\"partner_id\": \"3123\",\"user_id\": \"14123\"}",
+				"debug": "true",
+				"expectBody": "",
+				"expectCode": "200",
+				"headers": "[]",
+				"method": "POST",
+				"timeout": "30",
+				"url": "xxxxxxxxxxxxx"
+			},
+			"status": "success",
+			"next": "2019-11-28T09:00:00Z"
+		},
+		{
+			"name": "task4",
+			"displayname": "",
+			"timezone": "",
+			"schedule": "0 0 17 * * *",
+			"owner": "",
+			"owner_email": "",
+			"success_count": 26,
+			"error_count": 6,
+			"last_success": "2019-11-04T04:37:12.396866367Z",
+			"last_error": "2019-11-27T15:17:47.925761Z",
+			"disabled": false,
+			"tags": null,
+			"metadata": null,
+			"retries": 0,
+			"dependent_jobs": null,
+			"parent_job": "",
+			"processors": {},
+			"concurrency": "forbid",
+			"executor": "http",
+			"executor_config": {
+				"body": "{\"partner_id\": \"3123\",\"user_id\": \"14123\"}",
+				"debug": "true",
+				"expectBody": "",
+				"expectCode": "200",
+				"headers": "[]",
+				"method": "POST",
+				"timeout": "30",
+				"url": "xxxxxxxxxxxxx"
+			},
+			"status": "success",
+			"next": "2019-11-28T09:00:00Z"
+		},
+		{
+			"name": "task5",
+			"displayname": "",
+			"timezone": "",
+			"schedule": "0 0 17 * * *",
+			"owner": "",
+			"owner_email": "",
+			"success_count": 26,
+			"error_count": 6,
+			"last_success": "2019-11-04T04:37:12.396866367Z",
+			"last_error": "2019-11-27T15:17:47.925761Z",
+			"disabled": false,
+			"tags": null,
+			"metadata": null,
+			"retries": 0,
+			"dependent_jobs": null,
+			"parent_job": "task4",
+			"processors": {},
+			"concurrency": "forbid",
+			"executor": "http",
+			"executor_config": {
+				"body": "{\"partner_id\": \"3123\",\"user_id\": \"14123\"}",
+				"debug": "true",
+				"expectBody": "",
+				"expectCode": "200",
+				"headers": "[]",
+				"method": "POST",
+				"timeout": "30",
+				"url": "xxxxxxxxxxxxx"
+			},
+			"status": "success",
+			"next": "2019-11-28T09:00:00Z"
+		},
+		{
+			"name": "task6",
+			"displayname": "",
+			"timezone": "",
+			"schedule": "0 0 17 * * *",
+			"owner": "",
+			"owner_email": "",
+			"success_count": 26,
+			"error_count": 6,
+			"last_success": "2019-11-04T04:37:12.396866367Z",
+			"last_error": "2019-11-27T15:17:47.925761Z",
+			"disabled": false,
+			"tags": null,
+			"metadata": null,
+			"retries": 0,
+			"dependent_jobs": null,
+			"parent_job": "task5",
+			"processors": {},
+			"concurrency": "forbid",
+			"executor": "http",
+			"executor_config": {
+				"body": "{\"partner_id\": \"3123\",\"user_id\": \"14123\"}",
+				"debug": "true",
+				"expectBody": "",
+				"expectCode": "200",
+				"headers": "[]",
+				"method": "POST",
+				"timeout": "30",
+				"url": "xxxxxxxxxxxxx"
+			},
+			"status": "success",
+			"next": "2019-11-28T09:00:00Z"
+		},
+		{
+			"name": "task7",
+			"displayname": "",
+			"timezone": "",
+			"schedule": "0 0 17 * * *",
+			"owner": "",
+			"owner_email": "",
+			"success_count": 26,
+			"error_count": 6,
+			"last_success": "2019-11-04T04:37:12.396866367Z",
+			"last_error": "2019-11-27T15:17:47.925761Z",
+			"disabled": false,
+			"tags": null,
+			"metadata": null,
+			"retries": 0,
+			"dependent_jobs": null,
+			"parent_job": "task5",
+			"processors": {},
+			"concurrency": "forbid",
+			"executor": "http",
+			"executor_config": {
+				"body": "{\"partner_id\": \"3123\",\"user_id\": \"14123\"}",
+				"debug": "true",
+				"expectBody": "",
+				"expectCode": "200",
+				"headers": "[]",
+				"method": "POST",
+				"timeout": "30",
+				"url": "xxxxxxxxxxxxx"
+			},
+			"status": "success",
+			"next": "2019-11-28T09:00:00Z"
+		},
+		{
+			"name": "task8",
+			"displayname": "",
+			"timezone": "",
+			"schedule": "0 0 17 * * *",
+			"owner": "",
+			"owner_email": "",
+			"success_count": 26,
+			"error_count": 6,
+			"last_success": "2019-11-04T04:37:12.396866367Z",
+			"last_error": "2019-11-27T15:17:47.925761Z",
+			"disabled": false,
+			"tags": null,
+			"metadata": null,
+			"retries": 0,
+			"dependent_jobs": null,
+			"parent_job": "task6",
+			"processors": {},
+			"concurrency": "forbid",
+			"executor": "http",
+			"executor_config": {
+				"body": "{\"partner_id\": \"3123\",\"user_id\": \"14123\"}",
+				"debug": "true",
+				"expectBody": "",
+				"expectCode": "200",
+				"headers": "[]",
+				"method": "POST",
+				"timeout": "30",
+				"url": "xxxxxxxxxxxxx"
+			},
+			"status": "success",
+			"next": "2019-11-28T09:00:00Z"
+		}
+	]`
+	var jobs []*Job
+	err := json.Unmarshal([]byte(jsonString), &jobs)
+	if err != nil {
+		t.Fatalf("unmarshal json job error: %s", err)
+	}
+	jobTree, err := generateJobTree(jobs)
+	if err != nil {
+		t.Fatalf("generate job tree error: %s", err)
+	}
+	assert.Equal(t, len(jobTree), 3)
+}
