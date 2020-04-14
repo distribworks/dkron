@@ -167,6 +167,8 @@ github.com/hashicorp/go-plugin v1.1.0 h1:HGUJ/UDgeYfIBYT1ciftFUMSzbrheczUObdtuIA
 github.com/hashicorp/go-plugin v1.1.0/go.mod h1:popwcT5Xlw1syWU1GfAOQYhYt1xEf6hTOdJZbQNQcnQ=
 github.com/hashicorp/go-plugin v1.2.0 h1:CUfYokW0EJNDcGecVrHZK//Cp1GFlHwoqtcUIEiU6BY=
 github.com/hashicorp/go-plugin v1.2.0/go.mod h1:F9eH4LrE/ZsRdbwhfjs9k9HoDUwAHnYtXdgmf1AVNs0=
+github.com/hashicorp/go-plugin v1.2.2 h1:mgDpq0PkoK5gck2w4ivaMpWRHv/matdOR4xmeScmf/w=
+github.com/hashicorp/go-plugin v1.2.2/go.mod h1:F9eH4LrE/ZsRdbwhfjs9k9HoDUwAHnYtXdgmf1AVNs0=
 github.com/hashicorp/go-retryablehttp v0.5.3/go.mod h1:9B5zBasrRhHXnJnui7y6sL7es7NDiJgTc6Er0maI1Xs=
 github.com/hashicorp/go-sockaddr v1.0.0/go.mod h1:7Xibr9yA9JjQq1JpNB2Vw7kxv8xerXegt+ozgdvDeDU=
 github.com/hashicorp/go-sockaddr v1.0.2 h1:ztczhD1jLxIRjVejw8gFomI1BQZOe2WoVOu0SyteCQc=
