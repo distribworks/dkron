@@ -28,7 +28,7 @@ You must plan a backup strategy for the data directories, you can configure it u
       
       <guid>/upgrading/from_v2_0_to_v2_2/</guid>
       <description>Migrating Jobs To migrate jobs from v2.0.x to v2.2.x, export jobs from the v2.0.x cluster and import them into v2.2.x
-A basic script to do that can be found here</description>
+Refer to the backup&amp;amp;restore upgrade guide</description>
     </item>
     
   </channel>

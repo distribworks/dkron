@@ -808,10 +808,6 @@
   </url>
   
   <url>
-    <loc>/usage/upgrade/</loc>
-  </url>
-  
-  <url>
     <loc>/usage/executors/shell/</loc>
   </url>
   
@@ -861,6 +857,10 @@
   
   <url>
     <loc>/upgrading/from_v2_0_to_v2_2/</loc>
+  </url>
+  
+  <url>
+    <loc>/usage/upgrade/</loc>
   </url>
   
   <url>

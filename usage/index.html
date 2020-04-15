@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-04-12T18:59:37 CEST">
+<meta name="revised" content="2020-04-15T23:07:17 CEST">
 <title>Usage :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -245,7 +245,7 @@
       <li data-nav-id="/usage/upgrade/" class="dd-item">
         <div>
           <a href="/usage/upgrade/">
-            Rolling upgrade
+            Upgrade methods
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -1687,8 +1687,9 @@ Developing a plugin is simple. The only knowledge necessary to write a plugin is
 Note: A common pitfall is not properly setting up a $GOPATH.</p>
 </span>
 <p><span><card>
-<a href="/usage/upgrade/" >Rolling upgrade</a></card></p>
-<p>Use the following procedure to rotate all cluster nodes, one server at a time:
+<a href="/usage/upgrade/" >Upgrade methods</a></card></p>
+<p>Use one of the following methods (depending on the changes) to upgrade a cluster to a newer version.
+Rolling upgrade Use the following procedure to rotate all cluster nodes, one server at a time:
  Add a new servers to the cluster with a configuration that joins them to the existing cluter. Stop dkron service in one of the old servers, if it was the leader allow a new leader to be ellected, note that it is better to remove the current leader at the end, to ensure a leader is elected between the new nodes.</p>
 </span>
 <p><span><card>

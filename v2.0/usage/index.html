@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-04-12T18:59:37 CEST">
+<meta name="revised" content="2020-04-15T23:07:18 CEST">
 <title>Usage :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -245,7 +245,7 @@
       <li data-nav-id="/usage/upgrade/" class="dd-item">
         <div>
           <a href="/usage/upgrade/">
-            Rolling upgrade
+            Upgrade methods
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -1605,6 +1605,19 @@ Field name | Mandatory? | Allowed values | Allowed special characters ----------
 <p>Executors Executors plugins are the main mechanism of execution in Dkron. They implement different &ldquo;types&rdquo; of jobs in the sense that they can perform the most diverse actions on the target nodes.
 For example, the built-in shell executor, will run the indicated command in the target node.
 New plugins will be added, or you can create new ones, to perform different tasks, as HTTP requests, Docker runs, anything that you can imagine.</p>
+</span>
+<p><span><card>
+<a href="/v2.0/usage/executors/http/" >HTTP Executor</a></card></p>
+<p>HTTP executor can send a request to an HTTP endpoint
+Configuration Params:
+method: Request method in uppercase url: Request url headers: Json string, such as &quot;[\&quot;Content-Type: application/json\&quot;]&quot; body: POST body timeout: Request timeout, unit seconds expectCode: Expect response code, such as 200,206 expectBody: Expect response body, support regexp, such as /success/ debug: Debug option, will log everything when this option is not empty tlsNoVerifyPeer: false (default) or true. If true, disables verification of the remote SSL certificate's validity.</p>
+</span>
+<p><span><card>
+<a href="/v2.0/usage/executors/shell/" >Shell Executor</a></card></p>
+<p>Shell executor runs a system command
+Configuration Params
+shell: Run this command using a shell environment command: The command to run env: Env vars separated by comma cwd: Chdir before command run Example
+{ &#34;executor&#34;: &#34;shell&#34;, &#34;executor_config&#34;: { &#34;shell&#34;: &#34;true&#34;, &#34;command&#34;: &#34;my_command&#34;, &#34;env&#34;: &#34;ENV_VAR=va1,ANOTHER_ENV_VAR=var2&#34;, &#34;cwd&#34;: &#34;/app&#34; } } </p>
 </span>
 <p><span><card>
 <a href="/v2.0/usage/processors/" >Processors</a></card></p>

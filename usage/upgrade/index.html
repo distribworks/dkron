@@ -5,8 +5,8 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-04-12T18:59:36 CEST">
-<title>Rolling upgrade :: Dkron - Distributed job scheduling system</title>
+<meta name="revised" content="2020-04-15T23:07:17 CEST">
+<title>Upgrade methods :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
 <link href="/css/nucleus.css" rel="stylesheet">
@@ -246,7 +246,7 @@
       <li data-nav-id="/usage/upgrade/" class="dd-item active">
         <div>
           <a href="/usage/upgrade/">
-            Rolling upgrade
+            Upgrade methods
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -1541,7 +1541,7 @@
     <option value="/usage/plugins/" >
   - 
    Plugins</option>
-      <option value="/usage/upgrade/"  selected>- Rolling upgrade</option>
+      <option value="/usage/upgrade/"  selected>- Upgrade methods</option>
       <option value="/usage/ecs/" >- Use with AWS ECS</option>
   
     <option value="/pro/" >
@@ -1582,11 +1582,13 @@
       </div>
     
 
-    <h1>Rolling upgrade</h1>
+    <h1>Upgrade methods</h1>
     
     
     
-    <p>Use the following procedure to rotate all cluster nodes, one server at a time:</p>
+    <p>Use one of the following methods (depending on the changes) to upgrade a cluster to a newer version.</p>
+<h3 id="rolling-upgrade">Rolling upgrade</h3>
+<p>Use the following procedure to rotate all cluster nodes, one server at a time:</p>
 <ol>
 <li>Add a new servers to the cluster with a configuration that joins them to the existing cluter.</li>
 <li>Stop dkron service in one of the old servers, if it was the leader allow a new leader to be ellected, note that it is better to remove the current leader at the end, to ensure a leader is elected between the new nodes.</li>
@@ -1594,6 +1596,11 @@
 <li>Use <code>dkron raft remove-peer</code> to forcefully remove the old server</li>
 <li>Repeat steps util all old cluster nodes has been rotated</li>
 </ol>
+<h3 id="backup--restore">Backup &amp; Restore</h3>
+<p>Use the <code>/restore</code> API endpoint to restore a previously exported jobs file</p>
+<pre><code>curl localhost:8080/v1/jobs &gt; backup.json
+curl localhost:8080/v1/restore --form 'file=@backup.json'
+</code></pre><p>This will restore all jobs and counters as they were in the export file.</p>
 
 
     

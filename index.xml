@@ -1603,16 +1603,6 @@ This guide is for recovery from a Dkron outage due to a majority of server nodes
     </item>
     
     <item>
-      <title>Rolling upgrade</title>
-      <link>/usage/upgrade/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/usage/upgrade/</guid>
-      <description>Use the following procedure to rotate all cluster nodes, one server at a time:
- Add a new servers to the cluster with a configuration that joins them to the existing cluter. Stop dkron service in one of the old servers, if it was the leader allow a new leader to be ellected, note that it is better to remove the current leader at the end, to ensure a leader is elected between the new nodes.</description>
-    </item>
-    
-    <item>
       <title>Shell Executor</title>
       <link>/usage/executors/shell/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -1761,7 +1751,18 @@ You must plan a backup strategy for the data directories, you can configure it u
       
       <guid>/upgrading/from_v2_0_to_v2_2/</guid>
       <description>Migrating Jobs To migrate jobs from v2.0.x to v2.2.x, export jobs from the v2.0.x cluster and import them into v2.2.x
-A basic script to do that can be found here</description>
+Refer to the backup&amp;amp;restore upgrade guide</description>
+    </item>
+    
+    <item>
+      <title>Upgrade methods</title>
+      <link>/usage/upgrade/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/usage/upgrade/</guid>
+      <description>Use one of the following methods (depending on the changes) to upgrade a cluster to a newer version.
+Rolling upgrade Use the following procedure to rotate all cluster nodes, one server at a time:
+ Add a new servers to the cluster with a configuration that joins them to the existing cluter. Stop dkron service in one of the old servers, if it was the leader allow a new leader to be ellected, note that it is better to remove the current leader at the end, to ensure a leader is elected between the new nodes.</description>
     </item>
     
     <item>
