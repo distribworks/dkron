@@ -186,7 +186,7 @@
 	"title": "Dkron Pro",
 	"tags": [],
 	"description": "",
-	"content": " Pro CLI \n  dkron \n   dkron agent \n   dkron doc \n   dkron keygen \n   dkron leave \n   dkron raft \n   dkron raft list-peers \n   dkron raft remove-peer \n   dkron version \n    Access Control \n   Authentication \n   Commercial FAQ \n   Commercial Support \n   Configuration \n   Cross region failover \n   Encryption \n   Executors \n  AWS ECS Executor \n   Docker executor \n    Processors \n  Elasticsearch processor \n   Email processor \n   Slack processor \n    "
+	"content": " Pro CLI \n   Access Control \n   Authentication \n   Commercial FAQ \n   Commercial Support \n   Configuration \n   Cross region failover \n   Encryption \n   Executors \n  AWS ECS Executor \n   Docker executor \n    Processors \n  Elasticsearch processor \n   Email processor \n   Slack processor \n    "
 },
 {
 	"uri": "/v1.2/pro/",
