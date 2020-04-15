@@ -6,7 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changes
+
 - Restore jobs with file [#654](https://github.com/distribworks/dkron/pull/654) @vision9527
+- Upgrade deps [#724](https://github.com/distribworks/dkron/pull/724) [#725](https://github.com/distribworks/dkron/pull/725) [#726](https://github.com/distribworks/dkron/pull/726)
 
 ## [2.2.0] - 2020-04-11
 

@@ -1,6 +1,10 @@
 ---
-title: Rolling upgrade
+title: Upgrade methods
 ---
+
+Use one of the following methods (depending on the changes) to upgrade a cluster to a newer version.
+
+### Rolling upgrade
 
 Use the following procedure to rotate all cluster nodes, one server at a time:
 
@@ -9,3 +13,14 @@ Use the following procedure to rotate all cluster nodes, one server at a time:
 1. Use `dkron raft list-peers` to list current cluster nodes
 1. Use `dkron raft remove-peer` to forcefully remove the old server
 1. Repeat steps util all old cluster nodes has been rotated
+
+### Backup & Restore
+
+Use the `/restore` API endpoint to restore a previously exported jobs file
+
+```
+curl localhost:8080/v1/jobs > backup.json
+curl localhost:8080/v1/restore --form 'file=@backup.json'
+```
+
+This will restore all jobs and counters as they were in the export file.
