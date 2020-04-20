@@ -118,6 +118,7 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 		Execution: execution.ToProto(),
 	}); err != nil {
 		// In case of error means that maybe the server is gone so fallback to ExecutionDone
+		log.WithError(err).WithField("job", job.Name).Error("invoke: error sending the final execution, falling back to ExecutionDone")
 		return a.GRPCClient.ExecutionDone(rpcServer, execution)
 	}
 
@@ -125,8 +126,11 @@ func (a *Agent) invokeJob(job *Job, execution *Execution) error {
 	reply, err := stream.CloseAndRecv()
 	if err != nil {
 		// In case of error means that maybe the server is gone so fallback to ExecutionDone
+		log.WithError(err).WithField("job", job.Name).Error("invoke: error closing the stream, falling back to ExecutionDone")
 		return a.GRPCClient.ExecutionDone(rpcServer, execution)
 	}
+
+	// TODO add better logging
 	log.WithField("from", reply.From).Debug("agent: AgentRun reply")
 
 	return nil
