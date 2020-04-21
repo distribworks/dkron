@@ -127,6 +127,9 @@ func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
 			if len(ej.DependentJobs) != 0 && copyDependentJobs {
 				job.DependentJobs = ej.DependentJobs
 			}
+			if ej.Status != "" {
+				job.Status = ej.Status
+			}
 		}
 
 		if job.Schedule != ej.Schedule {
@@ -134,6 +137,8 @@ func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
 			if err != nil {
 				return err
 			}
+		} else {
+			job.Next = ej.Next
 		}
 
 		pbj := job.ToProto()
