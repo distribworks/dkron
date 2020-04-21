@@ -412,7 +412,7 @@ func (a *Agent) setupSerf() (*serf.Serf, error) {
 	serfConfig.UserQuiescentPeriod = time.Second
 
 	// Create a channel to listen for events from Serf
-	a.eventCh = make(chan serf.Event, 64)
+	a.eventCh = make(chan serf.Event, 2048)
 	serfConfig.EventCh = a.eventCh
 
 	// Start Serf
