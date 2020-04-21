@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.2.2] - 2020-04-22
+
+### Fixes
+
+- Increase serf events buffer size [#732](https://github.com/distribworks/dkron/pull/732) 
+- Resetting the status and next params [#730](https://github.com/distribworks/dkron/pull/730)
+
+### Changes
+
+- Bump protobuf to 1.4.0 [#729](https://github.com/distribworks/dkron/pull/729)
+
 ## [2.2.1] - 2020-04-15
 
 ### Changes
