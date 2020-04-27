@@ -54,8 +54,12 @@ func (a *Agent) RunQuery(jobName string, ex *Execution) (*Job, error) {
 		if err != nil {
 			return nil, fmt.Errorf("agent: RunQuery error processing filtered nodes: %w", err)
 		}
-		log.Debug("agent: Filtered nodes to run: ", filterNodes)
-		log.Debug("agent: Filtered tags to run: ", filterTags)
+		log.WithFields(logrus.Fields{
+			"job_name": job.Name,
+		}).Debug("agent: Filtered nodes to run: ", filterNodes)
+		log.WithFields(logrus.Fields{
+			"job_name": job.Name,
+		}).Debug("agent: Filtered tags to run: ", filterTags)
 
 		//serf match regexp but we want only match full tag
 		serfFilterTags := make(map[string]string)
@@ -110,14 +114,16 @@ func (a *Agent) RunQuery(jobName string, ex *Execution) (*Job, error) {
 		case ack, ok := <-ackCh:
 			if ok {
 				log.WithFields(logrus.Fields{
-					"query": QueryRunJob,
-					"from":  ack,
+					"query":    QueryRunJob,
+					"job_name": job.Name,
+					"from":     ack,
 				}).Debug("agent: Received ack")
 			}
 		case resp, ok := <-respCh:
 			if ok {
 				log.WithFields(logrus.Fields{
 					"query":    QueryRunJob,
+					"job_name": job.Name,
 					"from":     resp.From,
 					"response": string(resp.Payload),
 				}).Debug("agent: Received response")
@@ -125,8 +131,9 @@ func (a *Agent) RunQuery(jobName string, ex *Execution) (*Job, error) {
 		}
 	}
 	log.WithFields(logrus.Fields{
-		"time":  time.Since(start),
-		"query": QueryRunJob,
+		"time":     time.Since(start),
+		"job_name": job.Name,
+		"query":    QueryRunJob,
 	}).Debug("agent: Done receiving acks and responses")
 
 	return job, nil
