@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-contrib/expvar"
 	"github.com/gin-gonic/gin"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 	"github.com/tidwall/buntdb"
 	status "google.golang.org/grpc/status"
@@ -53,6 +54,12 @@ func (h *HTTPTransport) ServeHTTP() {
 	go h.Engine.Run(h.agent.config.HTTPAddr)
 }
 
+// metricsHandler returns a prometheus style http.Handler for scraping metrics using the agent's prometheus.Registry
+func (h *HTTPTransport) metricsHandler() http.Handler {
+	handler := promhttp.HandlerFor(h.agent.promReg, promhttp.HandlerOpts{})
+	return handler
+}
+
 // APIRoutes registers the api routes on the gin RouterGroup.
 func (h *HTTPTransport) APIRoutes(r *gin.RouterGroup, middleware ...gin.HandlerFunc) {
 	r.GET("/debug/vars", expvar.Handler())
@@ -62,6 +69,11 @@ func (h *HTTPTransport) APIRoutes(r *gin.RouterGroup, middleware ...gin.HandlerF
 			"status": "healthy",
 		})
 	})
+
+	if h.agent.config.EnablePrometheus {
+		// Prometheus metrics scrape endpoint
+		r.GET("/metrics", gin.WrapH(h.metricsHandler()))
+	}
 
 	r.GET("/v1", h.indexHandler)
 	v1 := r.Group("/v1")

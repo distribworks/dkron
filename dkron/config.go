@@ -153,6 +153,9 @@ type Config struct {
 
 	// StatsdAddr is the statsd standard server to be used for sending metrics.
 	StatsdAddr string `mapstructure:"statsd-addr"`
+
+	// EnablePrometheus enables serving of prometheus metrics at /metrics
+	EnablePrometheus bool `mapstructure:"enable-prometheus"`
 }
 
 // DefaultBindPort is the default port that dkron will use for Serf communication
@@ -231,6 +234,7 @@ func ConfigFlagSet() *flag.FlagSet {
 	cmdFlags.String("dog-statsd-addr", "", "DataDog Agent address")
 	cmdFlags.StringSlice("dog-statsd-tags", []string{}, "Datadog tags, specified as key:value")
 	cmdFlags.String("statsd-addr", "", "Statsd address")
+	cmdFlags.Bool("enable-prometheus", false, "Enable serving prometheus metrics")
 
 	return cmdFlags
 }

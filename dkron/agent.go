@@ -23,6 +23,7 @@ import (
 	"github.com/hashicorp/raft"
 	raftboltdb "github.com/hashicorp/raft-boltdb"
 	"github.com/hashicorp/serf/serf"
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/sirupsen/logrus"
 	"github.com/soheilhy/cmux"
 )
@@ -101,6 +102,8 @@ type Agent struct {
 	peers      map[string][]*ServerParts
 	localPeers map[raft.ServerAddress]*ServerParts
 	peerLock   sync.RWMutex
+
+	promReg *prometheus.Registry
 }
 
 // ProcessorFactory is a function type that creates a new instance
@@ -122,6 +125,7 @@ func NewAgent(config *Config, options ...AgentOption) *Agent {
 	agent := &Agent{
 		config:      config,
 		retryJoinCh: make(chan error),
+		promReg:     prometheus.NewRegistry(),
 	}
 
 	for _, option := range options {
