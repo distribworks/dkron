@@ -55,10 +55,10 @@ func (a *Agent) RunQuery(jobName string, ex *Execution) (*Job, error) {
 			return nil, fmt.Errorf("agent: RunQuery error processing filtered nodes: %w", err)
 		}
 		log.WithFields(logrus.Fields{
-			"job_name": job.Name,
+			"job": job.Name,
 		}).Debug("agent: Filtered nodes to run: ", filterNodes)
 		log.WithFields(logrus.Fields{
-			"job_name": job.Name,
+			"job": job.Name,
 		}).Debug("agent: Filtered tags to run: ", filterTags)
 
 		//serf match regexp but we want only match full tag
@@ -90,14 +90,14 @@ func (a *Agent) RunQuery(jobName string, ex *Execution) (*Job, error) {
 	rqpJSON, _ := json.Marshal(rqp)
 
 	log.WithFields(logrus.Fields{
-		"query":    QueryRunJob,
-		"job_name": job.Name,
+		"query": QueryRunJob,
+		"job":   job.Name,
 	}).Info("agent: Sending query")
 
 	log.WithFields(logrus.Fields{
-		"query":    QueryRunJob,
-		"job_name": job.Name,
-		"json":     string(rqpJSON),
+		"query": QueryRunJob,
+		"job":   job.Name,
+		"json":  string(rqpJSON),
 	}).Debug("agent: Sending query")
 
 	qr, err := a.serf.Query(QueryRunJob, rqpJSON, params)
@@ -114,16 +114,16 @@ func (a *Agent) RunQuery(jobName string, ex *Execution) (*Job, error) {
 		case ack, ok := <-ackCh:
 			if ok {
 				log.WithFields(logrus.Fields{
-					"query":    QueryRunJob,
-					"job_name": job.Name,
-					"from":     ack,
+					"query": QueryRunJob,
+					"job":   job.Name,
+					"from":  ack,
 				}).Debug("agent: Received ack")
 			}
 		case resp, ok := <-respCh:
 			if ok {
 				log.WithFields(logrus.Fields{
 					"query":    QueryRunJob,
-					"job_name": job.Name,
+					"job":      job.Name,
 					"from":     resp.From,
 					"response": string(resp.Payload),
 				}).Debug("agent: Received response")
@@ -131,9 +131,9 @@ func (a *Agent) RunQuery(jobName string, ex *Execution) (*Job, error) {
 		}
 	}
 	log.WithFields(logrus.Fields{
-		"time":     time.Since(start),
-		"job_name": job.Name,
-		"query":    QueryRunJob,
+		"time":  time.Since(start),
+		"job":   job.Name,
+		"query": QueryRunJob,
 	}).Debug("agent: Done receiving acks and responses")
 
 	return job, nil
