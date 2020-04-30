@@ -28,6 +28,7 @@ dkron agent [flags]
       --datacenter string            Specifies the data center of the local agent. All members of a datacenter should share a local LAN connection. (default "dc1")
       --dog-statsd-addr string       DataDog Agent address
       --dog-statsd-tags strings      Datadog tags, specified as key:value
+      --enable-prometheus            Enable serving prometheus metrics at /metrics
       --encrypt string               Key for encrypting network traffic. Must be a base64-encoded 16-byte key
   -h, --help                         help for agent
       --http-addr string             Address to bind the UI web server to. Only used when server. The value supports go-sockaddr/template format. (default ":8080")

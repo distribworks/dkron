@@ -6,6 +6,7 @@ import (
 
 	"github.com/armon/go-metrics"
 	"github.com/armon/go-metrics/datadog"
+	"github.com/armon/go-metrics/prometheus"
 )
 
 func initMetrics(a *Agent) error {
@@ -14,6 +15,16 @@ func initMetrics(a *Agent) error {
 	metrics.DefaultInmemSignal(inm)
 
 	var fanout metrics.FanoutSink
+
+	// Configure the prometheus sink
+	if a.config.EnablePrometheus {
+		promSink, err := prometheus.NewPrometheusSink()
+		if err != nil {
+			return err
+		}
+
+		fanout = append(fanout, promSink)
+	}
 
 	// Configure the statsd sink
 	if a.config.StatsdAddr != "" {
