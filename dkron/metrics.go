@@ -22,11 +22,6 @@ func initMetrics(a *Agent) error {
 		if err != nil {
 			return err
 		}
-		// Use a custom prometheus registry instead of prometheus.DefaultRegistry to avoid the default go metrics because they are already configured
-		err = a.promReg.Register(promSink)
-		if err != nil {
-			return err
-		}
 
 		fanout = append(fanout, promSink)
 	}

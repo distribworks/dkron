@@ -54,12 +54,6 @@ func (h *HTTPTransport) ServeHTTP() {
 	go h.Engine.Run(h.agent.config.HTTPAddr)
 }
 
-// metricsHandler returns a prometheus style http.Handler for scraping metrics using the agent's prometheus.Registry
-func (h *HTTPTransport) metricsHandler() http.Handler {
-	handler := promhttp.HandlerFor(h.agent.promReg, promhttp.HandlerOpts{})
-	return handler
-}
-
 // APIRoutes registers the api routes on the gin RouterGroup.
 func (h *HTTPTransport) APIRoutes(r *gin.RouterGroup, middleware ...gin.HandlerFunc) {
 	r.GET("/debug/vars", expvar.Handler())
@@ -72,7 +66,7 @@ func (h *HTTPTransport) APIRoutes(r *gin.RouterGroup, middleware ...gin.HandlerF
 
 	if h.agent.config.EnablePrometheus {
 		// Prometheus metrics scrape endpoint
-		r.GET("/metrics", gin.WrapH(h.metricsHandler()))
+		r.GET("/metrics", gin.WrapH(promhttp.Handler()))
 	}
 
 	r.GET("/v1", h.indexHandler)
