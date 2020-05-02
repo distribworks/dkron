@@ -143,15 +143,6 @@ func Test_isRunnable(t *testing.T) {
 			want: false,
 		},
 		{
-			name: "running true",
-			job: &Job{
-				Name:    "test_job",
-				Agent:   a,
-				running: true,
-			},
-			want: false,
-		},
-		{
 			name: "should run",
 			job: &Job{
 				Name:  "test_job",
@@ -190,6 +181,9 @@ func (gRPCClientMock) GetActiveExecutions(s string) ([]*proto.Execution, error) 
 	}, nil
 }
 func (gRPCClientMock) SetExecution(execution *proto.Execution) error { return nil }
+func (gRPCClientMock) AgentRun(addr string, job *proto.Job, execution *proto.Execution) error {
+	return nil
+}
 
 func Test_generateJobTree(t *testing.T) {
 	jsonString := `[

@@ -96,9 +96,6 @@ type Job struct {
 	// Number of times to retry a job that failed an execution.
 	Retries uint `json:"retries"`
 
-	// running indicates that the Run method is still broadcasting
-	running bool
-
 	// Jobs that are dependent upon this one will be run after this job runs.
 	DependentJobs []string `json:"dependent_jobs"`
 
@@ -229,9 +226,6 @@ func (j *Job) Run() {
 
 	// Check if it's runnable
 	if j.isRunnable() {
-		j.running = true
-		defer func() { j.running = false }()
-
 		log.WithFields(logrus.Fields{
 			"job":      j.Name,
 			"schedule": j.Schedule,
@@ -241,7 +235,8 @@ func (j *Job) Run() {
 
 		// Simple execution wrapper
 		ex := NewExecution(j.Name)
-		if _, err := j.Agent.RunQuery(j.Name, ex); err != nil {
+
+		if _, err := j.Agent.Run(j.Name, ex); err != nil {
 			log.WithError(err).Error("job: Error sending Run query to serf cluster")
 		}
 	}
@@ -315,12 +310,6 @@ func (j *Job) isRunnable() bool {
 				return false
 			}
 		}
-	}
-
-	if j.running {
-		log.WithField("job", j.Name).
-			Warning("job: Skipping execution because last execution still broadcasting, consider increasing schedule interval")
-		return false
 	}
 
 	return true
