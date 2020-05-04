@@ -3,9 +3,11 @@ package dkron
 import (
 	"errors"
 	"fmt"
+	"math/rand"
 	"regexp"
 	"time"
 
+	metrics "github.com/armon/go-metrics"
 	"github.com/distribworks/dkron/v2/extcron"
 	"github.com/distribworks/dkron/v2/ntime"
 	"github.com/distribworks/dkron/v2/plugin"
@@ -227,6 +229,11 @@ func (j *Job) Run() {
 		log.Fatal("job: agent not set")
 	}
 
+	rand.Seed(time.Now().UnixNano())
+	n := rand.Intn(10)
+	time.Sleep(time.Duration(n) * time.Second)
+	metrics.IncrCounter([]string{"job", "scheduler", "scheduled", j.Name, j.ExecutorConfig["project"]}, 1)
+
 	// Check if it's runnable
 	if j.isRunnable() {
 		j.running = true
@@ -318,9 +325,7 @@ func (j *Job) isRunnable() bool {
 	}
 
 	if j.running {
-		log.WithField("job", j.Name).
-			Warning("job: Skipping execution because last execution still broadcasting, consider increasing schedule interval")
-		return false
+		metrics.IncrCounter([]string{"job", "concurrency", "overlapping", j.Name, j.ExecutorConfig["project"]}, 1)
 	}
 
 	return true

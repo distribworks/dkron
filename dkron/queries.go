@@ -17,11 +17,19 @@ const (
 	QueryExecutionDone = "execution:done"
 )
 
+var responseStatusCheck bool
+
 // RunQueryParam defines the struct used to send a Run query
 // using serf.
 type RunQueryParam struct {
-	Execution *Execution `json:"execution"`
-	RPCAddr   string     `json:"rpc_addr"`
+	Execution        *Execution `json:"execution"`
+	RPCAddr          string     `json:"rpc_addr"`
+	ExpectedResponse time.Time
+}
+
+// QueryResponse hold status about Serf Query Responses for a job query
+type QueryResponse struct {
+	Node map[string]map[string]bool
 }
 
 // RunQuery sends a serf run query to the cluster, this is used to ask a node or nodes
@@ -47,94 +55,158 @@ func (a *Agent) RunQuery(jobName string, ex *Execution) (*Job, error) {
 		}
 	}
 
-	// In the first execution attempt we build and filter the target nodes
-	// but we use the existing node target in case of retry.
-	if ex.Attempt <= 1 {
-		filterNodes, filterTags, err := a.processFilteredNodes(job)
+	for i := 0; ; i++ {
+		if i > 10 {
+			log.WithFields(logrus.Fields{
+				"query": QueryRunJob,
+				"job":   job.Name,
+			}).Info("RunQuery retry limit reached. Skipping execution")
+			break
+		}
+
+		if i > 0 {
+			time.Sleep(time.Duration(i) * time.Second)
+		}
+
+		// In the first execution attempt we build and filter the target nodes
+		// but we use the existing node target in case of retry.
+		if ex.Attempt <= 1 {
+
+			filterNodes, filterTags, err := a.processFilteredNodes(job)
+			if err != nil {
+				return nil, fmt.Errorf("agent: RunQuery error processing filtered nodes: %w", err)
+			}
+
+			log.WithFields(logrus.Fields{
+				"nodes":    filterNodes,
+				"job_name": job.Name,
+			}).Debug("agent: Filtered nodes to run")
+
+			log.WithFields(logrus.Fields{
+				"tags":     filterTags,
+				"job_name": job.Name,
+			}).Debug("agent: Filtered tags to run")
+
+			//serf match regexp but we want only match full tag
+			serfFilterTags := make(map[string]string)
+			for key, val := range filterTags {
+				b := new(bytes.Buffer)
+				b.WriteString("^")
+				b.WriteString(val)
+				b.WriteString("$")
+				serfFilterTags[key] = b.String()
+			}
+
+			params = &serf.QueryParam{
+				FilterNodes: filterNodes,
+				FilterTags:  serfFilterTags,
+				RequestAck:  true,
+				Timeout:     10 * time.Second,
+			}
+
+		} else {
+			params = &serf.QueryParam{
+				FilterNodes: []string{ex.NodeName},
+				RequestAck:  true,
+				Timeout:     10 * time.Second,
+			}
+		}
+		rqp := &RunQueryParam{
+			Execution:        ex,
+			RPCAddr:          a.getRPCAddr(),
+			ExpectedResponse: time.Now().Add(params.Timeout),
+		}
+
+		rqpJSON, _ := json.Marshal(rqp)
+
+		log.WithFields(logrus.Fields{
+			"query":    QueryRunJob,
+			"job_name": job.Name,
+			"json":     string(rqpJSON),
+		}).Debug("agent: Sending query")
+
+		qrs := QueryResponse{Node: make(map[string]map[string]bool)}
+
+		log.WithFields(logrus.Fields{
+			"job_name": job.Name,
+		}).Infof("agent: Sending query. Attempt: %v", i)
+
+		qr, err := a.serf.Query(QueryRunJob, rqpJSON, params)
 		if err != nil {
-			return nil, fmt.Errorf("agent: RunQuery error processing filtered nodes: %w", err)
+			return nil, fmt.Errorf("agent: RunQuery sending query error: %w", err)
 		}
-		log.WithFields(logrus.Fields{
-			"job": job.Name,
-		}).Debug("agent: Filtered nodes to run: ", filterNodes)
-		log.WithFields(logrus.Fields{
-			"job": job.Name,
-		}).Debug("agent: Filtered tags to run: ", filterTags)
+		defer qr.Close()
 
-		//serf match regexp but we want only match full tag
-		serfFilterTags := make(map[string]string)
-		for key, val := range filterTags {
-			b := new(bytes.Buffer)
-			b.WriteString("^")
-			b.WriteString(val)
-			b.WriteString("$")
-			serfFilterTags[key] = b.String()
-		}
+		ackCh := qr.AckCh()
 
-		params = &serf.QueryParam{
-			FilterNodes: filterNodes,
-			FilterTags:  serfFilterTags,
-			RequestAck:  true,
-		}
-	} else {
-		params = &serf.QueryParam{
-			FilterNodes: []string{ex.NodeName},
-			RequestAck:  true,
-		}
-	}
+		var responseCounter int
+		for !qr.Finished() {
+			select {
+			case ack, ok := <-ackCh:
 
-	rqp := &RunQueryParam{
-		Execution: ex,
-		RPCAddr:   a.getRPCAddr(),
-	}
-	rqpJSON, _ := json.Marshal(rqp)
+				if ok {
+					log.WithFields(logrus.Fields{
+						"from":  ack,
+						"job":   job.Name,
+					}).Info("agent: Received ack")
+					responseCounter++
+					n, o := qrs.Node[ack]
+					if !o {
+						n = make(map[string]bool)
+						qrs.Node[ack] = n
+					}
+					n["ack"] = true
+				}
+			}
 
-	log.WithFields(logrus.Fields{
-		"query": QueryRunJob,
-		"job":   job.Name,
-	}).Info("agent: Sending query")
-
-	log.WithFields(logrus.Fields{
-		"query": QueryRunJob,
-		"job":   job.Name,
-		"json":  string(rqpJSON),
-	}).Debug("agent: Sending query")
-
-	qr, err := a.serf.Query(QueryRunJob, rqpJSON, params)
-	if err != nil {
-		return nil, fmt.Errorf("agent: RunQuery sending query error: %w", err)
-	}
-	defer qr.Close()
-
-	ackCh := qr.AckCh()
-	respCh := qr.ResponseCh()
-
-	for !qr.Finished() {
-		select {
-		case ack, ok := <-ackCh:
-			if ok {
+			if len(params.FilterNodes) == responseCounter {
 				log.WithFields(logrus.Fields{
 					"query": QueryRunJob,
 					"job":   job.Name,
-					"from":  ack,
-				}).Debug("agent: Received ack")
-			}
-		case resp, ok := <-respCh:
-			if ok {
-				log.WithFields(logrus.Fields{
-					"query":    QueryRunJob,
-					"job":      job.Name,
-					"from":     resp.From,
-					"response": string(resp.Payload),
-				}).Debug("agent: Received response")
+				}).Debug("All responses received. Not waiting for query timeout")
+				qr.Close()
+				break
 			}
 		}
+
+		responseStatusCheck = true
+
+		for _, v := range params.FilterNodes {
+			if _, e := qrs.Node[v]; e {
+				if _, b := qrs.Node[v]["ack"]; b {
+					log.WithFields(logrus.Fields{
+						"query": QueryRunJob,
+						"job":   job.Name,
+					}).Debugf("Ack check validated from expected node: %v", v)
+				} else {
+					log.WithFields(logrus.Fields{
+						"query": QueryRunJob,
+						"job":   job.Name,
+					}).Debugf("No ack received from expected node: %v", v)
+					responseStatusCheck = false
+					break
+				}
+
+			} else {
+				log.WithFields(logrus.Fields{
+					"query": QueryRunJob,
+					"job":   job.Name,
+				}).Debugf("No responses from expected node: %v", v)
+				responseStatusCheck = false
+				break
+			}
+		}
+
+		if responseStatusCheck == true {
+			break
+		}
+
+		log.WithFields(logrus.Fields{
+			"time":  time.Since(start),
+			"query": QueryRunJob,
+			"job":   job.Name,
+		}).Debug("agent: Done waiting responses")
 	}
-	log.WithFields(logrus.Fields{
-		"time":  time.Since(start),
-		"job":   job.Name,
-		"query": QueryRunJob,
-	}).Debug("agent: Done receiving acks and responses")
 
 	return job, nil
 }

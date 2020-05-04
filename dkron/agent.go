@@ -410,6 +410,7 @@ func (a *Agent) setupSerf() (*serf.Serf, error) {
 	serfConfig.QuiescentPeriod = time.Second
 	serfConfig.UserCoalescePeriod = 3 * time.Second
 	serfConfig.UserQuiescentPeriod = time.Second
+	serfConfig.ReconnectTimeout = time.Duration(config.SerfReconnectTimeout) * time.Second
 
 	// Create a channel to listen for events from Serf
 	a.eventCh = make(chan serf.Event, 2048)
@@ -601,7 +602,7 @@ func (a *Agent) eventLoop() {
 	for {
 		select {
 		case e := <-a.eventCh:
-			log.WithField("event", e.String()).Info("agent: Received event")
+			log.WithField("event", e.String()).Debug("agent: Received event")
 			metrics.IncrCounter([]string{"agent", "event_received", e.String()}, 1)
 
 			// Log all member events
@@ -642,16 +643,28 @@ func (a *Agent) eventLoop() {
 						"query":   query.Name,
 						"payload": string(query.Payload),
 						"at":      query.LTime,
-					}).Debug("agent: Running job")
+					}).Debug("agent: Received job run intent")
 
 					var rqp RunQueryParam
 					if err := json.Unmarshal(query.Payload, &rqp); err != nil {
 						log.WithField("query", QueryRunJob).Fatal("agent: Error unmarshaling query payload")
 					}
 
+					tn := time.Now()
+					d := tn.Sub(rqp.ExpectedResponse)
+					if d > 0 {
+						log.WithFields(logrus.Fields{
+							"job": rqp.Execution.JobName,
+							"tn": tn,
+							"expected": rqp.ExpectedResponse,
+							"diff": d,
+						}).Debug("agent: Not executing job, as execution intent timestamp is higher than expected time. It will be retried")
+						continue
+					}
+
 					log.WithFields(logrus.Fields{
 						"job": rqp.Execution.JobName,
-					}).Info("agent: Starting job")
+					}).Debug("agent: Starting job")
 
 					// There are two error types to handle here:
 					// Key not found when the job is removed from store
@@ -687,6 +700,7 @@ func (a *Agent) eventLoop() {
 					// Respond with the execution JSON though it is not used in the destination
 					exJSON, _ := json.Marshal(ex)
 					query.Respond(exJSON)
+
 				}
 			}
 
