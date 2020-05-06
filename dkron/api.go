@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-contrib/expvar"
 	"github.com/gin-gonic/gin"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 	"github.com/tidwall/buntdb"
 	status "google.golang.org/grpc/status"
@@ -62,6 +63,11 @@ func (h *HTTPTransport) APIRoutes(r *gin.RouterGroup, middleware ...gin.HandlerF
 			"status": "healthy",
 		})
 	})
+
+	if h.agent.config.EnablePrometheus {
+		// Prometheus metrics scrape endpoint
+		r.GET("/metrics", gin.WrapH(promhttp.Handler()))
+	}
 
 	r.GET("/v1", h.indexHandler)
 	v1 := r.Group("/v1")

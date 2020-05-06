@@ -2,14 +2,26 @@
 title: Metrics
 ---
 
-Dkron has the ability to send metrics to Statsd for dashboards and historical reporting. It sends job processing metrics and golang, serf metrics too.
+Dkron has the ability to send metrics to Statsd for dashboards and historical reporting or provide prometheus format metrics via the api. It sends job processing metrics, golang, and serf metrics.
 
 ## Configuration
 
-Add this in your yaml config file
+### Statsd
+
+Add this in your yaml config file to enable statsd metrics.
 
 ```yaml
-dog_statsd_addr: "localhost:8125"
+statsd-addr: "localhost:8125"
+# Or for datadog statsd
+dog-statsd-addr: "localhost:8125"
+```
+
+### Prometheus
+
+Add this to your yaml config file to enable serving prometheus metrics at the endpoint `/metrics`
+
+```yaml
+enable-prometheus: true
 ```
 
 ## Metrics
@@ -48,4 +60,3 @@ dog_statsd_addr: "localhost:8125"
 - dkron.serf.queue.Event
 - dkron.serf.queue.Intent
 - dkron.serf.queue.Query
-
