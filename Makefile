@@ -39,6 +39,7 @@ doc:
 	ghp-import -p public
 
 gen:
+	rm -rf static/.node_modules
 	go generate ./dkron/templates
 	go generate ./dkron/assets
 
