@@ -24,6 +24,7 @@ require (
 	github.com/hashicorp/serf v0.9.0
 	github.com/hashicorp/yamux v0.0.0-20190923154419-df201c70410d // indirect
 	github.com/jordan-wright/email v0.0.0-20180115032944-94ae17dedda2
+	github.com/juliangruber/go-intersect v1.0.0
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0
 	github.com/mattn/go-shellwords v1.0.10
 	github.com/mitchellh/go-testing-interface v1.0.0 // indirect

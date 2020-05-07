@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"io"
 	"net"
 	"sync"
 	"time"
@@ -57,6 +56,9 @@ func NewGRPCServer(agent *Agent) DkronGRPCServer {
 func (grpcs *GRPCServer) Serve(lis net.Listener) error {
 	grpcServer := grpc.NewServer()
 	proto.RegisterDkronServer(grpcServer, grpcs)
+
+	as := NewAgentServer(grpcs.agent)
+	proto.RegisterAgentServer(grpcServer, as)
 	go grpcServer.Serve(lis)
 
 	return nil
@@ -212,7 +214,7 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.E
 			"execution": execution,
 		}).Debug("grpc: Retrying execution")
 
-		if _, err := grpcs.agent.RunQuery(job.Name, execution); err != nil {
+		if _, err := grpcs.agent.Run(job.Name, execution); err != nil {
 			return nil, err
 		}
 		return &proto.ExecutionDoneResponse{
@@ -260,7 +262,7 @@ func (grpcs *GRPCServer) Leave(ctx context.Context, in *empty.Empty) (*empty.Emp
 // RunJob runs a job in the cluster
 func (grpcs *GRPCServer) RunJob(ctx context.Context, req *proto.RunJobRequest) (*proto.RunJobResponse, error) {
 	ex := NewExecution(req.JobName)
-	job, err := grpcs.agent.RunQuery(req.JobName, ex)
+	job, err := grpcs.agent.Run(req.JobName, ex)
 	if err != nil {
 		return nil, err
 	}
@@ -362,65 +364,12 @@ REMOVE:
 	return new(empty.Empty), nil
 }
 
-// AgentRun is called when an agent starts running a job and lasts all execution,
-// the agent will stream execution progress to the server.
-func (grpcs *GRPCServer) AgentRun(stream proto.Dkron_AgentRunServer) error {
-	defer metrics.MeasureSince([]string{"grpc", "agent_run"}, time.Now())
-
-	var execution *Execution
-	var first bool
-	for {
-		ars, err := stream.Recv()
-
-		// Stream ends
-		if err == io.EOF {
-			addr := grpcs.agent.raft.Leader()
-			if err := grpcs.agent.GRPCClient.ExecutionDone(string(addr), execution); err != nil {
-				return err
-			}
-			return stream.SendAndClose(&proto.AgentRunResponse{
-				From: grpcs.agent.Config().NodeName,
-			})
-		}
-
-		// Error receiving from stream
-		if err != nil {
-			// At this point the execution status will be unknown, set the FinshedAt time and an explanatory message
-			execution.FinishedAt = time.Now()
-			execution.Output = ErrBrokenStream.Error()
-
-			log.WithError(err).Error(ErrBrokenStream)
-
-			addr := grpcs.agent.raft.Leader()
-			if err := grpcs.agent.GRPCClient.ExecutionDone(string(addr), execution); err != nil {
-				return err
-			}
-			return err
-		}
-
-		// Registers an active stream
-		grpcs.activeExecutions.Store(ars.Execution.Key(), ars.Execution)
-		log.WithField("key", ars.Execution.Key()).Debug("grpc: received execution stream")
-
-		execution = NewExecutionFromProto(ars.Execution)
-		defer grpcs.activeExecutions.Delete(execution.Key())
-
-		// Store the received exeuction in the raft log and store
-		if !first {
-			if err := grpcs.agent.GRPCClient.SetExecution(ars.Execution); err != nil {
-				return err
-			}
-			first = true
-		}
-	}
-}
-
 // GetActiveExecutions returns the active executions on the server node
 func (grpcs *GRPCServer) GetActiveExecutions(ctx context.Context, in *empty.Empty) (*proto.GetActiveExecutionsResponse, error) {
 	defer metrics.MeasureSince([]string{"grpc", "agent_run"}, time.Now())
 
 	var executions []*proto.Execution
-	grpcs.activeExecutions.Range(func(k, v interface{}) bool {
+	grpcs.agent.activeExecutions.Range(func(k, v interface{}) bool {
 		e := v.(*proto.Execution)
 		executions = append(executions, e)
 		return true

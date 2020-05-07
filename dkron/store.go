@@ -138,7 +138,10 @@ func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
 				return err
 			}
 		} else {
-			job.Next = ej.Next
+			// If comming from a backup us the previous value, don't allow overwriting this
+			if job.Next.Before(ej.Next) {
+				job.Next = ej.Next
+			}
 		}
 
 		pbj := job.ToProto()

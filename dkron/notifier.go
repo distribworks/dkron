@@ -88,7 +88,7 @@ func (n *Notifier) buildTemplate(templ string) *bytes.Buffer {
 		n.Execution.FinishedAt,
 		fmt.Sprintf("%t", n.Execution.Success),
 		n.Execution.NodeName,
-		fmt.Sprintf("%s", n.Execution.Output),
+		n.Execution.Output,
 	}
 
 	out := &bytes.Buffer{}

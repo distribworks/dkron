@@ -2,10 +2,12 @@ package dkron
 
 import (
 	"fmt"
+	"io"
 	"time"
 
 	metrics "github.com/armon/go-metrics"
 	proto "github.com/distribworks/dkron/v2/plugin/types"
+	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
@@ -26,6 +28,7 @@ type DkronGRPCClient interface {
 	RaftRemovePeerByID(string, string) error
 	GetActiveExecutions(string) ([]*proto.Execution, error)
 	SetExecution(execution *proto.Execution) error
+	AgentRun(addr string, job *proto.Job, execution *proto.Execution) error
 }
 
 // GRPCClient is the local implementation of the DkronGRPCClient interface.
@@ -377,4 +380,75 @@ func (grpcc *GRPCClient) SetExecution(execution *proto.Execution) error {
 		return err
 	}
 	return nil
+}
+
+// AgentRun runs a job in the given agent
+func (grpcc *GRPCClient) AgentRun(addr string, job *proto.Job, execution *proto.Execution) error {
+	defer metrics.MeasureSince([]string{"grpc_client", "agent_run"}, time.Now())
+	var conn *grpc.ClientConn
+
+	// Initiate a connection with the server
+	conn, err := grpcc.Connect(string(addr))
+	if err != nil {
+		log.WithError(err).WithFields(logrus.Fields{
+			"method":      "AgentRun",
+			"server_addr": addr,
+		}).Error("grpc: error dialing.")
+		return err
+	}
+	defer conn.Close()
+
+	// Streaming call
+	a := proto.NewAgentClient(conn)
+	stream, err := a.AgentRun(context.Background(), &proto.AgentRunRequest{
+		Job:       job,
+		Execution: execution,
+	})
+	if err != nil {
+		return err
+	}
+
+	var first bool
+	for {
+		ars, err := stream.Recv()
+
+		// Stream ends
+		if err == io.EOF {
+			addr := grpcc.agent.raft.Leader()
+			if err := grpcc.ExecutionDone(string(addr), NewExecutionFromProto(execution)); err != nil {
+				return err
+			}
+			return nil
+		}
+
+		// Error receiving from stream
+		if err != nil {
+			// At this point the execution status will be unknown, set the FinshedAt time and an explanatory message
+			execution.FinishedAt = ptypes.TimestampNow()
+			execution.Output = []byte(ErrBrokenStream.Error())
+
+			log.WithError(err).Error(ErrBrokenStream)
+
+			addr := grpcc.agent.raft.Leader()
+			if err := grpcc.ExecutionDone(string(addr), NewExecutionFromProto(execution)); err != nil {
+				return err
+			}
+			return err
+		}
+
+		// Registers an active stream
+		grpcc.agent.activeExecutions.Store(ars.Execution.Key(), ars.Execution)
+		log.WithField("key", ars.Execution.Key()).Debug("grpc: received execution stream")
+
+		execution = ars.Execution
+		defer grpcc.agent.activeExecutions.Delete(execution.Key())
+
+		// Store the received execution in the raft log and store
+		if !first {
+			if err := grpcc.SetExecution(ars.Execution); err != nil {
+				return err
+			}
+			first = true
+		}
+	}
 }

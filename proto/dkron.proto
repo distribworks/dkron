@@ -140,7 +140,15 @@ service Dkron {
   rpc ToggleJob (ToggleJobRequest) returns (ToggleJobResponse);
   rpc RaftGetConfiguration (google.protobuf.Empty) returns (RaftGetConfigurationResponse);
   rpc RaftRemovePeerByID (RaftRemovePeerByIDRequest) returns (google.protobuf.Empty);
-  rpc AgentRun (stream AgentRunStream) returns (AgentRunResponse);
   rpc GetActiveExecutions (google.protobuf.Empty) returns  (GetActiveExecutionsResponse);
   rpc SetExecution (Execution) returns (google.protobuf.Empty);
+}
+
+message AgentRunRequest {
+  Job job = 1;
+  Execution execution = 2;
+}
+
+service Agent {
+  rpc AgentRun (AgentRunRequest) returns (stream AgentRunStream);
 }
