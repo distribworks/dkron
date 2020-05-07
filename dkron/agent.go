@@ -30,7 +30,7 @@ import (
 )
 
 const (
-	raftTimeout = 10 * time.Second
+	raftTimeout = 30 * time.Second
 	// raftLogCacheSize is the maximum number of logs to cache in-memory.
 	// This is used to reduce disk I/O for the recently committed entries.
 	raftLogCacheSize = 512
