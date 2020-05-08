@@ -35,7 +35,13 @@ func (a *Agent) Run(jobName string, ex *Execution) (*Job, error) {
 			return nil, fmt.Errorf("agent: Run error processing filtered nodes: %w", err)
 		}
 	} else {
-		filterMap = map[string]string{ex.NodeName: ""}
+		var addr string
+		for _, m := range a.serf.Members() {
+			if ex.NodeName == m.Name {
+				addr = m.Tags["rpc_addr"]
+			}
+		}
+		filterMap = map[string]string{ex.NodeName: addr}
 	}
 
 	log.WithField("nodes", filterMap).Debug("agent: Filtered nodes to run")

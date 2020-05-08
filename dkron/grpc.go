@@ -206,7 +206,6 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.E
 		execution.Attempt++
 
 		// Keep all execution properties intact except the last output
-		// as it could exceed serf query limits.
 		execution.Output = ""
 
 		log.WithFields(logrus.Fields{
