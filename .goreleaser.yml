@@ -97,7 +97,7 @@ builds:
       - amd64
       - arm64
     ldflags:
-      - -s -w -X github.com/distribworks/dkron/v2/dkron.Version={{.Version}}
+      - -s -w -X github.com/distribworks/dkron/v2/dkron.Version={{.Version}} -X github.com/distribworks/dkron/v2/dkron.Codename=merichuas
 
 nfpms:
   -
