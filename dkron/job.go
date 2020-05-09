@@ -237,7 +237,7 @@ func (j *Job) Run() {
 		ex := NewExecution(j.Name)
 
 		if _, err := j.Agent.Run(j.Name, ex); err != nil {
-			log.WithError(err).Error("job: Error sending Run query to serf cluster")
+			log.WithError(err).Error("job: Error running job")
 		}
 	}
 }
