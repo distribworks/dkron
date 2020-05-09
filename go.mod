@@ -1,4 +1,4 @@
-module github.com/distribworks/dkron/v2
+module github.com/distribworks/dkron/v3
 
 require (
 	github.com/DataDog/datadog-go v3.7.1+incompatible // indirect
