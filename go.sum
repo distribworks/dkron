@@ -72,6 +72,9 @@ github.com/digitalocean/godo v1.1.1 h1:v0A7yF3xmKLjjdJGIeBbINfMufcrrRhqZsxuVQMoT
 github.com/digitalocean/godo v1.1.1/go.mod h1:h6faOIcZ8lWIwNQ+DN7b3CgX4Kwby5T+nbpNqkUIozU=
 github.com/dimchansky/utfbom v1.1.0 h1:FcM3g+nofKgUteL8dm/UpdRXNC9KmADgTpLKsu0TRo4=
 github.com/dimchansky/utfbom v1.1.0/go.mod h1:rO41eb7gLfo8SF1jd9F8HplJm1Fewwi4mQvIirEdv+8=
+github.com/distribworks/dkron v1.2.5 h1:AHYcf3oLHa8impTjO8rhq2Y21kYsL2oZ4X1Hd0wMWSk=
+github.com/distribworks/dkron/v2 v2.2.2 h1:+7ro5UKAFduN3ekFyh6NBGLwu2eQ3ezaoTjk88MAS9Q=
+github.com/distribworks/dkron/v2 v2.2.2/go.mod h1:xVjBklxBOSI9Zq4a/DV40T++j9LI2AnZ3IC2/WdxDdM=
 github.com/dnaeon/go-vcr v1.0.1 h1:r8L/HqC0Hje5AXMu1ooW8oyQyOFv4GxqpL0nRP7SLLY=
 github.com/dnaeon/go-vcr v1.0.1/go.mod h1:aBB1+wY4s93YsC3HHjMBMrwTj2R9FHDzUr9KyGc8n1E=
 github.com/envoyproxy/go-control-plane v0.9.0/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=

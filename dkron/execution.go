@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	proto "github.com/distribworks/dkron/v2/plugin/types"
+	proto "github.com/distribworks/dkron/v3/plugin/types"
 	"github.com/golang/protobuf/ptypes"
 )
 

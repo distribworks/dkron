@@ -9,7 +9,7 @@ import (
 	"strings"
 	"sync"
 
-	dkronpb "github.com/distribworks/dkron/v2/plugin/types"
+	dkronpb "github.com/distribworks/dkron/v3/plugin/types"
 	"github.com/golang/protobuf/proto"
 	"github.com/sirupsen/logrus"
 	"github.com/tidwall/buntdb"
