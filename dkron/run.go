@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/hashicorp/serf/serf"
 	"github.com/sirupsen/logrus"
 )
 
@@ -32,12 +33,27 @@ func (a *Agent) Run(jobName string, ex *Execution) (*Job, error) {
 	if ex.Attempt <= 1 {
 		filterMap, _, err = a.processFilteredNodes(job)
 		if err != nil {
-			return nil, fmt.Errorf("agent: Run error processing filtered nodes: %w", err)
+			return nil, fmt.Errorf("run error processing filtered nodes: %w", err)
 		}
 	} else {
-		filterMap = map[string]string{ex.NodeName: ""}
+		// In case of retrying, find the rpc address of the node or return with an error
+		var addr string
+		for _, m := range a.serf.Members() {
+			if ex.NodeName == m.Name {
+				if m.Status == serf.StatusAlive {
+					addr = m.Tags["rpc_addr"]
+				} else {
+					return nil, fmt.Errorf("retry node is gone: %s for job %s", ex.NodeName, ex.JobName)
+				}
+			}
+		}
+		filterMap = map[string]string{ex.NodeName: addr}
 	}
 
+	// In case no nodes found, return reporting the error
+	if len(filterMap) < 1 {
+		return nil, fmt.Errorf("no target nodes found to run job %s", ex.JobName)
+	}
 	log.WithField("nodes", filterMap).Debug("agent: Filtered nodes to run")
 
 	var wg sync.WaitGroup
