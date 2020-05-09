@@ -6,6 +6,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.0.0] - 2020-05-09
+
+### Features
+
+- Add prometheus endpoint for metrics [#740](https://github.com/distribworks/dkron/pull/740)
+
+### Fixes
+
+- Ignored RaftMultiplier config param [#753] (https://github.com/distribworks/dkron/pull/753)
+- Increase serf events buffer size [#732](https://github.com/distribworks/dkron/pull/732)
+- Resetting the status and next params [#730](https://github.com/distribworks/dkron/pull/730)
+
+### Changes
+
+- Upgrade deps and add codename to version [#751](https://github.com/distribworks/dkron/pull/751)
+- Better alerts with growl like notifications [#750](https://github.com/distribworks/dkron/pull/750)
+- Refactor Run jobs [#749](https://github.com/distribworks/dkron/pull/749)
+- Add job name tags to log events to improve debugging [#739](https://github.com/distribworks/dkron/pull/739)
+
 ## [2.2.2] - 2020-04-22
 
 ### Fixes
