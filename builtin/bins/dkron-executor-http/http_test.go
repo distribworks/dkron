@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/distribworks/dkron/v2/plugin/types"
+	"github.com/distribworks/dkron/v3/plugin/types"
 	"github.com/stretchr/testify/assert"
 )
 

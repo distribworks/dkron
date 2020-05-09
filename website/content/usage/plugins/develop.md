@@ -19,7 +19,7 @@ With the directory made, create a main.go file. This project will be a binary so
 package main
 
 import (
-	"github.com/distribworks/dkron/v2/plugin"
+	"github.com/distribworks/dkron/v3/plugin"
 )
 
 func main() {

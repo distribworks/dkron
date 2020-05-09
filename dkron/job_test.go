@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/distribworks/dkron/v2/plugin"
-	proto "github.com/distribworks/dkron/v2/plugin/types"
+	"github.com/distribworks/dkron/v3/plugin"
+	proto "github.com/distribworks/dkron/v3/plugin/types"
 	"github.com/hashicorp/serf/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

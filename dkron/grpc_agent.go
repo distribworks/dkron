@@ -6,7 +6,7 @@ import (
 
 	"github.com/armon/circbuf"
 	metrics "github.com/armon/go-metrics"
-	"github.com/distribworks/dkron/v2/plugin/types"
+	"github.com/distribworks/dkron/v3/plugin/types"
 	"github.com/golang/protobuf/ptypes"
 )
 
