@@ -111,7 +111,7 @@ type Config struct {
 
 	// RaftMultiplier An integer multiplier used by Dkron servers to scale key
 	// Raft timing parameters.
-	RaftMultiplier int
+	RaftMultiplier int `mapstructure:"raft-multiplier"`
 
 	// MailHost is the SMTP server host to use for email notifications.
 	MailHost string `mapstructure:"mail-host"`

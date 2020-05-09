@@ -269,7 +269,7 @@ func (a *Agent) setupRaft() error {
 
 	// Raft performance
 	raftMultiplier := a.config.RaftMultiplier
-	if raftMultiplier < 1 && raftMultiplier > 10 {
+	if raftMultiplier < 1 || raftMultiplier > 10 {
 		return fmt.Errorf("raft-multiplier cannot be %d. Must be between 1 and 10", raftMultiplier)
 	}
 	config.HeartbeatTimeout = config.HeartbeatTimeout * time.Duration(raftMultiplier)
