@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-04-16T00:10:07 CEST">
+<meta name="revised" content="2020-05-11T01:36:03 CEST">
 <title>Metrics :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -1586,10 +1586,16 @@
     
     
     
-    <p>Dkron has the ability to send metrics to Statsd for dashboards and historical reporting. It sends job processing metrics and golang, serf metrics too.</p>
+    <p>Dkron has the ability to send metrics to Statsd for dashboards and historical reporting or provide prometheus format metrics via the api. It sends job processing metrics, golang, and serf metrics.</p>
 <h2 id="configuration">Configuration</h2>
-<p>Add this in your yaml config file</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#00a8c8">dog_statsd_addr</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;localhost:8125&#34;</span>
+<h3 id="statsd">Statsd</h3>
+<p>Add this in your yaml config file to enable statsd metrics.</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#00a8c8">statsd-addr</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;localhost:8125&#34;</span>
+<span style="color:#75715e"># Or for datadog statsd</span>
+<span style="color:#00a8c8">dog-statsd-addr</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;localhost:8125&#34;</span>
+</code></pre></div><h3 id="prometheus">Prometheus</h3>
+<p>Add this to your yaml config file to enable serving prometheus metrics at the endpoint <code>/metrics</code></p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#00a8c8">enable-prometheus</span><span style="color:#111">:</span> <span style="color:#00a8c8">true</span>
 </code></pre></div><h2 id="metrics">Metrics</h2>
 <ul>
 <li>dkron.agent.event_received.query_execution_done</li>
