@@ -3,6 +3,10 @@
 package main
 
 import (
+	"bufio"
+	"bytes"
+	"fmt"
+	"os"
 	"os/exec"
 	"os/user"
 	"strconv"
@@ -36,4 +40,31 @@ func setCmdAttr(cmd *exec.Cmd, config map[string]string) error {
 		}
 	}
 	return nil
+}
+
+func calculateMemory(pid int) (uint64, error) {
+	f, err := os.Open(fmt.Sprintf("/proc/%d/smaps", pid))
+	if err != nil {
+		return 0, err
+	}
+	defer f.Close()
+
+	res := uint64(0)
+	rfx := []byte("Rss:")
+	r := bufio.NewScanner(f)
+	for r.Scan() {
+		line := r.Bytes()
+		if bytes.HasPrefix(line, rfx) {
+			var size uint64
+			_, err := fmt.Sscanf(string(line[4:]), "%d", &size)
+			if err != nil {
+				return 0, err
+			}
+			res += size
+		}
+	}
+	if err := r.Err(); err != nil {
+		return 0, err
+	}
+	return res, nil
 }

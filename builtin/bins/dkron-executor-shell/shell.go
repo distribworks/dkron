@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/base64"
-	"log"
+	"fmt"
 	"os"
 	"os/exec"
 	"runtime"
@@ -14,6 +14,9 @@ import (
 	dkplugin "github.com/distribworks/dkron/v3/plugin"
 	dktypes "github.com/distribworks/dkron/v3/plugin/types"
 	"github.com/mattn/go-shellwords"
+	"github.com/prometheus/client_golang/prometheus/push"
+	log "github.com/sirupsen/logrus"
+	"github.com/struCoder/pidusage"
 )
 
 const (
@@ -59,6 +62,10 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelp
 		shell = false
 	}
 	command := args.Config["command"]
+	if command == "" {
+		return nil, err
+	}
+
 	env := strings.Split(args.Config["env"], ",")
 	cwd := args.Config["cwd"]
 
@@ -73,12 +80,6 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelp
 	// use same buffer for both channels, for the full return at the end
 	cmd.Stderr = reportingWriter{buffer: output, cb: cb, isError: true}
 	cmd.Stdout = reportingWriter{buffer: output, cb: cb}
-
-	// Start a timer to warn about slow handlers
-	slowTimer := time.AfterFunc(2*time.Hour, func() {
-		log.Printf("shell: Script '%s' slow, execution exceeding %v", command, 2*time.Hour)
-	})
-	defer slowTimer.Stop()
 
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
@@ -96,20 +97,86 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelp
 	stdin.Close()
 
 	log.Printf("shell: going to run %s", command)
+
+	jobTimeout := args.Config["timeout"]
+	jobMemLimit := args.Config["mem_limit_kb"]
+
+	if jobTimeout == "" {
+		log.Infof("shell: Job '%v' doesn't have configured timeout. Defaulting to 24h", args.JobName)
+		jobTimeout = "24h"
+	}
+
+	if args.Config["mem_limit_kb"] == "" {
+		log.Infof("shell: Job '%v' doesn't have configured mem_limit_kb", args.JobName)
+		jobMemLimit = "inf"
+	}
+
+	t, err := time.ParseDuration(jobTimeout)
+	if err != nil {
+		log.Infof("shell: Job '%v' can't parse job timeout. Defaulting to 24h", args.JobName)
+		jobTimeout = "24h"
+	}
+
+	startTime := time.Now()
 	err = cmd.Start()
 	if err != nil {
 		return nil, err
 	}
+
+	slowTimer := time.AfterFunc(t, func() {
+		j := fmt.Sprintf("shell: Job '%s' execution time exceeding timeout %v. Killing job.", command, t)
+		output.Write([]byte(j))
+		cmd.Process.Kill()
+
+	})
+	defer slowTimer.Stop()
 
 	// Warn if buffer is overritten
 	if output.TotalWritten() > output.Size() {
 		log.Printf("shell: Script '%s' generated %d bytes of output, truncated to %d", command, output.TotalWritten(), output.Size())
 	}
 
-	err = cmd.Wait()
+	pid := cmd.Process.Pid
+	quit := make(chan struct{})
 
-	// Always log output
-	log.Printf("shell: Command output %s", output)
+	go func() {
+		for {
+			select {
+			case <-quit:
+				return
+			default:
+				stat, _ := pidusage.GetStat(pid)
+				mem, _ := calculateMemory(pid)
+				cpu := stat.CPU
+				updateMetric(args.JobName, memUsage, float64(mem))
+				updateMetric(args.JobName, cpuUsage, cpu)
+				if jobMemLimit != "inf" {
+					i, _ := strconv.ParseUint(jobMemLimit, 0, 64)
+					if mem > i {
+						j := fmt.Sprintf("shell: Job '%s' memory limit exceeded %vkb. Killing job.", command, i)
+						output.Write([]byte(j))
+						cmd.Process.Kill()
+						return
+					}
+				}
+				time.Sleep(1 * time.Second)
+			}
+		}
+	}()
+
+	err = cmd.Wait()
+	close(quit)
+
+	executionTime.Set(time.Since(startTime).Seconds())
+	exitCode.Set(float64(cmd.ProcessState.ExitCode()))
+	lastExecutionTimestamp.Set(float64(time.Now().Unix()))
+
+	push.New(getEnv("PUSHGATEWAY_URL"), "dkron_job_push").Collector(executionTime).Grouping("job_name", args.JobName).Add()
+	push.New(getEnv("PUSHGATEWAY_URL"), "dkron_job_push").Collector(exitCode).Grouping("job_name", args.JobName).Add()
+	push.New(getEnv("PUSHGATEWAY_URL"), "dkron_job_push").Collector(lastExecutionTimestamp).Grouping("job_name", args.JobName).Add()
+
+	updateMetric(args.JobName, memUsage, 0)
+	updateMetric(args.JobName, cpuUsage, 0)
 
 	return output.Bytes(), err
 }
@@ -130,6 +197,9 @@ func buildCmd(command string, useShell bool, env []string, cwd string) (cmd *exe
 	} else {
 		args, err := shellwords.Parse(command)
 		if err != nil {
+			return nil, err
+		}
+		if len(args) == 0 {
 			return nil, err
 		}
 		cmd = exec.Command(args[0], args[1:]...)
