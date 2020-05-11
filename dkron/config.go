@@ -191,7 +191,7 @@ func DefaultConfig() *Config {
 		Datacenter:           "dc1",
 		Region:               "global",
 		ReconcileInterval:    60 * time.Second,
-		RaftMultiplier:       5,
+		RaftMultiplier:       1,
 		SerfReconnectTimeout: "24h",
 	}
 }
