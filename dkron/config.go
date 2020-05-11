@@ -154,6 +154,9 @@ type Config struct {
 	// StatsdAddr is the statsd standard server to be used for sending metrics.
 	StatsdAddr string `mapstructure:"statsd-addr"`
 
+	// SerfReconnectTimeout is the amount of time to attempt to reconnect to a failed node before giving up and considering it completely gone
+	SerfReconnectTimeout string `mapstructure:"serf-reconnect-timeout"`
+
 	// EnablePrometheus enables serving of prometheus metrics at /metrics
 	EnablePrometheus bool `mapstructure:"enable-prometheus"`
 }
@@ -176,19 +179,20 @@ func DefaultConfig() *Config {
 	tags := map[string]string{}
 
 	return &Config{
-		NodeName:          hostname,
-		BindAddr:          fmt.Sprintf("0.0.0.0:%d", DefaultBindPort),
-		HTTPAddr:          ":8080",
-		Profile:           "lan",
-		LogLevel:          "info",
-		RPCPort:           DefaultRPCPort,
-		MailSubjectPrefix: "[Dkron]",
-		Tags:              tags,
-		DataDir:           "dkron.data",
-		Datacenter:        "dc1",
-		Region:            "global",
-		ReconcileInterval: 60 * time.Second,
-		RaftMultiplier:    1,
+		NodeName:             hostname,
+		BindAddr:             fmt.Sprintf("0.0.0.0:%d", DefaultBindPort),
+		HTTPAddr:             ":8080",
+		Profile:              "lan",
+		LogLevel:             "info",
+		RPCPort:              DefaultRPCPort,
+		MailSubjectPrefix:    "[Dkron]",
+		Tags:                 tags,
+		DataDir:              "dkron.data",
+		Datacenter:           "dc1",
+		Region:               "global",
+		ReconcileInterval:    60 * time.Second,
+		RaftMultiplier:       5,
+		SerfReconnectTimeout: "24h",
 	}
 }
 
@@ -217,6 +221,7 @@ func ConfigFlagSet() *flag.FlagSet {
 	cmdFlags.String("data-dir", c.DataDir, "Specifies the directory to use for server-specific data, including the replicated log. By default, this is the top-level data-dir, like [/var/lib/dkron]")
 	cmdFlags.String("datacenter", c.Datacenter, "Specifies the data center of the local agent. All members of a datacenter should share a local LAN connection.")
 	cmdFlags.String("region", c.Region, "Specifies the region the Dkron agent is a member of. A region typically maps to a geographic region, for example us, with potentially multiple zones, which map to datacenters such as us-west and us-east")
+	cmdFlags.String("serf-reconnect-timeout", c.SerfReconnectTimeout, "This is the amount of time to attempt to reconnect to a failed node before giving up and considering it completely gone. In Kubernetes, you might need this to about 5s, because there is no reason to try reconnects for default 24h value. Also Raft behaves oddly if node is not reaped and returned with same ID, but different IP. Format there: https://golang.org/pkg/time/#ParseDuration")
 
 	// Notifications
 	cmdFlags.String("mail-host", "", "Mail server host address to use for notifications")
@@ -267,7 +272,7 @@ func (c *Config) normalizeAddrs() error {
 	return nil
 }
 
-// parseSingleIPTemplate is used as a helper function to parse out a single IP
+// ParseSingleIPTemplate is used as a helper function to parse out a single IP
 // address from a config parameter.
 func ParseSingleIPTemplate(ipTmpl string) (string, error) {
 	out, err := template.Parse(ipTmpl)
