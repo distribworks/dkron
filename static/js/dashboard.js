@@ -34,7 +34,24 @@ dkron.filter('startFrom', function () {
   }
 });
 
-dkron.controller('JobListCtrl', function ($scope, $location, $http, $interval, hideDelay) {
+dkron.run(function($rootScope) {
+  $rootScope.alertOptions = function (type) {
+    return {
+      type: type,
+      placement: {
+        from: "top",
+        align: "center"
+      },
+      offset: 40,
+      animate: {
+        enter: 'animated fadeInDown',
+        exit: 'animated fadeOutUp'
+      }
+    }
+  };
+});
+
+dkron.controller('JobListCtrl', function ($scope, $location, $http, $interval, hideDelay, $rootScope) {
   $scope.searchJob = $location.search()['filter']
 
   $scope.filter = function (filter) {
@@ -71,21 +88,6 @@ dkron.controller('JobListCtrl', function ($scope, $location, $http, $interval, h
     mode: "application/json",
   };
 
-  alertOptions = function (type) {
-    return {
-      type: type,
-      placement: {
-        from: "top",
-        align: "center"
-      },
-      offset: 40,
-      animate: {
-        enter: 'animated fadeInDown',
-        exit: 'animated fadeOutUp'
-      }
-    }
-  }
-
   $scope.runJob = function (jobName) {
     let i = $scope.pagedItems[$scope.currentPage].findIndex(j => j.name === jobName);
     $scope["running_" + i] = true;
@@ -93,13 +95,13 @@ dkron.controller('JobListCtrl', function ($scope, $location, $http, $interval, h
       then(function (response) {
         jQuery.notify({
           message: 'Success running job ' + jobName
-        },alertOptions('success'));
+        },$rootScope.alertOptions('success'));
         updateView();
         $scope["running_" + i] = false;
     }, function (response) {
       jQuery.notify({
         message: 'Error running job ' + jobName
-      },alertOptions('danger'));
+      },$rootScope.alertOptions('danger'));
     });
   };
 
@@ -115,12 +117,12 @@ dkron.controller('JobListCtrl', function ($scope, $location, $http, $interval, h
       then(function (response) {
         jQuery.notify({
           message: 'Success created job ' + job.name
-        },alertOptions('success'));
+        },$rootScope.alertOptions('success'));
         updateView();
     }, function (response) {
       jQuery.notify({
         message: 'Error creating job ' + job.name
-      },alertOptions('danger'));
+      },$rootScope.alertOptions('danger'));
     });
   };
 
@@ -136,12 +138,12 @@ dkron.controller('JobListCtrl', function ($scope, $location, $http, $interval, h
       then(function (response) {
         jQuery.notify({
           message: 'Success updating job ' + jobName
-        },alertOptions('success'));
+        },$rootScope.alertOptions('success'));
         updateView();
     }, function (response) {
       jQuery.notify({
         message: 'Error updating job ' + job.name
-      },alertOptions('danger'));
+      },$rootScope.alertOptions('danger'));
     });
   };
 
@@ -153,12 +155,12 @@ dkron.controller('JobListCtrl', function ($scope, $location, $http, $interval, h
       then(function (response) {
         jQuery.notify({
           message: 'Successfully removed job ' + jobName
-        },alertOptions('success'));
+        },$rootScope.alertOptions('success'));
         updateView();
     }, function (response) {
       jQuery.notify({
         message: 'Error removing job ' + jobName
-      },alertOptions('danger'));
+      },$rootScope.alertOptions('danger'));
     });
   };
 
@@ -167,12 +169,12 @@ dkron.controller('JobListCtrl', function ($scope, $location, $http, $interval, h
       then(function (response) {
         jQuery.notify({
           message: 'Successfully toggled job ' + jobName
-        },alertOptions('success'));
+        },$rootScope.alertOptions('success'));
         updateView();
     }, function (response) {
       jQuery.notify({
         message: 'Error toggle job ' + jobName
-      },alertOptions('danger'));
+      },$rootScope.alertOptions('danger'));
     });
   }
 
@@ -187,7 +189,7 @@ dkron.controller('JobListCtrl', function ($scope, $location, $http, $interval, h
     }, function (response) {
       jQuery.notify({
         message: 'Error loading data'
-      },alertOptions('success'));
+      },$rootScope.alertOptions('success'));
     });
   }
 
@@ -293,24 +295,24 @@ dkron.controller('JobListCtrl', function ($scope, $location, $http, $interval, h
   updateView();
 });
 
-dkron.controller('ExecutionsCtrl', function ($scope, $http, $interval, hideDelay) {
+dkron.controller('ExecutionsCtrl', function ($scope, $http, $interval, hideDelay, $rootScope) {
   $scope.runJob = function (jobName) {
     $scope["running_job"] = true;
     $http.post(DKRON_API_PATH + '/jobs/' + jobName).
       then(function (response) {
         jQuery.notify({
           message: 'Success running job ' + jobName
-        },alertOptions('success'));
+        },$rootScope.alertOptions('success'));
         $scope["running_job"] = false;
     }, function (response) {
       jQuery.notify({
         message: 'Error running job ' + jobName
-      },alertOptions('danger'));
+      },$rootScope.alertOptions('danger'));
     });
   };
 });
 
-dkron.controller('IndexCtrl', function ($scope, $http, $timeout, $element) {
+dkron.controller('IndexCtrl', function ($scope, $http, $timeout, $element, $rootScope) {
   $scope.options = {
     renderer: 'line',
     interpolation: 'linear'
@@ -350,7 +352,7 @@ dkron.controller('IndexCtrl', function ($scope, $http, $timeout, $element) {
     }, function (response) {
       jQuery.notify({
         message: 'Error loading data'
-      },alertOptions('danger'));
+      },$rootScope.alertOptions('danger'));
     });
 
     $http.get(DKRON_API_PATH + '/members').
@@ -379,7 +381,7 @@ dkron.controller('IndexCtrl', function ($scope, $http, $timeout, $element) {
     }, function (response) {
       jQuery.notify({
         message: 'Error loading data'
-      },alertOptions('danger'));
+      },$rootScope.alertOptions('danger'));
     });
   }
 
@@ -447,7 +449,7 @@ dkron.controller('IndexCtrl', function ($scope, $http, $timeout, $element) {
   updateView();
 });
 
-dkron.controller('BusyCtrl', function ($scope, $http, $timeout, $element) {
+dkron.controller('BusyCtrl', function ($scope, $http, $timeout, $element, $rootScope) {
   busy = function () {
     $http.get(DKRON_API_PATH + '/busy').then(function (response) {
       $scope.executions = response.data
@@ -458,7 +460,7 @@ dkron.controller('BusyCtrl', function ($scope, $http, $timeout, $element) {
     }, function (response) {
       jQuery.notify({
         message: 'Error loading data'
-      },alertOptions('danger'));
+      },$rootScope.alertOptions('danger'));
     });
   };
   busy();
