@@ -83,6 +83,22 @@ builds:
       - arm64
     ldflags:
       - -s -w
+  
+  - main: ./builtin/bins/dkron-processor-fluent/
+    id: dkron-processor-fluent
+    binary: dkron-processor-fluent
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - freebsd
+      - windows
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
 
   - main: .
     binary: dkron
@@ -150,6 +166,7 @@ dockers:
       - dkron-processor-syslog
       - dkron-processor-log
       - dkron-processor-files
+      - dkron-processor-fluent
     image_templates:
       - "dkron/dkron:latest"
       - "dkron/dkron:{{ .Tag }}"
