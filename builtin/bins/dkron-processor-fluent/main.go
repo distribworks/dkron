@@ -4,7 +4,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/distribworks/dkron/v2/plugin"
+	"github.com/distribworks/dkron/v3/plugin"
 	"github.com/fluent/fluent-logger-golang/fluent"
 	log "github.com/sirupsen/logrus"
 )
@@ -29,7 +29,7 @@ func main() {
 	})
 
 	fo := FluentOutput{fluent: logger, tag: ft}
-	
+
 	plugin.Serve(&plugin.ServeOpts{
 		Processor: &fo,
 	})
