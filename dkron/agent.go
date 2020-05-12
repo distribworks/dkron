@@ -438,6 +438,11 @@ func (a *Agent) setupSerf() (*serf.Serf, error) {
 	serfConfig.QuiescentPeriod = time.Second
 	serfConfig.UserCoalescePeriod = 3 * time.Second
 	serfConfig.UserQuiescentPeriod = time.Second
+	serfConfig.ReconnectTimeout, err = time.ParseDuration(config.SerfReconnectTimeout)
+
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// Create a channel to listen for events from Serf
 	a.eventCh = make(chan serf.Event, 2048)
