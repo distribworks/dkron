@@ -8,7 +8,7 @@ produces:
 schemes:
   - http
 info:
-  version: "2.2"
+  version: "3.0"
   title: Dkron REST API
   description: |
     You can communicate with Dkron using a RESTful JSON API over HTTP. Dkron nodes usually listen on port `8080` for API requests. All examples in this section assume that you've found a running leader at `localhost:8080`.
