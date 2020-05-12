@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.0.1] - 2020-05-12
+
+### Features
+
+- New Processor that sends job output to fluent destination [#759](https://github.com/distribworks/dkron/pull/759) @andreygolev
+- Configurable serf reconnect timeout [#757](https://github.com/distribworks/dkron/pull/757) @andreygolev
+
+### Fixes
+
+- Fix Alerts JS [#762](https://github.com/distribworks/dkron/pull/762)
+
+
 ## [3.0.0] - 2020-05-09
 
 ### Features
