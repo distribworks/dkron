@@ -108,6 +108,8 @@ type Agent struct {
 	peerLock   sync.RWMutex
 
 	activeExecutions sync.Map
+
+	listener net.Listener
 }
 
 // ProcessorFactory is a function type that creates a new instance
@@ -171,16 +173,17 @@ func (a *Agent) Start() error {
 		a.config.AdvertiseRPCPort = a.config.RPCPort
 	}
 
+	// Create a listener for RPC subsystem
+	addr := a.bindRPCAddr()
+	l, err := net.Listen("tcp", addr)
+	if err != nil {
+		log.Fatal(err)
+	}
+	a.listener = l
+
 	if a.config.Server {
 		a.StartServer()
 	} else {
-		// Create a listener at the desired port.
-		addr := a.bindRPCAddr()
-		l, err := net.Listen("tcp", addr)
-		if err != nil {
-			log.Fatal(err)
-		}
-
 		opts := []grpc.ServerOption{}
 		if a.TLSConfig != nil {
 			tc := credentials.NewTLS(a.TLSConfig)
@@ -495,15 +498,8 @@ func (a *Agent) StartServer() {
 	}
 	a.HTTPTransport.ServeHTTP()
 
-	// Create a listener at the desired port.
-	addr := a.bindRPCAddr()
-	l, err := net.Listen("tcp", addr)
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	// Create a cmux object.
-	tcpm := cmux.New(l)
+	tcpm := cmux.New(a.listener)
 	var grpcl, raftl net.Listener
 
 	// If TLS config present listen to TLS
@@ -779,7 +775,7 @@ func (a *Agent) advertiseRPCAddr() string {
 
 // Get bind address for RPC
 func (a *Agent) bindRPCAddr() string {
-	bindIP, _, _ := net.SplitHostPort(a.config.BindAddr)
+	bindIP, _, _ := a.config.AddrParts(a.config.BindAddr)
 	return net.JoinHostPort(bindIP, strconv.Itoa(a.config.RPCPort))
 }
 

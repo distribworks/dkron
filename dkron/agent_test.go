@@ -265,6 +265,7 @@ func Test_advertiseRPCAddr(t *testing.T) {
 
 	c := DefaultConfig()
 	c.BindAddr = a1Addr + ":5000"
+	c.AdvertiseAddr = "8.8.8.8"
 	c.NodeName = "test1"
 	c.Server = true
 	c.Tags = map[string]string{"role": "test"}
@@ -278,37 +279,7 @@ func Test_advertiseRPCAddr(t *testing.T) {
 	time.Sleep(2 * time.Second)
 
 	advertiseRPCAddr := a.advertiseRPCAddr()
-	exRPCAddr := a1Addr + ":6868"
-
-	assert.Equal(t, exRPCAddr, advertiseRPCAddr)
-
-	a.Stop()
-
-	ip2, returnFn2 := testutil.TakeIP()
-	defer returnFn2()
-	a2Addr := ip2.String()
-
-	c = DefaultConfig()
-	c.BindAddr = a2Addr + ":5000"
-	c.AdvertiseAddr = "8.8.8.8"
-	c.NodeName = "test1"
-	c.Server = true
-	c.Tags = map[string]string{"role": "test"}
-	c.LogLevel = logLevel
-	c.DevMode = true
-	c.DataDir = dir
-
-	a = NewAgent(c)
-	a.Start()
-
-	time.Sleep(2 * time.Second)
-
-	advertiseRPCAddr = a.advertiseRPCAddr()
-	exRPCAddr = "8.8.8.8:6868"
-
-	assert.Equal(t, exRPCAddr, advertiseRPCAddr)
-
-	c.AdvertiseAddr = "8.8.8.8"
+	exRPCAddr := "8.8.8.8:6868"
 
 	assert.Equal(t, exRPCAddr, advertiseRPCAddr)
 
@@ -338,10 +309,10 @@ func Test_bindRPCAddr(t *testing.T) {
 
 	time.Sleep(2 * time.Second)
 
-	getRPCAddr := a.bindRPCAddr()
+	bindRPCAddr := a.bindRPCAddr()
 	exRPCAddr := a1Addr + ":6868"
 
-	assert.Equal(t, exRPCAddr, getRPCAddr)
+	assert.Equal(t, exRPCAddr, bindRPCAddr)
 	a.Stop()
 }
 
