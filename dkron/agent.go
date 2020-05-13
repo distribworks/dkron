@@ -175,7 +175,7 @@ func (a *Agent) Start() error {
 		a.StartServer()
 	} else {
 		// Create a listener at the desired port.
-		addr := a.getRPCAddr()
+		addr := a.bindRPCAddr()
 		l, err := net.Listen("tcp", addr)
 		if err != nil {
 			log.Fatal(err)
@@ -198,7 +198,7 @@ func (a *Agent) Start() error {
 	}
 
 	tags := a.serf.LocalMember().Tags
-	tags["rpc_addr"] = a.getRPCAddr() // Address that clients will use to RPC to servers
+	tags["rpc_addr"] = a.advertiseRPCAddr() // Address that clients will use to RPC to servers
 	tags["port"] = strconv.Itoa(a.config.AdvertiseRPCPort)
 	a.serf.SetTags(tags)
 
@@ -496,7 +496,7 @@ func (a *Agent) StartServer() {
 	a.HTTPTransport.ServeHTTP()
 
 	// Create a listener at the desired port.
-	addr := a.getRPCAddr()
+	addr := a.bindRPCAddr()
 	l, err := net.Listen("tcp", addr)
 	if err != nil {
 		log.Fatal(err)
@@ -772,9 +772,15 @@ func (a *Agent) processFilteredNodes(job *Job) (map[string]string, map[string]st
 // This function is called when a client request the RPCAddress
 // of the current member.
 // in marathon, it would return the host's IP and advertise RPC port
-func (a *Agent) getRPCAddr() string {
+func (a *Agent) advertiseRPCAddr() string {
 	bindIP := a.serf.LocalMember().Addr
 	return net.JoinHostPort(bindIP.String(), strconv.Itoa(a.config.AdvertiseRPCPort))
+}
+
+// Get bind address for RPC
+func (a *Agent) bindRPCAddr() string {
+	bindIP, _, _ := net.SplitHostPort(a.config.BindAddr)
+	return net.JoinHostPort(bindIP, strconv.Itoa(a.config.RPCPort))
 }
 
 // applySetJob is a helper method to be called when
