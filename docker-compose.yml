@@ -23,6 +23,7 @@ services:
     build: .
     ports:
       - "8946"
+      - "6868"
     environment:
       - GODEBUG=netdns=go
     command: dkron agent --retry-join=dkron:8946 --log-level=debug
