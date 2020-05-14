@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixes
 
-- Fix binding to Advertise address [#3d65b1a](https://github.com/distribworks/dkron/commit/3d65b1af3f4faa1930e8e2f424c7280c983a8157)
+- Fix binding to Advertise address [#763](https://github.com/distribworks/dkron/pull/763)
 
 ## [3.0.1] - 2020-05-12
 
