@@ -180,7 +180,7 @@ func DefaultConfig() *Config {
 
 	return &Config{
 		NodeName:             hostname,
-		BindAddr:             fmt.Sprintf("0.0.0.0:%d", DefaultBindPort),
+		BindAddr:             fmt.Sprintf("{{ GetPrivateIP }}:%d", DefaultBindPort),
 		HTTPAddr:             ":8080",
 		Profile:              "lan",
 		LogLevel:             "info",
