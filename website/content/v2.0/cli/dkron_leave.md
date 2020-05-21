@@ -2,7 +2,7 @@
 date: 2019-10-10
 title: "dkron leave"
 slug: dkron_leave
-url: /cli/dkron_leave/
+url: /v2.0/cli/dkron_leave/
 ---
 ## dkron leave
 

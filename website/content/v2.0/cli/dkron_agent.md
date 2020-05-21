@@ -2,7 +2,7 @@
 date: 2019-10-10
 title: "dkron agent"
 slug: dkron_agent
-url: /cli/dkron_agent/
+url: /v2.0/cli/dkron_agent/
 ---
 ## dkron agent
 

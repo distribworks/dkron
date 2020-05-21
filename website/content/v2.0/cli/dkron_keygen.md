@@ -2,7 +2,7 @@
 date: 2019-10-10
 title: "dkron keygen"
 slug: dkron_keygen
-url: /cli/dkron_keygen/
+url: /v2.0/cli/dkron_keygen/
 ---
 ## dkron keygen
 

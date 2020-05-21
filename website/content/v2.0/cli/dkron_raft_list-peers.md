@@ -2,7 +2,7 @@
 date: 2019-10-10
 title: "dkron raft list-peers"
 slug: dkron_raft_list-peers
-url: /cli/dkron_raft_list-peers/
+url: /v2.0/cli/dkron_raft_list-peers/
 ---
 ## dkron raft list-peers
 

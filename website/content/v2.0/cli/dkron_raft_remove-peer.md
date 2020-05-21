@@ -2,7 +2,7 @@
 date: 2019-10-10
 title: "dkron raft remove-peer"
 slug: dkron_raft_remove-peer
-url: /cli/dkron_raft_remove-peer/
+url: /v2.0/cli/dkron_raft_remove-peer/
 ---
 ## dkron raft remove-peer
 
