@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-05-22T00:01:24 CEST">
+<meta name="revised" content="2020-05-22T00:25:37 CEST">
 <title>Getting started :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -1600,9 +1600,12 @@ Be sure you have opened this ports (or the ones that you configured) in your fir
 </ul>
 <pre><code>dkron agent --server --bootstrap-expect=1
 </code></pre><p>Check your server is working: <code>curl localhost:8080/v1</code></p>
-<p>Simple as that, now it is time to add a job:</p>
+<div class="notices info" >
+For a full list of configuration parameters and its description, see the <a href="https://dkron.io/cli/dkron_agent/">CLI docs</a>
+</div>
+<h3 id="create-a-job">Create a Job</h3>
 <div class="notices note" >
-This job will only run in just one `server` node due to the node count in the tag. Refer to the [target node spec](/usage/target-nodes-spec) for details.
+This job will only run in just one `server` node due to the node count in the tag. Refer to the <a href="/usage/target-nodes-spec">target node spec</a> for details.
 </div>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">curl localhost:8080/v1/jobs -XPOST -d <span style="color:#d88200">&#39;{
 </span><span style="color:#d88200">  &#34;name&#34;: &#34;job1&#34;,
@@ -1612,7 +1615,7 @@ This job will only run in just one `server` node due to the node count in the ta
 </span><span style="color:#d88200">  &#34;owner_email&#34;: &#34;platform@example.com&#34;,
 </span><span style="color:#d88200">  &#34;disabled&#34;: false,
 </span><span style="color:#d88200">  &#34;tags&#34;: {
-</span><span style="color:#d88200">    &#34;server&#34;: &#34;true&#34;
+</span><span style="color:#d88200">    &#34;server&#34;: &#34;true:1&#34;
 </span><span style="color:#d88200">  },
 </span><span style="color:#d88200">  &#34;metadata&#34;: {
 </span><span style="color:#d88200">    &#34;user&#34;: &#34;12345&#34;

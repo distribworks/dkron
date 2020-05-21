@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-05-22T00:01:24 CEST">
+<meta name="revised" content="2020-05-22T00:25:37 CEST">
 <title>Developing plugins :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -1564,9 +1564,7 @@
     
     
     <h2 id="developing-a-plugin">Developing a Plugin</h2>
-<div class="alert 
-alert-warning"
-<p>role=&quot;alert&quot;&gt;<strong>Advanced topic!</strong> Plugin development is a highly advanced topic, and is not required knowledge for day-to-day usage. If you don&rsquo;t plan on writing any plugins, we recommend not reading the following section of the documentation.</div></p>
+<div class="notices info" >Advanced topic! Plugin development is a highly advanced topic, and is not required knowledge for day-to-day usage. If you don't plan on writing any plugins, we recommend not reading the following section of the documentation.</div>
 <p>Developing a plugin is simple. The only knowledge necessary to write a plugin is basic command-line skills and basic knowledge of the Go programming language.</p>
 <p>Note: A common pitfall is not properly setting up a <code>$GOPATH</code>. This can lead to strange errors. You can read more about this here to familiarize yourself.</p>
 <p>Create a new Go project somewhere in your <code>$GOPATH</code>. If you&rsquo;re a GitHub user, we recommend creating the project in the directory <code>$GOPATH/src/github.com/USERNAME/dkron-NAME-TYPE</code>, where <code>USERNAME</code> is your GitHub username and <code>NAME</code> is the name of the plugin you&rsquo;re developing. This structure is what Go expects and simplifies things down the road.</p>

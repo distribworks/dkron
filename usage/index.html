@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-05-22T00:01:25 CEST">
+<meta name="revised" content="2020-05-22T00:25:38 CEST">
 <title>Usage :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -1681,6 +1681,11 @@ This page documents the basics of how the plugin system in Dkron works, and how 
 How it Works Dkron execution execution processors are provided via plugins.</p>
 </span>
 <p><span><card>
+<a href="/usage/plugins/develop/" >Developing plugins</a></card></p>
+<p>Developing a Plugin Advanced topic! Plugin development is a highly advanced topic, and is not required knowledge for day-to-day usage. If you don't plan on writing any plugins, we recommend not reading the following section of the documentation. Developing a plugin is simple. The only knowledge necessary to write a plugin is basic command-line skills and basic knowledge of the Go programming language.
+Note: A common pitfall is not properly setting up a $GOPATH.</p>
+</span>
+<p><span><card>
 <a href="/usage/upgrade/" >Upgrade methods</a></card></p>
 <p>Use one of the following methods (depending on the changes) to upgrade a cluster to a newer version.
 Rolling upgrade Use the following procedure to rotate all cluster nodes, one server at a time:
@@ -1688,7 +1693,7 @@ Rolling upgrade Use the following procedure to rotate all cluster nodes, one ser
 </span>
 <p><span><card>
 <a href="/usage/ecs/" >Use with AWS ECS</a></card></p>
-<p>[Dkron Pro](/products/pro) comes with a [native ECS executor](/pro/ecs) out of the box.  Use with Amazon ECS To use Dkron to schedule jobs that run in containers, a wrapper ECS script is needed.
+<p>Dkron Pro comes with a native ECS executor out of the box.  Use with Amazon ECS To use Dkron to schedule jobs that run in containers, a wrapper ECS script is needed.
 Install the following snippet in the node that will run the call to ECS
  Prerequisites The node that will run the call to ECS will need to have installed
  AWS cli jq  Example ecs-run --cluster cron --task-definition cron-taskdef --container-name cron --region us-east-1 --command &quot;rake foo&quot;</p>
