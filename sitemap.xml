@@ -332,12 +332,12 @@
   </url>
   
   <url>
-    <loc>/pro/cli/dkron/</loc>
+    <loc>/2.0/pro/cli/dkron/</loc>
     <lastmod>2019-08-26T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/pro/cli/dkron_agent/</loc>
+    <loc>/2.0/pro/cli/dkron_agent/</loc>
     <lastmod>2019-08-26T00:00:00+00:00</lastmod>
   </url>
   
@@ -347,32 +347,32 @@
   </url>
   
   <url>
-    <loc>/pro/cli/dkron_keygen/</loc>
+    <loc>/2.0/pro/cli/dkron_keygen/</loc>
     <lastmod>2019-08-26T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/pro/cli/dkron_leave/</loc>
+    <loc>/2.0/pro/cli/dkron_leave/</loc>
     <lastmod>2019-08-26T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/pro/cli/dkron_raft/</loc>
+    <loc>/2.0/pro/cli/dkron_raft/</loc>
     <lastmod>2019-08-26T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/pro/cli/dkron_raft_list-peers/</loc>
+    <loc>/2.0/pro/cli/dkron_raft_list-peers/</loc>
     <lastmod>2019-08-26T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/pro/cli/dkron_raft_remove-peer/</loc>
+    <loc>/2.0/pro/cli/dkron_raft_remove-peer/</loc>
     <lastmod>2019-08-26T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/pro/cli/dkron_version/</loc>
+    <loc>/2.0/pro/cli/dkron_version/</loc>
     <lastmod>2019-08-26T00:00:00+00:00</lastmod>
   </url>
   
