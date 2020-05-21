@@ -2,7 +2,7 @@
 date: 2019-08-26
 title: "dkron raft"
 slug: dkron_raft
-url: /pro/cli/dkron_raft/
+url: /2.0/pro/cli/dkron_raft/
 ---
 ## dkron raft
 

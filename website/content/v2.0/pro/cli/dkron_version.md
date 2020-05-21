@@ -2,7 +2,7 @@
 date: 2019-08-26
 title: "dkron version"
 slug: dkron_version
-url: /pro/cli/dkron_version/
+url: /2.0/pro/cli/dkron_version/
 ---
 ## dkron version
 
