@@ -2,7 +2,7 @@
 date: 2019-08-26
 title: "dkron doc"
 slug: dkron_doc
-url: /pro/cli/dkron_doc/
+url: /2.0/pro/cli/dkron_doc/
 ---
 ## dkron doc
 
