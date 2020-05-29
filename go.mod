@@ -14,7 +14,7 @@ require (
 	github.com/hashicorp/go-discover v0.0.0-20200108194735-7698de1390a1
 	github.com/hashicorp/go-hclog v0.13.0
 	github.com/hashicorp/go-immutable-radix v1.2.0 // indirect
-	github.com/hashicorp/go-plugin v1.2.2
+	github.com/hashicorp/go-plugin v1.3.0
 	github.com/hashicorp/go-sockaddr v1.0.2
 	github.com/hashicorp/go-syslog v1.0.0
 	github.com/hashicorp/go-version v1.2.0
