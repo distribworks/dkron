@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"sort"
 
 	"github.com/gin-contrib/expvar"
 	"github.com/gin-gonic/gin"
@@ -350,6 +351,10 @@ func (h *HTTPTransport) busyHandler(c *gin.Context) {
 	for _, e := range exs {
 		executions = append(executions, NewExecutionFromProto(e))
 	}
+
+	sort.SliceStable(executions, func(i, j int) bool {
+		return executions[i].StartedAt.Before(executions[j].StartedAt)
+	})
 
 	renderJSON(c, http.StatusOK, executions)
 }
