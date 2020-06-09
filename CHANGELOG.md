@@ -6,6 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.0.3] - 2020-06-10
+
+### Fixes
+
+- Log start job and logging prefix in grpc agent [#776](https://github.com/distribworks/dkron/pull/776)
+
+### Features
+
+- busyhandler execution sorting [#772](https://github.com/distribworks/dkron/pull/772)
+- Parse retry-join addresses with sockaddr templates [#783](https://github.com/distribworks/dkron/pull/783)
+
+### Changes
+
+- Bump several dependencies
+
 ## [3.0.2] - 2020-05-15
 
 ### Fixes
