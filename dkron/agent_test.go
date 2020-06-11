@@ -120,7 +120,10 @@ func Test_processFilteredNodes(t *testing.T) {
 	c.NodeName = "test1"
 	c.Server = true
 	c.LogLevel = logLevel
-	c.Tags = map[string]string{"tag": "test"}
+	c.Tags = map[string]string{
+		"tag":    "test",
+		"region": "global",
+	}
 	c.DevMode = true
 	c.DataDir = dir
 
@@ -137,8 +140,9 @@ func Test_processFilteredNodes(t *testing.T) {
 	c.Server = true
 	c.LogLevel = logLevel
 	c.Tags = map[string]string{
-		"tag":   "test",
-		"extra": "tag",
+		"tag":    "test",
+		"extra":  "tag",
+		"region": "global",
 	}
 	c.DevMode = true
 	c.DataDir = dir
@@ -158,8 +162,9 @@ func Test_processFilteredNodes(t *testing.T) {
 	c.Server = false
 	c.LogLevel = logLevel
 	c.Tags = map[string]string{
-		"tag":   "test_client",
-		"extra": "tag",
+		"tag":    "test_client",
+		"extra":  "tag",
+		"region": "global",
 	}
 	c.DevMode = true
 	c.DataDir = dir
@@ -172,7 +177,6 @@ func Test_processFilteredNodes(t *testing.T) {
 	job := &Job{
 		Name: "test_job_1",
 		Tags: map[string]string{
-			"foo": "bar:1",
 			"tag": "test:2",
 		},
 	}
@@ -221,6 +225,48 @@ func Test_processFilteredNodes(t *testing.T) {
 
 	assert.Len(t, nodes, 1)
 	assert.Contains(t, nodes, "test3")
+
+	job5 := &Job{
+		Name: "test_job_5",
+		Tags: map[string]string{
+			"tag": "no_tag",
+		},
+	}
+
+	nodes, _, err = a1.processFilteredNodes(job5)
+	require.NoError(t, err)
+
+	assert.Len(t, nodes, 0)
+
+	job6 := &Job{
+		Name: "test_job_6",
+		Tags: map[string]string{
+			"foo": "bar:1",
+			"tag": "test:2",
+		},
+	}
+
+	nodes, tags, err = a1.processFilteredNodes(job6)
+	require.NoError(t, err)
+
+	assert.Len(t, nodes, 0)
+	assert.Equal(t, tags["tag"], "test")
+
+	job7 := &Job{
+		Name: "test_job_7",
+		Tags: map[string]string{
+			"tag":   "test:2",
+			"extra": "tag:2",
+		},
+	}
+
+	nodes, tags, err = a1.processFilteredNodes(job7)
+	require.NoError(t, err)
+
+	assert.Contains(t, nodes, "test2")
+	assert.Len(t, nodes, 1)
+	assert.Equal(t, tags["tag"], "test")
+	assert.Equal(t, tags["extra"], "tag")
 
 	a1.Stop()
 	a2.Stop()
