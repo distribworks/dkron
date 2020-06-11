@@ -734,9 +734,8 @@ func (a *Agent) processFilteredNodes(job *Job) (map[string]string, map[string]st
 			}
 			cans = f
 		}
-		if len(cans) > 0 {
-			candidates = append(candidates, cans)
-		}
+
+		candidates = append(candidates, cans)
 	}
 
 	// The final result will be the intersection of all candidates.
@@ -757,7 +756,11 @@ func (a *Agent) processFilteredNodes(job *Job) (map[string]string, map[string]st
 		for _, m := range a.serf.Members() {
 			if n == m.Name {
 				// If the server is missing the rpc_addr tag, default to the serf advertise addr
-				nodes[n] = m.Tags["rpc_addr"]
+				if addr, ok := m.Tags["rpc_addr"]; ok {
+					nodes[n] = addr
+				} else {
+					nodes[n] = m.Addr.String()
+				}
 			}
 		}
 	}
