@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.0.4] - 2020-06-12
+
+### Fixes
+
+- processFilteredNodes do not return nodes when specified tag has no nodes [#785](https://github.com/distribworks/dkron/pull/785)
+
 ## [3.0.3] - 2020-06-10
 
 ### Fixes
