@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-05-22T00:53:04 CEST">
+<meta name="revised" content="2020-06-18T22:52:42 CEST">
 <title>Target nodes spec :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -770,9 +770,9 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/pro/cli/dkron_doc/" class="dd-item">
+      <li data-nav-id="/2.0/pro/cli/dkron_doc/" class="dd-item">
         <div>
-          <a href="/pro/cli/dkron_doc/">
+          <a href="/2.0/pro/cli/dkron_doc/">
             dkron doc
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
@@ -1565,9 +1565,10 @@
     
     <h2 id="target-nodes-spec">Target nodes spec</h2>
 <p>You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run.</p>
-<div class="notices note" >
-The target node syntax: `[tag-value]:[count]`
-</div>
+
+<div class="notices note" ><p><p>The target node syntax: <code>[tag-value]:[count]</code></p>
+</p></div>
+
 <h3 id="examples">Examples:</h3>
 <p>Target all nodes with a tag:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">{</span>

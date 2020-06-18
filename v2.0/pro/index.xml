@@ -17,7 +17,8 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/v2.0/pro/acls/</guid>
-      <description>Access Control (Preview) This feature is in preview and is subject to big changes  Dkron provides an optional Access Control List (ACL) system which can be used to control access to data and APIs. The ACL is Capability-based, relying on policies to determine which fine grained rules can be applied. Dkron&amp;rsquo;s capability based ACL system is very similar to common ACL systems you are used to.
+      <description>Access Control (Preview) This feature is in preview and is subject to big changes
+ Dkron provides an optional Access Control List (ACL) system which can be used to control access to data and APIs. The ACL is Capability-based, relying on policies to determine which fine grained rules can be applied. Dkron&amp;rsquo;s capability based ACL system is very similar to common ACL systems you are used to.
 ACL System Overview Dkron&amp;rsquo;s ACL system is implemented with the CNCF Open Policy Agent bringing a powerful system to suit your needs.</description>
     </item>
     
@@ -71,7 +72,8 @@ Command line options  --username - Authentication username --password - Authenti
       
       <guid>/v2.0/pro/failover/</guid>
       <description>Dkron Pro can run federated in failover mode, this allows to have two clusters running in different regions and configure one of the clusters in an active-passive fashion, doing a failover in case the active cluster dies.
-This feature is experimental and should be handled with care.  </description>
+This feature is experimental and should be handled with care.
+ </description>
     </item>
     
     <item>

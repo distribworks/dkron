@@ -35,10 +35,10 @@ dkron agent [flags] Options  --advertise-addr string Address used to advertise t
     
     <item>
       <title>dkron doc</title>
-      <link>/pro/cli/dkron_doc/</link>
+      <link>/2.0/pro/cli/dkron_doc/</link>
       <pubDate>Mon, 26 Aug 2019 00:00:00 +0000</pubDate>
       
-      <guid>/pro/cli/dkron_doc/</guid>
+      <guid>/2.0/pro/cli/dkron_doc/</guid>
       <description>dkron doc Generate Markdown documentation for the Dkron CLI.
 Synopsis Generate Markdown documentation for the Dkron CLI. This command is, mostly, used to create up-to-date documentation of Dkron&amp;rsquo;s command-line interface for http://dkron.io/. It creates one Markdown file per command with front matter suitable for rendering in Hugo.
 dkron doc [flags] Options  --dir string the directory to write the doc. (default &amp;quot;/tmp/dkrondoc/&amp;quot;) -h, --help help for doc Options inherited from parent commands  --config string config file (default is /etc/dkron/dkron.</description>

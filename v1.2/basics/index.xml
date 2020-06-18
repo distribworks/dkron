@@ -19,7 +19,8 @@
       <description>Running the binary Download the packaged archive for your platform from the downloads page and extract the package to a shared location in your drive, like /opt/local/bin.
 Run Dkron with default setting: dkron agent --server
 Navigate to http://localhost:8080
-By default dkron will start with a file based, embedded KV store called BoltDB, it is functional for a single node demo but does not offers clustering or HA.  Installing the package Debian repo APT repository:</description>
+By default dkron will start with a file based, embedded KV store called BoltDB, it is functional for a single node demo but does not offers clustering or HA.
+ Installing the package Debian repo APT repository:</description>
     </item>
     
     <item>

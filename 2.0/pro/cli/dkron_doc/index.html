@@ -6,7 +6,7 @@
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="revised" content="2020-06-18T22:52:42 CEST">
-<title>Products :: Dkron - Distributed job scheduling system</title>
+<title>dkron doc :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
 <link href="/css/nucleus.css" rel="stylesheet">
@@ -22,7 +22,7 @@
 
     
   </head>
-  <body data-url="/v2.0/products/">
+  <body data-url="/2.0/pro/cli/dkron_doc/">
     
       <header>
   <div class="logo">
@@ -551,11 +551,10 @@
       <a href="/api/">API</a><i class="fa fa-circle-thin read-icon"></i>
       </div>
     </li>
-    <li data-nav-id="/v2.0/" class="dd-item parent haschildren
+    <li data-nav-id="/v2.0/" class="dd-item haschildren
         ">
       <div>
-      <a href="/v2.0/">V2.0s</a>
-            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/v2.0/">V2.0s</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
     <li data-nav-id="/v2.0/basics/" class="dd-item haschildren
@@ -751,10 +750,11 @@
       <a href="/v2.0/pro/">Dkron Pro</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-    <li data-nav-id="/v2.0/pro/cli/" class="dd-item haschildren
+    <li data-nav-id="/v2.0/pro/cli/" class="dd-item parent haschildren
         ">
       <div>
-      <a href="/v2.0/pro/cli/">Pro CLI</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/v2.0/pro/cli/">Pro CLI</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
       <li data-nav-id="/2.0/pro/cli/dkron/" class="dd-item">
@@ -771,7 +771,7 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/2.0/pro/cli/dkron_doc/" class="dd-item">
+      <li data-nav-id="/2.0/pro/cli/dkron_doc/" class="dd-item active">
         <div>
           <a href="/2.0/pro/cli/dkron_doc/">
             dkron doc
@@ -924,7 +924,7 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/v2.0/products/" class="dd-item active haschildren
+    <li data-nav-id="/v2.0/products/" class="dd-item haschildren
         ">
       <div>
       <a href="/v2.0/products/">Products</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
@@ -1532,31 +1532,7 @@
     <option value="/api/" >
    API</option>
     <option value="/v2.0/" >
-   V2.0s</option> 
-    <option value="/v2.0/basics/" >
-  - 
-   Basics</option>
-    <option value="/v2.0/usage/" >
-  - 
-   Usage</option>
-    <option value="/v2.0/pro/" >
-  - 
-   Dkron Pro</option>
-    <option value="/v2.0/products/"  selected>
-  - 
-   Products</option>
-    <option value="/v2.0/intro/" >
-  - 
-   Intro</option>
-    <option value="/v2.0/cli/" >
-  - 
-   CLI</option>
-    <option value="/v2.0/api/" >
-  - 
-   API</option>
-      <option value="/v2.0/_footer/" >- </option>
-      <option value="/v2.0/upgrading/from_v1_to_v2/" >- Upgrade from v1 to v2</option>
-  
+   V2.0s</option>
     <option value="/v1.2/" >
    V1.2s</option>
     <option value="/upgrading/" >
@@ -1583,28 +1559,37 @@
       </div>
     
 
-    <h1>Products</h1>
+    <h1>dkron doc</h1>
     
     
     
-
-<ul class="children children-card">
-<p><span><card>
-<a href="/v2.0/products/pro/" >Dkron Pro</a></card></p>
-<p>Dkron Pro Improved security, features and reliability for your scheduled jobs  Buy      Get additional features and commercial support from the creator of Dkron
- Key features Security  Pro has enhanced security using industry standard SSL encryption for communication between all components of the application, the embedded storage engine and nodes.
-You can also enable basic authentication to restrict access to the WebUI and the API.</p>
-</span>
+    <h2 id="dkron-doc">dkron doc</h2>
+<p>Generate Markdown documentation for the Dkron CLI.</p>
+<h3 id="synopsis">Synopsis</h3>
+<p>Generate Markdown documentation for the Dkron CLI.
+This command is, mostly, used to create up-to-date documentation
+of Dkron&rsquo;s command-line interface for <a href="http://dkron.io/">http://dkron.io/</a>.
+It creates one Markdown file per command with front matter suitable
+for rendering in Hugo.</p>
+<pre><code>dkron doc [flags]
+</code></pre><h3 id="options">Options</h3>
+<pre><code>      --dir string   the directory to write the doc. (default &quot;/tmp/dkrondoc/&quot;)
+  -h, --help         help for doc
+</code></pre><h3 id="options-inherited-from-parent-commands">Options inherited from parent commands</h3>
+<pre><code>      --config string   config file (default is /etc/dkron/dkron.yml)
+</code></pre><h3 id="see-also">SEE ALSO</h3>
+<ul>
+<li><a href="/pro/cli/dkron/">dkron</a>	 - Professional distributed job scheduling system</li>
 </ul>
-
+<h6 id="auto-generated-by-spf13cobra-on-26-aug-2019">Auto generated by spf13/cobra on 26-Aug-2019</h6>
 
 
     
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-prev" href="/v2.0/pro/processors/slack/" title="Slack processor"> <i class="fa fa-chevron-left"></i><label>Slack processor</label></a>
-    <a class="nav nav-next" href="/v2.0/products/pro/" title="Dkron Pro" style="margin-right: 0px;"><label>Dkron Pro</label><i class="fa fa-chevron-right"></i></a></div>
+<a class="nav nav-prev" href="/2.0/pro/cli/dkron_agent/" title="dkron agent"> <i class="fa fa-chevron-left"></i><label>dkron agent</label></a>
+    <a class="nav nav-next" href="/2.0/pro/cli/dkron_keygen/" title="dkron keygen" style="margin-right: 0px;"><label>dkron keygen</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>
@@ -1618,10 +1603,14 @@ You can also enable basic authentication to restrict access to the WebUI and the
     
 
     
+    <div class="date">
+        <i class='fa fa-calendar'></i> Last update on 26/08/2019
+    </div>
+    
 
     
     <div class="github-link">
-      <a href="https://github.com/distribworks/dkron/edit/master/website/content/v2.0/products/_index.md" target="blank"><i class="fa fa-code-fork"></i>
+      <a href="https://github.com/distribworks/dkron/edit/master/website/content/v2.0/pro/cli/dkron_doc.md" target="blank"><i class="fa fa-code-fork"></i>
         Improve this page</a>
     </div>
     

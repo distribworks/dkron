@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-05-22T00:53:04 CEST">
+<meta name="revised" content="2020-06-18T22:52:42 CEST">
 <title>Getting started :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -771,9 +771,9 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/pro/cli/dkron_doc/" class="dd-item">
+      <li data-nav-id="/2.0/pro/cli/dkron_doc/" class="dd-item">
         <div>
-          <a href="/pro/cli/dkron_doc/">
+          <a href="/2.0/pro/cli/dkron_doc/">
             dkron doc
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
@@ -1585,9 +1585,10 @@
 <li><code>8080</code> for HTTP for the API and Dashboard</li>
 <li><code>6868</code> for gRPC and raft layer comunication between agents.</li>
 </ul>
-<div class="notices note" >
-Be sure you have opened this ports (or the ones that you configured) in your firewall or AWS security groups.
-</div>
+
+<div class="notices note" ><p><p>Be sure you have opened this ports (or the ones that you configured) in your firewall or AWS security groups.</p>
+</p></div>
+
 <h3 id="starting-a-single-node">Starting a single node</h3>
 <p>Works out of the box, good for non HA installations.</p>
 <ul>
@@ -1597,9 +1598,10 @@ Be sure you have opened this ports (or the ones that you configured) in your fir
 <pre><code>dkron agent --server --bootstrap-expect=1
 </code></pre><p>Check your server is working: <code>curl localhost:8080/v1</code></p>
 <p>Simple as that, now it is time to add a job:</p>
-<div class="notices note" >
-This job will only run in just one `server` node due to the node count in the tag. Refer to the [target node spec](/usage/target-nodes-spec) for details.
-</div>
+
+<div class="notices note" ><p><p>This job will only run in just one <code>server</code> node due to the node count in the tag. Refer to the <a href="/usage/target-nodes-spec">target node spec</a> for details.</p>
+</p></div>
+
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">curl localhost:8080/v1/jobs -XPOST -d <span style="color:#d88200">&#39;{
 </span><span style="color:#d88200">  &#34;name&#34;: &#34;job1&#34;,
 </span><span style="color:#d88200">  &#34;schedule&#34;: &#34;@every 10s&#34;,

@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-05-22T00:53:04 CEST">
+<meta name="revised" content="2020-06-18T22:52:42 CEST">
 <title>Usage :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -770,9 +770,9 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/pro/cli/dkron_doc/" class="dd-item">
+      <li data-nav-id="/2.0/pro/cli/dkron_doc/" class="dd-item">
         <div>
-          <a href="/pro/cli/dkron_doc/">
+          <a href="/2.0/pro/cli/dkron_doc/">
             dkron doc
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
@@ -1588,7 +1588,8 @@
 <p><span><card>
 <a href="/v1.2/usage/target-nodes-spec/" >Target nodes spec</a></card></p>
 <p>Target nodes spec You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run.
-The target node syntax: `[tag-value]:[count]`  Examples: Target all nodes with a tag:
+The target node syntax: [tag-value]:[count]
+ Examples: Target all nodes with a tag:
 { &#34;name&#34;: &#34;job_name&#34;, &#34;command&#34;: &#34;/bin/true&#34;, &#34;schedule&#34;: &#34;@every 2m&#34;, &#34;tags&#34;: { &#34;role&#34;: &#34;web&#34; } } mermaid.initialize({startOnLoad:true}); graph LR; J("Job tags: #quot;role#quot;: #quot;web#quot;") --|Run Job|N1["</p>
 </span>
 <p><span><card>
@@ -1691,13 +1692,13 @@ How it Works Dkron execution execution processors are provided via plugins.</p>
 </span>
 <p><span><card>
 <a href="/v1.2/usage/plugins/develop/" >Developing plugins</a></card></p>
-<p>Developing a Plugin role=&quot;alert&quot;&gt;Advanced topic! Plugin development is a highly advanced topic, and is not required knowledge for day-to-day usage. If you don&rsquo;t plan on writing any plugins, we recommend not reading the following section of the documentation.
-Developing a plugin is simple. The only knowledge necessary to write a plugin is basic command-line skills and basic knowledge of the Go programming language.
+<p>Developing a Plugin Advanced topic! Plugin development is a highly advanced topic, and is not required knowledge for day-to-day usage. If you don&rsquo;t plan on writing any plugins, we recommend not reading the following section of the documentation. Developing a plugin is simple. The only knowledge necessary to write a plugin is basic command-line skills and basic knowledge of the Go programming language.
 Note: A common pitfall is not properly setting up a $GOPATH.</p>
 </span>
 <p><span><card>
 <a href="/v1.2/usage/ecs/" >Use with AWS ECS</a></card></p>
-<p>[Dkron Pro](/products/pro) comes with a [native ECS executor](/pro/ecs) out of the box.  Use with Amazon ECS To use Dkron to schedule jobs that run in containers, a wrapper ECS script is needed.
+<p>Dkron Pro comes with a native ECS executor out of the box.
+ Use with Amazon ECS To use Dkron to schedule jobs that run in containers, a wrapper ECS script is needed.
 Install the following snippet in the node that will run the call to ECS
  Prerequisites The node that will run the call to ECS will need to have installed
  AWS cli jq  Example ecs-run --cluster cron --task-definition cron-taskdef --container-name cron --region us-east-1 --command &quot;rake foo&quot;</p>
