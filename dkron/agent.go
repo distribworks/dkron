@@ -240,6 +240,7 @@ func (a *Agent) Stop() error {
 
 	if a.config.Server && a.sched.Started {
 		a.sched.Stop()
+		a.sched.ClearCron()
 	}
 
 	if err := a.serf.Leave(); err != nil {
