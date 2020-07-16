@@ -66,7 +66,7 @@ Dkron uses the local filesystem for storing the embedded database to store its o
 To persist your data outside of the container and make it available for use between container launches we can mount a local path inside our container.
 
 ```
-docker run -d -p 8080:8080 -v ~/dkron.data:/dkron.data --name dkron dkron/dkron agent --server --bootstrap-expect=1
+docker run -d -p 8080:8080 -v ~/dkron.data:/dkron.data --name dkron dkron/dkron agent --server --bootstrap-expect=1 --data-dir=/dkron.data
 ```
 
 Now when you launch your container we are mounting that folder from our local filesystem into the container.
