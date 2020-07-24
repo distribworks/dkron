@@ -36,6 +36,22 @@ builds:
     ldflags:
       - -s -w
 
+  - main: ./builtin/bins/dkron-executor-rabbitmq/
+    id: dkron-executor-rabbitmq
+    binary: dkron-executor-rabbitmq
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - freebsd
+      - windows
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+
   - main: ./builtin/bins/dkron-processor-files/
     id: dkron-processor-files
     binary: dkron-processor-files
