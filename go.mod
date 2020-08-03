@@ -44,7 +44,7 @@ require (
 	github.com/tinylib/msgp v1.1.2 // indirect
 	golang.org/x/crypto v0.0.0-20200429183012-4b2356b1ed79 // indirect
 	golang.org/x/net v0.0.0-20200506145744-7e3656a0809f
-	google.golang.org/grpc v1.29.1
+	google.golang.org/grpc v1.31.0
 )
 
 go 1.14
