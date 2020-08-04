@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-06-18T22:52:41 CEST">
+<meta name="revised" content="2020-08-04T10:56:33 CEST">
 <title>Encryption :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -241,6 +241,13 @@
         </div>
     </li>
         </ul>
+    </li>
+      <li data-nav-id="/usage/signals/" class="dd-item">
+        <div>
+          <a href="/usage/signals/">
+            Signals
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
     </li>
       <li data-nav-id="/usage/upgrade/" class="dd-item">
         <div>
@@ -1586,7 +1593,7 @@
 <p>By default Dkron Pro runs with automatically generated SSL certificates, this is enough for using it in a trusted environment but to have a better grade of confidence, it is recommended to run Dkron Pro with custom SSL certificates.</p>
 <p>Follow <a href="https://coreos.com/os/docs/latest/generate-self-signed-certificates.html">this tutorial</a> to generate autosigned SSL certificates for your instances.</p>
 
-<div class="notices note" ><p><p>You don&rsquo;t need a client certificate for Dkron server, just add &ldquo;client auth&rdquo; usage to your server cert.</p>
+<div class="notices note" ><p><p>You don&rsquo;t need a client certificate for Dkron server, just add &ldquo;client auth&rdquo; usage and &ldquo;IP&rdquo; to the subjectAltNames to your server cert.</p>
 </p></div>
 
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#75715e"># dkron.yaml</span>

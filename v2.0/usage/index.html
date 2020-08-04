@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-06-18T22:52:42 CEST">
+<meta name="revised" content="2020-08-04T10:56:34 CEST">
 <title>Usage :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -241,6 +241,13 @@
         </div>
     </li>
         </ul>
+    </li>
+      <li data-nav-id="/usage/signals/" class="dd-item">
+        <div>
+          <a href="/usage/signals/">
+            Signals
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
     </li>
       <li data-nav-id="/usage/upgrade/" class="dd-item">
         <div>
@@ -1608,13 +1615,13 @@ For example, the built-in shell executor, will run the indicated command in the 
 New plugins will be added, or you can create new ones, to perform different tasks, as HTTP requests, Docker runs, anything that you can imagine.</p>
 </span>
 <p><span><card>
-<a href="/usage/executors/http/" >HTTP Executor</a></card></p>
+<a href="/v2.0/usage/executors/http/" >HTTP Executor</a></card></p>
 <p>HTTP executor can send a request to an HTTP endpoint
 Configuration Params:
 method: Request method in uppercase url: Request url headers: Json string, such as &quot;[\&quot;Content-Type: application/json\&quot;]&quot; body: POST body timeout: Request timeout, unit seconds expectCode: Expect response code, such as 200,206 expectBody: Expect response body, support regexp, such as /success/ debug: Debug option, will log everything when this option is not empty tlsNoVerifyPeer: false (default) or true. If true, disables verification of the remote SSL certificate's validity.</p>
 </span>
 <p><span><card>
-<a href="/usage/executors/shell/" >Shell Executor</a></card></p>
+<a href="/v2.0/usage/executors/shell/" >Shell Executor</a></card></p>
 <p>Shell executor runs a system command
 Configuration Params
 shell: Run this command using a shell environment command: The command to run env: Env vars separated by comma cwd: Chdir before command run Example

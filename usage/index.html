@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-06-18T22:52:42 CEST">
+<meta name="revised" content="2020-08-04T10:56:34 CEST">
 <title>Usage :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -241,6 +241,13 @@
         </div>
     </li>
         </ul>
+    </li>
+      <li data-nav-id="/usage/signals/" class="dd-item">
+        <div>
+          <a href="/usage/signals/">
+            Signals
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
     </li>
       <li data-nav-id="/usage/upgrade/" class="dd-item">
         <div>
@@ -1685,6 +1692,12 @@ How it Works Dkron execution execution processors are provided via plugins.</p>
 <p>Developing a Plugin Advanced topic! Plugin development is a highly advanced topic, and is not required knowledge for day-to-day usage. If you don&rsquo;t plan on writing any plugins, we recommend not reading the following section of the documentation.
  Developing a plugin is simple. The only knowledge necessary to write a plugin is basic command-line skills and basic knowledge of the Go programming language.
 Note: A common pitfall is not properly setting up a $GOPATH.</p>
+</span>
+<p><span><card>
+<a href="/usage/signals/" >Signals</a></card></p>
+<p>Dkron responds to several signals. On a Unix machine, you can use the kill binary, e.g.
+kill -TERM pid TERM TERM signals that Dkron should shut down. It will stop accepting new work, but continue working on current jobs until they finish, then will exit.
+HUP HUP signals Dkron to reload the configuration without restarting, it will only affect some of the configuration values like tags, notification settings, etc. Values that needs restarting the service like IP address or ports are not affected.</p>
 </span>
 <p><span><card>
 <a href="/usage/upgrade/" >Upgrade methods</a></card></p>

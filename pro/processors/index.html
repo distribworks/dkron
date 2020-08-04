@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-06-18T22:52:42 CEST">
+<meta name="revised" content="2020-08-04T10:56:34 CEST">
 <title>Processors :: Dkron - Distributed job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -70,17 +70,24 @@
       <a href="/basics/">Basics</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/v1.2/pro/executors/ecs/" class="dd-item">
+      <li data-nav-id="/basics/installation/" class="dd-item">
         <div>
-          <a href="/v1.2/pro/executors/ecs/">
-            AWS ECS Executor
+          <a href="/basics/installation/">
+            Installation
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/v1.2/pro/executors/docker/" class="dd-item">
+      <li data-nav-id="/basics/getting-started/" class="dd-item">
         <div>
-          <a href="/v1.2/pro/executors/docker/">
-            Docker executor
+          <a href="/basics/getting-started/">
+            Getting started
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/basics/configuration/" class="dd-item">
+        <div>
+          <a href="/basics/configuration/">
+            Configuration
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -234,6 +241,13 @@
         </div>
     </li>
         </ul>
+    </li>
+      <li data-nav-id="/usage/signals/" class="dd-item">
+        <div>
+          <a href="/usage/signals/">
+            Signals
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
     </li>
       <li data-nav-id="/usage/upgrade/" class="dd-item">
         <div>
@@ -1586,9 +1600,7 @@ Configuration { &#34;processors&#34;: { &#34;elasticsearch&#34;: { &#34;url&#34;
 <p>The Email processor provides flexibility to job email notifications.
 Configuration of the email processor is stored in a file named dkron-processor-email.yml in the same locations as dkron.yml, and should include a list of providers, it can include any number of providers.
 Example:
-provider1: host: smtp.myprovider.com port: 25 username: myusername password: mypassword from: cron@mycompany.com subjectPrefix: &#39;[Staging] &#39; Then configure each job with the following options:
-Example:
-{ &#34;processors&#34;: { &#34;email&#34;: { &#34;provider&#34;: &#34;provider1&#34;, &#34;emails&#34;: &#34;team@mycompany.</p>
+provider1: host: smtp.myprovider.com port: 25 username: myusername password: mypassword from: cron@mycompany.com subjectPrefix: &#39;[Staging] &#39;  host and port are the minimum required parameters for provider config, and also emails for the job configuration.</p>
 </span>
 <p><span><h3>
 <a href="/pro/processors/slack/" >Slack processor</a></h3></p>

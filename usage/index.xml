@@ -129,6 +129,17 @@ This guide is for recovery from a Dkron outage due to a majority of server nodes
     </item>
     
     <item>
+      <title>Signals</title>
+      <link>/usage/signals/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/usage/signals/</guid>
+      <description>Dkron responds to several signals. On a Unix machine, you can use the kill binary, e.g.
+kill -TERM pid TERM TERM signals that Dkron should shut down. It will stop accepting new work, but continue working on current jobs until they finish, then will exit.
+HUP HUP signals Dkron to reload the configuration without restarting, it will only affect some of the configuration values like tags, notification settings, etc. Values that needs restarting the service like IP address or ports are not affected.</description>
+    </item>
+    
+    <item>
       <title>Upgrade methods</title>
       <link>/usage/upgrade/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>

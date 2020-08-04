@@ -1218,9 +1218,7 @@ Configuration { &amp;#34;processors&amp;#34;: { &amp;#34;elasticsearch&amp;#34;:
       <description>The Email processor provides flexibility to job email notifications.
 Configuration of the email processor is stored in a file named dkron-processor-email.yml in the same locations as dkron.yml, and should include a list of providers, it can include any number of providers.
 Example:
-provider1: host: smtp.myprovider.com port: 25 username: myusername password: mypassword from: cron@mycompany.com subjectPrefix: &amp;#39;[Staging] &amp;#39; Then configure each job with the following options:
-Example:
-{ &amp;#34;processors&amp;#34;: { &amp;#34;email&amp;#34;: { &amp;#34;provider&amp;#34;: &amp;#34;provider1&amp;#34;, &amp;#34;emails&amp;#34;: &amp;#34;team@mycompany.</description>
+provider1: host: smtp.myprovider.com port: 25 username: myusername password: mypassword from: cron@mycompany.com subjectPrefix: &amp;#39;[Staging] &amp;#39;  host and port are the minimum required parameters for provider config, and also emails for the job configuration.</description>
     </item>
     
     <item>
@@ -1641,6 +1639,17 @@ shell: Run this command using a shell environment command: The command to run en
 Configuration Params
 shell: Run this command using a shell environment command: The command to run env: Env vars separated by comma cwd: Chdir before command run Example
 { &amp;#34;executor&amp;#34;: &amp;#34;shell&amp;#34;, &amp;#34;executor_config&amp;#34;: { &amp;#34;shell&amp;#34;: &amp;#34;true&amp;#34;, &amp;#34;command&amp;#34;: &amp;#34;my_command&amp;#34;, &amp;#34;env&amp;#34;: &amp;#34;ENV_VAR=va1,ANOTHER_ENV_VAR=var2&amp;#34;, &amp;#34;cwd&amp;#34;: &amp;#34;/app&amp;#34; } } </description>
+    </item>
+    
+    <item>
+      <title>Signals</title>
+      <link>/usage/signals/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/usage/signals/</guid>
+      <description>Dkron responds to several signals. On a Unix machine, you can use the kill binary, e.g.
+kill -TERM pid TERM TERM signals that Dkron should shut down. It will stop accepting new work, but continue working on current jobs until they finish, then will exit.
+HUP HUP signals Dkron to reload the configuration without restarting, it will only affect some of the configuration values like tags, notification settings, etc. Values that needs restarting the service like IP address or ports are not affected.</description>
     </item>
     
     <item>
