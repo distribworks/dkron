@@ -22,7 +22,7 @@ require (
 	github.com/hashicorp/memberlist v0.2.2
 	github.com/hashicorp/raft v1.1.2
 	github.com/hashicorp/raft-boltdb v0.0.0-20191021154308-4207f1bf0617
-	github.com/hashicorp/serf v0.9.2
+	github.com/hashicorp/serf v0.9.3
 	github.com/hashicorp/yamux v0.0.0-20190923154419-df201c70410d // indirect
 	github.com/jordan-wright/email v0.0.0-20180115032944-94ae17dedda2
 	github.com/juliangruber/go-intersect v1.0.0
