@@ -18,6 +18,7 @@ import (
 	metrics "github.com/armon/go-metrics"
 	"github.com/distribworks/dkron/v3/plugin"
 	proto "github.com/distribworks/dkron/v3/plugin/types"
+	"github.com/hashicorp/go-uuid"
 	"github.com/hashicorp/memberlist"
 	"github.com/hashicorp/raft"
 	raftboltdb "github.com/hashicorp/raft-boltdb"
@@ -110,6 +111,8 @@ type Agent struct {
 	activeExecutions sync.Map
 
 	listener net.Listener
+
+	id string
 }
 
 // ProcessorFactory is a function type that creates a new instance
@@ -280,7 +283,7 @@ func (a *Agent) setupRaft() error {
 	config.LeaderLeaseTimeout = config.LeaderLeaseTimeout * time.Duration(a.config.RaftMultiplier)
 
 	config.LogOutput = logger
-	config.LocalID = raft.ServerID(a.config.NodeName)
+	config.LocalID = raft.ServerID(a.id)
 
 	// Build an all in-memory setup for dev mode, otherwise prepare a full
 	// disk-based setup.
@@ -406,6 +409,13 @@ func (a *Agent) setupSerf() (*serf.Serf, error) {
 
 	serfConfig.Tags = a.config.Tags
 	serfConfig.Tags["role"] = "dkron"
+	// TODO move from here
+	id, err := uuid.GenerateUUID()
+	if err != nil {
+		return nil, err
+	}
+	a.id = id
+	serfConfig.Tags["id"] = id
 	serfConfig.Tags["dc"] = a.config.Datacenter
 	serfConfig.Tags["region"] = a.config.Region
 	serfConfig.Tags["version"] = Version

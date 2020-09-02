@@ -65,7 +65,10 @@ func isServer(m serf.Member) (bool, *ServerParts) {
 		return false, nil
 	}
 
-	id := m.Name
+	id := "unknown"
+	if v, ok := m.Tags["id"]; ok {
+		id = v
+	}
 	region := m.Tags["region"]
 	datacenter := m.Tags["dc"]
 	_, bootstrap := m.Tags["bootstrap"]
