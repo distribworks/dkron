@@ -3,7 +3,7 @@ module github.com/distribworks/dkron/v3
 require (
 	github.com/DataDog/datadog-go v3.7.1+incompatible // indirect
 	github.com/armon/circbuf v0.0.0-20190214190532-5111143e8da2
-	github.com/armon/go-metrics v0.3.3
+	github.com/armon/go-metrics v0.3.4
 	github.com/aws/aws-sdk-go v1.30.24 // indirect
 	github.com/fluent/fluent-logger-golang v1.5.0
 	github.com/gin-contrib/expvar v0.0.1
