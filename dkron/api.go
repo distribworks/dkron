@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"sort"
+	"strconv"
 
 	"github.com/gin-contrib/expvar"
 	"github.com/gin-gonic/gin"
@@ -116,13 +117,21 @@ func renderJSON(c *gin.Context, status int, v interface{}) {
 func (h *HTTPTransport) indexHandler(c *gin.Context) {
 	local := h.agent.serf.LocalMember()
 
+	entries := map[string]string{}
+	for _, e := range h.agent.sched.Cron.Entries() {
+		if j, ok := e.Job.(*Job); ok {
+			entries[strconv.Itoa(int(e.ID))] = j.String()
+		}
+	}
+
 	stats := map[string]map[string]string{
 		"agent": {
 			"name":    local.Name,
 			"version": Version,
 		},
-		"serf": h.agent.serf.Stats(),
-		"tags": local.Tags,
+		"serf":      h.agent.serf.Stats(),
+		"tags":      local.Tags,
+		"scheduler": entries,
 	}
 
 	renderJSON(c, http.StatusOK, stats)
