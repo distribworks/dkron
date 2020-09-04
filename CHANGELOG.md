@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.0.5] - 2020-09-04
+
+### Changes
+
+- Github Action for release (binary and docker) [#770](https://github.com/distribworks/dkron/pull/770)
+- Include scheduler entries in status API [#813](https://github.com/distribworks/dkron/pull/813)
+- Bump deps
+
+### Fixes
+
+- free s.Cron on proper opportunity to avoid unexpected crash [#779](https://github.com/distribworks/dkron/pull/779)
+
 ## [3.0.4] - 2020-06-12
 
 ### Fixes
