@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Github Action for release (binary and docker) [#770](https://github.com/distribworks/dkron/pull/770)
 - Include scheduler entries in status API [#813](https://github.com/distribworks/dkron/pull/813)
-- Bump deps
+- Bump deps [#814](https://github.com/distribworks/dkron/pull/814)
 
 ### Fixes
 
