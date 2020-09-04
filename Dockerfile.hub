@@ -1,5 +1,7 @@
-FROM alpine
+# syntax=docker/dockerfile:1.0-experimental
+FROM alpine:3.11
 LABEL maintainer="Victor Castell <victor@victorcastell.com>"
+ARG TARGETPLATFORM
 
 RUN set -x \
 	&& buildDeps='bash ca-certificates openssl tzdata' \
@@ -12,8 +14,8 @@ EXPOSE 8080 8946
 ENV SHELL /bin/bash
 WORKDIR /opt/local/dkron
 
-COPY dkron .
-COPY dkron-* ./
+RUN --mount=target=/build tar xf /build/dist/dkron_*_$(echo ${TARGETPLATFORM} | tr '/' '_' | sed -e 's/arm_/arm/').tar.gz
+
 ENTRYPOINT ["/opt/local/dkron/dkron"]
 
 CMD ["--help"]

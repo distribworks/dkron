@@ -1,0 +1,60 @@
+name: Release
+
+on:
+  push:
+    branches-ignore:
+      - '**'
+    tags:
+      - 'v*.*.*'
+      # to be used by fork patch-releases ^^
+      - 'v*.*.*-*'
+
+jobs:
+  goreleaser:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - name: Set up Go
+        uses: actions/setup-go@master
+        with:
+          go-version: 1.14.x
+
+      - name: Prepare
+        id: prepare
+        run: |
+            TAG=${GITHUB_REF#refs/tags/}
+            echo ::set-output name=tag_name::${TAG}
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v1
+        with:
+          version: latest
+          args: release --rm-dist --timeout=1h
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.prepare.outputs.tag_name }}
+
+      - name: set up buildx
+        id: buildx
+        uses: crazy-max/ghaction-docker-buildx@v1
+        with:
+          version: latest
+      
+      - name: login to dockerhub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+      - name: build (and publish) main image
+        env:
+          # fork friendly ^^
+          DOCKER_REPO: ${{ secrets.DOCKER_REPO }}
+        run: |
+          docker buildx build \
+            --platform linux/amd64,linux/arm64,linux/arm/v7 \
+            --build-arg VERSION=${{ steps.prepare.outputs.tag_name }} \
+            --push \
+            -t ${DOCKER_REPO:-dkron/dkron}:${{ steps.prepare.outputs.tag_name }} \
+            -t ${DOCKER_REPO:-dkron/dkron}:latest \
+            -f Dockerfile.hub \
+            .
