@@ -1,11 +1,16 @@
 package dkron
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
+	"sort"
+	"strconv"
 
 	"github.com/gin-contrib/expvar"
 	"github.com/gin-gonic/gin"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 	"github.com/tidwall/buntdb"
 	status "google.golang.org/grpc/status"
@@ -61,6 +66,11 @@ func (h *HTTPTransport) APIRoutes(r *gin.RouterGroup, middleware ...gin.HandlerF
 		})
 	})
 
+	if h.agent.config.EnablePrometheus {
+		// Prometheus metrics scrape endpoint
+		r.GET("/metrics", gin.WrapH(promhttp.Handler()))
+	}
+
 	r.GET("/v1", h.indexHandler)
 	v1 := r.Group("/v1")
 	v1.Use(middleware...)
@@ -69,6 +79,9 @@ func (h *HTTPTransport) APIRoutes(r *gin.RouterGroup, middleware ...gin.HandlerF
 	v1.GET("/leader", h.leaderHandler)
 	v1.GET("/isleader", h.isLeaderHandler)
 	v1.POST("/leave", h.leaveHandler)
+	v1.POST("/restore", h.restoreHandler)
+
+	v1.GET("/busy", h.busyHandler)
 
 	v1.POST("/jobs", h.jobCreateOrUpdateHandler)
 	v1.PATCH("/jobs", h.jobCreateOrUpdateHandler)
@@ -104,13 +117,21 @@ func renderJSON(c *gin.Context, status int, v interface{}) {
 func (h *HTTPTransport) indexHandler(c *gin.Context) {
 	local := h.agent.serf.LocalMember()
 
+	entries := map[string]string{}
+	for _, e := range h.agent.sched.Cron.Entries() {
+		if j, ok := e.Job.(*Job); ok {
+			entries[strconv.Itoa(int(e.ID))] = j.String()
+		}
+	}
+
 	stats := map[string]map[string]string{
 		"agent": {
 			"name":    local.Name,
 			"version": Version,
 		},
-		"serf": h.agent.serf.Stats(),
-		"tags": local.Tags,
+		"serf":      h.agent.serf.Stats(),
+		"tags":      local.Tags,
+		"scheduler": entries,
 	}
 
 	renderJSON(c, http.StatusOK, stats)
@@ -128,6 +149,9 @@ func (h *HTTPTransport) jobsHandler(c *gin.Context) {
 		log.WithError(err).Error("api: Unable to get jobs, store not reachable.")
 		return
 	}
+	// Ask all server peers for connections
+	// Range through jobs and assing running based on peers connections
+
 	renderJSON(c, http.StatusOK, jobs)
 }
 
@@ -213,6 +237,42 @@ func (h *HTTPTransport) jobRunHandler(c *gin.Context) {
 	renderJSON(c, http.StatusOK, job)
 }
 
+// Restore jobs from file.
+// Overwrite job if the job is exist.
+func (h *HTTPTransport) restoreHandler(c *gin.Context) {
+	file, _, err := c.Request.FormFile("file")
+	if err != nil {
+		c.AbortWithError(http.StatusNotFound, err)
+		return
+	}
+
+	data, err := ioutil.ReadAll(file)
+	if err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+	var jobs []*Job
+	err = json.Unmarshal(data, &jobs)
+
+	if err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	jobTree, err := generateJobTree(jobs)
+	if err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+	result := h.agent.recursiveSetJob(jobTree)
+	resp, err := json.Marshal(result)
+	if err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+	renderJSON(c, http.StatusOK, string(resp))
+}
+
 func (h *HTTPTransport) executionsHandler(c *gin.Context) {
 	jobName := c.Param("job")
 
@@ -286,4 +346,24 @@ func (h *HTTPTransport) jobToggleHandler(c *gin.Context) {
 
 	c.Header("Location", c.Request.RequestURI)
 	renderJSON(c, http.StatusOK, job)
+}
+
+func (h *HTTPTransport) busyHandler(c *gin.Context) {
+	executions := []*Execution{}
+
+	exs, err := h.agent.GetActiveExecutions()
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	for _, e := range exs {
+		executions = append(executions, NewExecutionFromProto(e))
+	}
+
+	sort.SliceStable(executions, func(i, j int) bool {
+		return executions[i].StartedAt.Before(executions[j].StartedAt)
+	})
+
+	renderJSON(c, http.StatusOK, executions)
 }

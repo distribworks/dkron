@@ -146,6 +146,26 @@ paths:
           description: Successful response
           schema:
             $ref: '#/definitions/job'
+  /restore:
+    post:
+      description: |
+        Restore jobs from json file.
+      operationId: restore
+      tags:
+        - jobs
+      parameters:
+        - in: formData
+          name: file
+          description: Json file that needs to be restored.
+          required: true
+          type: file
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/restore'
   /members:
     get:
       description: |
@@ -218,6 +238,20 @@ paths:
             type: array
             items:
               $ref: '#/definitions/execution'
+  /busy:
+    post:
+      description: |
+        Returns the running executions.
+      operationId: busy
+      tags:
+        - default
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/execution'
 
 definitions:
   status:
@@ -249,7 +283,7 @@ definitions:
     properties:
       name:
         type: string
-        description: "Name for the job."
+        description: "Name for the job. Use only lower case letters (unicode), digits, underscore and dash."
         readOnly: false
         example: "job1"
       displayname:
@@ -445,3 +479,9 @@ definitions:
     example:
       files:
         forward: true
+
+  restore:
+    type: string
+    description: Each job restore result.
+    example: "success create job_1"
+        

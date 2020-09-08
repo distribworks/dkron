@@ -83,10 +83,6 @@ message ExecutionDoneResponse {
   bytes payload = 2;
 }
 
-message Executions {
-  repeated Execution executions = 1;
-}
-
 message RunJobRequest {
   string job_name = 1;
 }
@@ -121,6 +117,19 @@ message RaftRemovePeerByIDRequest {
   string id = 1;
 }
 
+message AgentRunStream {
+  Execution execution = 1;
+}
+
+message AgentRunResponse {
+  string from = 1;
+  bytes payload = 2;
+}
+
+message GetActiveExecutionsResponse {
+  repeated Execution executions = 1;
+}
+
 service Dkron {
   rpc GetJob (GetJobRequest) returns (GetJobResponse);
   rpc ExecutionDone (ExecutionDoneRequest) returns (ExecutionDoneResponse);
@@ -131,4 +140,15 @@ service Dkron {
   rpc ToggleJob (ToggleJobRequest) returns (ToggleJobResponse);
   rpc RaftGetConfiguration (google.protobuf.Empty) returns (RaftGetConfigurationResponse);
   rpc RaftRemovePeerByID (RaftRemovePeerByIDRequest) returns (google.protobuf.Empty);
+  rpc GetActiveExecutions (google.protobuf.Empty) returns  (GetActiveExecutionsResponse);
+  rpc SetExecution (Execution) returns (google.protobuf.Empty);
+}
+
+message AgentRunRequest {
+  Job job = 1;
+  Execution execution = 2;
+}
+
+service Agent {
+  rpc AgentRun (AgentRunRequest) returns (stream AgentRunStream);
 }

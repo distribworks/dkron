@@ -71,11 +71,11 @@ func TestGRPCExecutionDone(t *testing.T) {
 		NodeName:   "testNode",
 		FinishedAt: time.Now(),
 		Success:    true,
-		Output:     []byte("type"),
+		Output:     "test",
 	}
 
 	rc := NewGRPCClient(nil, a)
-	rc.ExecutionDone(a.getRPCAddr(), testExecution)
+	rc.ExecutionDone(a.advertiseRPCAddr(), testExecution)
 	execs, err := a.Store.GetExecutions("test")
 	require.NoError(t, err)
 
@@ -100,7 +100,7 @@ func TestGRPCExecutionDone(t *testing.T) {
 
 	// Test store execution on a deleted job
 	testExecution.FinishedAt = time.Now()
-	err = rc.ExecutionDone(a.getRPCAddr(), testExecution)
+	err = rc.ExecutionDone(a.advertiseRPCAddr(), testExecution)
 
 	assert.Error(t, err, ErrExecutionDoneForDeletedJob)
 }

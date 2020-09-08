@@ -11,7 +11,8 @@ import (
 	"time"
 
 	"github.com/armon/circbuf"
-	dktypes "github.com/distribworks/dkron/v2/plugin/types"
+	dkplugin "github.com/distribworks/dkron/v3/plugin"
+	dktypes "github.com/distribworks/dkron/v3/plugin/types"
 	"github.com/mattn/go-shellwords"
 )
 
@@ -24,12 +25,24 @@ const (
 	maxBufSize = 256000
 )
 
+// reportingWriter This is a Writer implementation that writes back to the host
+type reportingWriter struct {
+	buffer  *circbuf.Buffer
+	cb      dkplugin.StatusHelper
+	isError bool
+}
+
+func (p reportingWriter) Write(data []byte) (n int, err error) {
+	p.cb.Update(data, p.isError)
+	return p.buffer.Write(data)
+}
+
 // Shell plugin runs shell commands when Execute method is called.
 type Shell struct{}
 
 // Execute method of the plugin
-func (s *Shell) Execute(args *dktypes.ExecuteRequest) (*dktypes.ExecuteResponse, error) {
-	out, err := s.ExecuteImpl(args)
+func (s *Shell) Execute(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelper) (*dktypes.ExecuteResponse, error) {
+	out, err := s.ExecuteImpl(args, cb)
 	resp := &dktypes.ExecuteResponse{Output: out}
 	if err != nil {
 		resp.Error = err.Error()
@@ -38,7 +51,7 @@ func (s *Shell) Execute(args *dktypes.ExecuteRequest) (*dktypes.ExecuteResponse,
 }
 
 // ExecuteImpl do execute command
-func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest) ([]byte, error) {
+func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelper) ([]byte, error) {
 	output, _ := circbuf.NewBuffer(maxBufSize)
 
 	shell, err := strconv.ParseBool(args.Config["shell"])
@@ -47,7 +60,7 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest) ([]byte, error) {
 	}
 	command := args.Config["command"]
 	env := strings.Split(args.Config["env"], ",")
-	cwd, _ := args.Config["cwd"]
+	cwd := args.Config["cwd"]
 
 	cmd, err := buildCmd(command, shell, env, cwd)
 	if err != nil {
@@ -57,8 +70,9 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	cmd.Stderr = output
-	cmd.Stdout = output
+	// use same buffer for both channels, for the full return at the end
+	cmd.Stderr = reportingWriter{buffer: output, cb: cb, isError: true}
+	cmd.Stdout = reportingWriter{buffer: output, cb: cb}
 
 	// Start a timer to warn about slow handlers
 	slowTimer := time.AfterFunc(2*time.Hour, func() {

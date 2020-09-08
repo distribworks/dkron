@@ -17,12 +17,34 @@ builds:
     goarch:
       - amd64
       - arm64
+      - arm
+    goarm:
+      - 7
     ldflags:
       - -s -w
 
   - main: ./builtin/bins/dkron-executor-shell/
     id: dkron-executor-shell
     binary: dkron-executor-shell
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - freebsd
+      - windows
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+      - arm
+    goarm:
+      - 7
+    ldflags:
+      - -s -w
+
+  - main: ./builtin/bins/dkron-executor-rabbitmq/
+    id: dkron-executor-rabbitmq
+    binary: dkron-executor-rabbitmq
     env:
       - CGO_ENABLED=0
     goos:
@@ -49,6 +71,9 @@ builds:
     goarch:
       - amd64
       - arm64
+      - arm
+    goarm:
+      - 7
     ldflags:
       - -s -w
 
@@ -65,6 +90,9 @@ builds:
     goarch:
       - amd64
       - arm64
+      - arm
+    goarm:
+      - 7
     ldflags:
       - -s -w
 
@@ -81,6 +109,28 @@ builds:
     goarch:
       - amd64
       - arm64
+      - arm
+    goarm:
+      - 7
+    ldflags:
+      - -s -w
+  
+  - main: ./builtin/bins/dkron-processor-fluent/
+    id: dkron-processor-fluent
+    binary: dkron-processor-fluent
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - freebsd
+      - windows
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+      - arm
+    goarm:
+      - 7
     ldflags:
       - -s -w
 
@@ -96,8 +146,11 @@ builds:
     goarch:
       - amd64
       - arm64
+      - arm
+    goarm:
+      - 7
     ldflags:
-      - -s -w -X github.com/distribworks/dkron/v2/dkron.Version={{.Version}}
+      - -s -w -X github.com/distribworks/dkron/v3/dkron.Version={{.Version}} -X github.com/distribworks/dkron/v3/dkron.Codename=merichuas
 
 nfpms:
   -
@@ -139,18 +192,3 @@ changelog:
     - '^docs:'
     - '^test:'
     - '^Merge pull request'
-
-dockers:
-  -
-    dockerfile: Dockerfile.hub
-    binaries:
-      - dkron
-      - dkron-executor-http
-      - dkron-executor-shell
-      - dkron-processor-syslog
-      - dkron-processor-log
-      - dkron-processor-files
-    image_templates:
-      - "dkron/dkron:latest"
-      - "dkron/dkron:{{ .Tag }}"
-      - "dkron/dkron:v{{ .Major }}"

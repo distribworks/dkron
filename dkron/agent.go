@@ -2,7 +2,6 @@ package dkron
 
 import (
 	"crypto/tls"
-	"encoding/json"
 	"errors"
 	"expvar"
 	"fmt"
@@ -17,18 +16,21 @@ import (
 	"time"
 
 	metrics "github.com/armon/go-metrics"
-	"github.com/distribworks/dkron/v2/plugin"
-	proto "github.com/distribworks/dkron/v2/plugin/types"
+	"github.com/distribworks/dkron/v3/plugin"
+	proto "github.com/distribworks/dkron/v3/plugin/types"
 	"github.com/hashicorp/memberlist"
 	"github.com/hashicorp/raft"
 	raftboltdb "github.com/hashicorp/raft-boltdb"
 	"github.com/hashicorp/serf/serf"
+	"github.com/juliangruber/go-intersect"
 	"github.com/sirupsen/logrus"
 	"github.com/soheilhy/cmux"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 )
 
 const (
-	raftTimeout = 10 * time.Second
+	raftTimeout = 30 * time.Second
 	// raftLogCacheSize is the maximum number of logs to cache in-memory.
 	// This is used to reduce disk I/O for the recently committed entries.
 	raftLogCacheSize = 512
@@ -39,9 +41,10 @@ var (
 	expNode = expvar.NewString("node")
 
 	// ErrLeaderNotFound is returned when obtained leader is not found in member list
-	ErrLeaderNotFound = errors.New("No member leader found in member list")
+	ErrLeaderNotFound = errors.New("no member leader found in member list")
 
-	defaultLeaderTTL = 20 * time.Second
+	// ErrNoSuitableServer returns an error in case no suitable server to send the request is found.
+	ErrNoSuitableServer = errors.New("no suitable server found to send the request, aborting")
 
 	runningExecutions sync.Map
 )
@@ -103,6 +106,10 @@ type Agent struct {
 	peers      map[string][]*ServerParts
 	localPeers map[raft.ServerAddress]*ServerParts
 	peerLock   sync.RWMutex
+
+	activeExecutions sync.Map
+
+	listener net.Listener
 }
 
 // ProcessorFactory is a function type that creates a new instance
@@ -161,8 +168,32 @@ func (a *Agent) Start() error {
 	// Expose the node name
 	expNode.Set(a.config.NodeName)
 
+	//Use the value of "RPCPort" if AdvertiseRPCPort has not been set
+	if a.config.AdvertiseRPCPort <= 0 {
+		a.config.AdvertiseRPCPort = a.config.RPCPort
+	}
+
+	// Create a listener for RPC subsystem
+	addr := a.bindRPCAddr()
+	l, err := net.Listen("tcp", addr)
+	if err != nil {
+		log.Fatal(err)
+	}
+	a.listener = l
+
 	if a.config.Server {
 		a.StartServer()
+	} else {
+		opts := []grpc.ServerOption{}
+		if a.TLSConfig != nil {
+			tc := credentials.NewTLS(a.TLSConfig)
+			opts = append(opts, grpc.Creds(tc))
+		}
+
+		grpcServer := grpc.NewServer(opts...)
+		as := NewAgentServer(a)
+		proto.RegisterAgentServer(grpcServer, as)
+		go grpcServer.Serve(l)
 	}
 
 	if a.GRPCClient == nil {
@@ -170,10 +201,8 @@ func (a *Agent) Start() error {
 	}
 
 	tags := a.serf.LocalMember().Tags
-	if a.config.Server {
-		tags["rpc_addr"] = a.getRPCAddr() // Address that clients will use to RPC to servers
-		tags["port"] = strconv.Itoa(a.config.AdvertiseRPCPort)
-	}
+	tags["rpc_addr"] = a.advertiseRPCAddr() // Address that clients will use to RPC to servers
+	tags["port"] = strconv.Itoa(a.config.AdvertiseRPCPort)
 	a.serf.SetTags(tags)
 
 	go a.eventLoop()
@@ -211,6 +240,7 @@ func (a *Agent) Stop() error {
 
 	if a.config.Server && a.sched.Started {
 		a.sched.Stop()
+		a.sched.ClearCron()
 	}
 
 	if err := a.serf.Leave(); err != nil {
@@ -243,7 +273,7 @@ func (a *Agent) setupRaft() error {
 
 	// Raft performance
 	raftMultiplier := a.config.RaftMultiplier
-	if raftMultiplier < 1 && raftMultiplier > 10 {
+	if raftMultiplier < 1 || raftMultiplier > 10 {
 		return fmt.Errorf("raft-multiplier cannot be %d. Must be between 1 and 10", raftMultiplier)
 	}
 	config.HeartbeatTimeout = config.HeartbeatTimeout * time.Duration(raftMultiplier)
@@ -355,7 +385,7 @@ func (a *Agent) setupSerf() (*serf.Serf, error) {
 
 	bindIP, bindPort, err := config.AddrParts(config.BindAddr)
 	if err != nil {
-		return nil, fmt.Errorf("Invalid bind address: %s", err)
+		return nil, fmt.Errorf("invalid bind address: %s", err)
 	}
 
 	var advertiseIP string
@@ -363,13 +393,13 @@ func (a *Agent) setupSerf() (*serf.Serf, error) {
 	if config.AdvertiseAddr != "" {
 		advertiseIP, advertisePort, err = config.AddrParts(config.AdvertiseAddr)
 		if err != nil {
-			return nil, fmt.Errorf("Invalid advertise address: %s", err)
+			return nil, fmt.Errorf("invalid advertise address: %s", err)
 		}
 	}
 
 	encryptKey, err := config.EncryptBytes()
 	if err != nil {
-		return nil, fmt.Errorf("Invalid encryption key: %s", err)
+		return nil, fmt.Errorf("invalid encryption key: %s", err)
 	}
 
 	serfConfig := serf.DefaultConfig()
@@ -398,7 +428,7 @@ func (a *Agent) setupSerf() (*serf.Serf, error) {
 	case "local":
 		serfConfig.MemberlistConfig = memberlist.DefaultLocalConfig()
 	default:
-		return nil, fmt.Errorf("Unknown profile: %s", config.Profile)
+		return nil, fmt.Errorf("unknown profile: %s", config.Profile)
 	}
 
 	serfConfig.MemberlistConfig.BindAddr = bindIP
@@ -412,9 +442,14 @@ func (a *Agent) setupSerf() (*serf.Serf, error) {
 	serfConfig.QuiescentPeriod = time.Second
 	serfConfig.UserCoalescePeriod = 3 * time.Second
 	serfConfig.UserQuiescentPeriod = time.Second
+	serfConfig.ReconnectTimeout, err = time.ParseDuration(config.SerfReconnectTimeout)
+
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// Create a channel to listen for events from Serf
-	a.eventCh = make(chan serf.Event, 64)
+	a.eventCh = make(chan serf.Event, 2048)
 	serfConfig.EventCh = a.eventCh
 
 	// Start Serf
@@ -449,11 +484,6 @@ func (a *Agent) SetConfig(c *Config) {
 
 // StartServer launch a new dkron server process
 func (a *Agent) StartServer() {
-	//Use the value of "RPCPort" if AdvertiseRPCPort has not been set
-	if a.config.AdvertiseRPCPort <= 0 {
-		a.config.AdvertiseRPCPort = a.config.RPCPort
-	}
-
 	if a.Store == nil {
 		s, err := NewStore()
 		if err != nil {
@@ -469,15 +499,8 @@ func (a *Agent) StartServer() {
 	}
 	a.HTTPTransport.ServeHTTP()
 
-	// Create a listener at the desired port.
-	addr := a.getRPCAddr()
-	l, err := net.Listen("tcp", addr)
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	// Create a cmux object.
-	tcpm := cmux.New(l)
+	tcpm := cmux.New(a.listener)
 	var grpcl, raftl net.Listener
 
 	// If TLS config present listen to TLS
@@ -636,84 +659,6 @@ func (a *Agent) eventLoop() {
 				}
 			}
 
-			if e.EventType() == serf.EventQuery {
-				query := e.(*serf.Query)
-
-				if query.Name == QueryRunJob {
-					log.WithFields(logrus.Fields{
-						"query":   query.Name,
-						"payload": string(query.Payload),
-						"at":      query.LTime,
-					}).Debug("agent: Running job")
-
-					var rqp RunQueryParam
-					if err := json.Unmarshal(query.Payload, &rqp); err != nil {
-						log.WithField("query", QueryRunJob).Fatal("agent: Error unmarshaling query payload")
-					}
-
-					log.WithFields(logrus.Fields{
-						"job": rqp.Execution.JobName,
-					}).Info("agent: Starting job")
-
-					// There are two error types to handle here:
-					// Key not found when the job is removed from store
-					// Dial tcp error
-					// In case of deleted job or other error, we should report and break the flow.
-					// On dial error we should retry with a limit.
-					i := 0
-				RetryGetJob:
-					job, err := a.GRPCClient.GetJob(rqp.RPCAddr, rqp.Execution.JobName)
-					if err != nil {
-						if err == ErrRPCDialing {
-							if i < 10 {
-								i++
-								goto RetryGetJob
-							}
-							log.WithError(err).Fatal("agent: A working RPC connection to a Dkron server must exists.")
-						}
-						log.WithError(err).Error("agent: Error on rpc.GetJob call")
-						continue
-					}
-					log.WithField("job", job.Name).Debug("agent: GetJob by RPC")
-
-					ex := rqp.Execution
-					ex.StartedAt = time.Now()
-					ex.NodeName = a.config.NodeName
-
-					go func() {
-						if err := a.invokeJob(job, ex); err != nil {
-							log.WithError(err).Error("agent: Error invoking job")
-						}
-					}()
-
-					exJSON, _ := json.Marshal(ex)
-					query.Respond(exJSON)
-				}
-
-				if query.Name == QueryExecutionDone {
-					group := string(query.Payload)
-
-					log.WithFields(logrus.Fields{
-						"query":   query.Name,
-						"payload": group,
-						"at":      query.LTime,
-					}).Debug("agent: Execution done requested")
-
-					// Find if the indicated execution is done processing
-					var err error
-					if _, ok := runningExecutions.Load(group); ok {
-						log.WithField("group", group).Debug("agent: Execution is still running")
-						err = query.Respond([]byte("false"))
-					} else {
-						log.WithField("group", group).Debug("agent: Execution is not running")
-						err = query.Respond([]byte("true"))
-					}
-					if err != nil {
-						log.WithError(err).Error("agent: query.Respond")
-					}
-				}
-			}
-
 		case <-serfShutdownCh:
 			log.Warn("agent: Serf shutdown detected, quitting")
 			return
@@ -734,9 +679,9 @@ func (a *Agent) join(addrs []string, replay bool) (n int, err error) {
 	return
 }
 
-func (a *Agent) processFilteredNodes(job *Job) ([]string, map[string]string, error) {
-	var nodes []string
-	var candidates []string
+func (a *Agent) processFilteredNodes(job *Job) (map[string]string, map[string]string, error) {
+	// candidates will contain a set of candidates by tags
+	// the final set of nodes will be the intesection of all groups
 	tags := make(map[string]string)
 
 	// Actually copy the map
@@ -748,126 +693,94 @@ func (a *Agent) processFilteredNodes(job *Job) ([]string, map[string]string, err
 	// on the same region.
 	tags["region"] = a.config.Region
 
+	candidates := [][]string{}
 	for jtk, jtv := range tags {
-		var tc []string
-		if tc = strings.Split(jtv, ":"); len(tc) == 2 {
-			tv := tc[0]
+		cans := []string{}
+		tc := strings.Split(jtv, ":")
 
-			// Set original tag to clean tag
-			tags[jtk] = tv
+		tv := tc[0]
+
+		// Set original tag to clean tag
+		tags[jtk] = tv
+
+		for _, member := range a.serf.Members() {
+			if member.Status == serf.StatusAlive {
+				for mtk, mtv := range member.Tags {
+					if mtk == jtk && mtv == tv {
+						cans = append(cans, member.Name)
+					}
+				}
+			}
+		}
+
+		// In case there is cardinality in the tag, randomize the order and select the amount of nodes
+		// or else just add all nodes to the result.
+		if len(tc) == 2 {
+			f := []string{}
+			rand.Seed(time.Now().UnixNano())
+			rand.Shuffle(len(cans), func(i, j int) {
+				cans[i], cans[j] = cans[j], cans[i]
+			})
 
 			count, err := strconv.Atoi(tc[1])
 			if err != nil {
 				return nil, nil, err
 			}
-
-			for _, member := range a.serf.Members() {
-				if member.Status == serf.StatusAlive {
-					for mtk, mtv := range member.Tags {
-						if mtk == jtk && mtv == tv {
-							candidates = append(candidates, member.Name)
-						}
-					}
-				}
-			}
-			rand.Seed(time.Now().UnixNano())
-			rand.Shuffle(len(candidates), func(i, j int) {
-				candidates[i], candidates[j] = candidates[j], candidates[i]
-			})
-
 			for i := 1; i <= count; i++ {
-				if len(candidates) == 0 {
+				if len(cans) == 0 {
 					break
 				}
-				nodes = append(nodes, candidates[0])
-				candidates = candidates[1:]
+				f = append(f, cans[0])
+				cans = cans[1:]
 			}
-			candidates = nil
+			cans = f
+		}
 
+		candidates = append(candidates, cans)
+	}
+
+	// The final result will be the intersection of all candidates.
+	nodes := make(map[string]string)
+	r := candidates[0]
+	for i := 1; i <= len(candidates)-1; i++ {
+		isec := intersect.Simple(r, candidates[i]).([]interface{})
+		// Empty the slice
+		r = []string{}
+
+		// Refill with the intersection
+		for _, v := range isec {
+			r = append(r, v.(string))
+		}
+	}
+
+	for _, n := range r {
+		for _, m := range a.serf.Members() {
+			if n == m.Name {
+				// If the server is missing the rpc_addr tag, default to the serf advertise addr
+				if addr, ok := m.Tags["rpc_addr"]; ok {
+					nodes[n] = addr
+				} else {
+					nodes[n] = m.Addr.String()
+				}
+			}
 		}
 	}
 
 	return nodes, tags, nil
 }
 
-func (a *Agent) setExecution(payload []byte) *Execution {
-	var ex Execution
-	if err := json.Unmarshal(payload, &ex); err != nil {
-		log.Fatal(err)
-	}
-
-	cmd, err := Encode(SetExecutionType, ex.ToProto())
-	if err != nil {
-		log.WithError(err).Fatal("agent: encode error in setExecution")
-		return nil
-	}
-	af := a.raft.Apply(cmd, raftTimeout)
-	if err := af.Error(); err != nil {
-		log.WithError(err).Fatal("agent: error applying SetExecutionType")
-		return nil
-	}
-
-	return &ex
-}
-
 // This function is called when a client request the RPCAddress
 // of the current member.
 // in marathon, it would return the host's IP and advertise RPC port
-func (a *Agent) getRPCAddr() string {
+func (a *Agent) advertiseRPCAddr() string {
 	bindIP := a.serf.LocalMember().Addr
 	return net.JoinHostPort(bindIP.String(), strconv.Itoa(a.config.AdvertiseRPCPort))
 }
 
-// RefreshJobStatus asks the nodes their progress on an execution
-func (a *Agent) RefreshJobStatus(jobName string) {
-	var group string
-
-	execs, _ := a.Store.GetLastExecutionGroup(jobName)
-	nodes := []string{}
-
-	unfinishedExecutions := []*Execution{}
-	for _, ex := range execs {
-		if ex.FinishedAt.IsZero() {
-			unfinishedExecutions = append(unfinishedExecutions, ex)
-		}
-	}
-
-	for _, ex := range unfinishedExecutions {
-		// Ignore executions that we know are finished
-		log.WithFields(logrus.Fields{
-			"member":        ex.NodeName,
-			"execution_key": ex.Key(),
-		}).Info("agent: Asking member for pending execution")
-
-		nodes = append(nodes, ex.NodeName)
-		group = strconv.FormatInt(ex.Group, 10)
-		log.WithField("group", group).Debug("agent: Pending execution group")
-	}
-
-	// If there is pending executions to finish ask if they are really pending.
-	if len(nodes) > 0 && group != "" {
-		statuses := a.executionDoneQuery(nodes, group)
-
-		log.WithFields(logrus.Fields{
-			"statuses": statuses,
-		}).Debug("agent: Received pending executions response")
-
-		for _, ex := range unfinishedExecutions {
-			if s, ok := statuses[ex.NodeName]; ok {
-				done, _ := strconv.ParseBool(s)
-				if done {
-					ex.FinishedAt = time.Now()
-				}
-			} else {
-				ex.FinishedAt = time.Now()
-			}
-			ej, err := json.Marshal(ex)
-			if err != nil {
-				log.WithError(err).Error("agent: Error marshaling execution")
-			}
-			a.setExecution(ej)
-		}
-	}
+// Get bind address for RPC
+func (a *Agent) bindRPCAddr() string {
+	bindIP, _, _ := a.config.AddrParts(a.config.BindAddr)
+	return net.JoinHostPort(bindIP, strconv.Itoa(a.config.RPCPort))
 }
 
 // applySetJob is a helper method to be called when
@@ -897,7 +810,7 @@ func (a *Agent) RaftApply(cmd []byte) raft.ApplyFuture {
 	return a.raft.Apply(cmd, raftTimeout)
 }
 
-// GetRunningJobs returns amount of active jobs
+// GetRunningJobs returns amount of active jobs of the local agent
 func (a *Agent) GetRunningJobs() int {
 	job := 0
 	runningExecutions.Range(func(k, v interface{}) bool {
@@ -905,4 +818,57 @@ func (a *Agent) GetRunningJobs() int {
 		return true
 	})
 	return job
+}
+
+// GetActiveExecutions returns running executions globally
+func (a *Agent) GetActiveExecutions() ([]*proto.Execution, error) {
+	var executions []*proto.Execution
+
+	for _, s := range a.LocalServers() {
+		exs, err := a.GRPCClient.GetActiveExecutions(s.RPCAddr.String())
+		if err != nil {
+			return nil, err
+		}
+
+		executions = append(executions, exs...)
+	}
+
+	return executions, nil
+}
+
+func (a *Agent) recursiveSetJob(jobs []*Job) []string {
+	result := make([]string, 0)
+	for _, job := range jobs {
+		err := a.GRPCClient.SetJob(job)
+		if err != nil {
+			result = append(result, "fail create "+job.Name)
+			continue
+		} else {
+			result = append(result, "success create "+job.Name)
+			if len(job.ChildJobs) > 0 {
+				recursiveResult := a.recursiveSetJob(job.ChildJobs)
+				result = append(result, recursiveResult...)
+			}
+		}
+	}
+	return result
+}
+
+// Check if the server is alive and select it
+func (a *Agent) checkAndSelectServer() (string, error) {
+	var peers []string
+	for _, p := range a.LocalServers() {
+		peers = append(peers, p.RPCAddr.String())
+	}
+
+	for _, peer := range peers {
+		log.WithField("peer", peer).Debug("Checking peer")
+		conn, err := net.DialTimeout("tcp", peer, 1*time.Second)
+		if err == nil {
+			conn.Close()
+			log.WithField("peer", peer).Debug("Found good peer")
+			return peer, nil
+		}
+	}
+	return "", ErrNoSuitableServer
 }

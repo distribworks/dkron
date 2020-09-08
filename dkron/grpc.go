@@ -5,11 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"net"
+	"sync"
 	"time"
 
 	metrics "github.com/armon/go-metrics"
-	"github.com/distribworks/dkron/v2/plugin"
-	proto "github.com/distribworks/dkron/v2/plugin/types"
+	"github.com/distribworks/dkron/v3/plugin"
+	proto "github.com/distribworks/dkron/v3/plugin/types"
 	pb "github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/raft"
@@ -22,12 +23,14 @@ import (
 var (
 	// ErrExecutionDoneForDeletedJob is returned when an execution done
 	// is received for a non existent job.
-	ErrExecutionDoneForDeletedJob = errors.New("rpc: Received execution done for a deleted job")
+	ErrExecutionDoneForDeletedJob = errors.New("grpc: Received execution done for a deleted job")
 	// ErrRPCDialing is returned on dialing fail.
-	ErrRPCDialing = errors.New("rpc: Error dialing, verify the network connection to the server")
+	ErrRPCDialing = errors.New("grpc: Error dialing, verify the network connection to the server")
 	// ErrNotLeader is the error returned when the operation need the node to be the leader,
 	// but the current node is not the leader.
-	ErrNotLeader = errors.New("Error, server is not leader, this operation should be run on the leader")
+	ErrNotLeader = errors.New("grpc: Error, server is not leader, this operation should be run on the leader")
+	// ErrBrokenStream is the error that indicates a sudden disconnection of the agent streaming an execution
+	ErrBrokenStream = errors.New("grpc: Error on execution streaming, agent connection was abruptly terminated")
 )
 
 // DkronGRPCServer defines the basics that a gRPC server should implement.
@@ -38,7 +41,8 @@ type DkronGRPCServer interface {
 
 // GRPCServer is the local implementation of the gRPC server interface.
 type GRPCServer struct {
-	agent *Agent
+	agent            *Agent
+	activeExecutions sync.Map
 }
 
 // NewGRPCServer creates and returns an instance of a DkronGRPCServer implementation
@@ -52,6 +56,9 @@ func NewGRPCServer(agent *Agent) DkronGRPCServer {
 func (grpcs *GRPCServer) Serve(lis net.Listener) error {
 	grpcServer := grpc.NewServer()
 	proto.RegisterDkronServer(grpcServer, grpcs)
+
+	as := NewAgentServer(grpcs.agent)
+	proto.RegisterAgentServer(grpcServer, as)
 	go grpcServer.Serve(lis)
 
 	return nil
@@ -199,15 +206,14 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.E
 		execution.Attempt++
 
 		// Keep all execution properties intact except the last output
-		// as it could exceed serf query limits.
-		execution.Output = []byte{}
+		execution.Output = ""
 
 		log.WithFields(logrus.Fields{
 			"attempt":   execution.Attempt,
 			"execution": execution,
 		}).Debug("grpc: Retrying execution")
 
-		if _, err := grpcs.agent.RunQuery(job.Name, execution); err != nil {
+		if _, err := grpcs.agent.Run(job.Name, execution); err != nil {
 			return nil, err
 		}
 		return &proto.ExecutionDoneResponse{
@@ -255,7 +261,7 @@ func (grpcs *GRPCServer) Leave(ctx context.Context, in *empty.Empty) (*empty.Emp
 // RunJob runs a job in the cluster
 func (grpcs *GRPCServer) RunJob(ctx context.Context, req *proto.RunJobRequest) (*proto.RunJobResponse, error) {
 	ex := NewExecution(req.JobName)
-	job, err := grpcs.agent.RunQuery(req.JobName, ex)
+	job, err := grpcs.agent.Run(req.JobName, ex)
 	if err != nil {
 		return nil, err
 	}
@@ -354,5 +360,43 @@ REMOVE:
 	}
 
 	log.WithField("peer", in.Id).Warn("removed Raft peer")
-	return nil, nil
+	return new(empty.Empty), nil
+}
+
+// GetActiveExecutions returns the active executions on the server node
+func (grpcs *GRPCServer) GetActiveExecutions(ctx context.Context, in *empty.Empty) (*proto.GetActiveExecutionsResponse, error) {
+	defer metrics.MeasureSince([]string{"grpc", "agent_run"}, time.Now())
+
+	var executions []*proto.Execution
+	grpcs.agent.activeExecutions.Range(func(k, v interface{}) bool {
+		e := v.(*proto.Execution)
+		executions = append(executions, e)
+		return true
+	})
+
+	return &proto.GetActiveExecutionsResponse{
+		Executions: executions,
+	}, nil
+}
+
+// SetExecution broadcast a state change to the cluster members that will store the execution.
+// This only works on the leader
+func (grpcs *GRPCServer) SetExecution(ctx context.Context, execution *proto.Execution) (*empty.Empty, error) {
+	defer metrics.MeasureSince([]string{"grpc", "set_execution"}, time.Now())
+	log.WithFields(logrus.Fields{
+		"execution": execution.Key(),
+	}).Debug("grpc: Received SetExecution")
+
+	cmd, err := Encode(SetExecutionType, execution)
+	if err != nil {
+		log.WithError(err).Fatal("agent: encode error in SetExecution")
+		return nil, err
+	}
+	af := grpcs.agent.raft.Apply(cmd, raftTimeout)
+	if err := af.Error(); err != nil {
+		log.WithError(err).Fatal("agent: error applying SetExecutionType")
+		return nil, err
+	}
+
+	return new(empty.Empty), nil
 }

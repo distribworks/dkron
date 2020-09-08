@@ -88,7 +88,7 @@ func (n *Notifier) buildTemplate(templ string) *bytes.Buffer {
 		n.Execution.FinishedAt,
 		fmt.Sprintf("%t", n.Execution.Success),
 		n.Execution.NodeName,
-		fmt.Sprintf("%s", n.Execution.Output),
+		n.Execution.Output,
 	}
 
 	out := &bytes.Buffer{}
@@ -105,7 +105,7 @@ func (n *Notifier) sendExecutionEmail() error {
 	if n.Config.MailPayload != "" {
 		data = n.buildTemplate(n.Config.MailPayload)
 	} else {
-		data = bytes.NewBuffer(n.Execution.Output)
+		data = bytes.NewBuffer([]byte(n.Execution.Output))
 	}
 	e := &email.Email{
 		To:      []string{n.Job.OwnerEmail},
@@ -136,6 +136,9 @@ func (n *Notifier) auth() smtp.Auth {
 func (n *Notifier) callExecutionWebhook() error {
 	out := n.buildTemplate(n.Config.WebhookPayload)
 	req, err := http.NewRequest("POST", n.Config.WebhookURL, out)
+	if err != nil {
+		return err
+	}
 	for _, h := range n.Config.WebhookHeaders {
 		if h != "" {
 			kv := strings.Split(h, ":")

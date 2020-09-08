@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/armon/go-metrics"
-	"github.com/distribworks/dkron/v2/extcron"
+	"github.com/distribworks/dkron/v3/extcron"
 	"github.com/robfig/cron/v3"
 	"github.com/sirupsen/logrus"
 )
@@ -16,7 +16,7 @@ var (
 	schedulerStarted = expvar.NewInt("scheduler_started")
 
 	// ErrScheduleParse is the error returned when the schdule parsing fails.
-	ErrScheduleParse = errors.New("Can't parse job schedule")
+	ErrScheduleParse = errors.New("can't parse job schedule")
 )
 
 // Scheduler represents a dkron scheduler instance, it stores the cron engine
@@ -60,7 +60,10 @@ func (s *Scheduler) Stop() {
 		log.Debug("scheduler: Stopping scheduler")
 		s.Cron.Stop()
 		s.Started = false
-		s.Cron = nil
+		// Keep Cron exists and let the jobs which have been scheduled can continue to finish,
+		// even the node's leadership will be revoked.
+		// Ignore the running jobs and make s.Cron to nil may cause whole process crashed.
+		//s.Cron = nil
 
 		// expvars
 		cronInspect.Do(func(kv expvar.KeyValue) {
@@ -73,7 +76,13 @@ func (s *Scheduler) Stop() {
 // Restart the scheduler
 func (s *Scheduler) Restart(jobs []*Job, agent *Agent) {
 	s.Stop()
+	s.ClearCron()
 	s.Start(jobs, agent)
+}
+
+// Clear cron separately, this can only be called when agent will be stop.
+func (s *Scheduler) ClearCron() {
+	s.Cron = nil
 }
 
 // GetEntry returns a scheduler entry from a snapshot in

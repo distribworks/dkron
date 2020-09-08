@@ -111,7 +111,7 @@ type Config struct {
 
 	// RaftMultiplier An integer multiplier used by Dkron servers to scale key
 	// Raft timing parameters.
-	RaftMultiplier int
+	RaftMultiplier int `mapstructure:"raft-multiplier"`
 
 	// MailHost is the SMTP server host to use for email notifications.
 	MailHost string `mapstructure:"mail-host"`
@@ -153,6 +153,12 @@ type Config struct {
 
 	// StatsdAddr is the statsd standard server to be used for sending metrics.
 	StatsdAddr string `mapstructure:"statsd-addr"`
+
+	// SerfReconnectTimeout is the amount of time to attempt to reconnect to a failed node before giving up and considering it completely gone
+	SerfReconnectTimeout string `mapstructure:"serf-reconnect-timeout"`
+
+	// EnablePrometheus enables serving of prometheus metrics at /metrics
+	EnablePrometheus bool `mapstructure:"enable-prometheus"`
 }
 
 // DefaultBindPort is the default port that dkron will use for Serf communication
@@ -173,19 +179,20 @@ func DefaultConfig() *Config {
 	tags := map[string]string{}
 
 	return &Config{
-		NodeName:          hostname,
-		BindAddr:          fmt.Sprintf("0.0.0.0:%d", DefaultBindPort),
-		HTTPAddr:          ":8080",
-		Profile:           "lan",
-		LogLevel:          "info",
-		RPCPort:           DefaultRPCPort,
-		MailSubjectPrefix: "[Dkron]",
-		Tags:              tags,
-		DataDir:           "dkron.data",
-		Datacenter:        "dc1",
-		Region:            "global",
-		ReconcileInterval: 60 * time.Second,
-		RaftMultiplier:    1,
+		NodeName:             hostname,
+		BindAddr:             fmt.Sprintf("{{ GetPrivateIP }}:%d", DefaultBindPort),
+		HTTPAddr:             ":8080",
+		Profile:              "lan",
+		LogLevel:             "info",
+		RPCPort:              DefaultRPCPort,
+		MailSubjectPrefix:    "[Dkron]",
+		Tags:                 tags,
+		DataDir:              "dkron.data",
+		Datacenter:           "dc1",
+		Region:               "global",
+		ReconcileInterval:    60 * time.Second,
+		RaftMultiplier:       1,
+		SerfReconnectTimeout: "24h",
 	}
 }
 
@@ -214,6 +221,7 @@ func ConfigFlagSet() *flag.FlagSet {
 	cmdFlags.String("data-dir", c.DataDir, "Specifies the directory to use for server-specific data, including the replicated log. By default, this is the top-level data-dir, like [/var/lib/dkron]")
 	cmdFlags.String("datacenter", c.Datacenter, "Specifies the data center of the local agent. All members of a datacenter should share a local LAN connection.")
 	cmdFlags.String("region", c.Region, "Specifies the region the Dkron agent is a member of. A region typically maps to a geographic region, for example us, with potentially multiple zones, which map to datacenters such as us-west and us-east")
+	cmdFlags.String("serf-reconnect-timeout", c.SerfReconnectTimeout, "This is the amount of time to attempt to reconnect to a failed node before giving up and considering it completely gone. In Kubernetes, you might need this to about 5s, because there is no reason to try reconnects for default 24h value. Also Raft behaves oddly if node is not reaped and returned with same ID, but different IP. Format there: https://golang.org/pkg/time/#ParseDuration")
 
 	// Notifications
 	cmdFlags.String("mail-host", "", "Mail server host address to use for notifications")
@@ -231,6 +239,7 @@ func ConfigFlagSet() *flag.FlagSet {
 	cmdFlags.String("dog-statsd-addr", "", "DataDog Agent address")
 	cmdFlags.StringSlice("dog-statsd-tags", []string{}, "Datadog tags, specified as key:value")
 	cmdFlags.String("statsd-addr", "", "Statsd address")
+	cmdFlags.Bool("enable-prometheus", false, "Enable serving prometheus metrics")
 
 	return cmdFlags
 }
@@ -241,7 +250,7 @@ func (c *Config) normalizeAddrs() error {
 	if c.BindAddr != "" {
 		ipStr, err := ParseSingleIPTemplate(c.BindAddr)
 		if err != nil {
-			return fmt.Errorf("Bind address resolution failed: %v", err)
+			return fmt.Errorf("bind address resolution failed: %v", err)
 		}
 		c.BindAddr = ipStr
 	}
@@ -249,21 +258,21 @@ func (c *Config) normalizeAddrs() error {
 	if c.HTTPAddr != "" {
 		ipStr, err := ParseSingleIPTemplate(c.HTTPAddr)
 		if err != nil {
-			return fmt.Errorf("Bind address resolution failed: %v", err)
+			return fmt.Errorf("bind address resolution failed: %v", err)
 		}
 		c.HTTPAddr = ipStr
 	}
 
 	addr, err := normalizeAdvertise(c.AdvertiseAddr, c.BindAddr, DefaultBindPort, c.DevMode)
 	if err != nil {
-		return fmt.Errorf("Failed to parse HTTP advertise address (%v, %v, %v, %v): %v", c.AdvertiseAddr, c.BindAddr, DefaultBindPort, c.DevMode, err)
+		return fmt.Errorf("failed to parse HTTP advertise address (%v, %v, %v, %v): %v", c.AdvertiseAddr, c.BindAddr, DefaultBindPort, c.DevMode, err)
 	}
 	c.AdvertiseAddr = addr
 
 	return nil
 }
 
-// parseSingleIPTemplate is used as a helper function to parse out a single IP
+// ParseSingleIPTemplate is used as a helper function to parse out a single IP
 // address from a config parameter.
 func ParseSingleIPTemplate(ipTmpl string) (string, error) {
 	out, err := template.Parse(ipTmpl)
@@ -331,14 +340,14 @@ func normalizeAdvertise(addr string, bind string, defport int, dev bool) (string
 				// loopback is fine for dev mode
 				return net.JoinHostPort(ip.String(), strconv.Itoa(defport)), nil
 			}
-			return "", fmt.Errorf("Defaulting advertise to localhost is unsafe, please set advertise manually")
+			return "", fmt.Errorf("defaulting advertise to localhost is unsafe, please set advertise manually")
 		}
 	}
 
 	// Bind is not localhost but not a valid advertise IP, use first private IP
 	addr, err = ParseSingleIPTemplate("{{ GetPrivateIP }}")
 	if err != nil {
-		return "", fmt.Errorf("Unable to parse default advertise address: %v", err)
+		return "", fmt.Errorf("unable to parse default advertise address: %v", err)
 	}
 	return net.JoinHostPort(addr, strconv.Itoa(defport)), nil
 }

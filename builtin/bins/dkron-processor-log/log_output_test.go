@@ -3,8 +3,8 @@ package main
 import (
 	"testing"
 
-	"github.com/distribworks/dkron/v2/plugin"
-	"github.com/distribworks/dkron/v2/plugin/types"
+	"github.com/distribworks/dkron/v3/plugin"
+	"github.com/distribworks/dkron/v3/plugin/types"
 	"github.com/golang/protobuf/ptypes"
 	"github.com/stretchr/testify/assert"
 )
