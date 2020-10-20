@@ -48,16 +48,26 @@ func (m *ExecutorClient) Execute(args *types.ExecuteRequest, cb StatusHelper) (*
 	// This is where the magic conversion to Proto happens
 	statusHelperServer := &GRPCStatusHelperServer{Impl: cb}
 
+	initChan := make(chan bool, 1)
 	var s *grpc.Server
 	serverFunc := func(opts []grpc.ServerOption) *grpc.Server {
 		s = grpc.NewServer(opts...)
 		types.RegisterStatusHelperServer(s, statusHelperServer)
+		initChan <- true
 
 		return s
 	}
 
 	brokerID := m.broker.NextId()
-	go m.broker.AcceptAndServe(brokerID, serverFunc)
+	go func() {
+		m.broker.AcceptAndServe(brokerID, serverFunc)
+		// AcceptAndServe might terminate without calling serverFunc
+		// To prevent eternal blocking, send 'init done' signal
+		initChan <- true
+	}()
+
+	// Wait for s to be initialized in the goroutine
+	<-initChan
 
 	args.StatusServer = brokerID
 	r, err := m.client.Execute(context.Background(), args)
