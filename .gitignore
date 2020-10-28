@@ -21,3 +21,5 @@ node_modules
 .vscode
 tags
 .sass-cache
+node_modules
+ui-dist

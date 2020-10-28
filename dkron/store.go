@@ -2,6 +2,7 @@ package dkron
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -40,6 +41,9 @@ type Store struct {
 // JobOptions additional options to apply when loading a Job.
 type JobOptions struct {
 	Metadata map[string]string `json:"tags"`
+	Sort     string
+	Order    string
+	Query    string
 }
 
 type kv struct {
@@ -50,6 +54,14 @@ type kv struct {
 // NewStore creates a new Storage instance.
 func NewStore() (*Store, error) {
 	db, err := buntdb.Open(":memory:")
+	db.CreateIndex("name", jobsPrefix+":*", buntdb.IndexJSON("name"))
+	db.CreateIndex("displayname", jobsPrefix+":*", buntdb.IndexJSON("displayname"))
+	db.CreateIndex("schedule", jobsPrefix+":*", buntdb.IndexJSON("schedule"))
+	db.CreateIndex("success_count", jobsPrefix+":*", buntdb.IndexJSON("success_count"))
+	db.CreateIndex("error_count", jobsPrefix+":*", buntdb.IndexJSON("error_count"))
+	db.CreateIndex("last_success", jobsPrefix+":*", buntdb.IndexJSON("last_success"))
+	db.CreateIndex("last_error", jobsPrefix+":*", buntdb.IndexJSON("last_error"))
+	db.CreateIndex("next", jobsPrefix+":*", buntdb.IndexJSON("next"))
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +78,7 @@ func (s *Store) setJobTxFunc(pbj *dkronpb.Job) func(tx *buntdb.Tx) error {
 	return func(tx *buntdb.Tx) error {
 		jobKey := fmt.Sprintf("%s:%s", jobsPrefix, pbj.Name)
 
-		jb, err := proto.Marshal(pbj)
+		jb, err := json.Marshal(pbj)
 		if err != nil {
 			return err
 		}
@@ -284,21 +296,39 @@ func (s *Store) jobHasMetadata(job *Job, metadata map[string]string) bool {
 
 // GetJobs returns all jobs
 func (s *Store) GetJobs(options *JobOptions) ([]*Job, error) {
+	if options == nil {
+		options = &JobOptions{
+			Sort: "name",
+		}
+	}
+
 	jobs := make([]*Job, 0)
+	jobsFn := func(key, item string) bool {
+		var pbj dkronpb.Job
+		// [TODO] This condition is temporary while we migrate to JSON marshalling for jobs
+		// so we can use BuntDb indexes. To be removed in future versions.
+		if err := proto.Unmarshal([]byte(item), &pbj); err != nil {
+			if err := json.Unmarshal([]byte(item), &pbj); err != nil {
+				return false
+			}
+		}
+		job := NewJobFromProto(&pbj)
+
+		if options == nil ||
+			(options.Metadata == nil || len(options.Metadata) == 0 || s.jobHasMetadata(job, options.Metadata)) &&
+				(options.Query == "" || strings.Contains(job.Name, options.Query)) {
+			jobs = append(jobs, job)
+		}
+		return true
+	}
 
 	err := s.db.View(func(tx *buntdb.Tx) error {
-		err := tx.Ascend("", func(key, value string) bool {
-			if strings.HasPrefix(key, jobsPrefix+":") {
-				var pbj dkronpb.Job
-				_ = proto.Unmarshal([]byte(value), &pbj)
-				job := NewJobFromProto(&pbj)
-
-				if options == nil || (options.Metadata == nil || len(options.Metadata) == 0 || s.jobHasMetadata(job, options.Metadata)) {
-					jobs = append(jobs, job)
-				}
-			}
-			return true
-		})
+		var err error
+		if options.Order == "DESC" {
+			err = tx.Descend(options.Sort, jobsFn)
+		} else {
+			err = tx.Ascend(options.Sort, jobsFn)
+		}
 		return err
 	})
 
@@ -327,8 +357,12 @@ func (s *Store) getJobTxFunc(name string, pbj *dkronpb.Job) func(tx *buntdb.Tx) 
 			return err
 		}
 
+		// [TODO] This condition is temporary while we migrate to JSON marshalling for jobs
+		// so we can use BuntDb indexes. To be removed in future versions.
 		if err := proto.Unmarshal([]byte(item), pbj); err != nil {
-			return err
+			if err := json.Unmarshal([]byte(item), pbj); err != nil {
+				return err
+			}
 		}
 
 		log.WithFields(logrus.Fields{
