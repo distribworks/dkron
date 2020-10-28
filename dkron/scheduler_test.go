@@ -40,6 +40,10 @@ func TestSchedule(t *testing.T) {
 
 	assert.True(t, sched.Started)
 	assert.Len(t, sched.Cron.Entries(), 1)
+
+	sched.Cron.Remove("cron_job")
+	assert.Len(t, sched.Cron.Entries(), 0)
+
 	sched.Stop()
 }
 
