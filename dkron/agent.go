@@ -22,7 +22,6 @@ import (
 	"github.com/hashicorp/raft"
 	raftboltdb "github.com/hashicorp/raft-boltdb"
 	"github.com/hashicorp/serf/serf"
-	"github.com/juliangruber/go-intersect"
 	"github.com/sirupsen/logrus"
 	"github.com/soheilhy/cmux"
 	"google.golang.org/grpc"
@@ -125,7 +124,7 @@ type Plugins struct {
 // AgentOption type that defines agent options
 type AgentOption func(agent *Agent)
 
-// NewAgent return a new Agent instace capable of starting
+// NewAgent returns a new Agent instance capable of starting
 // and running a Dkron instance.
 func NewAgent(config *Config, options ...AgentOption) *Agent {
 	agent := &Agent{
@@ -680,8 +679,7 @@ func (a *Agent) join(addrs []string, replay bool) (n int, err error) {
 }
 
 func (a *Agent) processFilteredNodes(job *Job) (map[string]string, map[string]string, error) {
-	// candidates will contain a set of candidates by tags
-	// the final set of nodes will be the intesection of all groups
+	// The final set of nodes will be the intersection of all groups
 	tags := make(map[string]string)
 
 	// Actually copy the map
@@ -693,80 +691,93 @@ func (a *Agent) processFilteredNodes(job *Job) (map[string]string, map[string]st
 	// on the same region.
 	tags["region"] = a.config.Region
 
-	candidates := [][]string{}
-	for jtk, jtv := range tags {
-		cans := []string{}
-		tc := strings.Split(jtv, ":")
-
-		tv := tc[0]
-
-		// Set original tag to clean tag
-		tags[jtk] = tv
-
-		for _, member := range a.serf.Members() {
-			if member.Status == serf.StatusAlive {
-				for mtk, mtv := range member.Tags {
-					if mtk == jtk && mtv == tv {
-						cans = append(cans, member.Name)
-					}
-				}
-			}
+	// Make a set of all members
+	execNodes := make(map[string]serf.Member)
+	for _, member := range a.serf.Members() {
+		if member.Status == serf.StatusAlive {
+			execNodes[member.Name] = member
 		}
-
-		// In case there is cardinality in the tag, randomize the order and select the amount of nodes
-		// or else just add all nodes to the result.
-		if len(tc) == 2 {
-			f := []string{}
-			rand.Seed(time.Now().UnixNano())
-			rand.Shuffle(len(cans), func(i, j int) {
-				cans[i], cans[j] = cans[j], cans[i]
-			})
-
-			count, err := strconv.Atoi(tc[1])
-			if err != nil {
-				return nil, nil, err
-			}
-			for i := 1; i <= count; i++ {
-				if len(cans) == 0 {
-					break
-				}
-				f = append(f, cans[0])
-				cans = cans[1:]
-			}
-			cans = f
-		}
-
-		candidates = append(candidates, cans)
 	}
 
-	// The final result will be the intersection of all candidates.
+	execNodes, tags, cardinality, err := filterNodes(execNodes, tags)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	// Create an array of node names to aid in computing resulting set based on cardinality
+	var nameIndex []string
+	for name := range execNodes {
+		nameIndex = append(nameIndex, name)
+	}
+
 	nodes := make(map[string]string)
-	r := candidates[0]
-	for i := 1; i <= len(candidates)-1; i++ {
-		isec := intersect.Simple(r, candidates[i]).([]interface{})
-		// Empty the slice
-		r = []string{}
+	rand.Seed(time.Now().UnixNano())
+	for ; cardinality > 0; cardinality-- {
+		// Pick a node, any node
+		randomIndex := rand.Intn(cardinality)
+		m := execNodes[nameIndex[randomIndex]]
 
-		// Refill with the intersection
-		for _, v := range isec {
-			r = append(r, v.(string))
+		// Store name and address
+		if addr, ok := m.Tags["rpc_addr"]; ok {
+			nodes[m.Name] = addr
+		} else {
+			nodes[m.Name] = m.Addr.String()
 		}
-	}
 
-	for _, n := range r {
-		for _, m := range a.serf.Members() {
-			if n == m.Name {
-				// If the server is missing the rpc_addr tag, default to the serf advertise addr
-				if addr, ok := m.Tags["rpc_addr"]; ok {
-					nodes[n] = addr
-				} else {
-					nodes[n] = m.Addr.String()
-				}
-			}
-		}
+		// Swap picked node with the first one and shorten array, so node can't get picked again
+		nameIndex[randomIndex], nameIndex[0] = nameIndex[0], nameIndex[randomIndex]
+		nameIndex = nameIndex[1:]
 	}
 
 	return nodes, tags, nil
+}
+
+// filterNodes determines which of the execNodes have the given tags
+// Out param! The incoming execNodes map is modified.
+// Returns:
+// * the (modified) map of execNodes
+// * a map of tag values without cardinality
+// * cardinality, i.e. the max number of nodes that should be targeted, regardless of the
+//   number of nodes in the resulting map.
+// * an error if a cardinality was malformed
+func filterNodes(execNodes map[string]serf.Member, tags map[string]string) (map[string]serf.Member, map[string]string, int, error) {
+	cardinality := int(^uint(0) >> 1) // MaxInt
+
+	cleanTags := make(map[string]string)
+
+	// Filter nodes that lack tags
+	// Determine lowest cardinality along the way
+	for jtk, jtv := range tags {
+		tc := strings.Split(jtv, ":")
+		tv := tc[0]
+
+		// Set original tag to clean tag
+		cleanTags[jtk] = tv
+
+		// Remove nodes that do not have the selected tags
+		for name, member := range execNodes {
+			if mtv, tagPresent := member.Tags[jtk]; !tagPresent || mtv != tv {
+				delete(execNodes, name)
+			}
+		}
+
+		if len(tc) == 2 {
+			tagCardinality, err := strconv.Atoi(tc[1])
+			if err != nil {
+				return nil, nil, 0, err
+			}
+			if tagCardinality < cardinality {
+				cardinality = tagCardinality
+			}
+		}
+	}
+
+	// limit the cardinality to the number of possible nodes
+	if len(execNodes) < cardinality {
+		cardinality = len(execNodes)
+	}
+
+	return execNodes, cleanTags, cardinality, nil
 }
 
 // This function is called when a client request the RPCAddress
