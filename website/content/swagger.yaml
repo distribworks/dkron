@@ -239,7 +239,7 @@ paths:
             items:
               $ref: '#/definitions/execution'
   /busy:
-    post:
+    get:
       description: |
         Returns the running executions.
       operationId: busy
