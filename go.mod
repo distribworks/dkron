@@ -20,7 +20,7 @@ require (
 	github.com/hashicorp/go-version v1.2.1
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/hashicorp/memberlist v0.2.2
-	github.com/hashicorp/raft v1.1.2
+	github.com/hashicorp/raft v1.2.0
 	github.com/hashicorp/raft-boltdb v0.0.0-20191021154308-4207f1bf0617
 	github.com/hashicorp/serf v0.9.5
 	github.com/hashicorp/yamux v0.0.0-20190923154419-df201c70410d // indirect
