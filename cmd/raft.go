@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/distribworks/dkron/v2/dkron"
+	"github.com/distribworks/dkron/v3/dkron"
 	"github.com/ryanuber/columnize"
 	"github.com/spf13/cobra"
 )
@@ -13,6 +13,15 @@ var raftCmd = &cobra.Command{
 	Use:   "raft [command]",
 	Short: "Command to perform some raft operations",
 	Long:  ``,
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		ipa, err := dkron.ParseSingleIPTemplate(rpcAddr)
+		if err != nil {
+			return err
+		}
+		ip = ipa
+
+		return nil
+	},
 }
 
 var raftListCmd = &cobra.Command{
@@ -23,7 +32,7 @@ var raftListCmd = &cobra.Command{
 		var gc dkron.DkronGRPCClient
 		gc = dkron.NewGRPCClient(nil, nil)
 
-		reply, err := gc.RaftGetConfiguration(rpcAddr)
+		reply, err := gc.RaftGetConfiguration(ip)
 		if err != nil {
 			return err
 		}
@@ -55,7 +64,7 @@ var raftRemovePeerCmd = &cobra.Command{
 		var gc dkron.DkronGRPCClient
 		gc = dkron.NewGRPCClient(nil, nil)
 
-		if err := gc.RaftRemovePeerByID(rpcAddr, peerID); err != nil {
+		if err := gc.RaftRemovePeerByID(ip, peerID); err != nil {
 			return err
 		}
 		fmt.Println("Peer removed")
@@ -65,7 +74,7 @@ var raftRemovePeerCmd = &cobra.Command{
 }
 
 func init() {
-	raftCmd.PersistentFlags().StringVar(&rpcAddr, "rpc-addr", "127.0.0.1:6868", "gRPC address of the agent")
+	raftCmd.PersistentFlags().StringVar(&rpcAddr, "rpc-addr", "{{ GetPrivateIP }}:6868", "gRPC address of the agent.")
 	raftRemovePeerCmd.Flags().StringVar(&peerID, "peer-id", "", "Remove a Dkron server with the given ID from the Raft configuration.")
 
 	raftCmd.AddCommand(raftListCmd)

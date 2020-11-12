@@ -34,11 +34,12 @@ clean:
 
 .PHONY: doc apidoc gen test
 doc:
-	scripts/run doc --dir website/content/cli
+	#scripts/run doc --dir website/content/cli
 	cd website; hugo -d ../public
 	ghp-import -p public
 
 gen:
+	rm -rf static/.node_modules
 	go generate ./dkron/templates
 	go generate ./dkron/assets
 

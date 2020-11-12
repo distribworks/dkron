@@ -6,9 +6,199 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.0.7] - 2020-11-10
+
+### Changes
+
+- Bump deps
+
+### Fixes
+
+- Server crash when adding new job [#840](https://github.com/distribworks/dkron/pull/840)
+- Fix method of busy endpoint in swagger.yaml [#843](https://github.com/distribworks/dkron/pull/843) @yvanoers
+- Fix multitag cardinality bug [#842](https://github.com/distribworks/dkron/pull/842) @yvanoers
+
+## [3.0.6] - 2020-10-15
+
+### Changes
+
+- Revert "feat: Include scheduler entries in status API" [#829](https://github.com/distribworks/dkron/pull/829)
+- Bump some deps
+
+## [3.0.5] - 2020-09-04
+
+### Changes
+
+- Github Action for release (binary and docker) [#770](https://github.com/distribworks/dkron/pull/770)
+- Include scheduler entries in status API [#813](https://github.com/distribworks/dkron/pull/813)
+- Bump deps [#814](https://github.com/distribworks/dkron/pull/814)
+
+### Fixes
+
+- free s.Cron on proper opportunity to avoid unexpected crash [#779](https://github.com/distribworks/dkron/pull/779)
+
+## [3.0.4] - 2020-06-12
+
+### Fixes
+
+- processFilteredNodes do not return nodes when specified tag has no nodes [#785](https://github.com/distribworks/dkron/pull/785)
+
+## [3.0.3] - 2020-06-10
+
+### Fixes
+
+- Log start job and logging prefix in grpc agent [#776](https://github.com/distribworks/dkron/pull/776)
+
 ### Features
 
-- Search all jobs in dashboards with the search box
+- busyhandler execution sorting [#772](https://github.com/distribworks/dkron/pull/772)
+- Parse retry-join addresses with sockaddr templates [#783](https://github.com/distribworks/dkron/pull/783)
+
+### Changes
+
+- Bump several dependencies
+
+## [3.0.2] - 2020-05-15
+
+### Fixes
+
+- Fix binding to Advertise address [#763](https://github.com/distribworks/dkron/pull/763)
+
+## [3.0.1] - 2020-05-12
+
+### Features
+
+- New Processor that sends job output to fluent destination [#759](https://github.com/distribworks/dkron/pull/759) @andreygolev
+- Configurable serf reconnect timeout [#757](https://github.com/distribworks/dkron/pull/757) @andreygolev
+
+### Fixes
+
+- Fix Alerts JS [#762](https://github.com/distribworks/dkron/pull/762)
+
+
+## [3.0.0] - 2020-05-09
+
+### Features
+
+- Add prometheus endpoint for metrics [#740](https://github.com/distribworks/dkron/pull/740)
+
+### Fixes
+
+- Ignored RaftMultiplier config param [#753] (https://github.com/distribworks/dkron/pull/753)
+- Increase serf events buffer size [#732](https://github.com/distribworks/dkron/pull/732)
+- Resetting the status and next params [#730](https://github.com/distribworks/dkron/pull/730)
+
+### Changes
+
+- Upgrade deps and add codename to version [#751](https://github.com/distribworks/dkron/pull/751)
+- Better alerts with growl like notifications [#750](https://github.com/distribworks/dkron/pull/750)
+- Refactor Run jobs [#749](https://github.com/distribworks/dkron/pull/749)
+- Add job name tags to log events to improve debugging [#739](https://github.com/distribworks/dkron/pull/739)
+
+## [2.2.2] - 2020-04-22
+
+### Fixes
+
+- Increase serf events buffer size [#732](https://github.com/distribworks/dkron/pull/732) 
+- Resetting the status and next params [#730](https://github.com/distribworks/dkron/pull/730)
+
+### Changes
+
+- Bump protobuf to 1.4.0 [#729](https://github.com/distribworks/dkron/pull/729)
+
+## [2.2.1] - 2020-04-15
+
+### Changes
+
+- Restore jobs with file [#654](https://github.com/distribworks/dkron/pull/654) @vision9527
+- Upgrade deps [#724](https://github.com/distribworks/dkron/pull/724) [#725](https://github.com/distribworks/dkron/pull/725) [#726](https://github.com/distribworks/dkron/pull/726)
+
+## [2.2.0] - 2020-04-11
+
+### Changes
+
+- Bump dependencies
+- Change Execution output type from []byte -> string, this works as we need with Go's JSON Marshal
+
+### Breaking Changes
+
+- Streaming executions: Implement persistent gRPC connections from agents to server during executions, refactored plugins interface to provide ability to stream output to the server and implement the new `/busy` endpoint to display running executions. Also refactored the Job status compute, to simplify it by removing the `running` status, this could be computed by the user using the `/busy` endpoint. (#716, #719, #720, #721, #723)
+
+## [2.1.1] - 2020-03-20
+
+### Fixes
+
+- Graceful shutdown (#690) @andreygolev
+- Fixes crash when plugin configuration is not defined in a job (#689) @andreygolev
+- Defer panic fix in ExecutionDone gRPC call (#691) @andreygolev
+
+### Changes
+
+- Default config will start and bootstrap a server
+- isLeader handler added (#695)
+- Compile with go 1.14
+- Execution load balancing (#692) @andreygolev
+- Update Bootstrap and JQuery (#700)
+- Upgrade all dependencies (#703)
+
+### Breaking Changes
+
+- Decrease plugin size by 75%, refactored plugin coding interface could affect new plugins development and require adaptations for existing plugin. (#696)
+- Use BuntDB for local storage, fixes [#687](https://github.com/distribworks/dkron/issues/687), require rolling upgrade. (#702) @andreygolev
+
+## [2.0.6] - 2020-02-14
+
+### Fixes
+
+- Memory consumption on startup (#682)
+
+## [2.0.5] - 2020-02-12
+
+### Fixes
+
+- Set the agent on dependent run (#675)
+- Return the correct status code on leader endpoint (#671)
+
+### Changes
+
+- Check for missing agent (#675)
+- Add code comment (#675)
+
+## [2.0.4] - 2020-01-31
+
+- Remove dependency of the agent in store and reduce usage in Job (#669)
+- Upgrade gin (#669)
+- Add helper methods (#669)
+- Move directory creation to the Store instantiation (#669)
+- Accept middlewares for API routes (#669)
+- ACL docs
+
+## [2.0.3] - 2020-01-04
+
+### Fixes
+
+- Fix modal indexing in UI (#666)
+
+### Changes
+
+- Bump BadgerDB to 2.0.1 (#667)
+- Allow templating of time format in notifications webhook (#665)
+
+## [2.0.2] - 2019-12-11
+
+### Features
+
+- Search all jobs in dashboards with the search box (#653)
+
+### Fixes
+
+- Validate empty job names (#659)
+- Die on plugin communication error (#658)
+- Revert GetStatus with concurrency forbid (#655)
+
+### Changes
+
+- Upgrade Angular to latest (#641)
 
 ## [2.0.1] - 2019-12-03
 

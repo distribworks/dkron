@@ -12,15 +12,17 @@ import (
 // HCLogAdapter implements the hclog interface, and wraps it
 // around a Logrus entry
 type HCLogAdapter struct {
-	Log  logrus.FieldLogger
-	Name string
+	Logger     logrus.FieldLogger
+	LoggerName string
+}
+
+// Log Emit a message and key/value pairs at a provided log level
+func (*HCLogAdapter) Log(level hclog.Level, msg string, args ...interface{}) {
 }
 
 // Trace HCLog has one more level than we do. As such, we will never
 // set trace level.
-func (*HCLogAdapter) Trace(_ string, _ ...interface{}) {
-	return
-}
+func (*HCLogAdapter) Trace(_ string, _ ...interface{}) {}
 
 // Debug logging level message
 func (a *HCLogAdapter) Debug(msg string, args ...interface{}) {
@@ -77,14 +79,19 @@ func (a *HCLogAdapter) SetLevel(hclog.Level) {
 // With returns a new instance with the specified options
 func (a *HCLogAdapter) With(args ...interface{}) hclog.Logger {
 	e := a.CreateEntry(args)
-	return &HCLogAdapter{Log: e}
+	return &HCLogAdapter{Logger: e}
+}
+
+// Name returns the Name of the logger
+func (a *HCLogAdapter) Name() string {
+	return a.LoggerName
 }
 
 // Named returns a named logger
 func (a *HCLogAdapter) Named(name string) hclog.Logger {
 	var newName bytes.Buffer
-	if a.Name != "" {
-		newName.WriteString(a.Name)
+	if a.LoggerName != "" {
+		newName.WriteString(a.Name())
 		newName.WriteString(".")
 	}
 	newName.WriteString(name)
@@ -96,7 +103,7 @@ func (a *HCLogAdapter) Named(name string) hclog.Logger {
 func (a *HCLogAdapter) ResetNamed(name string) hclog.Logger {
 	fields := []interface{}{"subsystem_name", name}
 	e := a.CreateEntry(fields)
-	return &HCLogAdapter{Log: e, Name: name}
+	return &HCLogAdapter{Logger: e, LoggerName: name}
 }
 
 // StandardWriter return a value that conforms to io.Writer, which can be passed into log.SetOutput()
@@ -115,17 +122,13 @@ func (a *HCLogAdapter) StandardWriter(opts *hclog.StandardLoggerOptions) io.Writ
 //
 // Apologies to those who find themselves here.
 func (a *HCLogAdapter) StandardLogger(opts *hclog.StandardLoggerOptions) *golog.Logger {
-	entry := a.Log.WithFields(logrus.Fields{})
+	entry := a.Logger.WithFields(logrus.Fields{})
 	return golog.New(entry.WriterLevel(logrus.InfoLevel), "", 0)
 }
 
 func (a *HCLogAdapter) shouldEmit(level logrus.Level) bool {
-	currentLevel := a.Log.WithFields(logrus.Fields{}).Level
-	if currentLevel >= level {
-		return true
-	}
-
-	return false
+	currentLevel := a.Logger.WithFields(logrus.Fields{}).Level
+	return currentLevel >= level
 }
 
 // CreateEntry creates a new logrus entry
@@ -136,12 +139,15 @@ func (a *HCLogAdapter) CreateEntry(args []interface{}) *logrus.Entry {
 
 	fields := make(logrus.Fields)
 	for i := 0; i < len(args); i = i + 2 {
-		k, ok := args[i].(string)
-		if !ok {
-		}
+		k := args[i].(string)
 		v := args[i+1]
 		fields[k] = v
 	}
 
-	return a.Log.WithFields(fields)
+	return a.Logger.WithFields(fields)
+}
+
+// ImpliedArgs returns With key/value pairs
+func (a *HCLogAdapter) ImpliedArgs() []interface{} {
+	return nil
 }

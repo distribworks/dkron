@@ -1,0 +1,257 @@
+# every-6m-processor-files-success
+# every-6m-processor-log-success
+# every-6m-processor-syslog-success
+
+# at-shell-success
+
+- hosts: packet
+  user: root
+  become: yes
+  become_method: sudo
+
+  tasks:
+    - name: 10-min-shell-success
+      run_once: true
+      uri:
+        url: http://localhost:8080/v1/jobs
+        method: POST
+        headers:
+          Content-Type: "application/json"
+        body: '{"name": "10-min-shell-success",
+          "schedule": "0 */10 0 * * *",
+          "owner": "Dkron test",
+          "disabled": false,
+          "concurrency": "allow",
+          "tags": {
+            "role": "dkron"
+          },
+          "executor": "shell",
+          "executor_config": {
+            "command": "echo \"10-min-shell-success\""
+          }
+        }'
+        status_code: 201
+    
+    - name: disabled-shell
+      run_once: true
+      uri:
+        url: http://localhost:8080/v1/jobs
+        method: POST
+        headers:
+          Content-Type: "application/json"
+        body: '{"name": "disabled-shell",
+          "schedule": "0 */10 0 * * *",
+          "owner": "Dkron test",
+          "disabled": true,
+          "concurrency": "allow",
+          "tags": {
+            "role": "dkron:1"
+          },
+          "executor": "shell",
+          "executor_config": {
+            "command": "echo \"disabled-shell\""
+          }
+        }'
+        status_code: 201
+    
+    - name: every-5m-shell-success
+      run_once: true
+      uri:
+        url: http://localhost:8080/v1/jobs
+        method: POST
+        headers:
+          Content-Type: "application/json"
+        body: '{"name": "every-5m-shell-success",
+          "schedule": "@every 5m",
+          "owner": "Dkron test",
+          "disabled": false,
+          "concurrency": "allow",
+          "tags": {
+            "role": "dkron"
+          },
+          "executor": "shell",
+          "executor_config": {
+            "command": "echo \"every-5m-shell-success\""
+          }
+        }'
+        status_code: 201
+    
+    - name: every-10m-parent-shell-success
+      run_once: true
+      uri:
+        url: http://localhost:8080/v1/jobs
+        method: POST
+        headers:
+          Content-Type: "application/json"
+        body: '{"name": "every-10m-parent-shell-success",
+          "schedule": "@every 10m",
+          "owner": "Dkron test",
+          "disabled": false,
+          "concurrency": "allow",
+          "tags": {
+            "role": "dkron:1"
+          },
+          "executor": "shell",
+          "executor_config": {
+            "command": "true"
+          }
+        }'
+        status_code: 201
+    
+    - name: child-shell-success
+      run_once: true
+      uri:
+        url: http://localhost:8080/v1/jobs
+        method: POST
+        headers:
+          Content-Type: "application/json"
+        body: '{"name": "child-shell-success",
+          "parent_job": "every-10m-parent-shell-success",
+          "owner": "Dkron test",
+          "disabled": false,
+          "concurrency": "allow",
+          "tags": {
+            "role": "dkron:1"
+          },
+          "executor": "shell",
+          "executor_config": {
+            "command": "echo \"child-shell-success\""
+          }
+        }'
+        status_code: 201
+    
+    - name: every-10m-parent-shell-fail
+      run_once: true
+      uri:
+        url: http://localhost:8080/v1/jobs
+        method: POST
+        headers:
+          Content-Type: "application/json"
+        body: '{"name": "every-10m-parent-shell-fail",
+          "schedule": "@every 10m",
+          "owner": "Dkron test",
+          "disabled": false,
+          "concurrency": "allow",
+          "tags": {
+            "role": "dkron:1"
+          },
+          "executor": "shell",
+          "executor_config": {
+            "command": "false"
+          }
+        }'
+        status_code: 201
+
+    - name: child-shell-fail
+      run_once: true
+      uri:
+        url: http://localhost:8080/v1/jobs
+        method: POST
+        headers:
+          Content-Type: "application/json"
+        body: '{"name": "child-shell-fail",
+          "schedule": "@every 10m",
+          "owner": "Dkron test",
+          "disabled": false,
+          "concurrency": "allow",
+          "tags": {
+            "role": "dkron"
+          },
+          "executor": "shell",
+          "executor_config": {
+            "command": "false"
+          }
+        }'
+        status_code: 201
+
+    - name: every-60s-concurrency-forbid-shell-success
+      run_once: true
+      uri:
+        url: http://localhost:8080/v1/jobs
+        method: POST
+        headers:
+          Content-Type: "application/json"
+        body: '{"name": "every-60-concurrency-forbid-shell-success",
+          "schedule": "@every 60s",
+          "owner": "Dkron test",
+          "disabled": false,
+          "concurrency": "forbid",
+          "tags": {
+            "role": "dkron"
+          },
+          "executor": "shell",
+          "executor_config": {
+            "command": "echo \"every-60-concurrency-forbid-shell-success\" && sleep 65",
+            "shell": "true"
+          }
+        }'
+        status_code: 201
+
+    - name: child-concurrency-forbid-shell-success
+      run_once: true
+      uri:
+        url: http://localhost:8080/v1/jobs
+        method: POST
+        headers:
+          Content-Type: "application/json"
+        body: '{"name": "child-concurrency-forbid-shell-success",
+          "parent_job": "every-60-concurrency-forbid-shell-success",
+          "owner": "Dkron test",
+          "disabled": false,
+          "concurrency": "forbid",
+          "tags": {
+            "role": "dkron:1"
+          },
+          "executor": "shell",
+          "executor_config": {
+            "command": "echo \"child-concurrency-forbid-shell-success\" && sleep 240",
+            "shell": "true"
+          }
+        }'
+        status_code: 201
+
+    - name: every-40s-http-success
+      run_once: true
+      uri:
+        url: http://localhost:8080/v1/jobs
+        method: POST
+        headers:
+          Content-Type: "application/json"
+        body: '{"name": "every-40s-http-success",
+          "schedule": "@every 40s",
+          "owner": "Dkron test",
+          "disabled": false,
+          "concurrency": "allow",
+          "tags": {
+            "role": "dkron:1"
+          },
+          "executor": "http",
+          "executor_config": {
+            "method": "GET",
+            "url": "https://httpbin.org/get"
+          }
+        }'
+        status_code: 201
+
+    - name: every-50s-http-fail
+      run_once: true
+      uri:
+        url: http://localhost:8080/v1/jobs
+        method: POST
+        headers:
+          Content-Type: "application/json"
+        body: '{"name": "every-50s-http-success",
+          "schedule": "@every 50s",
+          "owner": "Dkron test",
+          "disabled": false,
+          "concurrency": "allow",
+          "tags": {
+            "role": "dkron"
+          },
+          "executor": "http",
+          "executor_config": {
+            "method": "GET",
+            "url": "https://httpbin.org/status/500"
+          }
+        }'
+        status_code: 201

@@ -24,7 +24,7 @@ Example
     },
     "processors": {
         "syslog": {
-            "forward": true
+            "forward": "true"
         }
     }
 }

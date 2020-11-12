@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/distribworks/dkron/v2/dkron"
+	"github.com/distribworks/dkron/v3/plugin/types"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestExecute(t *testing.T) {
-	pa := &dkron.ExecuteRequest{
+	pa := &types.ExecuteRequest{
 		JobName: "testJob",
 		Config: map[string]string{
 			"method":     "GET",
@@ -19,7 +19,7 @@ func TestExecute(t *testing.T) {
 		},
 	}
 	http := &HTTP{}
-	output, err := http.Execute(pa)
+	output, err := http.Execute(pa, nil)
 	fmt.Println(string(output.Output))
 	fmt.Println(err)
 	if err != nil {
@@ -28,7 +28,7 @@ func TestExecute(t *testing.T) {
 }
 
 func TestExecutePost(t *testing.T) {
-	pa := &dkron.ExecuteRequest{
+	pa := &types.ExecuteRequest{
 		JobName: "testJob",
 		Config: map[string]string{
 			"method":     "POST",
@@ -41,7 +41,7 @@ func TestExecutePost(t *testing.T) {
 		},
 	}
 	http := &HTTP{}
-	output, err := http.Execute(pa)
+	output, err := http.Execute(pa, nil)
 	fmt.Println(string(output.Output))
 	fmt.Println(err)
 	if err != nil {
@@ -51,7 +51,7 @@ func TestExecutePost(t *testing.T) {
 
 // Note: badssl.com was meant for _manual_ testing. Maybe these tests should be disabled by default.
 func TestNoVerifyPeer(t *testing.T) {
-	pa := &dkron.ExecuteRequest{
+	pa := &types.ExecuteRequest{
 		JobName: "testJob",
 		Config: map[string]string{
 			"method":          "GET",
@@ -62,7 +62,7 @@ func TestNoVerifyPeer(t *testing.T) {
 		},
 	}
 	http := &HTTP{}
-	output, _ := http.Execute(pa)
+	output, _ := http.Execute(pa, nil)
 	fmt.Println(string(output.Output))
 	fmt.Println(output.Error)
 	assert.Equal(t, "", output.Error)
@@ -70,7 +70,7 @@ func TestNoVerifyPeer(t *testing.T) {
 
 func TestClientSSLCert(t *testing.T) {
 	// client certs: https://badssl.com/download/
-	pa := &dkron.ExecuteRequest{
+	pa := &types.ExecuteRequest{
 		JobName: "testJob",
 		Config: map[string]string{
 			"method":                "GET",
@@ -82,7 +82,7 @@ func TestClientSSLCert(t *testing.T) {
 		},
 	}
 	http := &HTTP{}
-	output, _ := http.Execute(pa)
+	output, _ := http.Execute(pa, nil)
 	fmt.Println(string(output.Output))
 	fmt.Println(output.Error)
 	assert.Equal(t, "", output.Error)
@@ -90,7 +90,7 @@ func TestClientSSLCert(t *testing.T) {
 
 func TestRootCA(t *testing.T) {
 	// untrusted root ca cert: https://badssl.com/certs/ca-untrusted-root.crt
-	pa := &dkron.ExecuteRequest{
+	pa := &types.ExecuteRequest{
 		JobName: "testJob",
 		Config: map[string]string{
 			"method":         "GET",
@@ -101,7 +101,7 @@ func TestRootCA(t *testing.T) {
 		},
 	}
 	http := &HTTP{}
-	output, _ := http.Execute(pa)
+	output, _ := http.Execute(pa, nil)
 	fmt.Println(string(output.Output))
 	fmt.Println(output.Error)
 	assert.Equal(t, "", output.Error)

@@ -1,11 +1,9 @@
 package cmd
 
 import (
-	"github.com/distribworks/dkron/v2/dkron"
+	"github.com/distribworks/dkron/v3/dkron"
 	"github.com/spf13/cobra"
 )
-
-var rpcAddr string
 
 // versionCmd represents the version command
 var leaveCmd = &cobra.Command{
@@ -14,11 +12,20 @@ var leaveCmd = &cobra.Command{
 	Long: `Stop stops an agent, if the agent is a server and is running for election
 	stop running for election, if this server was the leader
 	this will force the cluster to elect a new leader and start a new scheduler.`,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		ipa, err := dkron.ParseSingleIPTemplate(rpcAddr)
+		if err != nil {
+			return err
+		}
+		ip = ipa
+
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var gc dkron.DkronGRPCClient
 		gc = dkron.NewGRPCClient(nil, nil)
 
-		if err := gc.Leave(rpcAddr); err != nil {
+		if err := gc.Leave(ip); err != nil {
 			return err
 		}
 
@@ -28,5 +35,5 @@ var leaveCmd = &cobra.Command{
 
 func init() {
 	dkronCmd.AddCommand(leaveCmd)
-	leaveCmd.PersistentFlags().StringVar(&rpcAddr, "rpc-addr", "127.0.0.1:6868", "gRPC address of the agent")
+	leaveCmd.PersistentFlags().StringVar(&rpcAddr, "rpc-addr", "{{ GetPrivateIP }}:6868", "gRPC address of the agent")
 }

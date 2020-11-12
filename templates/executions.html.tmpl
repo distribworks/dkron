@@ -31,7 +31,7 @@
       <td>{{$ex.NodeName}}</td>
       <td>
         <a href="#{{ $ex.JobName }}-{{ $gk }}-{{ $ek }}-modal" data-toggle="modal" data-target="#{{ $ex.JobName }}-{{ $gk }}-{{ $ek }}-modal">
-          {{$ex.Output | toString | truncate}}...</a>
+          {{$ex.Output | truncate}}...</a>
       </td>
       <td>{{$ex.Success}}</td>
     </tr>
@@ -46,7 +46,7 @@
             <h4 class="modal-title" id="myModalLabel">View output for {{$ex.JobName}}</h4>
           </div>
           <div class="modal-body">
-            <pre>{{$ex.Output | toString}}</pre>
+            <pre>{{$ex.Output}}</pre>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

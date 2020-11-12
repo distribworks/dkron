@@ -7,16 +7,16 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/distribworks/dkron/v2/dkron"
-	dkplugin "github.com/distribworks/dkron/v2/plugin"
+	"github.com/distribworks/dkron/v3/dkron"
+	dkplugin "github.com/distribworks/dkron/v3/plugin"
 	"github.com/hashicorp/go-plugin"
 	"github.com/kardianos/osext"
 	"github.com/sirupsen/logrus"
 )
 
 type Plugins struct {
-	Processors map[string]dkron.ExecutionProcessor
-	Executors  map[string]dkron.Executor
+	Processors map[string]dkplugin.Processor
+	Executors  map[string]dkplugin.Executor
 	LogLevel   string
 	NodeName   string
 }
@@ -30,8 +30,8 @@ type Plugins struct {
 //
 // Whichever file is discoverd LAST wins.
 func (p *Plugins) DiscoverPlugins() error {
-	p.Processors = make(map[string]dkron.ExecutionProcessor)
-	p.Executors = make(map[string]dkron.Executor)
+	p.Processors = make(map[string]dkplugin.Processor)
+	p.Executors = make(map[string]dkplugin.Executor)
 
 	// Look in /etc/dkron/plugins
 	processors, err := plugin.Discover("dkron-processor-*", filepath.Join("/etc", "dkron", "plugins"))
@@ -74,7 +74,7 @@ func (p *Plugins) DiscoverPlugins() error {
 		if err != nil {
 			return err
 		}
-		p.Processors[pluginName] = raw.(dkron.ExecutionProcessor)
+		p.Processors[pluginName] = raw.(dkplugin.Processor)
 	}
 
 	for _, file := range executors {
@@ -88,7 +88,7 @@ func (p *Plugins) DiscoverPlugins() error {
 		if err != nil {
 			return err
 		}
-		p.Executors[pluginName] = raw.(dkron.Executor)
+		p.Executors[pluginName] = raw.(dkplugin.Executor)
 	}
 
 	return nil
@@ -116,7 +116,7 @@ func (p *Plugins) pluginFactory(path string, pluginType string) (interface{}, er
 	config.Plugins = dkplugin.PluginMap
 	config.SyncStdout = os.Stdout
 	config.SyncStderr = os.Stderr
-	config.Logger = &dkron.HCLogAdapter{Log: dkron.InitLogger(p.LogLevel, p.NodeName), Name: "plugins"}
+	config.Logger = &dkron.HCLogAdapter{Logger: dkron.InitLogger(p.LogLevel, p.NodeName), LoggerName: "plugins"}
 
 	switch pluginType {
 	case dkplugin.ProcessorPluginName:

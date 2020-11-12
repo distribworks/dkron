@@ -6,6 +6,7 @@ import (
 
 	"github.com/armon/go-metrics"
 	"github.com/armon/go-metrics/datadog"
+	"github.com/armon/go-metrics/prometheus"
 )
 
 func initMetrics(a *Agent) error {
@@ -15,11 +16,21 @@ func initMetrics(a *Agent) error {
 
 	var fanout metrics.FanoutSink
 
+	// Configure the prometheus sink
+	if a.config.EnablePrometheus {
+		promSink, err := prometheus.NewPrometheusSink()
+		if err != nil {
+			return err
+		}
+
+		fanout = append(fanout, promSink)
+	}
+
 	// Configure the statsd sink
 	if a.config.StatsdAddr != "" {
 		sink, err := metrics.NewStatsdSink(a.config.StatsdAddr)
 		if err != nil {
-			return fmt.Errorf("Failed to start statsd sink. Got: %s", err)
+			return fmt.Errorf("failed to start statsd sink. Got: %s", err)
 		}
 		fanout = append(fanout, sink)
 	}
@@ -34,7 +45,7 @@ func initMetrics(a *Agent) error {
 
 		sink, err := datadog.NewDogStatsdSink(a.config.DogStatsdAddr, a.config.NodeName)
 		if err != nil {
-			return fmt.Errorf("Failed to start DogStatsd sink. Got: %s", err)
+			return fmt.Errorf("failed to start DogStatsd sink. Got: %s", err)
 		}
 		sink.SetTags(tags)
 		fanout = append(fanout, sink)

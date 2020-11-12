@@ -22,9 +22,11 @@ You can use Dkron to run the most important part of your company, scheduled jobs
 
 ## Project status
 
-Dkron v1.x is the previous stable still used in production by several companies.
+Dkron v1.x is legacy, not supported.
 
-Dkron v2.x is the latest version also stable and used in production by several companies, if you are going to start a new deployment, use this.
+Dkron v2.x is the previous version, stable and still used in production by some users.
+
+Dkron v3.x current stable version, if you are going to start a new deployment, use this.
 
 ## Installation
 

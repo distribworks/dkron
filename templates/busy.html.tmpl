@@ -1,0 +1,25 @@
+{{define "content"}}
+<div class="container content" ng-controller="BusyCtrl">
+  <div class="row">
+    <h2>Active executions</h2>
+    <table class="table table-striped">
+    <tr>
+        <th>Job</th>
+        <th>Running Node</th>
+        <th>Started at</th>
+        <th>Output</th>
+        <th>Status</th>
+    </tr>
+    <tr ng-repeat="e in executions">
+        <td><a ng-href="jobs/{{`{{ e.job_name }}`}}/executions" ng-bind="e.job_name"></a></td>
+        <td ng-bind="e.node_name"></td>
+        <td ng-bind="e.started_at"></td>
+        <td ng-bind="e.output"></td>
+        <td>
+          <i class="status-running glyphicon glyphicon-play-circle"></i>
+        </td>
+    </tr>
+    </table>
+  </div>
+</div>
+{{end}}

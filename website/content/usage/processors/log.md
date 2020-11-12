@@ -22,7 +22,7 @@ Example
     },
     "processors": {
         "log": {
-            "forward": true
+            "forward": "true"
         }
     }
 }

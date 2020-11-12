@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/distribworks/dkron/v2/dkron"
+	"github.com/distribworks/dkron/v3/dkron"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -13,6 +13,9 @@ import (
 
 var cfgFile string
 var config = dkron.DefaultConfig()
+
+var rpcAddr string
+var ip string
 
 // dkronCmd represents the dkron command
 var dkronCmd = &cobra.Command{

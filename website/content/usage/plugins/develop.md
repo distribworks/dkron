@@ -5,7 +5,7 @@ weight: 99
 
 ## Developing a Plugin
 
-{{% alert theme="warning" %}}**Advanced topic!** Plugin development is a highly advanced topic, and is not required knowledge for day-to-day usage. If you don't plan on writing any plugins, we recommend not reading the following section of the documentation.{{% /alert %}}
+{{%notice info%}}Advanced topic! Plugin development is a highly advanced topic, and is not required knowledge for day-to-day usage. If you don't plan on writing any plugins, we recommend not reading the following section of the documentation.{{% /notice %}}
 
 Developing a plugin is simple. The only knowledge necessary to write a plugin is basic command-line skills and basic knowledge of the Go programming language.
 
@@ -19,7 +19,7 @@ With the directory made, create a main.go file. This project will be a binary so
 package main
 
 import (
-	"github.com/distribworks/dkron/v2/plugin"
+	"github.com/distribworks/dkron/v3/plugin"
 )
 
 func main() {

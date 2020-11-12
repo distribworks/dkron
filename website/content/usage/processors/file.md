@@ -26,7 +26,7 @@ Example
     "processors": {
         "files": {
             "log_dir": "/var/log/mydir",
-            "forward": true
+            "forward": "true"
         }
     }
 }

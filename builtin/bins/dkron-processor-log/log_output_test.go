@@ -2,22 +2,23 @@ package main
 
 import (
 	"testing"
-	"time"
 
-	"github.com/distribworks/dkron/v2/dkron"
+	"github.com/distribworks/dkron/v3/plugin"
+	"github.com/distribworks/dkron/v3/plugin/types"
+	"github.com/golang/protobuf/ptypes"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestProcess(t *testing.T) {
-	now := time.Now()
+	now := ptypes.TimestampNow()
 
-	pa := &dkron.ExecutionProcessorArgs{
-		Execution: dkron.Execution{
+	pa := &plugin.ProcessorArgs{
+		Execution: types.Execution{
 			StartedAt: now,
 			NodeName:  "testNode",
 			Output:    []byte("test"),
 		},
-		Config: dkron.PluginConfig{
+		Config: plugin.Config{
 			"forward": "false",
 		},
 	}

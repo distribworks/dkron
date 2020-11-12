@@ -34,7 +34,24 @@ dkron.filter('startFrom', function () {
   }
 });
 
-dkron.controller('JobListCtrl', function ($scope, $location, $http, $interval, hideDelay) {
+dkron.run(function($rootScope) {
+  $rootScope.alertOptions = function (type) {
+    return {
+      type: type,
+      placement: {
+        from: "top",
+        align: "center"
+      },
+      offset: 40,
+      animate: {
+        enter: 'animated fadeInDown',
+        exit: 'animated fadeOutUp'
+      }
+    }
+  };
+});
+
+dkron.controller('JobListCtrl', function ($scope, $location, $http, $interval, hideDelay, $rootScope) {
   $scope.searchJob = $location.search()['filter']
 
   $scope.filter = function (filter) {
@@ -76,14 +93,15 @@ dkron.controller('JobListCtrl', function ($scope, $location, $http, $interval, h
     $scope["running_" + i] = true;
     $http.post(DKRON_API_PATH + '/jobs/' + jobName).
       then(function (response) {
-        $('#message').html('<div class="alert alert-success fade in">Success running job ' + jobName + '</div>');
+        jQuery.notify({
+          message: 'Success running job ' + jobName
+        },$rootScope.alertOptions('success'));
         updateView();
         $scope["running_" + i] = false;
-        $(".alert-success").delay(hideDelay).slideUp(200, function () {
-          $(".alert").alert('close');
-        });
     }, function (response) {
-      $('#message').html('<div class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Error running job ' + jobName + '</div>');
+      jQuery.notify({
+        message: 'Error running job ' + jobName
+      },$rootScope.alertOptions('danger'));
     });
   };
 
@@ -97,14 +115,14 @@ dkron.controller('JobListCtrl', function ($scope, $location, $http, $interval, h
     
     $http.post(DKRON_API_PATH + '/jobs', job).
       then(function (response) {
-        $('#message').html('<div class="alert alert-success fade in">Success created job ' + job.name + '</div>');
+        jQuery.notify({
+          message: 'Success created job ' + job.name
+        },$rootScope.alertOptions('success'));
         updateView();
-
-        $(".alert-success").delay(hideDelay).slideUp(200, function () {
-          $(".alert").alert('close');
-        });
     }, function (response) {
-      $('#message').html('<div class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Error creating job ' + job.name + '</div>');
+      jQuery.notify({
+        message: 'Error creating job ' + job.name
+      },$rootScope.alertOptions('danger'));
     });
   };
 
@@ -118,14 +136,14 @@ dkron.controller('JobListCtrl', function ($scope, $location, $http, $interval, h
     
     $http.post(DKRON_API_PATH + '/jobs', job).
       then(function (response) {
-        $('#message').html('<div class="alert alert-success fade in">Success updating job ' + job.name + '</div>');
+        jQuery.notify({
+          message: 'Success updating job ' + jobName
+        },$rootScope.alertOptions('success'));
         updateView();
-
-        $(".alert-success").delay(hideDelay).slideUp(200, function () {
-          $(".alert").alert('close');
-        });
     }, function (response) {
-      $('#message').html('<div class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Error updating job ' + job.name + '</div>');
+      jQuery.notify({
+        message: 'Error updating job ' + job.name
+      },$rootScope.alertOptions('danger'));
     });
   };
 
@@ -135,28 +153,28 @@ dkron.controller('JobListCtrl', function ($scope, $location, $http, $interval, h
     
     $http.delete(DKRON_API_PATH + '/jobs/' + jobName).
       then(function (response) {
-        $('#message').html('<div class="alert alert-success fade in">Successfully removed job ' + jobName + '</div>');
+        jQuery.notify({
+          message: 'Successfully removed job ' + jobName
+        },$rootScope.alertOptions('success'));
         updateView();
-
-        $(".alert-success").delay(hideDelay).slideUp(200, function () {
-          $(".alert").alert('close');
-        });
     }, function (response) {
-      $('#message').html('<div class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Error removing job ' + jobName + '</div>');
+      jQuery.notify({
+        message: 'Error removing job ' + jobName
+      },$rootScope.alertOptions('danger'));
     });
   };
 
   $scope.toggleJob = function (jobName) {
     $http.post(DKRON_API_PATH + '/jobs/' + jobName + '/toggle').
       then(function (response) {
-        $('#message').html('<div class="alert alert-success fade in">Successfully toggled job ' + jobName + '</div>');
+        jQuery.notify({
+          message: 'Successfully toggled job ' + jobName
+        },$rootScope.alertOptions('success'));
         updateView();
-
-        $(".alert-success").delay(hideDelay).slideUp(200, function () {
-          $(".alert").alert('close');
-        });
     }, function (response) {
-      $('#message').html('<div class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Error toggle job ' + jobName + '</div>');
+      jQuery.notify({
+        message: 'Error toggle job ' + jobName
+      },$rootScope.alertOptions('danger'));
     });
   }
 
@@ -169,7 +187,9 @@ dkron.controller('JobListCtrl', function ($scope, $location, $http, $interval, h
           $("#conn-error").alert('close');
         });
     }, function (response) {
-      $('#message').html('<div id="conn-error" class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Error getting data</div>');
+      jQuery.notify({
+        message: 'Error loading data'
+      },$rootScope.alertOptions('success'));
     });
   }
 
@@ -275,25 +295,24 @@ dkron.controller('JobListCtrl', function ($scope, $location, $http, $interval, h
   updateView();
 });
 
-dkron.controller('ExecutionsCtrl', function ($scope, $http, $interval, hideDelay) {
+dkron.controller('ExecutionsCtrl', function ($scope, $http, $interval, hideDelay, $rootScope) {
   $scope.runJob = function (jobName) {
     $scope["running_job"] = true;
     $http.post(DKRON_API_PATH + '/jobs/' + jobName).
       then(function (response) {
-        $('#message').html('<div class="alert alert-success fade in">Success running job ' + jobName + '</div>');
+        jQuery.notify({
+          message: 'Success running job ' + jobName
+        },$rootScope.alertOptions('success'));
         $scope["running_job"] = false;
-
-        $(".alert-success").delay(hideDelay).slideUp(200, function () {
-          $(".alert").alert('close');
-          window.location.reload();
-        });
     }, function (response) {
-      $('#message').html('<div class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Error running job ' + jobName + '</div>');
+      jQuery.notify({
+        message: 'Error running job ' + jobName
+      },$rootScope.alertOptions('danger'));
     });
   };
 });
 
-dkron.controller('IndexCtrl', function ($scope, $http, $timeout, $element) {
+dkron.controller('IndexCtrl', function ($scope, $http, $timeout, $element, $rootScope) {
   $scope.options = {
     renderer: 'line',
     interpolation: 'linear'
@@ -331,7 +350,9 @@ dkron.controller('IndexCtrl', function ($scope, $http, $timeout, $element) {
           updateView();
         }, 2000);
     }, function (response) {
-      $('#message').html('<div class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Error getting data</div>');
+      jQuery.notify({
+        message: 'Error loading data'
+      },$rootScope.alertOptions('danger'));
     });
 
     $http.get(DKRON_API_PATH + '/members').
@@ -358,7 +379,9 @@ dkron.controller('IndexCtrl', function ($scope, $http, $timeout, $element) {
         });
         $scope.members = data;
     }, function (response) {
-      $('#message').html('<div class="alert alert-danger fade in"><button type="button" class="close close-alert" data-dismiss="alert" aria-hidden="true">x</button>Error getting data</div>');
+      jQuery.notify({
+        message: 'Error loading data'
+      },$rootScope.alertOptions('danger'));
     });
   }
 
@@ -424,4 +447,21 @@ dkron.controller('IndexCtrl', function ($scope, $http, $timeout, $element) {
   }
 
   updateView();
+});
+
+dkron.controller('BusyCtrl', function ($scope, $http, $timeout, $element, $rootScope) {
+  busy = function () {
+    $http.get(DKRON_API_PATH + '/busy').then(function (response) {
+      $scope.executions = response.data
+
+      $timeout(function () {
+        busy();
+      }, 500);
+    }, function (response) {
+      jQuery.notify({
+        message: 'Error loading data'
+      },$rootScope.alertOptions('danger'));
+    });
+  };
+  busy();
 });
