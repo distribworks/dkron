@@ -196,7 +196,7 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.E
 	// Retrieve the fresh, updated job from the store to work on stored values
 	job, err = grpcs.agent.Store.GetJob(job.Name, nil)
 	if err != nil {
-		log.WithError(err).WithField("job", job.Name).Error("grpc: Error retrieving job from store")
+		log.WithError(err).WithField("job", execDoneReq.Execution.JobName).Error("grpc: Error retrieving job from store")
 		return nil, err
 	}
 
