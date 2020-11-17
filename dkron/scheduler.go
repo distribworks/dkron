@@ -4,6 +4,7 @@ import (
 	"errors"
 	"expvar"
 	"strings"
+	"sync"
 
 	"github.com/armon/go-metrics"
 	"github.com/distribworks/dkron/v3/extcron"
@@ -24,7 +25,7 @@ var (
 type Scheduler struct {
 	Cron        *cron.Cron
 	Started     bool
-	EntryJobMap map[string]cron.EntryID
+	EntryJobMap sync.Map //map[string]cron.EntryID
 }
 
 // NewScheduler creates a new Scheduler instance
@@ -33,7 +34,7 @@ func NewScheduler() *Scheduler {
 	return &Scheduler{
 		Cron:        nil,
 		Started:     false,
-		EntryJobMap: make(map[string]cron.EntryID),
+		EntryJobMap: sync.Map{}, // make(map[string]cron.EntryID),
 	}
 }
 
@@ -100,7 +101,7 @@ func (s *Scheduler) GetEntry(jobName string) (cron.Entry, bool) {
 // AddJob Adds a job to the cron scheduler
 func (s *Scheduler) AddJob(job *Job) error {
 	// Check if the job is already set and remove it if exists
-	if _, ok := s.EntryJobMap[job.Name]; ok {
+	if _, ok := s.EntryJobMap.Load(job.Name); ok {
 		s.RemoveJob(job)
 	}
 
@@ -130,7 +131,7 @@ func (s *Scheduler) AddJob(job *Job) error {
 	if err != nil {
 		return err
 	}
-	s.EntryJobMap[job.Name] = id
+	s.EntryJobMap.Store(job.Name, id)
 
 	return nil
 }
@@ -140,6 +141,8 @@ func (s *Scheduler) RemoveJob(job *Job) {
 	log.WithFields(logrus.Fields{
 		"job": job.Name,
 	}).Debug("scheduler: Removing job from cron")
-	s.Cron.Remove(s.EntryJobMap[job.Name])
-	delete(s.EntryJobMap, job.Name)
+	if v, ok := s.EntryJobMap.Load(job.Name); ok {
+		s.Cron.Remove(v.(cron.EntryID))
+		s.EntryJobMap.Delete(job.Name)
+	}
 }

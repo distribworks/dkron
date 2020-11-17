@@ -6,6 +6,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.0.7] - 2020-11-10
+
+### Changes
+
+- Bump deps
+
+### Fixes
+
+- Server crash when adding new job [#840](https://github.com/distribworks/dkron/pull/840)
+- Fix method of busy endpoint in swagger.yaml [#843](https://github.com/distribworks/dkron/pull/843) @yvanoers
+- Fix multitag cardinality bug [#842](https://github.com/distribworks/dkron/pull/842) @yvanoers
+
+## [3.0.6] - 2020-10-15
+
+### Changes
+
+- Revert "feat: Include scheduler entries in status API" [#829](https://github.com/distribworks/dkron/pull/829)
+- Bump some deps
+
 ## [3.0.5] - 2020-09-04
 
 ### Changes

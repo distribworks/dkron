@@ -121,8 +121,10 @@ func Test_processFilteredNodes(t *testing.T) {
 	c.Server = true
 	c.LogLevel = logLevel
 	c.Tags = map[string]string{
-		"tag":    "test",
-		"region": "global",
+		"tag":         "test",
+		"region":      "global",
+		"additional":  "value",
+		"additional2": "value2",
 	}
 	c.DevMode = true
 	c.DataDir = dir
@@ -140,9 +142,11 @@ func Test_processFilteredNodes(t *testing.T) {
 	c.Server = true
 	c.LogLevel = logLevel
 	c.Tags = map[string]string{
-		"tag":    "test",
-		"extra":  "tag",
-		"region": "global",
+		"tag":         "test",
+		"extra":       "tag",
+		"region":      "global",
+		"additional":  "value",
+		"additional2": "value2",
 	}
 	c.DevMode = true
 	c.DataDir = dir
@@ -162,9 +166,11 @@ func Test_processFilteredNodes(t *testing.T) {
 	c.Server = false
 	c.LogLevel = logLevel
 	c.Tags = map[string]string{
-		"tag":    "test_client",
-		"extra":  "tag",
-		"region": "global",
+		"tag":         "test_client",
+		"extra":       "tag",
+		"region":      "global",
+		"additional":  "value",
+		"additional2": "value2",
 	}
 	c.DevMode = true
 	c.DataDir = dir
@@ -174,6 +180,7 @@ func Test_processFilteredNodes(t *testing.T) {
 
 	time.Sleep(2 * time.Second)
 
+	// Test cardinality of 2 returns correct nodes
 	job := &Job{
 		Name: "test_job_1",
 		Tags: map[string]string{
@@ -189,6 +196,7 @@ func Test_processFilteredNodes(t *testing.T) {
 	assert.Len(t, nodes, 2)
 	assert.Equal(t, tags["tag"], "test")
 
+	// Test cardinality of 1 with two qualified nodes returns 1 node
 	job2 := &Job{
 		Name: "test_job_2",
 		Tags: map[string]string{
@@ -201,6 +209,7 @@ func Test_processFilteredNodes(t *testing.T) {
 
 	assert.Len(t, nodes, 1)
 
+	// Test no cardinality specified, all nodes returned
 	job3 := &Job{
 		Name: "test_job_3",
 	}
@@ -213,6 +222,7 @@ func Test_processFilteredNodes(t *testing.T) {
 	assert.Contains(t, nodes, "test2")
 	assert.Contains(t, nodes, "test3")
 
+	// Test exclusive tag returns correct node
 	job4 := &Job{
 		Name: "test_job_4",
 		Tags: map[string]string{
@@ -226,6 +236,7 @@ func Test_processFilteredNodes(t *testing.T) {
 	assert.Len(t, nodes, 1)
 	assert.Contains(t, nodes, "test3")
 
+	// Test existing tag but no matching value returns no nodes
 	job5 := &Job{
 		Name: "test_job_5",
 		Tags: map[string]string{
@@ -238,6 +249,7 @@ func Test_processFilteredNodes(t *testing.T) {
 
 	assert.Len(t, nodes, 0)
 
+	// Test 1 matching and 1 not matching tag returns no nodes
 	job6 := &Job{
 		Name: "test_job_6",
 		Tags: map[string]string{
@@ -252,6 +264,7 @@ func Test_processFilteredNodes(t *testing.T) {
 	assert.Len(t, nodes, 0)
 	assert.Equal(t, tags["tag"], "test")
 
+	// Test matching tags with cardinality of 2 but only 1 matching node returns correct node
 	job7 := &Job{
 		Name: "test_job_7",
 		Tags: map[string]string{
@@ -268,6 +281,28 @@ func Test_processFilteredNodes(t *testing.T) {
 	assert.Equal(t, tags["tag"], "test")
 	assert.Equal(t, tags["extra"], "tag")
 
+	// Test two tags matching same 3 servers and cardinality of 1 should always return 1 server
+
+	// Do this 10 times: an old bug caused this to sometimes succeed and sometimes fail due to the use of math.rand
+	// Statistically, with 10 tries about 3 should succeed and the rest should fail, if the code is buggy.
+	for i := 0; i < 10; i++ {
+		job8 := &Job{
+			Name: "test_job_7",
+			Tags: map[string]string{
+				"additional":  "value:1",
+				"additional2": "value2:1",
+			},
+		}
+
+		nodes, tags, err = a1.processFilteredNodes(job8)
+		require.NoError(t, err)
+
+		assert.Len(t, nodes, 1)
+		assert.Equal(t, tags["additional"], "value")
+		assert.Equal(t, tags["additional2"], "value2")
+	}
+
+	// Clean up
 	a1.Stop()
 	a2.Stop()
 	a3.Stop()
