@@ -11,7 +11,7 @@ import (
 )
 
 func setCmdAttr(cmd *exec.Cmd, config map[string]string) error {
-	su, _ := config["su"]
+	su := config["su"]
 	if su != "" {
 		var uid, gid int
 		parts := strings.Split(su, ":")

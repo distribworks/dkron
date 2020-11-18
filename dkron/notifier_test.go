@@ -166,7 +166,7 @@ var templateTestCases = func(n *Notifier) []templateTestCase {
 		},
 		{
 			desc:     "Output template variable",
-			exp:      fmt.Sprintf("%s", n.Execution.Output),
+			exp:      n.Execution.Output,
 			template: "{{.Output}}",
 		},
 	}

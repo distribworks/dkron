@@ -29,8 +29,7 @@ var raftListCmd = &cobra.Command{
 	Short: "Command to list raft peers",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		var gc dkron.DkronGRPCClient
-		gc = dkron.NewGRPCClient(nil, nil)
+		gc := dkron.NewGRPCClient(nil, nil)
 
 		reply, err := gc.RaftGetConfiguration(ip)
 		if err != nil {
@@ -61,8 +60,7 @@ var raftRemovePeerCmd = &cobra.Command{
 	Short: "Command to list raft peers",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		var gc dkron.DkronGRPCClient
-		gc = dkron.NewGRPCClient(nil, nil)
+		gc := dkron.NewGRPCClient(nil, nil)
 
 		if err := gc.RaftRemovePeerByID(ip, peerID); err != nil {
 			return err

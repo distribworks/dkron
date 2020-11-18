@@ -67,7 +67,7 @@ func agentRun(args ...string) error {
 
 	exit := handleSignals()
 	if exit != 0 {
-		return fmt.Errorf("Exit status: %d", exit)
+		return fmt.Errorf("exit status: %d", exit)
 	}
 
 	return nil
@@ -159,7 +159,7 @@ func UnmarshalTags(tags []string) (map[string]string, error) {
 	for _, tag := range tags {
 		parts := strings.SplitN(tag, "=", 2)
 		if len(parts) != 2 || len(parts[0]) == 0 {
-			return nil, fmt.Errorf("Invalid tag: '%s'", tag)
+			return nil, fmt.Errorf("invalid tag: '%s'", tag)
 		}
 		result[parts[0]] = parts[1]
 	}
