@@ -13,7 +13,7 @@ main
 *.log
 config/
 dist
-static/node_modules
+node_modules
 *.db
 *.data
 *.retry
