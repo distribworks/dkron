@@ -25,7 +25,7 @@ var (
 type Scheduler struct {
 	Cron        *cron.Cron
 	Started     bool
-	EntryJobMap sync.Map //map[string]cron.EntryID
+	EntryJobMap sync.Map
 }
 
 // NewScheduler creates a new Scheduler instance
@@ -34,7 +34,7 @@ func NewScheduler() *Scheduler {
 	return &Scheduler{
 		Cron:        nil,
 		Started:     false,
-		EntryJobMap: sync.Map{}, // make(map[string]cron.EntryID),
+		EntryJobMap: sync.Map{},
 	}
 }
 
@@ -113,9 +113,6 @@ func (s *Scheduler) AddJob(job *Job) error {
 		"job": job.Name,
 	}).Debug("scheduler: Adding job to cron")
 
-	cronInspect.Set(job.Name, job)
-	metrics.EmitKey([]string{"scheduler", "job/update", "add", job.Name}, 1)
-
 	// If Timezone is set on the job, and not explicitly in its schedule,
 	// AND its not a descriptor (that don't support timezones), add the
 	// timezone to the schedule so robfig/cron knows about it.
@@ -133,6 +130,9 @@ func (s *Scheduler) AddJob(job *Job) error {
 	}
 	s.EntryJobMap.Store(job.Name, id)
 
+	cronInspect.Set(job.Name, job)
+	metrics.IncrCounterWithLabels([]string{"scheduler", "job_add"}, 1, []metrics.Label{{Name: "job", Value: job.Name}})
+
 	return nil
 }
 
@@ -144,5 +144,8 @@ func (s *Scheduler) RemoveJob(job *Job) {
 	if v, ok := s.EntryJobMap.Load(job.Name); ok {
 		s.Cron.Remove(v.(cron.EntryID))
 		s.EntryJobMap.Delete(job.Name)
+
+		cronInspect.Delete(job.Name)
+		metrics.IncrCounterWithLabels([]string{"scheduler", "job_delete"}, 1, []metrics.Label{{Name: "job", Value: job.Name}})
 	}
 }
