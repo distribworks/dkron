@@ -71,7 +71,7 @@ func TestStore(t *testing.T) {
 	_, err = s.SetExecution(testExecution2)
 	require.NoError(t, err)
 
-	execs, err := s.GetExecutions("test")
+	execs, err := s.GetExecutions("test", nil)
 	assert.NoError(t, err)
 
 	assert.Equal(t, testExecution, execs[0])
@@ -317,7 +317,7 @@ func TestStore_GetLastExecutionGroup(t *testing.T) {
 				s.SetExecution(e)
 			}
 
-			got, err := s.GetLastExecutionGroup(tt.jobName)
+			got, err := s.GetLastExecutionGroup(tt.jobName, nil)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Store.GetLastExecutionGroup() error = %v, wantErr %v", err, tt.wantErr)
 				return

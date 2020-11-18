@@ -90,9 +90,15 @@ func (a *Agent) dashboardJobsHandler(c *gin.Context) {
 }
 
 func (a *Agent) dashboardExecutionsHandler(c *gin.Context) {
-	job := c.Param("job")
+	jobName := c.Param("job")
 
-	groups, byGroup, err := a.Store.GetGroupedExecutions(job)
+	// Get the job's timezone
+	var jobLocation *time.Location
+	if job, err := a.Store.GetJob(jobName, nil); err == nil {
+		jobLocation = job.GetTimeLocation()
+	}
+
+	groups, byGroup, err := a.Store.GetGroupedExecutions(jobName, jobLocation)
 	if err != nil {
 		log.Error(err)
 	}
@@ -111,7 +117,7 @@ func (a *Agent) dashboardExecutionsHandler(c *gin.Context) {
 	}{
 		Common:  newCommonDashboardData(a, a.config.NodeName, "../../../"),
 		Groups:  groups,
-		JobName: job,
+		JobName: jobName,
 		ByGroup: byGroup,
 		Count:   count,
 	}

@@ -219,7 +219,7 @@ func (j *Job) ToProto() *proto.Job {
 // Run the job
 func (j *Job) Run() {
 	// As this function should comply with the Job interface of the cron package we will use
-	// the aget property on execution, this is why it need to check if it's set and otherwise fail.
+	// the agent property on execution, this is why it need to check if it's set and otherwise fail.
 	if j.Agent == nil {
 		log.Fatal("job: agent not set")
 	}
@@ -267,6 +267,14 @@ func (j *Job) GetParent(store *Store) (*Job, error) {
 	}
 
 	return parentJob, nil
+}
+
+// GetTimeLocation returns the time.Location based on the job's Timezone, or
+// the default (UTC) if none is configured, or
+// nil if an error occurred while creating the timezone from the property
+func (j *Job) GetTimeLocation() *time.Location {
+	loc, _ := time.LoadLocation(j.Timezone)
+	return loc
 }
 
 // GetNext returns the job's next schedule from now

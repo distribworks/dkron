@@ -76,14 +76,14 @@ func TestGRPCExecutionDone(t *testing.T) {
 
 	rc := NewGRPCClient(nil, a)
 	rc.ExecutionDone(a.advertiseRPCAddr(), testExecution)
-	execs, err := a.Store.GetExecutions("test")
+	execs, err := a.Store.GetExecutions("test", nil)
 	require.NoError(t, err)
 
 	assert.Len(t, execs, 1)
 	assert.Equal(t, string(testExecution.Output), string(execs[0].Output))
 
 	// Test run a dependent job
-	execs, err = a.Store.GetExecutions("child-test")
+	execs, err = a.Store.GetExecutions("child-test", nil)
 	require.NoError(t, err)
 
 	assert.Len(t, execs, 1)
