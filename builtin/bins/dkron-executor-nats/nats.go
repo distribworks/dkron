@@ -5,8 +5,10 @@ import (
 	"log"
 
 	"github.com/armon/circbuf"
-	"github.com/distribworks/dkron/v2/dkron"
 	"github.com/nats-io/nats.go"
+
+	dkplugin "github.com/distribworks/dkron/v3/plugin"
+	dktypes "github.com/distribworks/dkron/v3/plugin/types"
 )
 
 const (
@@ -29,10 +31,10 @@ type Nats struct {
 //     "userName":"test@hbh.dfg",
 //     "password":"dfdffs"
 // }
-func (s *Nats) Execute(args *dkron.ExecuteRequest) (*dkron.ExecuteResponse, error) {
+func (s *Nats) Execute(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelper) (*dktypes.ExecuteResponse, error) {
 
 	out, err := s.ExecuteImpl(args)
-	resp := &dkron.ExecuteResponse{Output: out}
+	resp := &dktypes.ExecuteResponse{Output: out}
 	if err != nil {
 		resp.Error = err.Error()
 	}
@@ -40,7 +42,7 @@ func (s *Nats) Execute(args *dkron.ExecuteRequest) (*dkron.ExecuteResponse, erro
 }
 
 // ExecuteImpl do http request
-func (s *Nats) ExecuteImpl(args *dkron.ExecuteRequest) ([]byte, error) {
+func (s *Nats) ExecuteImpl(args *dktypes.ExecuteRequest) ([]byte, error) {
 
 	output, _ := circbuf.NewBuffer(maxBufSize)
 

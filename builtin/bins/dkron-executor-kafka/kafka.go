@@ -3,9 +3,12 @@ package main
 import (
 	"errors"
 	"log"
+
 	"github.com/Shopify/sarama"
 	"github.com/armon/circbuf"
-	"github.com/distribworks/dkron/v2/dkron"
+
+	dkplugin "github.com/distribworks/dkron/v3/plugin"
+	dktypes "github.com/distribworks/dkron/v3/plugin/types"
 )
 
 const (
@@ -26,10 +29,10 @@ type Kafka struct {
 //     "message": "",                  //
 //     "topic": "publishTopic",             //
 // }
-func (s *Kafka) Execute(args *dkron.ExecuteRequest) (*dkron.ExecuteResponse, error) {
+func (s *Kafka) Execute(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelper) (*dktypes.ExecuteResponse, error) {
 
 	out, err := s.ExecuteImpl(args)
-	resp := &dkron.ExecuteResponse{Output: out}
+	resp := &dktypes.ExecuteResponse{Output: out}
 	if err != nil {
 		resp.Error = err.Error()
 	}
@@ -37,7 +40,7 @@ func (s *Kafka) Execute(args *dkron.ExecuteRequest) (*dkron.ExecuteResponse, err
 }
 
 // ExecuteImpl do http request
-func (s *Kafka) ExecuteImpl(args *dkron.ExecuteRequest) ([]byte, error) {
+func (s *Kafka) ExecuteImpl(args *dktypes.ExecuteRequest) ([]byte, error) {
 
 	output, _ := circbuf.NewBuffer(maxBufSize)
 

@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/distribworks/dkron/v2/dkron"
+	dktypes "github.com/distribworks/dkron/v3/plugin/types"
 )
 
 func TestPublishExecute(t *testing.T) {
-	pa := &dkron.ExecuteRequest{
+	pa := &dktypes.ExecuteRequest{
 		JobName: "testJob",
 		Config: map[string]string{
 			"topic":   "test",
@@ -18,7 +18,7 @@ func TestPublishExecute(t *testing.T) {
 		},
 	}
 	kafka := &Kafka{}
-	output, err := kafka.Execute(pa)
+	output, err := kafka.Execute(pa, nil)
 	fmt.Println(string(output.Output))
 	fmt.Println(err)
 	if err != nil {

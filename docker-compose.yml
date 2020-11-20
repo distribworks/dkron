@@ -26,4 +26,4 @@ services:
       - "6868"
     environment:
       - GODEBUG=netdns=go
-    command: dkron agent --retry-join=dkron:8946 --log-level=debug --tag="my_role=agent"
+    command: dkron agent --retry-join=dkron:8946 --log-level=debug

@@ -2,7 +2,7 @@ FROM golang:1.15
 LABEL maintainer="Victor Castell <victor@victorcastell.com>"
 
 EXPOSE 8080 8946
-USER root
+
 RUN mkdir -p /app
 WORKDIR /app
 
