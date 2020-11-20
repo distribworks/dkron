@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.0.8] - 2020-11-20
+
+### Changes
+
+- Clean-up and lint some code [#853](https://github.com/distribworks/dkron/pull/853)
+- Better metrics [#852](https://github.com/distribworks/dkron/pull/852)
+
+### Fixes
+
+- Represent execution times in the job's timezone [#615](https://github.com/distribworks/dkron/pull/615) @yvanoers
+- avoid nil pointer if job was deleted on ExecutionDone [#851](https://github.com/distribworks/dkron/pull/851)
+
 ## [3.0.7] - 2020-11-10
 
 ### Changes
