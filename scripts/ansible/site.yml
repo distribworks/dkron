@@ -29,14 +29,15 @@
   become_method: sudo
 
   vars:
-    version: 2.0.0-rc7
+    version: 3.0.4
     dkron_log_level: debug
     dkron_bootstrap_expect: 3
     dkron_data_dir: /var/lib/dkron
 
   tasks:
     - set_fact:
-        dkron_servers: "{{ groups['packet'] }}"
+        dkron_servers: "{{ groups['packet'] | map('extract', hostvars, ['ansible_all_ipv4_addresses', 1]) | list }}"
+      tags: config
 
     - name: Copy package
       copy:
@@ -59,9 +60,58 @@
       template: src={{ item }}.yml.j2 dest=/etc/dkron/{{ item }}.yml
       loop:
         - dkron
+      tags: config
 
     - name: ensure service is running and enabled
       systemd:
         name: dkron
         enabled: yes
         state: restarted
+
+    ### File descriptor and memory tweaks
+
+    - name: Increase sysctl open files system wide
+      sysctl:
+        name: fs.file-max
+        value: "3243542"
+      tags: performance
+
+    - name: Increasing number of open files
+      lineinfile: dest=/etc/systemd/system.conf regexp='^DefaultLimitNOFILE=65535' line='DefaultLimitNOFILE=65535' state=present
+      tags: performance
+    
+    - name: Increasing number of open files in service
+      lineinfile: dest=/lib/systemd/system/dkron.service regexp='^KillSignal=SIGTERM\n^LimitNOFILE=65535' line='LimitNOFILE=65535' state=present
+      tags: performance_b
+    
+    ### Network performance tweaks
+
+    - name: Set ARP GC entry point at 0
+      sysctl:
+        name: net.ipv4.neigh.default.gc_thresh1
+        value: "0"
+      tags: performance
+
+    - name: Increase maximum number of sockets
+      sysctl:
+        name: net.core.somaxconn
+        value: "32768"
+      tags: performance
+
+    - name: Increase maximum number of sockets in the backlog
+      sysctl:
+        name: net.ipv4.tcp_max_syn_backlog
+        value: "131072"
+      tags: performance
+
+    - name: Setting sane defaults for TCP reading sockets
+      sysctl:
+        name: net.ipv4.tcp_rmem
+        value: "4096 16384 16777216"
+      tags: performance
+
+    - name: Setting sane defaults for TCP writing sockets
+      sysctl:
+        name: net.ipv4.tcp_wmem
+        value: "4096 16384 16777216"
+      tags: performance

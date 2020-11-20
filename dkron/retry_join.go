@@ -83,7 +83,12 @@ func (r *retryJoiner) retryJoin() error {
 				}
 
 			default:
-				addrs = append(addrs, addr)
+				ipAddr, err := ParseSingleIPTemplate(addr)
+				if err != nil {
+					log.WithField("addr", addr).WithError(err).Error("agent: Error parsing retry-join ip template")
+					continue
+				}
+				addrs = append(addrs, ipAddr)
 			}
 		}
 
@@ -96,7 +101,7 @@ func (r *retryJoiner) retryJoin() error {
 		}
 
 		if len(addrs) == 0 {
-			err = fmt.Errorf("No servers to join")
+			err = fmt.Errorf("no servers to join")
 		}
 
 		attempt++

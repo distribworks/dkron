@@ -30,7 +30,7 @@ You must have an active subscription to run Dkron Pro. After a one week grace pe
 
 This is a common requirement for "on-site installs" or "appliances" sold to large corporations.
 
-The standard license is only appropriate for SaaS usage as it does not allow distribution. Dkron Pro have an Appliance license option which **does** allow you to distribute them. The Appliance license is $3,950/yr for Pro. It allows you to distribute the Pro binaries as part of your application and each of your customers to run Dkron Pro **as part of your application only**. Email [support&#64;distrib.works](mailto:support&#64;distrib.works) to purchase.
+The standard license is only appropriate for SaaS usage as it does not allow distribution. Dkron Pro have an Appliance license option which **does** allow you to distribute them. The Appliance license is $7,500/yr for Pro. It allows you to distribute the Pro binaries as part of your application and each of your customers to run Dkron Pro **as part of your application only**. Email [support&#64;distrib.works](mailto:support&#64;distrib.works) to purchase.
 
 ### Can you transfer a license?
 
@@ -53,7 +53,11 @@ If you purchased Dkron Pro ([settings](https://gumroad.com/settings)) with a cre
 
 ## Can I request a change to the license terms?
 
-Dkron Pro purchasing the Appliance license can ask for changes to the terms and conditions. Email your concerns and we can negotiate something.
+Dkron Pro customers purchasing the Appliance license can ask for changes to the terms and conditions.
+
+If you don't need the Appliance license but wants to ask for changes to the terms and conditions you will need to purchase a Dkron Pro standard license per production server.
+
+Email your concerns and we can negotiate something.
 
 ## Can I pay via invoice and purchase order?
 

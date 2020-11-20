@@ -48,7 +48,7 @@ func TestNotifier_sendExecutionEmail(t *testing.T) {
 		FinishedAt: time.Now(),
 		Success:    true,
 		NodeName:   "test-node",
-		Output:     []byte("test-output"),
+		Output:     "test-output",
 	}
 
 	exg := []*Execution{
@@ -56,7 +56,7 @@ func TestNotifier_sendExecutionEmail(t *testing.T) {
 			JobName:   "test",
 			StartedAt: time.Now(),
 			NodeName:  "test-node2",
-			Output:    []byte("test-output"),
+			Output:    "test-output",
 		},
 		ex1,
 	}
@@ -98,7 +98,7 @@ func TestNotifier_buildTemplate(t *testing.T) {
 		FinishedAt: time.Now(),
 		Success:    true,
 		NodeName:   "test-node",
-		Output:     []byte("test-output"),
+		Output:     "test-output",
 	}
 
 	exg := []*Execution{
@@ -106,7 +106,7 @@ func TestNotifier_buildTemplate(t *testing.T) {
 			JobName:   "test",
 			StartedAt: time.Now(),
 			NodeName:  "test-node2",
-			Output:    []byte("test-output"),
+			Output:    "test-output",
 		},
 		ex1,
 	}
@@ -146,12 +146,12 @@ var templateTestCases = func(n *Notifier) []templateTestCase {
 		},
 		{
 			desc:     "StartTime template variable",
-			exp:      fmt.Sprintf("%s", n.Execution.StartedAt),
+			exp:      n.Execution.StartedAt.String(),
 			template: "{{.StartTime}}",
 		},
 		{
 			desc:     "FinishedAt template variable",
-			exp:      fmt.Sprintf("%s", n.Execution.FinishedAt),
+			exp:      n.Execution.FinishedAt.String(),
 			template: "{{.FinishedAt}}",
 		},
 		{
@@ -166,7 +166,7 @@ var templateTestCases = func(n *Notifier) []templateTestCase {
 		},
 		{
 			desc:     "Output template variable",
-			exp:      fmt.Sprintf("%s", n.Execution.Output),
+			exp:      n.Execution.Output,
 			template: "{{.Output}}",
 		},
 	}

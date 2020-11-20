@@ -8,7 +8,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/distribworks/dkron/v2/dkron"
+	"github.com/distribworks/dkron/v3/dkron"
 	"github.com/hashicorp/go-plugin"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -20,7 +20,7 @@ var agent *dkron.Agent
 
 const (
 	// gracefulTimeout controls how long we wait before forcefully terminating
-	gracefulTimeout = 3 * time.Second
+	gracefulTimeout = 3 * time.Hour
 )
 
 // agentCmd represents the agent command
@@ -67,7 +67,7 @@ func agentRun(args ...string) error {
 
 	exit := handleSignals()
 	if exit != 0 {
-		return fmt.Errorf("Exit status: %d", exit)
+		return fmt.Errorf("exit status: %d", exit)
 	}
 
 	return nil
@@ -110,17 +110,29 @@ WAIT:
 	}
 
 	// Attempt a graceful leave
-	gracefulCh := make(chan struct{})
 	log.Info("agent: Gracefully shutting down agent...")
 	go func() {
-		plugin.CleanupClients()
 		if err := agent.Stop(); err != nil {
 			fmt.Printf("Error: %s", err)
 			log.Error(fmt.Sprintf("Error: %s", err))
 			return
 		}
-		close(gracefulCh)
 	}()
+
+	gracefulCh := make(chan struct{})
+
+	for {
+		log.Info("Waiting for jobs to finish...")
+		if agent.GetRunningJobs() < 1 {
+			log.Info("No jobs left. Exiting.")
+			break
+		}
+		time.Sleep(1 * time.Second)
+	}
+
+	plugin.CleanupClients()
+
+	close(gracefulCh)
 
 	// Wait for leave or another signal
 	select {
@@ -147,7 +159,7 @@ func UnmarshalTags(tags []string) (map[string]string, error) {
 	for _, tag := range tags {
 		parts := strings.SplitN(tag, "=", 2)
 		if len(parts) != 2 || len(parts[0]) == 0 {
-			return nil, fmt.Errorf("Invalid tag: '%s'", tag)
+			return nil, fmt.Errorf("invalid tag: '%s'", tag)
 		}
 		result[parts[0]] = parts[1]
 	}

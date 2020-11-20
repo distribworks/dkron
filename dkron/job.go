@@ -6,12 +6,13 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/dgraph-io/badger/v2"
-	"github.com/distribworks/dkron/v2/extcron"
-	"github.com/distribworks/dkron/v2/ntime"
-	"github.com/distribworks/dkron/v2/proto"
+	"github.com/distribworks/dkron/v3/extcron"
+	"github.com/distribworks/dkron/v3/ntime"
+	"github.com/distribworks/dkron/v3/plugin"
+	proto "github.com/distribworks/dkron/v3/plugin/types"
 	"github.com/golang/protobuf/ptypes"
 	"github.com/sirupsen/logrus"
+	"github.com/tidwall/buntdb"
 )
 
 const (
@@ -34,15 +35,15 @@ const (
 
 var (
 	// ErrParentJobNotFound is returned when the parent job is not found.
-	ErrParentJobNotFound = errors.New("Specified parent job not found")
+	ErrParentJobNotFound = errors.New("specified parent job not found")
 	// ErrNoAgent is returned when the job's agent is nil.
-	ErrNoAgent = errors.New("No agent defined")
+	ErrNoAgent = errors.New("no agent defined")
 	// ErrSameParent is returned when the job's parent is itself.
-	ErrSameParent = errors.New("The job can not have itself as parent")
+	ErrSameParent = errors.New("the job can not have itself as parent")
 	// ErrNoParent is returned when the job has no parent.
-	ErrNoParent = errors.New("The job doesn't have a parent job set")
+	ErrNoParent = errors.New("the job doesn't have a parent job set")
 	// ErrNoCommand is returned when attempting to store a job that has no command.
-	ErrNoCommand = errors.New("Unspecified command for job")
+	ErrNoCommand = errors.New("unspecified command for job")
 	// ErrWrongConcurrency is returned when Concurrency is set to a non existing setting.
 	ErrWrongConcurrency = errors.New("invalid concurrency policy value, use \"allow\" or \"forbid\"")
 )
@@ -95,17 +96,17 @@ type Job struct {
 	// Number of times to retry a job that failed an execution.
 	Retries uint `json:"retries"`
 
-	// running indicates that the Run method is still broadcasting
-	running bool
-
 	// Jobs that are dependent upon this one will be run after this job runs.
 	DependentJobs []string `json:"dependent_jobs"`
+
+	// Job pointer that are dependent upon this one
+	ChildJobs []*Job `json:"-"`
 
 	// Job id of job that this job is dependent upon.
 	ParentJob string `json:"parent_job"`
 
 	// Processors to use for this job
-	Processors map[string]PluginConfig `json:"processors"`
+	Processors map[string]plugin.Config `json:"processors"`
 
 	// Concurrency policy for this job (allow, forbid)
 	Concurrency string `json:"concurrency"`
@@ -114,7 +115,7 @@ type Job struct {
 	Executor string `json:"executor"`
 
 	// Executor args
-	ExecutorConfig ExecutorPluginConfig `json:"executor_config"`
+	ExecutorConfig plugin.ExecutorPluginConfig `json:"executor_config"`
 
 	// Computed job status
 	Status string `json:"status"`
@@ -157,8 +158,11 @@ func NewJobFromProto(in *proto.Job) *Job {
 		job.LastError.Set(t)
 	}
 
-	procs := make(map[string]PluginConfig)
+	procs := make(map[string]plugin.Config)
 	for k, v := range in.Processors {
+		if len(v.Config) == 0 {
+			v.Config = make(map[string]string)
+		}
 		procs[k] = v.Config
 	}
 	job.Processors = procs
@@ -214,23 +218,26 @@ func (j *Job) ToProto() *proto.Job {
 
 // Run the job
 func (j *Job) Run() {
-	// Maybe we are testing or it's disabled
-	if j.Agent != nil && j.Disabled == false {
-		// Check if it's runnable
-		if j.isRunnable() {
-			j.running = true
-			defer func() { j.running = false }()
+	// As this function should comply with the Job interface of the cron package we will use
+	// the agent property on execution, this is why it need to check if it's set and otherwise fail.
+	if j.Agent == nil {
+		log.Fatal("job: agent not set")
+	}
 
-			log.WithFields(logrus.Fields{
-				"job":      j.Name,
-				"schedule": j.Schedule,
-			}).Debug("scheduler: Run job")
+	// Check if it's runnable
+	if j.isRunnable() {
+		log.WithFields(logrus.Fields{
+			"job":      j.Name,
+			"schedule": j.Schedule,
+		}).Debug("job: Run job")
 
-			cronInspect.Set(j.Name, j)
+		cronInspect.Set(j.Name, j)
 
-			// Simple execution wrapper
-			ex := NewExecution(j.Name)
-			_ = j.Agent.RunQuery(j.Name, ex)
+		// Simple execution wrapper
+		ex := NewExecution(j.Name)
+
+		if _, err := j.Agent.Run(j.Name, ex); err != nil {
+			log.WithError(err).Error("job: Error running job")
 		}
 	}
 }
@@ -241,12 +248,7 @@ func (j *Job) String() string {
 }
 
 // GetParent returns the parent job of a job
-func (j *Job) GetParent() (*Job, error) {
-	// Maybe we are testing
-	if j.Agent == nil {
-		return nil, ErrNoAgent
-	}
-
+func (j *Job) GetParent(store *Store) (*Job, error) {
 	if j.Name == j.ParentJob {
 		return nil, ErrSameParent
 	}
@@ -255,9 +257,9 @@ func (j *Job) GetParent() (*Job, error) {
 		return nil, ErrNoParent
 	}
 
-	parentJob, err := j.Agent.Store.GetJob(j.ParentJob, nil)
+	parentJob, err := store.GetJob(j.ParentJob, nil)
 	if err != nil {
-		if err == badger.ErrKeyNotFound {
+		if err == buntdb.ErrNotFound {
 			return nil, ErrParentJobNotFound
 		}
 		return nil, err
@@ -265,6 +267,14 @@ func (j *Job) GetParent() (*Job, error) {
 	}
 
 	return parentJob, nil
+}
+
+// GetTimeLocation returns the time.Location based on the job's Timezone, or
+// the default (UTC) if none is configured, or
+// nil if an error occurred while creating the timezone from the property
+func (j *Job) GetTimeLocation() *time.Location {
+	loc, _ := time.LoadLocation(j.Timezone)
+	return loc
 }
 
 // GetNext returns the job's next schedule from now
@@ -281,6 +291,10 @@ func (j *Job) GetNext() (time.Time, error) {
 }
 
 func (j *Job) isRunnable() bool {
+	if j.Disabled {
+		return false
+	}
+
 	if j.Agent.GlobalLock {
 		log.WithField("job", j.Name).
 			Warning("job: Skipping execution because active global lock")
@@ -288,22 +302,22 @@ func (j *Job) isRunnable() bool {
 	}
 
 	if j.Concurrency == ConcurrencyForbid {
-		j.Agent.RefreshJobStatus(j.Name)
-	}
+		exs, err := j.Agent.GetActiveExecutions()
+		if err != nil {
+			log.WithError(err).Error("job: Error quering for running executions")
+			return false
+		}
 
-	if j.Status == StatusRunning && j.Concurrency == ConcurrencyForbid {
-		log.WithFields(logrus.Fields{
-			"job":         j.Name,
-			"concurrency": j.Concurrency,
-			"job_status":  j.Status,
-		}).Info("job: Skipping concurrent execution")
-		return false
-	}
-
-	if j.running {
-		log.WithField("job", j.Name).
-			Warning("job: Skipping execution because last execution still broadcasting, consider increasing schedule interval")
-		return false
+		for _, e := range exs {
+			if e.JobName == j.Name {
+				log.WithFields(logrus.Fields{
+					"job":         j.Name,
+					"concurrency": j.Concurrency,
+					"job_status":  j.Status,
+				}).Info("job: Skipping concurrent execution")
+				return false
+			}
+		}
 	}
 
 	return true
@@ -311,6 +325,10 @@ func (j *Job) isRunnable() bool {
 
 // Validate validates whether all values in the job are acceptable.
 func (j *Job) Validate() error {
+	if j.Name == "" {
+		return fmt.Errorf("name cannot be empty")
+	}
+
 	if valid, chr := isSlug(j.Name); !valid {
 		return fmt.Errorf("name contains illegal character '%s'", chr)
 	}
@@ -346,4 +364,69 @@ func isSlug(candidate string) (bool, string) {
 	illegalCharPattern, _ := regexp.Compile(`[^\p{Ll}0-9_-]`)
 	whyNot := illegalCharPattern.FindString(candidate)
 	return whyNot == "", whyNot
+}
+
+// generate Job Tree
+func generateJobTree(jobs []*Job) ([]*Job, error) {
+	length := len(jobs)
+	j := 0
+	for i := 0; i < length; i++ {
+		rejobs, isTopParentNodeFlag, err := findParentJobAndValidateJob(jobs, j)
+		if err != nil {
+			return nil, err
+		}
+		if isTopParentNodeFlag {
+			j++
+		}
+		jobs = rejobs
+	}
+	return jobs, nil
+}
+
+// findParentJobAndValidateJob...
+func findParentJobAndValidateJob(jobs []*Job, index int) ([]*Job, bool, error) {
+	childJob := jobs[index]
+	// Validate job
+	if err := childJob.Validate(); err != nil {
+		return nil, false, err
+	}
+	if childJob.ParentJob == "" {
+		return jobs, true, nil
+	}
+	for _, parentJob := range jobs {
+		if parentJob.Name == childJob.Name {
+			continue
+		}
+		if childJob.ParentJob == parentJob.Name {
+			parentJob.ChildJobs = append(parentJob.ChildJobs, childJob)
+			jobs = append(jobs[:index], jobs[index+1:]...)
+			return jobs, false, nil
+		}
+		if len(parentJob.ChildJobs) > 0 {
+			flag := findParentJobInChildJobs(parentJob.ChildJobs, childJob)
+			if flag {
+				jobs = append(jobs[:index], jobs[index+1:]...)
+				return jobs, false, nil
+			}
+		}
+	}
+	return nil, false, ErrNoParent
+}
+
+func findParentJobInChildJobs(jobs []*Job, job *Job) bool {
+	for _, parentJob := range jobs {
+		if job.ParentJob == parentJob.Name {
+			parentJob.ChildJobs = append(parentJob.ChildJobs, job)
+			return true
+		} else {
+			if len(parentJob.ChildJobs) > 0 {
+				flag := findParentJobInChildJobs(parentJob.ChildJobs, job)
+				if flag {
+					return true
+				}
+			}
+
+		}
+	}
+	return false
 }

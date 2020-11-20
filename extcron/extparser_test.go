@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/distribworks/dkron/v2/cron"
+	"github.com/robfig/cron/v3"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

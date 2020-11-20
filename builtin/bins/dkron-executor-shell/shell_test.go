@@ -19,8 +19,7 @@ func Test_buildCmd(t *testing.T) {
 	// test not shell command
 	cmd, err = buildCmd("date && echo 'success'", false, []string{}, "")
 	assert.NoError(t, err)
-	out, err = cmd.CombinedOutput()
-	assert.Error(t, err)
+	assert.Len(t, cmd.Args, 1)
 }
 
 func Test_buildCmdWithCustomEnvironmentVariables(t *testing.T) {

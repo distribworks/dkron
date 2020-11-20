@@ -6,7 +6,8 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/distribworks/dkron/v2/dkron"
+	"github.com/distribworks/dkron/v3/plugin"
+	"github.com/distribworks/dkron/v3/plugin/types"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -19,8 +20,8 @@ type FilesOutput struct {
 	logDir  string
 }
 
-// Process method of the plugin
-func (l *FilesOutput) Process(args *dkron.ExecutionProcessorArgs) dkron.Execution {
+// Process method writes the execution output to a file
+func (l *FilesOutput) Process(args *plugin.ProcessorArgs) types.Execution {
 	log.SetFormatter(&log.TextFormatter{FullTimestamp: true})
 	l.parseConfig(args.Config)
 
@@ -39,7 +40,7 @@ func (l *FilesOutput) Process(args *dkron.ExecutionProcessorArgs) dkron.Executio
 	return args.Execution
 }
 
-func (l *FilesOutput) parseConfig(config dkron.PluginConfig) {
+func (l *FilesOutput) parseConfig(config plugin.Config) {
 	forward, err := strconv.ParseBool(config["forward"])
 	if err != nil {
 		l.forward = false

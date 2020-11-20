@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/distribworks/dkron/v2/cron"
+	"github.com/robfig/cron/v3"
 )
 
 // ExtParser is a parser extending robfig/cron v3 standard parser with
@@ -15,7 +15,7 @@ type ExtParser struct {
 }
 
 // NewParser creates an ExtParser instance
-func NewParser() ExtParser {
+func NewParser() cron.ScheduleParser {
 	return ExtParser{cron.NewParser(cron.Second | cron.Minute | cron.Hour | cron.Dom | cron.Month | cron.Dow | cron.Descriptor)}
 }
 

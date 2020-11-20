@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/distribworks/dkron/v2/dkron/assets"
-	"github.com/distribworks/dkron/v2/dkron/templates"
+	"github.com/distribworks/dkron/v3/dkron/assets"
+	"github.com/distribworks/dkron/v3/dkron/templates"
 	"github.com/gin-contrib/multitemplate"
 	"github.com/gin-gonic/gin"
 )
@@ -67,6 +67,7 @@ func (a *Agent) DashboardRoutes(r *gin.RouterGroup) {
 	dashboard.GET("/", a.dashboardIndexHandler)
 	dashboard.GET("/jobs", a.dashboardJobsHandler)
 	dashboard.GET("/jobs/:job/executions", a.dashboardExecutionsHandler)
+	dashboard.GET("/busy", a.dashboardBusyHandler)
 }
 
 func (a *Agent) dashboardIndexHandler(c *gin.Context) {
@@ -89,9 +90,15 @@ func (a *Agent) dashboardJobsHandler(c *gin.Context) {
 }
 
 func (a *Agent) dashboardExecutionsHandler(c *gin.Context) {
-	job := c.Param("job")
+	jobName := c.Param("job")
 
-	groups, byGroup, err := a.Store.GetGroupedExecutions(job)
+	// Get the job's timezone
+	var jobLocation *time.Location
+	if job, err := a.Store.GetJob(jobName, nil); err == nil {
+		jobLocation = job.GetTimeLocation()
+	}
+
+	groups, byGroup, err := a.Store.GetGroupedExecutions(jobName, jobLocation)
 	if err != nil {
 		log.Error(err)
 	}
@@ -110,12 +117,21 @@ func (a *Agent) dashboardExecutionsHandler(c *gin.Context) {
 	}{
 		Common:  newCommonDashboardData(a, a.config.NodeName, "../../../"),
 		Groups:  groups,
-		JobName: job,
+		JobName: jobName,
 		ByGroup: byGroup,
 		Count:   count,
 	}
 
 	c.HTML(http.StatusOK, "executions", data)
+}
+
+func (a *Agent) dashboardBusyHandler(c *gin.Context) {
+	data := struct {
+		Common *commonDashboardData
+	}{
+		Common: newCommonDashboardData(a, a.config.NodeName, "../"),
+	}
+	c.HTML(http.StatusOK, "busy", data)
 }
 
 func mustLoadTemplate(path string) []byte {
@@ -156,6 +172,11 @@ func CreateMyRender() multitemplate.Render {
 		string(dash),
 		string(status),
 		string(mustLoadTemplate("/executions.html.tmpl")))
+
+	r.AddFromStringsFuncs("busy", funcMap(),
+		string(dash),
+		string(status),
+		string(mustLoadTemplate("/busy.html.tmpl")))
 
 	return r
 }

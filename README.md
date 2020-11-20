@@ -22,9 +22,11 @@ You can use Dkron to run the most important part of your company, scheduled jobs
 
 ## Project status
 
-Dkron v1.x is the previous stable still used in production by several companies.
+Dkron v1.x is legacy, not supported.
 
-Dkron v2.x is the latest version also stable and used in production by several companies, if you are going to start a new deployment, use this.
+Dkron v2.x is the previous version, stable and still used in production by some users.
+
+Dkron v3.x current stable version, if you are going to start a new deployment, use this.
 
 ## Installation
 
@@ -59,7 +61,7 @@ Dkron dashboard is built using a combinations of golang templates and AngularJS 
 
 To start developing the dashboard enter the `static` directory and run `npm install` to get the frontend dependencies.
 
-Change code in JS files or in templates, then run `make gen` to generate `bindata.go` file. This is a method of embedding resources in Go applications.
+Change code in JS files or in templates, then run `make gen` to generate assets files. This is a method of embedding resources in Go applications.
 
 ### Resources
 
@@ -75,9 +77,13 @@ https://github.com/jobandtalent/dkron-rb
 PHP client
 https://github.com/gromo/dkron-php-adapter
 
+Terraform provider
+https://github.com/peertransfer/terraform-provider-dkron
+
 ## Get in touch
 
-- Twitter: [@distribworks](https://twitter.com/distribworks) or [@distribworks](https://twitter.com/distribworks)
+- Twitter: [@distribworks](https://twitter.com/distribworks)
+- Chat: https://gitter.im/distribworks/dkron
 - Email: victor at distrib.works
 
 # Sponsor

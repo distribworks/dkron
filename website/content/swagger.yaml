@@ -69,8 +69,7 @@ paths:
           name: runoncreate
           description: If present, regardless of any value, causes the job to be run immediately after being succesfully created or updated.
           required: false
-          schema:
-            type: boolean
+          type: boolean
           allowEmptyValue: true
       responses:
         201:
@@ -147,6 +146,26 @@ paths:
           description: Successful response
           schema:
             $ref: '#/definitions/job'
+  /restore:
+    post:
+      description: |
+        Restore jobs from json file.
+      operationId: restore
+      tags:
+        - jobs
+      parameters:
+        - in: formData
+          name: file
+          description: Json file that needs to be restored.
+          required: true
+          type: file
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/restore'
   /members:
     get:
       description: |
@@ -173,6 +192,18 @@ paths:
           description: Successful response
           schema:
             $ref: '#/definitions/member'
+  /isleader:
+    get:
+      description: |
+        Check if node is a leader or follower.
+      operationId: getIsLeader
+      tags:
+        - default
+      responses:
+        200:
+          description: Node is a leader
+        404:
+          description: Node is a follower
   /leave:
     post:
       description: |
@@ -200,6 +231,20 @@ paths:
           description: The job that owns the executions to be fetched.
           required: true
           type: string
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/execution'
+  /busy:
+    get:
+      description: |
+        Returns the running executions.
+      operationId: busy
+      tags:
+        - default
       responses:
         200:
           description: Successful response
@@ -238,7 +283,7 @@ definitions:
     properties:
       name:
         type: string
-        description: "Name for the job."
+        description: "Name for the job. Use only lower case letters (unicode), digits, underscore and dash."
         readOnly: false
         example: "job1"
       displayname:
@@ -434,3 +479,9 @@ definitions:
     example:
       files:
         forward: true
+
+  restore:
+    type: string
+    description: Each job restore result.
+    example: "success create job_1"
+        

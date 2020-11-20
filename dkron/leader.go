@@ -12,11 +12,6 @@ import (
 )
 
 const (
-	// failedEvalUnblockInterval is the interval at which failed evaluations are
-	// unblocked to re-enter the scheduler. A failed evaluation occurs under
-	// high contention when the schedulers plan does not make progress.
-	failedEvalUnblockInterval = 1 * time.Minute
-
 	// barrierWriteTimeout is used to give Raft a chance to process a
 	// possible loss of leadership event if we are unable to get a barrier
 	// while leader.
@@ -192,7 +187,7 @@ func (a *Agent) establishLeadership(stopCh chan struct{}) error {
 	if err != nil {
 		log.Fatal(err)
 	}
-	a.sched.Start(jobs)
+	a.sched.Start(jobs, a)
 
 	return nil
 }
