@@ -20,10 +20,10 @@ var keygenCmd = &cobra.Command{
 		key := make([]byte, 16)
 		n, err := rand.Reader.Read(key)
 		if err != nil {
-			return fmt.Errorf("Error reading random data: %s", err)
+			return fmt.Errorf("error reading random data: %s", err)
 		}
 		if n != 16 {
-			return errors.New("Couldn't read enough entropy. Generate more entropy")
+			return errors.New("couldn't read enough entropy. Generate more entropy")
 		}
 
 		fmt.Println(base64.StdEncoding.EncodeToString(key))

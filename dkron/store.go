@@ -419,20 +419,6 @@ func (*Store) listTxFunc(prefix string, kvs *[]kv, found *bool) func(tx *buntdb.
 	}
 }
 
-// GetLastExecutionGroup get last execution group given the Job name.
-func (s *Store) GetLastExecutionGroup(jobName string, timezone *time.Location) ([]*Execution, error) {
-	executions, byGroup, err := s.GetGroupedExecutions(jobName, timezone)
-	if err != nil {
-		return nil, err
-	}
-
-	if len(executions) > 0 && len(byGroup) > 0 {
-		return executions[byGroup[0]], nil
-	}
-
-	return nil, nil
-}
-
 // GetExecutionGroup returns all executions in the same group of a given execution
 func (s *Store) GetExecutionGroup(execution *Execution, timezone *time.Location) ([]*Execution, error) {
 	res, err := s.GetExecutions(execution.JobName, timezone)

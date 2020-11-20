@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"net"
-	"sync"
 	"time"
 
 	metrics "github.com/armon/go-metrics"
@@ -41,8 +40,7 @@ type DkronGRPCServer interface {
 
 // GRPCServer is the local implementation of the gRPC server interface.
 type GRPCServer struct {
-	agent            *Agent
-	activeExecutions sync.Map
+	agent *Agent
 }
 
 // NewGRPCServer creates and returns an instance of a DkronGRPCServer implementation
