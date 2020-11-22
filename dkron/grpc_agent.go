@@ -34,6 +34,7 @@ func (s *statusAgentHelper) Update(b []byte, c bool) (int64, error) {
 
 // GRPCAgentServer is the local implementation of the gRPC server interface.
 type AgentServer struct {
+	types.AgentServer
 	agent *Agent
 }
 

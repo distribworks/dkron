@@ -5,6 +5,7 @@ require (
 	github.com/armon/circbuf v0.0.0-20190214190532-5111143e8da2
 	github.com/armon/go-metrics v0.3.4
 	github.com/aws/aws-sdk-go v1.34.17 // indirect
+	github.com/distribworks/dkron v1.2.5
 	github.com/fluent/fluent-logger-golang v1.5.0
 	github.com/gin-contrib/expvar v0.0.1
 	github.com/gin-contrib/multitemplate v0.0.0-20200226145339-3e397ee01bc6
@@ -33,6 +34,8 @@ require (
 	github.com/prometheus/client_golang v1.8.0
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/ryanuber/columnize v2.1.2+incompatible
+	github.com/shurcooL/httpfs v0.0.0-20190707220628-8d4bc4ba7749 // indirect
+	github.com/shurcooL/vfsgen v0.0.0-20200824052919-0d455de96546 // indirect
 	github.com/sirupsen/logrus v1.7.0
 	github.com/soheilhy/cmux v0.1.4
 	github.com/spf13/cobra v1.1.1
@@ -42,8 +45,10 @@ require (
 	github.com/stretchr/testify v1.6.1
 	github.com/tidwall/buntdb v1.1.4
 	github.com/tinylib/msgp v1.1.2 // indirect
-	golang.org/x/net v0.0.0-20200625001655-4c5254603344
-	google.golang.org/grpc v1.29.1
+	golang.org/x/net v0.0.0-20200822124328-c89045814202
+	google.golang.org/api v0.35.0
+	google.golang.org/grpc v1.33.2
+	google.golang.org/protobuf v1.25.0
 )
 
-go 1.14
+go 1.15

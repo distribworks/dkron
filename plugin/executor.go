@@ -69,6 +69,7 @@ func (m *ExecutorClient) Execute(args *types.ExecuteRequest, cb StatusHelper) (*
 // Here is the gRPC server that GRPCClient talks to.
 type ExecutorServer struct {
 	// This is the real implementation
+	types.ExecutorServer
 	Impl   Executor
 	broker *plugin.GRPCBroker
 }
@@ -102,6 +103,7 @@ func (m *GRPCStatusHelperClient) Update(b []byte, c bool) (int64, error) {
 // GRPCStatusHelperServer is the gRPC server that GRPCClient talks to.
 type GRPCStatusHelperServer struct {
 	// This is the real implementation
+	types.StatusHelperServer
 	Impl StatusHelper
 }
 
