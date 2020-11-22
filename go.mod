@@ -5,6 +5,7 @@ require (
 	github.com/armon/circbuf v0.0.0-20190214190532-5111143e8da2
 	github.com/armon/go-metrics v0.3.4
 	github.com/aws/aws-sdk-go v1.34.17 // indirect
+	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869 // indirect
 	github.com/fluent/fluent-logger-golang v1.5.0
 	github.com/gin-contrib/expvar v0.0.1
 	github.com/gin-contrib/multitemplate v0.0.0-20200226145339-3e397ee01bc6
@@ -25,7 +26,6 @@ require (
 	github.com/hashicorp/serf v0.9.5
 	github.com/hashicorp/yamux v0.0.0-20190923154419-df201c70410d // indirect
 	github.com/jordan-wright/email v0.0.0-20180115032944-94ae17dedda2
-	github.com/juliangruber/go-intersect v1.0.0
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0
 	github.com/mattn/go-shellwords v1.0.10
 	github.com/mitchellh/go-testing-interface v1.14.1 // indirect
@@ -42,8 +42,11 @@ require (
 	github.com/stretchr/testify v1.6.1
 	github.com/tidwall/buntdb v1.1.4
 	github.com/tinylib/msgp v1.1.2 // indirect
-	golang.org/x/net v0.0.0-20200625001655-4c5254603344
-	google.golang.org/grpc v1.29.1
+	golang.org/x/net v0.0.0-20200822124328-c89045814202
+	google.golang.org/api v0.35.0 // indirect
+	google.golang.org/grpc v1.33.2
+	google.golang.org/grpc/examples v0.0.0-20201121004645-9da74c039bbf // indirect
+	google.golang.org/protobuf v1.25.0
 )
 
-go 1.14
+go 1.15

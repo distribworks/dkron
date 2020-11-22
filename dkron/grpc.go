@@ -40,6 +40,7 @@ type DkronGRPCServer interface {
 
 // GRPCServer is the local implementation of the gRPC server interface.
 type GRPCServer struct {
+	proto.DkronServer
 	agent *Agent
 }
 
