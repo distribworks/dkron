@@ -63,9 +63,6 @@ func (as *AgentServer) AgentRun(req *types.AgentRunRequest, stream types.Agent_A
 
 	jex := job.Executor
 	exc := job.ExecutorConfig
-	if jex == "" {
-		return errors.New("grpc_agent: No executor defined, nothing to do")
-	}
 
 	// Send the first update with the initial execution state to be stored in the server
 	execution.StartedAt = ptypes.TimestampNow()
@@ -75,6 +72,10 @@ func (as *AgentServer) AgentRun(req *types.AgentRunRequest, stream types.Agent_A
 		Execution: execution,
 	}); err != nil {
 		return err
+	}
+
+	if jex == "" {
+		return errors.New("grpc_agent: No executor defined, nothing to do")
 	}
 
 	// Check if executor exists
