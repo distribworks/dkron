@@ -147,7 +147,7 @@ func (a *Agent) nodeFailed(me serf.MemberEvent) {
 		if !ok {
 			continue
 		}
-		log.Info("removing server", "server", parts)
+		log.Info("removing server ", parts)
 
 		// Remove the server if known
 		a.peerLock.Lock()
