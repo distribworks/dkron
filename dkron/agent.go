@@ -705,17 +705,17 @@ func (a *Agent) processFilteredNodes(job *Job) (map[string]string, map[string]st
 	}
 
 	// Create an array of node names to aid in computing resulting set based on cardinality
-	var nameIndex []string
+	var names []string
 	for name := range execNodes {
-		nameIndex = append(nameIndex, name)
+		names = append(names, name)
 	}
 
 	nodes := make(map[string]string)
 	rand.Seed(time.Now().UnixNano())
 	for ; cardinality > 0; cardinality-- {
 		// Pick a node, any node
-		randomIndex := rand.Intn(cardinality)
-		m := execNodes[nameIndex[randomIndex]]
+		randomIndex := rand.Intn(len(names))
+		m := execNodes[names[randomIndex]]
 
 		// Store name and address
 		if addr, ok := m.Tags["rpc_addr"]; ok {
@@ -725,8 +725,8 @@ func (a *Agent) processFilteredNodes(job *Job) (map[string]string, map[string]st
 		}
 
 		// Swap picked node with the first one and shorten array, so node can't get picked again
-		nameIndex[randomIndex], nameIndex[0] = nameIndex[0], nameIndex[randomIndex]
-		nameIndex = nameIndex[1:]
+		names[randomIndex], names[0] = names[0], names[randomIndex]
+		names = names[1:]
 	}
 
 	return nodes, tags, nil
