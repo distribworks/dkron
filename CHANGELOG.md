@@ -6,9 +6,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.1.0] - 2020-12-18
+
 ### Features
 
 - React admin web UI [#864](https://github.com/distribworks/dkron/pull/864)
+
+### Changes
+
+- Use newer gRPC library version [#855](https://github.com/distribworks/dkron/pull/855)
+- Bump deps
+
+### Fixes
+
+- Clean up log message [#860](https://github.com/distribworks/dkron/pull/860) @yvanoers
+- Remove duplicate lines from Recovery documentation [#861](https://github.com/distribworks/dkron/pull/861) @vishalsngl
+- How errors are handled in the AgentRun call [#858](https://github.com/distribworks/dkron/pull/858)
+- Fix uneven balancing [#865](https://github.com/distribworks/dkron/pull/865) @yvanoers
 
 ## [3.0.8] - 2020-11-20
 
