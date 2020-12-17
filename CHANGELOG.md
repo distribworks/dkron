@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Features
+
+- React admin web UI [#864](https://github.com/distribworks/dkron/pull/864)
+
 ## [3.0.8] - 2020-11-20
 
 ### Changes

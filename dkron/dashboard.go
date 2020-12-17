@@ -16,7 +16,6 @@ import (
 const (
 	dashboardPathPrefix = "dashboard"
 	assetsPrefix        = "static"
-	apiPathPrefix       = "v1"
 )
 
 type commonDashboardData struct {

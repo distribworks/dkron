@@ -72,6 +72,7 @@ func TestStore(t *testing.T) {
 	execs, err := s.GetExecutions("test", nil)
 	assert.NoError(t, err)
 
+	testExecution.Id = testExecution.Key()
 	assert.Equal(t, testExecution, execs[0])
 	assert.Len(t, execs, 1)
 

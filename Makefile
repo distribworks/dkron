@@ -32,16 +32,11 @@ clean:
 	rm -f *.tar.gz
 	rm -rf tmp
 
-.PHONY: doc apidoc gen test
+.PHONY: doc apidoc gen test ui
 doc:
 	#scripts/run doc --dir website/content/cli
 	cd website; hugo -d ../public
 	ghp-import -p public
-
-gen:
-	rm -rf static/.node_modules
-	go generate ./dkron/templates
-	go generate ./dkron/assets
 
 test:
 	@bash --norc -i ./scripts/test
@@ -51,3 +46,8 @@ updatetestcert:
 	openssl pkcs12 -in badssl.com-client.p12 -nocerts -nodes -passin pass:badssl.com -out builtin/bins/dkron-executor-http/testdata/badssl.com-client-key-decrypted.pem
 	openssl pkcs12 -in badssl.com-client.p12 -nokeys -passin pass:badssl.com -out builtin/bins/dkron-executor-http/testdata/badssl.com-client.pem
 	rm badssl.com-client.p12
+
+ui:
+	rm -rf ui-dist
+	cd ui; npm run-script build
+	go generate ./dkron/assets_ui
