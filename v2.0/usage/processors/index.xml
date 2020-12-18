@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Processors on Dkron - Distributed job scheduling system</title>
+    <title>Processors on Dkron - Cloud native job scheduling system</title>
     <link>/v2.0/usage/processors/</link>
-    <description>Recent content in Processors on Dkron - Distributed job scheduling system</description>
+    <description>Recent content in Processors on Dkron - Cloud native job scheduling system</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     

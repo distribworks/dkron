@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Dkron - Distributed job scheduling system</title>
+    <title>Dkron - Cloud native job scheduling system</title>
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-08-04T10:56:34 CEST">
-<title>Outage recovery :: Dkron - Distributed job scheduling system</title>
+<meta name="revised" content="2020-12-18T10:17:09 CET">
+<title>Outage recovery :: Dkron - Cloud native job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
 <link href="/css/nucleus.css" rel="stylesheet">
@@ -241,13 +241,6 @@
         </div>
     </li>
         </ul>
-    </li>
-      <li data-nav-id="/usage/signals/" class="dd-item">
-        <div>
-          <a href="/usage/signals/">
-            Signals
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
     </li>
       <li data-nav-id="/usage/upgrade/" class="dd-item">
         <div>
@@ -1582,7 +1575,6 @@
 <p>In the case of an unrecoverable server failure in a single server cluster, data loss is inevitable since data was not replicated to any other servers. This is why a single server deploy is never recommended.</p>
 <h2 id="failure-of-a-server-in-a-multi-server-cluster">Failure of a Server in a Multi-Server Cluster</h2>
 <p>If you think the failed server is recoverable, the easiest option is to bring it back online and have it rejoin the cluster with the same IP address, returning the cluster to a fully healthy state. Similarly, even if you need to rebuild a new Dkron server to replace the failed node, you may wish to do that immediately. Keep in mind that the rebuilt server needs to have the same IP address as the failed server. Again, once this server is online and has rejoined, the cluster will return to a fully healthy state.</p>
-<p>Both of these strategies involve a potentially lengthy time to reboot or rebuild a failed server. If this is impractical or if building a new server with the same IP isn&rsquo;t an option, you need to remove the failed server.</p>
 <p>Both of these strategies involve a potentially lengthy time to reboot or rebuild a failed server. If this is impractical or if building a new server with the same IP isn&rsquo;t an option, you need to remove the failed server. Usually, you can issue a <code>dkron leave</code> command to remove the failed server if it&rsquo;s still a member of the cluster.</p>
 <p>If <code>dkron leave</code> isn&rsquo;t able to remove the server, you can use the <code>dkron raft remove-peer</code> command to remove the stale peer server on the fly with no downtime.</p>
 <p>You can use the <code>dkron raft list-peers</code> command to inspect the Raft configuration:</p>

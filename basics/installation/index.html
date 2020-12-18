@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Dkron - Distributed job scheduling system</title>
+    <title>Dkron - Cloud native job scheduling system</title>
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-08-04T10:56:33 CEST">
-<title>Installation :: Dkron - Distributed job scheduling system</title>
+<meta name="revised" content="2020-12-18T10:17:08 CET">
+<title>Installation :: Dkron - Cloud native job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
 <link href="/css/nucleus.css" rel="stylesheet">
@@ -242,13 +242,6 @@
         </div>
     </li>
         </ul>
-    </li>
-      <li data-nav-id="/usage/signals/" class="dd-item">
-        <div>
-          <a href="/usage/signals/">
-            Signals
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
     </li>
       <li data-nav-id="/usage/upgrade/" class="dd-item">
         <div>
@@ -1603,7 +1596,7 @@ gpgcheck=0
 </code></pre><h3 id="mounting-a-mapped-file-storage-volume">Mounting a mapped file storage volume</h3>
 <p>Dkron uses the local filesystem for storing the embedded database to store its own application data and the Raft protocol log. The end result is that your Dkron data will be on disk inside your container and lost if you ever remove the container.</p>
 <p>To persist your data outside of the container and make it available for use between container launches we can mount a local path inside our container.</p>
-<pre><code>docker run -d -p 8080:8080 -v ~/dkron.data:/dkron.data --name dkron dkron/dkron agent --server --bootstrap-expect=1
+<pre><code>docker run -d -p 8080:8080 -v ~/dkron.data:/dkron.data --name dkron dkron/dkron agent --server --bootstrap-expect=1 --data-dir=/dkron.data
 </code></pre><p>Now when you launch your container we are mounting that folder from our local filesystem into the container.</p>
 
 

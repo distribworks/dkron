@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Usage on Dkron - Distributed job scheduling system</title>
+    <title>Usage on Dkron - Cloud native job scheduling system</title>
     <link>/usage/</link>
-    <description>Recent content in Usage on Dkron - Distributed job scheduling system</description>
+    <description>Recent content in Usage on Dkron - Cloud native job scheduling system</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     
@@ -126,17 +126,6 @@ statsd-addr: &amp;#34;localhost:8125&amp;#34; # Or for datadog statsd dog-statsd
       <description>Outage Recovery Don&amp;rsquo;t panic! This is a critical first step.
 Depending on your deployment configuration, it may take only a single server failure for cluster unavailability. Recovery requires an operator to intervene, but the process is straightforward.
 This guide is for recovery from a Dkron outage due to a majority of server nodes in a datacenter being lost. If you are looking to add or remove servers, see the clustering guide.</description>
-    </item>
-    
-    <item>
-      <title>Signals</title>
-      <link>/usage/signals/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/usage/signals/</guid>
-      <description>Dkron responds to several signals. On a Unix machine, you can use the kill binary, e.g.
-kill -TERM pid TERM TERM signals that Dkron should shut down. It will stop accepting new work, but continue working on current jobs until they finish, then will exit.
-HUP HUP signals Dkron to reload the configuration without restarting, it will only affect some of the configuration values like tags, notification settings, etc. Values that needs restarting the service like IP address or ports are not affected.</description>
     </item>
     
     <item>
