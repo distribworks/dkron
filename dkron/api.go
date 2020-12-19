@@ -165,16 +165,12 @@ func (h *HTTPTransport) indexHandler(c *gin.Context) {
 
 func (h *HTTPTransport) jobsHandler(c *gin.Context) {
 	metadata := c.QueryMap("metadata")
-	sort, ok := c.GetQuery("_sort")
-	if !ok || sort == "id" {
+	sort := c.DefaultQuery("_sort", "id")
+	if sort == "id" {
 		sort = "name"
 	}
-	order, ok := c.GetQuery("_order")
-	if !ok {
-		order = "ASC"
-	}
-
-	q, _ := c.GetQuery("q")
+	order := c.DefaultQuery("_order", "ASC")
+	q := c.Query("q")
 
 	jobs, err := h.agent.Store.GetJobs(
 		&JobOptions{
@@ -182,6 +178,7 @@ func (h *HTTPTransport) jobsHandler(c *gin.Context) {
 			Sort:     sort,
 			Order:    order,
 			Query:    q,
+			Status:   c.Query("status"),
 		},
 	)
 	if err != nil {
