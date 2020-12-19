@@ -9,6 +9,7 @@ import {
     Filter,
     TextInput,
     List,
+    SelectInput
 } from 'react-admin';
 import ToggleButton from "./ToggleButton"
 import RunButton from "./RunButton"
@@ -16,6 +17,10 @@ import RunButton from "./RunButton"
 const PostFilter = (props: any) => (
     <Filter {...props}>
         <TextInput label="Search" source="q" alwaysOn />
+        <SelectInput source="status" choices={[
+            { id: 'success', name: 'Success' },
+            { id: 'failed', name: 'Failed' },
+        ]} />
     </Filter>
 );
 
