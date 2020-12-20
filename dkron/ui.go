@@ -51,12 +51,15 @@ func (h *HTTPTransport) UI(r *gin.RouterGroup) {
 				}
 			}
 			l, err := h.agent.leaderMember()
+			ln := "no leader"
 			if err != nil {
 				log.Error(err)
+			} else {
+				ln = l.Name
 			}
 			ctx.HTML(http.StatusOK, "index.html", gin.H{
 				"DKRON_API_URL":         fmt.Sprintf("/%s", apiPathPrefix),
-				"DKRON_LEADER":          l.Name,
+				"DKRON_LEADER":          ln,
 				"DKRON_TOTAL_JOBS":      totalJobs,
 				"DKRON_FAILED_JOBS":     failedJobs,
 				"DKRON_SUCCESSFUL_JOBS": successfulJobs,
