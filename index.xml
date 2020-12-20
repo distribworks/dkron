@@ -19,7 +19,7 @@
       <guid>/basics/installation/</guid>
       <description>Running the binary Download the packaged archive for your platform from the downloads page and extract the package to a shared location in your drive, like /opt/local/bin.
 Run Dkron with default setting: dkron agent --server --bootstrap-expect=1
-Navigate to http://localhost:8080
+Navigate to http://localhost:8080/ui
 Installing the package Debian repo APT repository:
 deb [trusted=yes] https://repo.distrib.works/apt/ / Then install: sudo apt-get install dkron
 YUM repo YUM repository:
