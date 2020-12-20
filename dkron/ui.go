@@ -36,8 +36,30 @@ func (h *HTTPTransport) UI(r *gin.RouterGroup) {
 		if err == nil && p != "/" && p != "/index.html" {
 			ctx.FileFromFS(p, assets_ui.Assets)
 		} else {
+			jobs, err := h.agent.Store.GetJobs(nil)
+			if err != nil {
+				log.Error(err)
+			}
+			totalJobs := len(jobs)
+			successfulJobs := 0
+			failedJobs := 0
+			for _, j := range jobs {
+				if j.Status == "success" {
+					successfulJobs++
+				} else {
+					failedJobs++
+				}
+			}
+			l, err := h.agent.leaderMember()
+			if err != nil {
+				log.Error(err)
+			}
 			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"DKRON_API_URL": fmt.Sprintf("/%s", apiPathPrefix),
+				"DKRON_API_URL":         fmt.Sprintf("/%s", apiPathPrefix),
+				"DKRON_LEADER":          l.Name,
+				"DKRON_TOTAL_JOBS":      totalJobs,
+				"DKRON_FAILED_JOBS":     failedJobs,
+				"DKRON_SUCCESSFUL_JOBS": successfulJobs,
 			})
 		}
 	})

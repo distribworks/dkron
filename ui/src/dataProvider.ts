@@ -1,12 +1,6 @@
 import { fetchUtils } from 'ra-core';
 import jsonServerProvider from 'ra-data-json-server';
 
-declare global {
-    interface Window {
-        DKRON_API_URL:any;
-    }
-}
-
 export const apiUrl = window.DKRON_API_URL || 'http://localhost:8080/v1'
 const dataProvider = jsonServerProvider(apiUrl);
 
