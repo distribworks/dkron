@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.1.1] - 2020-12-21
+
+### Features
+
+- Some info cards in dashboard [#873](https://github.com/distribworks/dkron/pull/873)
+- Add status to JobOption to filter from UI and API [#872](https://github.com/distribworks/dkron/pull/872)
+
 ## [3.1.0] - 2020-12-18
 
 ### Features
