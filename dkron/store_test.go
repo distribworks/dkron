@@ -69,7 +69,10 @@ func TestStore(t *testing.T) {
 	_, err = s.SetExecution(testExecution2)
 	require.NoError(t, err)
 
-	execs, err := s.GetExecutions("test", nil)
+	execs, err := s.GetExecutions("test", nil, &JobExecutionOptions{
+		Sort: "started_at",
+		Order: "DESC", 
+	})
 	assert.NoError(t, err)
 
 	testExecution.Id = testExecution.Key()
