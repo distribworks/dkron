@@ -69,7 +69,7 @@ func TestStore(t *testing.T) {
 	_, err = s.SetExecution(testExecution2)
 	require.NoError(t, err)
 
-	execs, err := s.GetExecutions("test", nil, &JobExecutionOptions{
+	execs, err := s.GetExecutions("test", nil, &ExecutionOptions{
 		Sort: "started_at",
 		Order: "DESC", 
 	})

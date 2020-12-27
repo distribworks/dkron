@@ -16,7 +16,7 @@ type Storage interface {
 	SetExecutionDone(execution *Execution) (bool, error)
 	GetJobs(options *JobOptions) ([]*Job, error)
 	GetJob(name string, options *JobOptions) (*Job, error)
-	GetExecutions(jobName string, timezone *time.Location, opts *JobExecutionOptions) ([]*Execution, error)
+	GetExecutions(jobName string, timezone *time.Location, opts *ExecutionOptions) ([]*Execution, error)
 	GetExecutionGroup(execution *Execution, timezone *time.Location) ([]*Execution, error)
 	GetGroupedExecutions(jobName string, timezone *time.Location) (map[int64][]*Execution, []int64, error)
 	Shutdown() error

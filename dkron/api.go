@@ -329,6 +329,9 @@ func (h *HTTPTransport) executionsHandler(c *gin.Context) {
 	jobName := c.Param("job")
 
 	sort := c.DefaultQuery("_sort", "")
+	if sort == "id" {
+		sort = "started_at"
+	}
 	order := c.DefaultQuery("_order", "DESC")
 
 	job, err := h.agent.Store.GetJob(jobName, nil)
@@ -338,7 +341,7 @@ func (h *HTTPTransport) executionsHandler(c *gin.Context) {
 	}
 
 	executions, err := h.agent.Store.GetExecutions(job.Name, job.GetTimeLocation(), 
-		&JobExecutionOptions{
+		&ExecutionOptions{
 			Sort:     sort,
 			Order:    order,
 		},
