@@ -69,9 +69,9 @@ func TestStore(t *testing.T) {
 	_, err = s.SetExecution(testExecution2)
 	require.NoError(t, err)
 
-	execs, err := s.GetExecutions("test", nil, &ExecutionOptions{
+	execs, err := s.GetExecutions("test", &ExecutionOptions{
 		Sort: "started_at",
-		Order: "DESC", 
+		Order: "DESC",
 	})
 	assert.NoError(t, err)
 

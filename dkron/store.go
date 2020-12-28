@@ -49,8 +49,9 @@ type JobOptions struct {
 
 // ExecutionOptions additional options like "Sort" will be ready for JSON marshall
 type ExecutionOptions struct {
-	Sort 	string
-	Order 	string
+	Sort 		string
+	Order 		string
+	Timezone 	*time.Location
 }
 
 type kv struct {
@@ -424,7 +425,7 @@ func (s *Store) DeleteJob(name string) (*Job, error) {
 }
 
 // GetExecutions returns the executions given a Job name.
-func (s *Store) GetExecutions(jobName string, timezone *time.Location, opts *ExecutionOptions) ([]*Execution, error) {
+func (s *Store) GetExecutions(jobName string, opts *ExecutionOptions) ([]*Execution, error) {
 	prefix := fmt.Sprintf("%s:%s:", executionsPrefix, jobName)
 
 	kvs, err := s.list(prefix, true, opts)
@@ -432,7 +433,7 @@ func (s *Store) GetExecutions(jobName string, timezone *time.Location, opts *Exe
 		return nil, err
 	}
 
-	return s.unmarshalExecutions(kvs, timezone)
+	return s.unmarshalExecutions(kvs, opts.Timezone)
 }
 
 func (s *Store) list(prefix string, checkRoot bool, opts *ExecutionOptions) ([]kv, error) {
@@ -471,8 +472,8 @@ func (*Store) listTxFunc(prefix string, kvs *[]kv, found *bool, opts *ExecutionO
 }
 
 // GetExecutionGroup returns all executions in the same group of a given execution
-func (s *Store) GetExecutionGroup(execution *Execution, timezone *time.Location) ([]*Execution, error) {
-	res, err := s.GetExecutions(execution.JobName, timezone, &ExecutionOptions{})
+func (s *Store) GetExecutionGroup(execution *Execution, opts *ExecutionOptions) ([]*Execution, error) {
+	res, err := s.GetExecutions(execution.JobName, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -488,8 +489,8 @@ func (s *Store) GetExecutionGroup(execution *Execution, timezone *time.Location)
 
 // GetGroupedExecutions returns executions for a job grouped and with an ordered index
 // to facilitate access.
-func (s *Store) GetGroupedExecutions(jobName string, timezone *time.Location) (map[int64][]*Execution, []int64, error) {
-	execs, err := s.GetExecutions(jobName, timezone, &ExecutionOptions{})
+func (s *Store) GetGroupedExecutions(jobName string, opts *ExecutionOptions) (map[int64][]*Execution, []int64, error) {
+	execs, err := s.GetExecutions(jobName, opts)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -559,7 +560,7 @@ func (s *Store) SetExecution(execution *Execution) (string, error) {
 		return "", err
 	}
 
-	execs, err := s.GetExecutions(execution.JobName, nil, &ExecutionOptions{})
+	execs, err := s.GetExecutions(execution.JobName, &ExecutionOptions{})
 	if err != nil && err != buntdb.ErrNotFound {
 		log.WithError(err).
 			WithField("job", execution.JobName).

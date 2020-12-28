@@ -340,10 +340,11 @@ func (h *HTTPTransport) executionsHandler(c *gin.Context) {
 		return
 	}
 
-	executions, err := h.agent.Store.GetExecutions(job.Name, job.GetTimeLocation(), 
+	executions, err := h.agent.Store.GetExecutions(job.Name, 
 		&ExecutionOptions{
 			Sort:     sort,
 			Order:    order,
+			Timezone: job.GetTimeLocation(),
 		},
 	)
 	if err != nil {
