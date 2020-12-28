@@ -65,6 +65,7 @@ func NewStore() (*Store, error) {
 	db.CreateIndex("name", jobsPrefix+":*", buntdb.IndexJSON("name"))
 	db.CreateIndex("started_at", executionsPrefix+":*", buntdb.IndexJSON("started_at"))
 	db.CreateIndex("finished_at", executionsPrefix+":*", buntdb.IndexJSON("finished_at"))
+	db.CreateIndex("attempt", executionsPrefix+":*", buntdb.IndexJSON("attempt"))
 	db.CreateIndex("displayname", jobsPrefix+":*", buntdb.IndexJSON("displayname"))
 	db.CreateIndex("schedule", jobsPrefix+":*", buntdb.IndexJSON("schedule"))
 	db.CreateIndex("success_count", jobsPrefix+":*", buntdb.IndexJSON("success_count"))
@@ -520,7 +521,7 @@ func (*Store) setExecutionTxFunc(key string, pbe *dkronpb.Execution) func(tx *bu
 		// more recent, avoiding non ordered execution set
 		if i != "" {
 			var p dkronpb.Execution
-			if err := proto.Unmarshal([]byte(i), &p); err != nil {
+			if err := json.Unmarshal([]byte(i), &p); err != nil {
 				return err
 			}
 			// Compare existing execution
@@ -529,7 +530,7 @@ func (*Store) setExecutionTxFunc(key string, pbe *dkronpb.Execution) func(tx *bu
 			}
 		}
 
-		eb, err := proto.Marshal(pbe)
+		eb, err := json.Marshal(pbe)
 		if err != nil {
 			return err
 		}
@@ -635,8 +636,8 @@ func (s *Store) unmarshalExecutions(items []kv, timezone *time.Location) ([]*Exe
 	for _, item := range items {
 		var pbe dkronpb.Execution
 
-		if err := proto.Unmarshal(item.Value, &pbe); err != nil {
-			log.WithError(err).WithField("key", item.Key).Debug("error unmarshaling")
+		if err := json.Unmarshal(item.Value, &pbe); err != nil {
+			log.WithError(err).WithField("key", item.Key).Debug("error unmarshaling JSON")
 			return nil, err
 		}
 		execution := NewExecutionFromProto(&pbe)
