@@ -16,4 +16,6 @@ code {
   white-space: break-spaces;
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+  max-height: 300px;
+  overflow: auto;
 }
