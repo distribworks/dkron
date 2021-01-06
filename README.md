@@ -57,11 +57,11 @@ To add jobs to the system read the [API docs](https://dkron.io/api/).
 
 ## Frontend development
 
-Dkron dashboard is built using a combinations of golang templates and AngularJS code.
+Dkron dashboard is built using [React Admin](https://marmelab.com/react-admin/) as a single page application.
 
-To start developing the dashboard enter the `static` directory and run `npm install` to get the frontend dependencies.
+To start developing the dashboard enter the `ui` directory and run `npm install` to get the frontend dependencies and then start the local server with `npm start` it should start a new local web server and open a new browser window serving de web ui.
 
-Change code in JS files or in templates, then run `make gen` to generate assets files. This is a method of embedding resources in Go applications.
+Make your changes to the code, then run `make ui` to generate assets files. This is a method of embedding resources in Go applications.
 
 ### Resources
 
