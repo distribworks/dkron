@@ -327,7 +327,11 @@ func (a *Agent) setupRaft() error {
 			if err != nil {
 				return fmt.Errorf("recovery failed to parse peers.json: %v", err)
 			}
-			tmpFsm := newFSM(nil, nil)
+			store, err := NewStore()
+			if err != nil {
+				log.WithError(err).Fatal("dkron: Error initializing store")
+                        }
+			tmpFsm := newFSM(store, nil)
 			if err := raft.RecoverCluster(config, tmpFsm,
 				logStore, stableStore, snapshots, transport, configuration); err != nil {
 				return fmt.Errorf("recovery failed: %v", err)
