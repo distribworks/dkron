@@ -49,9 +49,9 @@ type JobOptions struct {
 
 // ExecutionOptions additional options like "Sort" will be ready for JSON marshall
 type ExecutionOptions struct {
-	Sort 		string
-	Order 		string
-	Timezone 	*time.Location
+	Sort     string
+	Order    string
+	Timezone *time.Location
 }
 
 type kv struct {
@@ -461,7 +461,7 @@ func (*Store) listTxFunc(prefix string, kvs *[]kv, found *bool, opts *ExecutionO
 		}
 		return true
 	}
-	
+
 	return func(tx *buntdb.Tx) (err error) {
 		if opts.Order == "DESC" {
 			err = tx.Descend(opts.Sort, fnc)
@@ -521,8 +521,12 @@ func (*Store) setExecutionTxFunc(key string, pbe *dkronpb.Execution) func(tx *bu
 		// more recent, avoiding non ordered execution set
 		if i != "" {
 			var p dkronpb.Execution
-			if err := json.Unmarshal([]byte(i), &p); err != nil {
-				return err
+			// [TODO] This condition is temporary while we migrate to JSON marshalling for executions
+			// so we can use BuntDb indexes. To be removed in future versions.
+			if err := proto.Unmarshal([]byte(i), &p); err != nil {
+				if err := json.Unmarshal([]byte(i), &p); err != nil {
+					return err
+				}
 			}
 			// Compare existing execution
 			if p.GetFinishedAt().Seconds > pbe.GetFinishedAt().Seconds {
@@ -636,9 +640,13 @@ func (s *Store) unmarshalExecutions(items []kv, timezone *time.Location) ([]*Exe
 	for _, item := range items {
 		var pbe dkronpb.Execution
 
-		if err := json.Unmarshal(item.Value, &pbe); err != nil {
-			log.WithError(err).WithField("key", item.Key).Debug("error unmarshaling JSON")
-			return nil, err
+		// [TODO] This condition is temporary while we migrate to JSON marshalling for jobs
+		// so we can use BuntDb indexes. To be removed in future versions.
+		if err := proto.Unmarshal([]byte(item.Value), &pbe); err != nil {
+			if err := json.Unmarshal(item.Value, &pbe); err != nil {
+				log.WithError(err).WithField("key", item.Key).Debug("error unmarshaling JSON")
+				return nil, err
+			}
 		}
 		execution := NewExecutionFromProto(&pbe)
 		if timezone != nil {
