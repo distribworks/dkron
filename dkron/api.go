@@ -328,16 +328,29 @@ func (h *HTTPTransport) restoreHandler(c *gin.Context) {
 func (h *HTTPTransport) executionsHandler(c *gin.Context) {
 	jobName := c.Param("job")
 
+	sort := c.DefaultQuery("_sort", "")
+	if sort == "id" {
+		sort = "started_at"
+	}
+	order := c.DefaultQuery("_order", "DESC")
+
 	job, err := h.agent.Store.GetJob(jobName, nil)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
 
-	executions, err := h.agent.Store.GetExecutions(job.Name, job.GetTimeLocation())
+	executions, err := h.agent.Store.GetExecutions(job.Name, 
+		&ExecutionOptions{
+			Sort:     sort,
+			Order:    order,
+			Timezone: job.GetTimeLocation(),
+		},
+	)
 	if err != nil {
 		if err == buntdb.ErrNotFound {
 			renderJSON(c, http.StatusOK, &[]Execution{})
+			log.Error(err)
 			return
 		}
 		log.Error(err)

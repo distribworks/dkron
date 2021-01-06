@@ -97,7 +97,11 @@ func (a *Agent) dashboardExecutionsHandler(c *gin.Context) {
 		jobLocation = job.GetTimeLocation()
 	}
 
-	groups, byGroup, err := a.Store.GetGroupedExecutions(jobName, jobLocation)
+	groups, byGroup, err := a.Store.GetGroupedExecutions(jobName, 
+		&ExecutionOptions{
+			Timezone: jobLocation,
+		},
+	)
 	if err != nil {
 		log.Error(err)
 	}
