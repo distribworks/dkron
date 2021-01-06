@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.1.2] - 2021-01-06
+
+### Features
+
+- Added some query filters on Job executions [#878](https://github.com/distribworks/dkron/pull/878) @MGSousa
+
+### Fixes
+
+- Fix panic on recovering cluster (with peers.json) [#882](https://github.com/distribworks/dkron/pull/882) @fopina
+- Use correct wrapping and monospace font for execution's output [#879](https://github.com/distribworks/dkron/pull/879) @sc0rp10
+
+
 ## [3.1.1] - 2020-12-21
 
 ### Features
