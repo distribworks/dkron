@@ -74,12 +74,12 @@ const JobShow = (props: any) => (
                 <ReferenceManyField reference="executions" target="jobs" label="Executions">
                     <Datagrid rowClick="expand" isRowSelectable={ record => false } expand={<OutputPanel {...props} />}>
                         <TextField source="id" />
-                        <TextField source="group" />
-                        <TextField source="job_name" />
+                        <TextField source="group" sortable={false} />
+                        <TextField source="job_name" sortable={false} />
                         <DateField source="started_at" showTime />
                         <DateField source="finished_at" showTime />
-                        <TextField source="node_name" />
-                        <BooleanField source="success" />
+                        <TextField source="node_name" sortable={false} />
+                        <BooleanField source="success" sortable={false} />
                         <NumberField source="attempt" />
                     </Datagrid>
                 </ReferenceManyField>
