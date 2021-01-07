@@ -1,5 +1,6 @@
 import { fetchUtils } from 'ra-core';
 import jsonServerProvider from 'ra-data-json-server';
+import { stringify } from 'query-string';
 
 export const apiUrl = window.DKRON_API_URL || 'http://localhost:8080/v1'
 const dataProvider = jsonServerProvider(apiUrl);
@@ -7,20 +8,18 @@ const dataProvider = jsonServerProvider(apiUrl);
 const myDataProvider = {
     ...dataProvider,
     getManyReference: (resource: any, params: any) => {
-        // Commented because executions query do not accept any query options yet
-        
-        // const { page, perPage } = params.pagination;
-        // const { field, order } = params.sort;
+        const { page, perPage } = params.pagination;
+        const { field, order } = params.sort;
 
-        // const query = {
-        //     ...fetchUtils.flattenObject(params.filter),
-        //     [params.target]: params.id,
-        //     _sort: field,
-        //     _order: order,
-        //     _start: (page - 1) * perPage,
-        //     _end: page * perPage,
-        // };
-        const url = `${apiUrl}/${params.target}/${params.id}/${resource}`;
+        const query = {
+            ...fetchUtils.flattenObject(params.filter),
+            [params.target]: params.id,
+            _sort: field,
+            _order: order,
+            _start: (page - 1) * perPage,
+            _end: page * perPage,
+        };
+        const url = `${apiUrl}/${params.target}/${params.id}/${resource}?${stringify(query)}`;
 
         return fetchUtils.fetchJson(url).then(({ headers, json }) => {
             if (!headers.has('x-total-count')) {
