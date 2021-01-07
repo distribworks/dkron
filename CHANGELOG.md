@@ -6,11 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-## [3.1.2] - 2021-01-06
+## [3.1.2] - 2021-01-08
 
 ### Features
 
 - Added some query filters on Job executions [#878](https://github.com/distribworks/dkron/pull/878) @MGSousa
+- Executions sorting in UI [#885](https://github.com/distribworks/dkron/pull/885)
 
 ### Fixes
 
