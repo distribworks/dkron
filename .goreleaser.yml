@@ -4,7 +4,8 @@ release:
   prerelease: auto
 
 builds:
-  - main: ./builtin/bins/dkron-executor-http/
+  - &xbuild
+    main: ./builtin/bins/dkron-executor-http/
     id: dkron-executor-http
     binary: dkron-executor-http
     env:
@@ -23,135 +24,40 @@ builds:
     ldflags:
       - -s -w
 
-  - main: ./builtin/bins/dkron-executor-shell/
+  - <<: *xbuild
+    main: ./builtin/bins/dkron-executor-shell/
     id: dkron-executor-shell
     binary: dkron-executor-shell
-    env:
-      - CGO_ENABLED=0
-    goos:
-      - freebsd
-      - windows
-      - darwin
-      - linux
-    goarch:
-      - amd64
-      - arm64
-      - arm
-    goarm:
-      - 7
-    ldflags:
-      - -s -w
 
-  - main: ./builtin/bins/dkron-executor-rabbitmq/
+  - <<: *xbuild
+    main: ./builtin/bins/dkron-executor-rabbitmq/
     id: dkron-executor-rabbitmq
     binary: dkron-executor-rabbitmq
-    env:
-      - CGO_ENABLED=0
-    goos:
-      - freebsd
-      - windows
-      - darwin
-      - linux
-    goarch:
-      - amd64
-      - arm64
-      - arm
-    goarm:
-      - 7
-    ldflags:
-      - -s -w
 
-  - main: ./builtin/bins/dkron-processor-files/
+  - <<: *xbuild
+    main: ./builtin/bins/dkron-processor-files/
     id: dkron-processor-files
     binary: dkron-processor-files
-    env:
-      - CGO_ENABLED=0
-    goos:
-      - freebsd
-      - windows
-      - darwin
-      - linux
-    goarch:
-      - amd64
-      - arm64
-      - arm
-    goarm:
-      - 7
-    ldflags:
-      - -s -w
 
-  - main: ./builtin/bins/dkron-processor-log/
+  - <<: *xbuild
+    main: ./builtin/bins/dkron-processor-log/
     id: dkron-processor-log
     binary: dkron-processor-log
-    env:
-      - CGO_ENABLED=0
-    goos:
-      - freebsd
-      - windows
-      - darwin
-      - linux
-    goarch:
-      - amd64
-      - arm64
-      - arm
-    goarm:
-      - 7
-    ldflags:
-      - -s -w
 
-  - main: ./builtin/bins/dkron-processor-syslog/
+  - <<: *xbuild
+    main: ./builtin/bins/dkron-processor-syslog/
     id: dkron-processor-syslog
     binary: dkron-processor-syslog
-    env:
-      - CGO_ENABLED=0
-    goos:
-      - freebsd
-      - windows
-      - darwin
-      - linux
-    goarch:
-      - amd64
-      - arm64
-      - arm
-    goarm:
-      - 7
-    ldflags:
-      - -s -w
   
-  - main: ./builtin/bins/dkron-processor-fluent/
+  - <<: *xbuild
+    main: ./builtin/bins/dkron-processor-fluent/
     id: dkron-processor-fluent
     binary: dkron-processor-fluent
-    env:
-      - CGO_ENABLED=0
-    goos:
-      - freebsd
-      - windows
-      - darwin
-      - linux
-    goarch:
-      - amd64
-      - arm64
-      - arm
-    goarm:
-      - 7
-    ldflags:
-      - -s -w
 
-  - main: .
+  - <<: *xbuild
+    main: .
+    id: dkron
     binary: dkron
-    env:
-      - CGO_ENABLED=0
-    goos:
-      - freebsd
-      - windows
-      - darwin
-      - linux
-    goarch:
-      - amd64
-      - arm64
-      - arm
-    goarm:
-      - 7
     ldflags:
       - -s -w -X github.com/distribworks/dkron/v3/dkron.Version={{.Version}} -X github.com/distribworks/dkron/v3/dkron.Codename=merichuas
 
