@@ -9,12 +9,14 @@ import {
     Filter,
     TextInput,
     List,
-    SelectInput
+    SelectInput,
+    BulkDeleteButton
 } from 'react-admin';
-import ToggleButton from "./ToggleButton"
-import RunButton from "./RunButton"
+import { Fragment } from 'react';
+import BulkRunButton from "./BulkRunButton"
+import BulkToggleButton from "./BulkToggleButton"
 
-const PostFilter = (props: any) => (
+const JobFilter = (props: any) => (
     <Filter {...props}>
         <TextInput label="Search" source="q" alwaysOn />
         <SelectInput source="status" choices={[
@@ -24,11 +26,23 @@ const PostFilter = (props: any) => (
     </Filter>
 );
 
+const StatusField = (props: any) => {
+    return <TextField {...props} />;
+};
+
+const JobBulkActionButtons = (props: any) => (
+    <Fragment>
+        <BulkRunButton {...props} />
+        <BulkToggleButton {...props} />
+        <BulkDeleteButton {...props} />
+    </Fragment>
+);
+
 const JobList = (props: any) => (
-    <List filters={<PostFilter />} {...props}>
-        <Datagrid rowClick="show">
+    <List {...props} filters={<JobFilter />} bulkActionButtons={<JobBulkActionButtons />}>
+        <Datagrid rowClick="show" style={{tableLayout: 'fixed'}}>
             <TextField source="id" />
-            <TextField source="displayname" />
+            <TextField source="displayname" label="Display name" />
             <TextField source="schedule" />
             <NumberField source="success_count" />
             <NumberField source="error_count" />
@@ -36,11 +50,9 @@ const JobList = (props: any) => (
             <DateField source="last_error" showTime />
             <BooleanField source="disabled" sortable={false} />
             <NumberField source="retries" sortable={false} />
-            <TextField source="status" sortable={false} />
+            <StatusField source="status" sortable={false} />
             <DateField source="next" showTime />
-            <RunButton />
-            <ToggleButton />
-            <EditButton />
+            <EditButton/>
         </Datagrid>
     </List>
 );
