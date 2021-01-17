@@ -52,7 +52,7 @@ const CustomAppBar = (props: any) => {
                 className={classes.title}
                 id="react-admin-title"
             />
-            <div className="clock">
+            <div>
                 <img src={logo} alt="logo" className={classes.logo} />
             </div>
             <span className={classes.spacer} />
