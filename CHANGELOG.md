@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.1.3] - 2021-01-17
+
 ### Changes
 
 - Several UI Improvements [#891](https://github.com/distribworks/dkron/pull/891)
