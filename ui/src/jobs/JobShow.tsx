@@ -16,6 +16,7 @@ import { OutputPanel } from "../executions/BusyList";
 import ToggleButton from "./ToggleButton"
 import RunButton from "./RunButton"
 import { JsonField } from "react-admin-json-view";
+import ZeroDateField from "./ZeroDateField";
 
 const JobShowActions = ({ basePath, data, resource }: any) => (
     <TopToolbar>
@@ -77,7 +78,7 @@ const JobShow = (props: any) => (
                         <TextField source="group" sortable={false} />
                         <TextField source="job_name" sortable={false} />
                         <DateField source="started_at" showTime />
-                        <DateField source="finished_at" showTime />
+                        <ZeroDateField source="finished_at" showTime />
                         <TextField source="node_name" sortable={false} />
                         <BooleanField source="success" sortable={false} />
                         <NumberField source="attempt" />

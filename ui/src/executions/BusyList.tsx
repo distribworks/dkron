@@ -1,9 +1,10 @@
 import * as React from "react";
 import { List, Datagrid, TextField, DateField } from 'react-admin';
 
-export const OutputPanel = ({ id, record, resource }: any) => (
-    <div className="execution-output" dangerouslySetInnerHTML={{ __html: record.output }} />
-);
+export const OutputPanel = ({ id, record, resource }: any) => {
+    let o = record.output || "Empty output";
+    return (<div className="execution-output" dangerouslySetInnerHTML={{ __html: o }} />);
+};
 
 export const BusyList = (props: any) => (
     <List {...props} pagination={ false }>
