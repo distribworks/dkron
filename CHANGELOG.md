@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changes
+
+- Several UI Improvements [#891](https://github.com/distribworks/dkron/pull/891)
+    * Visual status for jobs
+    * Bulk actions for toggle and run
+    * Flexible jobs datagrid layout
+    * Fix clock style
+    * Fix date rendering on non finished executions
+
 ## [3.1.2] - 2021-01-08
 
 ### Features
