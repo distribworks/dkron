@@ -19,3 +19,7 @@ code {
   max-height: 300px;
   overflow: auto;
 }
+
+.clock {
+  width: 100px;
+}

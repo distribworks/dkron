@@ -15,6 +15,7 @@ import {
 import { Fragment } from 'react';
 import BulkRunButton from "./BulkRunButton"
 import BulkToggleButton from "./BulkToggleButton"
+import StatusField from "./StatusFiled"
 
 const JobFilter = (props: any) => (
     <Filter {...props}>
@@ -25,10 +26,6 @@ const JobFilter = (props: any) => (
         ]} />
     </Filter>
 );
-
-const StatusField = (props: any) => {
-    return <TextField {...props} />;
-};
 
 const JobBulkActionButtons = (props: any) => (
     <Fragment>
