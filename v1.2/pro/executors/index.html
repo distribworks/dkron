@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2020-12-20T01:11:16 CET">
+<meta name="revised" content="2021-01-18T23:30:11 CET">
 <title>Executors :: Dkron - Cloud native job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -1066,24 +1066,153 @@
       <a href="/v1.2/basics/">Basics</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/v1.2/basics/installation/" class="dd-item">
+      <li data-nav-id="/v2.0/usage/target-nodes-spec/" class="dd-item">
         <div>
-          <a href="/v1.2/basics/installation/">
-            Installation
+          <a href="/v2.0/usage/target-nodes-spec/">
+            Target nodes spec
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/v1.2/basics/getting-started/" class="dd-item">
+      <li data-nav-id="/v2.0/usage/cron-spec/" class="dd-item">
         <div>
-          <a href="/v1.2/basics/getting-started/">
-            Getting started
+          <a href="/v2.0/usage/cron-spec/">
+            Cron spec
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/v1.2/basics/configuration/" class="dd-item">
+    <li data-nav-id="/v2.0/usage/executors/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/v2.0/usage/executors/">Executors</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/v2.0/usage/executors/http/" class="dd-item">
         <div>
-          <a href="/v1.2/basics/configuration/">
-            Configuration
+          <a href="/v2.0/usage/executors/http/">
+            HTTP Executor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/v2.0/usage/executors/shell/" class="dd-item">
+        <div>
+          <a href="/v2.0/usage/executors/shell/">
+            Shell Executor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/v2.0/usage/processors/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/v2.0/usage/processors/">Processors</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/v2.0/usage/processors/file/" class="dd-item">
+        <div>
+          <a href="/v2.0/usage/processors/file/">
+            File Processor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/v2.0/usage/processors/log/" class="dd-item">
+        <div>
+          <a href="/v2.0/usage/processors/log/">
+            Log Processor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/v2.0/usage/processors/syslog/" class="dd-item">
+        <div>
+          <a href="/v2.0/usage/processors/syslog/">
+            Syslog Processor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+      <li data-nav-id="/v2.0/usage/cloud-auto-join/" class="dd-item">
+        <div>
+          <a href="/v2.0/usage/cloud-auto-join/">
+            Cloud Auto-join
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/v2.0/usage/clustering/" class="dd-item">
+        <div>
+          <a href="/v2.0/usage/clustering/">
+            Clustering
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/v2.0/usage/concurrency/" class="dd-item">
+        <div>
+          <a href="/v2.0/usage/concurrency/">
+            Concurrency
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/v2.0/usage/storage/" class="dd-item">
+        <div>
+          <a href="/v2.0/usage/storage/">
+            Embedded storage
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/v2.0/usage/chaining/" class="dd-item">
+        <div>
+          <a href="/v2.0/usage/chaining/">
+            Job chaining
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/v2.0/usage/metatags/" class="dd-item">
+        <div>
+          <a href="/v2.0/usage/metatags/">
+            Job metadata
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/v2.0/usage/retries/" class="dd-item">
+        <div>
+          <a href="/v2.0/usage/retries/">
+            Job retries
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/v2.0/usage/metrics/" class="dd-item">
+        <div>
+          <a href="/v2.0/usage/metrics/">
+            Metrics
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/v2.0/usage/recovery/" class="dd-item">
+        <div>
+          <a href="/v2.0/usage/recovery/">
+            Outage recovery
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+    <li data-nav-id="/v2.0/usage/plugins/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/v2.0/usage/plugins/">Plugins</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/v2.0/usage/plugins/develop/" class="dd-item">
+        <div>
+          <a href="/v2.0/usage/plugins/develop/">
+            Developing plugins
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+      <li data-nav-id="/v2.0/usage/ecs/" class="dd-item">
+        <div>
+          <a href="/v2.0/usage/ecs/">
+            Use with AWS ECS
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
