@@ -4,8 +4,8 @@ import {
     TextField,
     NumberField,
     DateField,
-    BooleanField,
     EditButton,
+    BooleanField,
     TopToolbar,
     Show,
     TabbedShowLayout,
@@ -17,6 +17,8 @@ import ToggleButton from "./ToggleButton"
 import RunButton from "./RunButton"
 import { JsonField } from "react-admin-json-view";
 import ZeroDateField from "./ZeroDateField";
+import JobIcon from '@material-ui/icons/Update';
+import { Tooltip } from '@material-ui/core';
 
 const JobShowActions = ({ basePath, data, resource }: any) => (
     <TopToolbar>
@@ -26,11 +28,16 @@ const JobShowActions = ({ basePath, data, resource }: any) => (
     </TopToolbar>
 );
 
+const SuccessField = (props: any) => {
+    return (props.record["finished_at"] === null ? <Tooltip title="Running"><JobIcon /></Tooltip> : <BooleanField {...props} />);
+};
+
 const JobShow = (props: any) => (
     <Show actions={<JobShowActions {...props}/>} {...props}>
         <TabbedShowLayout>
             <Tab label="summary">
                 <TextField source="name" />
+                <TextField source="timezone" />
                 <TextField source="schedule" />
                 <DateField label="Last success" source="last_success" showTime />
                 <DateField source="last_error" showTime />
@@ -80,7 +87,7 @@ const JobShow = (props: any) => (
                         <DateField source="started_at" showTime />
                         <ZeroDateField source="finished_at" showTime />
                         <TextField source="node_name" sortable={false} />
-                        <BooleanField source="success" sortable={false} />
+                        <SuccessField source="success" sortable={false} />
                         <NumberField source="attempt" />
                     </Datagrid>
                 </ReferenceManyField>

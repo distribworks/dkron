@@ -4,7 +4,7 @@ require (
 	github.com/DataDog/datadog-go v4.0.0+incompatible // indirect
 	github.com/armon/circbuf v0.0.0-20190214190532-5111143e8da2
 	github.com/armon/go-metrics v0.3.6
-	github.com/aws/aws-sdk-go v1.34.17 // indirect
+	github.com/aws/aws-sdk-go v1.36.31 // indirect
 	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869 // indirect
 	github.com/fluent/fluent-logger-golang v1.5.0
 	github.com/gin-contrib/cors v1.3.1
@@ -13,9 +13,9 @@ require (
 	github.com/gin-gonic/gin v1.6.3
 	github.com/gogo/protobuf v1.3.1 // indirect
 	github.com/golang/protobuf v1.4.3
-	github.com/hashicorp/go-discover v0.0.0-20200108194735-7698de1390a1
+	github.com/hashicorp/go-discover v0.0.0-20201029210230-738cb3105cd0
 	github.com/hashicorp/go-hclog v0.15.0
-	github.com/hashicorp/go-immutable-radix v1.2.0 // indirect
+	github.com/hashicorp/go-immutable-radix v1.3.0 // indirect
 	github.com/hashicorp/go-plugin v1.4.0
 	github.com/hashicorp/go-sockaddr v1.0.2
 	github.com/hashicorp/go-syslog v1.0.0
@@ -44,7 +44,7 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/tidwall/buntdb v1.1.7
 	github.com/tinylib/msgp v1.1.2 // indirect
-	golang.org/x/net v0.0.0-20200822124328-c89045814202
+	golang.org/x/net v0.0.0-20201110031124-69a78807bb2b
 	google.golang.org/api v0.35.0 // indirect
 	google.golang.org/grpc v1.35.0
 	google.golang.org/grpc/examples v0.0.0-20201121004645-9da74c039bbf // indirect

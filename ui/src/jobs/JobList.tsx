@@ -40,6 +40,7 @@ const JobList = (props: any) => (
         <Datagrid rowClick="show" style={{tableLayout: 'fixed'}}>
             <TextField source="id" />
             <TextField source="displayname" label="Display name" />
+            <TextField source="timezone" />
             <TextField source="schedule" />
             <NumberField source="success_count" />
             <NumberField source="error_count" />
