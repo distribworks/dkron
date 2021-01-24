@@ -31,6 +31,7 @@ const JobShow = (props: any) => (
         <TabbedShowLayout>
             <Tab label="summary">
                 <TextField source="name" />
+                <TextField source="timezone" />
                 <TextField source="schedule" />
                 <DateField label="Last success" source="last_success" showTime />
                 <DateField source="last_error" showTime />

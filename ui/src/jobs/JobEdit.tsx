@@ -26,8 +26,9 @@ const EditForm = (props: any) => (
     <SimpleForm  {...props}>
         <TextInput disabled source="id" />
         <TextInput source="name" />
-        <TextInput source="schedule" />
         <TextInput source="displayname" />
+        <TextInput source="timezone" />
+        <TextInput source="schedule" />
         <TextInput source="owner" />
         <TextInput source="owner_email" />
         <TextInput source="parent_job" />
@@ -37,36 +38,30 @@ const EditForm = (props: any) => (
         ]} />
         <JsonInput
             source="processors"
-            // validate={required(){ return true }}
             reactJsonOptions={{
-                // Props passed to react-json-view
                 name: null,
                 collapsed: false,
-                enableClipboard: false,
+                enableClipboard: true,
                 displayDataTypes: false,
                 src: {},
             }}
         />
         <JsonInput
             source="tags"
-            // validate={required(){ return true }}
             reactJsonOptions={{
-                // Props passed to react-json-view
                 name: null,
                 collapsed: false,
-                enableClipboard: false,
+                enableClipboard: true,
                 displayDataTypes: false,
                 src: {},
             }}
         />
         <JsonInput
             source="metadata"
-            // validate={required(){ return true }}
             reactJsonOptions={{
-                // Props passed to react-json-view
                 name: null,
                 collapsed: false,
-                enableClipboard: false,
+                enableClipboard: true,
                 displayDataTypes: false,
                 src: {},
             }}
