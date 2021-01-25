@@ -65,7 +65,7 @@ func (h *HTTPTransport) UI(r *gin.RouterGroup) {
 				"DKRON_LEADER":          	ln,
 				"DKRON_TOTAL_JOBS":      	totalJobs,
 				"DKRON_FAILED_JOBS":     	failedJobs,
-				"DKRON_DIS_PRISTINE_JOBS":   pristineJobs,
+				"DKRON_PRISTINE_JOBS":   	pristineJobs,
 				"DKRON_SUCCESSFUL_JOBS": 	successfulJobs,
 			})
 		}
