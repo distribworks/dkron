@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.1.4] - 2021-01-25
+
+### Changes
+
+- Bump some deps
+- UI fixes
+    * Add timezone back to UI
+    * Show execution status
+
 ## [3.1.3] - 2021-01-17
 
 ### Changes
