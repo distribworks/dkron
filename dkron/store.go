@@ -327,7 +327,7 @@ func (s *Store) GetJobs(options *JobOptions) ([]*Job, error) {
 
 		if options == nil ||
 			(options.Metadata == nil || len(options.Metadata) == 0 || s.jobHasMetadata(job, options.Metadata)) &&
-				(options.Query == "" || strings.Contains(job.Name, options.Query)) &&
+				(options.Query == "" || strings.Contains(job.Name, options.Query) || strings.Contains(job.DisplayName, options.Query)) &&
 				(options.Status == "" || job.Status == options.Status) {
 
 			jobs = append(jobs, job)
