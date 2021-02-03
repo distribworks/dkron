@@ -40,6 +40,7 @@ type DkronGRPCServer interface {
 
 // GRPCServer is the local implementation of the gRPC server interface.
 type GRPCServer struct {
+	proto.DkronServer
 	agent *Agent
 }
 
@@ -220,7 +221,11 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.E
 		}, nil
 	}
 
-	exg, err := grpcs.agent.Store.GetExecutionGroup(execution, job.GetTimeLocation())
+	exg, err := grpcs.agent.Store.GetExecutionGroup(execution, 
+		&ExecutionOptions{
+			Timezone: job.GetTimeLocation(),
+		},
+	)
 	if err != nil {
 		log.WithError(err).WithField("group", execution.Group).Error("grpc: Error getting execution group.")
 		return nil, err

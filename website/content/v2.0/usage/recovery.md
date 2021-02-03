@@ -22,8 +22,6 @@ In the case of an unrecoverable server failure in a single server cluster, data 
 
 If you think the failed server is recoverable, the easiest option is to bring it back online and have it rejoin the cluster with the same IP address, returning the cluster to a fully healthy state. Similarly, even if you need to rebuild a new Dkron server to replace the failed node, you may wish to do that immediately. Keep in mind that the rebuilt server needs to have the same IP address as the failed server. Again, once this server is online and has rejoined, the cluster will return to a fully healthy state.
 
-Both of these strategies involve a potentially lengthy time to reboot or rebuild a failed server. If this is impractical or if building a new server with the same IP isn't an option, you need to remove the failed server.
-
 Both of these strategies involve a potentially lengthy time to reboot or rebuild a failed server. If this is impractical or if building a new server with the same IP isn't an option, you need to remove the failed server. Usually, you can issue a `dkron leave` command to remove the failed server if it's still a member of the cluster.
 
 If `dkron leave` isn't able to remove the server, you can use the `dkron raft remove-peer` command to remove the stale peer server on the fly with no downtime.

@@ -11,6 +11,9 @@ import (
 
 // Execution type holds all of the details of a specific Execution.
 type Execution struct {
+	// Id is the Key for this execution
+	Id string `json:"id,omitempty"`
+
 	// Name of the job this executions refers to.
 	JobName string `json:"job_name,omitempty"`
 
@@ -50,6 +53,7 @@ func NewExecutionFromProto(e *proto.Execution) *Execution {
 	startedAt, _ := ptypes.Timestamp(e.GetStartedAt())
 	finishedAt, _ := ptypes.Timestamp(e.GetFinishedAt())
 	return &Execution{
+		Id:         e.Key(),
 		JobName:    e.JobName,
 		Success:    e.Success,
 		Output:     string(e.Output),

@@ -1,6 +1,6 @@
 baseURL = "/"
 languageCode = "en-us"
-title = "Dkron - Distributed job scheduling system"
+title = "Dkron - Cloud native job scheduling system"
 theme = "docdock"
 MetaDataFormat = "yaml"
 pygmentsCodeFences = true

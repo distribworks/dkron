@@ -10,7 +10,7 @@ Download the packaged archive for your platform from the [downloads page](https:
 
 Run Dkron with default setting: `dkron agent --server --bootstrap-expect=1`
 
-Navigate to http://localhost:8080
+Navigate to http://localhost:8080/ui
 
 ## Installing the package
 

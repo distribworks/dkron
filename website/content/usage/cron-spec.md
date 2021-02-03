@@ -30,8 +30,8 @@ month.
 Slash ( / )
 
 Slashes are used to describe increments of ranges. For example 3-59/15 in the
-1st field (minutes) would indicate the 3rd minute of the hour and every 15
-minutes thereafter. The form "*\/..." is equivalent to the form "first-last/...",
+1st field (seconds) would indicate the 3rd second of the minute and every 15
+seconds thereafter. The form "*\/..." is equivalent to the form "first-last/...",
 that is, an increment over the largest possible range of the field.  The form
 "N/..." is accepted as meaning "N-MAX/...", that is, starting at N, use the
 increment until the end of that specific range.  It does not wrap around.
@@ -39,7 +39,7 @@ increment until the end of that specific range.  It does not wrap around.
 Comma ( , )
 
 Commas are used to separate items of a list. For example, using "MON,WED,FRI" in
-the 5th field (day of week) would mean Mondays, Wednesdays and Fridays.
+the 6th field (day of week) would mean Mondays, Wednesdays and Fridays.
 
 Hyphen ( - )
 
