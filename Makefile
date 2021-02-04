@@ -31,8 +31,13 @@ clean:
 	rm -f *.rpm
 	rm -f *.tar.gz
 	rm -rf tmp
+	rm -rf ui-dist
+	rm -rf ui/build
+	rm -rf ui/node_modules
+	GOBIN=`pwd` go clean -i ./builtin/...
+	GOBIN=`pwd` go clean
 
-.PHONY: doc apidoc gen test ui
+.PHONY: doc apidoc test ui updatetestcert
 doc:
 	#scripts/run doc --dir website/content/cli
 	cd website; hugo -d ../public
@@ -47,5 +52,20 @@ updatetestcert:
 	openssl pkcs12 -in badssl.com-client.p12 -nokeys -passin pass:badssl.com -out builtin/bins/dkron-executor-http/testdata/badssl.com-client.pem
 	rm badssl.com-client.p12
 
-ui:
+ui/node_modules: ui/package.json
+	cd ui; npm install
+	# touch the directory so Make understands it is up to date
+	touch ui/node_modules
+
+dkron/ui-dist: ui/node_modules ui/public/* ui/src/* ui/src/*/*
 	cd ui; npm run-script build
+
+plugin/types/%.pb.go: proto/%.proto
+	protoc -I proto/ --go_out=plugin/types --go_opt=paths=source_relative --go-grpc_out=plugin/types --go-grpc_opt=paths=source_relative $<
+
+ui: dkron/ui-dist
+
+main: dkron/ui-dist plugin/types/dkron.pb.go plugin/types/executor.pb.go *.go */*.go */*/*.go */*/*/*.go
+	GOBIN=`pwd` go install ./builtin/...
+	go mod tidy
+	go build main.go
