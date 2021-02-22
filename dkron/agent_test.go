@@ -113,6 +113,10 @@ func TestAgentCommand_runForElection(t *testing.T) {
 	a3.Stop()
 }
 
+func lastSelector(nodes []serf.Member) int {
+	return len(nodes) - 1
+}
+
 func Test_processFilteredNodes(t *testing.T) {
 	dir, err := ioutil.TempDir("", "dkron-test")
 	require.NoError(t, err)
@@ -200,13 +204,12 @@ func Test_processFilteredNodes(t *testing.T) {
 		},
 	}
 
-	nodes, tags, err := a1.processFilteredNodes(job)
+	nodes, err := a1.processFilteredNodes(job, lastSelector)
 	require.NoError(t, err)
 
-	assert.Contains(t, nodes, "test1")
-	assert.Contains(t, nodes, "test2")
+	assert.Exactly(t, "test1", nodes[0].Name)
+	assert.Exactly(t, "test2", nodes[1].Name)
 	assert.Len(t, nodes, 2)
-	assert.Equal(t, tags["tag"], "test")
 
 	// Test cardinality of 1 with two qualified nodes returns 1 node
 	job2 := &Job{
@@ -216,7 +219,7 @@ func Test_processFilteredNodes(t *testing.T) {
 		},
 	}
 
-	nodes, _, err = a1.processFilteredNodes(job2)
+	nodes, err = a1.processFilteredNodes(job2, defaultSelector)
 	require.NoError(t, err)
 
 	assert.Len(t, nodes, 1)
@@ -226,13 +229,13 @@ func Test_processFilteredNodes(t *testing.T) {
 		Name: "test_job_3",
 	}
 
-	nodes, _, err = a1.processFilteredNodes(job3)
+	nodes, err = a1.processFilteredNodes(job3, lastSelector)
 	require.NoError(t, err)
 
 	assert.Len(t, nodes, 3)
-	assert.Contains(t, nodes, "test1")
-	assert.Contains(t, nodes, "test2")
-	assert.Contains(t, nodes, "test3")
+	assert.Exactly(t, "test1", nodes[0].Name)
+	assert.Exactly(t, "test2", nodes[1].Name)
+	assert.Exactly(t, "test3", nodes[2].Name)
 
 	// Test exclusive tag returns correct node
 	job4 := &Job{
@@ -242,11 +245,11 @@ func Test_processFilteredNodes(t *testing.T) {
 		},
 	}
 
-	nodes, _, err = a1.processFilteredNodes(job4)
+	nodes, err = a1.processFilteredNodes(job4, defaultSelector)
 	require.NoError(t, err)
 
 	assert.Len(t, nodes, 1)
-	assert.Contains(t, nodes, "test3")
+	assert.Exactly(t, "test3", nodes[0].Name)
 
 	// Test existing tag but no matching value returns no nodes
 	job5 := &Job{
@@ -256,7 +259,7 @@ func Test_processFilteredNodes(t *testing.T) {
 		},
 	}
 
-	nodes, _, err = a1.processFilteredNodes(job5)
+	nodes, err = a1.processFilteredNodes(job5, defaultSelector)
 	require.NoError(t, err)
 
 	assert.Len(t, nodes, 0)
@@ -270,11 +273,10 @@ func Test_processFilteredNodes(t *testing.T) {
 		},
 	}
 
-	nodes, tags, err = a1.processFilteredNodes(job6)
+	nodes, err = a1.processFilteredNodes(job6, defaultSelector)
 	require.NoError(t, err)
 
 	assert.Len(t, nodes, 0)
-	assert.Equal(t, tags["tag"], "test")
 
 	// Test matching tags with cardinality of 2 but only 1 matching node returns correct node
 	job7 := &Job{
@@ -285,13 +287,11 @@ func Test_processFilteredNodes(t *testing.T) {
 		},
 	}
 
-	nodes, tags, err = a1.processFilteredNodes(job7)
+	nodes, err = a1.processFilteredNodes(job7, defaultSelector)
 	require.NoError(t, err)
 
-	assert.Contains(t, nodes, "test2")
 	assert.Len(t, nodes, 1)
-	assert.Equal(t, tags["tag"], "test")
-	assert.Equal(t, tags["extra"], "tag")
+	assert.Exactly(t, "test2", nodes[0].Name)
 
 	// Test two tags matching same 3 servers and cardinality of 1 should always return 1 server
 
@@ -310,32 +310,24 @@ func Test_processFilteredNodes(t *testing.T) {
 		},
 	}
 	distrib := make(map[string]int)
-	var sampleSize = 1000
+	var sampleSize = 999
 	for i := 0; i < sampleSize; i++ {
-		nodes, tags, err = a1.processFilteredNodes(job8)
+		// round-robin on the selected nodes to come out at an exactly equal distribution
+		roundRobinSelector := func(nodes []serf.Member) int { return i % len(nodes) }
+		nodes, err = a1.processFilteredNodes(job8, roundRobinSelector)
 		require.NoError(t, err)
 
 		assert.Len(t, nodes, 1)
-		assert.Equal(t, tags["additional"], "value")
-		assert.Equal(t, tags["additional2"], "value2")
-		for name := range nodes {
-			distrib[name] = distrib[name] + 1
-		}
+		distrib[nodes[0].Name]++
 	}
 
-	// Each node must have been chosen between 30% and 36% of the time,
-	// for the distribution to be considered equal.
-	// Note: This test should almost never, but still can, fail even if the
-	// code is fine. To fix this, the randomizer ought to be mocked.
+	// Each node must have been chosen 1/3 of the time.
 	for name, count := range distrib {
-		fmt.Println(name, float64(count)/float64(sampleSize)*100.0, "%")
+		fmt.Println(name, float64(count)/float64(sampleSize)*100.0, "%", count)
 	}
-	assert.Greater(t, float64(distrib["test1"])/float64(sampleSize), 0.25)
-	assert.Less(t, float64(distrib["test1"])/float64(sampleSize), 0.40)
-	assert.Greater(t, float64(distrib["test2"])/float64(sampleSize), 0.25)
-	assert.Less(t, float64(distrib["test2"])/float64(sampleSize), 0.40)
-	assert.Greater(t, float64(distrib["test3"])/float64(sampleSize), 0.25)
-	assert.Less(t, float64(distrib["test3"])/float64(sampleSize), 0.40)
+	assert.Exactly(t, sampleSize/3, distrib["test1"])
+	assert.Exactly(t, sampleSize/3, distrib["test2"])
+	assert.Exactly(t, sampleSize/3, distrib["test3"])
 
 	// Clean up
 	a1.Stop()
@@ -464,8 +456,8 @@ func TestAgentConfig(t *testing.T) {
 }
 
 func Test_filterNodes(t *testing.T) {
-	nodes := map[string]serf.Member{
-		"node1": {
+	nodes := []serf.Member{
+		{
 			Tags: map[string]string{
 				"region":  "global",
 				"tag":     "test",
@@ -473,7 +465,7 @@ func Test_filterNodes(t *testing.T) {
 				"tagfor2": "2",
 			},
 		},
-		"node2": {
+		{
 			Tags: map[string]string{
 				"region":  "global",
 				"tag":     "test",
@@ -481,7 +473,7 @@ func Test_filterNodes(t *testing.T) {
 				"tagfor2": "2",
 			},
 		},
-		"node3": {
+		{
 			Tags: map[string]string{
 				"region": "global",
 				"tag":    "test",
@@ -490,14 +482,13 @@ func Test_filterNodes(t *testing.T) {
 		},
 	}
 	type args struct {
-		execNodes map[string]serf.Member
+		execNodes []serf.Member
 		tags      map[string]string
 	}
 	tests := []struct {
 		name    string
 		args    args
-		want    map[string]serf.Member
-		want1   map[string]string
+		want    []serf.Member
 		want2   int
 		wantErr bool
 	}{
@@ -508,7 +499,6 @@ func Test_filterNodes(t *testing.T) {
 				tags:      map[string]string{"tag": "test"},
 			},
 			want:    nodes,
-			want1:   map[string]string{"tag": "test"},
 			want2:   3,
 			wantErr: false,
 		},
@@ -518,8 +508,7 @@ func Test_filterNodes(t *testing.T) {
 				execNodes: nodes,
 				tags:      map[string]string{"just1": "value"},
 			},
-			want:    map[string]serf.Member{"node1": nodes["node1"]},
-			want1:   map[string]string{"just1": "value"},
+			want:    []serf.Member{nodes[0]},
 			want2:   1,
 			wantErr: false,
 		},
@@ -529,8 +518,7 @@ func Test_filterNodes(t *testing.T) {
 				execNodes: nodes,
 				tags:      map[string]string{"just2": "value"},
 			},
-			want:    map[string]serf.Member{"node2": nodes["node2"]},
-			want1:   map[string]string{"just2": "value"},
+			want:    []serf.Member{nodes[1]},
 			want2:   1,
 			wantErr: false,
 		},
@@ -540,8 +528,7 @@ func Test_filterNodes(t *testing.T) {
 				execNodes: nodes,
 				tags:      map[string]string{"tagfor2": "2"},
 			},
-			want:    map[string]serf.Member{"node1": nodes["node1"], "node2": nodes["node2"]},
-			want1:   map[string]string{"tagfor2": "2"},
+			want:    []serf.Member{nodes[0], nodes[1]},
 			want2:   2,
 			wantErr: false,
 		},
@@ -551,8 +538,7 @@ func Test_filterNodes(t *testing.T) {
 				execNodes: nodes,
 				tags:      map[string]string{"unknown": "value"},
 			},
-			want:    map[string]serf.Member{},
-			want1:   map[string]string{"unknown": "value"},
+			want:    []serf.Member{},
 			want2:   0,
 			wantErr: false,
 		},
@@ -563,23 +549,19 @@ func Test_filterNodes(t *testing.T) {
 				tags:      map[string]string{"tag": "test:1"},
 			},
 			want:    nodes,
-			want1:   map[string]string{"tag": "test"},
 			want2:   1,
 			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, got1, got2, err := filterNodes(tt.args.execNodes, tt.args.tags)
+			got, got2, err := filterNodes(tt.args.execNodes, tt.args.tags)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("filterNodes() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("filterNodes() got = %v, want %v", got, tt.want)
-			}
-			if !reflect.DeepEqual(got1, tt.want1) {
-				t.Errorf("filterNodes() got1 = %v, want %v", got1, tt.want1)
 			}
 			if got2 != tt.want2 {
 				t.Errorf("filterNodes() got2 = %v, want %v", got2, tt.want2)

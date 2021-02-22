@@ -11,6 +11,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"sort"
 	"strconv"
 	"sync"
 	"time"
@@ -692,7 +693,12 @@ func (a *Agent) join(addrs []string, replay bool) (n int, err error) {
 	return
 }
 
-func (a *Agent) processFilteredNodes(job *Job) (map[string]string, map[string]string, error) {
+// The default selector function for processFilteredNodes
+func defaultSelector(nodes []serf.Member) int {
+	return rand.Intn(len(nodes))
+}
+
+func (a *Agent) processFilteredNodes(job *Job, selectFunc func([]serf.Member) int) ([]serf.Member, error) {
 	// The final set of nodes will be the intersection of all groups
 	tags := make(map[string]string)
 
@@ -705,65 +711,56 @@ func (a *Agent) processFilteredNodes(job *Job) (map[string]string, map[string]st
 	// on the same region.
 	tags["region"] = a.config.Region
 
-	// Make a set of all members
-	allNodes := make(map[string]serf.Member)
-	for _, member := range a.serf.Members() {
-		if member.Status == serf.StatusAlive {
-			allNodes[member.Name] = member
+	// Get all living members
+	allNodes := a.serf.Members()
+	for i := len(allNodes) - 1; i >= 0; i-- {
+		if allNodes[i].Status != serf.StatusAlive {
+			allNodes[i] = allNodes[len(allNodes)-1]
+			allNodes = allNodes[:len(allNodes)-1]
 		}
 	}
 
-	execNodes, tags, cardinality, err := filterNodes(allNodes, tags)
+	// Sort the nodes to make selection from them predictable
+	sort.Slice(allNodes, func(i, j int) bool { return allNodes[i].Name < allNodes[j].Name })
+
+	execNodes, cardinality, err := filterNodes(allNodes, tags)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	// Create an array of node names to aid in computing resulting set based on cardinality
-	var names []string
-	for name := range execNodes {
-		names = append(names, name)
-	}
-
-	nodes := make(map[string]string)
+	numNodes := len(execNodes)
 	for ; cardinality > 0; cardinality-- {
-		// Pick a node, any node
-		randomIndex := rand.Intn(len(names))
-		m := execNodes[names[randomIndex]]
+		// Select a node
+		chosenIndex := selectFunc(execNodes[:numNodes])
 
-		// Store name and address
-		if addr, ok := m.Tags["rpc_addr"]; ok {
-			nodes[m.Name] = addr
-		} else {
-			nodes[m.Name] = m.Addr.String()
-		}
-
-		// Swap picked node with the first one and shorten array, so node can't get picked again
-		names[randomIndex], names[0] = names[0], names[randomIndex]
-		names = names[1:]
+		// Swap picked node with the last one and reduce choices so it can't get picked again
+		execNodes[numNodes-1], execNodes[chosenIndex] = execNodes[chosenIndex], execNodes[numNodes-1]
+		numNodes--
 	}
 
-	return nodes, tags, nil
+	return execNodes[numNodes:], nil
 }
 
-// filterNodes determines which of the provided nodes have the given tags
+// filterNodes determines which of the execNodes have the given tags
 // Returns:
 // * the map of allNodes that match the provided tags
-// * a clean map of tag values without cardinality
-// * cardinality, i.e. the max number of nodes that should be targeted, regardless of the
-//   number of nodes in the resulting map.
+// * cardinality, i.e. the max number of nodes that should be targeted. This can be no higher
+//   than the number of nodes in the resulting map
 // * an error if a cardinality was malformed
-func filterNodes(allNodes map[string]serf.Member, tags map[string]string) (map[string]serf.Member, map[string]string, int, error) {
+func filterNodes(allNodes []serf.Member, tags map[string]string) ([]serf.Member, int, error) {
 	ct, cardinality, err := cleanTags(tags)
 	if err != nil {
-		return nil, nil, 0, err
+		return nil, 0, err
 	}
 
-	matchingNodes := make(map[string]serf.Member)
+	matchingNodes := make([]serf.Member, len(allNodes))
+	copy(matchingNodes, allNodes)
 
-	// Filter nodes that lack tags
-	for name, member := range allNodes {
-		if nodeMatchesTags(member, ct) {
-			matchingNodes[name] = member
+	// Remove nodes that do not have the selected tags
+	for i := len(matchingNodes) - 1; i >= 0; i-- {
+		if !nodeMatchesTags(matchingNodes[i], ct) {
+			matchingNodes[i] = matchingNodes[len(matchingNodes)-1]
+			matchingNodes = matchingNodes[:len(matchingNodes)-1]
 		}
 	}
 
@@ -772,7 +769,7 @@ func filterNodes(allNodes map[string]serf.Member, tags map[string]string) (map[s
 		cardinality = len(matchingNodes)
 	}
 
-	return matchingNodes, ct, cardinality, nil
+	return matchingNodes, cardinality, nil
 }
 
 // This function is called when a client request the RPCAddress
