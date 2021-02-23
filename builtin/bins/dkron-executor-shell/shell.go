@@ -74,12 +74,6 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelp
 	cmd.Stderr = reportingWriter{buffer: output, cb: cb, isError: true}
 	cmd.Stdout = reportingWriter{buffer: output, cb: cb}
 
-	// Start a timer to warn about slow handlers
-	slowTimer := time.AfterFunc(2*time.Hour, func() {
-		log.Printf("shell: Script '%s' slow, execution exceeding %v", command, 2*time.Hour)
-	})
-	defer slowTimer.Stop()
-
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
 		return nil, err
@@ -96,10 +90,38 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelp
 	stdin.Close()
 
 	log.Printf("shell: going to run %s", command)
+
+	jobTimeout := args.Config["timeout"]
+	if jobTimeout == "" {
+		log.Printf("shell: Job '%v' doesn't have configured timeout. Defaulting to 24h", args.JobName)
+		jobTimeout = "24h"
+	}
+
+	t, err := time.ParseDuration(jobTimeout)
+	if err != nil {
+		return nil, errors.New("shell: Error parsing job timeout")
+	}
+
+	startTime := time.Now()
 	err = cmd.Start()
 	if err != nil {
 		return nil, err
 	}
+
+	slowTimer := time.AfterFunc(t, func() {
+		log.Printf("shell: Job '%s' execution time exceeding timeout %v. Killing job.", command, t)
+		_, err := output.Write([]byte(j))
+		if err != nil {
+			log.Printf("Error writing output on timeout event: %v", err)
+			return
+		}
+		err = cmd.Process.Kill()
+		if err != nil {
+			log.Printf("Error killing process on timeout event: %v", err)
+			return
+		}
+	})
+	defer slowTimer.Stop()
 
 	// Warn if buffer is overritten
 	if output.TotalWritten() > output.Size() {
