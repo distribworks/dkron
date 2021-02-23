@@ -1,7 +1,10 @@
 package main
 
 import (
+	"bufio"
+	"bytes"
 	"encoding/base64"
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -14,6 +17,7 @@ import (
 	dkplugin "github.com/distribworks/dkron/v3/plugin"
 	dktypes "github.com/distribworks/dkron/v3/plugin/types"
 	"github.com/mattn/go-shellwords"
+	"github.com/struCoder/pidusage"
 )
 
 const (
@@ -106,6 +110,35 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelp
 		log.Printf("shell: Script '%s' generated %d bytes of output, truncated to %d", command, output.TotalWritten(), output.Size())
 	}
 
+	pid := cmd.Process.Pid
+	quit := make(chan struct{})
+
+	go func() {
+		for {
+			select {
+			case <-quit:
+				return
+			default:
+				stat, err := pidusage.GetStat(pid)
+				if err != nil {
+					log.Printf("Error getting pid statistics: %v", err)
+					return
+				}
+
+				mem, err := calculateMemory(pid)
+				if err != nil {
+					log.Printf("Error calculating memory metrics: %v", err)
+					return
+				}
+
+				cpu := stat.CPU
+				updateMetric(args.JobName, memUsage, float64(mem))
+				updateMetric(args.JobName, cpuUsage, cpu)
+				time.Sleep(1 * time.Second) // Refreshing metrics in real-time each second
+			}
+		}
+	}()
+
 	err = cmd.Wait()
 
 	// Always log output
@@ -139,4 +172,31 @@ func buildCmd(command string, useShell bool, env []string, cwd string) (cmd *exe
 	}
 	cmd.Dir = cwd
 	return
+}
+
+func calculateMemory(pid int) (uint64, error) {
+	f, err := os.Open(fmt.Sprintf("/proc/%d/smaps", pid))
+	if err != nil {
+		return 0, err
+	}
+	defer f.Close()
+
+	res := uint64(0)
+	rfx := []byte("Rss:")
+	r := bufio.NewScanner(f)
+	for r.Scan() {
+		line := r.Bytes()
+		if bytes.HasPrefix(line, rfx) {
+			var size uint64
+			_, err := fmt.Sscanf(string(line[4:]), "%d", &size)
+			if err != nil {
+				return 0, err
+			}
+			res += size
+		}
+	}
+	if err := r.Err(); err != nil {
+		return 0, err
+	}
+	return res, nil
 }
