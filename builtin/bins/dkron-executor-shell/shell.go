@@ -140,6 +140,7 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelp
 	}()
 
 	err = cmd.Wait()
+	close(quit) // exit metric refresh goroutine after job is finished
 
 	// Always log output
 	log.Printf("shell: Command output %s", output)
