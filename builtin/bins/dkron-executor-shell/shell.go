@@ -94,41 +94,50 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelp
 	log.Printf("shell: going to run %s", command)
 
 	jobTimeout := args.Config["timeout"]
+	var jt time.Duration
+
+	if jobTimeout != "" {
+		jt, err = time.ParseDuration(jobTimeout)
+		if err != nil {
+			return nil, errors.New("shell: Error parsing job timeout")
+		}
+	}
 
 	err = cmd.Start()
 	if err != nil {
 		return nil, err
 	}
 
-	if jobTimeout != "" {
-		t, err := time.ParseDuration(jobTimeout)
+	var jobTimeoutMessage string
+	var jobWasKilled bool
+
+	slowTimer := time.AfterFunc(jt, func() {
+		err = cmd.Process.Kill()
 		if err != nil {
-			return nil, errors.New("shell: Error parsing job timeout")
+			jobTimeoutMessage = fmt.Sprintf("shell: Job '%s' execution time exceeding defined timeout %v. SIGKILL returned error. Job probably was not killed", command, jt)
+		} else {
+			jobTimeoutMessage = fmt.Sprintf("shell: Job '%s' execution time exceeding defined timeout %v. Job was killed", command, jt)
 		}
 
-		slowTimer := time.AfterFunc(t, func() {
-			j := fmt.Sprintf("shell: Job '%s' execution time exceeding defined timeout %v. Killing job.", command, t)
-			log.Print(j)
-			_, err := output.Write([]byte(j))
-			if err != nil {
-				log.Printf("Error writing output on timeout event: %v", err)
-				return
-			}
-			err = cmd.Process.Kill()
-			if err != nil {
-				log.Printf("Error killing process on timeout event: %v", err)
-				return
-			}
-		})
-		defer slowTimer.Stop()
-	}
+		jobWasKilled = true
+		return
+	})
 
-	// Warn if buffer is overritten
+	defer slowTimer.Stop()
+
+	// Warn if buffer is ovewritten
 	if output.TotalWritten() > output.Size() {
 		log.Printf("shell: Script '%s' generated %d bytes of output, truncated to %d", command, output.TotalWritten(), output.Size())
 	}
 
 	err = cmd.Wait()
+
+	if jobWasKilled {
+		_, err := output.Write([]byte(jobTimeoutMessage))
+		if err != nil {
+			log.Printf("Error writing output on timeout event: %v", err)
+		}
+	}
 
 	// Always log output
 	log.Printf("shell: Command output %s", output)
