@@ -109,30 +109,30 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelp
 	}
 
 	var jobTimeoutMessage string
-	var jobWasKilled bool
+	var jobTimedOut bool
 
 	slowTimer := time.AfterFunc(jt, func() {
 		err = cmd.Process.Kill()
 		if err != nil {
-			jobTimeoutMessage = fmt.Sprintf("shell: Job '%s' execution time exceeding defined timeout %v. SIGKILL returned error. Job probably was not killed", command, jt)
+			jobTimeoutMessage = fmt.Sprintf("shell: Job '%s' execution time exceeding defined timeout %v. SIGKILL returned error. Job may not have been killed", command, jt)
 		} else {
 			jobTimeoutMessage = fmt.Sprintf("shell: Job '%s' execution time exceeding defined timeout %v. Job was killed", command, jt)
 		}
 
-		jobWasKilled = true
+		jobTimedOut = true
 		return
 	})
 
 	defer slowTimer.Stop()
 
-	// Warn if buffer is ovewritten
+	// Warn if buffer is overwritten
 	if output.TotalWritten() > output.Size() {
 		log.Printf("shell: Script '%s' generated %d bytes of output, truncated to %d", command, output.TotalWritten(), output.Size())
 	}
 
 	err = cmd.Wait()
 
-	if jobWasKilled {
+	if jobTimedOut {
 		_, err := output.Write([]byte(jobTimeoutMessage))
 		if err != nil {
 			log.Printf("Error writing output on timeout event: %v", err)
