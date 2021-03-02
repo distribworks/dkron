@@ -42,7 +42,7 @@ builds:
   - <<: *xbuild
     main: ./builtin/bins/dkron-executor-kafka/
     id: dkron-executor-kafka
-    binary: dkron-executor-nats
+    binary: dkron-executor-kafka
 
   - <<: *xbuild
     main: ./builtin/bins/dkron-processor-files/
