@@ -7,14 +7,14 @@ import (
 	dktypes "github.com/distribworks/dkron/v3/plugin/types"
 )
 
-func TestPublishExecute(t *testing.T) {
+func TestProduceExecute(t *testing.T) {
 	pa := &dktypes.ExecuteRequest{
 		JobName: "testJob",
 		Config: map[string]string{
-			"topic":   "test",
-			"url":     "tesr",
-			"message": "{\"hello\":11}",
-			"debug":   "true",
+			"topic":         "test",
+			"brokerAddress": "testaddress",
+			"message":       "{\"hello\":11}",
+			"debug":         "true",
 		},
 	}
 	kafka := &Kafka{}

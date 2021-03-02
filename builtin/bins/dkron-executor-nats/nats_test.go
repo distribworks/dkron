@@ -11,7 +11,7 @@ func TestPublishExecute(t *testing.T) {
 	pa := &dktypes.ExecuteRequest{
 		JobName: "testJob",
 		Config: map[string]string{
-			"topic":   "opcuaReadRequest",
+			"subject": "opcuaReadRequest",
 			"url":     "localhost:4222",
 			"message": "{\"hello\":11}",
 			"debug":   "true",

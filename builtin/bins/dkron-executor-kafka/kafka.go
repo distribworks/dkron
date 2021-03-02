@@ -25,9 +25,9 @@ type Kafka struct {
 // Execute Process method of the plugin
 // "executor": "kafka",
 // "executor_config": {
-//     "url": "http://example.com", // kafka server url
-//     "message": "",                  //
-//     "topic": "publishTopic",             //
+//     "brokerAddress": "192.168.59.103:9092", // kafka broker url
+//     "message": "",
+//     "topic": "publishTopic"
 // }
 func (s *Kafka) Execute(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelper) (*dktypes.ExecuteResponse, error) {
 
@@ -39,7 +39,7 @@ func (s *Kafka) Execute(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelper) 
 	return resp, nil
 }
 
-// ExecuteImpl do http request
+// ExecuteImpl produce message on Kafka broker
 func (s *Kafka) ExecuteImpl(args *dktypes.ExecuteRequest) ([]byte, error) {
 
 	output, _ := circbuf.NewBuffer(maxBufSize)
@@ -50,9 +50,9 @@ func (s *Kafka) ExecuteImpl(args *dktypes.ExecuteRequest) ([]byte, error) {
 		log.Printf("config  %#v\n\n", args.Config)
 	}
 
-	if args.Config["url"] == "" {
+	if args.Config["brokerAddress"] == "" {
 
-		return output.Bytes(), errors.New("url is empty")
+		return output.Bytes(), errors.New("brokerAddress is empty")
 	}
 
 	if args.Config["topic"] == "" {
@@ -64,21 +64,20 @@ func (s *Kafka) ExecuteImpl(args *dktypes.ExecuteRequest) ([]byte, error) {
 	config.Producer.Return.Successes = true
 	config.Producer.Return.Errors = true
 
-	// brokers := []string{"192.168.59.103:9092"}
-	brokers := []string{args.Config["url"]}
+	brokers := []string{args.Config["brokerAddress"]}
 	producer, err := sarama.NewSyncProducer(brokers, config)
 	if err != nil {
 		// Should not reach here
 
 		if debug {
-			log.Printf("request  %#v\n\n", config)
+			log.Printf("sarama  %#v\n\n", config)
 		}
 		return output.Bytes(), err
 	}
+	defer producer.Close()
 
-	topic := args.Config["topic"]
 	msg := &sarama.ProducerMessage{
-		Topic: topic,
+		Topic: args.Config["topic"],
 		Value: sarama.StringEncoder(args.Config["message"]),
 	}
 
@@ -87,10 +86,7 @@ func (s *Kafka) ExecuteImpl(args *dktypes.ExecuteRequest) ([]byte, error) {
 	if err != nil {
 		return output.Bytes(), err
 	}
-	defer func() {
-		producer.Close()
-	}()
 
-	output.Write([]byte("Result: success to publish data\n"))
+	output.Write([]byte("Result: successfully produced the message on Kafka broker\n"))
 	return output.Bytes(), nil
 }

@@ -25,9 +25,9 @@ type Nats struct {
 // Execute Process method of the plugin
 // "executor": "nats",
 // "executor_config": {
-//     "url": "http://example.com", // nats server url
-//     "message": "",                  //
-//     "topic": "publishTopic",             //
+//     "url": "tls://nats.demo.io:4443", // nats server url
+//     "message": "",
+//     "subject": "Subject",
 //     "userName":"test@hbh.dfg",
 //     "password":"dfdffs"
 // }
@@ -57,18 +57,18 @@ func (s *Nats) ExecuteImpl(args *dktypes.ExecuteRequest) ([]byte, error) {
 		return output.Bytes(), errors.New("url is empty")
 	}
 
-	if args.Config["topic"] == "" {
-		return output.Bytes(), errors.New("topic is empty")
+	if args.Config["subject"] == "" {
+		return output.Bytes(), errors.New("subject is empty")
 	}
 	nc, err := nats.Connect(args.Config["url"], nats.UserInfo(args.Config["userName"], args.Config["password"]))
 
 	if err != nil {
-		return output.Bytes(), errors.New("Error At Nats Connection")
+		return output.Bytes(), errors.New("error connecting to NATS")
 	}
 
-	nc.Publish(args.Config["topic"], []byte(args.Config["message"]))
+	nc.Publish(args.Config["subject"], []byte(args.Config["message"]))
 
-	output.Write([]byte("Result: success to publish data\n"))
+	output.Write([]byte("Result: Message successfully sent\n"))
 
 	if debug {
 		log.Printf("request  %#v\n\n", nc)
