@@ -42,7 +42,7 @@ require (
 	github.com/spf13/viper v1.7.1
 	github.com/streadway/amqp v1.0.0
 	github.com/stretchr/testify v1.7.0
-	github.com/tidwall/buntdb v1.1.7
+	github.com/tidwall/buntdb v1.2.0
 	github.com/tinylib/msgp v1.1.2 // indirect
 	golang.org/x/net v0.0.0-20201110031124-69a78807bb2b
 	google.golang.org/api v0.35.0 // indirect
