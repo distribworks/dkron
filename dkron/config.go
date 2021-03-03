@@ -1,7 +1,9 @@
 package dkron
 
 import (
+	"crypto/sha256"
 	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net"
@@ -162,6 +164,9 @@ type Config struct {
 
 	// UI enable the web UI on this node. The node must be server.
 	UI bool
+
+	// UsageDisable disable sending anonymous usage stats
+	UsageDisable bool `mapstructure:"usage-disable"`
 }
 
 // DefaultBindPort is the default port that dkron will use for Serf communication
@@ -245,6 +250,7 @@ func ConfigFlagSet() *flag.FlagSet {
 	cmdFlags.StringSlice("dog-statsd-tags", []string{}, "Datadog tags, specified as key:value")
 	cmdFlags.String("statsd-addr", "", "Statsd address")
 	cmdFlags.Bool("enable-prometheus", false, "Enable serving prometheus metrics")
+	cmdFlags.Bool("usage-disable", c.UsageDisable, "Disable sending anonymous usage stats")
 
 	return cmdFlags
 }
@@ -400,4 +406,14 @@ START:
 // EncryptBytes returns the encryption key configured.
 func (c *Config) EncryptBytes() ([]byte, error) {
 	return base64.StdEncoding.DecodeString(c.EncryptKey)
+}
+
+// Hash returns the sha 256 hash of the configuration in a standard base64 encoded string
+func (c *Config) Hash() (string, error) {
+	b, err := json.Marshal(c)
+	if err != nil {
+		return "", err
+	}
+	sum := sha256.Sum256(b)
+	return base64.StdEncoding.EncodeToString(sum[:]), nil
 }

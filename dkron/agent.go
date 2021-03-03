@@ -1,6 +1,7 @@
 package dkron
 
 import (
+	"context"
 	"crypto/tls"
 	"errors"
 	"expvar"
@@ -16,8 +17,10 @@ import (
 	"time"
 
 	metrics "github.com/armon/go-metrics"
+	"github.com/devopsfaith/krakend-usage/client"
 	"github.com/distribworks/dkron/v3/plugin"
 	proto "github.com/distribworks/dkron/v3/plugin/types"
+	"github.com/hashicorp/go-uuid"
 	"github.com/hashicorp/memberlist"
 	"github.com/hashicorp/raft"
 	raftboltdb "github.com/hashicorp/raft-boltdb"
@@ -330,7 +333,7 @@ func (a *Agent) setupRaft() error {
 			store, err := NewStore()
 			if err != nil {
 				log.WithError(err).Fatal("dkron: Error initializing store")
-                        }
+			}
 			tmpFsm := newFSM(store, nil)
 			if err := raft.RecoverCluster(config, tmpFsm,
 				logStore, stableStore, snapshots, transport, configuration); err != nil {
@@ -563,6 +566,7 @@ func (a *Agent) StartServer() {
 		}
 	}()
 	go a.monitorLeadership()
+	a.startReporter()
 }
 
 // Utility method to get leader nodename
@@ -886,4 +890,31 @@ func (a *Agent) checkAndSelectServer() (string, error) {
 		}
 	}
 	return "", ErrNoSuitableServer
+}
+
+func (a *Agent) startReporter() {
+	if a.config.UsageDisable {
+		log.Info("usage report client disabled")
+		return
+	}
+
+	clusterID, err := a.config.Hash()
+	if err != nil {
+		log.Warning("unable to hash the service configuration:", err.Error())
+		return
+	}
+
+	go func() {
+		serverID, _ := uuid.GenerateUUID()
+		log.Info(fmt.Sprintf("registering usage stats for cluster ID '%s'", clusterID))
+
+		if err := client.StartReporter(context.Background(), client.Options{
+			ClusterID: clusterID,
+			ServerID:  serverID,
+			URL:       "https://stats.dkron.io",
+			Version:   fmt.Sprintf("%s %s", Name, Version),
+		}); err != nil {
+			log.Warning("unable to create the usage report client:", err.Error())
+		}
+	}()
 }
