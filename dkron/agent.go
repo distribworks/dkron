@@ -893,20 +893,20 @@ func (a *Agent) checkAndSelectServer() (string, error) {
 }
 
 func (a *Agent) startReporter() {
-	if a.config.UsageDisable {
-		log.Info("usage report client disabled")
+	if a.config.DisableUsageStats {
+		log.Info("agent: usage report client disabled")
 		return
 	}
 
 	clusterID, err := a.config.Hash()
 	if err != nil {
-		log.Warning("unable to hash the service configuration:", err.Error())
+		log.Warning("agent: unable to hash the service configuration:", err.Error())
 		return
 	}
 
 	go func() {
 		serverID, _ := uuid.GenerateUUID()
-		log.Info(fmt.Sprintf("registering usage stats for cluster ID '%s'", clusterID))
+		log.Info(fmt.Sprintf("agent: registering usage stats for cluster ID '%s'", clusterID))
 
 		if err := client.StartReporter(context.Background(), client.Options{
 			ClusterID: clusterID,
@@ -914,7 +914,7 @@ func (a *Agent) startReporter() {
 			URL:       "https://stats.dkron.io",
 			Version:   fmt.Sprintf("%s %s", Name, Version),
 		}); err != nil {
-			log.Warning("unable to create the usage report client:", err.Error())
+			log.Warning("agent: unable to create the usage report client:", err.Error())
 		}
 	}()
 }

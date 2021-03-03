@@ -165,8 +165,8 @@ type Config struct {
 	// UI enable the web UI on this node. The node must be server.
 	UI bool
 
-	// UsageDisable disable sending anonymous usage stats
-	UsageDisable bool `mapstructure:"usage-disable"`
+	// DisableUsageStats disable sending anonymous usage stats
+	DisableUsageStats bool `mapstructure:"disable-usage-stats"`
 }
 
 // DefaultBindPort is the default port that dkron will use for Serf communication
@@ -250,7 +250,7 @@ func ConfigFlagSet() *flag.FlagSet {
 	cmdFlags.StringSlice("dog-statsd-tags", []string{}, "Datadog tags, specified as key:value")
 	cmdFlags.String("statsd-addr", "", "Statsd address")
 	cmdFlags.Bool("enable-prometheus", false, "Enable serving prometheus metrics")
-	cmdFlags.Bool("usage-disable", c.UsageDisable, "Disable sending anonymous usage stats")
+	cmdFlags.Bool("disable-usage-stats", c.DisableUsageStats, "Disable sending anonymous usage stats")
 
 	return cmdFlags
 }
