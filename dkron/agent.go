@@ -893,7 +893,7 @@ func (a *Agent) checkAndSelectServer() (string, error) {
 }
 
 func (a *Agent) startReporter() {
-	if a.config.DisableUsageStats {
+	if a.config.DisableUsageStats || a.config.DevMode {
 		log.Info("agent: usage report client disabled")
 		return
 	}
