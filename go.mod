@@ -34,7 +34,7 @@ require (
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0
 	github.com/mattn/go-shellwords v1.0.11
 	github.com/mitchellh/go-testing-interface v1.14.1 // indirect
-	github.com/nats-io/nats.go v1.9.1
+	github.com/nats-io/nats.go v1.10.0
 	github.com/philhofer/fwd v1.0.0 // indirect
 	github.com/prometheus/client_golang v1.9.0
 	github.com/robfig/cron/v3 v3.0.1
