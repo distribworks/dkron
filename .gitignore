@@ -1,5 +1,6 @@
 site/
-public
+/public
+/website/public
 docs/scss/Gemfile.lock
 docs/scss/.sass-cache
 downloads/
