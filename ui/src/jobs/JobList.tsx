@@ -16,7 +16,7 @@ import {
 import { Fragment } from 'react';
 import BulkRunButton from "./BulkRunButton"
 import BulkToggleButton from "./BulkToggleButton"
-import StatusField from "./StatusFiled"
+import StatusField from "./StatusField"
 
 const JobFilter = (props: any) => (
     <Filter {...props}>
