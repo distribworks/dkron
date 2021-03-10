@@ -44,8 +44,7 @@ The main distinction is that servers order job executions, can be used to schedu
       
       <guid>/basics/configuration/</guid>
       <description>Configuration sources Settings can be specified in three ways (in order of precedence):
- Command line arguments. Environment variables starting with DKRON_ dkron.yml config file  Config file location Config file will be loaded from the following paths:
- /etc/dkron $HOME/.dkron ./config  Config file example # Dkron example configuration file # server: false # bootstrap-expect: 3 # data-dir: dkron.data # log-level: debug # tags: # dc: east # encrypt: a-valid-key-generated-with-dkron-keygen # retry-join: # - 10.</description>
+ Command line arguments. Environment variables starting with DKRON_ dkron.yml config file  Note: Dkron sends anonymous usage data to a server with the purpose of elaborating usage statistics, if you want to disable statistics collection, you can disable it in the dkron config file or in the command line using --disable-usage-stats parameter Config file location Config file will be loaded from the following paths:</description>
     </item>
     
   </channel>

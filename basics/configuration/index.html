@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2021-01-18T23:30:10 CET">
+<meta name="revised" content="2021-03-10T13:28:33 CET">
 <title>Configuration :: Dkron - Cloud native job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -124,6 +124,20 @@
         <div>
           <a href="/usage/executors/http/">
             HTTP Executor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/executors/kafka/" class="dd-item">
+        <div>
+          <a href="/usage/executors/kafka/">
+            Kafka Executor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/executors/nats/" class="dd-item">
+        <div>
+          <a href="/usage/executors/nats/">
+            Shell Executor
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -1574,6 +1588,9 @@
 <li>Environment variables starting with <strong><code>DKRON_</code></strong></li>
 <li><strong><code>dkron.yml</code></strong> config file</li>
 </ol>
+
+<div class="alert alert-info" role="alert"><strong>Note:</strong> Dkron sends anonymous usage data to a server with the purpose of elaborating usage statistics, if you want to disable statistics collection, you can disable it in the dkron config file or in the command line using <code>--disable-usage-stats</code> parameter</div>
+
 <h2 id="config-file-location">Config file location</h2>
 <p>Config file will be loaded from the following paths:</p>
 <ul>

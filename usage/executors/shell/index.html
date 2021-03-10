@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2021-01-18T23:30:10 CET">
+<meta name="revised" content="2021-03-10T13:28:33 CET">
 <title>Shell Executor :: Dkron - Cloud native job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -124,6 +124,20 @@
         <div>
           <a href="/usage/executors/http/">
             HTTP Executor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/executors/kafka/" class="dd-item">
+        <div>
+          <a href="/usage/executors/kafka/">
+            Kafka Executor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/executors/nats/" class="dd-item">
+        <div>
+          <a href="/usage/executors/nats/">
+            Shell Executor
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -1570,6 +1584,7 @@
 command: The command to run
 env: Env vars separated by comma
 cwd: Chdir before command run
+timeout: Force kill job after specified time. Format: https://golang.org/pkg/time/#ParseDuration.
 </code></pre><p>Example</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">{</span>
   <span style="color:#f92672">&#34;executor&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;shell&#34;</span><span style="color:#111">,</span>
@@ -1577,7 +1592,8 @@ cwd: Chdir before command run
       <span style="color:#f92672">&#34;shell&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;true&#34;</span><span style="color:#111">,</span>
       <span style="color:#f92672">&#34;command&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;my_command&#34;</span><span style="color:#111">,</span>
       <span style="color:#f92672">&#34;env&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;ENV_VAR=va1,ANOTHER_ENV_VAR=var2&#34;</span><span style="color:#111">,</span>
-      <span style="color:#f92672">&#34;cwd&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;/app&#34;</span>
+      <span style="color:#f92672">&#34;cwd&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;/app&#34;</span><span style="color:#111">,</span>
+      <span style="color:#f92672">&#34;timeout&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;24h&#34;</span>
   <span style="color:#111">}</span>
 <span style="color:#111">}</span>
 </code></pre></div>
@@ -1586,7 +1602,7 @@ cwd: Chdir before command run
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-prev" href="/usage/executors/http/" title="HTTP Executor"> <i class="fa fa-chevron-left"></i><label>HTTP Executor</label></a>
+<a class="nav nav-prev" href="/usage/executors/nats/" title="Shell Executor"> <i class="fa fa-chevron-left"></i><label>Shell Executor</label></a>
     <a class="nav nav-next" href="/usage/processors/" title="Processors" style="margin-right: 0px;"><label>Processors</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 

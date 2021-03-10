@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2021-01-18T23:30:10 CET">
+<meta name="revised" content="2021-03-10T13:28:33 CET">
 <title>Cron spec :: Dkron - Cloud native job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -124,6 +124,20 @@
         <div>
           <a href="/usage/executors/http/">
             HTTP Executor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/executors/kafka/" class="dd-item">
+        <div>
+          <a href="/usage/executors/kafka/">
+            Kafka Executor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/executors/nats/" class="dd-item">
+        <div>
+          <a href="/usage/executors/nats/">
+            Shell Executor
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -1606,14 +1620,14 @@ field; e.g., using an asterisk in the 5th field (month) would indicate every
 month.</p>
 <p>Slash ( / )</p>
 <p>Slashes are used to describe increments of ranges. For example 3-59/15 in the
-1st field (minutes) would indicate the 3rd minute of the hour and every 15
-minutes thereafter. The form &ldquo;*/&hellip;&rdquo; is equivalent to the form &ldquo;first-last/&hellip;&quot;,
+1st field (seconds) would indicate the 3rd second of the minute and every 15
+seconds thereafter. The form &ldquo;*/&hellip;&rdquo; is equivalent to the form &ldquo;first-last/&hellip;&quot;,
 that is, an increment over the largest possible range of the field.  The form
 &ldquo;N/&hellip;&rdquo; is accepted as meaning &ldquo;N-MAX/&hellip;&quot;, that is, starting at N, use the
 increment until the end of that specific range.  It does not wrap around.</p>
 <p>Comma ( , )</p>
 <p>Commas are used to separate items of a list. For example, using &ldquo;MON,WED,FRI&rdquo; in
-the 5th field (day of week) would mean Mondays, Wednesdays and Fridays.</p>
+the 6th field (day of week) would mean Mondays, Wednesdays and Fridays.</p>
 <p>Hyphen ( - )</p>
 <p>Hyphens are used to define ranges. For example, 9-17 would indicate every
 hour between 9am and 5pm inclusive.</p>

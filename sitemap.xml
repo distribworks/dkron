@@ -740,6 +740,10 @@
   </url>
   
   <url>
+    <loc>/usage/executors/kafka/</loc>
+  </url>
+  
+  <url>
     <loc>/intro/license/</loc>
   </url>
   
@@ -805,6 +809,10 @@
   
   <url>
     <loc>/v2.0/pro/processors/</loc>
+  </url>
+  
+  <url>
+    <loc>/usage/executors/nats/</loc>
   </url>
   
   <url>

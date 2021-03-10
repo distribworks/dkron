@@ -1005,8 +1005,7 @@ Concurrency property accepts two option:
       
       <guid>/basics/configuration/</guid>
       <description>Configuration sources Settings can be specified in three ways (in order of precedence):
- Command line arguments. Environment variables starting with DKRON_ dkron.yml config file  Config file location Config file will be loaded from the following paths:
- /etc/dkron $HOME/.dkron ./config  Config file example # Dkron example configuration file # server: false # bootstrap-expect: 3 # data-dir: dkron.data # log-level: debug # tags: # dc: east # encrypt: a-valid-key-generated-with-dkron-keygen # retry-join: # - 10.</description>
+ Command line arguments. Environment variables starting with DKRON_ dkron.yml config file  Note: Dkron sends anonymous usage data to a server with the purpose of elaborating usage statistics, if you want to disable statistics collection, you can disable it in the dkron config file or in the command line using --disable-usage-stats parameter Config file location Config file will be loaded from the following paths:</description>
     </item>
     
     <item>
@@ -1481,6 +1480,18 @@ Configuration { &amp;#34;name&amp;#34;: &amp;#34;job1&amp;#34;, &amp;#34;schedul
     </item>
     
     <item>
+      <title>Kafka Executor</title>
+      <link>/usage/executors/kafka/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/usage/executors/kafka/</guid>
+      <description>A basic Kafka executor that produces a message on a Kafka broker.
+Configuration Params
+brokerAddress: &amp;quot;IP:port&amp;quot; of the broker message: The message to produce topic: The Kafka topic for this message debug: Turns on debugging output if not empty Example
+&amp;#34;executor&amp;#34;: &amp;#34;kafka&amp;#34;, &amp;#34;executor_config&amp;#34;: { &amp;#34;brokerAddress&amp;#34;: &amp;#34;localhost:9092&amp;#34;, &amp;#34;message&amp;#34;: &amp;#34;My message&amp;#34;, &amp;#34;topic&amp;#34;: &amp;#34;my_topic&amp;#34; } </description>
+    </item>
+    
+    <item>
       <title>License</title>
       <link>/intro/license/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -1606,14 +1617,27 @@ This guide is for recovery from a Dkron outage due to a majority of server nodes
     
     <item>
       <title>Shell Executor</title>
+      <link>/usage/executors/nats/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/usage/executors/nats/</guid>
+      <description>The NATS executor sends a message to a NATS server/cluster.
+Currently, only username/password authentication is supported.
+Configuration Params
+url: Comma separated list of NATS server URLs message: The message to send subject: The subject to send the message to userName: username for authentication password: password for authentication debug: If not empty, turns on debugging. Will log the NATS specific job config and the request sent. Example
+{ &amp;#34;executor&amp;#34;: &amp;#34;nats&amp;#34;, &amp;#34;executor_config&amp;#34;: { &amp;#34;url&amp;#34;: &amp;#34;tls://nats.</description>
+    </item>
+    
+    <item>
+      <title>Shell Executor</title>
       <link>/usage/executors/shell/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/usage/executors/shell/</guid>
       <description>Shell executor runs a system command
 Configuration Params
-shell: Run this command using a shell environment command: The command to run env: Env vars separated by comma cwd: Chdir before command run Example
-{ &amp;#34;executor&amp;#34;: &amp;#34;shell&amp;#34;, &amp;#34;executor_config&amp;#34;: { &amp;#34;shell&amp;#34;: &amp;#34;true&amp;#34;, &amp;#34;command&amp;#34;: &amp;#34;my_command&amp;#34;, &amp;#34;env&amp;#34;: &amp;#34;ENV_VAR=va1,ANOTHER_ENV_VAR=var2&amp;#34;, &amp;#34;cwd&amp;#34;: &amp;#34;/app&amp;#34; } } </description>
+shell: Run this command using a shell environment command: The command to run env: Env vars separated by comma cwd: Chdir before command run timeout: Force kill job after specified time. Format: https://golang.org/pkg/time/#ParseDuration. Example
+{ &amp;#34;executor&amp;#34;: &amp;#34;shell&amp;#34;, &amp;#34;executor_config&amp;#34;: { &amp;#34;shell&amp;#34;: &amp;#34;true&amp;#34;, &amp;#34;command&amp;#34;: &amp;#34;my_command&amp;#34;, &amp;#34;env&amp;#34;: &amp;#34;ENV_VAR=va1,ANOTHER_ENV_VAR=var2&amp;#34;, &amp;#34;cwd&amp;#34;: &amp;#34;/app&amp;#34;, &amp;#34;timeout&amp;#34;: &amp;#34;24h&amp;#34; } } </description>
     </item>
     
     <item>

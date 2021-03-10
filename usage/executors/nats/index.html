@@ -5,8 +5,8 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2021-03-10T13:28:34 CET">
-<title>Job retries :: Dkron - Cloud native job scheduling system</title>
+<meta name="revised" content="2021-03-10T13:28:33 CET">
+<title>Shell Executor :: Dkron - Cloud native job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
 <link href="/css/nucleus.css" rel="stylesheet">
@@ -22,7 +22,7 @@
 
     
   </head>
-  <body data-url="/v1.2/usage/retries/">
+  <body data-url="/usage/executors/nats/">
     
       <header>
   <div class="logo">
@@ -113,10 +113,11 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-    <li data-nav-id="/usage/executors/" class="dd-item haschildren
+    <li data-nav-id="/usage/executors/" class="dd-item parent haschildren
         ">
       <div>
-      <a href="/usage/executors/">Executors</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/usage/executors/">Executors</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
       <li data-nav-id="/usage/executors/http/" class="dd-item">
@@ -133,7 +134,7 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/usage/executors/nats/" class="dd-item">
+      <li data-nav-id="/usage/executors/nats/" class="dd-item active">
         <div>
           <a href="/usage/executors/nats/">
             Shell Executor
@@ -1102,11 +1103,10 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/v1.2/usage/" class="dd-item parent haschildren
+    <li data-nav-id="/v1.2/usage/" class="dd-item haschildren
         ">
       <div>
-      <a href="/v1.2/usage/">Usage</a>
-            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/v1.2/usage/">Usage</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
       <li data-nav-id="/v1.2/usage/target-nodes-spec/" class="dd-item">
@@ -1202,7 +1202,7 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/v1.2/usage/retries/" class="dd-item active">
+      <li data-nav-id="/v1.2/usage/retries/" class="dd-item">
         <div>
           <a href="/v1.2/usage/retries/">
             Job retries
@@ -1573,30 +1573,38 @@
       </div>
     
 
-    <h1>Job retries</h1>
+    <h1>Shell Executor</h1>
     
     
     
-    <p>Jobs can be configured to retry in case of failure.</p>
+    <p>The NATS executor sends a message to a NATS server/cluster.</p>
+<p>Currently, only username/password authentication is supported.</p>
 <h2 id="configuration">Configuration</h2>
+<p>Params</p>
+<pre><code>url:      Comma separated list of NATS server URLs
+message:  The message to send
+subject:  The subject to send the message to
+userName: username for authentication
+password: password for authentication
+debug:    If not empty, turns on debugging. Will log the NATS specific job config and the request sent.
+</code></pre><p>Example</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">{</span>
-  <span style="color:#f92672">&#34;name&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;job1&#34;</span><span style="color:#111">,</span>
-  <span style="color:#f92672">&#34;schedule&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;@every 10s&#34;</span><span style="color:#111">,</span>
-  <span style="color:#f92672">&#34;executor&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;shell&#34;</span><span style="color:#111">,</span>
-  <span style="color:#f92672">&#34;executor_config&#34;</span><span style="color:#111">:</span> <span style="color:#111">{</span>
-    <span style="color:#f92672">&#34;command&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;echo \&#34;Hello from parent\&#34;&#34;</span>
-  <span style="color:#111">},</span>
-  <span style="color:#f92672">&#34;retries&#34;</span><span style="color:#111">:</span> <span style="color:#ae81ff">5</span>
+   <span style="color:#f92672">&#34;executor&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;nats&#34;</span><span style="color:#111">,</span>
+   <span style="color:#f92672">&#34;executor_config&#34;</span><span style="color:#111">:</span> <span style="color:#111">{</span>
+       <span style="color:#f92672">&#34;url&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;tls://nats.demo.io:4443&#34;</span><span style="color:#111">,</span> 
+       <span style="color:#f92672">&#34;message&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;the message&#34;</span><span style="color:#111">,</span>
+       <span style="color:#f92672">&#34;subject&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;myfavoritesubject&#34;</span><span style="color:#111">,</span>
+       <span style="color:#f92672">&#34;userName&#34;</span><span style="color:#111">:</span><span style="color:#d88200">&#34;someusername&#34;</span><span style="color:#111">,</span>
+       <span style="color:#f92672">&#34;password&#34;</span><span style="color:#111">:</span><span style="color:#d88200">&#34;somepassword&#34;</span>
 <span style="color:#111">}</span>
-</code></pre></div><p>In case of failure to run the job in one node, it will try to run the job again in that node until the retries count reaches the limit.</p>
-
+</code></pre></div>
 
     
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-prev" href="/v1.2/usage/chaining/" title="Job chaining"> <i class="fa fa-chevron-left"></i><label>Job chaining</label></a>
-    <a class="nav nav-next" href="/v1.2/usage/metrics/" title="Metrics" style="margin-right: 0px;"><label>Metrics</label><i class="fa fa-chevron-right"></i></a></div>
+<a class="nav nav-prev" href="/usage/executors/kafka/" title="Kafka Executor"> <i class="fa fa-chevron-left"></i><label>Kafka Executor</label></a>
+    <a class="nav nav-next" href="/usage/executors/shell/" title="Shell Executor" style="margin-right: 0px;"><label>Shell Executor</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>
@@ -1613,7 +1621,7 @@
 
     
     <div class="github-link">
-      <a href="https://github.com/distribworks/dkron/edit/master/website/content/v1.2/usage/retries.md" target="blank"><i class="fa fa-code-fork"></i>
+      <a href="https://github.com/distribworks/dkron/edit/master/website/content/usage/executors/nats.md" target="blank"><i class="fa fa-code-fork"></i>
         Improve this page</a>
     </div>
     

@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2021-01-18T23:30:11 CET">
+<meta name="revised" content="2021-03-10T13:28:35 CET">
 <title>Usage :: Dkron - Cloud native job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -123,6 +123,20 @@
         <div>
           <a href="/usage/executors/http/">
             HTTP Executor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/executors/kafka/" class="dd-item">
+        <div>
+          <a href="/usage/executors/kafka/">
+            Kafka Executor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/executors/nats/" class="dd-item">
+        <div>
+          <a href="/usage/executors/nats/">
+            Shell Executor
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -412,24 +426,31 @@
       <a href="/pro/processors/">Processors</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/pro/processors/elasticsearch/" class="dd-item">
+      <li data-nav-id="/usage/executors/http/" class="dd-item">
         <div>
-          <a href="/pro/processors/elasticsearch/">
-            Elasticsearch processor
+          <a href="/usage/executors/http/">
+            HTTP Executor
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/pro/processors/email/" class="dd-item">
+      <li data-nav-id="/usage/executors/kafka/" class="dd-item">
         <div>
-          <a href="/pro/processors/email/">
-            Email processor
+          <a href="/usage/executors/kafka/">
+            Kafka Executor
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/pro/processors/slack/" class="dd-item">
+      <li data-nav-id="/usage/executors/nats/" class="dd-item">
         <div>
-          <a href="/pro/processors/slack/">
-            Slack processor
+          <a href="/usage/executors/nats/">
+            Shell Executor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/executors/shell/" class="dd-item">
+        <div>
+          <a href="/usage/executors/shell/">
+            Shell Executor
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -1476,17 +1497,17 @@
       <a href="/upgrading/">Upgradings</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/pro/executors/ecs/" class="dd-item">
+      <li data-nav-id="/upgrading/from_v1_to_v2/" class="dd-item">
         <div>
-          <a href="/pro/executors/ecs/">
-            AWS ECS Executor
+          <a href="/upgrading/from_v1_to_v2/">
+            Upgrade from v1 to v2
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/pro/executors/docker/" class="dd-item">
+      <li data-nav-id="/upgrading/from_v2_0_to_v2_2/" class="dd-item">
         <div>
-          <a href="/pro/executors/docker/">
-            Docker executor
+          <a href="/upgrading/from_v2_0_to_v2_2/">
+            Upgrade from v2.0.x to v2.2.x
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -1578,8 +1599,8 @@ Field name | Mandatory? | Allowed values | Allowed special characters ----------
 <p><span><card>
 <a href="/usage/executors/" >Executors</a></card></p>
 <p>Executors Executor plugins are the main mechanism of execution in Dkron. They implement different &ldquo;types&rdquo; of jobs in the sense that they can perform the most diverse actions on the target nodes.
-For example, the built-in shell executor, will run the indicated command in the target node.
-New plugins will be added, or you can create new ones, to perform different tasks, as HTTP requests, Docker runs, anything that you can imagine.</p>
+For example, the built-in shell executor, will run the indicated command on the target node.
+New plugins will be added, or you can create new ones, to perform different tasks, such as HTTP requests, Docker runs, anything that you can imagine.</p>
 </span>
 <p><span><card>
 <a href="/usage/executors/http/" >HTTP Executor</a></card></p>
@@ -1588,11 +1609,26 @@ Configuration Params:
 method: Request method in uppercase url: Request url headers: Json string, such as &quot;[\&quot;Content-Type: application/json\&quot;]&quot; body: POST body timeout: Request timeout, unit seconds expectCode: Expect response code, such as 200,206 expectBody: Expect response body, support regexp, such as /success/ debug: Debug option, will log everything when this option is not empty tlsNoVerifyPeer: false (default) or true. If true, disables verification of the remote SSL certificate's validity.</p>
 </span>
 <p><span><card>
+<a href="/usage/executors/kafka/" >Kafka Executor</a></card></p>
+<p>A basic Kafka executor that produces a message on a Kafka broker.
+Configuration Params
+brokerAddress: &quot;IP:port&quot; of the broker message: The message to produce topic: The Kafka topic for this message debug: Turns on debugging output if not empty Example
+&#34;executor&#34;: &#34;kafka&#34;, &#34;executor_config&#34;: { &#34;brokerAddress&#34;: &#34;localhost:9092&#34;, &#34;message&#34;: &#34;My message&#34;, &#34;topic&#34;: &#34;my_topic&#34; } </p>
+</span>
+<p><span><card>
+<a href="/usage/executors/nats/" >Shell Executor</a></card></p>
+<p>The NATS executor sends a message to a NATS server/cluster.
+Currently, only username/password authentication is supported.
+Configuration Params
+url: Comma separated list of NATS server URLs message: The message to send subject: The subject to send the message to userName: username for authentication password: password for authentication debug: If not empty, turns on debugging. Will log the NATS specific job config and the request sent. Example
+{ &#34;executor&#34;: &#34;nats&#34;, &#34;executor_config&#34;: { &#34;url&#34;: &#34;tls://nats.</p>
+</span>
+<p><span><card>
 <a href="/usage/executors/shell/" >Shell Executor</a></card></p>
 <p>Shell executor runs a system command
 Configuration Params
-shell: Run this command using a shell environment command: The command to run env: Env vars separated by comma cwd: Chdir before command run Example
-{ &#34;executor&#34;: &#34;shell&#34;, &#34;executor_config&#34;: { &#34;shell&#34;: &#34;true&#34;, &#34;command&#34;: &#34;my_command&#34;, &#34;env&#34;: &#34;ENV_VAR=va1,ANOTHER_ENV_VAR=var2&#34;, &#34;cwd&#34;: &#34;/app&#34; } } </p>
+shell: Run this command using a shell environment command: The command to run env: Env vars separated by comma cwd: Chdir before command run timeout: Force kill job after specified time. Format: https://golang.org/pkg/time/#ParseDuration. Example
+{ &#34;executor&#34;: &#34;shell&#34;, &#34;executor_config&#34;: { &#34;shell&#34;: &#34;true&#34;, &#34;command&#34;: &#34;my_command&#34;, &#34;env&#34;: &#34;ENV_VAR=va1,ANOTHER_ENV_VAR=var2&#34;, &#34;cwd&#34;: &#34;/app&#34;, &#34;timeout&#34;: &#34;24h&#34; } } </p>
 </span>
 <p><span><card>
 <a href="/usage/processors/" >Processors</a></card></p>

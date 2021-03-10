@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2021-01-18T23:30:10 CET">
+<meta name="revised" content="2021-03-10T13:28:33 CET">
 <title>HTTP Executor :: Dkron - Cloud native job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -124,6 +124,20 @@
         <div>
           <a href="/usage/executors/http/">
             HTTP Executor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/executors/kafka/" class="dd-item">
+        <div>
+          <a href="/usage/executors/kafka/">
+            Kafka Executor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/usage/executors/nats/" class="dd-item">
+        <div>
+          <a href="/usage/executors/nats/">
+            Shell Executor
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -1566,18 +1580,18 @@
     <p>HTTP executor can send a request to an HTTP endpoint</p>
 <h2 id="configuration">Configuration</h2>
 <p>Params:</p>
-<pre><code>method: Request method in uppercase
-url: Request url
-headers: Json string, such as &quot;[\&quot;Content-Type: application/json\&quot;]&quot;
-body: POST body
-timeout: Request timeout, unit seconds
+<pre><code>method:     Request method in uppercase
+url:        Request url
+headers:    Json string, such as &quot;[\&quot;Content-Type: application/json\&quot;]&quot;
+body:       POST body
+timeout:    Request timeout, unit seconds
 expectCode: Expect response code, such as 200,206
 expectBody: Expect response body, support regexp, such as /success/
-debug: Debug option, will log everything when this option is not empty
-tlsNoVerifyPeer: false (default) or true. If true, disables verification of the remote SSL certificate's validity.
-tlsCertificateFile: Path to the PEM file containing the client certificate. Optional.
+debug:      Debug option, will log everything when this option is not empty
+tlsNoVerifyPeer:       false (default) or true. If true, disables verification of the remote SSL certificate's validity.
+tlsCertificateFile:    Path to the PEM file containing the client certificate. Optional.
 tlsCertificateKeyFile: Path to the PEM file containing the client certificate private key. Optional.
-tlsRootCAsFile: Path to the PEM file containing certificates to use as root CAs. Optional.
+tlsRootCAsFile:        Path to the PEM file containing certificates to use as root CAs. Optional.
 </code></pre><p>Example</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">{</span>
   <span style="color:#f92672">&#34;executor&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;http&#34;</span><span style="color:#111">,</span>
@@ -1599,7 +1613,7 @@ tlsRootCAsFile: Path to the PEM file containing certificates to use as root CAs.
         <div class="chevrons">
     <div id="navigation">
 <a class="nav nav-prev" href="/usage/executors/" title="Executors"> <i class="fa fa-chevron-left"></i><label>Executors</label></a>
-    <a class="nav nav-next" href="/usage/executors/shell/" title="Shell Executor" style="margin-right: 0px;"><label>Shell Executor</label><i class="fa fa-chevron-right"></i></a></div>
+    <a class="nav nav-next" href="/usage/executors/kafka/" title="Kafka Executor" style="margin-right: 0px;"><label>Kafka Executor</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>
