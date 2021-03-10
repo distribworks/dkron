@@ -125,6 +125,9 @@ func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
 	}
 
 	err := s.db.Update(func(tx *buntdb.Tx) error {
+		// set pristine as default for newly created jobs
+		job.Status = "pristine"
+
 		// Get if the requested job already exist
 		err := s.getJobTxFunc(job.Name, &pbej)(tx)
 		if err != nil && err != buntdb.ErrNotFound {
