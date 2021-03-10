@@ -11,7 +11,8 @@ import {
     List,
     SelectInput,
     BulkDeleteButton,
-    BooleanInput
+    BooleanInput,
+    Pagination
 } from 'react-admin';
 import { Fragment } from 'react';
 import BulkRunButton from "./BulkRunButton"
@@ -37,8 +38,10 @@ const JobBulkActionButtons = (props: any) => (
     </Fragment>
 );
 
+const JobPagination = (props: any) => <Pagination rowsPerPageOptions={[5, 10, 25, 50, 100]} {...props} />;
+
 const JobList = (props: any) => (
-    <List {...props} filters={<JobFilter />} bulkActionButtons={<JobBulkActionButtons />}>
+    <List {...props} filters={<JobFilter />} bulkActionButtons={<JobBulkActionButtons />} pagination={<JobPagination />}>
         <Datagrid rowClick="show" style={{tableLayout: 'fixed'}}>
             <TextField source="id" />
             <TextField source="displayname" label="Display name" />
