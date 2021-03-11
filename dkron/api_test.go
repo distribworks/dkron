@@ -236,6 +236,18 @@ func TestAPIJobCreateUpdateValidationBadTimezone(t *testing.T) {
 	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
 }
 
+func TestAPIJobCreateUpdateValidationBadShellExecutorTimeout(t *testing.T) {
+	resp := postJob(t, "8099", []byte(`{
+		"name": "testjob",
+		"schedule": "@every 1m",
+		"executor": "shell",
+		"executor_config": {"command": "date", "timeout": "foreverandever"},
+		"disabled": true
+	}`))
+
+	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
+}
+
 func TestAPIGetNonExistentJobReturnsNotFound(t *testing.T) {
 	port := "8096"
 	baseURL := fmt.Sprintf("http://localhost:%s/v1", port)

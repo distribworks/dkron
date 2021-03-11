@@ -35,6 +35,16 @@ builds:
     binary: dkron-executor-rabbitmq
 
   - <<: *xbuild
+    main: ./builtin/bins/dkron-executor-nats/
+    id: dkron-executor-nats
+    binary: dkron-executor-nats
+
+  - <<: *xbuild
+    main: ./builtin/bins/dkron-executor-kafka/
+    id: dkron-executor-kafka
+    binary: dkron-executor-kafka
+
+  - <<: *xbuild
     main: ./builtin/bins/dkron-processor-files/
     id: dkron-processor-files
     binary: dkron-processor-files

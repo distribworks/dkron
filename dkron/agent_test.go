@@ -48,6 +48,8 @@ func TestAgentCommand_runForElection(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	time.Sleep(2 * time.Second)
+
 	// Wait for the first agent to start and elect itself as leader
 	if a1.IsLeader() {
 		m, err := a1.leaderMember()
@@ -70,7 +72,11 @@ func TestAgentCommand_runForElection(t *testing.T) {
 	c.DataDir = dir
 
 	a2 := NewAgent(c)
-	a2.Start()
+	if err := a2.Start(); err != nil {
+		t.Fatal(err)
+	}
+
+	time.Sleep(2 * time.Second)
 
 	// Start another agent
 	c = DefaultConfig()
@@ -86,7 +92,9 @@ func TestAgentCommand_runForElection(t *testing.T) {
 	c.DataDir = dir
 
 	a3 := NewAgent(c)
-	a3.Start()
+	if err := a3.Start(); err != nil {
+		t.Fatal(err)
+	}
 
 	time.Sleep(2 * time.Second)
 

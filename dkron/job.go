@@ -357,6 +357,13 @@ func (j *Job) Validate() error {
 		return err
 	}
 
+	if j.Executor == "shell" && j.ExecutorConfig["timeout"] != "" {
+		_, err := time.ParseDuration(j.ExecutorConfig["timeout"])
+		if err != nil {
+			return fmt.Errorf("Error parsing job timeout value")
+		}
+	}
+
 	return nil
 }
 

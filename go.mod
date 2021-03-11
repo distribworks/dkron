@@ -2,10 +2,13 @@ module github.com/distribworks/dkron/v3
 
 require (
 	github.com/DataDog/datadog-go v4.0.0+incompatible // indirect
+	github.com/Shopify/sarama v1.19.0
 	github.com/armon/circbuf v0.0.0-20190214190532-5111143e8da2
 	github.com/armon/go-metrics v0.3.6
 	github.com/aws/aws-sdk-go v1.36.31 // indirect
 	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869 // indirect
+	github.com/catalinc/hashcash v0.0.0-20161205220751-e6bc29ff4de9 // indirect
+	github.com/devopsfaith/krakend-usage v0.0.0-20210223224348-1ff8aabbd5bb
 	github.com/fluent/fluent-logger-golang v1.5.0
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-contrib/expvar v0.0.1
@@ -31,23 +34,24 @@ require (
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0
 	github.com/mattn/go-shellwords v1.0.11
 	github.com/mitchellh/go-testing-interface v1.14.1 // indirect
+	github.com/nats-io/nats.go v1.10.0
 	github.com/philhofer/fwd v1.0.0 // indirect
 	github.com/prometheus/client_golang v1.9.0
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/ryanuber/columnize v2.1.2+incompatible
-	github.com/sirupsen/logrus v1.7.0
+	github.com/sirupsen/logrus v1.8.0
 	github.com/soheilhy/cmux v0.1.4
-	github.com/spf13/cobra v1.1.1
+	github.com/spf13/cobra v1.1.3
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.7.1
 	github.com/streadway/amqp v1.0.0
 	github.com/stretchr/testify v1.7.0
 	github.com/struCoder/pidusage v0.1.3
-	github.com/tidwall/buntdb v1.1.7
+	github.com/tidwall/buntdb v1.2.0
 	github.com/tinylib/msgp v1.1.2 // indirect
 	golang.org/x/net v0.0.0-20201110031124-69a78807bb2b
 	google.golang.org/api v0.35.0 // indirect
-	google.golang.org/grpc v1.35.0
+	google.golang.org/grpc v1.36.0
 	google.golang.org/grpc/examples v0.0.0-20201121004645-9da74c039bbf // indirect
 	google.golang.org/protobuf v1.25.0
 )

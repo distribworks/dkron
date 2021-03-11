@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -78,12 +79,6 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelp
 	cmd.Stderr = reportingWriter{buffer: output, cb: cb, isError: true}
 	cmd.Stdout = reportingWriter{buffer: output, cb: cb}
 
-	// Start a timer to warn about slow handlers
-	slowTimer := time.AfterFunc(2*time.Hour, func() {
-		log.Printf("shell: Script '%s' slow, execution exceeding %v", command, 2*time.Hour)
-	})
-	defer slowTimer.Stop()
-
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
 		return nil, err
@@ -100,12 +95,42 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelp
 	stdin.Close()
 
 	log.Printf("shell: going to run %s", command)
+
+	jobTimeout := args.Config["timeout"]
+	var jt time.Duration
+
+	if jobTimeout != "" {
+		jt, err = time.ParseDuration(jobTimeout)
+		if err != nil {
+			return nil, errors.New("shell: Error parsing job timeout")
+		}
+	}
+
 	err = cmd.Start()
 	if err != nil {
 		return nil, err
 	}
 
-	// Warn if buffer is overritten
+	var jobTimeoutMessage string
+	var jobTimedOut bool
+
+	if jt != 0 {
+		slowTimer := time.AfterFunc(jt, func() {
+			err = cmd.Process.Kill()
+			if err != nil {
+				jobTimeoutMessage = fmt.Sprintf("shell: Job '%s' execution time exceeding defined timeout %v. SIGKILL returned error. Job may not have been killed", command, jt)
+			} else {
+				jobTimeoutMessage = fmt.Sprintf("shell: Job '%s' execution time exceeding defined timeout %v. Job was killed", command, jt)
+			}
+
+			jobTimedOut = true
+			return
+		})
+
+		defer slowTimer.Stop()
+	}
+
+	// Warn if buffer is overwritten
 	if output.TotalWritten() > output.Size() {
 		log.Printf("shell: Script '%s' generated %d bytes of output, truncated to %d", command, output.TotalWritten(), output.Size())
 	}
@@ -141,6 +166,13 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelp
 
 	err = cmd.Wait()
 	close(quit) // exit metric refresh goroutine after job is finished
+
+	if jobTimedOut {
+		_, err := output.Write([]byte(jobTimeoutMessage))
+		if err != nil {
+			log.Printf("Error writing output on timeout event: %v", err)
+		}
+	}
 
 	// Always log output
 	log.Printf("shell: Command output %s", output)
