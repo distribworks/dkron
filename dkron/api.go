@@ -179,6 +179,7 @@ func (h *HTTPTransport) jobsHandler(c *gin.Context) {
 			Order:    order,
 			Query:    q,
 			Status:   c.Query("status"),
+			Disabled: c.Query("disabled"),
 		},
 	)
 	if err != nil {
@@ -340,7 +341,7 @@ func (h *HTTPTransport) executionsHandler(c *gin.Context) {
 		return
 	}
 
-	executions, err := h.agent.Store.GetExecutions(job.Name, 
+	executions, err := h.agent.Store.GetExecutions(job.Name,
 		&ExecutionOptions{
 			Sort:     sort,
 			Order:    order,
