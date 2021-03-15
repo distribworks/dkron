@@ -42,7 +42,7 @@ func (h *HTTPTransport) UI(r *gin.RouterGroup) {
 			}
 			var (
 				totalJobs = len(jobs)
-				successfulJobs, failedJobs, pristineJobs int
+				successfulJobs, failedJobs, untriggeredJobs int
 			)
 			for _, j := range jobs {
 				if j.Status == "success" {
@@ -50,7 +50,7 @@ func (h *HTTPTransport) UI(r *gin.RouterGroup) {
 				} else if j.Status == "failed" {
 					failedJobs++
 				} else {
-					pristineJobs++
+					untriggeredJobs++
 				}
 			}
 			l, err := h.agent.leaderMember()
@@ -65,7 +65,7 @@ func (h *HTTPTransport) UI(r *gin.RouterGroup) {
 				"DKRON_LEADER":          	ln,
 				"DKRON_TOTAL_JOBS":      	totalJobs,
 				"DKRON_FAILED_JOBS":     	failedJobs,
-				"DKRON_PRISTINE_JOBS":   	pristineJobs,
+				"DKRON_PRISTINE_JOBS":   	untriggeredJobs,
 				"DKRON_SUCCESSFUL_JOBS": 	successfulJobs,
 			})
 		}
