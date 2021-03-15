@@ -6,6 +6,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.1.5] - 2021-03-08
+
+### Features
+
+- Configurable job timeout [#906](https://github.com/distribworks/dkron/pull/906)
+- Add kafka and nats executor [#854](https://github.com/distribworks/dkron/pull/854)
+- Add reporting usage stats [#910](https://github.com/distribworks/dkron/pull/910)
+
+### Changes
+
+- Bump some deps
+
+### Fixes
+
+- Add the ui/public dir [#919](https://github.com/distribworks/dkron/pull/919)
+
 ## [3.1.4] - 2021-01-25
 
 ### Changes

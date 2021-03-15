@@ -1,5 +1,5 @@
 import * as React from "react";
-import { 
+import {
     Datagrid,
     TextField,
     NumberField,
@@ -10,7 +10,8 @@ import {
     TextInput,
     List,
     SelectInput,
-    BulkDeleteButton
+    BulkDeleteButton,
+    BooleanInput
 } from 'react-admin';
 import { Fragment } from 'react';
 import BulkRunButton from "./BulkRunButton"
@@ -23,7 +24,9 @@ const JobFilter = (props: any) => (
         <SelectInput source="status" choices={[
             { id: 'success', name: 'Success' },
             { id: 'failed', name: 'Failed' },
+            { id: 'untriggered', name: 'Waiting to Run' },
         ]} />
+        <BooleanInput source="disabled"/>
     </Filter>
 );
 

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"sort"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -45,6 +46,7 @@ type JobOptions struct {
 	Order    string
 	Query    string
 	Status   string
+	Disabled string
 }
 
 // ExecutionOptions additional options like "Sort" will be ready for JSON marshall
@@ -327,8 +329,9 @@ func (s *Store) GetJobs(options *JobOptions) ([]*Job, error) {
 
 		if options == nil ||
 			(options.Metadata == nil || len(options.Metadata) == 0 || s.jobHasMetadata(job, options.Metadata)) &&
-				(options.Query == "" || strings.Contains(job.Name, options.Query)) &&
-				(options.Status == "" || job.Status == options.Status) {
+			(options.Query == "" || strings.Contains(job.Name, options.Query) || strings.Contains(job.DisplayName, options.Query)) &&
+			(options.Disabled == "" || strconv.FormatBool(job.Disabled) == options.Disabled) && 
+			((options.Status == "untriggered" && job.Status == "") || (options.Status == "" || job.Status == options.Status)) {
 
 			jobs = append(jobs, job)
 		}
