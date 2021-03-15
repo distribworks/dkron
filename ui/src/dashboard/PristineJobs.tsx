@@ -11,9 +11,9 @@ interface Props {
 const PristineJobs: FC<Props> = ({ value }) => {
     return (
         <CardWithIcon
-            to='/jobs?filter={"status":"pristine"}'
+            to='/jobs?filter={"status":"untriggered"}'
             icon={Icon}
-            title='Pristine Jobs'
+            title='Untriggered Jobs'
             subtitle={value}
         />
     );

@@ -127,9 +127,6 @@ func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
 	}
 
 	err := s.db.Update(func(tx *buntdb.Tx) error {
-		// set pristine as default for newly created jobs
-		job.Status = "pristine"
-
 		// Get if the requested job already exist
 		err := s.getJobTxFunc(job.Name, &pbej)(tx)
 		if err != nil && err != buntdb.ErrNotFound {
@@ -332,9 +329,9 @@ func (s *Store) GetJobs(options *JobOptions) ([]*Job, error) {
 
 		if options == nil ||
 			(options.Metadata == nil || len(options.Metadata) == 0 || s.jobHasMetadata(job, options.Metadata)) &&
-				(options.Query == "" || strings.Contains(job.Name, options.Query)) &&
-				(options.Status == "" || job.Status == options.Status) &&
-				(options.Disabled == "" || strconv.FormatBool(job.Disabled) == options.Disabled) {
+			(options.Query == "" || strings.Contains(job.Name, options.Query) || strings.Contains(job.DisplayName, options.Query)) &&
+			(options.Disabled == "" || strconv.FormatBool(job.Disabled) == options.Disabled) && 
+			((options.Status == "untriggered" && job.Status == "") || (options.Status == "" || job.Status == options.Status)) {
 
 			jobs = append(jobs, job)
 		}
