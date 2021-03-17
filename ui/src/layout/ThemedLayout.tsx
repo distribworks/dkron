@@ -7,7 +7,7 @@ import { AppState } from '../types';
 
 const CustomSidebar = (props: any) => <Sidebar {...props} size={200} />;
 
-const Hayout = (props: LayoutProps) => {
+const ThemedLayout = (props: LayoutProps) => {
     const theme = useSelector((state: AppState) =>
         state.theme === 'dark' ? darkTheme : lightTheme
     );
@@ -20,4 +20,4 @@ const Hayout = (props: LayoutProps) => {
         />
     );
 };
-export default Hayout;
+export default ThemedLayout;
