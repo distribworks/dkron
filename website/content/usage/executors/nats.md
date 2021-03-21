@@ -1,6 +1,6 @@
 
 ---
-title: Shell Executor
+title: NATS Executor
 ---
 
 The NATS executor sends a message to a NATS server/cluster.

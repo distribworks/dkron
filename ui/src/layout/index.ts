@@ -1,4 +1,4 @@
 import AppBar from './AppBar';
-import Layout from './Layout';
+import Layout from './ThemedLayout';
 
 export { AppBar, Layout };

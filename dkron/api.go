@@ -348,15 +348,11 @@ func (h *HTTPTransport) executionsHandler(c *gin.Context) {
 			Timezone: job.GetTimeLocation(),
 		},
 	)
-	if err != nil {
-		if err == buntdb.ErrNotFound {
-			renderJSON(c, http.StatusOK, &[]Execution{})
-			log.Error(err)
-			return
-		}
+	if err == buntdb.ErrNotFound {
+		executions = make([]*Execution, 0)
+	} else if err != nil {
 		log.Error(err)
 		return
-
 	}
 
 	c.Header("X-Total-Count", strconv.Itoa(len(executions)))
