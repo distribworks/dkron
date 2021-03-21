@@ -5,7 +5,7 @@ import { TagsField } from '../TagsField'
 import Leader from './Leader';
 import FailedJobs from './FailedJobs';
 import SuccessfulJobs from './SuccessfulJobs';
-import PristineJobs from './PristineJobs';
+import UntriggeredJobs from './UntriggeredJobs';
 import TotalJobs from './TotalJobs';
 
 let fakeProps = {
@@ -48,7 +48,7 @@ const Dashboard = () => (
                             <Spacer />
                             <FailedJobs value={window.DKRON_FAILED_JOBS || "0"} />
                             <Spacer />
-                            <PristineJobs value={window.DKRON_PRISTINE_JOBS || "0"} />
+                            <UntriggeredJobs value={window.DKRON_UNTRIGGERED_JOBS || "0"} />
                         </div>
                     </div>
                 </div>

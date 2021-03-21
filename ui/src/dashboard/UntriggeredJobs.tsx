@@ -8,7 +8,7 @@ interface Props {
     value?: string;
 }
 
-const PristineJobs: FC<Props> = ({ value }) => {
+const UntriggeredJobs: FC<Props> = ({ value }) => {
     return (
         <CardWithIcon
             to='/jobs?filter={"status":"untriggered"}'
@@ -19,4 +19,4 @@ const PristineJobs: FC<Props> = ({ value }) => {
     );
 };
 
-export default PristineJobs;
+export default UntriggeredJobs;
