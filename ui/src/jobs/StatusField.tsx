@@ -1,7 +1,7 @@
 import * as React from "react";
 import SuccessIcon from '@material-ui/icons/CheckCircle';
 import FailedIcon from '@material-ui/icons/Cancel';
-import PristineIcon from '@material-ui/icons/Timer';
+import UntriggeredIcon from '@material-ui/icons/Timer';
 import { Tooltip } from '@material-ui/core';
 
 const StatusField = (props: any) => {
