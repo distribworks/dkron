@@ -1,17 +1,10 @@
 import * as React from "react";
 import SuccessIcon from '@material-ui/icons/CheckCircle';
 import FailedIcon from '@material-ui/icons/Cancel';
-import PristineIcon from '@material-ui/icons/Timer';
 import { Tooltip } from '@material-ui/core';
 
 const StatusField = (props: any) => {
-	if (props.record[props.source] === 'success') {
-		return <Tooltip title="Success"><SuccessIcon htmlColor="green" /></Tooltip> 
-	} else if (props.record[props.source] === 'failed') {
-		return <Tooltip title="Error"><FailedIcon htmlColor="red" /></Tooltip>
-	} else {
-		return <Tooltip title="Waiting to Run"><PristineIcon htmlColor="blue" /></Tooltip>
-	}
+  return props.record === undefined ? null : (props.record[props.source] === 'success' ? <Tooltip title="Success"><SuccessIcon htmlColor="green" /></Tooltip> : <Tooltip title="Success"><FailedIcon htmlColor="red" /></Tooltip>);
 };
 
 export default StatusField;
