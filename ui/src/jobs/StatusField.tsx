@@ -13,7 +13,7 @@ const StatusField = (props: any) => {
 		} else if (props.record[props.source] === 'failed') {
 			return <Tooltip title="Error"><FailedIcon htmlColor="red" /></Tooltip>
 		} else {
-			return <Tooltip title="Waiting to Run"><PristineIcon htmlColor="blue" /></Tooltip>
+			return <Tooltip title="Waiting to Run"><UntriggeredIcon htmlColor="blue" /></Tooltip>
 		}
 	}
 };
