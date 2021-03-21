@@ -12,8 +12,18 @@ import (
 
 const uiPathPrefix = "ui/"
 
-// DashboardRoutes registers dashboard specific routes on the gin RouterGroup.
+// UI registers UI specific routes on the gin RouterGroup.
 func (h *HTTPTransport) UI(r *gin.RouterGroup) {
+	// If we are visiting from a browser redirect to the dashboard
+	r.GET("/", func(c *gin.Context) {
+		switch c.NegotiateFormat(gin.MIMEHTML) {
+		case gin.MIMEHTML:
+			c.Redirect(http.StatusSeeOther, "/ui/")
+		default:
+			c.AbortWithStatus(http.StatusNotFound)
+		}
+	})
+
 	ui := r.Group("/" + uiPathPrefix)
 
 	a, err := assets_ui.Assets.Open("index.html")
