@@ -59,7 +59,7 @@ func (h *HTTPTransport) UI(r *gin.RouterGroup) {
 					successfulJobs++
 				} else if j.Status == "failed" {
 					failedJobs++
-				} else {
+				} else if j.Status == "" {
 					untriggeredJobs++
 				}
 			}
