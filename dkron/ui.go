@@ -50,14 +50,17 @@ func (h *HTTPTransport) UI(r *gin.RouterGroup) {
 			if err != nil {
 				log.Error(err)
 			}
-			totalJobs := len(jobs)
-			successfulJobs := 0
-			failedJobs := 0
+			var (
+				totalJobs = len(jobs)
+				successfulJobs, failedJobs, untriggeredJobs int
+			)
 			for _, j := range jobs {
 				if j.Status == "success" {
 					successfulJobs++
-				} else {
+				} else if j.Status == "failed" {
 					failedJobs++
+				} else if j.Status == "" {
+					untriggeredJobs++
 				}
 			}
 			l, err := h.agent.leaderMember()
@@ -68,11 +71,12 @@ func (h *HTTPTransport) UI(r *gin.RouterGroup) {
 				ln = l.Name
 			}
 			ctx.HTML(http.StatusOK, "index.html", gin.H{
-				"DKRON_API_URL":         fmt.Sprintf("/%s", apiPathPrefix),
-				"DKRON_LEADER":          ln,
-				"DKRON_TOTAL_JOBS":      totalJobs,
-				"DKRON_FAILED_JOBS":     failedJobs,
-				"DKRON_SUCCESSFUL_JOBS": successfulJobs,
+				"DKRON_API_URL":         	fmt.Sprintf("/%s", apiPathPrefix),
+				"DKRON_LEADER":          	ln,
+				"DKRON_TOTAL_JOBS":      	totalJobs,
+				"DKRON_FAILED_JOBS":     	failedJobs,
+				"DKRON_UNTRIGGERED_JOBS":	untriggeredJobs,
+				"DKRON_SUCCESSFUL_JOBS": 	successfulJobs,
 			})
 		}
 	})

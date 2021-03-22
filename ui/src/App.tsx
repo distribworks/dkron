@@ -18,6 +18,7 @@ declare global {
     interface Window {
         DKRON_API_URL: string;
         DKRON_LEADER: string;
+        DKRON_UNTRIGGERED_JOBS: string;
         DKRON_FAILED_JOBS: string;
         DKRON_SUCCESSFUL_JOBS: string;
         DKRON_TOTAL_JOBS: string;

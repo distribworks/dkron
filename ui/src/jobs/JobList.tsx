@@ -25,6 +25,7 @@ const JobFilter = (props: any) => (
         <SelectInput source="status" choices={[
             { id: 'success', name: 'Success' },
             { id: 'failed', name: 'Failed' },
+            { id: 'untriggered', name: 'Waiting to Run' },
         ]} />
         <BooleanInput source="disabled"/>
     </Filter>
