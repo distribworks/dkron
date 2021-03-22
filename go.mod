@@ -2,7 +2,7 @@ module github.com/distribworks/dkron/v3
 
 require (
 	github.com/DataDog/datadog-go v4.0.0+incompatible // indirect
-	github.com/Shopify/sarama v1.19.0
+	github.com/Shopify/sarama v1.28.0
 	github.com/armon/circbuf v0.0.0-20190214190532-5111143e8da2
 	github.com/armon/go-metrics v0.3.6
 	github.com/aws/aws-sdk-go v1.36.31 // indirect
@@ -47,7 +47,7 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/tidwall/buntdb v1.2.0
 	github.com/tinylib/msgp v1.1.2 // indirect
-	golang.org/x/net v0.0.0-20201110031124-69a78807bb2b
+	golang.org/x/net v0.0.0-20210119194325-5f4716e94777
 	google.golang.org/api v0.35.0 // indirect
 	google.golang.org/grpc v1.36.0
 	google.golang.org/grpc/examples v0.0.0-20201121004645-9da74c039bbf // indirect
