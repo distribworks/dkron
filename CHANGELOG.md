@@ -6,6 +6,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.1.6] - 2021-03-23
+
+### Features
+
+- Add a filter on disabled state [#923](https://github.com/distribworks/dkron/pull/923) @educlos
+- Provide filter query by job displayName, add pristine jobs reports [#897](https://github.com/distribworks/dkron/pull/897) @MGSousa
+
+### Fixes
+
+- Fix XSS vulnerability [#922](https://github.com/distribworks/dkron/pull/922) @yvanoers
+- Correct title of NATS executor page [#929](https://github.com/distribworks/dkron/pull/929) @yvanoers
+- UI fixes [#926](https://github.com/distribworks/dkron/pull/926) @yvanoers
+
+### Changes
+
+- Use go embed for assets embedding [#931](https://github.com/distribworks/dkron/pull/931)
+
 ## [3.1.5] - 2021-03-08
 
 ### Features
