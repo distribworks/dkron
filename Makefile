@@ -48,6 +48,4 @@ updatetestcert:
 	rm badssl.com-client.p12
 
 ui:
-	rm -rf ui-dist
 	cd ui; npm run-script build
-	go generate ./dkron/assets_ui
