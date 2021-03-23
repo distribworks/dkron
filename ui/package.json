@@ -26,7 +26,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "postbuild": "mv ./build ../ui-dist",
+    "prebuild": "rm -rf ../dkron/ui-dist",
+    "postbuild": "mv ./build ../dkron/ui-dist",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
