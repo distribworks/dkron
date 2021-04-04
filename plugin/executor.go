@@ -37,11 +37,16 @@ func (p *ExecutorPlugin) GRPCClient(ctx context.Context, broker *plugin.GRPCBrok
 	return &ExecutorClient{client: types.NewExecutorClient(c), broker: broker}, nil
 }
 
+type Broker interface {
+	NextId() uint32
+	AcceptAndServe(id uint32, s func([]grpc.ServerOption) *grpc.Server)
+}
+
 // Here is the gRPC client that GRPCClient talks to.
 type ExecutorClient struct {
 	// This is the real implementation
 	client types.ExecutorClient
-	broker *plugin.GRPCBroker
+	broker Broker
 }
 
 func (m *ExecutorClient) Execute(args *types.ExecuteRequest, cb StatusHelper) (*types.ExecuteResponse, error) {
