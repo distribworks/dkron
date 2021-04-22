@@ -1,9 +1,10 @@
 package main
 
 import (
+	"testing"
+
 	"cloud.google.com/go/pubsub"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestConfigToPubSubMessage(t *testing.T) {

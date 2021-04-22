@@ -18,10 +18,10 @@ type GCPPubSub struct {
 // Execute Process method of the plugin
 // "executor": "gcppubsub",
 // "executor_config": {
-//	   "project": "project-id",
-//     "topic": "topic-name",
-//	   "data": "aGVsbG8gd29ybGQ=" // Optional. base64 encoded data
-//	   "attributes": "{\"hello\":\"world\",\"waka\":\"paka\"}" // JSON serialized attributes
+//  "project": "project-id",
+//  "topic": "topic-name",
+//  "data": "aGVsbG8gd29ybGQ=" // Optional. base64 encoded data
+//  "attributes": "{\"hello\":\"world\",\"waka\":\"paka\"}" // JSON serialized attributes
 // }
 func (g *GCPPubSub) Execute(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelper) (*dktypes.ExecuteResponse, error) {
 	out, err := g.ExecuteImpl(args)
@@ -37,8 +37,6 @@ func (g *GCPPubSub) ExecuteImpl(args *dktypes.ExecuteRequest) ([]byte, error) {
 	ctx := context.Background()
 	projectID := args.Config["project"]
 	topicName := args.Config["topic"]
-	encodedData := args.Config["data"]
-	attributesJSON := args.Config["attributes"]
 
 	if projectID == "" {
 		return nil, fmt.Errorf("missing project")
@@ -48,27 +46,9 @@ func (g *GCPPubSub) ExecuteImpl(args *dktypes.ExecuteRequest) ([]byte, error) {
 		return nil, fmt.Errorf("missing topic")
 	}
 
-	if attributesJSON == "" && encodedData == "" {
-		return nil, fmt.Errorf("at least one of these fields should be set 'attributes, data'")
-	}
-
-	msg := &pubsub.Message{}
-
-	var attributes map[string]string
-	if attributesJSON != "" {
-		err := json.Unmarshal([]byte(attributesJSON), &attributes)
-		if err != nil {
-			return nil, fmt.Errorf("invalid attributes JSON: %w", err)
-		}
-		msg.Attributes = attributes
-	}
-
-	if encodedData != "" {
-		data, err := base64.StdEncoding.DecodeString(encodedData)
-		if err != nil {
-			return nil, fmt.Errorf("invalid encoded data: %w", err)
-		}
-		msg.Data = data
+	msg, err := ConfigToPubSubMessage(args.Config)
+	if err != nil{
+		return nil, fmt.Errorf("convert config to pubsub message: %w", err)
 	}
 
 	client, err := pubsub.NewClient(ctx, projectID)

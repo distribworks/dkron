@@ -45,6 +45,11 @@ builds:
     binary: dkron-executor-kafka
 
   - <<: *xbuild
+    main: ./builtin/bins/dkron-executor-gcppubsub/
+    id: dkron-executor-gcppubsub
+    binary: dkron-executor-gcppubsub
+
+  - <<: *xbuild
     main: ./builtin/bins/dkron-processor-files/
     id: dkron-processor-files
     binary: dkron-processor-files
