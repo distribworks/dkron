@@ -15,6 +15,13 @@ import (
 type GCPPubSub struct {
 }
 
+const (
+	configProjectName    = "project"
+	configTopicName      = "topic"
+	configDataName       = "data"
+	configAttributesName = "attributes"
+)
+
 // Execute Process method of the plugin
 // "executor": "gcppubsub",
 // "executor_config": {
@@ -23,7 +30,7 @@ type GCPPubSub struct {
 //  "data": "aGVsbG8gd29ybGQ=" // Optional. base64 encoded data
 //  "attributes": "{\"hello\":\"world\",\"waka\":\"paka\"}" // JSON serialized attributes
 // }
-func (g *GCPPubSub) Execute(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelper) (*dktypes.ExecuteResponse, error) {
+func (g *GCPPubSub) Execute(args *dktypes.ExecuteRequest, _ dkplugin.StatusHelper) (*dktypes.ExecuteResponse, error) {
 	out, err := g.ExecuteImpl(args)
 	resp := &dktypes.ExecuteResponse{Output: out}
 	if err != nil {
@@ -35,8 +42,8 @@ func (g *GCPPubSub) Execute(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelp
 // ExecuteImpl do http request
 func (g *GCPPubSub) ExecuteImpl(args *dktypes.ExecuteRequest) ([]byte, error) {
 	ctx := context.Background()
-	projectID := args.Config["project"]
-	topicName := args.Config["topic"]
+	projectID := args.Config[configProjectName]
+	topicName := args.Config[configTopicName]
 
 	if projectID == "" {
 		return nil, fmt.Errorf("missing project")
@@ -46,8 +53,8 @@ func (g *GCPPubSub) ExecuteImpl(args *dktypes.ExecuteRequest) ([]byte, error) {
 		return nil, fmt.Errorf("missing topic")
 	}
 
-	msg, err := ConfigToPubSubMessage(args.Config)
-	if err != nil{
+	msg, err := configToPubSubMessage(args.Config)
+	if err != nil {
 		return nil, fmt.Errorf("convert config to pubsub message: %w", err)
 	}
 
@@ -68,13 +75,13 @@ func (g *GCPPubSub) ExecuteImpl(args *dktypes.ExecuteRequest) ([]byte, error) {
 	return []byte(serverID), nil
 }
 
-func ConfigToPubSubMessage(config map[string]string) (*pubsub.Message, error) {
+func configToPubSubMessage(config map[string]string) (*pubsub.Message, error) {
 	if config == nil {
 		return nil, fmt.Errorf("invalid config")
 	}
 
-	encodedData := config["data"]
-	attributesJSON := config["attributes"]
+	encodedData := config[configDataName]
+	attributesJSON := config[configAttributesName]
 
 	if attributesJSON == "" && encodedData == "" {
 		return nil, fmt.Errorf("at least one of these fields should be set 'attributes, data'")

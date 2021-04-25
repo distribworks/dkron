@@ -1,6 +1,7 @@
 package main
 
 import (
+	dktypes "github.com/distribworks/dkron/v3/plugin/types"
 	"testing"
 
 	"cloud.google.com/go/pubsub"
@@ -45,11 +46,11 @@ func TestConfigToPubSubMessage(t *testing.T) {
 		{
 			name: "attributes and data",
 			config: map[string]string{
-				"data": "aGVsbG8gd29ybGQ=",
+				"data":       "aGVsbG8gd29ybGQ=",
 				"attributes": "{\"hello\":\"world\",\"waka\":\"paka\"}",
 			},
 			expected: &pubsub.Message{
-				Data: []byte("hello world"),
+				Data:       []byte("hello world"),
 				Attributes: map[string]string{"hello": "world", "waka": "paka"},
 			},
 		},
@@ -57,7 +58,7 @@ func TestConfigToPubSubMessage(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := ConfigToPubSubMessage(tt.config)
+			got, err := configToPubSubMessage(tt.config)
 			if tt.wantErr {
 				assert.Error(t, err)
 			} else {
@@ -68,4 +69,20 @@ func TestConfigToPubSubMessage(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestExecute(t *testing.T) {
+	pa := &dktypes.ExecuteRequest{
+		JobName: "testJob",
+		Config: map[string]string{
+			"topic":         "test",
+			"brokerAddress": "testaddress",
+			"message":       "{\"hello\":11}",
+			"debug":         "true",
+		},
+	}
+	output, err := (&GCPPubSub{}).Execute(pa, nil)
+	assert.NoError(t, err)
+	assert.NotNil(t, output)
+	t.Log(string(output.Output))
 }
