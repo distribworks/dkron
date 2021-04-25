@@ -1,10 +1,10 @@
 package main
 
 import (
-	dktypes "github.com/distribworks/dkron/v3/plugin/types"
 	"testing"
 
 	"cloud.google.com/go/pubsub"
+	dktypes "github.com/distribworks/dkron/v3/plugin/types"
 	"github.com/stretchr/testify/assert"
 )
 
