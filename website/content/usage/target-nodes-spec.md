@@ -5,7 +5,7 @@ weight: 10
 
 ## Target nodes spec
 
-Dkron has the ability to run jobs in specific nodes by leveraging the use of tags. You can choose whether a job is run on a node or group of nodes by specifying tags and a count of target nodes having this tag do you want a job to run.
+Default is for all nodes to execute each job. Dkron has the ability to run jobs in specific nodes by leveraging the use of tags. You can choose whether a job is run on a node or group of nodes by specifying tags and a count of target nodes having this tag do you want a job to run.
 
 The target node syntax is:
     
@@ -30,6 +30,8 @@ To achieve this Nodes and Jobs have tags, for example, having a node with the fo
 ```
 
 {{% alert info %}}**Tip:** You can specify tags for nodes in the dkron config file or in the command line using `--tags` parameter{{% /alert %}}
+
+In case there is no matching nodes with the specified tags, the job will not run.
 
 Following some examples using different tag combinations:
 
@@ -102,6 +104,3 @@ There is no limit in the tags that a job can have but having a Job with several 
 ```
 
 Will try to run the job in nodes that have all specified tags and using the lowest count. In the last example, it will run in **one** node having `"my_role": "web"` and `"role": "dkron"` tag, even if there is more than one node with these tags.
-
-* In case there is no matching nodes with the specified tags, the job will not run
-* In case no tags are specified for a job it will run in all nodes in the cluster
