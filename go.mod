@@ -25,7 +25,7 @@ require (
 	github.com/hashicorp/go-version v1.2.1
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/hashicorp/memberlist v0.2.2
-	github.com/hashicorp/raft v1.2.0
+	github.com/hashicorp/raft v1.3.1
 	github.com/hashicorp/raft-boltdb v0.0.0-20191021154308-4207f1bf0617
 	github.com/hashicorp/serf v0.9.5
 	github.com/hashicorp/yamux v0.0.0-20190923154419-df201c70410d // indirect
@@ -34,7 +34,6 @@ require (
 	github.com/mattn/go-shellwords v1.0.11
 	github.com/mitchellh/go-testing-interface v1.14.1 // indirect
 	github.com/nats-io/nats.go v1.10.0
-	github.com/nats-io/nkeys v0.1.4 // indirect
 	github.com/philhofer/fwd v1.0.0 // indirect
 	github.com/prometheus/client_golang v1.9.0
 	github.com/robfig/cron/v3 v3.0.1
@@ -48,7 +47,6 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/tidwall/buntdb v1.2.0
 	github.com/tinylib/msgp v1.1.2 // indirect
-	golang.org/x/crypto v0.0.0-20201221181555-eec23a3978ad // indirect
 	golang.org/x/net v0.0.0-20210119194325-5f4716e94777
 	google.golang.org/api v0.35.0 // indirect
 	google.golang.org/grpc v1.36.0
