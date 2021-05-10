@@ -24,8 +24,8 @@ func TestNotifier_callExecutionWebhook(t *testing.T) {
 	}
 
 	n := Notification(c, &Execution{}, []*Execution{}, &Job{})
-
-	assert.NoError(t, n.Send())
+	log := getTestLogger()
+	assert.NoError(t, n.Send(log))
 }
 
 func TestNotifier_sendExecutionEmail(t *testing.T) {
@@ -61,8 +61,9 @@ func TestNotifier_sendExecutionEmail(t *testing.T) {
 		ex1,
 	}
 
+	log := getTestLogger()
 	n := Notification(c, ex1, exg, job)
-	assert.NoError(t, n.Send())
+	assert.NoError(t, n.Send(log))
 }
 
 func Test_auth(t *testing.T) {
@@ -111,9 +112,10 @@ func TestNotifier_buildTemplate(t *testing.T) {
 		ex1,
 	}
 
+	log := getTestLogger()
 	n := Notification(c, ex1, exg, nil)
 	for _, tc := range templateTestCases(n) {
-		got := n.buildTemplate(tc.template).String()
+		got := n.buildTemplate(tc.template, log).String()
 
 		if tc.exp != got {
 			t.Errorf("Exp: %s\nGot: %s", tc.exp, got)

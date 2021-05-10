@@ -5,6 +5,7 @@ import (
 
 	"github.com/distribworks/dkron/v3/dkron"
 	"github.com/ryanuber/columnize"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -29,7 +30,8 @@ var raftListCmd = &cobra.Command{
 	Short: "Command to list raft peers",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		gc := dkron.NewGRPCClient(nil, nil)
+		log := logrus.NewEntry(logrus.New())
+		gc := dkron.NewGRPCClient(nil, nil, log)
 
 		reply, err := gc.RaftGetConfiguration(ip)
 		if err != nil {
@@ -60,7 +62,8 @@ var raftRemovePeerCmd = &cobra.Command{
 	Short: "Command to list raft peers",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		gc := dkron.NewGRPCClient(nil, nil)
+		log := logrus.NewEntry(logrus.New())
+		gc := dkron.NewGRPCClient(nil, nil, log)
 
 		if err := gc.RaftRemovePeerByID(ip, peerID); err != nil {
 			return err

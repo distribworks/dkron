@@ -5,7 +5,6 @@ import (
 	"sync"
 
 	"github.com/hashicorp/serf/serf"
-	"github.com/sirupsen/logrus"
 )
 
 // Run call the agents to run a job. Returns a job with it's new status and next schedule.
@@ -54,7 +53,7 @@ func (a *Agent) Run(jobName string, ex *Execution) (*Job, error) {
 	if len(filterMap) < 1 {
 		return nil, fmt.Errorf("no target nodes found to run job %s", ex.JobName)
 	}
-	log.WithField("nodes", filterMap).Debug("agent: Filtered nodes to run")
+	a.logger.WithField("nodes", filterMap).Debug("agent: Filtered nodes to run")
 
 	var wg sync.WaitGroup
 	for _, v := range filterMap {
@@ -62,14 +61,14 @@ func (a *Agent) Run(jobName string, ex *Execution) (*Job, error) {
 		wg.Add(1)
 		go func(node string, wg *sync.WaitGroup) {
 			defer wg.Done()
-			log.WithFields(logrus.Fields{
+			a.logger.WithFields(map[string]interface{}{
 				"job_name": job.Name,
 				"node":     node,
 			}).Info("agent: Calling AgentRun")
 
 			err := a.GRPCClient.AgentRun(node, job.ToProto(), ex.ToProto())
 			if err != nil {
-				log.WithFields(logrus.Fields{
+				a.logger.WithFields(map[string]interface{}{
 					"job_name": job.Name,
 					"node":     node,
 				}).Error("agent: Error calling AgentRun")

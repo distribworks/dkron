@@ -125,6 +125,8 @@ type Job struct {
 
 	// Computed next execution
 	Next time.Time `json:"next"`
+
+	logger *logrus.Entry
 }
 
 // NewJobFromProto create a new Job from a PB Job struct
@@ -225,12 +227,12 @@ func (j *Job) Run() {
 	// As this function should comply with the Job interface of the cron package we will use
 	// the agent property on execution, this is why it need to check if it's set and otherwise fail.
 	if j.Agent == nil {
-		log.Fatal("job: agent not set")
+		j.logger.Fatal("job: agent not set")
 	}
 
 	// Check if it's runnable
-	if j.isRunnable() {
-		log.WithFields(logrus.Fields{
+	if j.isRunnable(j.logger) {
+		j.logger.WithFields(logrus.Fields{
 			"job":      j.Name,
 			"schedule": j.Schedule,
 		}).Debug("job: Run job")
@@ -241,7 +243,7 @@ func (j *Job) Run() {
 		ex := NewExecution(j.Name)
 
 		if _, err := j.Agent.Run(j.Name, ex); err != nil {
-			log.WithError(err).Error("job: Error running job")
+			j.logger.WithError(err).Error("job: Error running job")
 		}
 	}
 }
@@ -294,13 +296,13 @@ func (j *Job) GetNext() (time.Time, error) {
 	return time.Time{}, nil
 }
 
-func (j *Job) isRunnable() bool {
+func (j *Job) isRunnable(logger *logrus.Entry) bool {
 	if j.Disabled {
 		return false
 	}
 
 	if j.Agent.GlobalLock {
-		log.WithField("job", j.Name).
+		logger.WithField("job", j.Name).
 			Warning("job: Skipping execution because active global lock")
 		return false
 	}
@@ -308,13 +310,13 @@ func (j *Job) isRunnable() bool {
 	if j.Concurrency == ConcurrencyForbid {
 		exs, err := j.Agent.GetActiveExecutions()
 		if err != nil {
-			log.WithError(err).Error("job: Error quering for running executions")
+			logger.WithError(err).Error("job: Error quering for running executions")
 			return false
 		}
 
 		for _, e := range exs {
 			if e.JobName == j.Name {
-				log.WithFields(logrus.Fields{
+				logger.WithFields(logrus.Fields{
 					"job":         j.Name,
 					"concurrency": j.Concurrency,
 					"job_status":  j.Status,

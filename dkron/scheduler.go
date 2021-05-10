@@ -26,15 +26,17 @@ type Scheduler struct {
 	Cron        *cron.Cron
 	Started     bool
 	EntryJobMap sync.Map
+	logger      *logrus.Entry
 }
 
 // NewScheduler creates a new Scheduler instance
-func NewScheduler() *Scheduler {
+func NewScheduler(logger *logrus.Entry) *Scheduler {
 	schedulerStarted.Set(0)
 	return &Scheduler{
 		Cron:        nil,
 		Started:     false,
 		EntryJobMap: sync.Map{},
+		logger:      logger,
 	}
 }
 
@@ -58,7 +60,7 @@ func (s *Scheduler) Start(jobs []*Job, agent *Agent) error {
 // Stop stops the scheduler effectively not running any job.
 func (s *Scheduler) Stop() {
 	if s.Started {
-		log.Debug("scheduler: Stopping scheduler")
+		s.logger.Debug("scheduler: Stopping scheduler")
 		s.Cron.Stop()
 		s.Started = false
 		// Keep Cron exists and let the jobs which have been scheduled can continue to finish,
@@ -91,6 +93,7 @@ func (s *Scheduler) ClearCron() {
 func (s *Scheduler) GetEntry(jobName string) (cron.Entry, bool) {
 	for _, e := range s.Cron.Entries() {
 		j, _ := e.Job.(*Job)
+		j.logger = s.logger
 		if j.Name == jobName {
 			return e, true
 		}
@@ -109,7 +112,7 @@ func (s *Scheduler) AddJob(job *Job) error {
 		return nil
 	}
 
-	log.WithFields(logrus.Fields{
+	s.logger.WithFields(logrus.Fields{
 		"job": job.Name,
 	}).Debug("scheduler: Adding job to cron")
 
@@ -138,7 +141,7 @@ func (s *Scheduler) AddJob(job *Job) error {
 
 // RemoveJob removes a job from the cron scheduler
 func (s *Scheduler) RemoveJob(job *Job) {
-	log.WithFields(logrus.Fields{
+	s.logger.WithFields(logrus.Fields{
 		"job": job.Name,
 	}).Debug("scheduler: Removing job from cron")
 	if v, ok := s.EntryJobMap.Load(job.Name); ok {

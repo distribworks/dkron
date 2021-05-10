@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/distribworks/dkron/v3/dkron"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -23,7 +24,8 @@ var leaveCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var gc dkron.DkronGRPCClient
-		gc = dkron.NewGRPCClient(nil, nil)
+		log := logrus.NewEntry(logrus.New())
+		gc = dkron.NewGRPCClient(nil, nil, log)
 
 		if err := gc.Leave(ip); err != nil {
 			return err

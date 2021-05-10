@@ -34,19 +34,21 @@ type Transport interface {
 type HTTPTransport struct {
 	Engine *gin.Engine
 
-	agent *Agent
+	agent  *Agent
+	logger *logrus.Entry
 }
 
 // NewTransport creates an HTTPTransport with a bound agent.
-func NewTransport(a *Agent) *HTTPTransport {
+func NewTransport(a *Agent, log *logrus.Entry) *HTTPTransport {
 	return &HTTPTransport{
-		agent: a,
+		agent:  a,
+		logger: log,
 	}
 }
 
 func (h *HTTPTransport) ServeHTTP() {
 	h.Engine = gin.Default()
-	h.Engine.HTMLRender = CreateMyRender()
+	h.Engine.HTMLRender = CreateMyRender(h.logger)
 	h.Engine.Use(h.Options)
 
 	rootPath := h.Engine.Group("/")
@@ -68,7 +70,7 @@ func (h *HTTPTransport) ServeHTTP() {
 		h.agent.DashboardRoutes(rootPath)
 	}
 
-	log.WithFields(logrus.Fields{
+	h.logger.WithFields(logrus.Fields{
 		"address": h.agent.config.HTTPAddr,
 	}).Info("api: Running HTTP server")
 
@@ -183,7 +185,7 @@ func (h *HTTPTransport) jobsHandler(c *gin.Context) {
 		},
 	)
 	if err != nil {
-		log.WithError(err).Error("api: Unable to get jobs, store not reachable.")
+		h.logger.WithError(err).Error("api: Unable to get jobs, store not reachable.")
 		return
 	}
 
@@ -213,7 +215,7 @@ func (h *HTTPTransport) jobGetHandler(c *gin.Context) {
 
 	job, err := h.agent.Store.GetJob(jobName, nil)
 	if err != nil {
-		log.Error(err)
+		h.logger.Error(err)
 	}
 	if job == nil {
 		c.AbortWithStatus(http.StatusNotFound)
@@ -231,7 +233,7 @@ func (h *HTTPTransport) jobCreateOrUpdateHandler(c *gin.Context) {
 	// Parse values from JSON
 	if err := c.BindJSON(&job); err != nil {
 		c.Writer.WriteString(fmt.Sprintf("Unable to parse payload: %s.", err))
-		log.Error(err)
+		h.logger.Error(err)
 		return
 	}
 
@@ -351,7 +353,7 @@ func (h *HTTPTransport) executionsHandler(c *gin.Context) {
 	if err == buntdb.ErrNotFound {
 		executions = make([]*Execution, 0)
 	} else if err != nil {
-		log.Error(err)
+		h.logger.Error(err)
 		return
 	}
 

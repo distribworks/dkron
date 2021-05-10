@@ -8,13 +8,22 @@ import (
 	"github.com/distribworks/dkron/v3/plugin"
 	proto "github.com/distribworks/dkron/v3/plugin/types"
 	"github.com/hashicorp/serf/testutil"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
 )
 
+func getTestLogger() *logrus.Entry {
+	log := logrus.New()
+	log.Level = logrus.DebugLevel
+	entry := logrus.NewEntry(log)
+	return entry
+}
+
 func TestJobGetParent(t *testing.T) {
-	s, err := NewStore()
+	log := getTestLogger()
+	s, err := NewStore(log)
 	defer s.Shutdown()
 	require.NoError(t, err)
 
@@ -152,9 +161,11 @@ func Test_isRunnable(t *testing.T) {
 		},
 	}
 
+	log := getTestLogger()
+
 	for _, tt := range testCases {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equal(t, tt.want, tt.job.isRunnable())
+			assert.Equal(t, tt.want, tt.job.isRunnable(log))
 		})
 	}
 }
@@ -175,7 +186,7 @@ func (gRPCClientMock) RaftGetConfiguration(s string) (*proto.RaftGetConfiguratio
 func (gRPCClientMock) RaftRemovePeerByID(s string, a string) error { return nil }
 func (gRPCClientMock) GetActiveExecutions(s string) ([]*proto.Execution, error) {
 	return []*proto.Execution{
-		&proto.Execution{
+		{
 			JobName: "test_job",
 		},
 	}, nil
