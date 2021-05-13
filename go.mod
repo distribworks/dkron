@@ -10,7 +10,7 @@ require (
 	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869 // indirect
 	github.com/catalinc/hashcash v0.0.0-20161205220751-e6bc29ff4de9 // indirect
 	github.com/devopsfaith/krakend-usage v0.0.0-20210223224348-1ff8aabbd5bb
-	github.com/fluent/fluent-logger-golang v1.5.0
+	github.com/fluent/fluent-logger-golang v1.6.0
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-contrib/expvar v0.0.1
 	github.com/gin-contrib/multitemplate v0.0.0-20200226145339-3e397ee01bc6
