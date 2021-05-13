@@ -17,7 +17,7 @@ require (
 	github.com/gin-gonic/gin v1.6.3
 	github.com/golang/protobuf v1.5.0
 	github.com/hashicorp/go-discover v0.0.0-20201029210230-738cb3105cd0
-	github.com/hashicorp/go-hclog v0.15.0
+	github.com/hashicorp/go-hclog v0.16.0
 	github.com/hashicorp/go-immutable-radix v1.3.0 // indirect
 	github.com/hashicorp/go-plugin v1.4.1
 	github.com/hashicorp/go-sockaddr v1.0.2
