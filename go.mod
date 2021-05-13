@@ -1,6 +1,7 @@
 module github.com/distribworks/dkron/v3
 
 require (
+	cloud.google.com/go/pubsub v1.3.1
 	github.com/DataDog/datadog-go v4.0.0+incompatible // indirect
 	github.com/Shopify/sarama v1.28.0
 	github.com/armon/circbuf v0.0.0-20190214190532-5111143e8da2
