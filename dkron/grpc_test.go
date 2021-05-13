@@ -74,7 +74,8 @@ func TestGRPCExecutionDone(t *testing.T) {
 		Output:     "test",
 	}
 
-	rc := NewGRPCClient(nil, a)
+	log := getTestLogger()
+	rc := NewGRPCClient(nil, a, log)
 	rc.ExecutionDone(a.advertiseRPCAddr(), testExecution)
 	execs, err := a.Store.GetExecutions("test", &ExecutionOptions{})
 	require.NoError(t, err)
