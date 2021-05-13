@@ -8,7 +8,8 @@ import (
 )
 
 func TestSchedule(t *testing.T) {
-	sched := NewScheduler()
+	log := getTestLogger()
+	sched := NewScheduler(log)
 
 	assert.False(t, sched.Started)
 
@@ -48,7 +49,8 @@ func TestSchedule(t *testing.T) {
 }
 
 func TestTimezoneAwareJob(t *testing.T) {
-	sched := NewScheduler()
+	log := getTestLogger()
+	sched := NewScheduler(log)
 
 	tzJob := &Job{
 		Name:           "cron_job",
