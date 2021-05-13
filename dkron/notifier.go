@@ -34,12 +34,12 @@ func Notification(config *Config, execution *Execution, exGroup []*Execution, jo
 }
 
 // Send sends the notifications using any configured method
-func (n *Notifier) Send() error {
+func (n *Notifier) Send(logger *logrus.Entry) error {
 	if n.Config.MailHost != "" && n.Config.MailPort != 0 && n.Job.OwnerEmail != "" {
-		return n.sendExecutionEmail()
+		return n.sendExecutionEmail(logger)
 	}
 	if n.Config.WebhookURL != "" && n.Config.WebhookPayload != "" {
-		return n.callExecutionWebhook()
+		return n.callExecutionWebhook(logger)
 	}
 
 	return nil
@@ -68,7 +68,7 @@ func (n *Notifier) report() string {
 		exgStr)
 }
 
-func (n *Notifier) buildTemplate(templ string) *bytes.Buffer {
+func (n *Notifier) buildTemplate(templ string, logger *logrus.Entry) *bytes.Buffer {
 	t := template.Must(template.New("report").Parse(templ))
 
 	data := struct {
@@ -94,16 +94,16 @@ func (n *Notifier) buildTemplate(templ string) *bytes.Buffer {
 	out := &bytes.Buffer{}
 	err := t.Execute(out, data)
 	if err != nil {
-		log.WithError(err).Error("notifier: error executing template")
+		logger.WithError(err).Error("notifier: error executing template")
 		return bytes.NewBuffer([]byte("Failed to execute template:" + err.Error()))
 	}
 	return out
 }
 
-func (n *Notifier) sendExecutionEmail() error {
+func (n *Notifier) sendExecutionEmail(logger *logrus.Entry) error {
 	var data *bytes.Buffer
 	if n.Config.MailPayload != "" {
-		data = n.buildTemplate(n.Config.MailPayload)
+		data = n.buildTemplate(n.Config.MailPayload, logger)
 	} else {
 		data = bytes.NewBuffer([]byte(n.Execution.Output))
 	}
@@ -133,8 +133,8 @@ func (n *Notifier) auth() smtp.Auth {
 	return auth
 }
 
-func (n *Notifier) callExecutionWebhook() error {
-	out := n.buildTemplate(n.Config.WebhookPayload)
+func (n *Notifier) callExecutionWebhook(logger *logrus.Entry) error {
+	out := n.buildTemplate(n.Config.WebhookPayload, logger)
 	req, err := http.NewRequest("POST", n.Config.WebhookURL, out)
 	if err != nil {
 		return err
@@ -154,7 +154,7 @@ func (n *Notifier) callExecutionWebhook() error {
 	defer resp.Body.Close()
 
 	body, _ := ioutil.ReadAll(resp.Body)
-	log.WithFields(logrus.Fields{
+	logger.WithFields(logrus.Fields{
 		"status": resp.Status,
 		"header": resp.Header,
 		"body":   string(body),

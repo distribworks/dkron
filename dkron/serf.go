@@ -18,10 +18,10 @@ func (a *Agent) nodeJoin(me serf.MemberEvent) {
 	for _, m := range me.Members {
 		ok, parts := isServer(m)
 		if !ok {
-			log.WithField("member", m.Name).Warn("non-server in gossip pool")
+			a.logger.WithField("member", m.Name).Warn("non-server in gossip pool")
 			continue
 		}
-		log.WithField("server", parts.Name).Info("adding server")
+		a.logger.WithField("server", parts.Name).Info("adding server")
 
 		// Check if this server is known
 		found := false
@@ -68,7 +68,7 @@ func (a *Agent) maybeBootstrap() {
 		panic("neither raftInmem or raftStore is initialized")
 	}
 	if err != nil {
-		log.WithError(err).Error("failed to read last raft index")
+		a.logger.WithError(err).Error("failed to read last raft index")
 		return
 	}
 
@@ -92,11 +92,11 @@ func (a *Agent) maybeBootstrap() {
 			continue
 		}
 		if p.Expect != 0 && p.Expect != a.config.BootstrapExpect {
-			log.WithField("member", member).Error("peer has a conflicting expect value. All nodes should expect the same number")
+			a.logger.WithField("member", member).Error("peer has a conflicting expect value. All nodes should expect the same number")
 			return
 		}
 		if p.Bootstrap {
-			log.WithField("member", member).Error("peer has bootstrap mode. Expect disabled")
+			a.logger.WithField("member", member).Error("peer has bootstrap mode. Expect disabled")
 			return
 		}
 		if valid {
@@ -129,11 +129,11 @@ func (a *Agent) maybeBootstrap() {
 		}
 		configuration.Servers = append(configuration.Servers, peer)
 	}
-	log.Info("agent: found expected number of peers, attempting to bootstrap cluster...",
+	a.logger.Info("agent: found expected number of peers, attempting to bootstrap cluster...",
 		"peers", strings.Join(addrs, ","))
 	future := a.raft.BootstrapCluster(configuration)
 	if err := future.Error(); err != nil {
-		log.WithError(err).Error("agent: failed to bootstrap cluster")
+		a.logger.WithError(err).Error("agent: failed to bootstrap cluster")
 	}
 
 	// Bootstrapping complete, or failed for some reason, don't enter this again
@@ -147,7 +147,7 @@ func (a *Agent) nodeFailed(me serf.MemberEvent) {
 		if !ok {
 			continue
 		}
-		log.Info("removing server ", parts)
+		a.logger.Info("removing server ", parts)
 
 		// Remove the server if known
 		a.peerLock.Lock()
