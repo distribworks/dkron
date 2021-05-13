@@ -91,8 +91,7 @@ func configToPubSubMessage(config map[string]string) (*pubsub.Message, error) {
 
 	var attributes map[string]string
 	if attributesJSON != "" {
-		err := json.Unmarshal([]byte(attributesJSON), &attributes)
-		if err != nil {
+		if err := json.Unmarshal([]byte(attributesJSON), &attributes); err != nil  {
 			return nil, fmt.Errorf("invalid attributes JSON: %w", err)
 		}
 		msg.Attributes = attributes
