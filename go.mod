@@ -14,7 +14,7 @@ require (
 	github.com/gin-contrib/expvar v0.0.1
 	github.com/gin-contrib/multitemplate v0.0.0-20200226145339-3e397ee01bc6
 	github.com/gin-gonic/gin v1.6.3
-	github.com/golang/protobuf v1.4.3
+	github.com/golang/protobuf v1.5.0
 	github.com/hashicorp/go-discover v0.0.0-20201029210230-738cb3105cd0
 	github.com/hashicorp/go-hclog v0.15.0
 	github.com/hashicorp/go-immutable-radix v1.3.0 // indirect
@@ -51,7 +51,7 @@ require (
 	google.golang.org/api v0.35.0 // indirect
 	google.golang.org/grpc v1.37.0
 	google.golang.org/grpc/examples v0.0.0-20201121004645-9da74c039bbf // indirect
-	google.golang.org/protobuf v1.25.0
+	google.golang.org/protobuf v1.26.0
 )
 
 go 1.16
