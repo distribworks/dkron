@@ -37,6 +37,8 @@ var (
 type Store struct {
 	db   *buntdb.DB
 	lock *sync.Mutex // for
+
+	logger *logrus.Entry
 }
 
 // JobOptions additional options to apply when loading a Job.
@@ -62,7 +64,7 @@ type kv struct {
 }
 
 // NewStore creates a new Storage instance.
-func NewStore() (*Store, error) {
+func NewStore(logger *logrus.Entry) (*Store, error) {
 	db, err := buntdb.Open(":memory:")
 	db.CreateIndex("name", jobsPrefix+":*", buntdb.IndexJSON("name"))
 	db.CreateIndex("started_at", executionsPrefix+":*", buntdb.IndexJSON("started_at"))
@@ -80,8 +82,9 @@ func NewStore() (*Store, error) {
 	}
 
 	store := &Store{
-		db:   db,
-		lock: &sync.Mutex{},
+		db:     db,
+		lock:   &sync.Mutex{},
+		logger: logger,
 	}
 
 	return store, nil
@@ -95,7 +98,7 @@ func (s *Store) setJobTxFunc(pbj *dkronpb.Job) func(tx *buntdb.Tx) error {
 		if err != nil {
 			return err
 		}
-		log.WithField("job", pbj.Name).Debug("store: Setting job")
+		s.logger.WithField("job", pbj.Name).Debug("store: Setting job")
 
 		if _, _, err := tx.Set(jobKey, string(jb), nil); err != nil {
 			return err
@@ -248,10 +251,10 @@ func (s *Store) SetExecutionDone(execution *Execution) (bool, error) {
 		var pbj dkronpb.Job
 		if err := s.getJobTxFunc(execution.JobName, &pbj)(tx); err != nil {
 			if err == buntdb.ErrNotFound {
-				log.Warning(ErrExecutionDoneForDeletedJob)
+				s.logger.Warn(ErrExecutionDoneForDeletedJob)
 				return ErrExecutionDoneForDeletedJob
 			}
-			log.WithError(err).Fatal(err)
+			s.logger.WithError(err).Fatal(err)
 			return err
 		}
 
@@ -286,7 +289,7 @@ func (s *Store) SetExecutionDone(execution *Execution) (bool, error) {
 		return nil
 	})
 	if err != nil {
-		log.WithError(err).Error("store: Error in SetExecutionDone")
+		s.logger.WithError(err).Error("store: Error in SetExecutionDone")
 		return false, err
 	}
 
@@ -326,12 +329,13 @@ func (s *Store) GetJobs(options *JobOptions) ([]*Job, error) {
 			}
 		}
 		job := NewJobFromProto(&pbj)
+		job.logger = s.logger
 
 		if options == nil ||
 			(options.Metadata == nil || len(options.Metadata) == 0 || s.jobHasMetadata(job, options.Metadata)) &&
-			(options.Query == "" || strings.Contains(job.Name, options.Query) || strings.Contains(job.DisplayName, options.Query)) &&
-			(options.Disabled == "" || strconv.FormatBool(job.Disabled) == options.Disabled) && 
-			((options.Status == "untriggered" && job.Status == "") || (options.Status == "" || job.Status == options.Status)) {
+				(options.Query == "" || strings.Contains(job.Name, options.Query) || strings.Contains(job.DisplayName, options.Query)) &&
+				(options.Disabled == "" || strconv.FormatBool(job.Disabled) == options.Disabled) &&
+				((options.Status == "untriggered" && job.Status == "") || (options.Status == "" || job.Status == options.Status)) {
 
 			jobs = append(jobs, job)
 		}
@@ -361,6 +365,7 @@ func (s *Store) GetJob(name string, options *JobOptions) (*Job, error) {
 	}
 
 	job := NewJobFromProto(&pbj)
+	job.logger = s.logger
 
 	return job, nil
 }
@@ -381,7 +386,7 @@ func (s *Store) getJobTxFunc(name string, pbj *dkronpb.Job) func(tx *buntdb.Tx) 
 			}
 		}
 
-		log.WithFields(logrus.Fields{
+		s.logger.WithFields(logrus.Fields{
 			"job": pbj.Name,
 		}).Debug("store: Retrieved job from datastore")
 
@@ -552,7 +557,7 @@ func (s *Store) SetExecution(execution *Execution) (string, error) {
 	pbe := execution.ToProto()
 	key := fmt.Sprintf("%s:%s:%s", executionsPrefix, execution.JobName, execution.Key())
 
-	log.WithFields(logrus.Fields{
+	s.logger.WithFields(logrus.Fields{
 		"job":       execution.JobName,
 		"execution": key,
 		"finished":  execution.FinishedAt.String(),
@@ -561,7 +566,7 @@ func (s *Store) SetExecution(execution *Execution) (string, error) {
 	err := s.db.Update(s.setExecutionTxFunc(key, pbe))
 
 	if err != nil {
-		log.WithError(err).WithFields(logrus.Fields{
+		s.logger.WithError(err).WithFields(logrus.Fields{
 			"job":       execution.JobName,
 			"execution": key,
 		}).Debug("store: Failed to set key")
@@ -570,7 +575,7 @@ func (s *Store) SetExecution(execution *Execution) (string, error) {
 
 	execs, err := s.GetExecutions(execution.JobName, &ExecutionOptions{})
 	if err != nil && err != buntdb.ErrNotFound {
-		log.WithError(err).
+		s.logger.WithError(err).
 			WithField("job", execution.JobName).
 			Error("store: Error getting executions for job")
 	}
@@ -583,7 +588,7 @@ func (s *Store) SetExecution(execution *Execution) (string, error) {
 		})
 
 		for i := 0; i < len(execs)-MaxExecutions; i++ {
-			log.WithFields(logrus.Fields{
+			s.logger.WithFields(logrus.Fields{
 				"job":       execs[i].JobName,
 				"execution": execs[i].Key(),
 			}).Debug("store: to detele key")
@@ -593,7 +598,7 @@ func (s *Store) SetExecution(execution *Execution) (string, error) {
 				return err
 			})
 			if err != nil {
-				log.WithError(err).
+				s.logger.WithError(err).
 					WithField("execution", execs[i].Key()).
 					Error("store: Error trying to delete overflowed execution")
 			}
@@ -647,7 +652,7 @@ func (s *Store) unmarshalExecutions(items []kv, timezone *time.Location) ([]*Exe
 		// so we can use BuntDb indexes. To be removed in future versions.
 		if err := proto.Unmarshal([]byte(item.Value), &pbe); err != nil {
 			if err := json.Unmarshal(item.Value, &pbe); err != nil {
-				log.WithError(err).WithField("key", item.Key).Debug("error unmarshaling JSON")
+				s.logger.WithError(err).WithField("key", item.Key).Debug("error unmarshaling JSON")
 				return nil, err
 			}
 		}

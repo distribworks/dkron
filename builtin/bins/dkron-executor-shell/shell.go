@@ -165,6 +165,9 @@ func buildCmd(command string, useShell bool, env []string, cwd string) (cmd *exe
 		if err != nil {
 			return nil, err
 		}
+		if len(args) == 0 {
+			return nil, errors.New("shell: Command missing")
+		}
 		cmd = exec.Command(args[0], args[1:]...)
 	}
 	if env != nil {

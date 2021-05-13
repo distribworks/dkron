@@ -3,6 +3,7 @@ package dkron
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"testing"
 	"time"
@@ -104,7 +105,7 @@ func TestAgentCommand_runForElection(t *testing.T) {
 	// Wait until a follower steps as leader
 	time.Sleep(2 * time.Second)
 	assert.True(t, (a2.IsLeader() || a3.IsLeader()))
-	log.Info(a3.IsLeader())
+	log.Println(a3.IsLeader())
 
 	a2.Stop()
 	a3.Stop()

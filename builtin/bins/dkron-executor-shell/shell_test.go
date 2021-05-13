@@ -7,6 +7,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func Test_buildCmdInvalidInput(t *testing.T) {
+	assert.NotPanics(t, func() { buildCmd("", false, []string{}, "") })
+}
+
 func Test_buildCmd(t *testing.T) {
 
 	// test shell command
