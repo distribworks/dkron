@@ -14,8 +14,8 @@ require (
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-contrib/expvar v0.0.1
 	github.com/gin-contrib/multitemplate v0.0.0-20200226145339-3e397ee01bc6
-	github.com/gin-gonic/gin v1.6.3
-	github.com/golang/protobuf v1.5.2
+	github.com/gin-gonic/gin v1.7.1
+	github.com/golang/protobuf v1.4.3
 	github.com/hashicorp/go-discover v0.0.0-20201029210230-738cb3105cd0
 	github.com/hashicorp/go-hclog v0.16.0
 	github.com/hashicorp/go-immutable-radix v1.3.0 // indirect
