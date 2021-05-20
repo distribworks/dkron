@@ -5,9 +5,11 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"reflect"
 	"testing"
 	"time"
 
+	"github.com/hashicorp/serf/serf"
 	"github.com/hashicorp/serf/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -328,12 +330,12 @@ func Test_processFilteredNodes(t *testing.T) {
 	for name, count := range distrib {
 		fmt.Println(name, float64(count)/float64(sampleSize)*100.0, "%")
 	}
-	assert.Greater(t, float64(distrib["test1"])/float64(sampleSize), 0.3)
-	assert.Less(t, float64(distrib["test1"])/float64(sampleSize), 0.36)
-	assert.Greater(t, float64(distrib["test2"])/float64(sampleSize), 0.3)
-	assert.Less(t, float64(distrib["test2"])/float64(sampleSize), 0.36)
-	assert.Greater(t, float64(distrib["test3"])/float64(sampleSize), 0.3)
-	assert.Less(t, float64(distrib["test3"])/float64(sampleSize), 0.36)
+	assert.Greater(t, float64(distrib["test1"])/float64(sampleSize), 0.25)
+	assert.Less(t, float64(distrib["test1"])/float64(sampleSize), 0.40)
+	assert.Greater(t, float64(distrib["test2"])/float64(sampleSize), 0.25)
+	assert.Less(t, float64(distrib["test2"])/float64(sampleSize), 0.40)
+	assert.Greater(t, float64(distrib["test3"])/float64(sampleSize), 0.25)
+	assert.Less(t, float64(distrib["test3"])/float64(sampleSize), 0.40)
 
 	// Clean up
 	a1.Stop()
@@ -459,4 +461,129 @@ func TestAgentConfig(t *testing.T) {
 	assert.Equal(t, advAddr+":8946", a.config.AdvertiseAddr)
 
 	a.Stop()
+}
+
+func Test_filterNodes(t *testing.T) {
+	nodes := map[string]serf.Member{
+		"node1": {
+			Tags: map[string]string{
+				"region":  "global",
+				"tag":     "test",
+				"just1":   "value",
+				"tagfor2": "2",
+			},
+		},
+		"node2": {
+			Tags: map[string]string{
+				"region":  "global",
+				"tag":     "test",
+				"just2":   "value",
+				"tagfor2": "2",
+			},
+		},
+		"node3": {
+			Tags: map[string]string{
+				"region": "global",
+				"tag":    "test",
+				"just3":  "value",
+			},
+		},
+	}
+	type args struct {
+		execNodes map[string]serf.Member
+		tags      map[string]string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    map[string]serf.Member
+		want1   map[string]string
+		want2   int
+		wantErr bool
+	}{
+		{
+			name: "All nodes tag",
+			args: args{
+				execNodes: nodes,
+				tags:      map[string]string{"tag": "test"},
+			},
+			want:    nodes,
+			want1:   map[string]string{"tag": "test"},
+			want2:   3,
+			wantErr: false,
+		},
+		{
+			name: "Just node1 tag",
+			args: args{
+				execNodes: nodes,
+				tags:      map[string]string{"just1": "value"},
+			},
+			want:    map[string]serf.Member{"node1": nodes["node1"]},
+			want1:   map[string]string{"just1": "value"},
+			want2:   1,
+			wantErr: false,
+		},
+		{
+			name: "Just node2 tag",
+			args: args{
+				execNodes: nodes,
+				tags:      map[string]string{"just2": "value"},
+			},
+			want:    map[string]serf.Member{"node2": nodes["node2"]},
+			want1:   map[string]string{"just2": "value"},
+			want2:   1,
+			wantErr: false,
+		},
+		{
+			name: "Matching 2 nodes",
+			args: args{
+				execNodes: nodes,
+				tags:      map[string]string{"tagfor2": "2"},
+			},
+			want:    map[string]serf.Member{"node1": nodes["node1"], "node2": nodes["node2"]},
+			want1:   map[string]string{"tagfor2": "2"},
+			want2:   2,
+			wantErr: false,
+		},
+		{
+			name: "No matching nodes",
+			args: args{
+				execNodes: nodes,
+				tags:      map[string]string{"unknown": "value"},
+			},
+			want:    map[string]serf.Member{},
+			want1:   map[string]string{"unknown": "value"},
+			want2:   0,
+			wantErr: false,
+		},
+		{
+			name: "All nodes low cardinality",
+			args: args{
+				execNodes: nodes,
+				tags:      map[string]string{"tag": "test:1"},
+			},
+			want:    nodes,
+			want1:   map[string]string{"tag": "test"},
+			want2:   1,
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, got1, got2, err := filterNodes(tt.args.execNodes, tt.args.tags)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("filterNodes() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("filterNodes() got = %v, want %v", got, tt.want)
+			}
+			if !reflect.DeepEqual(got1, tt.want1) {
+				t.Errorf("filterNodes() got1 = %v, want %v", got1, tt.want1)
+			}
+			if got2 != tt.want2 {
+				t.Errorf("filterNodes() got2 = %v, want %v", got2, tt.want2)
+			}
+		})
+	}
 }
