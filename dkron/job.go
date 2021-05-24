@@ -66,10 +66,10 @@ type Job struct {
 	// Cron expression for the job. When to run the job.
 	Schedule string `json:"schedule"`
 
-	// Owner of the job.
+	// Arbitrary string indicating the owner of the job.
 	Owner string `json:"owner"`
 
-	// Owner email of the job.
+	// eMail address to use for notifications.
 	OwnerEmail string `json:"owner_email"`
 
 	// Number of successful executions of this job.
@@ -108,31 +108,37 @@ type Job struct {
 	// Job id of job that this job is dependent upon.
 	ParentJob string `json:"parent_job"`
 
-	// Processors to use for this job
+	// Processors to use for this job.
 	Processors map[string]plugin.Config `json:"processors"`
 
-	// Concurrency policy for this job (allow, forbid)
+	// Concurrency policy for this job (allow, forbid).
 	Concurrency string `json:"concurrency"`
 
-	// Executor plugin to be used in this job
+	// Executor plugin to be used in this job.
 	Executor string `json:"executor"`
 
-	// Executor args
+	// Configuration arguments for the specific executor.
 	ExecutorConfig plugin.ExecutorPluginConfig `json:"executor_config"`
 
-	// Computed job status
+	// Computed job status.
 	Status string `json:"status"`
 
-	// Computed next execution
+	// Computed next execution.
 	Next time.Time `json:"next"`
 
-	ExpiresAt ntime.NullableTime `json:"expires_at"`
+	// Delete the job after the first execution.
+	Ephemeral bool `json:"ephemeral"`
+
+	// The job will not be executed after this time.
+	ExpiresAt time.Time `json:"expires_at"`
+
 	logger *logrus.Entry
 }
 
 // NewJobFromProto create a new Job from a PB Job struct
 func NewJobFromProto(in *proto.Job, logger *logrus.Entry) *Job {
 	next, _ := ptypes.Timestamp(in.GetNext())
+	expiresAt, _ := ptypes.Timestamp(in.GetExpiresAt())
 
 	job := &Job{
 		ID:             in.Name,
@@ -155,6 +161,8 @@ func NewJobFromProto(in *proto.Job, logger *logrus.Entry) *Job {
 		Status:         in.Status,
 		Metadata:       in.Metadata,
 		Next:           next,
+		Ephemeral:      in.Ephemeral,
+		ExpiresAt:      expiresAt,
 		logger:         logger,
 	}
 	if in.GetLastSuccess().GetHasValue() {
@@ -192,7 +200,9 @@ func (j *Job) ToProto() *proto.Job {
 	if j.LastError.HasValue() {
 		lastError.Time, _ = ptypes.TimestampProto(j.LastError.Get())
 	}
+
 	next, _ := ptypes.TimestampProto(j.Next)
+	expiresAt, _ := ptypes.TimestampProto(j.ExpiresAt)
 
 	processors := make(map[string]*proto.PluginConfig)
 	for k, v := range j.Processors {
@@ -221,6 +231,8 @@ func (j *Job) ToProto() *proto.Job {
 		LastSuccess:    lastSuccess,
 		LastError:      lastError,
 		Next:           next,
+		Ephemeral:      j.Ephemeral,
+		ExpiresAt:      expiresAt,
 	}
 }
 
@@ -299,7 +311,7 @@ func (j *Job) GetNext() (time.Time, error) {
 }
 
 func (j *Job) isRunnable(logger *logrus.Entry) bool {
-	if j.Disabled {
+	if j.Disabled || (!j.ExpiresAt.IsZero() && time.Now().After(j.ExpiresAt)) {
 		return false
 	}
 

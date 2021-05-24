@@ -4,10 +4,10 @@ package types
 
 import (
 	context "context"
-	empty "github.com/golang/protobuf/ptypes/empty"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -20,15 +20,15 @@ const _ = grpc.SupportPackageIsVersion7
 type DkronClient interface {
 	GetJob(ctx context.Context, in *GetJobRequest, opts ...grpc.CallOption) (*GetJobResponse, error)
 	ExecutionDone(ctx context.Context, in *ExecutionDoneRequest, opts ...grpc.CallOption) (*ExecutionDoneResponse, error)
-	Leave(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error)
+	Leave(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	SetJob(ctx context.Context, in *SetJobRequest, opts ...grpc.CallOption) (*SetJobResponse, error)
 	DeleteJob(ctx context.Context, in *DeleteJobRequest, opts ...grpc.CallOption) (*DeleteJobResponse, error)
 	RunJob(ctx context.Context, in *RunJobRequest, opts ...grpc.CallOption) (*RunJobResponse, error)
 	ToggleJob(ctx context.Context, in *ToggleJobRequest, opts ...grpc.CallOption) (*ToggleJobResponse, error)
-	RaftGetConfiguration(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*RaftGetConfigurationResponse, error)
-	RaftRemovePeerByID(ctx context.Context, in *RaftRemovePeerByIDRequest, opts ...grpc.CallOption) (*empty.Empty, error)
-	GetActiveExecutions(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*GetActiveExecutionsResponse, error)
-	SetExecution(ctx context.Context, in *Execution, opts ...grpc.CallOption) (*empty.Empty, error)
+	RaftGetConfiguration(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*RaftGetConfigurationResponse, error)
+	RaftRemovePeerByID(ctx context.Context, in *RaftRemovePeerByIDRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	GetActiveExecutions(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetActiveExecutionsResponse, error)
+	SetExecution(ctx context.Context, in *Execution, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type dkronClient struct {
@@ -57,8 +57,8 @@ func (c *dkronClient) ExecutionDone(ctx context.Context, in *ExecutionDoneReques
 	return out, nil
 }
 
-func (c *dkronClient) Leave(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
+func (c *dkronClient) Leave(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/types.Dkron/Leave", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -102,7 +102,7 @@ func (c *dkronClient) ToggleJob(ctx context.Context, in *ToggleJobRequest, opts 
 	return out, nil
 }
 
-func (c *dkronClient) RaftGetConfiguration(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*RaftGetConfigurationResponse, error) {
+func (c *dkronClient) RaftGetConfiguration(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*RaftGetConfigurationResponse, error) {
 	out := new(RaftGetConfigurationResponse)
 	err := c.cc.Invoke(ctx, "/types.Dkron/RaftGetConfiguration", in, out, opts...)
 	if err != nil {
@@ -111,8 +111,8 @@ func (c *dkronClient) RaftGetConfiguration(ctx context.Context, in *empty.Empty,
 	return out, nil
 }
 
-func (c *dkronClient) RaftRemovePeerByID(ctx context.Context, in *RaftRemovePeerByIDRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
+func (c *dkronClient) RaftRemovePeerByID(ctx context.Context, in *RaftRemovePeerByIDRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/types.Dkron/RaftRemovePeerByID", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -120,7 +120,7 @@ func (c *dkronClient) RaftRemovePeerByID(ctx context.Context, in *RaftRemovePeer
 	return out, nil
 }
 
-func (c *dkronClient) GetActiveExecutions(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*GetActiveExecutionsResponse, error) {
+func (c *dkronClient) GetActiveExecutions(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetActiveExecutionsResponse, error) {
 	out := new(GetActiveExecutionsResponse)
 	err := c.cc.Invoke(ctx, "/types.Dkron/GetActiveExecutions", in, out, opts...)
 	if err != nil {
@@ -129,8 +129,8 @@ func (c *dkronClient) GetActiveExecutions(ctx context.Context, in *empty.Empty, 
 	return out, nil
 }
 
-func (c *dkronClient) SetExecution(ctx context.Context, in *Execution, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
+func (c *dkronClient) SetExecution(ctx context.Context, in *Execution, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/types.Dkron/SetExecution", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -144,15 +144,15 @@ func (c *dkronClient) SetExecution(ctx context.Context, in *Execution, opts ...g
 type DkronServer interface {
 	GetJob(context.Context, *GetJobRequest) (*GetJobResponse, error)
 	ExecutionDone(context.Context, *ExecutionDoneRequest) (*ExecutionDoneResponse, error)
-	Leave(context.Context, *empty.Empty) (*empty.Empty, error)
+	Leave(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	SetJob(context.Context, *SetJobRequest) (*SetJobResponse, error)
 	DeleteJob(context.Context, *DeleteJobRequest) (*DeleteJobResponse, error)
 	RunJob(context.Context, *RunJobRequest) (*RunJobResponse, error)
 	ToggleJob(context.Context, *ToggleJobRequest) (*ToggleJobResponse, error)
-	RaftGetConfiguration(context.Context, *empty.Empty) (*RaftGetConfigurationResponse, error)
-	RaftRemovePeerByID(context.Context, *RaftRemovePeerByIDRequest) (*empty.Empty, error)
-	GetActiveExecutions(context.Context, *empty.Empty) (*GetActiveExecutionsResponse, error)
-	SetExecution(context.Context, *Execution) (*empty.Empty, error)
+	RaftGetConfiguration(context.Context, *emptypb.Empty) (*RaftGetConfigurationResponse, error)
+	RaftRemovePeerByID(context.Context, *RaftRemovePeerByIDRequest) (*emptypb.Empty, error)
+	GetActiveExecutions(context.Context, *emptypb.Empty) (*GetActiveExecutionsResponse, error)
+	SetExecution(context.Context, *Execution) (*emptypb.Empty, error)
 	mustEmbedUnimplementedDkronServer()
 }
 
@@ -166,7 +166,7 @@ func (UnimplementedDkronServer) GetJob(context.Context, *GetJobRequest) (*GetJob
 func (UnimplementedDkronServer) ExecutionDone(context.Context, *ExecutionDoneRequest) (*ExecutionDoneResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExecutionDone not implemented")
 }
-func (UnimplementedDkronServer) Leave(context.Context, *empty.Empty) (*empty.Empty, error) {
+func (UnimplementedDkronServer) Leave(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Leave not implemented")
 }
 func (UnimplementedDkronServer) SetJob(context.Context, *SetJobRequest) (*SetJobResponse, error) {
@@ -181,16 +181,16 @@ func (UnimplementedDkronServer) RunJob(context.Context, *RunJobRequest) (*RunJob
 func (UnimplementedDkronServer) ToggleJob(context.Context, *ToggleJobRequest) (*ToggleJobResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ToggleJob not implemented")
 }
-func (UnimplementedDkronServer) RaftGetConfiguration(context.Context, *empty.Empty) (*RaftGetConfigurationResponse, error) {
+func (UnimplementedDkronServer) RaftGetConfiguration(context.Context, *emptypb.Empty) (*RaftGetConfigurationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RaftGetConfiguration not implemented")
 }
-func (UnimplementedDkronServer) RaftRemovePeerByID(context.Context, *RaftRemovePeerByIDRequest) (*empty.Empty, error) {
+func (UnimplementedDkronServer) RaftRemovePeerByID(context.Context, *RaftRemovePeerByIDRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RaftRemovePeerByID not implemented")
 }
-func (UnimplementedDkronServer) GetActiveExecutions(context.Context, *empty.Empty) (*GetActiveExecutionsResponse, error) {
+func (UnimplementedDkronServer) GetActiveExecutions(context.Context, *emptypb.Empty) (*GetActiveExecutionsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetActiveExecutions not implemented")
 }
-func (UnimplementedDkronServer) SetExecution(context.Context, *Execution) (*empty.Empty, error) {
+func (UnimplementedDkronServer) SetExecution(context.Context, *Execution) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetExecution not implemented")
 }
 func (UnimplementedDkronServer) mustEmbedUnimplementedDkronServer() {}
@@ -243,7 +243,7 @@ func _Dkron_ExecutionDone_Handler(srv interface{}, ctx context.Context, dec func
 }
 
 func _Dkron_Leave_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(empty.Empty)
+	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -255,7 +255,7 @@ func _Dkron_Leave_Handler(srv interface{}, ctx context.Context, dec func(interfa
 		FullMethod: "/types.Dkron/Leave",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DkronServer).Leave(ctx, req.(*empty.Empty))
+		return srv.(DkronServer).Leave(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -333,7 +333,7 @@ func _Dkron_ToggleJob_Handler(srv interface{}, ctx context.Context, dec func(int
 }
 
 func _Dkron_RaftGetConfiguration_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(empty.Empty)
+	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -345,7 +345,7 @@ func _Dkron_RaftGetConfiguration_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: "/types.Dkron/RaftGetConfiguration",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DkronServer).RaftGetConfiguration(ctx, req.(*empty.Empty))
+		return srv.(DkronServer).RaftGetConfiguration(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -369,7 +369,7 @@ func _Dkron_RaftRemovePeerByID_Handler(srv interface{}, ctx context.Context, dec
 }
 
 func _Dkron_GetActiveExecutions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(empty.Empty)
+	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -381,7 +381,7 @@ func _Dkron_GetActiveExecutions_Handler(srv interface{}, ctx context.Context, de
 		FullMethod: "/types.Dkron/GetActiveExecutions",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DkronServer).GetActiveExecutions(ctx, req.(*empty.Empty))
+		return srv.(DkronServer).GetActiveExecutions(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }

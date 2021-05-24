@@ -67,8 +67,12 @@ const JobList = (props: any) => {
                     cellClassName={classes.hiddenOnSmallScreens}
                     headerClassName={classes.hiddenOnSmallScreens} />
                 <TextField source="schedule" />
-                <NumberField source="success_count" />
-                <NumberField source="error_count" />
+                <NumberField source="success_count" 
+                    cellClassName={classes.hiddenOnSmallScreens}
+                    headerClassName={classes.hiddenOnSmallScreens} />
+                <NumberField source="error_count" 
+                    cellClassName={classes.hiddenOnSmallScreens}
+                    headerClassName={classes.hiddenOnSmallScreens} />
                 <DateField source="last_success" showTime />
                 <DateField source="last_error" showTime />
                 <BooleanField source="disabled" sortable={false} />
