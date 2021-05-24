@@ -131,7 +131,7 @@ type Job struct {
 }
 
 // NewJobFromProto create a new Job from a PB Job struct
-func NewJobFromProto(in *proto.Job) *Job {
+func NewJobFromProto(in *proto.Job, logger *logrus.Entry) *Job {
 	next, _ := ptypes.Timestamp(in.GetNext())
 
 	job := &Job{
