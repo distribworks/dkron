@@ -26,7 +26,7 @@ func cleanTags(tags map[string]string) (map[string]string, int, error) {
 			tagCard, err := strconv.Atoi(vparts[1])
 			if err != nil {
 				// Tag value is malformed
-				return nil, 0, fmt.Errorf("imporper cardinality specified for tag %s: %v", k, vparts[1])
+				return nil, 0, fmt.Errorf("improper cardinality specified for tag %s: %v", k, vparts[1])
 			}
 
 			if tagCard < cardinality {

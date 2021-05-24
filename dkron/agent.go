@@ -762,8 +762,7 @@ func filterNodes(execNodes map[string]serf.Member, tags map[string]string) (map[
 
 	// Filter nodes that lack tags
 	for name, member := range execNodes {
-		nodeMatches := nodeMatchesTags(member, ct)
-		if nodeMatches {
+		if nodeMatchesTags(member, ct) {
 			matchingNodes[name] = member
 		}
 	}
