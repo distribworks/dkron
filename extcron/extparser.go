@@ -21,10 +21,14 @@ func NewParser() cron.ScheduleParser {
 
 // Parse parses a cron schedule specification. It accepts the cron spec with
 // mandatory seconds parameter, descriptors and the custom descriptors
-// "@at <date>" and "@manually".
+// "@at <date>", "@manually" and "@minutely".
 func (p ExtParser) Parse(spec string) (cron.Schedule, error) {
-	if spec == "@manually" {
+	switch spec {
+	case "@manually":
 		return At(time.Time{}), nil
+
+	case "@minutely":
+		spec = "0 * * * * *"
 	}
 
 	const at = "@at "
