@@ -131,7 +131,7 @@ func (grpcc *GRPCClient) GetJob(addr, jobName string) (*Job, error) {
 		return nil, err
 	}
 
-	return NewJobFromProto(gjr.Job), nil
+	return NewJobFromProto(gjr.Job, grpcc.logger), nil
 }
 
 // Leave calls Leave method on the gRPC server
@@ -225,7 +225,7 @@ func (grpcc *GRPCClient) DeleteJob(jobName string) (*Job, error) {
 		return nil, err
 	}
 
-	job := NewJobFromProto(res.Job)
+	job := NewJobFromProto(res.Job, grpcc.logger)
 
 	return job, nil
 }
@@ -260,7 +260,7 @@ func (grpcc *GRPCClient) RunJob(jobName string) (*Job, error) {
 		return nil, err
 	}
 
-	job := NewJobFromProto(res.Job)
+	job := NewJobFromProto(res.Job, grpcc.logger)
 
 	return job, nil
 }

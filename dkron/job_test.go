@@ -89,7 +89,7 @@ func TestNewJobFromProto(t *testing.T) {
 	}
 	in.Processors = proc
 
-	j := NewJobFromProto(in)
+	j := NewJobFromProto(in, nil)
 	assert.Equal(t, testConfig, j.Processors)
 }
 

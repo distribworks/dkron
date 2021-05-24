@@ -81,7 +81,7 @@ func (d *dkronFSM) applySetJob(buf []byte) interface{} {
 	if err := proto.Unmarshal(buf, &pj); err != nil {
 		return err
 	}
-	job := NewJobFromProto(&pj)
+	job := NewJobFromProto(&pj, d.logger)
 	if err := d.store.SetJob(job, false); err != nil {
 		return err
 	}

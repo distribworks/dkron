@@ -126,6 +126,7 @@ type Job struct {
 	// Computed next execution
 	Next time.Time `json:"next"`
 
+	ExpiresAt ntime.NullableTime `json:"expires_at"`
 	logger *logrus.Entry
 }
 
@@ -154,6 +155,7 @@ func NewJobFromProto(in *proto.Job) *Job {
 		Status:         in.Status,
 		Metadata:       in.Metadata,
 		Next:           next,
+		logger:         logger,
 	}
 	if in.GetLastSuccess().GetHasValue() {
 		t, _ := ptypes.Timestamp(in.GetLastSuccess().GetTime())
