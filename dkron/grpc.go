@@ -91,7 +91,7 @@ func (grpcs *GRPCServer) SetJob(ctx context.Context, setJobReq *proto.SetJobRequ
 	}
 
 	// If everything is ok, add the job to the scheduler
-	job := NewJobFromProto(setJobReq.Job)
+	job := NewJobFromProto(setJobReq.Job, grpcs.logger)
 	job.Agent = grpcs.agent
 	if err := grpcs.agent.sched.AddJob(job); err != nil {
 		return nil, err
