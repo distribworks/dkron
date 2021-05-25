@@ -745,14 +745,14 @@ func (a *Agent) processFilteredNodes(job *Job) (map[string]string, map[string]st
 	return nodes, tags, nil
 }
 
-// filterNodes determines which of the execNodes have the given tags
+// filterNodes determines which of the provided nodes have the given tags
 // Returns:
-// * the map of execNodes that match the provided tags
+// * the map of allNodes that match the provided tags
 // * a clean map of tag values without cardinality
 // * cardinality, i.e. the max number of nodes that should be targeted, regardless of the
 //   number of nodes in the resulting map.
 // * an error if a cardinality was malformed
-func filterNodes(execNodes map[string]serf.Member, tags map[string]string) (map[string]serf.Member, map[string]string, int, error) {
+func filterNodes(allNodes map[string]serf.Member, tags map[string]string) (map[string]serf.Member, map[string]string, int, error) {
 	ct, cardinality, err := cleanTags(tags)
 	if err != nil {
 		return nil, nil, 0, err
@@ -761,7 +761,7 @@ func filterNodes(execNodes map[string]serf.Member, tags map[string]string) (map[
 	matchingNodes := make(map[string]serf.Member)
 
 	// Filter nodes that lack tags
-	for name, member := range execNodes {
+	for name, member := range allNodes {
 		if nodeMatchesTags(member, ct) {
 			matchingNodes[name] = member
 		}
