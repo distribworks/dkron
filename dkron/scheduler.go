@@ -3,6 +3,7 @@ package dkron
 import (
 	"errors"
 	"expvar"
+	"fmt"
 	"strings"
 	"sync"
 
@@ -23,8 +24,10 @@ var (
 // Scheduler represents a dkron scheduler instance, it stores the cron engine
 // and the related parameters.
 type Scheduler struct {
+	// mu is to prevent concurrent edits to Cron and Started
+	mu          sync.RWMutex
 	Cron        *cron.Cron
-	Started     bool
+	started     bool
 	EntryJobMap sync.Map
 	logger      *logrus.Entry
 }
@@ -34,7 +37,7 @@ func NewScheduler(logger *logrus.Entry) *Scheduler {
 	schedulerStarted.Set(0)
 	return &Scheduler{
 		Cron:        nil,
-		Started:     false,
+		started:     false,
 		EntryJobMap: sync.Map{},
 		logger:      logger,
 	}
@@ -43,6 +46,14 @@ func NewScheduler(logger *logrus.Entry) *Scheduler {
 // Start the cron scheduler, adding its corresponding jobs and
 // executing them on time.
 func (s *Scheduler) Start(jobs []*Job, agent *Agent) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	if s.Cron != nil {
+		// Creating a new cron is risky if not nil because the previous invocation is dirty
+		return fmt.Errorf("cron is already configured, can not start scheduler")
+	}
+
 	s.Cron = cron.New(cron.WithParser(extcron.NewParser()))
 
 	metrics.IncrCounter([]string{"scheduler", "start"}, 1)
@@ -51,7 +62,7 @@ func (s *Scheduler) Start(jobs []*Job, agent *Agent) error {
 		s.AddJob(job)
 	}
 	s.Cron.Start()
-	s.Started = true
+	s.started = true
 	schedulerStarted.Set(1)
 
 	return nil
@@ -59,10 +70,13 @@ func (s *Scheduler) Start(jobs []*Job, agent *Agent) error {
 
 // Stop stops the scheduler effectively not running any job.
 func (s *Scheduler) Stop() {
-	if s.Started {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	if s.started {
 		s.logger.Debug("scheduler: Stopping scheduler")
 		s.Cron.Stop()
-		s.Started = false
+		s.started = false
 		// Keep Cron exists and let the jobs which have been scheduled can continue to finish,
 		// even the node's leadership will be revoked.
 		// Ignore the running jobs and make s.Cron to nil may cause whole process crashed.
@@ -86,6 +100,14 @@ func (s *Scheduler) Restart(jobs []*Job, agent *Agent) {
 // Clear cron separately, this can only be called when agent will be stop.
 func (s *Scheduler) ClearCron() {
 	s.Cron = nil
+}
+
+// Started will safely return if the schduler is started or not
+func (s *Scheduler) Started() bool {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	return s.started
 }
 
 // GetEntry returns a scheduler entry from a snapshot in

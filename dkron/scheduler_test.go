@@ -11,7 +11,8 @@ func TestSchedule(t *testing.T) {
 	log := getTestLogger()
 	sched := NewScheduler(log)
 
-	assert.False(t, sched.Started)
+	assert.False(t, sched.started)
+	assert.False(t, sched.Started())
 
 	testJob1 := &Job{
 		Name:           "cron_job",
@@ -23,7 +24,8 @@ func TestSchedule(t *testing.T) {
 	}
 	sched.Start([]*Job{testJob1}, &Agent{})
 
-	assert.True(t, sched.Started)
+	assert.True(t, sched.started)
+	assert.True(t, sched.Started())
 	now := time.Now().Truncate(time.Second)
 
 	entry, _ := sched.GetEntry(testJob1.Name)
@@ -39,7 +41,8 @@ func TestSchedule(t *testing.T) {
 	}
 	sched.Restart([]*Job{testJob2}, &Agent{})
 
-	assert.True(t, sched.Started)
+	assert.True(t, sched.started)
+	assert.True(t, sched.Started())
 	assert.Len(t, sched.Cron.Entries(), 1)
 
 	sched.Cron.Remove(1)
@@ -61,7 +64,8 @@ func TestTimezoneAwareJob(t *testing.T) {
 	}
 	sched.Start([]*Job{tzJob}, &Agent{})
 
-	assert.True(t, sched.Started)
+	assert.True(t, sched.started)
+	assert.True(t, sched.Started())
 	assert.Len(t, sched.Cron.Entries(), 1)
 	sched.Stop()
 }

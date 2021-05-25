@@ -244,7 +244,7 @@ func (a *Agent) Stop() error {
 		a.Store.Shutdown()
 	}
 
-	if a.config.Server && a.sched.Started {
+	if a.config.Server && a.sched.Started() {
 		a.sched.Stop()
 		a.sched.ClearCron()
 	}
