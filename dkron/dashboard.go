@@ -11,12 +11,12 @@ import (
 	"github.com/distribworks/dkron/v3/dkron/templates"
 	"github.com/gin-contrib/multitemplate"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 const (
 	dashboardPathPrefix = "dashboard"
 	assetsPrefix        = "static"
-	apiPathPrefix       = "v1"
 )
 
 type commonDashboardData struct {
@@ -90,11 +90,21 @@ func (a *Agent) dashboardJobsHandler(c *gin.Context) {
 }
 
 func (a *Agent) dashboardExecutionsHandler(c *gin.Context) {
-	job := c.Param("job")
+	jobName := c.Param("job")
 
-	groups, byGroup, err := a.Store.GetGroupedExecutions(job)
+	// Get the job's timezone
+	var jobLocation *time.Location
+	if job, err := a.Store.GetJob(jobName, nil); err == nil {
+		jobLocation = job.GetTimeLocation()
+	}
+
+	groups, byGroup, err := a.Store.GetGroupedExecutions(jobName,
+		&ExecutionOptions{
+			Timezone: jobLocation,
+		},
+	)
 	if err != nil {
-		log.Error(err)
+		a.logger.Error(err)
 	}
 
 	var count int
@@ -111,7 +121,7 @@ func (a *Agent) dashboardExecutionsHandler(c *gin.Context) {
 	}{
 		Common:  newCommonDashboardData(a, a.config.NodeName, "../../../"),
 		Groups:  groups,
-		JobName: job,
+		JobName: jobName,
 		ByGroup: byGroup,
 		Count:   count,
 	}
@@ -128,7 +138,7 @@ func (a *Agent) dashboardBusyHandler(c *gin.Context) {
 	c.HTML(http.StatusOK, "busy", data)
 }
 
-func mustLoadTemplate(path string) []byte {
+func mustLoadTemplate(path string, log *logrus.Entry) []byte {
 	f, err := templates.Templates.Open(path)
 	if err != nil {
 		log.Error(err)
@@ -146,31 +156,31 @@ func mustLoadTemplate(path string) []byte {
 
 // CreateMyRender returns a new custom multitemplate renderer
 // to use with Gin.
-func CreateMyRender() multitemplate.Render {
+func CreateMyRender(l *logrus.Entry) multitemplate.Render {
 	r := multitemplate.New()
 
-	status := mustLoadTemplate("/status.html.tmpl")
-	dash := mustLoadTemplate("/dashboard.html.tmpl")
+	status := mustLoadTemplate("/status.html.tmpl", l)
+	dash := mustLoadTemplate("/dashboard.html.tmpl", l)
 
 	r.AddFromStringsFuncs("index", funcMap(),
 		string(dash),
 		string(status),
-		string(mustLoadTemplate("/index.html.tmpl")))
+		string(mustLoadTemplate("/index.html.tmpl", l)))
 
 	r.AddFromStringsFuncs("jobs", funcMap(),
 		string(dash),
 		string(status),
-		string(mustLoadTemplate("/jobs.html.tmpl")))
+		string(mustLoadTemplate("/jobs.html.tmpl", l)))
 
 	r.AddFromStringsFuncs("executions", funcMap(),
 		string(dash),
 		string(status),
-		string(mustLoadTemplate("/executions.html.tmpl")))
+		string(mustLoadTemplate("/executions.html.tmpl", l)))
 
 	r.AddFromStringsFuncs("busy", funcMap(),
 		string(dash),
 		string(status),
-		string(mustLoadTemplate("/busy.html.tmpl")))
+		string(mustLoadTemplate("/busy.html.tmpl", l)))
 
 	return r
 }

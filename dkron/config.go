@@ -1,9 +1,12 @@
 package dkron
 
 import (
+	"crypto/sha256"
 	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"net"
 	"os"
 	"strconv"
@@ -159,6 +162,12 @@ type Config struct {
 
 	// EnablePrometheus enables serving of prometheus metrics at /metrics
 	EnablePrometheus bool `mapstructure:"enable-prometheus"`
+
+	// UI enable the web UI on this node. The node must be server.
+	UI bool
+
+	// DisableUsageStats disable sending anonymous usage stats
+	DisableUsageStats bool `mapstructure:"disable-usage-stats"`
 }
 
 // DefaultBindPort is the default port that dkron will use for Serf communication
@@ -193,6 +202,7 @@ func DefaultConfig() *Config {
 		ReconcileInterval:    60 * time.Second,
 		RaftMultiplier:       1,
 		SerfReconnectTimeout: "24h",
+		UI:                   true,
 	}
 }
 
@@ -222,6 +232,7 @@ func ConfigFlagSet() *flag.FlagSet {
 	cmdFlags.String("datacenter", c.Datacenter, "Specifies the data center of the local agent. All members of a datacenter should share a local LAN connection.")
 	cmdFlags.String("region", c.Region, "Specifies the region the Dkron agent is a member of. A region typically maps to a geographic region, for example us, with potentially multiple zones, which map to datacenters such as us-west and us-east")
 	cmdFlags.String("serf-reconnect-timeout", c.SerfReconnectTimeout, "This is the amount of time to attempt to reconnect to a failed node before giving up and considering it completely gone. In Kubernetes, you might need this to about 5s, because there is no reason to try reconnects for default 24h value. Also Raft behaves oddly if node is not reaped and returned with same ID, but different IP. Format there: https://golang.org/pkg/time/#ParseDuration")
+	cmdFlags.Bool("ui", true, "Enable the web UI on this node. The node must be server.")
 
 	// Notifications
 	cmdFlags.String("mail-host", "", "Mail server host address to use for notifications")
@@ -231,15 +242,16 @@ func ConfigFlagSet() *flag.FlagSet {
 	cmdFlags.String("mail-from", "", "From email address to use")
 	cmdFlags.String("mail-payload", "", "Notification mail payload")
 	cmdFlags.String("mail-subject-prefix", c.MailSubjectPrefix, "Notification mail subject prefix")
-
 	cmdFlags.String("webhook-url", "", "Webhook url to call for notifications")
 	cmdFlags.String("webhook-payload", "", "Body of the POST request to send on webhook call")
 	cmdFlags.StringSlice("webhook-headers", []string{}, "Headers to use when calling the webhook URL. Can be specified multiple times")
 
+	// Observability
 	cmdFlags.String("dog-statsd-addr", "", "DataDog Agent address")
 	cmdFlags.StringSlice("dog-statsd-tags", []string{}, "Datadog tags, specified as key:value")
 	cmdFlags.String("statsd-addr", "", "Statsd address")
 	cmdFlags.Bool("enable-prometheus", false, "Enable serving prometheus metrics")
+	cmdFlags.Bool("disable-usage-stats", c.DisableUsageStats, "Disable sending anonymous usage stats")
 
 	return cmdFlags
 }
@@ -395,4 +407,14 @@ START:
 // EncryptBytes returns the encryption key configured.
 func (c *Config) EncryptBytes() ([]byte, error) {
 	return base64.StdEncoding.DecodeString(c.EncryptKey)
+}
+
+// Hash returns the sha 256 hash of the configuration in a standard base64 encoded string
+func (c *Config) Hash() (string, error) {
+	b, err := json.Marshal(c)
+	if err != nil {
+		return "", err
+	}
+	sum := sha256.Sum256(b)
+	return base64.StdEncoding.EncodeToString(sum[:]), nil
 }

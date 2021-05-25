@@ -17,7 +17,7 @@ Dkron clusters have a leader, the leader is responsible of starting job executio
 
 Any Dkron agent or server acts as a cluster member and it's available to run scheduled jobs.
 
-You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run. This gives an unprecedented level of flexibility in runnig jobs across a cluster of any size and with any combination of machines you need.
+Default is for all nodes to execute each job. You can control what nodes run a job by specifying tags and a count of target nodes having this tag. This gives an unprecedented level of flexibility in runnig jobs across a cluster of any size and with any combination of machines you need.
 
 All the execution responses will be gathered by the scheduler and stored in the database.
 

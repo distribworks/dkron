@@ -3,6 +3,7 @@ package dkron
 import (
 	"errors"
 	"expvar"
+	"fmt"
 	"strings"
 	"sync"
 
@@ -23,24 +24,36 @@ var (
 // Scheduler represents a dkron scheduler instance, it stores the cron engine
 // and the related parameters.
 type Scheduler struct {
+	// mu is to prevent concurrent edits to Cron and Started
+	mu          sync.RWMutex
 	Cron        *cron.Cron
-	Started     bool
-	EntryJobMap sync.Map //map[string]cron.EntryID
+	started     bool
+	EntryJobMap sync.Map
+	logger      *logrus.Entry
 }
 
 // NewScheduler creates a new Scheduler instance
-func NewScheduler() *Scheduler {
+func NewScheduler(logger *logrus.Entry) *Scheduler {
 	schedulerStarted.Set(0)
 	return &Scheduler{
 		Cron:        nil,
-		Started:     false,
-		EntryJobMap: sync.Map{}, // make(map[string]cron.EntryID),
+		started:     false,
+		EntryJobMap: sync.Map{},
+		logger:      logger,
 	}
 }
 
 // Start the cron scheduler, adding its corresponding jobs and
 // executing them on time.
 func (s *Scheduler) Start(jobs []*Job, agent *Agent) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	if s.Cron != nil {
+		// Creating a new cron is risky if not nil because the previous invocation is dirty
+		return fmt.Errorf("cron is already configured, can not start scheduler")
+	}
+
 	s.Cron = cron.New(cron.WithParser(extcron.NewParser()))
 
 	metrics.IncrCounter([]string{"scheduler", "start"}, 1)
@@ -49,7 +62,7 @@ func (s *Scheduler) Start(jobs []*Job, agent *Agent) error {
 		s.AddJob(job)
 	}
 	s.Cron.Start()
-	s.Started = true
+	s.started = true
 	schedulerStarted.Set(1)
 
 	return nil
@@ -57,10 +70,13 @@ func (s *Scheduler) Start(jobs []*Job, agent *Agent) error {
 
 // Stop stops the scheduler effectively not running any job.
 func (s *Scheduler) Stop() {
-	if s.Started {
-		log.Debug("scheduler: Stopping scheduler")
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	if s.started {
+		s.logger.Debug("scheduler: Stopping scheduler")
 		s.Cron.Stop()
-		s.Started = false
+		s.started = false
 		// Keep Cron exists and let the jobs which have been scheduled can continue to finish,
 		// even the node's leadership will be revoked.
 		// Ignore the running jobs and make s.Cron to nil may cause whole process crashed.
@@ -86,11 +102,20 @@ func (s *Scheduler) ClearCron() {
 	s.Cron = nil
 }
 
+// Started will safely return if the schduler is started or not
+func (s *Scheduler) Started() bool {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	return s.started
+}
+
 // GetEntry returns a scheduler entry from a snapshot in
 // the current time, and whether or not the entry was found.
 func (s *Scheduler) GetEntry(jobName string) (cron.Entry, bool) {
 	for _, e := range s.Cron.Entries() {
 		j, _ := e.Job.(*Job)
+		j.logger = s.logger
 		if j.Name == jobName {
 			return e, true
 		}
@@ -109,12 +134,9 @@ func (s *Scheduler) AddJob(job *Job) error {
 		return nil
 	}
 
-	log.WithFields(logrus.Fields{
+	s.logger.WithFields(logrus.Fields{
 		"job": job.Name,
 	}).Debug("scheduler: Adding job to cron")
-
-	cronInspect.Set(job.Name, job)
-	metrics.EmitKey([]string{"scheduler", "job/update", "add", job.Name}, 1)
 
 	// If Timezone is set on the job, and not explicitly in its schedule,
 	// AND its not a descriptor (that don't support timezones), add the
@@ -133,16 +155,22 @@ func (s *Scheduler) AddJob(job *Job) error {
 	}
 	s.EntryJobMap.Store(job.Name, id)
 
+	cronInspect.Set(job.Name, job)
+	metrics.IncrCounterWithLabels([]string{"scheduler", "job_add"}, 1, []metrics.Label{{Name: "job", Value: job.Name}})
+
 	return nil
 }
 
 // RemoveJob removes a job from the cron scheduler
 func (s *Scheduler) RemoveJob(job *Job) {
-	log.WithFields(logrus.Fields{
+	s.logger.WithFields(logrus.Fields{
 		"job": job.Name,
 	}).Debug("scheduler: Removing job from cron")
 	if v, ok := s.EntryJobMap.Load(job.Name); ok {
 		s.Cron.Remove(v.(cron.EntryID))
 		s.EntryJobMap.Delete(job.Name)
+
+		cronInspect.Delete(job.Name)
+		metrics.IncrCounterWithLabels([]string{"scheduler", "job_delete"}, 1, []metrics.Label{{Name: "job", Value: job.Name}})
 	}
 }

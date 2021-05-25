@@ -50,6 +50,9 @@ var (
 
 // Job descibes a scheduled Job.
 type Job struct {
+	// Job id. Must be unique, it's a copy of name.
+	ID string `json:"id"`
+
 	// Job name. Must be unique, acts as the id.
 	Name string `json:"name"`
 
@@ -122,13 +125,17 @@ type Job struct {
 
 	// Computed next execution
 	Next time.Time `json:"next"`
+
+	ExpiresAt ntime.NullableTime `json:"expires_at"`
+	logger *logrus.Entry
 }
 
 // NewJobFromProto create a new Job from a PB Job struct
-func NewJobFromProto(in *proto.Job) *Job {
+func NewJobFromProto(in *proto.Job, logger *logrus.Entry) *Job {
 	next, _ := ptypes.Timestamp(in.GetNext())
 
 	job := &Job{
+		ID:             in.Name,
 		Name:           in.Name,
 		DisplayName:    in.Displayname,
 		Timezone:       in.Timezone,
@@ -148,6 +155,7 @@ func NewJobFromProto(in *proto.Job) *Job {
 		Status:         in.Status,
 		Metadata:       in.Metadata,
 		Next:           next,
+		logger:         logger,
 	}
 	if in.GetLastSuccess().GetHasValue() {
 		t, _ := ptypes.Timestamp(in.GetLastSuccess().GetTime())
@@ -219,14 +227,14 @@ func (j *Job) ToProto() *proto.Job {
 // Run the job
 func (j *Job) Run() {
 	// As this function should comply with the Job interface of the cron package we will use
-	// the aget property on execution, this is why it need to check if it's set and otherwise fail.
+	// the agent property on execution, this is why it need to check if it's set and otherwise fail.
 	if j.Agent == nil {
-		log.Fatal("job: agent not set")
+		j.logger.Fatal("job: agent not set")
 	}
 
 	// Check if it's runnable
-	if j.isRunnable() {
-		log.WithFields(logrus.Fields{
+	if j.isRunnable(j.logger) {
+		j.logger.WithFields(logrus.Fields{
 			"job":      j.Name,
 			"schedule": j.Schedule,
 		}).Debug("job: Run job")
@@ -237,7 +245,7 @@ func (j *Job) Run() {
 		ex := NewExecution(j.Name)
 
 		if _, err := j.Agent.Run(j.Name, ex); err != nil {
-			log.WithError(err).Error("job: Error running job")
+			j.logger.WithError(err).Error("job: Error running job")
 		}
 	}
 }
@@ -269,6 +277,14 @@ func (j *Job) GetParent(store *Store) (*Job, error) {
 	return parentJob, nil
 }
 
+// GetTimeLocation returns the time.Location based on the job's Timezone, or
+// the default (UTC) if none is configured, or
+// nil if an error occurred while creating the timezone from the property
+func (j *Job) GetTimeLocation() *time.Location {
+	loc, _ := time.LoadLocation(j.Timezone)
+	return loc
+}
+
 // GetNext returns the job's next schedule from now
 func (j *Job) GetNext() (time.Time, error) {
 	if j.Schedule != "" {
@@ -282,13 +298,13 @@ func (j *Job) GetNext() (time.Time, error) {
 	return time.Time{}, nil
 }
 
-func (j *Job) isRunnable() bool {
+func (j *Job) isRunnable(logger *logrus.Entry) bool {
 	if j.Disabled {
 		return false
 	}
 
 	if j.Agent.GlobalLock {
-		log.WithField("job", j.Name).
+		logger.WithField("job", j.Name).
 			Warning("job: Skipping execution because active global lock")
 		return false
 	}
@@ -296,13 +312,13 @@ func (j *Job) isRunnable() bool {
 	if j.Concurrency == ConcurrencyForbid {
 		exs, err := j.Agent.GetActiveExecutions()
 		if err != nil {
-			log.WithError(err).Error("job: Error quering for running executions")
+			logger.WithError(err).Error("job: Error quering for running executions")
 			return false
 		}
 
 		for _, e := range exs {
 			if e.JobName == j.Name {
-				log.WithFields(logrus.Fields{
+				logger.WithFields(logrus.Fields{
 					"job":         j.Name,
 					"concurrency": j.Concurrency,
 					"job_status":  j.Status,
@@ -343,6 +359,13 @@ func (j *Job) Validate() error {
 	// An empty string is a valid timezone for LoadLocation
 	if _, err := time.LoadLocation(j.Timezone); err != nil {
 		return err
+	}
+
+	if j.Executor == "shell" && j.ExecutorConfig["timeout"] != "" {
+		_, err := time.ParseDuration(j.ExecutorConfig["timeout"])
+		if err != nil {
+			return fmt.Errorf("Error parsing job timeout value")
+		}
 	}
 
 	return nil

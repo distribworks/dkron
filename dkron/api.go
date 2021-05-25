@@ -6,9 +6,14 @@ import (
 	"io/ioutil"
 	"net/http"
 	"sort"
+	"strconv"
+	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/expvar"
 	"github.com/gin-gonic/gin"
+	"github.com/hashicorp/go-uuid"
+	"github.com/hashicorp/serf/serf"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 	"github.com/tidwall/buntdb"
@@ -16,7 +21,8 @@ import (
 )
 
 const (
-	pretty = "pretty"
+	pretty        = "pretty"
+	apiPathPrefix = "v1"
 )
 
 // Transport is the interface that wraps the ServeHTTP method.
@@ -28,27 +34,43 @@ type Transport interface {
 type HTTPTransport struct {
 	Engine *gin.Engine
 
-	agent *Agent
+	agent  *Agent
+	logger *logrus.Entry
 }
 
 // NewTransport creates an HTTPTransport with a bound agent.
-func NewTransport(a *Agent) *HTTPTransport {
+func NewTransport(a *Agent, log *logrus.Entry) *HTTPTransport {
 	return &HTTPTransport{
-		agent: a,
+		agent:  a,
+		logger: log,
 	}
 }
 
 func (h *HTTPTransport) ServeHTTP() {
 	h.Engine = gin.Default()
-	h.Engine.HTMLRender = CreateMyRender()
+	h.Engine.HTMLRender = CreateMyRender(h.logger)
+	h.Engine.Use(h.Options)
+
 	rootPath := h.Engine.Group("/")
 
+	rootPath.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"*"},
+		AllowHeaders:     []string{"*"},
+		ExposeHeaders:    []string{"*"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
+	rootPath.Use(h.MetaMiddleware())
+
 	h.APIRoutes(rootPath)
-	h.agent.DashboardRoutes(rootPath)
+	if h.agent.config.UI {
+		h.UI(rootPath)
+	} else {
+		h.agent.DashboardRoutes(rootPath)
+	}
 
-	h.Engine.Use(h.MetaMiddleware())
-
-	log.WithFields(logrus.Fields{
+	h.logger.WithFields(logrus.Fields{
 		"address": h.agent.config.HTTPAddr,
 	}).Info("api: Running HTTP server")
 
@@ -90,7 +112,9 @@ func (h *HTTPTransport) APIRoutes(r *gin.RouterGroup, middleware ...gin.HandlerF
 	jobs := v1.Group("/jobs")
 	jobs.DELETE("/:job", h.jobDeleteHandler)
 	jobs.POST("/:job", h.jobRunHandler)
+	jobs.POST("/:job/run", h.jobRunHandler)
 	jobs.POST("/:job/toggle", h.jobToggleHandler)
+	jobs.PUT("/:job", h.jobCreateOrUpdateHandler)
 
 	// Place fallback routes last
 	jobs.GET("/:job", h.jobGetHandler)
@@ -102,6 +126,19 @@ func (h *HTTPTransport) MetaMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Header("X-Whom", h.agent.config.NodeName)
 		c.Next()
+	}
+}
+
+func (h *HTTPTransport) Options(c *gin.Context) {
+	if c.Request.Method != "OPTIONS" {
+		c.Next()
+	} else {
+		c.Header("Allow", "HEAD,GET,POST,PUT,PATCH,DELETE,OPTIONS")
+		c.Header("Content-Type", "application/json")
+		gh := cors.Default()
+		gh(c)
+
+		c.AbortWithStatus(http.StatusOK)
 	}
 }
 
@@ -130,20 +167,47 @@ func (h *HTTPTransport) indexHandler(c *gin.Context) {
 
 func (h *HTTPTransport) jobsHandler(c *gin.Context) {
 	metadata := c.QueryMap("metadata")
+	sort := c.DefaultQuery("_sort", "id")
+	if sort == "id" {
+		sort = "name"
+	}
+	order := c.DefaultQuery("_order", "ASC")
+	q := c.Query("q")
 
 	jobs, err := h.agent.Store.GetJobs(
 		&JobOptions{
 			Metadata: metadata,
+			Sort:     sort,
+			Order:    order,
+			Query:    q,
+			Status:   c.Query("status"),
+			Disabled: c.Query("disabled"),
 		},
 	)
 	if err != nil {
-		log.WithError(err).Error("api: Unable to get jobs, store not reachable.")
+		h.logger.WithError(err).Error("api: Unable to get jobs, store not reachable.")
 		return
 	}
-	// Ask all server peers for connections
-	// Range through jobs and assing running based on peers connections
 
-	renderJSON(c, http.StatusOK, jobs)
+	start, ok := c.GetQuery("_start")
+	if !ok {
+		start = "0"
+	}
+	s, _ := strconv.Atoi(start)
+
+	end, ok := c.GetQuery("_end")
+	e := 0
+	if !ok {
+		e = len(jobs)
+	} else {
+		e, _ = strconv.Atoi(end)
+		if e > len(jobs) {
+			e = len(jobs)
+		}
+	}
+
+	c.Header("X-Total-Count", strconv.Itoa(len(jobs)))
+	renderJSON(c, http.StatusOK, jobs[s:e])
 }
 
 func (h *HTTPTransport) jobGetHandler(c *gin.Context) {
@@ -151,7 +215,7 @@ func (h *HTTPTransport) jobGetHandler(c *gin.Context) {
 
 	job, err := h.agent.Store.GetJob(jobName, nil)
 	if err != nil {
-		log.Error(err)
+		h.logger.Error(err)
 	}
 	if job == nil {
 		c.AbortWithStatus(http.StatusNotFound)
@@ -169,7 +233,7 @@ func (h *HTTPTransport) jobCreateOrUpdateHandler(c *gin.Context) {
 	// Parse values from JSON
 	if err := c.BindJSON(&job); err != nil {
 		c.Writer.WriteString(fmt.Sprintf("Unable to parse payload: %s.", err))
-		log.Error(err)
+		h.logger.Error(err)
 		return
 	}
 
@@ -267,27 +331,51 @@ func (h *HTTPTransport) restoreHandler(c *gin.Context) {
 func (h *HTTPTransport) executionsHandler(c *gin.Context) {
 	jobName := c.Param("job")
 
+	sort := c.DefaultQuery("_sort", "")
+	if sort == "id" {
+		sort = "started_at"
+	}
+	order := c.DefaultQuery("_order", "DESC")
+
 	job, err := h.agent.Store.GetJob(jobName, nil)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
 
-	executions, err := h.agent.Store.GetExecutions(job.Name)
-	if err != nil {
-		if err == buntdb.ErrNotFound {
-			renderJSON(c, http.StatusOK, &[]Execution{})
-			return
-		}
-		log.Error(err)
+	executions, err := h.agent.Store.GetExecutions(job.Name,
+		&ExecutionOptions{
+			Sort:     sort,
+			Order:    order,
+			Timezone: job.GetTimeLocation(),
+		},
+	)
+	if err == buntdb.ErrNotFound {
+		executions = make([]*Execution, 0)
+	} else if err != nil {
+		h.logger.Error(err)
 		return
-
 	}
+
+	c.Header("X-Total-Count", strconv.Itoa(len(executions)))
 	renderJSON(c, http.StatusOK, executions)
 }
 
+type MId struct {
+	serf.Member
+
+	Id string `json:"id"`
+}
+
 func (h *HTTPTransport) membersHandler(c *gin.Context) {
-	renderJSON(c, http.StatusOK, h.agent.serf.Members())
+	mems := []*MId{}
+	for _, m := range h.agent.serf.Members() {
+		id, _ := uuid.GenerateUUID()
+		mid := &MId{m, id}
+		mems = append(mems, mid)
+	}
+	c.Header("X-Total-Count", strconv.Itoa(len(mems)))
+	renderJSON(c, http.StatusOK, mems)
 }
 
 func (h *HTTPTransport) leaderHandler(c *gin.Context) {
@@ -356,5 +444,6 @@ func (h *HTTPTransport) busyHandler(c *gin.Context) {
 		return executions[i].StartedAt.Before(executions[j].StartedAt)
 	})
 
+	c.Header("X-Total-Count", strconv.Itoa(len(executions)))
 	renderJSON(c, http.StatusOK, executions)
 }

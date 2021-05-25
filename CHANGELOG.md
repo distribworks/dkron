@@ -6,6 +6,109 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.1.6] - 2021-03-23
+
+### Features
+
+- Add a filter on disabled state [#923](https://github.com/distribworks/dkron/pull/923) @educlos
+- Provide filter query by job displayName, add pristine jobs reports [#897](https://github.com/distribworks/dkron/pull/897) @MGSousa
+
+### Fixes
+
+- Fix XSS vulnerability [#922](https://github.com/distribworks/dkron/pull/922) @yvanoers
+- Correct title of NATS executor page [#929](https://github.com/distribworks/dkron/pull/929) @yvanoers
+- UI fixes [#926](https://github.com/distribworks/dkron/pull/926) @yvanoers
+
+### Changes
+
+- Use go embed for assets embedding [#931](https://github.com/distribworks/dkron/pull/931)
+
+## [3.1.5] - 2021-03-08
+
+### Features
+
+- Configurable job timeout [#906](https://github.com/distribworks/dkron/pull/906)
+- Add kafka and nats executor [#854](https://github.com/distribworks/dkron/pull/854)
+- Add reporting usage stats [#910](https://github.com/distribworks/dkron/pull/910)
+
+### Changes
+
+- Bump some deps
+
+### Fixes
+
+- Add the ui/public dir [#919](https://github.com/distribworks/dkron/pull/919)
+
+## [3.1.4] - 2021-01-25
+
+### Changes
+
+- Bump some deps
+- UI fixes
+    * Add timezone back to UI
+    * Show execution status
+
+## [3.1.3] - 2021-01-17
+
+### Changes
+
+- Several UI Improvements [#891](https://github.com/distribworks/dkron/pull/891)
+    * Visual status for jobs
+    * Bulk actions for toggle and run
+    * Flexible jobs datagrid layout
+    * Fix clock style
+    * Fix date rendering on non finished executions
+
+## [3.1.2] - 2021-01-08
+
+### Features
+
+- Added some query filters on Job executions [#878](https://github.com/distribworks/dkron/pull/878) @MGSousa
+- Executions sorting in UI [#885](https://github.com/distribworks/dkron/pull/885)
+
+### Fixes
+
+- Fix panic on recovering cluster (with peers.json) [#882](https://github.com/distribworks/dkron/pull/882) @fopina
+- Use correct wrapping and monospace font for execution's output [#879](https://github.com/distribworks/dkron/pull/879) @sc0rp10
+
+
+## [3.1.1] - 2020-12-21
+
+### Features
+
+- Some info cards in dashboard [#873](https://github.com/distribworks/dkron/pull/873)
+- Add status to JobOption to filter from UI and API [#872](https://github.com/distribworks/dkron/pull/872)
+
+## [3.1.0] - 2020-12-18
+
+### Features
+
+- React admin web UI [#864](https://github.com/distribworks/dkron/pull/864)
+
+### Changes
+
+- Use newer gRPC library version [#855](https://github.com/distribworks/dkron/pull/855)
+- Bump deps
+
+### Fixes
+
+- Clean up log message [#860](https://github.com/distribworks/dkron/pull/860) @yvanoers
+- Remove duplicate lines from Recovery documentation [#861](https://github.com/distribworks/dkron/pull/861) @vishalsngl
+- How errors are handled in the AgentRun call [#858](https://github.com/distribworks/dkron/pull/858)
+- Fix uneven balancing [#865](https://github.com/distribworks/dkron/pull/865) @yvanoers
+
+## [3.0.8] - 2020-11-20
+
+### Changes
+
+- Clean-up and lint some code [#853](https://github.com/distribworks/dkron/pull/853)
+- Better metrics [#852](https://github.com/distribworks/dkron/pull/852)
+
+### Fixes
+
+- Represent execution times in the job's timezone [#615](https://github.com/distribworks/dkron/pull/615) @yvanoers
+- avoid nil pointer if job was deleted on ExecutionDone [#851](https://github.com/distribworks/dkron/pull/851)
+
 ## [3.0.7] - 2020-11-10
 
 ### Changes

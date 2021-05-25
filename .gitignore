@@ -1,5 +1,6 @@
 site/
-public
+/public
+/website/public
 docs/scss/Gemfile.lock
 docs/scss/.sass-cache
 downloads/
@@ -13,7 +14,7 @@ main
 *.log
 config/
 dist
-static/node_modules
+node_modules
 *.db
 *.data
 *.retry

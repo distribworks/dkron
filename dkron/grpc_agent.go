@@ -34,13 +34,16 @@ func (s *statusAgentHelper) Update(b []byte, c bool) (int64, error) {
 
 // GRPCAgentServer is the local implementation of the gRPC server interface.
 type AgentServer struct {
-	agent *Agent
+	types.AgentServer
+	agent  *Agent
+	logger *logrus.Entry
 }
 
 // NewServer creates and returns an instance of a DkronGRPCServer implementation
-func NewAgentServer(agent *Agent) types.AgentServer {
+func NewAgentServer(agent *Agent, logger *logrus.Entry) types.AgentServer {
 	return &AgentServer{
-		agent: agent,
+		agent:  agent,
+		logger: logger,
 	}
 }
 
@@ -52,7 +55,7 @@ func (as *AgentServer) AgentRun(req *types.AgentRunRequest, stream types.Agent_A
 	job := req.Job
 	execution := req.Execution
 
-	log.WithFields(logrus.Fields{
+	as.logger.WithFields(logrus.Fields{
 		"job": job.Name,
 	}).Info("grpc_agent: Starting job")
 
@@ -62,9 +65,6 @@ func (as *AgentServer) AgentRun(req *types.AgentRunRequest, stream types.Agent_A
 
 	jex := job.Executor
 	exc := job.ExecutorConfig
-	if jex == "" {
-		return errors.New("grpc_agent: No executor defined, nothing to do")
-	}
 
 	// Send the first update with the initial execution state to be stored in the server
 	execution.StartedAt = ptypes.TimestampNow()
@@ -76,9 +76,13 @@ func (as *AgentServer) AgentRun(req *types.AgentRunRequest, stream types.Agent_A
 		return err
 	}
 
+	if jex == "" {
+		return errors.New("grpc_agent: No executor defined, nothing to do")
+	}
+
 	// Check if executor exists
 	if executor, ok := as.agent.ExecutorPlugins[jex]; ok {
-		log.WithField("plugin", jex).Debug("grpc_agent: calling executor plugin")
+		as.logger.WithField("plugin", jex).Debug("grpc_agent: calling executor plugin")
 		runningExecutions.Store(execution.GetGroup(), execution)
 		out, err := executor.Execute(&types.ExecuteRequest{
 			JobName: job.Name,
@@ -92,7 +96,7 @@ func (as *AgentServer) AgentRun(req *types.AgentRunRequest, stream types.Agent_A
 			err = errors.New(out.Error)
 		}
 		if err != nil {
-			log.WithError(err).WithField("job", job.Name).WithField("plugin", executor).Error("grpc_agent: command error output")
+			as.logger.WithError(err).WithField("job", job.Name).WithField("plugin", executor).Error("grpc_agent: command error output")
 			success = false
 			output.Write([]byte(err.Error() + "\n"))
 		} else {
@@ -103,7 +107,7 @@ func (as *AgentServer) AgentRun(req *types.AgentRunRequest, stream types.Agent_A
 			output.Write(out.Output)
 		}
 	} else {
-		log.WithField("executor", jex).Error("grpc_agent: Specified executor is not present")
+		as.logger.WithField("executor", jex).Error("grpc_agent: Specified executor is not present")
 		output.Write([]byte("grpc_agent: Specified executor is not present"))
 	}
 
@@ -118,7 +122,7 @@ func (as *AgentServer) AgentRun(req *types.AgentRunRequest, stream types.Agent_A
 		Execution: execution,
 	}); err != nil {
 		// In case of error means that maybe the server is gone so fallback to ExecutionDone
-		log.WithError(err).WithField("job", job.Name).Error("grpc_agent: error sending the final execution, falling back to ExecutionDone")
+		as.logger.WithError(err).WithField("job", job.Name).Error("grpc_agent: error sending the final execution, falling back to ExecutionDone")
 		rpcServer, err := as.agent.checkAndSelectServer()
 		if err != nil {
 			return err

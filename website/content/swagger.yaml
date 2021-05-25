@@ -42,6 +42,26 @@ paths:
           items:
             type: string
           description: Filter jobs by metadata
+        - in: query
+          name: _sort
+          type: string
+          description: Sorting field
+        - in: query
+          name: _order
+          type: string
+          description: Sort order (ASC/DESC)
+        - in: query
+          name: q
+          type: string
+          description: Filter query text
+        - in: query
+          name: _start
+          type: integer
+          description: Start index
+        - in: query
+          name: _end
+          type: integer
+          description: End index
       operationId: getJobs
       tags:
         - jobs
@@ -166,6 +186,8 @@ paths:
             type: array
             items:
               $ref: '#/definitions/restore'
+      consumes:
+        - multipart/form-data
   /members:
     get:
       description: |
@@ -484,4 +506,3 @@ definitions:
     type: string
     description: Each job restore result.
     example: "success create job_1"
-        

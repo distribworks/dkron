@@ -1,0 +1,11 @@
+version: 2
+updates:
+- package-ecosystem: gomod
+  directory: "/"
+  schedule:
+    interval: weekly
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: github.com/tidwall/buntdb
+    versions:
+    - 1.1.8
