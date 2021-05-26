@@ -12,7 +12,6 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
-	"strings"
 	"sync"
 	"time"
 
@@ -150,6 +149,9 @@ func NewAgent(config *Config, options ...AgentOption) *Agent {
 func (a *Agent) Start() error {
 	log := InitLogger(a.config.LogLevel, a.config.NodeName)
 	a.logger = log
+
+	// Initialize rand with current time
+	rand.Seed(time.Now().UnixNano())
 
 	// Normalize configured addresses
 	a.config.normalizeAddrs()
@@ -704,14 +706,14 @@ func (a *Agent) processFilteredNodes(job *Job) (map[string]string, map[string]st
 	tags["region"] = a.config.Region
 
 	// Make a set of all members
-	execNodes := make(map[string]serf.Member)
+	allNodes := make(map[string]serf.Member)
 	for _, member := range a.serf.Members() {
 		if member.Status == serf.StatusAlive {
-			execNodes[member.Name] = member
+			allNodes[member.Name] = member
 		}
 	}
 
-	execNodes, tags, cardinality, err := filterNodes(execNodes, tags)
+	execNodes, tags, cardinality, err := filterNodes(allNodes, tags)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -723,7 +725,6 @@ func (a *Agent) processFilteredNodes(job *Job) (map[string]string, map[string]st
 	}
 
 	nodes := make(map[string]string)
-	rand.Seed(time.Now().UnixNano())
 	for ; cardinality > 0; cardinality-- {
 		// Pick a node, any node
 		randomIndex := rand.Intn(len(names))
@@ -744,52 +745,34 @@ func (a *Agent) processFilteredNodes(job *Job) (map[string]string, map[string]st
 	return nodes, tags, nil
 }
 
-// filterNodes determines which of the execNodes have the given tags
-// Out param! The incoming execNodes map is modified.
+// filterNodes determines which of the provided nodes have the given tags
 // Returns:
-// * the (modified) map of execNodes
-// * a map of tag values without cardinality
+// * the map of allNodes that match the provided tags
+// * a clean map of tag values without cardinality
 // * cardinality, i.e. the max number of nodes that should be targeted, regardless of the
 //   number of nodes in the resulting map.
 // * an error if a cardinality was malformed
-func filterNodes(execNodes map[string]serf.Member, tags map[string]string) (map[string]serf.Member, map[string]string, int, error) {
-	cardinality := int(^uint(0) >> 1) // MaxInt
+func filterNodes(allNodes map[string]serf.Member, tags map[string]string) (map[string]serf.Member, map[string]string, int, error) {
+	ct, cardinality, err := cleanTags(tags)
+	if err != nil {
+		return nil, nil, 0, err
+	}
 
-	cleanTags := make(map[string]string)
+	matchingNodes := make(map[string]serf.Member)
 
 	// Filter nodes that lack tags
-	// Determine lowest cardinality along the way
-	for jtk, jtv := range tags {
-		tc := strings.Split(jtv, ":")
-		tv := tc[0]
-
-		// Set original tag to clean tag
-		cleanTags[jtk] = tv
-
-		// Remove nodes that do not have the selected tags
-		for name, member := range execNodes {
-			if mtv, tagPresent := member.Tags[jtk]; !tagPresent || mtv != tv {
-				delete(execNodes, name)
-			}
-		}
-
-		if len(tc) == 2 {
-			tagCardinality, err := strconv.Atoi(tc[1])
-			if err != nil {
-				return nil, nil, 0, err
-			}
-			if tagCardinality < cardinality {
-				cardinality = tagCardinality
-			}
+	for name, member := range allNodes {
+		if nodeMatchesTags(member, ct) {
+			matchingNodes[name] = member
 		}
 	}
 
 	// limit the cardinality to the number of possible nodes
-	if len(execNodes) < cardinality {
-		cardinality = len(execNodes)
+	if len(matchingNodes) < cardinality {
+		cardinality = len(matchingNodes)
 	}
 
-	return execNodes, cleanTags, cardinality, nil
+	return matchingNodes, ct, cardinality, nil
 }
 
 // This function is called when a client request the RPCAddress
