@@ -69,7 +69,7 @@ type Job struct {
 	// Arbitrary string indicating the owner of the job.
 	Owner string `json:"owner"`
 
-	// eMail address to use for notifications.
+	// Email address to use for notifications.
 	OwnerEmail string `json:"owner_email"`
 
 	// Number of successful executions of this job.

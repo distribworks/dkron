@@ -124,7 +124,7 @@ func (grpcs *GRPCServer) DeleteJob(ctx context.Context, delJobReq *proto.DeleteJ
 	// If everything is ok, remove the job
 	grpcs.agent.sched.RemoveJob(job)
 	if job.Ephemeral {
-		grpcs.logger.WithField("job", job.Name).Info("grpc: Done expiring ephemeral job")
+		grpcs.logger.WithField("job", job.Name).Info("grpc: Done deleting ephemeral job")
 	}
 
 	return &proto.DeleteJobResponse{Job: jpb}, nil

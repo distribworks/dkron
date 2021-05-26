@@ -27,11 +27,11 @@ const EditForm = (props: any) => (
     <SimpleForm  {...props}>
         <TextInput disabled source="id" helperText="Job id. Must be unique, it's a copy of name." />
         <TextInput source="name" helperText="Job name. Must be unique, acts as the id." />
-        <TextInput source="displayname" helperText="Display name of the job. If present, displayed instead of the name" />
+        <TextInput source="displayname" helperText="Display name of the job. If present, displayed instead of the name." />
         <TextInput source="timezone" helperText="The timezone where the cron expression will be evaluated in." />
         <TextInput source="schedule" helperText="Cron expression for the job. When to run the job." />
         <TextInput source="owner" helperText="Arbitrary string indicating the owner of the job." />
-        <TextInput source="owner_email" helperText="eMail address to use for notifications."/>
+        <TextInput source="owner_email" helperText="Email address to use for notifications."/>
         <TextInput source="parent_job" helperText="Job id of job that this job is dependent upon." />
         <BooleanInput source="ephemeral" helperText="Delete the job after the first execution." />
         <DateTimeInput source="expires_at" helperText="The job will not be executed after this time." />
