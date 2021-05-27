@@ -10,9 +10,9 @@ import (
 	"github.com/distribworks/dkron/v3/ntime"
 	"github.com/distribworks/dkron/v3/plugin"
 	proto "github.com/distribworks/dkron/v3/plugin/types"
-	"github.com/golang/protobuf/ptypes"
 	"github.com/sirupsen/logrus"
 	"github.com/tidwall/buntdb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 const (
@@ -130,16 +130,13 @@ type Job struct {
 	Ephemeral bool `json:"ephemeral"`
 
 	// The job will not be executed after this time.
-	ExpiresAt time.Time `json:"expires_at"`
+	ExpiresAt ntime.NullableTime `json:"expires_at"`
 
 	logger *logrus.Entry
 }
 
 // NewJobFromProto create a new Job from a PB Job struct
 func NewJobFromProto(in *proto.Job, logger *logrus.Entry) *Job {
-	next, _ := ptypes.Timestamp(in.GetNext())
-	expiresAt, _ := ptypes.Timestamp(in.GetExpiresAt())
-
 	job := &Job{
 		ID:             in.Name,
 		Name:           in.Name,
@@ -160,18 +157,21 @@ func NewJobFromProto(in *proto.Job, logger *logrus.Entry) *Job {
 		ExecutorConfig: in.ExecutorConfig,
 		Status:         in.Status,
 		Metadata:       in.Metadata,
-		Next:           next,
+		Next:           in.GetNext().AsTime(),
 		Ephemeral:      in.Ephemeral,
-		ExpiresAt:      expiresAt,
 		logger:         logger,
 	}
 	if in.GetLastSuccess().GetHasValue() {
-		t, _ := ptypes.Timestamp(in.GetLastSuccess().GetTime())
+		t := in.GetLastSuccess().GetTime().AsTime()
 		job.LastSuccess.Set(t)
 	}
 	if in.GetLastError().GetHasValue() {
-		t, _ := ptypes.Timestamp(in.GetLastError().GetTime())
+		t := in.GetLastError().GetTime().AsTime()
 		job.LastError.Set(t)
+	}
+	if in.GetExpiresAt().GetHasValue() {
+		t := in.GetExpiresAt().GetTime().AsTime()
+		job.ExpiresAt.Set(t)
 	}
 
 	procs := make(map[string]plugin.Config)
@@ -192,17 +192,23 @@ func (j *Job) ToProto() *proto.Job {
 		HasValue: j.LastSuccess.HasValue(),
 	}
 	if j.LastSuccess.HasValue() {
-		lastSuccess.Time, _ = ptypes.TimestampProto(j.LastSuccess.Get())
+		lastSuccess.Time = timestamppb.New(j.LastSuccess.Get())
 	}
 	lastError := &proto.Job_NullableTime{
 		HasValue: j.LastError.HasValue(),
 	}
 	if j.LastError.HasValue() {
-		lastError.Time, _ = ptypes.TimestampProto(j.LastError.Get())
+		lastError.Time = timestamppb.New(j.LastError.Get())
 	}
 
-	next, _ := ptypes.TimestampProto(j.Next)
-	expiresAt, _ := ptypes.TimestampProto(j.ExpiresAt)
+	next := timestamppb.New(j.Next)
+
+	expiresAt := &proto.Job_NullableTime{
+		HasValue: j.ExpiresAt.HasValue(),
+	}
+	if j.ExpiresAt.HasValue() {
+		expiresAt.Time = timestamppb.New(j.ExpiresAt.Get())
+	}
 
 	processors := make(map[string]*proto.PluginConfig)
 	for k, v := range j.Processors {
@@ -311,7 +317,9 @@ func (j *Job) GetNext() (time.Time, error) {
 }
 
 func (j *Job) isRunnable(logger *logrus.Entry) bool {
-	if j.Disabled || (!j.ExpiresAt.IsZero() && time.Now().After(j.ExpiresAt)) {
+	if j.Disabled || (j.ExpiresAt.HasValue() && time.Now().After(j.ExpiresAt.Get())) {
+		logger.WithField("job", j.Name).
+			Debug("job: Skipping execution because job is disabled or expired")
 		return false
 	}
 
