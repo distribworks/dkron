@@ -126,7 +126,7 @@ type Job struct {
 	// Computed next execution.
 	Next time.Time `json:"next"`
 
-	// Delete the job after the first execution.
+	// Delete the job after the first successful execution.
 	Ephemeral bool `json:"ephemeral"`
 
 	// The job will not be executed after this time.
