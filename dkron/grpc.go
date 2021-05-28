@@ -255,7 +255,7 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.E
 		}
 	}
 
-	if job.Ephemeral {
+	if job.Ephemeral && job.Status == StatusSuccess {
 		if _, err := grpcs.DeleteJob(ctx, &proto.DeleteJobRequest{JobName: job.Name}); err != nil {
 			return nil, err
 		}

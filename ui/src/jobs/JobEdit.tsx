@@ -33,7 +33,7 @@ const EditForm = (props: any) => (
         <TextInput source="owner" helperText="Arbitrary string indicating the owner of the job." />
         <TextInput source="owner_email" helperText="Email address to use for notifications."/>
         <TextInput source="parent_job" helperText="Job id of job that this job is dependent upon." />
-        <BooleanInput source="ephemeral" helperText="Delete the job after the first execution." />
+        <BooleanInput source="ephemeral" helperText="Delete the job after the first successful execution." />
         <DateTimeInput source="expires_at" helperText="The job will not be executed after this time." />
         <SelectInput source="concurrency" 
             choices={[
