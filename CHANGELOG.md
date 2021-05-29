@@ -6,6 +6,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.1.7] - 2021-05-29
+
+### Features
+
+- Implement ephemeral and expires at feature [#972](https://github.com/distribworks/dkron/pull/972)
+- Add @minutely custom schedule again [#970](https://github.com/distribworks/dkron/pull/970)
+
+### Fixes
+
+- DataGrid UI fixes for long fields [#965](https://github.com/distribworks/dkron/pull/965)
+- Fix race conditions [#967](https://github.com/distribworks/dkron/pull/967)
+- Fix shell executor crashing on missing command [#948](https://github.com/distribworks/dkron/pull/948)
+
+### Changes
+
+- Overhaul logging to avoid package level var [#963](https://github.com/distribworks/dkron/pull/963)
+- Improve tests for http executor [#936](https://github.com/distribworks/dkron/pull/936)
+- Refactor processFilteredNodes for testing [#968](https://github.com/distribworks/dkron/pull/968)
+
+
+
 ## [3.1.6] - 2021-03-23
 
 ### Features
