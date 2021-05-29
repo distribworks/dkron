@@ -104,4 +104,17 @@ func TestGRPCExecutionDone(t *testing.T) {
 	err = rc.ExecutionDone(a.advertiseRPCAddr(), testExecution)
 
 	assert.Error(t, err, ErrExecutionDoneForDeletedJob)
+
+	// Test ephemeral jobs
+	testJob.Ephemeral = true
+
+	err = a.Store.SetJob(testJob, true)
+	require.NoError(t, err)
+
+	err = rc.ExecutionDone(a.advertiseRPCAddr(), testExecution)
+	assert.NoError(t, err)
+
+	j, err := a.Store.GetJob("test", nil)
+	assert.Error(t, err)
+	assert.Nil(t, j)
 }

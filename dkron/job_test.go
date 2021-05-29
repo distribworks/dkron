@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/distribworks/dkron/v3/ntime"
 	"github.com/distribworks/dkron/v3/plugin"
 	proto "github.com/distribworks/dkron/v3/plugin/types"
 	"github.com/hashicorp/serf/testutil"
@@ -127,6 +128,9 @@ func Test_isRunnable(t *testing.T) {
 	a.Start()
 	time.Sleep(2 * time.Second)
 
+	var exp ntime.NullableTime
+	exp.Set(time.Now().AddDate(0, 0, -1))
+
 	testCases := []struct {
 		name string
 		job  *Job
@@ -158,6 +162,24 @@ func Test_isRunnable(t *testing.T) {
 				Agent: a,
 			},
 			want: true,
+		},
+		{
+			name: "disabled",
+			job: &Job{
+				Name:     "test_job",
+				Disabled: true,
+				Agent:    a,
+			},
+			want: false,
+		},
+		{
+			name: "expired",
+			job: &Job{
+				Name:      "test_job",
+				ExpiresAt: exp,
+				Agent:     a,
+			},
+			want: false,
 		},
 	}
 
