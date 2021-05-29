@@ -10,9 +10,9 @@ import (
 	"github.com/distribworks/dkron/v3/ntime"
 	"github.com/distribworks/dkron/v3/plugin"
 	proto "github.com/distribworks/dkron/v3/plugin/types"
-	"github.com/golang/protobuf/ptypes"
 	"github.com/sirupsen/logrus"
 	"github.com/tidwall/buntdb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 const (
@@ -66,10 +66,10 @@ type Job struct {
 	// Cron expression for the job. When to run the job.
 	Schedule string `json:"schedule"`
 
-	// Owner of the job.
+	// Arbitrary string indicating the owner of the job.
 	Owner string `json:"owner"`
 
-	// Owner email of the job.
+	// Email address to use for notifications.
 	OwnerEmail string `json:"owner_email"`
 
 	// Number of successful executions of this job.
@@ -108,32 +108,35 @@ type Job struct {
 	// Job id of job that this job is dependent upon.
 	ParentJob string `json:"parent_job"`
 
-	// Processors to use for this job
+	// Processors to use for this job.
 	Processors map[string]plugin.Config `json:"processors"`
 
-	// Concurrency policy for this job (allow, forbid)
+	// Concurrency policy for this job (allow, forbid).
 	Concurrency string `json:"concurrency"`
 
-	// Executor plugin to be used in this job
+	// Executor plugin to be used in this job.
 	Executor string `json:"executor"`
 
-	// Executor args
+	// Configuration arguments for the specific executor.
 	ExecutorConfig plugin.ExecutorPluginConfig `json:"executor_config"`
 
-	// Computed job status
+	// Computed job status.
 	Status string `json:"status"`
 
-	// Computed next execution
+	// Computed next execution.
 	Next time.Time `json:"next"`
 
+	// Delete the job after the first successful execution.
+	Ephemeral bool `json:"ephemeral"`
+
+	// The job will not be executed after this time.
 	ExpiresAt ntime.NullableTime `json:"expires_at"`
+
 	logger *logrus.Entry
 }
 
 // NewJobFromProto create a new Job from a PB Job struct
 func NewJobFromProto(in *proto.Job, logger *logrus.Entry) *Job {
-	next, _ := ptypes.Timestamp(in.GetNext())
-
 	job := &Job{
 		ID:             in.Name,
 		Name:           in.Name,
@@ -154,16 +157,21 @@ func NewJobFromProto(in *proto.Job, logger *logrus.Entry) *Job {
 		ExecutorConfig: in.ExecutorConfig,
 		Status:         in.Status,
 		Metadata:       in.Metadata,
-		Next:           next,
+		Next:           in.GetNext().AsTime(),
+		Ephemeral:      in.Ephemeral,
 		logger:         logger,
 	}
 	if in.GetLastSuccess().GetHasValue() {
-		t, _ := ptypes.Timestamp(in.GetLastSuccess().GetTime())
+		t := in.GetLastSuccess().GetTime().AsTime()
 		job.LastSuccess.Set(t)
 	}
 	if in.GetLastError().GetHasValue() {
-		t, _ := ptypes.Timestamp(in.GetLastError().GetTime())
+		t := in.GetLastError().GetTime().AsTime()
 		job.LastError.Set(t)
+	}
+	if in.GetExpiresAt().GetHasValue() {
+		t := in.GetExpiresAt().GetTime().AsTime()
+		job.ExpiresAt.Set(t)
 	}
 
 	procs := make(map[string]plugin.Config)
@@ -184,15 +192,23 @@ func (j *Job) ToProto() *proto.Job {
 		HasValue: j.LastSuccess.HasValue(),
 	}
 	if j.LastSuccess.HasValue() {
-		lastSuccess.Time, _ = ptypes.TimestampProto(j.LastSuccess.Get())
+		lastSuccess.Time = timestamppb.New(j.LastSuccess.Get())
 	}
 	lastError := &proto.Job_NullableTime{
 		HasValue: j.LastError.HasValue(),
 	}
 	if j.LastError.HasValue() {
-		lastError.Time, _ = ptypes.TimestampProto(j.LastError.Get())
+		lastError.Time = timestamppb.New(j.LastError.Get())
 	}
-	next, _ := ptypes.TimestampProto(j.Next)
+
+	next := timestamppb.New(j.Next)
+
+	expiresAt := &proto.Job_NullableTime{
+		HasValue: j.ExpiresAt.HasValue(),
+	}
+	if j.ExpiresAt.HasValue() {
+		expiresAt.Time = timestamppb.New(j.ExpiresAt.Get())
+	}
 
 	processors := make(map[string]*proto.PluginConfig)
 	for k, v := range j.Processors {
@@ -221,6 +237,8 @@ func (j *Job) ToProto() *proto.Job {
 		LastSuccess:    lastSuccess,
 		LastError:      lastError,
 		Next:           next,
+		Ephemeral:      j.Ephemeral,
+		ExpiresAt:      expiresAt,
 	}
 }
 
@@ -299,7 +317,9 @@ func (j *Job) GetNext() (time.Time, error) {
 }
 
 func (j *Job) isRunnable(logger *logrus.Entry) bool {
-	if j.Disabled {
+	if j.Disabled || (j.ExpiresAt.HasValue() && time.Now().After(j.ExpiresAt.Get())) {
+		logger.WithField("job", j.Name).
+			Debug("job: Skipping execution because job is disabled or expired")
 		return false
 	}
 

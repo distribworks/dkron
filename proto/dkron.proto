@@ -34,6 +34,8 @@ message Job {
   google.protobuf.Timestamp next = 23;
   string displayname = 24;
   map<string, PluginConfig> processors = 27;
+  bool ephemeral = 28;
+  NullableTime expires_at = 29;
 }
 
 message PluginConfig {

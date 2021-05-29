@@ -6,7 +6,8 @@ import {
     Create,
     SimpleForm,
     BooleanInput,
-    NumberInput
+    NumberInput,
+    DateTimeInput
 } from 'react-admin';
 import { JsonInput } from "react-admin-json-view";
 
@@ -24,18 +25,23 @@ export const JobCreate = (props: any) => (
 
 const EditForm = (props: any) => (
     <SimpleForm  {...props}>
-        <TextInput disabled source="id" />
-        <TextInput source="name" />
-        <TextInput source="displayname" />
-        <TextInput source="timezone" />
-        <TextInput source="schedule" />
-        <TextInput source="owner" />
-        <TextInput source="owner_email" />
-        <TextInput source="parent_job" />
-        <SelectInput source="concurrency" choices={[
-            { id: 'allow', name: 'Allow' },
-            { id: 'forbid', name: 'Forbid' },
-        ]} />
+        <TextInput disabled source="id" helperText="Job id. Must be unique, it's a copy of name." />
+        <TextInput source="name" helperText="Job name. Must be unique, acts as the id." />
+        <TextInput source="displayname" helperText="Display name of the job. If present, displayed instead of the name." />
+        <TextInput source="timezone" helperText="The timezone where the cron expression will be evaluated in." />
+        <TextInput source="schedule" helperText="Cron expression for the job. When to run the job." />
+        <TextInput source="owner" helperText="Arbitrary string indicating the owner of the job." />
+        <TextInput source="owner_email" helperText="Email address to use for notifications."/>
+        <TextInput source="parent_job" helperText="Job id of job that this job is dependent upon." />
+        <BooleanInput source="ephemeral" helperText="Delete the job after the first successful execution." />
+        <DateTimeInput source="expires_at" helperText="The job will not be executed after this time." />
+        <SelectInput source="concurrency" 
+            choices={[
+                { id: 'allow', name: 'Allow' },
+                { id: 'forbid', name: 'Forbid' },
+            ]}
+            helperText="Concurrency policy for this job (allow, forbid)."
+        />
         <JsonInput
             source="processors"
             reactJsonOptions={{
@@ -45,6 +51,7 @@ const EditForm = (props: any) => (
                 displayDataTypes: false,
                 src: {},
             }}
+            helperText="Processor plugins to use for this job."
         />
         <JsonInput
             source="tags"
@@ -55,6 +62,7 @@ const EditForm = (props: any) => (
                 displayDataTypes: false,
                 src: {},
             }}
+            helperText="Tags of the target servers to run this job against."
         />
         <JsonInput
             source="metadata"
@@ -65,8 +73,9 @@ const EditForm = (props: any) => (
                 displayDataTypes: false,
                 src: {},
             }}
+            helperText="Job metadata describes the job and allows filtering from the API."
         />
-        <TextInput source="executor" />
+        <TextInput source="executor" helperText="Executor plugin to be used in this job." />
         <JsonInput
             source="executor_config"
             // validate={required(){ return true }}
@@ -78,8 +87,9 @@ const EditForm = (props: any) => (
                 displayDataTypes: false,
                 src: {},
             }}
+            helperText="Configuration arguments for the specific executor."
         />
-        <BooleanInput source="disabled" />
-        <NumberInput source="retries" />
+        <BooleanInput source="disabled" helperText="Is this job disabled?" />
+        <NumberInput source="retries" helperText="Number of times to retry a job that failed an execution." />
     </SimpleForm>
 );

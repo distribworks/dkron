@@ -123,6 +123,9 @@ func (grpcs *GRPCServer) DeleteJob(ctx context.Context, delJobReq *proto.DeleteJ
 
 	// If everything is ok, remove the job
 	grpcs.agent.sched.RemoveJob(job)
+	if job.Ephemeral {
+		grpcs.logger.WithField("job", job.Name).Info("grpc: Done deleting ephemeral job")
+	}
 
 	return &proto.DeleteJobResponse{Job: jpb}, nil
 }
@@ -250,6 +253,16 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.E
 			grpcs.logger.WithField("job", djn).Debug("grpc: Running dependent job")
 			dj.Run()
 		}
+	}
+
+	if job.Ephemeral && job.Status == StatusSuccess {
+		if _, err := grpcs.DeleteJob(ctx, &proto.DeleteJobRequest{JobName: job.Name}); err != nil {
+			return nil, err
+		}
+		return &proto.ExecutionDoneResponse{
+			From:    grpcs.agent.config.NodeName,
+			Payload: []byte("deleted"),
+		}, nil
 	}
 
 	return &proto.ExecutionDoneResponse{
