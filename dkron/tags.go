@@ -38,7 +38,7 @@ func cleanTags(tags map[string]string) (map[string]string, int, error) {
 	return cleanTags, cardinality, nil
 }
 
-// nodeMatchesTags encapsulates the logic of testing if a node matches all of the provided tags
+// nodeMatchesTags tests if a node matches all of the provided tags
 func nodeMatchesTags(node serf.Member, tags map[string]string) bool {
 	for k, v := range tags {
 		nodeVal, present := node.Tags[k]
