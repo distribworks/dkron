@@ -98,14 +98,8 @@ WAIT:
 		goto WAIT
 	}
 
-	// Check if we should do a graceful leave
-	graceful := false
-	if sig == syscall.SIGTERM || sig == os.Interrupt {
-		graceful = true
-	}
-
 	// Fail fast if not doing a graceful leave
-	if !graceful {
+	if sig != syscall.SIGTERM && sig != os.Interrupt {
 		return 1
 	}
 
