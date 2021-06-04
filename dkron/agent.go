@@ -699,77 +699,43 @@ func defaultSelector(nodes []serf.Member) int {
 }
 
 func (a *Agent) processFilteredNodes(job *Job, selectFunc func([]serf.Member) int) ([]serf.Member, error) {
-	// The final set of nodes will be the intersection of all groups
-	tags := make(map[string]string)
-
-	// Actually copy the map
-	for key, val := range job.Tags {
-		tags[key] = val
-	}
-
-	// Always filter by region tag as we currently only target nodes
-	// on the same region.
-	tags["region"] = a.config.Region
-
-	// Get all living members
-	allNodes := a.serf.Members()
-	for i := len(allNodes) - 1; i >= 0; i-- {
-		if allNodes[i].Status != serf.StatusAlive {
-			allNodes[i] = allNodes[len(allNodes)-1]
-			allNodes = allNodes[:len(allNodes)-1]
-		}
-	}
-
-	// Sort the nodes to make selection from them predictable
-	sort.Slice(allNodes, func(i, j int) bool { return allNodes[i].Name < allNodes[j].Name })
-
-	execNodes, cardinality, err := filterNodes(allNodes, tags)
+	ct, cardinality, err := cleanTags(job.Tags)
 	if err != nil {
 		return nil, err
 	}
 
-	numNodes := len(execNodes)
-	for ; cardinality > 0; cardinality-- {
+	// Determine the usable set of nodes
+	nodes := filterArray(a.serf.Members(), func(node serf.Member) bool {
+		return node.Status == serf.StatusAlive &&
+			node.Tags["region"] == a.config.Region &&
+			nodeMatchesTags(node, ct)
+	})
+
+	// Sort the nodes to make selection from them predictable
+	sort.Slice(nodes, func(i, j int) bool { return nodes[i].Name < nodes[j].Name })
+
+	numNodes := len(nodes)
+	for ; cardinality > 0 && numNodes > 0; cardinality-- {
 		// Select a node
-		chosenIndex := selectFunc(execNodes[:numNodes])
+		chosenIndex := selectFunc(nodes[:numNodes])
 
 		// Swap picked node with the last one and reduce choices so it can't get picked again
-		execNodes[numNodes-1], execNodes[chosenIndex] = execNodes[chosenIndex], execNodes[numNodes-1]
+		nodes[numNodes-1], nodes[chosenIndex] = nodes[chosenIndex], nodes[numNodes-1]
 		numNodes--
 	}
 
-	return execNodes[numNodes:], nil
+	return nodes[numNodes:], nil
 }
 
-// filterNodes determines which of the execNodes have the given tags
-// Returns:
-// * the map of allNodes that match the provided tags
-// * cardinality, i.e. the max number of nodes that should be targeted. This can be no higher
-//   than the number of nodes in the resulting map
-// * an error if a cardinality was malformed
-func filterNodes(allNodes []serf.Member, tags map[string]string) ([]serf.Member, int, error) {
-	ct, cardinality, err := cleanTags(tags)
-	if err != nil {
-		return nil, 0, err
-	}
-
-	matchingNodes := make([]serf.Member, len(allNodes))
-	copy(matchingNodes, allNodes)
-
-	// Remove nodes that do not have the selected tags
-	for i := len(matchingNodes) - 1; i >= 0; i-- {
-		if !nodeMatchesTags(matchingNodes[i], ct) {
-			matchingNodes[i] = matchingNodes[len(matchingNodes)-1]
-			matchingNodes = matchingNodes[:len(matchingNodes)-1]
+// Returns all items from an array for which filterFunc returns true,
+func filterArray(arr []serf.Member, filterFunc func(serf.Member) bool) []serf.Member {
+	for i := len(arr) - 1; i >= 0; i-- {
+		if !filterFunc(arr[i]) {
+			arr[i] = arr[len(arr)-1]
+			arr = arr[:len(arr)-1]
 		}
 	}
-
-	// limit the cardinality to the number of possible nodes
-	if len(matchingNodes) < cardinality {
-		cardinality = len(matchingNodes)
-	}
-
-	return matchingNodes, cardinality, nil
+	return arr
 }
 
 // This function is called when a client request the RPCAddress
