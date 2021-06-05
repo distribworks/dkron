@@ -118,7 +118,7 @@ type Config struct {
 
 	// RaftDuration An integer indicating the desired duration of the raft log (-1 Low, 0 Mid, 1 High)
 	// Low no writes at all, Mid (default) fsync every second, High fsync on every change.
-	RaftDuration int `mapstructure:"raft-multiplier"`
+	RaftDuration int `mapstructure:"raft-duration"`
 
 	// MailHost is the SMTP server host to use for email notifications.
 	MailHost string `mapstructure:"mail-host"`
