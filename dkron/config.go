@@ -116,6 +116,10 @@ type Config struct {
 	// Raft timing parameters.
 	RaftMultiplier int `mapstructure:"raft-multiplier"`
 
+	// RaftDuration An integer indicating the desired duration of the raft log (-1 Low, 0 Mid, 1 High)
+	// Low no writes at all, Mid (default) fsync every second, High fsync on every change.
+	RaftDuration int `mapstructure:"raft-multiplier"`
+
 	// MailHost is the SMTP server host to use for email notifications.
 	MailHost string `mapstructure:"mail-host"`
 
@@ -222,6 +226,7 @@ func ConfigFlagSet() *flag.FlagSet {
 	cmdFlags.Int("retry-max", 0, "Maximum number of join attempts. Defaults to 0, which will retry indefinitely.")
 	cmdFlags.String("retry-interval", DefaultRetryInterval.String(), "Time to wait between join attempts.")
 	cmdFlags.Int("raft-multiplier", c.RaftMultiplier, "An integer multiplier used by servers to scale key Raft timing parameters. Omitting this value or setting it to 0 uses default timing described below. Lower values are used to tighten timing and increase sensitivity while higher values relax timings and reduce sensitivity. Tuning this affects the time it takes to detect leader failures and to perform leader elections, at the expense of requiring more network and CPU resources for better performance. By default, Dkron will use a lower-performance timing that's suitable for minimal Dkron servers, currently equivalent to setting this to a value of 5 (this default may be changed in future versions of Dkron, depending if the target minimum server profile changes). Setting this to a value of 1 will configure Raft to its highest-performance mode is recommended for production Dkron servers. The maximum allowed value is 10.")
+	cmdFlags.Int("raft-duration", c.RaftDuration, "RaftDuration An integer indicating the desired duration of the raft log (-1 Low, 0 Mid, 1 High) Low no writes at all, Mid (default) fsync every second, High fsync on every change.")
 	cmdFlags.StringSlice("tag", []string{}, "Tag can be specified multiple times to attach multiple key/value tag pairs to the given node, specified as key=value")
 	cmdFlags.String("encrypt", "", "Key for encrypting network traffic. Must be a base64-encoded 16-byte key")
 	cmdFlags.String("log-level", c.LogLevel, "Log level (debug|info|warn|error|fatal|panic)")
