@@ -5,11 +5,12 @@ require (
 	github.com/DataDog/datadog-go v4.0.0+incompatible // indirect
 	github.com/Shopify/sarama v1.28.0
 	github.com/armon/circbuf v0.0.0-20190214190532-5111143e8da2
-	github.com/armon/go-metrics v0.3.6
+	github.com/armon/go-metrics v0.3.8
 	github.com/aws/aws-sdk-go v1.36.31 // indirect
 	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869 // indirect
 	github.com/catalinc/hashcash v0.0.0-20161205220751-e6bc29ff4de9 // indirect
 	github.com/devopsfaith/krakend-usage v0.0.0-20210223224348-1ff8aabbd5bb
+	github.com/fatih/color v1.12.0 // indirect
 	github.com/fluent/fluent-logger-golang v1.6.0
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-contrib/expvar v0.0.1
@@ -17,8 +18,9 @@ require (
 	github.com/gin-gonic/gin v1.7.1
 	github.com/golang/protobuf v1.5.0
 	github.com/hashicorp/go-discover v0.0.0-20201029210230-738cb3105cd0
-	github.com/hashicorp/go-hclog v0.16.0
+	github.com/hashicorp/go-hclog v0.16.1
 	github.com/hashicorp/go-immutable-radix v1.3.0 // indirect
+	github.com/hashicorp/go-msgpack v1.1.5 // indirect
 	github.com/hashicorp/go-plugin v1.4.1
 	github.com/hashicorp/go-sockaddr v1.0.2
 	github.com/hashicorp/go-syslog v1.0.0
@@ -32,6 +34,7 @@ require (
 	github.com/hashicorp/yamux v0.0.0-20190923154419-df201c70410d // indirect
 	github.com/jordan-wright/email v0.0.0-20180115032944-94ae17dedda2
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0
+	github.com/mattn/go-isatty v0.0.13 // indirect
 	github.com/mattn/go-shellwords v1.0.11
 	github.com/mitchellh/go-testing-interface v1.14.1 // indirect
 	github.com/nats-io/nats.go v1.10.0
@@ -47,8 +50,11 @@ require (
 	github.com/streadway/amqp v1.0.0
 	github.com/stretchr/testify v1.7.0
 	github.com/tidwall/buntdb v1.2.0
+	github.com/tidwall/raft-fastlog v0.1.0 // indirect
+	github.com/tidwall/raft-wal v0.1.5 // indirect
 	github.com/tinylib/msgp v1.1.2 // indirect
 	golang.org/x/net v0.0.0-20210119194325-5f4716e94777
+	golang.org/x/sys v0.0.0-20210603125802-9665404d3644 // indirect
 	google.golang.org/api v0.35.0 // indirect
 	google.golang.org/grpc v1.37.0
 	google.golang.org/protobuf v1.26.0
