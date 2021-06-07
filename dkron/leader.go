@@ -85,14 +85,15 @@ RECONCILE:
 	// Check if we need to handle initial leadership actions
 	if !establishedLeader {
 		if err := a.establishLeadership(stopCh); err != nil {
-			a.logger.WithError(err).Error("dkron: failed to establish leadership")
-
 			// Immediately revoke leadership since we didn't successfully
 			// establish leadership.
 			if err := a.revokeLeadership(); err != nil {
 				a.logger.WithError(err).Error("dkron: failed to revoke leadership")
 			}
 
+			a.logger.WithError(err).Fatal("dkron: failed to establish leadership")
+
+			// TODO: review this code path
 			goto WAIT
 		}
 
@@ -185,11 +186,9 @@ func (a *Agent) establishLeadership(stopCh chan struct{}) error {
 	a.logger.Info("agent: Starting scheduler")
 	jobs, err := a.Store.GetJobs(nil)
 	if err != nil {
-		a.logger.Fatal(err)
+		return err
 	}
-	a.sched.Start(jobs, a)
-
-	return nil
+	return a.sched.Start(jobs, a)
 }
 
 // revokeLeadership is invoked once we step down as leader.
