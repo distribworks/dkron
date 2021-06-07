@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.0-experimental
+# syntax=docker/dockerfile:1.2
 FROM alpine:3.12
 LABEL maintainer="Victor Castell <victor@victorcastell.com>"
 ARG TARGETPLATFORM
