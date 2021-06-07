@@ -30,7 +30,7 @@ func (a *Agent) Run(jobName string, ex *Execution) (*Job, error) {
 	// but we use the existing node target in case of retry.
 	var targetNodes []serf.Member
 	if ex.Attempt <= 1 {
-		targetNodes, err = a.processFilteredNodes(job, defaultSelector)
+		targetNodes, err = a.processFilteredNodes(job.Tags, defaultSelector)
 		if err != nil {
 			return nil, fmt.Errorf("run error processing filtered nodes: %w", err)
 		}

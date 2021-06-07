@@ -698,8 +698,8 @@ func defaultSelector(nodes []serf.Member) int {
 	return rand.Intn(len(nodes))
 }
 
-func (a *Agent) processFilteredNodes(job *Job, selectFunc func([]serf.Member) int) ([]serf.Member, error) {
-	ct, cardinality, err := cleanTags(job.Tags)
+func (a *Agent) processFilteredNodes(tags map[string]string, selectFunc func([]serf.Member) int) ([]serf.Member, error) {
+	ct, cardinality, err := cleanTags(tags)
 	if err != nil {
 		return nil, err
 	}

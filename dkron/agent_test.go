@@ -196,14 +196,9 @@ func Test_processFilteredNodes(t *testing.T) {
 	time.Sleep(2 * time.Second)
 
 	// Test cardinality of 2 returns correct nodes
-	job := &Job{
-		Name: "test_job_1",
-		Tags: map[string]string{
-			"tag": "test:2",
-		},
-	}
+	tags := map[string]string{"tag": "test:2"}
 
-	nodes, err := a1.processFilteredNodes(job, lastSelector)
+	nodes, err := a1.processFilteredNodes(tags, lastSelector)
 	require.NoError(t, err)
 
 	assert.Exactly(t, "test1", nodes[0].Name)
@@ -211,24 +206,17 @@ func Test_processFilteredNodes(t *testing.T) {
 	assert.Len(t, nodes, 2)
 
 	// Test cardinality of 1 with two qualified nodes returns 1 node
-	job2 := &Job{
-		Name: "test_job_2",
-		Tags: map[string]string{
-			"tag": "test:1",
-		},
-	}
+	tags2 := map[string]string{"tag": "test:1"}
 
-	nodes, err = a1.processFilteredNodes(job2, defaultSelector)
+	nodes, err = a1.processFilteredNodes(tags2, defaultSelector)
 	require.NoError(t, err)
 
 	assert.Len(t, nodes, 1)
 
 	// Test no cardinality specified, all nodes returned
-	job3 := &Job{
-		Name: "test_job_3",
-	}
+	var tags3 map[string]string
 
-	nodes, err = a1.processFilteredNodes(job3, lastSelector)
+	nodes, err = a1.processFilteredNodes(tags3, lastSelector)
 	require.NoError(t, err)
 
 	assert.Len(t, nodes, 3)
@@ -237,56 +225,40 @@ func Test_processFilteredNodes(t *testing.T) {
 	assert.Exactly(t, "test3", nodes[2].Name)
 
 	// Test exclusive tag returns correct node
-	job4 := &Job{
-		Name: "test_job_4",
-		Tags: map[string]string{
-			"tag": "test_client:1",
-		},
-	}
+	tags4 := map[string]string{"tag": "test_client:1"}
 
-	nodes, err = a1.processFilteredNodes(job4, defaultSelector)
+	nodes, err = a1.processFilteredNodes(tags4, defaultSelector)
 	require.NoError(t, err)
 
 	assert.Len(t, nodes, 1)
 	assert.Exactly(t, "test3", nodes[0].Name)
 
 	// Test existing tag but no matching value returns no nodes
-	job5 := &Job{
-		Name: "test_job_5",
-		Tags: map[string]string{
-			"tag": "no_tag",
-		},
-	}
+	tags5 := map[string]string{"tag": "no_tag"}
 
-	nodes, err = a1.processFilteredNodes(job5, defaultSelector)
+	nodes, err = a1.processFilteredNodes(tags5, defaultSelector)
 	require.NoError(t, err)
 
 	assert.Len(t, nodes, 0)
 
 	// Test 1 matching and 1 not matching tag returns no nodes
-	job6 := &Job{
-		Name: "test_job_6",
-		Tags: map[string]string{
-			"foo": "bar:1",
-			"tag": "test:2",
-		},
+	tags6 := map[string]string{
+		"foo": "bar:1",
+		"tag": "test:2",
 	}
 
-	nodes, err = a1.processFilteredNodes(job6, defaultSelector)
+	nodes, err = a1.processFilteredNodes(tags6, defaultSelector)
 	require.NoError(t, err)
 
 	assert.Len(t, nodes, 0)
 
 	// Test matching tags with cardinality of 2 but only 1 matching node returns correct node
-	job7 := &Job{
-		Name: "test_job_7",
-		Tags: map[string]string{
-			"tag":   "test:2",
-			"extra": "tag:2",
-		},
+	tags7 := map[string]string{
+		"tag":   "test:2",
+		"extra": "tag:2",
 	}
 
-	nodes, err = a1.processFilteredNodes(job7, defaultSelector)
+	nodes, err = a1.processFilteredNodes(tags7, defaultSelector)
 	require.NoError(t, err)
 
 	assert.Len(t, nodes, 1)
@@ -298,22 +270,18 @@ func Test_processFilteredNodes(t *testing.T) {
 	// sometimes fail (=return no nodes at all) due to the use of math.rand
 	// Statistically, about 33% should succeed and the rest should fail if
 	// the code is buggy.
-	// Another bug caused one node to be favored over the others. With a
-	// large enough number of attempts, each node should be chosen about 1/3
-	// of the time.
-	job8 := &Job{
-		Name: "test_job_8",
-		Tags: map[string]string{
-			"additional":  "value:1",
-			"additional2": "value2:1",
-		},
+	// Another bug caused one node to be favored over the others. With a large
+	// enough number of attempts, each node should be chosen 1/3 of the time.
+	tags8 := map[string]string{
+		"additional":  "value:1",
+		"additional2": "value2:1",
 	}
 	distrib := make(map[string]int)
 	var sampleSize = 999
 	for i := 0; i < sampleSize; i++ {
 		// round-robin on the selected nodes to come out at an exactly equal distribution
 		roundRobinSelector := func(nodes []serf.Member) int { return i % len(nodes) }
-		nodes, err = a1.processFilteredNodes(job8, roundRobinSelector)
+		nodes, err = a1.processFilteredNodes(tags8, roundRobinSelector)
 		require.NoError(t, err)
 
 		assert.Len(t, nodes, 1)
