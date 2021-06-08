@@ -311,7 +311,7 @@ func (a *Agent) setupRaft() error {
 			return fmt.Errorf("file snapshot store: %s", err)
 		}
 
-		// Create the BoltDB backend
+		// Create the Raft store
 		s, err := raftfastlog.NewFastLogStore(filepath.Join(a.config.DataDir, "raft", "raft.db"), raftfastlog.Level(a.config.RaftDuration), a.logger.Writer())
 		if err != nil {
 			return fmt.Errorf("error creating new raft store: %s", err)
