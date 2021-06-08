@@ -711,11 +711,16 @@ func (a *Agent) processFilteredNodes(tags map[string]string, selectFunc func([]s
 			nodeMatchesTags(node, ct)
 	})
 
+	// Return all nodes immediately if they're all going to be selected
+	numNodes := len(nodes)
+	if numNodes <= cardinality {
+		return nodes, nil
+	}
+
 	// Sort the nodes to make selection from them predictable
 	sort.Slice(nodes, func(i, j int) bool { return nodes[i].Name < nodes[j].Name })
 
-	numNodes := len(nodes)
-	for ; cardinality > 0 && numNodes > 0; cardinality-- {
+	for ; cardinality > 0; cardinality-- {
 		// Select a node
 		chosenIndex := selectFunc(nodes[:numNodes])
 
