@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 	"os/exec"
 	"path"
@@ -115,7 +114,6 @@ func getPluginName(file string) (string, bool) {
 func (p *Plugins) pluginFactory(path string, args []string, pluginType string) (interface{}, error) {
 	// Build the plugin client configuration and init the plugin
 	var config plugin.ClientConfig
-	fmt.Println(path)
 	config.Cmd = exec.Command(path, args...)
 	config.HandshakeConfig = dkplugin.Handshake
 	config.Managed = true
