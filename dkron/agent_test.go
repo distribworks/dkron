@@ -199,8 +199,7 @@ func Test_processFilteredNodes(t *testing.T) {
 	// Test cardinality of 2 returns correct nodes
 	tags := map[string]string{"tag": "test:2"}
 
-	nodes, err := a1.processFilteredNodes(tags, lastSelector)
-	require.NoError(t, err)
+	nodes := a1.getTargetNodes(tags, lastSelector)
 
 	sort.Slice(nodes, func(i, j int) bool { return nodes[i].Name < nodes[j].Name })
 	assert.Exactly(t, "test1", nodes[0].Name)
@@ -210,16 +209,14 @@ func Test_processFilteredNodes(t *testing.T) {
 	// Test cardinality of 1 with two qualified nodes returns 1 node
 	tags2 := map[string]string{"tag": "test:1"}
 
-	nodes, err = a1.processFilteredNodes(tags2, defaultSelector)
-	require.NoError(t, err)
+	nodes = a1.getTargetNodes(tags2, defaultSelector)
 
 	assert.Len(t, nodes, 1)
 
 	// Test no cardinality specified, all nodes returned
 	var tags3 map[string]string
 
-	nodes, err = a1.processFilteredNodes(tags3, lastSelector)
-	require.NoError(t, err)
+	nodes = a1.getTargetNodes(tags3, lastSelector)
 
 	sort.Slice(nodes, func(i, j int) bool { return nodes[i].Name < nodes[j].Name })
 	assert.Len(t, nodes, 3)
@@ -230,8 +227,7 @@ func Test_processFilteredNodes(t *testing.T) {
 	// Test exclusive tag returns correct node
 	tags4 := map[string]string{"tag": "test_client:1"}
 
-	nodes, err = a1.processFilteredNodes(tags4, defaultSelector)
-	require.NoError(t, err)
+	nodes = a1.getTargetNodes(tags4, defaultSelector)
 
 	assert.Len(t, nodes, 1)
 	assert.Exactly(t, "test3", nodes[0].Name)
@@ -239,8 +235,7 @@ func Test_processFilteredNodes(t *testing.T) {
 	// Test existing tag but no matching value returns no nodes
 	tags5 := map[string]string{"tag": "no_tag"}
 
-	nodes, err = a1.processFilteredNodes(tags5, defaultSelector)
-	require.NoError(t, err)
+	nodes = a1.getTargetNodes(tags5, defaultSelector)
 
 	assert.Len(t, nodes, 0)
 
@@ -250,8 +245,7 @@ func Test_processFilteredNodes(t *testing.T) {
 		"tag": "test:2",
 	}
 
-	nodes, err = a1.processFilteredNodes(tags6, defaultSelector)
-	require.NoError(t, err)
+	nodes = a1.getTargetNodes(tags6, defaultSelector)
 
 	assert.Len(t, nodes, 0)
 
@@ -261,11 +255,19 @@ func Test_processFilteredNodes(t *testing.T) {
 		"extra": "tag:2",
 	}
 
-	nodes, err = a1.processFilteredNodes(tags7, defaultSelector)
-	require.NoError(t, err)
+	nodes = a1.getTargetNodes(tags7, defaultSelector)
 
 	assert.Len(t, nodes, 1)
 	assert.Exactly(t, "test2", nodes[0].Name)
+
+	// Test invalid cardinality yields 0 nodes
+	tags9 := map[string]string{
+		"tag": "test:invalid",
+	}
+
+	nodes = a1.getTargetNodes(tags9, defaultSelector)
+
+	assert.Len(t, nodes, 0)
 
 	// Test two tags matching same 3 servers and cardinality of 1 should always return 1 server
 
@@ -284,8 +286,7 @@ func Test_processFilteredNodes(t *testing.T) {
 	for i := 0; i < sampleSize; i++ {
 		// round-robin on the selected nodes to come out at an exactly equal distribution
 		roundRobinSelector := func(nodes []serf.Member) int { return i % len(nodes) }
-		nodes, err = a1.processFilteredNodes(tags8, roundRobinSelector)
-		require.NoError(t, err)
+		nodes = a1.getTargetNodes(tags8, roundRobinSelector)
 
 		assert.Len(t, nodes, 1)
 		distrib[nodes[0].Name]++

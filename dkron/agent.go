@@ -693,20 +693,13 @@ func (a *Agent) join(addrs []string, replay bool) (n int, err error) {
 	return
 }
 
-func (a *Agent) processFilteredNodes(tags map[string]string, selectFunc func([]serf.Member) int) ([]serf.Member, error) {
-	nodes, card, err := a.getQualifyingNodes(tags)
-	if err != nil {
-		return nil, err
-	}
-
-	return selectNodes(nodes, card, selectFunc), nil
+func (a *Agent) getTargetNodes(tags map[string]string, selectFunc func([]serf.Member) int) []serf.Member {
+	nodes, card := a.getQualifyingNodes(tags)
+	return selectNodes(nodes, card, selectFunc)
 }
 
-func (a *Agent) getQualifyingNodes(tags map[string]string) ([]serf.Member, int, error) {
-	ct, cardinality, err := cleanTags(tags)
-	if err != nil {
-		return nil, 0, err
-	}
+func (a *Agent) getQualifyingNodes(tags map[string]string) ([]serf.Member, int) {
+	ct, cardinality := cleanTags(tags, a.logger)
 
 	// Determine the usable set of nodes
 	nodes := filterArray(a.serf.Members(), func(node serf.Member) bool {
@@ -714,7 +707,7 @@ func (a *Agent) getQualifyingNodes(tags map[string]string) ([]serf.Member, int, 
 			node.Tags["region"] == a.config.Region &&
 			nodeMatchesTags(node, ct)
 	})
-	return nodes, cardinality, nil
+	return nodes, cardinality
 }
 
 // The default selector function for processFilteredNodes
