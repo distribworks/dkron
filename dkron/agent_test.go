@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"sort"
 	"testing"
 	"time"
 
@@ -201,6 +202,7 @@ func Test_processFilteredNodes(t *testing.T) {
 	nodes, err := a1.processFilteredNodes(tags, lastSelector)
 	require.NoError(t, err)
 
+	sort.Slice(nodes, func(i, j int) bool { return nodes[i].Name < nodes[j].Name })
 	assert.Exactly(t, "test1", nodes[0].Name)
 	assert.Exactly(t, "test2", nodes[1].Name)
 	assert.Len(t, nodes, 2)
@@ -219,6 +221,7 @@ func Test_processFilteredNodes(t *testing.T) {
 	nodes, err = a1.processFilteredNodes(tags3, lastSelector)
 	require.NoError(t, err)
 
+	sort.Slice(nodes, func(i, j int) bool { return nodes[i].Name < nodes[j].Name })
 	assert.Len(t, nodes, 3)
 	assert.Exactly(t, "test1", nodes[0].Name)
 	assert.Exactly(t, "test2", nodes[1].Name)

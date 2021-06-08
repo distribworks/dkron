@@ -693,15 +693,19 @@ func (a *Agent) join(addrs []string, replay bool) (n int, err error) {
 	return
 }
 
-// The default selector function for processFilteredNodes
-func defaultSelector(nodes []serf.Member) int {
-	return rand.Intn(len(nodes))
-}
-
 func (a *Agent) processFilteredNodes(tags map[string]string, selectFunc func([]serf.Member) int) ([]serf.Member, error) {
-	ct, cardinality, err := cleanTags(tags)
+	nodes, card, err := a.getQualifyingNodes(tags)
 	if err != nil {
 		return nil, err
+	}
+
+	return selectNodes(nodes, card, selectFunc), nil
+}
+
+func (a *Agent) getQualifyingNodes(tags map[string]string) ([]serf.Member, int, error) {
+	ct, cardinality, err := cleanTags(tags)
+	if err != nil {
+		return nil, 0, err
 	}
 
 	// Determine the usable set of nodes
@@ -710,11 +714,19 @@ func (a *Agent) processFilteredNodes(tags map[string]string, selectFunc func([]s
 			node.Tags["region"] == a.config.Region &&
 			nodeMatchesTags(node, ct)
 	})
+	return nodes, cardinality, nil
+}
 
+// The default selector function for processFilteredNodes
+func defaultSelector(nodes []serf.Member) int {
+	return rand.Intn(len(nodes))
+}
+
+func selectNodes(nodes []serf.Member, cardinality int, selectFunc func([]serf.Member) int) []serf.Member {
 	// Return all nodes immediately if they're all going to be selected
 	numNodes := len(nodes)
 	if numNodes <= cardinality {
-		return nodes, nil
+		return nodes
 	}
 
 	// Sort the nodes to make selection from them predictable
@@ -729,7 +741,7 @@ func (a *Agent) processFilteredNodes(tags map[string]string, selectFunc func([]s
 		numNodes--
 	}
 
-	return nodes[numNodes:], nil
+	return nodes[numNodes:]
 }
 
 // Returns all items from an array for which filterFunc returns true,
