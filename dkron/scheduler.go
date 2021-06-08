@@ -59,7 +59,9 @@ func (s *Scheduler) Start(jobs []*Job, agent *Agent) error {
 	metrics.IncrCounter([]string{"scheduler", "start"}, 1)
 	for _, job := range jobs {
 		job.Agent = agent
-		s.AddJob(job)
+		if err := s.AddJob(job); err != nil {
+			return err
+		}
 	}
 	s.Cron.Start()
 	s.started = true
