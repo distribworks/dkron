@@ -51,6 +51,9 @@ var (
 	runningExecutions sync.Map
 )
 
+// Node is a shorter, more descriptive name for serf.Member
+type Node = serf.Member
+
 // Agent is the main struct that represents a dkron agent
 type Agent struct {
 	// ProcessorPlugins maps processor plugins
@@ -693,16 +696,18 @@ func (a *Agent) join(addrs []string, replay bool) (n int, err error) {
 	return
 }
 
-func (a *Agent) getTargetNodes(tags map[string]string, selectFunc func([]serf.Member) int) []serf.Member {
+func (a *Agent) getTargetNodes(tags map[string]string, selectFunc func([]Node) int) []Node {
 	nodes, card := a.getQualifyingNodes(tags)
 	return selectNodes(nodes, card, selectFunc)
 }
 
-func (a *Agent) getQualifyingNodes(tags map[string]string) ([]serf.Member, int) {
+// getQualifyingNodes returns all nodes in the cluster that are
+// alive, in this agent's region and have all given tags
+func (a *Agent) getQualifyingNodes(tags map[string]string) ([]Node, int) {
 	ct, cardinality := cleanTags(tags, a.logger)
 
 	// Determine the usable set of nodes
-	nodes := filterArray(a.serf.Members(), func(node serf.Member) bool {
+	nodes := filterArray(a.serf.Members(), func(node Node) bool {
 		return node.Status == serf.StatusAlive &&
 			node.Tags["region"] == a.config.Region &&
 			nodeMatchesTags(node, ct)
@@ -711,11 +716,12 @@ func (a *Agent) getQualifyingNodes(tags map[string]string) ([]serf.Member, int) 
 }
 
 // The default selector function for processFilteredNodes
-func defaultSelector(nodes []serf.Member) int {
+func defaultSelector(nodes []Node) int {
 	return rand.Intn(len(nodes))
 }
 
-func selectNodes(nodes []serf.Member, cardinality int, selectFunc func([]serf.Member) int) []serf.Member {
+// selectNodes selects at most #cardinality from the given nodes using the selectFunc
+func selectNodes(nodes []Node, cardinality int, selectFunc func([]Node) int) []Node {
 	// Return all nodes immediately if they're all going to be selected
 	numNodes := len(nodes)
 	if numNodes <= cardinality {
@@ -738,7 +744,7 @@ func selectNodes(nodes []serf.Member, cardinality int, selectFunc func([]serf.Me
 }
 
 // Returns all items from an array for which filterFunc returns true,
-func filterArray(arr []serf.Member, filterFunc func(serf.Member) bool) []serf.Member {
+func filterArray(arr []Node, filterFunc func(Node) bool) []Node {
 	for i := len(arr) - 1; i >= 0; i-- {
 		if !filterFunc(arr[i]) {
 			arr[i] = arr[len(arr)-1]

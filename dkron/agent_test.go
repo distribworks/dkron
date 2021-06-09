@@ -113,7 +113,7 @@ func TestAgentCommand_runForElection(t *testing.T) {
 	a3.Stop()
 }
 
-func lastSelector(nodes []serf.Member) int {
+func lastSelector(nodes []Node) int {
 	return len(nodes) - 1
 }
 
@@ -428,7 +428,7 @@ func TestAgentConfig(t *testing.T) {
 
 /*
 func Test_filterNodes(t *testing.T) {
-	nodes := []serf.Member{
+	nodes := []Node{
 		{
 			Tags: map[string]string{
 				"region":  "global",
@@ -454,13 +454,13 @@ func Test_filterNodes(t *testing.T) {
 		},
 	}
 	type args struct {
-		execNodes []serf.Member
+		execNodes []Node
 		tags      map[string]string
 	}
 	tests := []struct {
 		name    string
 		args    args
-		want    []serf.Member
+		want    []Node
 		want2   int
 		wantErr bool
 	}{
@@ -480,7 +480,7 @@ func Test_filterNodes(t *testing.T) {
 				execNodes: nodes,
 				tags:      map[string]string{"just1": "value"},
 			},
-			want:    []serf.Member{nodes[0]},
+			want:    []Node{nodes[0]},
 			want2:   1,
 			wantErr: false,
 		},
@@ -490,7 +490,7 @@ func Test_filterNodes(t *testing.T) {
 				execNodes: nodes,
 				tags:      map[string]string{"just2": "value"},
 			},
-			want:    []serf.Member{nodes[1]},
+			want:    []Node{nodes[1]},
 			want2:   1,
 			wantErr: false,
 		},
@@ -500,7 +500,7 @@ func Test_filterNodes(t *testing.T) {
 				execNodes: nodes,
 				tags:      map[string]string{"tagfor2": "2"},
 			},
-			want:    []serf.Member{nodes[0], nodes[1]},
+			want:    []Node{nodes[0], nodes[1]},
 			want2:   2,
 			wantErr: false,
 		},
@@ -510,7 +510,7 @@ func Test_filterNodes(t *testing.T) {
 				execNodes: nodes,
 				tags:      map[string]string{"unknown": "value"},
 			},
-			want:    []serf.Member{},
+			want:    []Node{},
 			want2:   0,
 			wantErr: false,
 		},
@@ -542,3 +542,75 @@ func Test_filterNodes(t *testing.T) {
 	}
 }
 */
+
+func Test_filterArray(t *testing.T) {
+	n1 := Node{Name: "node1"}
+	n2 := Node{Name: "node2"}
+	n3 := Node{Name: "node3"}
+	matchAll := func(m Node) bool { return true }
+	matchNone := func(m Node) bool { return false }
+	filtertests := []struct {
+		name   string
+		in     []Node
+		filter func(Node) bool
+		expect []Node
+	}{
+		{"No items match", []Node{n1, n2, n3}, matchNone, []Node{}},
+		{"All items match", []Node{n1, n2, n3}, matchAll, []Node{n1, n2, n3}},
+		{"Empty input returns empty output", []Node{}, matchAll, []Node{}},
+		{"All but first match", []Node{n1, n2, n3}, func(m Node) bool { return m.Name != "node1" }, []Node{n2, n3}},
+		{"All but last match", []Node{n1, n2, n3}, func(m Node) bool { return m.Name != "node3" }, []Node{n1, n2}},
+		{"Middle does not match", []Node{n1, n2, n3}, func(m Node) bool { return m.Name != "node2" }, []Node{n1, n3}},
+		{"Only middle matches", []Node{n1, n2, n3}, func(m Node) bool { return m.Name == "node2" }, []Node{n2}},
+	}
+
+	for _, tt := range filtertests {
+		t.Run(tt.name, func(t *testing.T) {
+			actual := filterArray(tt.in, tt.filter)
+			assert.Len(t, actual, len(tt.expect))
+			for _, expectedItem := range tt.expect {
+				assert.Contains(t, actual, expectedItem)
+			}
+		})
+	}
+}
+
+func Test_selectNodes(t *testing.T) {
+	n1 := Node{Name: "node1"}
+	n2 := Node{Name: "node2"}
+	n3 := Node{Name: "node3"}
+	node2Selector := func(nodes []Node) int {
+		for i, node := range nodes {
+			if node.Name == "node2" {
+				return i
+			}
+		}
+		panic("This shouldn't happen")
+	}
+	filtertests := []struct {
+		name        string
+		in          []Node
+		cardinality int
+		selector    func([]Node) int
+		expect      []Node
+	}{
+		{"Cardinality 0 returns none", []Node{n1, n2, n3}, 0, defaultSelector, []Node{}},
+		{"Cardinality < 0 returns none", []Node{n1, n2, n3}, -1, defaultSelector, []Node{}},
+		{"Cardinality > #nodes returns all", []Node{n1, n2, n3}, 1000, defaultSelector, []Node{n1, n2, n3}},
+		{"Cardinality = #nodes returns all", []Node{n1, n2, n3}, 3, defaultSelector, []Node{n1, n2, n3}},
+		{"Cardinality = 1 returns one", []Node{n1, n2, n3}, 1, lastSelector, []Node{n3}},
+		{"Cardinality = 2 returns two", []Node{n1, n2, n3}, 2, lastSelector, []Node{n2, n3}},
+		{"Pick node2", []Node{n1, n2, n3}, 1, node2Selector, []Node{n2}},
+		{"No nodes, card>0 returns none", []Node{}, 2, defaultSelector, []Node{}},
+		{"No nodes, card=0 returns none", []Node{}, 0, defaultSelector, []Node{}},
+	}
+	for _, tt := range filtertests {
+		t.Run(tt.name, func(t *testing.T) {
+			actual := selectNodes(tt.in, tt.cardinality, tt.selector)
+			assert.Len(t, actual, len(tt.expect))
+			for _, expectedItem := range tt.expect {
+				assert.Contains(t, actual, expectedItem)
+			}
+		})
+	}
+}
