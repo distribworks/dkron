@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2021-03-10T13:28:33 CET">
+<meta name="revised" content="2021-06-10T18:39:03 CEST">
 <title>Upgrade methods :: Dkron - Cloud native job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -137,7 +137,7 @@
       <li data-nav-id="/usage/executors/nats/" class="dd-item">
         <div>
           <a href="/usage/executors/nats/">
-            Shell Executor
+            NATS Executor
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -1604,11 +1604,11 @@
 <h3 id="rolling-upgrade">Rolling upgrade</h3>
 <p>Use the following procedure to rotate all cluster nodes, one server at a time:</p>
 <ol>
-<li>Add a new servers to the cluster with a configuration that joins them to the existing cluter.</li>
-<li>Stop dkron service in one of the old servers, if it was the leader allow a new leader to be ellected, note that it is better to remove the current leader at the end, to ensure a leader is elected between the new nodes.</li>
-<li>Use <code>dkron raft list-peers</code> to list current cluster nodes</li>
-<li>Use <code>dkron raft remove-peer</code> to forcefully remove the old server</li>
-<li>Repeat steps util all old cluster nodes has been rotated</li>
+<li>Add a new server to the cluster with a configuration that joins them to the existing cluster.</li>
+<li>Stop dkron service on one of the old servers, if it was the leader allow a new leader to be elected. Note that it is better to remove the current leader at the end, to ensure a leader is elected from the new nodes.</li>
+<li>Use <code>dkron raft list-peers</code> to list current cluster nodes.</li>
+<li>Use <code>dkron raft remove-peer</code> to forcefully remove the old server.</li>
+<li>Repeat steps above until all old cluster nodes have been upgraded.</li>
 </ol>
 <h3 id="backup--restore">Backup &amp; Restore</h3>
 <p>Use the <code>/restore</code> API endpoint to restore a previously exported jobs file</p>

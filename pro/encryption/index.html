@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2021-03-10T13:28:33 CET">
+<meta name="revised" content="2021-06-10T18:39:03 CEST">
 <title>Encryption :: Dkron - Cloud native job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -136,7 +136,7 @@
       <li data-nav-id="/usage/executors/nats/" class="dd-item">
         <div>
           <a href="/usage/executors/nats/">
-            Shell Executor
+            NATS Executor
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -1604,11 +1604,11 @@
 </p></div>
 
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#75715e"># dkron.yaml</span>
-<span style="color:#00a8c8">auto-tls</span><span style="color:#111">:</span> <span style="color:#00a8c8">false</span> <span style="color:#75715e"># Set to false to use custom certs</span>
-<span style="color:#00a8c8">key-file</span><span style="color:#111">:</span> server-key.pem
-<span style="color:#00a8c8">cert-file</span><span style="color:#111">:</span> server.pem
-<span style="color:#00a8c8">trusted-ca-file</span><span style="color:#111">:</span> ca.pem
-<span style="color:#00a8c8">client-cert-auth</span><span style="color:#111">:</span> <span style="color:#00a8c8">true</span> <span style="color:#75715e"># Enable it to only allow certs signed by the same CA</span>
+<span style="color:#f92672">auto-tls</span><span style="color:#111">:</span> <span style="color:#00a8c8">false</span> <span style="color:#75715e"># Set to false to use custom certs</span>
+<span style="color:#f92672">key-file</span><span style="color:#111">:</span> <span style="color:#ae81ff">server-key.pem</span>
+<span style="color:#f92672">cert-file</span><span style="color:#111">:</span> <span style="color:#ae81ff">server.pem</span>
+<span style="color:#f92672">trusted-ca-file</span><span style="color:#111">:</span> <span style="color:#ae81ff">ca.pem</span>
+<span style="color:#f92672">client-cert-auth</span><span style="color:#111">:</span> <span style="color:#00a8c8">true</span> <span style="color:#75715e"># Enable it to only allow certs signed by the same CA</span>
 </code></pre></div>
 
     

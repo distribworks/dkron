@@ -5,11 +5,7 @@
     <link>/usage/executors/</link>
     <description>Recent content in Executors on Dkron - Cloud native job scheduling system</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    
-	<atom:link href="/usage/executors/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <language>en-us</language><atom:link href="/usage/executors/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>HTTP Executor</title>
       <link>/usage/executors/http/</link>
@@ -34,7 +30,7 @@ brokerAddress: &amp;quot;IP:port&amp;quot; of the broker message: The message to
     </item>
     
     <item>
-      <title>Shell Executor</title>
+      <title>NATS Executor</title>
       <link>/usage/executors/nats/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       

@@ -1,890 +1,478 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  
   <url>
     <loc>/basics/installation/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/basics/installation/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/basics/installation/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/pro/quick-start/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/usage/target-nodes-spec/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/usage/target-nodes-spec/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/usage/target-nodes-spec/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/basics/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/basics/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/basics/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/usage/cron-spec/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/usage/cron-spec/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/usage/cron-spec/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/usage/executors/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/usage/executors/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/usage/executors/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/basics/getting-started/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/basics/getting-started/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/basics/getting-started/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/usage/processors/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/usage/processors/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/usage/processors/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/usage/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/usage/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/usage/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/pro/</loc>
     <lastmod>2020-05-15T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/pro/</loc>
     <lastmod>2019-08-26T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/pro/</loc>
     <lastmod>2019-01-21T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/products/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/products/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/intro/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/intro/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/intro/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/cli/</loc>
     <lastmod>2020-12-17T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/pro/cli/</loc>
     <lastmod>2020-05-15T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/cli/</loc>
     <lastmod>2019-10-10T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/pro/cli/</loc>
     <lastmod>2019-08-26T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/cli/</loc>
     <lastmod>2019-03-22T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/pro/cli/</loc>
     <lastmod>2019-01-21T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/usage/plugins/develop/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/usage/plugins/develop/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/usage/plugins/develop/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/api/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/api/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/api/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/cli/dkron/</loc>
     <lastmod>2020-12-17T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
+    <loc>/</loc>
+    <lastmod>2020-12-17T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>/cli/dkron_agent/</loc>
     <lastmod>2020-12-17T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/cli/dkron_doc/</loc>
     <lastmod>2020-12-17T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/cli/dkron_keygen/</loc>
     <lastmod>2020-12-17T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/cli/dkron_leave/</loc>
     <lastmod>2020-12-17T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/cli/dkron_raft/</loc>
     <lastmod>2020-12-17T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/cli/dkron_raft_list-peers/</loc>
     <lastmod>2020-12-17T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/cli/dkron_raft_remove-peer/</loc>
     <lastmod>2020-12-17T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/cli/dkron_version/</loc>
     <lastmod>2020-12-17T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/pro/cli/dkron/</loc>
     <lastmod>2020-05-15T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/pro/cli/dkron_agent/</loc>
     <lastmod>2020-05-15T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/pro/cli/dkron_doc/</loc>
     <lastmod>2020-05-15T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/pro/cli/dkron_keygen/</loc>
     <lastmod>2020-05-15T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/pro/cli/dkron_leave/</loc>
     <lastmod>2020-05-15T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/pro/cli/dkron_raft/</loc>
     <lastmod>2020-05-15T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/pro/cli/dkron_raft_list-peers/</loc>
     <lastmod>2020-05-15T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/pro/cli/dkron_raft_remove-peer/</loc>
     <lastmod>2020-05-15T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/pro/cli/dkron_version/</loc>
     <lastmod>2020-05-15T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/cli/dkron/</loc>
     <lastmod>2019-10-10T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/cli/dkron_agent/</loc>
     <lastmod>2019-10-10T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/cli/dkron_doc/</loc>
     <lastmod>2019-10-10T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/cli/dkron_keygen/</loc>
     <lastmod>2019-10-10T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/cli/dkron_leave/</loc>
     <lastmod>2019-10-10T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/cli/dkron_raft/</loc>
     <lastmod>2019-10-10T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/cli/dkron_raft_list-peers/</loc>
     <lastmod>2019-10-10T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/cli/dkron_raft_remove-peer/</loc>
     <lastmod>2019-10-10T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/cli/dkron_version/</loc>
     <lastmod>2019-10-10T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/</loc>
     <lastmod>2019-10-10T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/2.0/pro/cli/dkron/</loc>
     <lastmod>2019-08-26T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/2.0/pro/cli/dkron_agent/</loc>
     <lastmod>2019-08-26T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/2.0/pro/cli/dkron_doc/</loc>
     <lastmod>2019-08-26T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/2.0/pro/cli/dkron_keygen/</loc>
     <lastmod>2019-08-26T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/2.0/pro/cli/dkron_leave/</loc>
     <lastmod>2019-08-26T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/2.0/pro/cli/dkron_raft/</loc>
     <lastmod>2019-08-26T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/2.0/pro/cli/dkron_raft_list-peers/</loc>
     <lastmod>2019-08-26T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/2.0/pro/cli/dkron_raft_remove-peer/</loc>
     <lastmod>2019-08-26T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/2.0/pro/cli/dkron_version/</loc>
     <lastmod>2019-08-26T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/cli/dkron/</loc>
     <lastmod>2019-03-22T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/cli/dkron_agent/</loc>
     <lastmod>2019-03-22T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/cli/dkron_doc/</loc>
     <lastmod>2019-03-22T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/cli/dkron_keygen/</loc>
     <lastmod>2019-03-22T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/cli/dkron_leave/</loc>
     <lastmod>2019-03-22T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/cli/dkron_version/</loc>
     <lastmod>2019-03-22T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/</loc>
     <lastmod>2019-03-22T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/cli/dkron/</loc>
     <lastmod>2019-01-21T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/cli/dkron_agent/</loc>
     <lastmod>2019-01-21T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/cli/dkron_doc/</loc>
     <lastmod>2019-01-21T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/cli/dkron_keygen/</loc>
     <lastmod>2019-01-21T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/cli/dkron_version/</loc>
     <lastmod>2019-01-21T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/</loc>
-    <lastmod>2017-04-24T18:36:24+02:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/_header/</loc>
     <lastmod>2017-04-24T18:36:24+02:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/_footer/</loc>
     <priority>0</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/_footer/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/_footer/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/pro/acls/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/pro/acls/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/pro/auth/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/pro/auth/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/pro/auth/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/pro/executors/ecs/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/pro/executors/ecs/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/pro/executors/ecs/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/categories/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/usage/cloud-auto-join/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/usage/cloud-auto-join/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/usage/clustering/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/pro/clustering/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/usage/clustering/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/usage/clustering/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/pro/commercial-faq/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/pro/commercial-faq/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/pro/commercial-faq/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/pro/commercial-support/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/pro/commercial-support/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/pro/commercial-support/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/usage/concurrency/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/usage/concurrency/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/usage/concurrency/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/basics/configuration/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/pro/configuration/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/basics/configuration/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/pro/configuration/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/basics/configuration/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/pro/configuration/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/pro/failover/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/pro/failover/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/products/pro/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/products/pro/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/intro/dkron_vs_other_software/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/intro/dkron_vs_other_software/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/intro/dkron_vs_other_software/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/pro/executors/docker/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/pro/executors/docker/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/pro/executors/docker/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/pro/processors/elasticsearch/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/pro/processors/elasticsearch/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/pro/processors/elasticsearch/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/pro/processors/email/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/pro/processors/email/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/pro/processors/email/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/usage/storage/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/pro/storage/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/usage/storage/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/pro/encryption/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/pro/encryption/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/pro/encryption/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/pro/executors/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/pro/executors/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/pro/executors/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/usage/processors/file/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/usage/processors/file/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/usage/processors/file/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/usage/executors/http/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/usage/executors/http/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/usage/executors/http/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/usage/internals/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/usage/chaining/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/usage/chaining/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/usage/chaining/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/usage/metatags/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/usage/metatags/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/usage/retries/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/usage/retries/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/usage/retries/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/usage/executors/kafka/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/intro/license/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/intro/license/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/intro/license/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/usage/processors/log/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/usage/processors/log/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/usage/processors/log/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/usage/metrics/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/usage/metrics/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/usage/metrics/</loc>
-  </url>
-  
-  <url>
-    <loc>/usage/recovery/</loc>
-  </url>
-  
-  <url>
-    <loc>/v2.0/usage/recovery/</loc>
-  </url>
-  
-  <url>
-    <loc>/usage/plugins/</loc>
-  </url>
-  
-  <url>
-    <loc>/v1.2/usage/plugins/</loc>
-  </url>
-  
-  <url>
-    <loc>/v2.0/usage/plugins/</loc>
-  </url>
-  
-  <url>
-    <loc>/pro/processors/</loc>
-  </url>
-  
-  <url>
-    <loc>/v1.2/pro/processors/</loc>
-  </url>
-  
-  <url>
-    <loc>/v2.0/pro/processors/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/usage/executors/nats/</loc>
-  </url>
-  
-  <url>
+  </url><url>
+    <loc>/usage/recovery/</loc>
+  </url><url>
+    <loc>/v2.0/usage/recovery/</loc>
+  </url><url>
+    <loc>/usage/plugins/</loc>
+  </url><url>
+    <loc>/v1.2/usage/plugins/</loc>
+  </url><url>
+    <loc>/v2.0/usage/plugins/</loc>
+  </url><url>
+    <loc>/pro/processors/</loc>
+  </url><url>
+    <loc>/v1.2/pro/processors/</loc>
+  </url><url>
+    <loc>/v2.0/pro/processors/</loc>
+  </url><url>
     <loc>/usage/executors/shell/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/usage/executors/shell/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/usage/executors/shell/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/pro/processors/slack/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/pro/processors/slack/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/pro/processors/slack/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/usage/processors/syslog/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/usage/processors/syslog/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/usage/processors/syslog/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/tags/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/upgrading/from_v1_to_v2/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/upgrading/from_v1_to_v2/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/upgrading/from_v2_0_to_v2_2/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/usage/upgrade/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/upgrading/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/usage/ecs/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v1.2/usage/ecs/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>/v2.0/usage/ecs/</loc>
   </url>
-  
 </urlset>

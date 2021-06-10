@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2021-03-10T13:28:35 CET">
+<meta name="revised" content="2021-06-10T18:39:04 CEST">
 <title>Dkron Pro :: Dkron - Cloud native job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -136,7 +136,7 @@
       <li data-nav-id="/usage/executors/nats/" class="dd-item">
         <div>
           <a href="/usage/executors/nats/">
-            Shell Executor
+            NATS Executor
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -272,10 +272,11 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/pro/" class="dd-item active haschildren
+    <li data-nav-id="/pro/" class="dd-item parent active haschildren
         ">
       <div>
-      <a href="/pro/">Dkron Pro</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/pro/">Dkron Pro</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
     <li data-nav-id="/pro/cli/" class="dd-item haschildren
@@ -1535,7 +1536,24 @@
     <option value="/usage/" >
    Usage</option>
     <option value="/pro/"  selected>
-   Dkron Pro</option>
+   Dkron Pro</option> 
+    <option value="/pro/cli/" >
+  - 
+   Pro CLI</option>
+      <option value="/pro/acls/" >- Access Control</option>
+      <option value="/pro/auth/" >- Authentication</option>
+      <option value="/pro/commercial-faq/" >- Commercial FAQ</option>
+      <option value="/pro/commercial-support/" >- Commercial Support</option>
+      <option value="/pro/configuration/" >- Configuration</option>
+      <option value="/pro/failover/" >- Cross region failover</option>
+      <option value="/pro/encryption/" >- Encryption</option>
+    <option value="/pro/executors/" >
+  - 
+   Executors</option>
+    <option value="/pro/processors/" >
+  - 
+   Processors</option>
+  
     <option value="/products/" >
    Products</option>
     <option value="/intro/" >
@@ -1668,12 +1686,122 @@
 </span></p>
 <ul>
 <p><span><li>
-<a href="/pro/executors/ecs/" >AWS ECS Executor</a></li>
+<a href="/usage/target-nodes-spec/" >Target nodes spec</a></li>
 </span></p>
 <ul>
 </ul>
 <p><span><li>
-<a href="/pro/executors/docker/" >Docker executor</a></li>
+<a href="/usage/cron-spec/" >Cron spec</a></li>
+</span></p>
+<ul>
+</ul>
+<p><span><li>
+<a href="/usage/executors/" >Executors</a></li>
+</span></p>
+<ul>
+<p><span><li>
+<a href="/usage/executors/http/" >HTTP Executor</a></li>
+</span></p>
+<ul>
+</ul>
+<p><span><li>
+<a href="/usage/executors/kafka/" >Kafka Executor</a></li>
+</span></p>
+<ul>
+</ul>
+<p><span><li>
+<a href="/usage/executors/nats/" >NATS Executor</a></li>
+</span></p>
+<ul>
+</ul>
+<p><span><li>
+<a href="/usage/executors/shell/" >Shell Executor</a></li>
+</span></p>
+<ul>
+</ul>
+</ul>
+<p><span><li>
+<a href="/usage/processors/" >Processors</a></li>
+</span></p>
+<ul>
+<p><span><li>
+<a href="/usage/processors/file/" >File Processor</a></li>
+</span></p>
+<ul>
+</ul>
+<p><span><li>
+<a href="/usage/processors/log/" >Log Processor</a></li>
+</span></p>
+<ul>
+</ul>
+<p><span><li>
+<a href="/usage/processors/syslog/" >Syslog Processor</a></li>
+</span></p>
+<ul>
+</ul>
+</ul>
+<p><span><li>
+<a href="/usage/cloud-auto-join/" >Cloud Auto-join</a></li>
+</span></p>
+<ul>
+</ul>
+<p><span><li>
+<a href="/usage/clustering/" >Clustering</a></li>
+</span></p>
+<ul>
+</ul>
+<p><span><li>
+<a href="/usage/concurrency/" >Concurrency</a></li>
+</span></p>
+<ul>
+</ul>
+<p><span><li>
+<a href="/usage/storage/" >Embedded storage</a></li>
+</span></p>
+<ul>
+</ul>
+<p><span><li>
+<a href="/usage/chaining/" >Job chaining</a></li>
+</span></p>
+<ul>
+</ul>
+<p><span><li>
+<a href="/usage/metatags/" >Job metadata</a></li>
+</span></p>
+<ul>
+</ul>
+<p><span><li>
+<a href="/usage/retries/" >Job retries</a></li>
+</span></p>
+<ul>
+</ul>
+<p><span><li>
+<a href="/usage/metrics/" >Metrics</a></li>
+</span></p>
+<ul>
+</ul>
+<p><span><li>
+<a href="/usage/recovery/" >Outage recovery</a></li>
+</span></p>
+<ul>
+</ul>
+<p><span><li>
+<a href="/usage/plugins/" >Plugins</a></li>
+</span></p>
+<ul>
+<p><span><li>
+<a href="/usage/plugins/develop/" >Developing plugins</a></li>
+</span></p>
+<ul>
+</ul>
+</ul>
+<p><span><li>
+<a href="/usage/upgrade/" >Upgrade methods</a></li>
+</span></p>
+<ul>
+</ul>
+<p><span><li>
+<a href="/usage/ecs/" >Use with AWS ECS</a></li>
 </span></p>
 <ul>
 </ul>

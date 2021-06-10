@@ -5,11 +5,7 @@
     <link>/v2.0/pro/processors/</link>
     <description>Recent content in Processors on Dkron - Cloud native job scheduling system</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    
-	<atom:link href="/v2.0/pro/processors/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <language>en-us</language><atom:link href="/v2.0/pro/processors/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Elasticsearch processor</title>
       <link>/v2.0/pro/processors/elasticsearch/</link>

@@ -5,11 +5,7 @@
     <link>/v2.0/intro/</link>
     <description>Recent content in Intro on Dkron - Cloud native job scheduling system</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    
-	<atom:link href="/v2.0/intro/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <language>en-us</language><atom:link href="/v2.0/intro/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Dkron vs. Other Software</title>
       <link>/v2.0/intro/dkron_vs_other_software/</link>

@@ -6,11 +6,7 @@
     <description>Recent content in V2.0s on Dkron - Cloud native job scheduling system</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 10 Oct 2019 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="/v2.0/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Thu, 10 Oct 2019 00:00:00 +0000</lastBuildDate><atom:link href="/v2.0/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title></title>
       <link>/v2.0/_footer/</link>

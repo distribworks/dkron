@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2021-03-10T13:28:35 CET">
+<meta name="revised" content="2021-06-10T18:39:04 CEST">
 <title>Processors :: Dkron - Cloud native job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -136,7 +136,7 @@
       <li data-nav-id="/usage/executors/nats/" class="dd-item">
         <div>
           <a href="/usage/executors/nats/">
-            Shell Executor
+            NATS Executor
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -1146,10 +1146,11 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/v1.2/usage/processors/" class="dd-item active haschildren
+    <li data-nav-id="/v1.2/usage/processors/" class="dd-item parent active haschildren
         ">
       <div>
-      <a href="/v1.2/usage/processors/">Processors</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/v1.2/usage/processors/">Processors</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
       <li data-nav-id="/v1.2/usage/processors/file/" class="dd-item">
@@ -1563,7 +1564,11 @@
    Executors</option>
     <option value="/v1.2/usage/processors/"  selected>
   -- 
-   Processors</option>
+   Processors</option> 
+      <option value="/v1.2/usage/processors/file/" >--- File Processor</option>
+      <option value="/v1.2/usage/processors/log/" >--- Log Processor</option>
+      <option value="/v1.2/usage/processors/syslog/" >--- Syslog Processor</option>
+  
       <option value="/v1.2/usage/clustering/" >-- Clustering</option>
       <option value="/v1.2/usage/concurrency/" >-- Concurrency</option>
       <option value="/v1.2/usage/internals/" >-- Internals</option>

@@ -5,11 +5,7 @@
     <link>/pro/executors/</link>
     <description>Recent content in Executors on Dkron - Cloud native job scheduling system</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    
-	<atom:link href="/pro/executors/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <language>en-us</language><atom:link href="/pro/executors/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>AWS ECS Executor</title>
       <link>/pro/executors/ecs/</link>

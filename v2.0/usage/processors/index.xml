@@ -5,11 +5,7 @@
     <link>/v2.0/usage/processors/</link>
     <description>Recent content in Processors on Dkron - Cloud native job scheduling system</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    
-	<atom:link href="/v2.0/usage/processors/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <language>en-us</language><atom:link href="/v2.0/usage/processors/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>File Processor</title>
       <link>/v2.0/usage/processors/file/</link>

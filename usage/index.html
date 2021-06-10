@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2021-03-10T13:28:35 CET">
+<meta name="revised" content="2021-06-10T18:39:04 CEST">
 <title>Usage :: Dkron - Cloud native job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -93,10 +93,11 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/usage/" class="dd-item active haschildren
+    <li data-nav-id="/usage/" class="dd-item parent active haschildren
         ">
       <div>
-      <a href="/usage/">Usage</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/usage/">Usage</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
       <li data-nav-id="/usage/target-nodes-spec/" class="dd-item">
@@ -136,7 +137,7 @@
       <li data-nav-id="/usage/executors/nats/" class="dd-item">
         <div>
           <a href="/usage/executors/nats/">
-            Shell Executor
+            NATS Executor
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -426,31 +427,24 @@
       <a href="/pro/processors/">Processors</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/usage/executors/http/" class="dd-item">
+      <li data-nav-id="/pro/processors/elasticsearch/" class="dd-item">
         <div>
-          <a href="/usage/executors/http/">
-            HTTP Executor
+          <a href="/pro/processors/elasticsearch/">
+            Elasticsearch processor
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/usage/executors/kafka/" class="dd-item">
+      <li data-nav-id="/pro/processors/email/" class="dd-item">
         <div>
-          <a href="/usage/executors/kafka/">
-            Kafka Executor
+          <a href="/pro/processors/email/">
+            Email processor
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/usage/executors/nats/" class="dd-item">
+      <li data-nav-id="/pro/processors/slack/" class="dd-item">
         <div>
-          <a href="/usage/executors/nats/">
-            Shell Executor
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/usage/executors/shell/" class="dd-item">
-        <div>
-          <a href="/usage/executors/shell/">
-            Shell Executor
+          <a href="/pro/processors/slack/">
+            Slack processor
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -1540,7 +1534,30 @@
     <option value="/basics/" >
    Basics</option>
     <option value="/usage/"  selected>
-   Usage</option>
+   Usage</option> 
+      <option value="/usage/target-nodes-spec/" >- Target nodes spec</option>
+      <option value="/usage/cron-spec/" >- Cron spec</option>
+    <option value="/usage/executors/" >
+  - 
+   Executors</option>
+    <option value="/usage/processors/" >
+  - 
+   Processors</option>
+      <option value="/usage/cloud-auto-join/" >- Cloud Auto-join</option>
+      <option value="/usage/clustering/" >- Clustering</option>
+      <option value="/usage/concurrency/" >- Concurrency</option>
+      <option value="/usage/storage/" >- Embedded storage</option>
+      <option value="/usage/chaining/" >- Job chaining</option>
+      <option value="/usage/metatags/" >- Job metadata</option>
+      <option value="/usage/retries/" >- Job retries</option>
+      <option value="/usage/metrics/" >- Metrics</option>
+      <option value="/usage/recovery/" >- Outage recovery</option>
+    <option value="/usage/plugins/" >
+  - 
+   Plugins</option>
+      <option value="/usage/upgrade/" >- Upgrade methods</option>
+      <option value="/usage/ecs/" >- Use with AWS ECS</option>
+  
     <option value="/pro/" >
    Dkron Pro</option>
     <option value="/products/" >
@@ -1587,7 +1604,7 @@
 <ul class="children children-card">
 <p><span><card>
 <a href="/usage/target-nodes-spec/" >Target nodes spec</a></card></p>
-<p>Target nodes spec Dkron has the ability to run jobs in specific nodes by leveraging the use of tags. You can choose whether a job is run on a node or group of nodes by specifying tags and a count of target nodes having this tag do you want a job to run.
+<p>Target nodes spec Default is for all nodes to execute each job. Dkron has the ability to run jobs in specific nodes by leveraging the use of tags. You can choose whether a job is run on a node or group of nodes by specifying tags and a count of target nodes having this tag do you want a job to run.
 The target node syntax is:
 &quot;tag&quot;: &quot;value[:count]&quot;  To achieve this Nodes and Jobs have tags, for example, having a node with the following tags:</p>
 </span>
@@ -1616,7 +1633,7 @@ brokerAddress: &quot;IP:port&quot; of the broker message: The message to produce
 &#34;executor&#34;: &#34;kafka&#34;, &#34;executor_config&#34;: { &#34;brokerAddress&#34;: &#34;localhost:9092&#34;, &#34;message&#34;: &#34;My message&#34;, &#34;topic&#34;: &#34;my_topic&#34; } </p>
 </span>
 <p><span><card>
-<a href="/usage/executors/nats/" >Shell Executor</a></card></p>
+<a href="/usage/executors/nats/" >NATS Executor</a></card></p>
 <p>The NATS executor sends a message to a NATS server/cluster.
 Currently, only username/password authentication is supported.
 Configuration Params
@@ -1634,30 +1651,6 @@ shell: Run this command using a shell environment command: The command to run en
 <a href="/usage/processors/" >Processors</a></card></p>
 <p>Execution Processors Processor plugins are called when an execution response has been received. They are passed the resulting execution data and configuration parameters, this plugins can perform a variety of operations with the execution and it&rsquo;s very flexible and per Job, examples of operations this plugins can do:
  Execution output storage, forwarding or redirection. Notification Monitoring  For example, Processor plugins can be used to redirect the output of a job execution to different targets.</p>
-</span>
-<p><span><card>
-<a href="/usage/processors/file/" >File Processor</a></card></p>
-<p>File processor saves the execution output to a single log file in the specified directory
-Configuration Parameters
-log_dir: Path to the location where the log files will be saved forward: Forward log output to the next processor Example
-{ &#34;name&#34;: &#34;job_name&#34;, &#34;command&#34;: &#34;echo &#39;Hello files&#39;&#34;, &#34;schedule&#34;: &#34;@every 2m&#34;, &#34;tags&#34;: { &#34;role&#34;: &#34;web&#34; }, &#34;processors&#34;: { &#34;files&#34;: { &#34;log_dir&#34;: &#34;/var/log/mydir&#34;, &#34;forward&#34;: &#34;true&#34; } } } </p>
-</span>
-<p><span><card>
-<a href="/usage/processors/log/" >Log Processor</a></card></p>
-<p>Log processor writes the execution output to stdout/stderr
-Configuration Parameters
-forward: Forward the output to the next processor
-Example
-{ &#34;name&#34;: &#34;job_name&#34;, &#34;command&#34;: &#34;echo &#39;Hello log&#39;&#34;, &#34;schedule&#34;: &#34;@every 2m&#34;, &#34;tags&#34;: { &#34;role&#34;: &#34;web&#34; }, &#34;processors&#34;: { &#34;log&#34;: { &#34;forward&#34;: &#34;true&#34; } } } </p>
-</span>
-<p><span><card>
-<a href="/usage/processors/syslog/" >Syslog Processor</a></card></p>
-<p>Syslog processor writes the execution output to the system syslog daemon
-Note: Only work on linux systems
-Configuration Parameters
-forward: Forward the output to the next processor
-Example
-{ &#34;name&#34;: &#34;job_name&#34;, &#34;command&#34;: &#34;echo &#39;Hello syslog&#39;&#34;, &#34;schedule&#34;: &#34;@every 2m&#34;, &#34;tags&#34;: { &#34;role&#34;: &#34;web&#34; }, &#34;processors&#34;: { &#34;syslog&#34;: { &#34;forward&#34;: &#34;true&#34; } } } </p>
 </span>
 <p><span><card>
 <a href="/usage/cloud-auto-join/" >Cloud Auto-join</a></card></p>
@@ -1726,7 +1719,7 @@ Note: A common pitfall is not properly setting up a $GOPATH.</p>
 <a href="/usage/upgrade/" >Upgrade methods</a></card></p>
 <p>Use one of the following methods (depending on the changes) to upgrade a cluster to a newer version.
 Rolling upgrade Use the following procedure to rotate all cluster nodes, one server at a time:
- Add a new servers to the cluster with a configuration that joins them to the existing cluter. Stop dkron service in one of the old servers, if it was the leader allow a new leader to be ellected, note that it is better to remove the current leader at the end, to ensure a leader is elected between the new nodes.</p>
+ Add a new server to the cluster with a configuration that joins them to the existing cluster. Stop dkron service on one of the old servers, if it was the leader allow a new leader to be elected.</p>
 </span>
 <p><span><card>
 <a href="/usage/ecs/" >Use with AWS ECS</a></card></p>

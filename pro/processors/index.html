@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2021-03-10T13:28:35 CET">
+<meta name="revised" content="2021-06-10T18:39:04 CEST">
 <title>Processors :: Dkron - Cloud native job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -70,27 +70,6 @@
       <a href="/basics/">Basics</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/basics/installation/" class="dd-item">
-        <div>
-          <a href="/basics/installation/">
-            Installation
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/basics/getting-started/" class="dd-item">
-        <div>
-          <a href="/basics/getting-started/">
-            Getting started
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/basics/configuration/" class="dd-item">
-        <div>
-          <a href="/basics/configuration/">
-            Configuration
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
         </ul>
     </li>
     <li data-nav-id="/usage/" class="dd-item haschildren
@@ -136,7 +115,7 @@
       <li data-nav-id="/usage/executors/nats/" class="dd-item">
         <div>
           <a href="/usage/executors/nats/">
-            Shell Executor
+            NATS Executor
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -421,10 +400,11 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/pro/processors/" class="dd-item active haschildren
+    <li data-nav-id="/pro/processors/" class="dd-item parent active haschildren
         ">
       <div>
-      <a href="/pro/processors/">Processors</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/pro/processors/">Processors</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
       <li data-nav-id="/pro/processors/elasticsearch/" class="dd-item">
@@ -1552,7 +1532,11 @@
    Executors</option>
     <option value="/pro/processors/"  selected>
   - 
-   Processors</option>
+   Processors</option> 
+      <option value="/pro/processors/elasticsearch/" >-- Elasticsearch processor</option>
+      <option value="/pro/processors/email/" >-- Email processor</option>
+      <option value="/pro/processors/slack/" >-- Slack processor</option>
+  
   
     <option value="/products/" >
    Products</option>

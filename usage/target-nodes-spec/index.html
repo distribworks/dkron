@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2021-03-10T13:28:33 CET">
+<meta name="revised" content="2021-06-10T18:39:03 CEST">
 <title>Target nodes spec :: Dkron - Cloud native job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -137,7 +137,7 @@
       <li data-nav-id="/usage/executors/nats/" class="dd-item">
         <div>
           <a href="/usage/executors/nats/">
-            Shell Executor
+            NATS Executor
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -1601,7 +1601,7 @@
     
     
     <h2 id="target-nodes-spec">Target nodes spec</h2>
-<p>Dkron has the ability to run jobs in specific nodes by leveraging the use of tags. You can choose whether a job is run on a node or group of nodes by specifying tags and a count of target nodes having this tag do you want a job to run.</p>
+<p>Default is for all nodes to execute each job. Dkron has the ability to run jobs in specific nodes by leveraging the use of tags. You can choose whether a job is run on a node or group of nodes by specifying tags and a count of target nodes having this tag do you want a job to run.</p>
 <p>The target node syntax is:</p>
 <pre><code>&quot;tag&quot;: &quot;value[:count]&quot;
 </code></pre>
@@ -1622,6 +1622,7 @@
 </code></pre></div>
 <div class="alert alert-info" role="alert"><strong>Tip:</strong> You can specify tags for nodes in the dkron config file or in the command line using <code>--tags</code> parameter</div>
 
+<p>In case there is no matching nodes with the specified tags, the job will not run.</p>
 <p>Following some examples using different tag combinations:</p>
 <h4 id="target-all-nodes-with-a-tag">Target all nodes with a tag</h4>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">{</span>
@@ -1677,10 +1678,6 @@ graph LR;
     <span style="color:#111">}</span>
 <span style="color:#111">}</span>
 </code></pre></div><p>Will try to run the job in nodes that have all specified tags and using the lowest count. In the last example, it will run in <strong>one</strong> node having <code>&quot;my_role&quot;: &quot;web&quot;</code> and <code>&quot;role&quot;: &quot;dkron&quot;</code> tag, even if there is more than one node with these tags.</p>
-<ul>
-<li>In case there is no matching nodes with the specified tags, the job will not run</li>
-<li>In case no tags are specified for a job it will run in all nodes in the cluster</li>
-</ul>
 
 
     

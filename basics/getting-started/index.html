@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2021-03-10T13:28:33 CET">
+<meta name="revised" content="2021-06-10T18:39:03 CEST">
 <title>Getting started :: Dkron - Cloud native job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -137,7 +137,7 @@
       <li data-nav-id="/usage/executors/nats/" class="dd-item">
         <div>
           <a href="/usage/executors/nats/">
-            Shell Executor
+            NATS Executor
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -1588,7 +1588,7 @@
 <p>The main distinction is that servers order job executions, can be used to schedule jobs, handles data storage and participate on leader election.</p>
 <p>Dkron clusters have a leader, the leader is responsible of starting job execution queries in the cluster.</p>
 <p>Any Dkron agent or server acts as a cluster member and it&rsquo;s available to run scheduled jobs.</p>
-<p>You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run. This gives an unprecedented level of flexibility in runnig jobs across a cluster of any size and with any combination of machines you need.</p>
+<p>Default is for all nodes to execute each job. You can control what nodes run a job by specifying tags and a count of target nodes having this tag. This gives an unprecedented level of flexibility in runnig jobs across a cluster of any size and with any combination of machines you need.</p>
 <p>All the execution responses will be gathered by the scheduler and stored in the database.</p>
 <h2 id="state-storage">State storage</h2>
 <p>Dkron deployment is just a single binary, it stores the state in an internal BuntDB instance and replicate all changes between all server nodes using the Raft protocol, it doesn&rsquo;t need any other storage system outside itself.</p>

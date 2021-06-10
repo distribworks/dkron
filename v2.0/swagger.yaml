@@ -67,7 +67,10 @@ paths:
             $ref: "#/definitions/job"
         - in: query
           name: runoncreate
-          description: If present, regardless of any value, causes the job to be run immediately after being succesfully created or updated.
+          description: |
+            If present, regardless of any value, causes the job to be run immediately after being succesfully created or updated.
+
+            This will cause the server to wait until the job has finished before returning a result.
           required: false
           schema:
             type: boolean
@@ -115,6 +118,8 @@ paths:
     post:
       description: |
         Executes a job.
+
+        The server will wait until the job has finished before returning a result.
       operationId: runJob
       tags:
         - jobs

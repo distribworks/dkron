@@ -5,11 +5,7 @@
     <link>/v2.0/basics/</link>
     <description>Recent content in Basics on Dkron - Cloud native job scheduling system</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    
-	<atom:link href="/v2.0/basics/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <language>en-us</language><atom:link href="/v2.0/basics/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Installation</title>
       <link>/v2.0/basics/installation/</link>

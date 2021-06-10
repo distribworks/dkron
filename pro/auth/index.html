@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2021-03-10T13:28:33 CET">
+<meta name="revised" content="2021-06-10T18:39:03 CEST">
 <title>Authentication :: Dkron - Cloud native job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -136,7 +136,7 @@
       <li data-nav-id="/usage/executors/nats/" class="dd-item">
         <div>
           <a href="/usage/executors/nats/">
-            Shell Executor
+            NATS Executor
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -1597,8 +1597,8 @@
     <p>Dkron Pro has the ability to be configured to use HTTP basic auth.</p>
 <p>Authentication can be set using these parameters in the dkron config file:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#75715e"># dkron.yml</span>
-<span style="color:#00a8c8">username</span><span style="color:#111">:</span> dkron_admin
-<span style="color:#00a8c8">password</span><span style="color:#111">:</span> adminpassword
+<span style="color:#f92672">username</span><span style="color:#111">:</span> <span style="color:#ae81ff">dkron_admin</span>
+<span style="color:#f92672">password</span><span style="color:#111">:</span> <span style="color:#ae81ff">adminpassword</span>
 </code></pre></div><p>This will enable auth on the WebUI and for the API.</p>
 
 

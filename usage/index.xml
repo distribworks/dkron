@@ -5,18 +5,14 @@
     <link>/usage/</link>
     <description>Recent content in Usage on Dkron - Cloud native job scheduling system</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    
-	<atom:link href="/usage/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <language>en-us</language><atom:link href="/usage/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Target nodes spec</title>
       <link>/usage/target-nodes-spec/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/usage/target-nodes-spec/</guid>
-      <description>Target nodes spec Dkron has the ability to run jobs in specific nodes by leveraging the use of tags. You can choose whether a job is run on a node or group of nodes by specifying tags and a count of target nodes having this tag do you want a job to run.
+      <description>Target nodes spec Default is for all nodes to execute each job. Dkron has the ability to run jobs in specific nodes by leveraging the use of tags. You can choose whether a job is run on a node or group of nodes by specifying tags and a count of target nodes having this tag do you want a job to run.
 The target node syntax is:
 &amp;quot;tag&amp;quot;: &amp;quot;value[:count]&amp;quot;  To achieve this Nodes and Jobs have tags, for example, having a node with the following tags:</description>
     </item>
@@ -136,7 +132,7 @@ This guide is for recovery from a Dkron outage due to a majority of server nodes
       <guid>/usage/upgrade/</guid>
       <description>Use one of the following methods (depending on the changes) to upgrade a cluster to a newer version.
 Rolling upgrade Use the following procedure to rotate all cluster nodes, one server at a time:
- Add a new servers to the cluster with a configuration that joins them to the existing cluter. Stop dkron service in one of the old servers, if it was the leader allow a new leader to be ellected, note that it is better to remove the current leader at the end, to ensure a leader is elected between the new nodes.</description>
+ Add a new server to the cluster with a configuration that joins them to the existing cluster. Stop dkron service on one of the old servers, if it was the leader allow a new leader to be elected.</description>
     </item>
     
     <item>

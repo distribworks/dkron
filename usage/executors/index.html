@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2021-03-10T13:28:35 CET">
+<meta name="revised" content="2021-06-10T18:39:04 CEST">
 <title>Executors :: Dkron - Cloud native job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -114,10 +114,11 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-    <li data-nav-id="/usage/executors/" class="dd-item active haschildren
+    <li data-nav-id="/usage/executors/" class="dd-item parent active haschildren
         ">
       <div>
-      <a href="/usage/executors/">Executors</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/usage/executors/">Executors</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
       <li data-nav-id="/usage/executors/http/" class="dd-item">
@@ -137,7 +138,7 @@
       <li data-nav-id="/usage/executors/nats/" class="dd-item">
         <div>
           <a href="/usage/executors/nats/">
-            Shell Executor
+            NATS Executor
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -405,6 +406,20 @@
       <a href="/pro/executors/">Executors</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
+      <li data-nav-id="/pro/executors/ecs/" class="dd-item">
+        <div>
+          <a href="/pro/executors/ecs/">
+            AWS ECS Executor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/pro/executors/docker/" class="dd-item">
+        <div>
+          <a href="/pro/executors/docker/">
+            Docker executor
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
         </ul>
     </li>
     <li data-nav-id="/pro/processors/" class="dd-item haschildren
@@ -1525,7 +1540,12 @@
       <option value="/usage/cron-spec/" >- Cron spec</option>
     <option value="/usage/executors/"  selected>
   - 
-   Executors</option>
+   Executors</option> 
+      <option value="/usage/executors/http/" >-- HTTP Executor</option>
+      <option value="/usage/executors/kafka/" >-- Kafka Executor</option>
+      <option value="/usage/executors/nats/" >-- NATS Executor</option>
+      <option value="/usage/executors/shell/" >-- Shell Executor</option>
+  
     <option value="/usage/processors/" >
   - 
    Processors</option>
@@ -1599,7 +1619,7 @@
 <a href="/usage/executors/kafka/" >Kafka Executor</a></li>
 </span></p>
 <p><span><li>
-<a href="/usage/executors/nats/" >Shell Executor</a></li>
+<a href="/usage/executors/nats/" >NATS Executor</a></li>
 </span></p>
 <p><span><li>
 <a href="/usage/executors/shell/" >Shell Executor</a></li>

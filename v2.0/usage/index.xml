@@ -5,11 +5,7 @@
     <link>/v2.0/usage/</link>
     <description>Recent content in Usage on Dkron - Cloud native job scheduling system</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    
-	<atom:link href="/v2.0/usage/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <language>en-us</language><atom:link href="/v2.0/usage/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Target nodes spec</title>
       <link>/v2.0/usage/target-nodes-spec/</link>

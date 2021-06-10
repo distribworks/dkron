@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2021-03-10T13:28:33 CET">
+<meta name="revised" content="2021-06-10T18:39:03 CEST">
 <title>Email processor :: Dkron - Cloud native job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -136,7 +136,7 @@
       <li data-nav-id="/usage/executors/nats/" class="dd-item">
         <div>
           <a href="/usage/executors/nats/">
-            Shell Executor
+            NATS Executor
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -272,10 +272,11 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/pro/" class="dd-item haschildren
+    <li data-nav-id="/pro/" class="dd-item parent haschildren
         ">
       <div>
-      <a href="/pro/">Dkron Pro</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/pro/">Dkron Pro</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
     <li data-nav-id="/pro/cli/" class="dd-item haschildren
@@ -1536,7 +1537,28 @@
     <option value="/usage/" >
    Usage</option>
     <option value="/pro/" >
-   Dkron Pro</option>
+   Dkron Pro</option> 
+    <option value="/pro/cli/" >
+  - 
+   Pro CLI</option>
+      <option value="/pro/acls/" >- Access Control</option>
+      <option value="/pro/auth/" >- Authentication</option>
+      <option value="/pro/commercial-faq/" >- Commercial FAQ</option>
+      <option value="/pro/commercial-support/" >- Commercial Support</option>
+      <option value="/pro/configuration/" >- Configuration</option>
+      <option value="/pro/failover/" >- Cross region failover</option>
+      <option value="/pro/encryption/" >- Encryption</option>
+    <option value="/pro/executors/" >
+  - 
+   Executors</option>
+    <option value="/pro/processors/" >
+  - 
+   Processors</option> 
+      <option value="/pro/processors/elasticsearch/" >-- Elasticsearch processor</option>
+      <option value="/pro/processors/email/"  selected>-- Email processor</option>
+      <option value="/pro/processors/slack/" >-- Slack processor</option>
+  
+  
     <option value="/products/" >
    Products</option>
     <option value="/intro/" >
@@ -1580,13 +1602,13 @@
     <p>The Email processor provides flexibility to job email notifications.</p>
 <p>Configuration of the email processor is stored in a file named <code>dkron-processor-email.yml</code> in the same locations as <code>dkron.yml</code>, and should include a list of providers, it can include any number of providers.</p>
 <p>Example:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#00a8c8">provider1</span><span style="color:#111">:</span>
-  <span style="color:#00a8c8">host</span><span style="color:#111">:</span> smtp.myprovider.com
-  <span style="color:#00a8c8">port</span><span style="color:#111">:</span> <span style="color:#ae81ff">25</span>
-  <span style="color:#00a8c8">username</span><span style="color:#111">:</span> myusername
-  <span style="color:#00a8c8">password</span><span style="color:#111">:</span> mypassword
-  <span style="color:#00a8c8">from</span><span style="color:#111">:</span> cron@mycompany.com
-  <span style="color:#00a8c8">subjectPrefix</span><span style="color:#111">:</span> <span style="color:#d88200">&#39;[Staging] &#39;</span>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">provider1</span><span style="color:#111">:</span>
+  <span style="color:#f92672">host</span><span style="color:#111">:</span> <span style="color:#ae81ff">smtp.myprovider.com</span>
+  <span style="color:#f92672">port</span><span style="color:#111">:</span> <span style="color:#ae81ff">25</span>
+  <span style="color:#f92672">username</span><span style="color:#111">:</span> <span style="color:#ae81ff">myusername</span>
+  <span style="color:#f92672">password</span><span style="color:#111">:</span> <span style="color:#ae81ff">mypassword</span>
+  <span style="color:#f92672">from</span><span style="color:#111">:</span> <span style="color:#ae81ff">cron@mycompany.com</span>
+  <span style="color:#f92672">subjectPrefix</span><span style="color:#111">:</span> <span style="color:#d88200">&#39;[Staging] &#39;</span>
 </code></pre></div><p>Then configure each job with the following options:</p>
 <p>Example:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">{</span>

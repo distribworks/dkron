@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2021-03-10T13:28:33 CET">
+<meta name="revised" content="2021-06-10T18:39:03 CEST">
 <title>File Processor :: Dkron - Cloud native job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -93,10 +93,11 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/usage/" class="dd-item haschildren
+    <li data-nav-id="/usage/" class="dd-item parent haschildren
         ">
       <div>
-      <a href="/usage/">Usage</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/usage/">Usage</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
       <li data-nav-id="/usage/target-nodes-spec/" class="dd-item">
@@ -136,7 +137,7 @@
       <li data-nav-id="/usage/executors/nats/" class="dd-item">
         <div>
           <a href="/usage/executors/nats/">
-            Shell Executor
+            NATS Executor
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -1534,7 +1535,34 @@
     <option value="/basics/" >
    Basics</option>
     <option value="/usage/" >
-   Usage</option>
+   Usage</option> 
+      <option value="/usage/target-nodes-spec/" >- Target nodes spec</option>
+      <option value="/usage/cron-spec/" >- Cron spec</option>
+    <option value="/usage/executors/" >
+  - 
+   Executors</option>
+    <option value="/usage/processors/" >
+  - 
+   Processors</option> 
+      <option value="/usage/processors/file/"  selected>-- File Processor</option>
+      <option value="/usage/processors/log/" >-- Log Processor</option>
+      <option value="/usage/processors/syslog/" >-- Syslog Processor</option>
+  
+      <option value="/usage/cloud-auto-join/" >- Cloud Auto-join</option>
+      <option value="/usage/clustering/" >- Clustering</option>
+      <option value="/usage/concurrency/" >- Concurrency</option>
+      <option value="/usage/storage/" >- Embedded storage</option>
+      <option value="/usage/chaining/" >- Job chaining</option>
+      <option value="/usage/metatags/" >- Job metadata</option>
+      <option value="/usage/retries/" >- Job retries</option>
+      <option value="/usage/metrics/" >- Metrics</option>
+      <option value="/usage/recovery/" >- Outage recovery</option>
+    <option value="/usage/plugins/" >
+  - 
+   Plugins</option>
+      <option value="/usage/upgrade/" >- Upgrade methods</option>
+      <option value="/usage/ecs/" >- Use with AWS ECS</option>
+  
     <option value="/pro/" >
    Dkron Pro</option>
     <option value="/products/" >

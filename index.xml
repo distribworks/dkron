@@ -6,11 +6,7 @@
     <description>Recent content on Dkron - Cloud native job scheduling system</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 24 Apr 2017 18:36:24 +0200</lastBuildDate>
-    
-	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Thu, 17 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Installation</title>
       <link>/basics/installation/</link>
@@ -72,7 +68,7 @@ Starting a single node Works out of the box, good for non HA installations.</des
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/usage/target-nodes-spec/</guid>
-      <description>Target nodes spec Dkron has the ability to run jobs in specific nodes by leveraging the use of tags. You can choose whether a job is run on a node or group of nodes by specifying tags and a count of target nodes having this tag do you want a job to run.
+      <description>Target nodes spec Default is for all nodes to execute each job. Dkron has the ability to run jobs in specific nodes by leveraging the use of tags. You can choose whether a job is run on a node or group of nodes by specifying tags and a count of target nodes having this tag do you want a job to run.
 The target node syntax is:
 &amp;quot;tag&amp;quot;: &amp;quot;value[:count]&amp;quot;  To achieve this Nodes and Jobs have tags, for example, having a node with the following tags:</description>
     </item>
@@ -1594,6 +1590,19 @@ dog_statsd_addr: &amp;#34;localhost:8125&amp;#34; Metrics  dkron.agent.event_rec
     </item>
     
     <item>
+      <title>NATS Executor</title>
+      <link>/usage/executors/nats/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/usage/executors/nats/</guid>
+      <description>The NATS executor sends a message to a NATS server/cluster.
+Currently, only username/password authentication is supported.
+Configuration Params
+url: Comma separated list of NATS server URLs message: The message to send subject: The subject to send the message to userName: username for authentication password: password for authentication debug: If not empty, turns on debugging. Will log the NATS specific job config and the request sent. Example
+{ &amp;#34;executor&amp;#34;: &amp;#34;nats&amp;#34;, &amp;#34;executor_config&amp;#34;: { &amp;#34;url&amp;#34;: &amp;#34;tls://nats.</description>
+    </item>
+    
+    <item>
       <title>Outage recovery</title>
       <link>/usage/recovery/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -1613,19 +1622,6 @@ This guide is for recovery from a Dkron outage due to a majority of server nodes
       <description>Outage Recovery Don&amp;rsquo;t panic! This is a critical first step.
 Depending on your deployment configuration, it may take only a single server failure for cluster unavailability. Recovery requires an operator to intervene, but the process is straightforward.
 This guide is for recovery from a Dkron outage due to a majority of server nodes in a datacenter being lost. If you are looking to add or remove servers, see the clustering guide.</description>
-    </item>
-    
-    <item>
-      <title>Shell Executor</title>
-      <link>/usage/executors/nats/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/usage/executors/nats/</guid>
-      <description>The NATS executor sends a message to a NATS server/cluster.
-Currently, only username/password authentication is supported.
-Configuration Params
-url: Comma separated list of NATS server URLs message: The message to send subject: The subject to send the message to userName: username for authentication password: password for authentication debug: If not empty, turns on debugging. Will log the NATS specific job config and the request sent. Example
-{ &amp;#34;executor&amp;#34;: &amp;#34;nats&amp;#34;, &amp;#34;executor_config&amp;#34;: { &amp;#34;url&amp;#34;: &amp;#34;tls://nats.</description>
     </item>
     
     <item>
@@ -1788,7 +1784,7 @@ Refer to the backup&amp;amp;restore upgrade guide</description>
       <guid>/usage/upgrade/</guid>
       <description>Use one of the following methods (depending on the changes) to upgrade a cluster to a newer version.
 Rolling upgrade Use the following procedure to rotate all cluster nodes, one server at a time:
- Add a new servers to the cluster with a configuration that joins them to the existing cluter. Stop dkron service in one of the old servers, if it was the leader allow a new leader to be ellected, note that it is better to remove the current leader at the end, to ensure a leader is elected between the new nodes.</description>
+ Add a new server to the cluster with a configuration that joins them to the existing cluster. Stop dkron service on one of the old servers, if it was the leader allow a new leader to be elected.</description>
     </item>
     
     <item>

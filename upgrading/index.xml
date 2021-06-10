@@ -5,11 +5,7 @@
     <link>/upgrading/</link>
     <description>Recent content in Upgradings on Dkron - Cloud native job scheduling system</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    
-	<atom:link href="/upgrading/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <language>en-us</language><atom:link href="/upgrading/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Upgrade from v1 to v2</title>
       <link>/upgrading/from_v1_to_v2/</link>
