@@ -426,122 +426,126 @@ func TestAgentConfig(t *testing.T) {
 	a.Stop()
 }
 
-/*
-func Test_filterNodes(t *testing.T) {
-	nodes := []Node{
-		{
-			Tags: map[string]string{
-				"region":  "global",
-				"tag":     "test",
-				"just1":   "value",
-				"tagfor2": "2",
-			},
-		},
-		{
-			Tags: map[string]string{
-				"region":  "global",
-				"tag":     "test",
-				"just2":   "value",
-				"tagfor2": "2",
-			},
-		},
-		{
-			Tags: map[string]string{
-				"region": "global",
-				"tag":    "test",
-				"just3":  "value",
-			},
+func Test_getQualifyingNodes(t *testing.T) {
+	n1 := Node{
+		Status: serf.StatusAlive,
+		Tags: map[string]string{
+			"region":  "global",
+			"tag":     "test",
+			"just1":   "value",
+			"tagfor2": "2",
 		},
 	}
-	type args struct {
-		execNodes []Node
-		tags      map[string]string
+	n2 := Node{
+		Status: serf.StatusAlive,
+		Tags: map[string]string{
+			"region":  "global",
+			"tag":     "test",
+			"just2":   "value",
+			"tagfor2": "2",
+		},
+	}
+	n3 := Node{
+		Status: serf.StatusAlive,
+		Tags: map[string]string{
+			"region": "global",
+			"tag":    "test",
+			"just3":  "value",
+		},
+	}
+	n4 := Node{
+		Status: serf.StatusNone,
+		Tags: map[string]string{
+			"region": "global",
+			"dead":   "true",
+			"just1":  "value",
+		},
+	}
+	n5 := Node{
+		Status: serf.StatusAlive,
+		Tags: map[string]string{
+			"region": "atlantis",
+			"just1":  "value",
+		},
 	}
 	tests := []struct {
 		name    string
-		args    args
+		inNodes []Node
+		inTags  map[string]string
 		want    []Node
-		want2   int
-		wantErr bool
 	}{
 		{
-			name: "All nodes tag",
-			args: args{
-				execNodes: nodes,
-				tags:      map[string]string{"tag": "test"},
-			},
-			want:    nodes,
-			want2:   3,
-			wantErr: false,
+			name:    "All nodes match tag",
+			inNodes: []Node{n1, n2, n3},
+			inTags:  map[string]string{"tag": "test"},
+			want:    []Node{n1, n2, n3},
 		},
 		{
-			name: "Just node1 tag",
-			args: args{
-				execNodes: nodes,
-				tags:      map[string]string{"just1": "value"},
-			},
-			want:    []Node{nodes[0]},
-			want2:   1,
-			wantErr: false,
+			name:    "Only node1 matches tag",
+			inNodes: []Node{n1, n2, n3},
+			inTags:  map[string]string{"just1": "value"},
+			want:    []Node{n1},
 		},
 		{
-			name: "Just node2 tag",
-			args: args{
-				execNodes: nodes,
-				tags:      map[string]string{"just2": "value"},
-			},
-			want:    []Node{nodes[1]},
-			want2:   1,
-			wantErr: false,
+			name:    "Only node2 matches tag",
+			inNodes: []Node{n1, n2, n3},
+			inTags:  map[string]string{"just2": "value"},
+			want:    []Node{n2},
 		},
 		{
-			name: "Matching 2 nodes",
-			args: args{
-				execNodes: nodes,
-				tags:      map[string]string{"tagfor2": "2"},
-			},
-			want:    []Node{nodes[0], nodes[1]},
-			want2:   2,
-			wantErr: false,
+			name:    "Tag matches two nodes",
+			inNodes: []Node{n1, n2, n3},
+			inTags:  map[string]string{"tagfor2": "2"},
+			want:    []Node{n1, n2},
 		},
 		{
-			name: "No matching nodes",
-			args: args{
-				execNodes: nodes,
-				tags:      map[string]string{"unknown": "value"},
-			},
+			name:    "No nodes match tag",
+			inNodes: []Node{n1, n2, n3},
+			inTags:  map[string]string{"unknown": "value"},
 			want:    []Node{},
-			want2:   0,
-			wantErr: false,
 		},
 		{
-			name: "All nodes low cardinality",
-			args: args{
-				execNodes: nodes,
-				tags:      map[string]string{"tag": "test:1"},
-			},
-			want:    nodes,
-			want2:   1,
-			wantErr: false,
+			name:    "Dead nodes don't match",
+			inNodes: []Node{n1, n4},
+			inTags:  map[string]string{},
+			want:    []Node{n1},
+		},
+		{
+			name:    "No nodes returns no nodes",
+			inNodes: []Node{},
+			inTags:  map[string]string{"just1": "value"},
+			want:    []Node{},
+		},
+		{
+			name:    "No tags matches all nodes",
+			inNodes: []Node{n1, n2, n3},
+			inTags:  map[string]string{},
+			want:    []Node{n1, n2, n3},
+		},
+		{
+			name:    "Nodes out of region don't match",
+			inNodes: []Node{n1, n5},
+			inTags:  map[string]string{},
+			want:    []Node{n1},
+		},
+		{
+			name:    "Multiple tags match correct nodes",
+			inNodes: []Node{n1, n2, n3},
+			inTags:  map[string]string{"tag": "test", "tagfor2": "2"},
+			want:    []Node{n1, n2},
 		},
 	}
+	agentStub := NewAgent(DefaultConfig())
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, got2, err := filterNodes(tt.args.execNodes, tt.args.tags)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("filterNodes() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("filterNodes() got = %v, want %v", got, tt.want)
-			}
-			if got2 != tt.want2 {
-				t.Errorf("filterNodes() got2 = %v, want %v", got2, tt.want2)
+			actual := agentStub.getQualifyingNodes(tt.inNodes, tt.inTags)
+			assert.Len(t, actual, len(tt.want))
+			for _, expectedItem := range tt.want {
+				assert.Contains(t, actual, expectedItem)
 			}
 		})
 	}
 }
-*/
 
 func Test_filterArray(t *testing.T) {
 	n1 := Node{Name: "node1"}
@@ -587,7 +591,7 @@ func Test_selectNodes(t *testing.T) {
 		}
 		panic("This shouldn't happen")
 	}
-	filtertests := []struct {
+	selectertests := []struct {
 		name        string
 		in          []Node
 		cardinality int
@@ -604,7 +608,7 @@ func Test_selectNodes(t *testing.T) {
 		{"No nodes, card>0 returns none", []Node{}, 2, defaultSelector, []Node{}},
 		{"No nodes, card=0 returns none", []Node{}, 0, defaultSelector, []Node{}},
 	}
-	for _, tt := range filtertests {
+	for _, tt := range selectertests {
 		t.Run(tt.name, func(t *testing.T) {
 			actual := selectNodes(tt.in, tt.cardinality, tt.selector)
 			assert.Len(t, actual, len(tt.expect))

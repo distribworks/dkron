@@ -697,22 +697,21 @@ func (a *Agent) join(addrs []string, replay bool) (n int, err error) {
 }
 
 func (a *Agent) getTargetNodes(tags map[string]string, selectFunc func([]Node) int) []Node {
-	nodes, card := a.getQualifyingNodes(tags)
-	return selectNodes(nodes, card, selectFunc)
+	bareTags, cardinality := cleanTags(tags, a.logger)
+	nodes := a.getQualifyingNodes(a.serf.Members(), bareTags)
+	return selectNodes(nodes, cardinality, selectFunc)
 }
 
 // getQualifyingNodes returns all nodes in the cluster that are
 // alive, in this agent's region and have all given tags
-func (a *Agent) getQualifyingNodes(tags map[string]string) ([]Node, int) {
-	ct, cardinality := cleanTags(tags, a.logger)
-
+func (a *Agent) getQualifyingNodes(nodes []Node, bareTags map[string]string) []Node {
 	// Determine the usable set of nodes
-	nodes := filterArray(a.serf.Members(), func(node Node) bool {
+	qualifiers := filterArray(nodes, func(node Node) bool {
 		return node.Status == serf.StatusAlive &&
 			node.Tags["region"] == a.config.Region &&
-			nodeMatchesTags(node, ct)
+			nodeMatchesTags(node, bareTags)
 	})
-	return nodes, cardinality
+	return qualifiers
 }
 
 // The default selector function for processFilteredNodes
