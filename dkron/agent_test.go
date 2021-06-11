@@ -117,7 +117,7 @@ func lastSelector(nodes []Node) int {
 	return len(nodes) - 1
 }
 
-func Test_processFilteredNodes(t *testing.T) {
+func Test_getTargetNodes(t *testing.T) {
 	dir, err := ioutil.TempDir("", "dkron-test")
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
@@ -196,109 +196,130 @@ func Test_processFilteredNodes(t *testing.T) {
 
 	time.Sleep(2 * time.Second)
 
-	// Test cardinality of 2 returns correct nodes
-	tags := map[string]string{"tag": "test:2"}
+	t.Run("Test cardinality of 2 returns correct nodes", func(t *testing.T) {
+		tags := map[string]string{"tag": "test:2"}
 
-	nodes := a1.getTargetNodes(tags, lastSelector)
+		nodes := a1.getTargetNodes(tags, lastSelector)
 
-	sort.Slice(nodes, func(i, j int) bool { return nodes[i].Name < nodes[j].Name })
-	assert.Exactly(t, "test1", nodes[0].Name)
-	assert.Exactly(t, "test2", nodes[1].Name)
-	assert.Len(t, nodes, 2)
+		sort.Slice(nodes, func(i, j int) bool { return nodes[i].Name < nodes[j].Name })
+		assert.Exactly(t, "test1", nodes[0].Name)
+		assert.Exactly(t, "test2", nodes[1].Name)
+		assert.Len(t, nodes, 2)
+	})
 
-	// Test cardinality of 1 with two qualified nodes returns 1 node
-	tags2 := map[string]string{"tag": "test:1"}
+	t.Run("Test cardinality of 1 with two qualified nodes returns 1 node", func(t *testing.T) {
+		tags2 := map[string]string{"tag": "test:1"}
 
-	nodes = a1.getTargetNodes(tags2, defaultSelector)
-
-	assert.Len(t, nodes, 1)
-
-	// Test no cardinality specified, all nodes returned
-	var tags3 map[string]string
-
-	nodes = a1.getTargetNodes(tags3, lastSelector)
-
-	sort.Slice(nodes, func(i, j int) bool { return nodes[i].Name < nodes[j].Name })
-	assert.Len(t, nodes, 3)
-	assert.Exactly(t, "test1", nodes[0].Name)
-	assert.Exactly(t, "test2", nodes[1].Name)
-	assert.Exactly(t, "test3", nodes[2].Name)
-
-	// Test exclusive tag returns correct node
-	tags4 := map[string]string{"tag": "test_client:1"}
-
-	nodes = a1.getTargetNodes(tags4, defaultSelector)
-
-	assert.Len(t, nodes, 1)
-	assert.Exactly(t, "test3", nodes[0].Name)
-
-	// Test existing tag but no matching value returns no nodes
-	tags5 := map[string]string{"tag": "no_tag"}
-
-	nodes = a1.getTargetNodes(tags5, defaultSelector)
-
-	assert.Len(t, nodes, 0)
-
-	// Test 1 matching and 1 not matching tag returns no nodes
-	tags6 := map[string]string{
-		"foo": "bar:1",
-		"tag": "test:2",
-	}
-
-	nodes = a1.getTargetNodes(tags6, defaultSelector)
-
-	assert.Len(t, nodes, 0)
-
-	// Test matching tags with cardinality of 2 but only 1 matching node returns correct node
-	tags7 := map[string]string{
-		"tag":   "test:2",
-		"extra": "tag:2",
-	}
-
-	nodes = a1.getTargetNodes(tags7, defaultSelector)
-
-	assert.Len(t, nodes, 1)
-	assert.Exactly(t, "test2", nodes[0].Name)
-
-	// Test invalid cardinality yields 0 nodes
-	tags9 := map[string]string{
-		"tag": "test:invalid",
-	}
-
-	nodes = a1.getTargetNodes(tags9, defaultSelector)
-
-	assert.Len(t, nodes, 0)
-
-	// Test two tags matching same 3 servers and cardinality of 1 should always return 1 server
-
-	// Do this multiple times: an old bug caused this to sometimes succeed and
-	// sometimes fail (=return no nodes at all) due to the use of math.rand
-	// Statistically, about 33% should succeed and the rest should fail if
-	// the code is buggy.
-	// Another bug caused one node to be favored over the others. With a large
-	// enough number of attempts, each node should be chosen 1/3 of the time.
-	tags8 := map[string]string{
-		"additional":  "value:1",
-		"additional2": "value2:1",
-	}
-	distrib := make(map[string]int)
-	var sampleSize = 999
-	for i := 0; i < sampleSize; i++ {
-		// round-robin on the selected nodes to come out at an exactly equal distribution
-		roundRobinSelector := func(nodes []serf.Member) int { return i % len(nodes) }
-		nodes = a1.getTargetNodes(tags8, roundRobinSelector)
+		nodes := a1.getTargetNodes(tags2, defaultSelector)
 
 		assert.Len(t, nodes, 1)
-		distrib[nodes[0].Name]++
-	}
+	})
 
-	// Each node must have been chosen 1/3 of the time.
-	for name, count := range distrib {
-		fmt.Println(name, float64(count)/float64(sampleSize)*100.0, "%", count)
-	}
-	assert.Exactly(t, sampleSize/3, distrib["test1"])
-	assert.Exactly(t, sampleSize/3, distrib["test2"])
-	assert.Exactly(t, sampleSize/3, distrib["test3"])
+	t.Run("Test no cardinality specified, all nodes returned", func(t *testing.T) {
+		var tags3 map[string]string
+
+		nodes := a1.getTargetNodes(tags3, lastSelector)
+
+		sort.Slice(nodes, func(i, j int) bool { return nodes[i].Name < nodes[j].Name })
+		assert.Len(t, nodes, 3)
+		assert.Exactly(t, "test1", nodes[0].Name)
+		assert.Exactly(t, "test2", nodes[1].Name)
+		assert.Exactly(t, "test3", nodes[2].Name)
+	})
+
+	t.Run("Test exclusive tag returns correct node", func(t *testing.T) {
+		tags4 := map[string]string{"tag": "test_client:1"}
+
+		nodes := a1.getTargetNodes(tags4, defaultSelector)
+
+		assert.Len(t, nodes, 1)
+		assert.Exactly(t, "test3", nodes[0].Name)
+	})
+
+	t.Run("Test existing tag but no matching value returns no nodes", func(t *testing.T) {
+		tags5 := map[string]string{"tag": "no_tag"}
+
+		nodes := a1.getTargetNodes(tags5, defaultSelector)
+
+		assert.Len(t, nodes, 0)
+	})
+
+	t.Run("Test 1 matching and 1 not matching tag returns no nodes", func(t *testing.T) {
+		tags6 := map[string]string{
+			"foo": "bar:1",
+			"tag": "test:2",
+		}
+
+		nodes := a1.getTargetNodes(tags6, defaultSelector)
+
+		assert.Len(t, nodes, 0)
+	})
+
+	t.Run("Test matching tags with cardinality of 2 but only 1 matching node returns correct node", func(t *testing.T) {
+		tags7 := map[string]string{
+			"tag":   "test:2",
+			"extra": "tag:2",
+		}
+
+		nodes := a1.getTargetNodes(tags7, defaultSelector)
+
+		assert.Len(t, nodes, 1)
+		assert.Exactly(t, "test2", nodes[0].Name)
+	})
+
+	t.Run("Test invalid cardinality yields 0 nodes", func(t *testing.T) {
+		tags9 := map[string]string{
+			"tag": "test:invalid",
+		}
+
+		nodes := a1.getTargetNodes(tags9, defaultSelector)
+
+		assert.Len(t, nodes, 0)
+	})
+
+	t.Run("Test two tags matching same 3 servers and cardinality of 1 should always return 1 server", func(t *testing.T) {
+		// Do this multiple times: an old bug caused this to sometimes succeed and
+		// sometimes fail (=return no nodes at all) due to the use of math.rand
+		// Statistically, about 33% should succeed and the rest should fail if
+		// the code is buggy.
+		// Another bug caused one node to be favored over the others. With a large
+		// enough number of attempts, each node should be chosen 1/3 of the time.
+		tags8 := map[string]string{
+			"additional":  "value:1",
+			"additional2": "value2:1",
+		}
+		distrib := make(map[string]int)
+
+		// Modified version of getTargetNodes
+		faked_getTargetNodes := func(tags map[string]string, selectFunc func(nodes []Node) int) []Node {
+			bareTags, card := cleanTags(tags, a1.logger)
+			allNodes := a1.serf.Members()
+
+			// Sort the nodes: serf.Members() doesn't always return the nodes in the same order, which skews the results.
+			sort.Slice(allNodes, func(i, j int) bool { return allNodes[i].Name < allNodes[j].Name })
+
+			nodes := a1.getQualifyingNodes(allNodes, bareTags)
+			return selectNodes(nodes, card, selectFunc)
+		}
+
+		var sampleSize = 999
+		for i := 0; i < sampleSize; i++ {
+			roundRobinSelector := func(nodes []Node) int { return i % len(nodes) }
+
+			nodes := faked_getTargetNodes(tags8, roundRobinSelector)
+
+			assert.Len(t, nodes, 1)
+			distrib[nodes[0].Name]++
+		}
+
+		// Each node must have been chosen 1/3 of the time.
+		for name, count := range distrib {
+			fmt.Println(name, float64(count)/float64(sampleSize)*100.0, "%", count)
+		}
+		assert.Exactly(t, sampleSize/3, distrib["test1"])
+		assert.Exactly(t, sampleSize/3, distrib["test2"])
+		assert.Exactly(t, sampleSize/3, distrib["test3"])
+	})
 
 	// Clean up
 	a1.Stop()

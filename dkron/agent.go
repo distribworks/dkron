@@ -11,7 +11,6 @@ import (
 	"net"
 	"os"
 	"path/filepath"
-	"sort"
 	"strconv"
 	"sync"
 	"time"
@@ -726,9 +725,6 @@ func selectNodes(nodes []Node, cardinality int, selectFunc func([]Node) int) []N
 	if numNodes <= cardinality {
 		return nodes
 	}
-
-	// Sort the nodes to make selection from them predictable
-	sort.Slice(nodes, func(i, j int) bool { return nodes[i].Name < nodes[j].Name })
 
 	for ; cardinality > 0; cardinality-- {
 		// Select a node
