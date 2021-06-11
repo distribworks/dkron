@@ -713,7 +713,7 @@ func (a *Agent) getQualifyingNodes(nodes []Node, bareTags map[string]string) []N
 	return qualifiers
 }
 
-// The default selector function for processFilteredNodes
+// The default selector function for getTargetNodes/selectNodes
 func defaultSelector(nodes []Node) int {
 	return rand.Intn(len(nodes))
 }
