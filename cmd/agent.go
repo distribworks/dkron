@@ -150,6 +150,7 @@ func handleReload() {
 	fmt.Println("Reloading configuration...")
 	initConfig()
 	//Config reloading will also reload Notification settings
+	agent.UpdateTags(config.Tags)
 }
 
 // UnmarshalTags is a utility function which takes a slice of strings in
