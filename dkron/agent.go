@@ -594,33 +594,6 @@ func (a *Agent) IsLeader() bool {
 	return a.raft.State() == raft.Leader
 }
 
-// Members is used to return the members of the serf cluster
-func (a *Agent) Members() []serf.Member {
-	return a.serf.Members()
-}
-
-// LocalMember is used to return the local node
-func (a *Agent) LocalMember() serf.Member {
-	return a.serf.LocalMember()
-}
-
-// Leader is used to return the Raft leader
-func (a *Agent) Leader() raft.ServerAddress {
-	return a.raft.Leader()
-}
-
-// Servers returns a list of known server
-func (a *Agent) Servers() (members []*ServerParts) {
-	for _, member := range a.serf.Members() {
-		ok, parts := isServer(member)
-		if !ok || member.Status != serf.StatusAlive {
-			continue
-		}
-		members = append(members, parts)
-	}
-	return members
-}
-
 // LocalServers returns a list of the local known server
 func (a *Agent) LocalServers() (members []*ServerParts) {
 	for _, member := range a.serf.Members() {
