@@ -262,6 +262,25 @@ func (a *Agent) Stop() error {
 	return nil
 }
 
+// UpdateTags updates the tag configuration for this agent
+func (a *Agent) UpdateTags(tags map[string]string) {
+	// Preserve reserved tags
+	currentTags := a.serf.LocalMember().Tags
+	for _, tagName := range []string{"role", "version", "server", "bootstrap", "expect", "port", "rpc_addr"} {
+		if val, exists := currentTags[tagName]; exists {
+			tags[tagName] = val
+		}
+	}
+	tags["dc"] = a.config.Datacenter
+	tags["region"] = a.config.Region
+
+	// Set new collection of tags
+	err := a.serf.SetTags(tags)
+	if err != nil {
+		a.logger.Warnf("Setting tags unsuccessful: %s.", err.Error())
+	}
+}
+
 func (a *Agent) setupRaft() error {
 	if a.config.BootstrapExpect > 0 {
 		if a.config.BootstrapExpect == 1 {
