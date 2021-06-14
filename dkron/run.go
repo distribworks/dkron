@@ -28,7 +28,7 @@ func (a *Agent) Run(jobName string, ex *Execution) (*Job, error) {
 
 	// In the first execution attempt we build and filter the target nodes
 	// but we use the existing node target in case of retry.
-	var targetNodes []serf.Member
+	var targetNodes []Node
 	if ex.Attempt <= 1 {
 		targetNodes = a.getTargetNodes(job.Tags, defaultSelector)
 	} else {
@@ -36,7 +36,7 @@ func (a *Agent) Run(jobName string, ex *Execution) (*Job, error) {
 		for _, m := range a.serf.Members() {
 			if ex.NodeName == m.Name {
 				if m.Status == serf.StatusAlive {
-					targetNodes = []serf.Member{m}
+					targetNodes = []Node{m}
 					break
 				} else {
 					return nil, fmt.Errorf("retry node is gone: %s for job %s", ex.NodeName, ex.JobName)
