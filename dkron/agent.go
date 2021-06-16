@@ -50,6 +50,9 @@ var (
 	runningExecutions sync.Map
 )
 
+// Node is a shorter, more descriptive name for serf.Member
+type Node = serf.Member
+
 // Agent is the main struct that represents a dkron agent
 type Agent struct {
 	// ProcessorPlugins maps processor plugins
@@ -711,87 +714,58 @@ func (a *Agent) join(addrs []string, replay bool) (n int, err error) {
 	return
 }
 
-func (a *Agent) processFilteredNodes(job *Job) (map[string]string, map[string]string, error) {
-	// The final set of nodes will be the intersection of all groups
-	tags := make(map[string]string)
-
-	// Actually copy the map
-	for key, val := range job.Tags {
-		tags[key] = val
-	}
-
-	// Always filter by region tag as we currently only target nodes
-	// on the same region.
-	tags["region"] = a.config.Region
-
-	// Make a set of all members
-	allNodes := make(map[string]serf.Member)
-	for _, member := range a.serf.Members() {
-		if member.Status == serf.StatusAlive {
-			allNodes[member.Name] = member
-		}
-	}
-
-	execNodes, tags, cardinality, err := filterNodes(allNodes, tags)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	// Create an array of node names to aid in computing resulting set based on cardinality
-	var names []string
-	for name := range execNodes {
-		names = append(names, name)
-	}
-
-	nodes := make(map[string]string)
-	for ; cardinality > 0; cardinality-- {
-		// Pick a node, any node
-		randomIndex := rand.Intn(len(names))
-		m := execNodes[names[randomIndex]]
-
-		// Store name and address
-		if addr, ok := m.Tags["rpc_addr"]; ok {
-			nodes[m.Name] = addr
-		} else {
-			nodes[m.Name] = m.Addr.String()
-		}
-
-		// Swap picked node with the first one and shorten array, so node can't get picked again
-		names[randomIndex], names[0] = names[0], names[randomIndex]
-		names = names[1:]
-	}
-
-	return nodes, tags, nil
+func (a *Agent) getTargetNodes(tags map[string]string, selectFunc func([]Node) int) []Node {
+	bareTags, cardinality := cleanTags(tags, a.logger)
+	nodes := a.getQualifyingNodes(a.serf.Members(), bareTags)
+	return selectNodes(nodes, cardinality, selectFunc)
 }
 
-// filterNodes determines which of the provided nodes have the given tags
-// Returns:
-// * the map of allNodes that match the provided tags
-// * a clean map of tag values without cardinality
-// * cardinality, i.e. the max number of nodes that should be targeted, regardless of the
-//   number of nodes in the resulting map.
-// * an error if a cardinality was malformed
-func filterNodes(allNodes map[string]serf.Member, tags map[string]string) (map[string]serf.Member, map[string]string, int, error) {
-	ct, cardinality, err := cleanTags(tags)
-	if err != nil {
-		return nil, nil, 0, err
+// getQualifyingNodes returns all nodes in the cluster that are
+// alive, in this agent's region and have all given tags
+func (a *Agent) getQualifyingNodes(nodes []Node, bareTags map[string]string) []Node {
+	// Determine the usable set of nodes
+	qualifiers := filterArray(nodes, func(node Node) bool {
+		return node.Status == serf.StatusAlive &&
+			node.Tags["region"] == a.config.Region &&
+			nodeMatchesTags(node, bareTags)
+	})
+	return qualifiers
+}
+
+// The default selector function for getTargetNodes/selectNodes
+func defaultSelector(nodes []Node) int {
+	return rand.Intn(len(nodes))
+}
+
+// selectNodes selects at most #cardinality from the given nodes using the selectFunc
+func selectNodes(nodes []Node, cardinality int, selectFunc func([]Node) int) []Node {
+	// Return all nodes immediately if they're all going to be selected
+	numNodes := len(nodes)
+	if numNodes <= cardinality {
+		return nodes
 	}
 
-	matchingNodes := make(map[string]serf.Member)
+	for ; cardinality > 0; cardinality-- {
+		// Select a node
+		chosenIndex := selectFunc(nodes[:numNodes])
 
-	// Filter nodes that lack tags
-	for name, member := range allNodes {
-		if nodeMatchesTags(member, ct) {
-			matchingNodes[name] = member
+		// Swap picked node with the last one and reduce choices so it can't get picked again
+		nodes[numNodes-1], nodes[chosenIndex] = nodes[chosenIndex], nodes[numNodes-1]
+		numNodes--
+	}
+
+	return nodes[numNodes:]
+}
+
+// Returns all items from an array for which filterFunc returns true,
+func filterArray(arr []Node, filterFunc func(Node) bool) []Node {
+	for i := len(arr) - 1; i >= 0; i-- {
+		if !filterFunc(arr[i]) {
+			arr[i] = arr[len(arr)-1]
+			arr = arr[:len(arr)-1]
 		}
 	}
-
-	// limit the cardinality to the number of possible nodes
-	if len(matchingNodes) < cardinality {
-		cardinality = len(matchingNodes)
-	}
-
-	return matchingNodes, ct, cardinality, nil
+	return arr
 }
 
 // This function is called when a client request the RPCAddress

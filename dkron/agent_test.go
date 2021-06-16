@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"reflect"
+	"sort"
 	"testing"
 	"time"
 
@@ -113,7 +113,11 @@ func TestAgentCommand_runForElection(t *testing.T) {
 	a3.Stop()
 }
 
-func Test_processFilteredNodes(t *testing.T) {
+func lastSelector(nodes []Node) int {
+	return len(nodes) - 1
+}
+
+func Test_getTargetNodes(t *testing.T) {
 	dir, err := ioutil.TempDir("", "dkron-test")
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
@@ -192,150 +196,130 @@ func Test_processFilteredNodes(t *testing.T) {
 
 	time.Sleep(2 * time.Second)
 
-	// Test cardinality of 2 returns correct nodes
-	job := &Job{
-		Name: "test_job_1",
-		Tags: map[string]string{
-			"tag": "test:2",
-		},
-	}
+	t.Run("Test cardinality of 2 returns correct nodes", func(t *testing.T) {
+		tags := map[string]string{"tag": "test:2"}
 
-	nodes, tags, err := a1.processFilteredNodes(job)
-	require.NoError(t, err)
+		nodes := a1.getTargetNodes(tags, lastSelector)
 
-	assert.Contains(t, nodes, "test1")
-	assert.Contains(t, nodes, "test2")
-	assert.Len(t, nodes, 2)
-	assert.Equal(t, tags["tag"], "test")
+		sort.Slice(nodes, func(i, j int) bool { return nodes[i].Name < nodes[j].Name })
+		assert.Exactly(t, "test1", nodes[0].Name)
+		assert.Exactly(t, "test2", nodes[1].Name)
+		assert.Len(t, nodes, 2)
+	})
 
-	// Test cardinality of 1 with two qualified nodes returns 1 node
-	job2 := &Job{
-		Name: "test_job_2",
-		Tags: map[string]string{
-			"tag": "test:1",
-		},
-	}
+	t.Run("Test cardinality of 1 with two qualified nodes returns 1 node", func(t *testing.T) {
+		tags2 := map[string]string{"tag": "test:1"}
 
-	nodes, _, err = a1.processFilteredNodes(job2)
-	require.NoError(t, err)
-
-	assert.Len(t, nodes, 1)
-
-	// Test no cardinality specified, all nodes returned
-	job3 := &Job{
-		Name: "test_job_3",
-	}
-
-	nodes, _, err = a1.processFilteredNodes(job3)
-	require.NoError(t, err)
-
-	assert.Len(t, nodes, 3)
-	assert.Contains(t, nodes, "test1")
-	assert.Contains(t, nodes, "test2")
-	assert.Contains(t, nodes, "test3")
-
-	// Test exclusive tag returns correct node
-	job4 := &Job{
-		Name: "test_job_4",
-		Tags: map[string]string{
-			"tag": "test_client:1",
-		},
-	}
-
-	nodes, _, err = a1.processFilteredNodes(job4)
-	require.NoError(t, err)
-
-	assert.Len(t, nodes, 1)
-	assert.Contains(t, nodes, "test3")
-
-	// Test existing tag but no matching value returns no nodes
-	job5 := &Job{
-		Name: "test_job_5",
-		Tags: map[string]string{
-			"tag": "no_tag",
-		},
-	}
-
-	nodes, _, err = a1.processFilteredNodes(job5)
-	require.NoError(t, err)
-
-	assert.Len(t, nodes, 0)
-
-	// Test 1 matching and 1 not matching tag returns no nodes
-	job6 := &Job{
-		Name: "test_job_6",
-		Tags: map[string]string{
-			"foo": "bar:1",
-			"tag": "test:2",
-		},
-	}
-
-	nodes, tags, err = a1.processFilteredNodes(job6)
-	require.NoError(t, err)
-
-	assert.Len(t, nodes, 0)
-	assert.Equal(t, tags["tag"], "test")
-
-	// Test matching tags with cardinality of 2 but only 1 matching node returns correct node
-	job7 := &Job{
-		Name: "test_job_7",
-		Tags: map[string]string{
-			"tag":   "test:2",
-			"extra": "tag:2",
-		},
-	}
-
-	nodes, tags, err = a1.processFilteredNodes(job7)
-	require.NoError(t, err)
-
-	assert.Contains(t, nodes, "test2")
-	assert.Len(t, nodes, 1)
-	assert.Equal(t, tags["tag"], "test")
-	assert.Equal(t, tags["extra"], "tag")
-
-	// Test two tags matching same 3 servers and cardinality of 1 should always return 1 server
-
-	// Do this multiple times: an old bug caused this to sometimes succeed and
-	// sometimes fail (=return no nodes at all) due to the use of math.rand
-	// Statistically, about 33% should succeed and the rest should fail if
-	// the code is buggy.
-	// Another bug caused one node to be favored over the others. With a
-	// large enough number of attempts, each node should be chosen about 1/3
-	// of the time.
-	job8 := &Job{
-		Name: "test_job_8",
-		Tags: map[string]string{
-			"additional":  "value:1",
-			"additional2": "value2:1",
-		},
-	}
-	distrib := make(map[string]int)
-	var sampleSize = 1000
-	for i := 0; i < sampleSize; i++ {
-		nodes, tags, err = a1.processFilteredNodes(job8)
-		require.NoError(t, err)
+		nodes := a1.getTargetNodes(tags2, defaultSelector)
 
 		assert.Len(t, nodes, 1)
-		assert.Equal(t, tags["additional"], "value")
-		assert.Equal(t, tags["additional2"], "value2")
-		for name := range nodes {
-			distrib[name] = distrib[name] + 1
-		}
-	}
+	})
 
-	// Each node must have been chosen between 30% and 36% of the time,
-	// for the distribution to be considered equal.
-	// Note: This test should almost never, but still can, fail even if the
-	// code is fine. To fix this, the randomizer ought to be mocked.
-	for name, count := range distrib {
-		fmt.Println(name, float64(count)/float64(sampleSize)*100.0, "%")
-	}
-	assert.Greater(t, float64(distrib["test1"])/float64(sampleSize), 0.25)
-	assert.Less(t, float64(distrib["test1"])/float64(sampleSize), 0.40)
-	assert.Greater(t, float64(distrib["test2"])/float64(sampleSize), 0.25)
-	assert.Less(t, float64(distrib["test2"])/float64(sampleSize), 0.40)
-	assert.Greater(t, float64(distrib["test3"])/float64(sampleSize), 0.25)
-	assert.Less(t, float64(distrib["test3"])/float64(sampleSize), 0.40)
+	t.Run("Test no cardinality specified, all nodes returned", func(t *testing.T) {
+		var tags3 map[string]string
+
+		nodes := a1.getTargetNodes(tags3, lastSelector)
+
+		sort.Slice(nodes, func(i, j int) bool { return nodes[i].Name < nodes[j].Name })
+		assert.Len(t, nodes, 3)
+		assert.Exactly(t, "test1", nodes[0].Name)
+		assert.Exactly(t, "test2", nodes[1].Name)
+		assert.Exactly(t, "test3", nodes[2].Name)
+	})
+
+	t.Run("Test exclusive tag returns correct node", func(t *testing.T) {
+		tags4 := map[string]string{"tag": "test_client:1"}
+
+		nodes := a1.getTargetNodes(tags4, defaultSelector)
+
+		assert.Len(t, nodes, 1)
+		assert.Exactly(t, "test3", nodes[0].Name)
+	})
+
+	t.Run("Test existing tag but no matching value returns no nodes", func(t *testing.T) {
+		tags5 := map[string]string{"tag": "no_tag"}
+
+		nodes := a1.getTargetNodes(tags5, defaultSelector)
+
+		assert.Len(t, nodes, 0)
+	})
+
+	t.Run("Test 1 matching and 1 not matching tag returns no nodes", func(t *testing.T) {
+		tags6 := map[string]string{
+			"foo": "bar:1",
+			"tag": "test:2",
+		}
+
+		nodes := a1.getTargetNodes(tags6, defaultSelector)
+
+		assert.Len(t, nodes, 0)
+	})
+
+	t.Run("Test matching tags with cardinality of 2 but only 1 matching node returns correct node", func(t *testing.T) {
+		tags7 := map[string]string{
+			"tag":   "test:2",
+			"extra": "tag:2",
+		}
+
+		nodes := a1.getTargetNodes(tags7, defaultSelector)
+
+		assert.Len(t, nodes, 1)
+		assert.Exactly(t, "test2", nodes[0].Name)
+	})
+
+	t.Run("Test invalid cardinality yields 0 nodes", func(t *testing.T) {
+		tags9 := map[string]string{
+			"tag": "test:invalid",
+		}
+
+		nodes := a1.getTargetNodes(tags9, defaultSelector)
+
+		assert.Len(t, nodes, 0)
+	})
+
+	t.Run("Test two tags matching same 3 servers and cardinality of 1 should always return 1 server", func(t *testing.T) {
+		// Do this multiple times: an old bug caused this to sometimes succeed and
+		// sometimes fail (=return no nodes at all) due to the use of math.rand
+		// Statistically, about 33% should succeed and the rest should fail if
+		// the code is buggy.
+		// Another bug caused one node to be favored over the others. With a large
+		// enough number of attempts, each node should be chosen 1/3 of the time.
+		tags8 := map[string]string{
+			"additional":  "value:1",
+			"additional2": "value2:1",
+		}
+		distrib := make(map[string]int)
+
+		// Modified version of getTargetNodes
+		faked_getTargetNodes := func(tags map[string]string, selectFunc func(nodes []Node) int) []Node {
+			bareTags, card := cleanTags(tags, a1.logger)
+			allNodes := a1.serf.Members()
+
+			// Sort the nodes: serf.Members() doesn't always return the nodes in the same order, which skews the results.
+			sort.Slice(allNodes, func(i, j int) bool { return allNodes[i].Name < allNodes[j].Name })
+
+			nodes := a1.getQualifyingNodes(allNodes, bareTags)
+			return selectNodes(nodes, card, selectFunc)
+		}
+
+		var sampleSize = 999
+		for i := 0; i < sampleSize; i++ {
+			roundRobinSelector := func(nodes []Node) int { return i % len(nodes) }
+
+			nodes := faked_getTargetNodes(tags8, roundRobinSelector)
+
+			assert.Len(t, nodes, 1)
+			distrib[nodes[0].Name]++
+		}
+
+		// Each node must have been chosen 1/3 of the time.
+		for name, count := range distrib {
+			fmt.Println(name, float64(count)/float64(sampleSize)*100.0, "%", count)
+		}
+		assert.Exactly(t, sampleSize/3, distrib["test1"])
+		assert.Exactly(t, sampleSize/3, distrib["test2"])
+		assert.Exactly(t, sampleSize/3, distrib["test3"])
+	})
 
 	// Clean up
 	a1.Stop()
@@ -463,126 +447,194 @@ func TestAgentConfig(t *testing.T) {
 	a.Stop()
 }
 
-func Test_filterNodes(t *testing.T) {
-	nodes := map[string]serf.Member{
-		"node1": {
-			Tags: map[string]string{
-				"region":  "global",
-				"tag":     "test",
-				"just1":   "value",
-				"tagfor2": "2",
-			},
-		},
-		"node2": {
-			Tags: map[string]string{
-				"region":  "global",
-				"tag":     "test",
-				"just2":   "value",
-				"tagfor2": "2",
-			},
-		},
-		"node3": {
-			Tags: map[string]string{
-				"region": "global",
-				"tag":    "test",
-				"just3":  "value",
-			},
+func Test_getQualifyingNodes(t *testing.T) {
+	n1 := Node{
+		Status: serf.StatusAlive,
+		Tags: map[string]string{
+			"region":  "global",
+			"tag":     "test",
+			"just1":   "value",
+			"tagfor2": "2",
 		},
 	}
-	type args struct {
-		execNodes map[string]serf.Member
-		tags      map[string]string
+	n2 := Node{
+		Status: serf.StatusAlive,
+		Tags: map[string]string{
+			"region":  "global",
+			"tag":     "test",
+			"just2":   "value",
+			"tagfor2": "2",
+		},
+	}
+	n3 := Node{
+		Status: serf.StatusAlive,
+		Tags: map[string]string{
+			"region": "global",
+			"tag":    "test",
+			"just3":  "value",
+		},
+	}
+	n4 := Node{
+		Status: serf.StatusNone,
+		Tags: map[string]string{
+			"region": "global",
+			"dead":   "true",
+			"just1":  "value",
+		},
+	}
+	n5 := Node{
+		Status: serf.StatusAlive,
+		Tags: map[string]string{
+			"region": "atlantis",
+			"just1":  "value",
+		},
 	}
 	tests := []struct {
 		name    string
-		args    args
-		want    map[string]serf.Member
-		want1   map[string]string
-		want2   int
-		wantErr bool
+		inNodes []Node
+		inTags  map[string]string
+		want    []Node
 	}{
 		{
-			name: "All nodes tag",
-			args: args{
-				execNodes: nodes,
-				tags:      map[string]string{"tag": "test"},
-			},
-			want:    nodes,
-			want1:   map[string]string{"tag": "test"},
-			want2:   3,
-			wantErr: false,
+			name:    "All nodes match tag",
+			inNodes: []Node{n1, n2, n3},
+			inTags:  map[string]string{"tag": "test"},
+			want:    []Node{n1, n2, n3},
 		},
 		{
-			name: "Just node1 tag",
-			args: args{
-				execNodes: nodes,
-				tags:      map[string]string{"just1": "value"},
-			},
-			want:    map[string]serf.Member{"node1": nodes["node1"]},
-			want1:   map[string]string{"just1": "value"},
-			want2:   1,
-			wantErr: false,
+			name:    "Only node1 matches tag",
+			inNodes: []Node{n1, n2, n3},
+			inTags:  map[string]string{"just1": "value"},
+			want:    []Node{n1},
 		},
 		{
-			name: "Just node2 tag",
-			args: args{
-				execNodes: nodes,
-				tags:      map[string]string{"just2": "value"},
-			},
-			want:    map[string]serf.Member{"node2": nodes["node2"]},
-			want1:   map[string]string{"just2": "value"},
-			want2:   1,
-			wantErr: false,
+			name:    "Only node2 matches tag",
+			inNodes: []Node{n1, n2, n3},
+			inTags:  map[string]string{"just2": "value"},
+			want:    []Node{n2},
 		},
 		{
-			name: "Matching 2 nodes",
-			args: args{
-				execNodes: nodes,
-				tags:      map[string]string{"tagfor2": "2"},
-			},
-			want:    map[string]serf.Member{"node1": nodes["node1"], "node2": nodes["node2"]},
-			want1:   map[string]string{"tagfor2": "2"},
-			want2:   2,
-			wantErr: false,
+			name:    "Tag matches two nodes",
+			inNodes: []Node{n1, n2, n3},
+			inTags:  map[string]string{"tagfor2": "2"},
+			want:    []Node{n1, n2},
 		},
 		{
-			name: "No matching nodes",
-			args: args{
-				execNodes: nodes,
-				tags:      map[string]string{"unknown": "value"},
-			},
-			want:    map[string]serf.Member{},
-			want1:   map[string]string{"unknown": "value"},
-			want2:   0,
-			wantErr: false,
+			name:    "No nodes match tag",
+			inNodes: []Node{n1, n2, n3},
+			inTags:  map[string]string{"unknown": "value"},
+			want:    []Node{},
 		},
 		{
-			name: "All nodes low cardinality",
-			args: args{
-				execNodes: nodes,
-				tags:      map[string]string{"tag": "test:1"},
-			},
-			want:    nodes,
-			want1:   map[string]string{"tag": "test"},
-			want2:   1,
-			wantErr: false,
+			name:    "Dead nodes don't match",
+			inNodes: []Node{n1, n4},
+			inTags:  map[string]string{},
+			want:    []Node{n1},
+		},
+		{
+			name:    "No nodes returns no nodes",
+			inNodes: []Node{},
+			inTags:  map[string]string{"just1": "value"},
+			want:    []Node{},
+		},
+		{
+			name:    "No tags matches all nodes",
+			inNodes: []Node{n1, n2, n3},
+			inTags:  map[string]string{},
+			want:    []Node{n1, n2, n3},
+		},
+		{
+			name:    "Nodes out of region don't match",
+			inNodes: []Node{n1, n5},
+			inTags:  map[string]string{},
+			want:    []Node{n1},
+		},
+		{
+			name:    "Multiple tags match correct nodes",
+			inNodes: []Node{n1, n2, n3},
+			inTags:  map[string]string{"tag": "test", "tagfor2": "2"},
+			want:    []Node{n1, n2},
 		},
 	}
+	agentStub := NewAgent(DefaultConfig())
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, got1, got2, err := filterNodes(tt.args.execNodes, tt.args.tags)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("filterNodes() error = %v, wantErr %v", err, tt.wantErr)
-				return
+			actual := agentStub.getQualifyingNodes(tt.inNodes, tt.inTags)
+			assert.Len(t, actual, len(tt.want))
+			for _, expectedItem := range tt.want {
+				assert.Contains(t, actual, expectedItem)
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("filterNodes() got = %v, want %v", got, tt.want)
+		})
+	}
+}
+
+func Test_filterArray(t *testing.T) {
+	n1 := Node{Name: "node1"}
+	n2 := Node{Name: "node2"}
+	n3 := Node{Name: "node3"}
+	matchAll := func(m Node) bool { return true }
+	matchNone := func(m Node) bool { return false }
+	filtertests := []struct {
+		name   string
+		in     []Node
+		filter func(Node) bool
+		expect []Node
+	}{
+		{"No items match", []Node{n1, n2, n3}, matchNone, []Node{}},
+		{"All items match", []Node{n1, n2, n3}, matchAll, []Node{n1, n2, n3}},
+		{"Empty input returns empty output", []Node{}, matchAll, []Node{}},
+		{"All but first match", []Node{n1, n2, n3}, func(m Node) bool { return m.Name != "node1" }, []Node{n2, n3}},
+		{"All but last match", []Node{n1, n2, n3}, func(m Node) bool { return m.Name != "node3" }, []Node{n1, n2}},
+		{"Middle does not match", []Node{n1, n2, n3}, func(m Node) bool { return m.Name != "node2" }, []Node{n1, n3}},
+		{"Only middle matches", []Node{n1, n2, n3}, func(m Node) bool { return m.Name == "node2" }, []Node{n2}},
+	}
+
+	for _, tt := range filtertests {
+		t.Run(tt.name, func(t *testing.T) {
+			actual := filterArray(tt.in, tt.filter)
+			assert.Len(t, actual, len(tt.expect))
+			for _, expectedItem := range tt.expect {
+				assert.Contains(t, actual, expectedItem)
 			}
-			if !reflect.DeepEqual(got1, tt.want1) {
-				t.Errorf("filterNodes() got1 = %v, want %v", got1, tt.want1)
+		})
+	}
+}
+
+func Test_selectNodes(t *testing.T) {
+	n1 := Node{Name: "node1"}
+	n2 := Node{Name: "node2"}
+	n3 := Node{Name: "node3"}
+	node2Selector := func(nodes []Node) int {
+		for i, node := range nodes {
+			if node.Name == "node2" {
+				return i
 			}
-			if got2 != tt.want2 {
-				t.Errorf("filterNodes() got2 = %v, want %v", got2, tt.want2)
+		}
+		panic("This shouldn't happen")
+	}
+	selectertests := []struct {
+		name        string
+		in          []Node
+		cardinality int
+		selector    func([]Node) int
+		expect      []Node
+	}{
+		{"Cardinality 0 returns none", []Node{n1, n2, n3}, 0, defaultSelector, []Node{}},
+		{"Cardinality < 0 returns none", []Node{n1, n2, n3}, -1, defaultSelector, []Node{}},
+		{"Cardinality > #nodes returns all", []Node{n1, n2, n3}, 1000, defaultSelector, []Node{n1, n2, n3}},
+		{"Cardinality = #nodes returns all", []Node{n1, n2, n3}, 3, defaultSelector, []Node{n1, n2, n3}},
+		{"Cardinality = 1 returns one", []Node{n1, n2, n3}, 1, lastSelector, []Node{n3}},
+		{"Cardinality = 2 returns two", []Node{n1, n2, n3}, 2, lastSelector, []Node{n2, n3}},
+		{"Pick node2", []Node{n1, n2, n3}, 1, node2Selector, []Node{n2}},
+		{"No nodes, card>0 returns none", []Node{}, 2, defaultSelector, []Node{}},
+		{"No nodes, card=0 returns none", []Node{}, 0, defaultSelector, []Node{}},
+	}
+	for _, tt := range selectertests {
+		t.Run(tt.name, func(t *testing.T) {
+			actual := selectNodes(tt.in, tt.cardinality, tt.selector)
+			assert.Len(t, actual, len(tt.expect))
+			for _, expectedItem := range tt.expect {
+				assert.Contains(t, actual, expectedItem)
 			}
 		})
 	}
