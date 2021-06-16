@@ -540,7 +540,7 @@ func (a *Agent) StartServer() {
 	// If TLS config present listen to TLS
 	if a.TLSConfig != nil {
 		// Create a RaftLayer with TLS
-		a.raftLayer = NewTLSRaftLayer(a.TLSConfig)
+		a.raftLayer = NewTLSRaftLayer(a.TLSConfig, a.logger)
 
 		// Match any connection to the recursive mux
 		tlsl := tcpm.Match(cmux.Any())

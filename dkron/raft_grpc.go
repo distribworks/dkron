@@ -24,8 +24,11 @@ func NewRaftLayer(logger *logrus.Entry) *RaftLayer {
 }
 
 // NewTLSRaftLayer returns an initialized TLS-ecrypted RaftLayer.
-func NewTLSRaftLayer(tlsConfig *tls.Config) *RaftLayer {
-	return &RaftLayer{TLSConfig: tlsConfig}
+func NewTLSRaftLayer(tlsConfig *tls.Config, logger *logrus.Entry) *RaftLayer {
+	return &RaftLayer{
+		TLSConfig: tlsConfig,
+		logger:    logger,
+	}
 }
 
 // Open opens the RaftLayer, binding to the supplied address.
