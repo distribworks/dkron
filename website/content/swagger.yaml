@@ -411,6 +411,11 @@ definitions:
         readOnly: true
         description: "Status of the job"
         example: "success"
+      next:
+        type: string
+        format: date-time
+        readOnly: true
+        description: "Time of the next job execution"
   member:
     type: object
     description: A member represents a cluster member node.
