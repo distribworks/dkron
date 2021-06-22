@@ -69,7 +69,11 @@ func (n *Notifier) report() string {
 }
 
 func (n *Notifier) buildTemplate(templ string, logger *logrus.Entry) *bytes.Buffer {
-	t := template.Must(template.New("report").Parse(templ))
+	t, e := template.New("report").Parse(templ)
+	if e != nil {
+		logger.WithError(e).Error("notifier: error parsing template")
+		return bytes.NewBuffer([]byte("Failed to parse template: " + e.Error()))
+	}
 
 	data := struct {
 		Report        string
