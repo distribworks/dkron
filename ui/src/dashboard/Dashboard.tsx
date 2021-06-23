@@ -15,7 +15,7 @@ let fakeProps = {
     hasEdit: false,
     hasList: true,
     hasShow: false,
-    location: { pathname: "/", search: "", hash: "", state: undefined },
+    location: { key: "/", pathname: "/", search: "", hash: "", state: undefined },
     match: { path: "/", url: "/", isExact: true, params: {} },
     options: {},
     permissions: null,
