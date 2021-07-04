@@ -81,7 +81,7 @@ type Config struct {
 	AdvertiseRPCPort int `mapstructure:"advertise-rpc-port"`
 
 	// LogLevel is the log verbosity level used.
-	// It could be (debug|info|warn|error|fatal|panic).
+	// It can be (debug|info|warn|error|fatal|panic).
 	LogLevel string `mapstructure:"log-level"`
 
 	// Datacenter is the datacenter this Dkron server belongs to.
