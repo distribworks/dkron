@@ -705,7 +705,7 @@ func (s *Store) computeStatus(jobName string, exGroup int64, tx *buntdb.Tx) (str
 	} else if failed > 0 && success == 0 {
 		status = StatusFailed
 	} else if failed > 0 && success > 0 {
-		status = StatusPartialyFailed
+		status = StatusPartiallyFailed
 	}
 
 	return status, nil

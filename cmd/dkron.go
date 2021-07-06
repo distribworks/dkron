@@ -64,7 +64,7 @@ func initConfig() {
 	}
 
 	if err := viper.Unmarshal(config); err != nil {
-		logrus.WithError(err).Fatal("config: Error unmarshaling config")
+		logrus.WithError(err).Fatal("config: Error unmarshalling config")
 	}
 
 	cliTags := viper.GetStringSlice("tag")
@@ -73,7 +73,7 @@ func initConfig() {
 	if len(cliTags) > 0 {
 		tags, err = UnmarshalTags(cliTags)
 		if err != nil {
-			logrus.WithError(err).Fatal("config: Error unmarshaling cli tags")
+			logrus.WithError(err).Fatal("config: Error unmarshalling cli tags")
 		}
 	} else {
 		tags = viper.GetStringMapString("tags")

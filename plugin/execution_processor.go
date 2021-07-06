@@ -67,7 +67,7 @@ type ProcessorServer struct {
 	Processor Processor
 }
 
-// Process will call the actuall Process method of the plugin
+// Process will call the actual Process method of the plugin
 func (e *ProcessorServer) Process(args *ProcessorArgs, resp *types.Execution) error {
 	*resp = e.Processor.Process(args)
 	return nil

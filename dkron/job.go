@@ -24,8 +24,8 @@ const (
 	StatusRunning = "running"
 	// StatusFailed is status of a job whose last run was not successful on any nodes.
 	StatusFailed = "failed"
-	// StatusPartialyFailed is status of a job whose last run was successful on only some nodes.
-	StatusPartialyFailed = "partially_failed"
+	// StatusPartiallyFailed is status of a job whose last run was successful on only some nodes.
+	StatusPartiallyFailed = "partially_failed"
 
 	// ConcurrencyAllow allows a job to execute concurrency.
 	ConcurrencyAllow = "allow"
@@ -48,7 +48,7 @@ var (
 	ErrWrongConcurrency = errors.New("invalid concurrency policy value, use \"allow\" or \"forbid\"")
 )
 
-// Job descibes a scheduled Job.
+// Job describes a scheduled Job.
 type Job struct {
 	// Job id. Must be unique, it's a copy of name.
 	ID string `json:"id"`
@@ -78,7 +78,7 @@ type Job struct {
 	// Number of errors running this job.
 	ErrorCount int `json:"error_count"`
 
-	// Last time this job executed succesful.
+	// Last time this job executed successfully.
 	LastSuccess ntime.NullableTime `json:"last_success"`
 
 	// Last time this job failed.

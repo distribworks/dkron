@@ -275,7 +275,7 @@ func Test_computeStatus(t *testing.T) {
 	// Tests status
 	err = s.db.View(func(tx *buntdb.Tx) error {
 		status, _ := s.computeStatus("test", 1, tx)
-		assert.Equal(t, StatusPartialyFailed, status)
+		assert.Equal(t, StatusPartiallyFailed, status)
 
 		status, _ = s.computeStatus("test", 2, tx)
 		assert.Equal(t, StatusSuccess, status)
