@@ -17,7 +17,7 @@ var (
 	cronInspect      = expvar.NewMap("cron_entries")
 	schedulerStarted = expvar.NewInt("scheduler_started")
 
-	// ErrScheduleParse is the error returned when the schdule parsing fails.
+	// ErrScheduleParse is the error returned when the schedule parsing fails.
 	ErrScheduleParse = errors.New("can't parse job schedule")
 )
 
@@ -104,7 +104,7 @@ func (s *Scheduler) ClearCron() {
 	s.Cron = nil
 }
 
-// Started will safely return if the schduler is started or not
+// Started will safely return if the scheduler is started or not
 func (s *Scheduler) Started() bool {
 	s.mu.RLock()
 	defer s.mu.RUnlock()

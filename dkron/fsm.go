@@ -21,7 +21,7 @@ const (
 	SetExecutionType
 	// DeleteExecutionsType is the command used to delete executions from the store.
 	DeleteExecutionsType
-	// ExecutionDoneType is the command to perform the logic needed once an exeuction
+	// ExecutionDoneType is the command to perform the logic needed once an execution
 	// is done.
 	ExecutionDoneType
 )
