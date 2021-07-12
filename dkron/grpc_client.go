@@ -78,13 +78,13 @@ func (grpcc *GRPCClient) ExecutionDone(addr string, execution *Execution) error 
 		}).Error("grpc: error dialing.")
 		return err
 	}
+	defer conn.Close()
 
 	d := proto.NewDkronClient(conn)
 	edr, err := d.ExecutionDone(context.Background(), &proto.ExecutionDoneRequest{Execution: execution.ToProto()})
 	if err != nil {
 		if err.Error() == fmt.Sprintf("rpc error: code = Unknown desc = %s", ErrNotLeader.Error()) {
 			grpcc.logger.Info("grpc: ExecutionDone forwarded to the leader")
-			conn.Close()
 			return nil
 		}
 
@@ -100,7 +100,6 @@ func (grpcc *GRPCClient) ExecutionDone(addr string, execution *Execution) error 
 		"from":        edr.From,
 		"payload":     string(edr.Payload),
 	}).Debug("grpc: Response from method")
-	conn.Close()
 	return nil
 }
 
