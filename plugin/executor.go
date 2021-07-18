@@ -62,7 +62,10 @@ func (m *ExecutorClient) Execute(args *types.ExecuteRequest, cb StatusHelper) (*
 	args.StatusServer = brokerID
 	r, err := m.client.Execute(context.Background(), args)
 
-	s.Stop()
+	/* In some cases the server cannot start (ex: too many open files), so, the s pointer is nil */
+	if s != nil {
+		s.Stop()
+	}
 	return r, err
 }
 
