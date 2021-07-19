@@ -77,7 +77,7 @@ func (s *Scheduler) Stop() {
 
 	if s.started {
 		s.logger.Debug("scheduler: Stopping scheduler")
-		s.Cron.Stop()
+		<- s.Cron.Stop().Done()
 		s.started = false
 		// Keep Cron exists and let the jobs which have been scheduled can continue to finish,
 		// even the node's leadership will be revoked.
