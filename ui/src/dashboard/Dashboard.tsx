@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Card, CardContent, CardHeader } from '@material-ui/core';
-import { List, Datagrid, TextField } from 'react-admin';
+import { List, Datagrid, TextField, SelectField } from 'react-admin';
 import { TagsField } from '../TagsField'
 import Leader from './Leader';
 import FailedJobs from './FailedJobs';
@@ -62,7 +62,13 @@ const Dashboard = () => (
                         <TextField source="Name" sortable={false} />
                         <TextField source="Addr" sortable={false} />
                         <TextField source="Port" sortable={false} />
-                        <TextField source="Status" sortable={false} />
+                        <SelectField source="Status" sortable={false} choices={[
+                            { id: 0, name: 'none'},
+                            { id: 1, name: 'alive'},
+                            { id: 2, name: 'leaving'},
+                            { id: 3, name: 'left'},
+                            { id: 4, name: 'failed'},
+                        ]} />
                         <TagsField source="Tags" sortable={false} />
                     </Datagrid>
                 </List>
