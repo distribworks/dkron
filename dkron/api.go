@@ -365,13 +365,14 @@ type MId struct {
 	serf.Member
 
 	Id string `json:"id"`
+	StatusText string `json:"statusText"`
 }
 
 func (h *HTTPTransport) membersHandler(c *gin.Context) {
 	mems := []*MId{}
 	for _, m := range h.agent.serf.Members() {
 		id, _ := uuid.GenerateUUID()
-		mid := &MId{m, id}
+		mid := &MId{m, id, m.Status.String()}
 		mems = append(mems, mid)
 	}
 	c.Header("X-Total-Count", strconv.Itoa(len(mems)))
