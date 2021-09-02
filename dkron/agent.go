@@ -441,6 +441,9 @@ func (a *Agent) setupSerf() (*serf.Serf, error) {
 
 	serfConfig.Tags = a.config.Tags
 	serfConfig.Tags["role"] = "dkron"
+	if _, ok := a.config.Tags["role"]; ok {
+		serfConfig.Tags["role"] = a.config.Tags["role"]
+	}
 	serfConfig.Tags["dc"] = a.config.Datacenter
 	serfConfig.Tags["region"] = a.config.Region
 	serfConfig.Tags["version"] = Version
