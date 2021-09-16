@@ -244,14 +244,14 @@ func (a *Agent) JoinLAN(addrs []string) (int, error) {
 func (a *Agent) Stop() error {
 	a.logger.Info("agent: Called member stop, now stopping")
 
-	if a.config.Server {
-		a.raft.Shutdown()
-		a.Store.Shutdown()
-	}
-
 	if a.config.Server && a.sched.Started() {
 		a.sched.Stop()
 		a.sched.ClearCron()
+	}
+
+	if a.config.Server {
+		a.raft.Shutdown()
+		a.Store.Shutdown()
 	}
 
 	if err := a.serf.Leave(); err != nil {
