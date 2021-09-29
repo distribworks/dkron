@@ -97,9 +97,13 @@ nfpms:
     #files:
     #  "builder/files/": "/etc/init.d"
     #  "path/**/glob": "/var/foo/glob"
-    config_files:
-      "builder/files/dkron.yml": "/etc/dkron/dkron.yml"
-      "builder/files/dkron.service": "/lib/systemd/system/dkron.service"
+    contents:
+      - src: builder/files/dkron.yml
+        dst: /etc/dkron/dkron.yml
+        type: config
+      - src: builder/files/dkron.service
+        dst: /lib/systemd/system/dkron.service
+        type: config
 
     overrides:
       rpm:
