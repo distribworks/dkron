@@ -54,7 +54,6 @@ const JobShow = (props: any) => (
                         collapsed: false,
                         enableClipboard: false,
                         displayDataTypes: false,
-                        src: {},
                     }}
                 />
                 <JsonField
@@ -65,7 +64,6 @@ const JobShow = (props: any) => (
                         collapsed: false,
                         enableClipboard: false,
                         displayDataTypes: false,
-                        src: {},
                     }}
                 />
                 <JsonField
@@ -76,7 +74,6 @@ const JobShow = (props: any) => (
                         collapsed: false,
                         enableClipboard: false,
                         displayDataTypes: false,
-                        src: {},
                     }}
                 />
             </Tab>
