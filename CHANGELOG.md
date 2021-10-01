@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.1.10] - 2021-10-01
+
+### Fixes
+
+- Nats executor consume all available connections [#1020](https://github.com/distribworks/dkron/pull/1020)
+
+### Changes
+
+- Update assets with latest changes
+
 ## [3.1.9] - 2021-09-29
 
 ### Features
