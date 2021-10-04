@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2021-06-10T18:39:03 CEST">
+<meta name="revised" content="2021-10-04T08:34:03 CEST">
 <title>Cloud Auto-join :: Dkron - Cloud native job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -1608,9 +1608,9 @@ supported cloud provider, specify the configuration on the command line or
 configuration file as a <code>key=value key=value ...</code> string.</p>
 <p>If the values contain spaces, equals, backslashes or double quotes then
 they need to be double quoted and the usual escaping rules apply.</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#39;provider=my-cloud config=val config2=&#34;some other val&#34; ...&#39;</span>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#39;provider=my-cloud config=val config2=&#34;some other val&#34; ...&#39;</span>
 </code></pre></div><p>or via a configuration file:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml"><span style="color:#ae81ff">retry-join&#34;: [&#34;provider=my-cloud config=val config2=\&#34;some other val\&#34; ...&#34;]</span>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml"><span style="color:#ae81ff">retry-join&#34;: [&#34;provider=my-cloud config=val config2=\&#34;some other val\&#34; ...&#34;]</span>
 </code></pre></div><p>The cloud provider-specific configurations are detailed below. This can be
 combined with static IP or DNS addresses or even multiple configurations
 for different providers.</p>
@@ -1622,8 +1622,8 @@ provider.</p>
 <h3 id="amazon-ec2">Amazon EC2</h3>
 <p>This returns the first private IP address of all servers in the given
 region which have the given <code>tag_key</code> and <code>tag_value</code>.</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#34;provider=aws tag_key=... tag_value=...&#34;</span>
-</code></pre></div><div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml"><span style="color:#f92672">retry-join</span><span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=aws tag_key=... tag_value=...&#34;</span><span style="color:#111">]</span>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#34;provider=aws tag_key=... tag_value=...&#34;</span>
+</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml"><span style="color:#f92672">retry-join</span><span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=aws tag_key=... tag_value=...&#34;</span><span style="color:#111">]</span>
 </code></pre></div><ul>
 <li><code>provider</code> (required) - the name of the provider (&ldquo;aws&rdquo; in this case).</li>
 <li><code>tag_key</code> (required) - the key of the tag to auto-join on.</li>
@@ -1650,8 +1650,8 @@ endpoint</a>.</p>
 <p>This returns the first private IP address of all servers in the given region
 which have the given <code>tag_key</code> and <code>tag_value</code> in the tenant and subscription, or in
 the given <code>resource_group</code> of a <code>vm_scale_set</code> for Virtual Machine Scale Sets.</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#34;provider=azure tag_name=... tag_value=... tenant_id=... client_id=... subscription_id=... secret_access_key=...&#34;</span>
-</code></pre></div><div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml"><span style="color:#f92672">retry-join</span><span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=azure tag_name=... tag_value=... tenant_id=... client_id=... subscription_id=... secret_access_key=...&#34;</span><span style="color:#111">]</span>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#34;provider=azure tag_name=... tag_value=... tenant_id=... client_id=... subscription_id=... secret_access_key=...&#34;</span>
+</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml"><span style="color:#f92672">retry-join</span><span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=azure tag_name=... tag_value=... tenant_id=... client_id=... subscription_id=... secret_access_key=...&#34;</span><span style="color:#111">]</span>
 </code></pre></div><ul>
 <li><code>provider</code> (required) - the name of the provider (&ldquo;azure&rdquo; in this case).</li>
 <li><code>tenant_id</code> (required) - the tenant to join machines in.</li>
@@ -1680,8 +1680,8 @@ the given <code>resource_group</code> of a <code>vm_scale_set</code> for Virtual
 <h3 id="google-compute-engine">Google Compute Engine</h3>
 <p>This returns the first private IP address of all servers in the given
 project which have the given <code>tag_value</code>.</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#34;provider=gce project_name=... tag_value=...&#34;</span>
-</code></pre></div><div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml"><span style="color:#f92672">retry_join</span><span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=gce project_name=... tag_value=...&#34;</span><span style="color:#111">]</span>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#34;provider=gce project_name=... tag_value=...&#34;</span>
+</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml"><span style="color:#f92672">retry_join</span><span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=gce project_name=... tag_value=...&#34;</span><span style="color:#111">]</span>
 </code></pre></div><ul>
 <li><code>provider</code> (required) - the name of the provider (&ldquo;gce&rdquo; in this case).</li>
 <li><code>tag_value</code> (required) - the value of the tag to auto-join on.</li>
@@ -1708,8 +1708,8 @@ Credentials are searched using the following paths, in order of precedence.</p>
 <h3 id="ibm-softlayer">IBM SoftLayer</h3>
 <p>This returns the first private IP address of all servers for the given
 datacenter with the given <code>tag_value</code>.</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#34;provider=softlayer datacenter=... tag_value=... username=... api_key=...&#34;</span>
-</code></pre></div><div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml"><span style="color:#f92672">retry-join</span><span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=softlayer datacenter=... tag_value=... username=... api_key=...&#34;</span><span style="color:#111">]</span>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#34;provider=softlayer datacenter=... tag_value=... username=... api_key=...&#34;</span>
+</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml"><span style="color:#f92672">retry-join</span><span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=softlayer datacenter=... tag_value=... username=... api_key=...&#34;</span><span style="color:#111">]</span>
 </code></pre></div><ul>
 <li><code>provider</code> (required) - the name of the provider (&ldquo;softlayer&rdquo; in this case).</li>
 <li><a name="sl_datacenter"></a><a href="#sl_datacenter"><code>datacenter</code></a> (required) - the name of the datacenter to auto-join in.</li>
@@ -1720,8 +1720,8 @@ datacenter with the given <code>tag_value</code>.</p>
 <h3 id="aliyun-alibaba-cloud">Aliyun (Alibaba Cloud)</h3>
 <p>This returns the first private IP address of all servers for the given
 <code>region</code> with the given <code>tag_key</code> and <code>tag_value</code>.</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#34;provider=aliyun region=... tag_key=dkron tag_value=... access_key_id=... access_key_secret=...&#34;</span>
-</code></pre></div><div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml"><span style="color:#f92672">retry-join</span><span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=aliyun region=... tag_key=dkron tag_value=... access_key_id=... access_key_secret=...&#34;</span><span style="color:#111">]</span>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#34;provider=aliyun region=... tag_key=dkron tag_value=... access_key_id=... access_key_secret=...&#34;</span>
+</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml"><span style="color:#f92672">retry-join</span><span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=aliyun region=... tag_key=dkron tag_value=... access_key_id=... access_key_secret=...&#34;</span><span style="color:#111">]</span>
 </code></pre></div><ul>
 <li><code>provider</code> (required) - the name of the provider (&ldquo;aliyun&rdquo; in this case).</li>
 <li><code>region</code> (required) - the name of the region.</li>
@@ -1735,8 +1735,8 @@ It is recommended you make a dedicated key used only for auto-joining.</p>
 <h3 id="digital-ocean">Digital Ocean</h3>
 <p>This returns the first private IP address of all servers for the given
 <code>region</code> with the given <code>tag_name</code>.</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#34;provider=digitalocean region=... tag_name=... api_token=...&#34;</span>
-</code></pre></div><div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml"><span style="color:#f92672">retry-join</span><span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=digitalocean region=... tag_name=... api_token=...&#34;</span><span style="color:#111">]</span>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#34;provider=digitalocean region=... tag_name=... api_token=...&#34;</span>
+</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml"><span style="color:#f92672">retry-join</span><span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=digitalocean region=... tag_name=... api_token=...&#34;</span><span style="color:#111">]</span>
 </code></pre></div><ul>
 <li><code>provider</code> (required) - the name of the provider (&ldquo;digitalocean&rdquo; in this case).</li>
 <li><code>region</code> (required) - the name of the region.</li>
@@ -1746,8 +1746,8 @@ It is recommended you make a dedicated key used only for auto-joining.</p>
 <h3 id="openstack">Openstack</h3>
 <p>This returns the first private IP address of all servers for the given
 <code>region</code> with the given <code>tag_key</code> and <code>tag_value</code>.</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#34;provider=os tag_key=dkron tag_value=server username=... password=... auth_url=...&#34;</span>
-</code></pre></div><div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml"><span style="color:#f92672">retry-join</span><span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=os tag_key=dkron tag_value=server username=... password=... auth_url=...&#34;</span><span style="color:#111">]</span>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#34;provider=os tag_key=dkron tag_value=server username=... password=... auth_url=...&#34;</span>
+</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml"><span style="color:#f92672">retry-join</span><span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=os tag_key=dkron tag_value=server username=... password=... auth_url=...&#34;</span><span style="color:#111">]</span>
 </code></pre></div><ul>
 <li><code>provider</code> (required) - the name of the provider (&ldquo;os&rdquo; in this case).</li>
 <li><code>tag_key</code> (required) - the key of the tag to auto-join on.</li>
@@ -1763,8 +1763,8 @@ It is recommended you make a dedicated key used only for auto-joining.</p>
 <h3 id="scaleway">Scaleway</h3>
 <p>This returns the first private IP address of all servers for the given
 <code>region</code> with the given <code>tag_name</code>.</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#34;provider=scaleway organization=my-org tag_name=dkron-server token=... region=...&#34;</span>
-</code></pre></div><div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml"><span style="color:#f92672">retry-join</span><span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=scaleway organization=my-org tag_name=dkron-server token=... region=...&#34;</span><span style="color:#111">]</span>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#34;provider=scaleway organization=my-org tag_name=dkron-server token=... region=...&#34;</span>
+</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml"><span style="color:#f92672">retry-join</span><span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=scaleway organization=my-org tag_name=dkron-server token=... region=...&#34;</span><span style="color:#111">]</span>
 </code></pre></div><ul>
 <li><code>provider</code> (required) - the name of the provider (&ldquo;scaleway&rdquo; in this case).</li>
 <li><code>region</code> (required) - the name of the region.</li>
@@ -1774,8 +1774,8 @@ It is recommended you make a dedicated key used only for auto-joining.</p>
 </ul>
 <h3 id="joyent-triton">Joyent Triton</h3>
 <p>This returns the first PrimaryIP addresses for all servers with the given <code>tag_key</code> and <code>tag_value</code>.</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#34;provider=triton account=testaccount url=https://us-sw-1.api.joyentcloud.com key_id=... tag_key=dkron-role tag_value=server&#34;</span>
-</code></pre></div><div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml"><span style="color:#f92672">retry-join</span><span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=triton account=testaccount url=https://us-sw-1.api.joyentcloud.com key_id=... tag_key=dkron-role tag_value=server&#34;</span><span style="color:#111">]</span>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#34;provider=triton account=testaccount url=https://us-sw-1.api.joyentcloud.com key_id=... tag_key=dkron-role tag_value=server&#34;</span>
+</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml"><span style="color:#f92672">retry-join</span><span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=triton account=testaccount url=https://us-sw-1.api.joyentcloud.com key_id=... tag_key=dkron-role tag_value=server&#34;</span><span style="color:#111">]</span>
 </code></pre></div><ul>
 <li><code>provider</code> (required) - the name of the provider (&ldquo;triton&rdquo; in this case).</li>
 <li><code>account</code> (required) - the name of the account.</li>
@@ -1786,8 +1786,8 @@ It is recommended you make a dedicated key used only for auto-joining.</p>
 </ul>
 <h3 id="vsphere">vSphere</h3>
 <p>This returns the first private IP address of all servers for the given region with the given <code>tag_name</code> and <code>category_name</code>.</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#34;provider=vsphere category_name=dkron-role tag_name=dkron-server host=... user=... password=... insecure_ssl=[true|false]&#34;</span>
-</code></pre></div><div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml"><span style="color:#f92672">retry-join</span><span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=vsphere category_name=dkron-role tag_name=dkron-server host=... user=... password=... insecure_ssl=[true|false]&#34;</span><span style="color:#111">]</span>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#34;provider=vsphere category_name=dkron-role tag_name=dkron-server host=... user=... password=... insecure_ssl=[true|false]&#34;</span>
+</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml"><span style="color:#f92672">retry-join</span><span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=vsphere category_name=dkron-role tag_name=dkron-server host=... user=... password=... insecure_ssl=[true|false]&#34;</span><span style="color:#111">]</span>
 </code></pre></div><ul>
 <li><code>provider</code> (required) -   the name of the provider (&ldquo;vsphere&rdquo; is the provider here)</li>
 <li><code>tag_name</code> (required) -    The name of the tag to look up.</li>
@@ -1800,8 +1800,8 @@ It is recommended you make a dedicated key used only for auto-joining.</p>
 </ul>
 <h3 id="packet">Packet</h3>
 <p>This returns the first private IP address (or the IP address of <code>address type</code>) of all servers with the given <code>project</code> and <code>auth_token</code>.</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#34;provider=packet auth_token=token project=uuid url=... address_type=...&#34;</span>
-</code></pre></div><div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml"><span style="color:#f92672">retry-join</span><span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=packet auth_token=token project=uuid url=... address_type=...&#34;</span><span style="color:#111">]</span>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#34;provider=packet auth_token=token project=uuid url=... address_type=...&#34;</span>
+</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml"><span style="color:#f92672">retry-join</span><span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=packet auth_token=token project=uuid url=... address_type=...&#34;</span><span style="color:#111">]</span>
 </code></pre></div><ul>
 <li><code>provider</code> (required)	-	the name of the provider (&ldquo;packet&rdquo; is the provider here)</li>
 <li><code>project</code> (required) 	- 	the UUID of packet project</li>
@@ -1822,8 +1822,8 @@ to be exported to the host as well.</p>
 gossip port (default behavior with all join requests). The pod may specify
 the <code>dkron.hashicorp.com/auto-join-port</code> annotation to set the port. The value
 may be an integer or a named port.</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#34;provider=k8s label_selector=\&#34;app=dkron,component=server\&#34;&#34;</span>
-</code></pre></div><div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml"><span style="color:#f92672">retry-join</span><span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=k8s label_selector=...&#34;</span><span style="color:#111">]</span>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ dkron agent --retry-join <span style="color:#d88200">&#34;provider=k8s label_selector=\&#34;app=dkron,component=server\&#34;&#34;</span>
+</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yml" data-lang="yml"><span style="color:#f92672">retry-join</span><span style="color:#111">:</span> <span style="color:#111">[</span><span style="color:#d88200">&#34;provider=k8s label_selector=...&#34;</span><span style="color:#111">]</span>
 </code></pre></div><ul>
 <li><code>provider</code> (required)	-	the name of the provider (&ldquo;k8s&rdquo; is the provider here)</li>
 <li><code>kubeconfig</code> (optional) 	- 	path to the kubeconfig file. If this isn&rsquo;t

@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2021-06-10T18:39:04 CEST">
+<meta name="revised" content="2021-10-04T08:34:04 CEST">
 <title>Outage recovery :: Dkron - Cloud native job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -1639,7 +1639,7 @@
 <p>Both of these strategies involve a potentially lengthy time to reboot or rebuild a failed server. If this is impractical or if building a new server with the same IP isn&rsquo;t an option, you need to remove the failed server. Usually, you can issue a <code>dkron leave</code> command to remove the failed server if it&rsquo;s still a member of the cluster.</p>
 <p>If <code>dkron leave</code> isn&rsquo;t able to remove the server, you can use the <code>dkron raft remove-peer</code> command to remove the stale peer server on the fly with no downtime.</p>
 <p>You can use the <code>dkron raft list-peers</code> command to inspect the Raft configuration:</p>
-<pre><code>$ dkron raft list-peers
+<pre tabindex="0"><code>$ dkron raft list-peers
 Node                   ID               Address          State     Voter
 dkron-server01.global  10.10.11.5:4647  10.10.11.5:4647  follower  true
 dkron-server02.global  10.10.11.6:4647  10.10.11.6:4647  leader    true
@@ -1655,7 +1655,7 @@ dkron-server03.global  10.10.11.7:4647  10.10.11.7:4647  follower  true
 <p>The peers.json file will be deleted after Dkron starts and ingests this file.</p>
 <p>Using raft/peers.json for recovery can cause uncommitted Raft log entries to be implicitly committed, so this should only be used after an outage where no other option is available to recover a lost server. Make sure you don&rsquo;t have any automated processes that will put the peers file in place on a periodic basis.</p>
 <p>The next step is to go to the <code>data-dir</code> of each Dkron server. Inside that directory, there will be a raft/ sub-directory. We need to create a raft/peers.json file. It should look something like:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">[</span>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">[</span>
   <span style="color:#111">{</span>
     <span style="color:#f92672">&#34;id&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;node1&#34;</span><span style="color:#111">,</span>
     <span style="color:#f92672">&#34;address&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;10.1.0.1:4647&#34;</span>
@@ -1671,12 +1671,12 @@ dkron-server03.global  10.10.11.7:4647  10.10.11.7:4647  follower  true
 <span style="color:#111">]</span>
 </code></pre></div><p>Simply create entries for all remaining servers. You must confirm that servers you do not include here have indeed failed and will not later rejoin the cluster. Ensure that this file is the same across all remaining server nodes.</p>
 <p>At this point, you can restart all the remaining servers. In Dkron 0.5.5 and later you will see them ingest recovery file:</p>
-<pre><code>Recovery log placeholder
+<pre tabindex="0"><code>Recovery log placeholder
 </code></pre><p>It should be noted that any existing member can be used to rejoin the cluster as the gossip protocol will take care of discovering the server nodes.</p>
 <p>At this point, the cluster should be in an operable state again. One of the nodes should claim leadership and emit a log like:</p>
 <p><code>[INFO] Dkron: cluster leadership acquired</code></p>
 <p>You can use the <code>dkron raft list-peers</code> command to inspect the Raft configuration:</p>
-<pre><code>$ dkron raft list-peers
+<pre tabindex="0"><code>$ dkron raft list-peers
 Node   ID     Address          State     Voter
 node1  node1  10.10.11.5:4647  follower  true
 node2  node2  10.10.11.6:4647  leader    true

@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2021-06-10T18:39:03 CEST">
+<meta name="revised" content="2021-10-04T08:34:04 CEST">
 <title>AWS ECS Executor :: Dkron - Cloud native job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -1623,7 +1623,7 @@
     <p>The ECS exeutor is capable of launching tasks in ECS clusters, then listen to a stream of CloudWatch Logs and return the output.</p>
 <p>To configure a job to be run in ECS, the executor needs a JSON Task definition template or an already defined task in ECS.</p>
 <p>To allow the ECS Task runner to run tasks, the machine running Dkron needs to have the appropriate permissions configured in AWS IAM:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">{</span>
     <span style="color:#f92672">&#34;Version&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;2012-10-17&#34;</span><span style="color:#111">,</span>
     <span style="color:#f92672">&#34;Statement&#34;</span><span style="color:#111">:</span> <span style="color:#111">[</span>
         <span style="color:#111">{</span>
@@ -1645,7 +1645,7 @@
 <span style="color:#111">}</span>
 </code></pre></div><p>To configure a job to be run with the ECS executor:</p>
 <p>Example using an existing taskdef</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">{</span>
   <span style="color:#f92672">&#34;executor&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;ecs&#34;</span><span style="color:#111">,</span>
   <span style="color:#f92672">&#34;executor_config&#34;</span><span style="color:#111">:</span> <span style="color:#111">{</span>
     <span style="color:#f92672">&#34;taskdefName&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;mytaskdef-family&#34;</span><span style="color:#111">,</span>
@@ -1657,7 +1657,7 @@
   <span style="color:#111">}</span>
 <span style="color:#111">}</span>
 </code></pre></div><p>Example using a provided taskdef</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">{</span>
   <span style="color:#f92672">&#34;executor&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;ecs&#34;</span><span style="color:#111">,</span>
   <span style="color:#f92672">&#34;executor_config&#34;</span><span style="color:#111">:</span> <span style="color:#111">{</span>
     <span style="color:#f92672">&#34;taskdefBody&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;{\&#34;containerDefinitions\&#34;: [{\&#34;essential\&#34;: true,\&#34;image\&#34;: \&#34;hello-world\&#34;,\&#34;memory\&#34;: 100,\&#34;name\&#34;: \&#34;hello-world\&#34;}],\&#34;family\&#34;: \&#34;helloworld\&#34;}&#34;</span><span style="color:#111">,</span>
@@ -1669,7 +1669,7 @@
   <span style="color:#111">}</span>
 <span style="color:#111">}</span>
 </code></pre></div><p>This is the complete list of configuration parameters of the plugin:</p>
-<pre><code>taskdefBody
+<pre tabindex="0"><code>taskdefBody
 taskdefName
 region
 cluster

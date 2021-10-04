@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2021-06-10T18:39:03 CEST">
+<meta name="revised" content="2021-10-04T08:34:03 CEST">
 <title>Access Control :: Dkron - Cloud native job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -1618,7 +1618,7 @@
 <h2 id="configuring-acls">Configuring ACLs</h2>
 <p>ACLs are not enabled by default and must be enabled. To enable ACLs simply create an ACL policy using the API. Below you can find the most basic example of an ACL policy:</p>
 <p>Basic example policy:</p>
-<pre><code>curl localhost:8080/v1/acl/policies -d '{
+<pre tabindex="0"><code>curl localhost:8080/v1/acl/policies -d '{
     &quot;path&quot;: {
         &quot;/v1&quot;: {
             &quot;capabilities&quot;: [
@@ -1640,7 +1640,7 @@
 <p>ACLs also allows templating, providing the ability to allow or deny operations to certain resource by patterns without having to hardcode values in policies.</p>
 <p>For example, we can for limit job actions on certain resources based on the provided token via the accepted header <code>X-Dkron-Token</code> on the request:</p>
 <p>Example policy:</p>
-<pre><code>curl localhost:8080/v1/acl/policies -d '{
+<pre tabindex="0"><code>curl localhost:8080/v1/acl/policies -d '{
     &quot;path&quot;: {
         &quot;/v1/members&quot;: {
             &quot;capabilities&quot;: [&quot;read&quot;]
@@ -1664,7 +1664,7 @@
 </code></pre><p>This policy will allow all operations on jobs starting with <code>[Token]-job_name</code>, but will deny manipulation of jobs that doesn&rsquo;t match the pattern.</p>
 <h2 id="disable-acls">Disable ACLs</h2>
 <p>As an administrator you will need to edit policies. Currently to be able to edit ACLs if you get locked out, you need to edit the default Rego file and disable enforcement completely. Edit the file located in <code>policies/main.rego</code> and change the <code>default allow</code> directive to <code>true</code>:</p>
-<pre><code>default allow = false -&gt; true
+<pre tabindex="0"><code>default allow = false -&gt; true
 </code></pre><p>This way the policy engine always evaluates to true, allowing any operation again. To restore ACL enforcemen, edit again the <code>default allow</code> line and set it back to <code>false</code>.</p>
 
 

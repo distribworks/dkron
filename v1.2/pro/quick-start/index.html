@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2021-06-10T18:39:03 CEST">
+<meta name="revised" content="2021-10-04T08:34:04 CEST">
 <title>Quick start :: Dkron - Cloud native job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -1628,7 +1628,7 @@
 </ul>
 <p>Check your server is working: <code>curl localhost:8080/v1</code></p>
 <p>Simple as that, now it is time to add some jobs:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">curl localhost:8080/v1/jobs -XPOST -d <span style="color:#d88200">&#39;{
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">curl localhost:8080/v1/jobs -XPOST -d <span style="color:#d88200">&#39;{
 </span><span style="color:#d88200">  &#34;name&#34;: &#34;job1&#34;,
 </span><span style="color:#d88200">  &#34;schedule&#34;: &#34;@every 10s&#34;,
 </span><span style="color:#d88200">  &#34;timezone&#34;: &#34;Europe/Berlin&#34;,

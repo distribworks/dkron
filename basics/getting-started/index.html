@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2021-06-10T18:39:03 CEST">
+<meta name="revised" content="2021-10-04T08:34:03 CEST">
 <title>Getting started :: Dkron - Cloud native job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -1613,7 +1613,7 @@
 <li>System service: If no changes are done to the default config files, dkron will start as a service in single mode.</li>
 <li>Command line: Running a single node with default config can be done by running:</li>
 </ul>
-<pre><code>dkron agent --server --bootstrap-expect=1
+<pre tabindex="0"><code>dkron agent --server --bootstrap-expect=1
 </code></pre><p>Check your server is working: <code>curl localhost:8080/v1</code></p>
 
 <div class="notices info" ><p><p>For a full list of configuration parameters and its description, see the <a href="https://dkron.io/cli/dkron_agent/">CLI docs</a></p>
@@ -1624,7 +1624,7 @@
 <div class="notices note" ><p><p>This job will only run in just one <code>server</code> node due to the node count in the tag. Refer to the <a href="/usage/target-nodes-spec">target node spec</a> for details.</p>
 </p></div>
 
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">curl localhost:8080/v1/jobs -XPOST -d <span style="color:#d88200">&#39;{
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">curl localhost:8080/v1/jobs -XPOST -d <span style="color:#d88200">&#39;{
 </span><span style="color:#d88200">  &#34;name&#34;: &#34;job1&#34;,
 </span><span style="color:#d88200">  &#34;schedule&#34;: &#34;@every 10s&#34;,
 </span><span style="color:#d88200">  &#34;timezone&#34;: &#34;Europe/Berlin&#34;,

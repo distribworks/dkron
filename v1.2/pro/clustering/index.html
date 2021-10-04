@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2021-06-10T18:39:03 CEST">
+<meta name="revised" content="2021-10-04T08:34:04 CEST">
 <title>Clustering :: Dkron - Cloud native job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -1619,7 +1619,7 @@
     <h2 id="configure-a-cluster">Configure a cluster</h2>
 <p>First follow the Dkron <a href="/usage/clustering">clustering guide</a> then you can continue with this guide.</p>
 <p>The embedded store also needs to know its peers, it needs its own configuration as in the following example:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#75715e"># etcd.conf.yaml</span>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#75715e"># etcd.conf.yaml</span>
 <span style="color:#75715e"># Initial cluster configuration for bootstrapping.</span>
 <span style="color:#f92672">initial-cluster</span><span style="color:#111">:</span> <span style="color:#ae81ff">dkron1=https://10.19.3.9:2380,dkron2=https://10.19.4.64:2380,dkron3=https://10.19.7.215:2380</span>
 </code></pre></div><p>With this configuration Dkron Pro should start in cluster mode with embedded storage.</p>

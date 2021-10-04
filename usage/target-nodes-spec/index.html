@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2021-06-10T18:39:03 CEST">
+<meta name="revised" content="2021-10-04T08:34:03 CEST">
 <title>Target nodes spec :: Dkron - Cloud native job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -1606,7 +1606,7 @@
 <pre><code>&quot;tag&quot;: &quot;value[:count]&quot;
 </code></pre>
 <p>To achieve this Nodes and Jobs have tags, for example, having a node with the following tags:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">{</span>
     <span style="color:#f92672">&#34;tags&#34;</span><span style="color:#111">:</span> <span style="color:#111">{</span>
         <span style="color:#f92672">&#34;dc&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;dc1&#34;</span><span style="color:#111">,</span>
         <span style="color:#f92672">&#34;expect&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;3&#34;</span><span style="color:#111">,</span>
@@ -1625,7 +1625,7 @@
 <p>In case there is no matching nodes with the specified tags, the job will not run.</p>
 <p>Following some examples using different tag combinations:</p>
 <h4 id="target-all-nodes-with-a-tag">Target all nodes with a tag</h4>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">{</span>
     <span style="color:#f92672">&#34;name&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;job_name&#34;</span><span style="color:#111">,</span>
     <span style="color:#f92672">&#34;command&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;/bin/true&#34;</span><span style="color:#111">,</span>
     <span style="color:#f92672">&#34;schedule&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;@every 2m&#34;</span><span style="color:#111">,</span>
@@ -1642,7 +1642,7 @@ graph LR;
     J -->|Run Job|N3["Node2 tags: #quot;my_role#quot;: #quot;web#quot;"]
 </div>
 <h4 id="target-only-one-nodes-of-a-group-of-nodes-with-a-tag">Target only one nodes of a group of nodes with a tag</h4>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">{</span>
     <span style="color:#f92672">&#34;name&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;job_name&#34;</span><span style="color:#111">,</span>
     <span style="color:#f92672">&#34;command&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;/bin/true&#34;</span><span style="color:#111">,</span>
     <span style="color:#f92672">&#34;schedule&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;@every 2m&#34;</span><span style="color:#111">,</span>
@@ -1663,7 +1663,7 @@ graph LR;
 <ul>
 <li>Tags specified in a Job are combined using <code>AND</code>, therefore a job that specifies several tags like:</li>
 </ul>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">{</span>
     <span style="color:#f92672">&#34;tags&#34;</span><span style="color:#111">:</span> <span style="color:#111">{</span>
         <span style="color:#f92672">&#34;my_role&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;web&#34;</span><span style="color:#111">,</span>
         <span style="color:#f92672">&#34;role&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;dkron&#34;</span>
@@ -1671,7 +1671,7 @@ graph LR;
 <span style="color:#111">}</span>
 </code></pre></div><p>Will try to run the job in nodes that have all speciefied tags.</p>
 <p>There is no limit in the tags that a job can have but having a Job with several tags with count like:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#111">{</span>
     <span style="color:#f92672">&#34;tags&#34;</span><span style="color:#111">:</span> <span style="color:#111">{</span>
         <span style="color:#f92672">&#34;my_role&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;web:1&#34;</span><span style="color:#111">,</span>
         <span style="color:#f92672">&#34;role&#34;</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;dkron:2&#34;</span>

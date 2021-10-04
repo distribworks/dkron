@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2021-06-10T18:39:03 CEST">
+<meta name="revised" content="2021-10-04T08:34:03 CEST">
 <title>Installation :: Dkron - Cloud native job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -1588,11 +1588,11 @@
 <h2 id="installing-the-package">Installing the package</h2>
 <h3 id="debian-repo">Debian repo</h3>
 <p>APT repository:</p>
-<pre><code>deb [trusted=yes] https://repo.distrib.works/apt/ /
+<pre tabindex="0"><code>deb [trusted=yes] https://repo.distrib.works/apt/ /
 </code></pre><p>Then install: <code>sudo apt-get install dkron</code></p>
 <h3 id="yum-repo">YUM repo</h3>
 <p>YUM repository:</p>
-<pre><code>[dkron]
+<pre tabindex="0"><code>[dkron]
 name=Dkron Pro Private Repo
 baseurl=https://repo.distrib.works/yum/
 enabled=1
@@ -1603,14 +1603,14 @@ gpgcheck=0
 <p>Dkron provides an official Docker image vi Dockerhub that can be used for deployment on any system running Docker.</p>
 <h3 id="launching-dkron-as-a-new-container">Launching Dkron as a new container</h3>
 <p>Here’s a quick one-liner to get you off the ground (please note, we recommend further configuration for production deployments below):</p>
-<pre><code>docker run -d -p 8080:8080 --name dkron dkron/dkron agent --server --bootstrap-expect=1 --node-name=node1
+<pre tabindex="0"><code>docker run -d -p 8080:8080 --name dkron dkron/dkron agent --server --bootstrap-expect=1 --node-name=node1
 </code></pre><p>This will launch a Dkron server on port 8080 by default. You can use <code>docker logs -f dkron</code> to follow the rest of the initialization progress. Once the Dkron startup completes you can access the app at localhost:8080</p>
 <p>Since Docker containers have their own ports and we just map them to the system ports as needed it’s easy to move Dkron onto a different system port if you wish. For example running Dkron on port 12345:</p>
-<pre><code>docker run -d -p 12345:8080 --name dkron dkron/dkron agent --server --bootstrap-expect=1 --node-name=node1
+<pre tabindex="0"><code>docker run -d -p 12345:8080 --name dkron dkron/dkron agent --server --bootstrap-expect=1 --node-name=node1
 </code></pre><h3 id="mounting-a-mapped-file-storage-volume">Mounting a mapped file storage volume</h3>
 <p>Dkron uses the local filesystem for storing the embedded database to store its own application data and the Raft protocol log. The end result is that your Dkron data will be on disk inside your container and lost if you ever remove the container.</p>
 <p>To persist your data outside of the container and make it available for use between container launches we can mount a local path inside our container.</p>
-<pre><code>docker run -d -p 8080:8080 -v ~/dkron.data:/dkron.data --name dkron dkron/dkron agent --server --bootstrap-expect=1 --data-dir=/dkron.data
+<pre tabindex="0"><code>docker run -d -p 8080:8080 -v ~/dkron.data:/dkron.data --name dkron dkron/dkron agent --server --bootstrap-expect=1 --data-dir=/dkron.data
 </code></pre><p>Now when you launch your container we are mounting that folder from our local filesystem into the container.</p>
 
 

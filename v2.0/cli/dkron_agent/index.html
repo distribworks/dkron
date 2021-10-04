@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2021-06-10T18:39:04 CEST">
+<meta name="revised" content="2021-10-04T08:34:04 CEST">
 <title>dkron agent :: Dkron - Cloud native job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -1617,9 +1617,9 @@
 <h3 id="synopsis">Synopsis</h3>
 <p>Start a dkron agent that schedules jobs, listens for executions and runs executors.
 It also runs a web UI.</p>
-<pre><code>dkron agent [flags]
+<pre tabindex="0"><code>dkron agent [flags]
 </code></pre><h3 id="options">Options</h3>
-<pre><code>      --advertise-addr string        Address used to advertise to other nodes in the cluster. By default, the bind address is advertised. The value supports go-sockaddr/template format.
+<pre tabindex="0"><code>      --advertise-addr string        Address used to advertise to other nodes in the cluster. By default, the bind address is advertised. The value supports go-sockaddr/template format.
       --advertise-rpc-port int       Use the value of rpc-port by default
       --bind-addr string             Specifies which address the agent should bind to for network services, including the internal gossip protocol and RPC mechanism. This should be specified in IP format, and can be used to easily bind all network services to the same address. The value supports go-sockaddr/template format. (default &quot;0.0.0.0:8946&quot;)
       --bootstrap-expect int         Provides the number of expected servers in the datacenter. Either this value should not be provided or the value must agree with other servers in the cluster. When provided, Dkron waits until the specified number of servers are available and then bootstraps the cluster. This allows an initial leader to be elected automatically. This flag requires server mode.
@@ -1654,7 +1654,7 @@ It also runs a web UI.</p>
       --webhook-payload string       Body of the POST request to send on webhook call
       --webhook-url string           Webhook url to call for notifications
 </code></pre><h3 id="options-inherited-from-parent-commands">Options inherited from parent commands</h3>
-<pre><code>      --config string   config file path
+<pre tabindex="0"><code>      --config string   config file path
 </code></pre><h3 id="see-also">SEE ALSO</h3>
 <ul>
 <li><a href="/cli/dkron/">dkron</a>	 - Open source distributed job scheduling system</li>

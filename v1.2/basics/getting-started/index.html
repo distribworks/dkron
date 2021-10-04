@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="revised" content="2021-06-10T18:39:03 CEST">
+<meta name="revised" content="2021-10-04T08:34:04 CEST">
 <title>Getting started :: Dkron - Cloud native job scheduling system</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -1642,13 +1642,13 @@
 
 <p>By default dkron will use the embedded BoltDB KV store. A different store can be specified setting <code>backend</code> and <code>backend-machines</code> flag in the config file, env variables or as a command line flag.</p>
 <p>To start a Dkron server instance:</p>
-<pre><code>dkron agent --server
+<pre tabindex="0"><code>dkron agent --server
 </code></pre><p>Time to add the first job:</p>
 
 <div class="notices note" ><p><p>This job will only run in just one <code>dkron_server</code> node due to the node count in the tag. Refer to the <a href="/usage/target-nodes-spec">target node spec</a> for details.</p>
 </p></div>
 
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">curl localhost:8080/v1/jobs -XPOST -d <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">curl localhost:8080/v1/jobs -XPOST -d <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">{</span>
   <span style="color:#d88200">&#34;name&#34;</span>: <span style="color:#d88200">&#34;job1&#34;</span>,
   <span style="color:#d88200">&#34;schedule&#34;</span>: <span style="color:#d88200">&#34;@every 10s&#34;</span>,
   <span style="color:#d88200">&#34;timezone&#34;</span>: <span style="color:#d88200">&#34;Europe/Berlin&#34;</span>,
