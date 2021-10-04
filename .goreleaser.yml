@@ -12,7 +12,7 @@ builds:
       - CGO_ENABLED=0
     goos:
       - freebsd
-      - windows
+      #- windows // Temporary disable because of https://github.com/golang/go/issues/46761
       - darwin
       - linux
     goarch:
