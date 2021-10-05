@@ -22,6 +22,7 @@ Example
 "executor": "kafka",
 "executor_config": {
     "brokerAddress": "localhost:9092",
+    "key": "MyKey",
     "message": "My message",
     "topic": "my_topic"
 }
