@@ -11,7 +11,8 @@ Params
 
 ```
 brokerAddress: "IP:port" of the broker
-message:       The message to produce
+key:           The key of the message to produce
+message:       The body of the message to produce
 topic:         The Kafka topic for this message
 debug:         Turns on debugging output if not empty
 ```
