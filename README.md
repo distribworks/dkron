@@ -70,7 +70,7 @@ PHP client
 https://github.com/gromo/dkron-php-adapter
 
 Terraform provider
-https://github.com/peertransfer/terraform-provider-dkron
+https://github.com/bozerkins/terraform-provider-dkron
 
 ## Get in touch
 
