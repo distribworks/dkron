@@ -371,14 +371,15 @@ func (h *HTTPTransport) executionsHandler(c *gin.Context) {
 	for j, execution := range executions {
 		apiExecutions[j] = &apiExecution{execution, false}
 		if outputSizeLimit > -1 {
-			apiExecutions[j].OutputTruncated = true
 			// truncate execution output
 			if outputSizeLimit == 0 {
 				apiExecutions[j].Output = ""
+				apiExecutions[j].OutputTruncated = true
 			} else {
 				size := len(execution.Output)
 				if size > outputSizeLimit {
 					apiExecutions[j].Output = apiExecutions[j].Output[size-outputSizeLimit:]
+					apiExecutions[j].OutputTruncated = true
 				}
 			}
 		}

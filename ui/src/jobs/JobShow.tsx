@@ -52,6 +52,7 @@ const FullButton = ({record}: any) => {
                 throw response
             })
             .then((data) => {
+                record.output_truncated = false
                 record.output = data.output
             })
             .catch((e) => {
@@ -74,8 +75,12 @@ const FullButton = ({record}: any) => {
 };
 
 const SpecialOutputPanel = ({ id, record, resource }: any) => {
-    // FIXME: hide button if not required
-    return (<div className="execution-output"><div><FullButton record={record} /></div>{record.output || "Empty output"}</div>);
+    return (
+        <div className="execution-output">
+            {record.output_truncated ? <div><FullButton record={record} /></div> : ""}
+            {record.output || "Empty output"}
+        </div>
+    );
 };
 
 const JobShow = (props: any) => (
