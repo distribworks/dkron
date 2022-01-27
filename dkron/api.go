@@ -329,6 +329,11 @@ func (h *HTTPTransport) restoreHandler(c *gin.Context) {
 	renderJSON(c, http.StatusOK, string(resp))
 }
 
+type apiExecution struct {
+	*Execution
+	OutputTruncated bool `json:"output_truncated"`
+}
+
 func (h *HTTPTransport) executionsHandler(c *gin.Context) {
 	jobName := c.Param("job")
 
@@ -337,9 +342,9 @@ func (h *HTTPTransport) executionsHandler(c *gin.Context) {
 		sort = "started_at"
 	}
 	order := c.DefaultQuery("_order", "DESC")
-	output_size_limit, err := strconv.Atoi(c.DefaultQuery("output_size_limit", ""))
+	outputSizeLimit, err := strconv.Atoi(c.DefaultQuery("output_size_limit", ""))
 	if err != nil {
-		output_size_limit = -1
+		outputSizeLimit = -1
 	}
 
 	job, err := h.agent.Store.GetJob(jobName, nil)
@@ -362,18 +367,25 @@ func (h *HTTPTransport) executionsHandler(c *gin.Context) {
 		return
 	}
 
-	if output_size_limit > 0 {
-		// truncate execution output
-		for _, execution := range executions {
-			size := len(execution.Output)
-			if size > output_size_limit {
-				execution.Output = execution.Output[size-output_size_limit:]
+	apiExecutions := make([]*apiExecution, len(executions))
+	for j, execution := range executions {
+		apiExecutions[j] = &apiExecution{execution, false}
+		if outputSizeLimit > -1 {
+			apiExecutions[j].OutputTruncated = true
+			// truncate execution output
+			if outputSizeLimit == 0 {
+				apiExecutions[j].Output = ""
+			} else {
+				size := len(execution.Output)
+				if size > outputSizeLimit {
+					apiExecutions[j].Output = apiExecutions[j].Output[size-outputSizeLimit:]
+				}
 			}
 		}
 	}
 
 	c.Header("X-Total-Count", strconv.Itoa(len(executions)))
-	renderJSON(c, http.StatusOK, executions)
+	renderJSON(c, http.StatusOK, apiExecutions)
 }
 
 func (h *HTTPTransport) executionHandler(c *gin.Context) {
