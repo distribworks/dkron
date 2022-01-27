@@ -119,7 +119,7 @@ func (h *HTTPTransport) APIRoutes(r *gin.RouterGroup, middleware ...gin.HandlerF
 	// Place fallback routes last
 	jobs.GET("/:job", h.jobGetHandler)
 	jobs.GET("/:job/executions", h.executionsHandler)
-	jobs.GET("/:job/execution/:execution", h.executionHandler)
+	jobs.GET("/:job/executions/:execution", h.executionHandler)
 }
 
 // MetaMiddleware adds middleware to the gin Context.

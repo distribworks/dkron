@@ -43,7 +43,7 @@ const FullButton = ({record}: any) => {
     const handleClick = () => {
         setLoading(true);
         dispatch(fetchStart()); // start the global loading indicator 
-        fetch(`${apiUrl}/jobs/${record.job_name}/execution/${record.id}`)
+        fetch(`${apiUrl}/jobs/${record.job_name}/executions/${record.id}`)
             .then((response) => {
                 if (response.ok) {
                     notify('Success loading full output');
