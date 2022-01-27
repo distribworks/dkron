@@ -365,9 +365,9 @@ func (h *HTTPTransport) executionsHandler(c *gin.Context) {
 	if output_size_limit > 0 {
 		// truncate execution output
 		for _, execution := range executions {
-			_s := len(execution.Output)
-			if _s > output_size_limit {
-				execution.Output = execution.Output[_s-output_size_limit:]
+			size := len(execution.Output)
+			if size > output_size_limit {
+				execution.Output = execution.Output[size-output_size_limit:]
 			}
 		}
 	}
