@@ -337,9 +337,9 @@ func (h *HTTPTransport) executionsHandler(c *gin.Context) {
 		sort = "started_at"
 	}
 	order := c.DefaultQuery("_order", "DESC")
-	output_size, err := strconv.Atoi(c.DefaultQuery("output_size", ""))
+	output_size_limit, err := strconv.Atoi(c.DefaultQuery("output_size_limit", ""))
 	if err != nil {
-		output_size = -1
+		output_size_limit = -1
 	}
 
 	job, err := h.agent.Store.GetJob(jobName, nil)
@@ -362,12 +362,12 @@ func (h *HTTPTransport) executionsHandler(c *gin.Context) {
 		return
 	}
 
-	if output_size > 0 {
+	if output_size_limit > 0 {
 		// truncate execution output
 		for _, execution := range executions {
 			_s := len(execution.Output)
-			if _s > output_size {
-				execution.Output = execution.Output[_s-output_size:]
+			if _s > output_size_limit {
+				execution.Output = execution.Output[_s-output_size_limit:]
 			}
 		}
 	}
