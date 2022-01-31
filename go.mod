@@ -53,7 +53,7 @@ require (
 	golang.org/x/net v0.0.0-20220105145211-5b0dc2dfae98
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/api v0.61.0 // indirect
-	google.golang.org/grpc v1.42.0
+	google.golang.org/grpc v1.44.0
 	google.golang.org/protobuf v1.27.1
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )
