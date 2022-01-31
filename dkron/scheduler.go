@@ -77,7 +77,7 @@ func (s *Scheduler) Stop() {
 
 	if s.started {
 		s.logger.Debug("scheduler: Stopping scheduler")
-		<- s.Cron.Stop().Done()
+		<-s.Cron.Stop().Done()
 		s.started = false
 		// Keep Cron exists and let the jobs which have been scheduled can continue to finish,
 		// even the node's leadership will be revoked.
@@ -96,7 +96,9 @@ func (s *Scheduler) Stop() {
 func (s *Scheduler) Restart(jobs []*Job, agent *Agent) {
 	s.Stop()
 	s.ClearCron()
-	s.Start(jobs, agent)
+	if err := s.Start(jobs, agent); err != nil {
+		s.logger.Fatal(err)
+	}
 }
 
 // Clear cron separately, this can only be called when agent will be stop.
@@ -163,7 +165,7 @@ func (s *Scheduler) AddJob(job *Job) error {
 	return nil
 }
 
-// RemoveJob removes a job from the cron scheduler
+// RemoveJob removes a job from the cron scheduler if it exists.
 func (s *Scheduler) RemoveJob(job *Job) {
 	s.logger.WithFields(logrus.Fields{
 		"job": job.Name,
