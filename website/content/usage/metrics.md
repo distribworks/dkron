@@ -24,6 +24,17 @@ Add this to your yaml config file to enable serving prometheus metrics at the en
 enable-prometheus: true
 ```
 
+Additionally, in your Prometheus config file (prometheus.yml), add the following to link dkron metric endpoint
+```yaml
+scrape_configs:
+  ... #initial configuration
+  
+  - job_name: "dkron_metrics"
+    # metrics_path defaults to '/metrics'
+    static_configs:
+      - targets: ["localhost:6080"]
+```
+
 ## Metrics
 
 - dkron.agent.event_received.query_execution_done
