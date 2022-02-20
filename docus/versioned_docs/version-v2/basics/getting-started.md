@@ -1,7 +1,7 @@
 ---
-sidebar_position: 1
+title: Getting started
+weight: 30
 ---
-# Getting started
 
 ## Introduction
 
@@ -17,13 +17,13 @@ Dkron clusters have a leader, the leader is responsible of starting job executio
 
 Any Dkron agent or server acts as a cluster member and it's available to run scheduled jobs.
 
-Default is for all nodes to execute each job. You can control what nodes run a job by specifying tags and a count of target nodes having this tag. This gives an unprecedented level of flexibility in runnig jobs across a cluster of any size and with any combination of machines you need.
+You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run. This gives an unprecedented level of flexibility in runnig jobs across a cluster of any size and with any combination of machines you need.
 
 All the execution responses will be gathered by the scheduler and stored in the database.
 
 ## State storage
 
-Dkron deployment is just a single binary, it stores the state in an internal BuntDB instance and replicate all changes between all server nodes using the Raft protocol, it doesn't need any other storage system outside itself.
+Dkron deployment is just a single binary, it stores the state in an internal BadgerDB instance and replicate all changes between all server nodes using the Raft protocol, it doesn't need any other storage system outside itself.
 
 ## Installation
 
@@ -58,14 +58,10 @@ dkron agent --server --bootstrap-expect=1
 
 Check your server is working: `curl localhost:8080/v1`
 
-{{% notice info %}}
-For a full list of configuration parameters and its description, see the <a href="https://dkron.io/cli/dkron_agent/">CLI docs</a>
-{{% /notice %}}
-
-### Create a Job
+Simple as that, now it is time to add a job:
 
 {{% notice note %}}
-This job will only run in just one `server` node due to the node count in the tag. Refer to the <a href="/usage/target-nodes-spec">target node spec</a> for details.
+This job will only run in just one `server` node due to the node count in the tag. Refer to the [target node spec](/usage/target-nodes-spec) for details.
 {{% /notice %}}
 
 ```bash
@@ -77,11 +73,11 @@ curl localhost:8080/v1/jobs -XPOST -d '{
   "owner_email": "platform@example.com",
   "disabled": false,
   "tags": {
-    "server": "true:1"
+    "server": "true"
   },
   "metadata": {
     "user": "12345"
-  },
+  }
   "concurrency": "allow",
   "executor": "shell",
   "executor_config": {

@@ -1,4 +1,8 @@
-# Configuration
+---
+title: Configuration
+wight: 20
+---
+
 ## Configuration sources
 
 Settings can be specified in three ways (in order of precedence): 
@@ -6,9 +10,6 @@ Settings can be specified in three ways (in order of precedence):
 1. Command line arguments.
 1. Environment variables starting with **`DKRON_`**
 1. **`dkron.yml`** config file
-
-:::danger Dkron sends anonymous usage data to a server with the purpose of elaborating usage statistics, if you want to disable statistics collection, you can disable it in the dkron config file or in the command line using `--disable-usage-stats` parameter
-:::
 
 ## Config file location
 
