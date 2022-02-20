@@ -1,47 +1,37 @@
 ---
 sidebar_position: 1
 ---
+# Intro
 
-# Tutorial Intro
+## Dkron - Distributed, fault tolerant job scheduling system
 
-Let's discover **Docusaurus in less than 5 minutes**.
+Welcome to the Dkron documentation! This is the reference guide on how to use Dkron. If you want a getting started guide refer to the [getting started guide](getting-started).
 
-## Getting Started
+## What is Dkron
 
-Get started by **creating a new site**.
+Dkron is a distributed system to run scheduled jobs against a server or a group of servers of any size. One of the machines is the leader and the others will be followers. If the leader fails or becomes unreachable, any other one will take over and reschedule all jobs to keep the system healthy.
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
+In case the old leader becomes alive again, it'll become a follower.
 
-### What you'll need
+Dkron is a distributed cron drop-in replacement, easy to setup and fault tolerant with focus in:
 
-- [Node.js](https://nodejs.org/en/download/) version 14 or above:
-  - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
+- Easy: Easy to use with a great UI
+- Reliable: Completely fault tolerant
+- Highly scalable: Able to handle high volumes of scheduled jobs and thousands of nodes
 
-## Generate a new site
+Dkron is written in Go and leverages the power of distributed key value stores and [Serf](https://www.serfdom.io/) for providing fault tolerance, reliability and scalability while remaining simple and easily installable.
 
-Generate a new Docusaurus site using the **classic template**.
+Dkron is inspired by the google whitepaper [Reliable Cron across the Planet](https://queue.acm.org/detail.cfm?id=2745840)
 
-The classic template will automatically be added to your project after you run the command:
+Dkron runs on Linux, OSX and Windows. It can be used to run scheduled commands on a server cluster using any combination of servers for each job. It has no single points of failure due to the use of the fault tolerant distributed databases and can work at large scale thanks to the efficient and lightweight gossip protocol.
 
-```bash
-npm init docusaurus@latest my-website classic
-```
+Dkron uses the efficient and lightweight [gossip protocol](https://www.serfdom.io/docs/internals/gossip.html) underneath to communicate with nodes. Failure notification and task handling are run efficiently across an entire cluster of any size.
 
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
+## Web UI
+<center class="hidden-xs">
+![](/img/screenshot1.png)
+</center>
 
-The command also installs all necessary dependencies you need to run Docusaurus.
+## Dkron design
 
-## Start your site
-
-Run the development server:
-
-```bash
-cd my-website
-npm run start
-```
-
-The `cd` command changes the directory you're working with. In order to work with your newly created Docusaurus site, you'll need to navigate the terminal there.
-
-The `npm run start` command builds your website locally and serves it through a development server, ready for you to view at http://localhost:3000/.
-
-Open `docs/intro.md` (this page) and edit some lines: the site **reloads automatically** and displays your changes.
+Dkron is designed to solve one problem well, executing commands in given intervals. Following the unix philosophy of doing one thing and doing it well (like the battle-tested cron) but with the given addition of being designed for the cloud era, removing single points of failure in environments where scheduled jobs are needed to be run in multiple servers.

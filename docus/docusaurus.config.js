@@ -63,8 +63,9 @@ const config = {
             label: 'Docs',
           },
           {to: '/blog', label: 'Blog', position: 'left'},
+          {to: '/license', label: 'License', position: 'left'},
           {
-            href: 'https://github.com/facebook/docusaurus',
+            href: 'https://github.com/distribworks/dkron',
             label: 'GitHub',
             position: 'right',
           },
