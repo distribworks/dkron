@@ -1,6 +1,4 @@
----
-title: HTTP Executor
----
+# HTTP Executor
 
 HTTP executor can send a request to an HTTP endpoint
 

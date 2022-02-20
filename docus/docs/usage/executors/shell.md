@@ -1,7 +1,4 @@
-
----
-title: Shell Executor
----
+# Shell Executor
 
 Shell executor runs a system command
 

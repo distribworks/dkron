@@ -29,7 +29,9 @@ To achieve this Nodes and Jobs have tags, for example, having a node with the fo
 }
 ```
 
-{{% alert info %}}**Tip:** You can specify tags for nodes in the dkron config file or in the command line using `--tags` parameter{{% /alert %}}
+:::tip
+You can specify tags for nodes in the dkron config file or in the command line using `--tags` parameter
+:::
 
 In case there is no matching nodes with the specified tags, the job will not run.
 
@@ -48,12 +50,12 @@ Following some examples using different tag combinations:
 }
 ```
 
-{{<mermaid align="left">}}
+```mermaid
 graph LR;
     J("Job tags: #quot;my_role#quot;: #quot;web#quot;") -->|Run Job|N1["Node1 tags: #quot;my_role#quot;: #quot;web#quot;"]
     J -->|Run Job|N2["Node2 tags: #quot;my_role#quot;: #quot;web#quot;"]
     J -->|Run Job|N3["Node2 tags: #quot;my_role#quot;: #quot;web#quot;"]
-{{</mermaid>}}
+```
 
 #### Target only one nodes of a group of nodes with a tag
 
@@ -68,12 +70,12 @@ graph LR;
 }
 ```
 
-{{<mermaid align="left">}}
+```mermaid
 graph LR;
     J("Job tags: #quot;my_role#quot;: #quot;web:1#quot;") -->|Run Job|N1["Node1 tags: #quot;my_role#quot;: #quot;web#quot;"]
     J -.- N2["Node2 tags: #quot;my_role#quot;: #quot;web#quot;"]
     J -.- N3["Node2 tags: #quot;my_role#quot;: #quot;web#quot;"]
-{{</mermaid>}}
+```
 
 Dkron will try to run the job in the amount of nodes indicated by that count having that tag.
 

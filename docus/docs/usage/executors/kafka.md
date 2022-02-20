@@ -1,7 +1,4 @@
-
----
-title: Kafka Executor
----
+# Kafka Executor
 
 A basic Kafka executor that produces a message on a Kafka broker.
 

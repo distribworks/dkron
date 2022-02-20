@@ -1,7 +1,4 @@
----
-title: Processors
-weight: 30
----
+# Processors
 
 ## Execution Processors
 

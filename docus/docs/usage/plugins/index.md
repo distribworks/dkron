@@ -1,6 +1,4 @@
----
-title: Plugins
----
+# Plugins
 
 ## Intro
 
@@ -20,5 +18,3 @@ Dkron searches for plugins at startup, to install a plugin just drop the binary 
 
 1. /etc/dkron/plugins
 2. Dkron executable directory
-
-{{% children  %}}
