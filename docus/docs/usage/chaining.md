@@ -1,8 +1,4 @@
----
-title: Job chaining
----
-
-## Job chaining
+# Job chaining
 
 You can set some jobs to run after other job is executed. To setup a job that will be executed after any other given job, just set the `parent_job` property when saving the new job.
 

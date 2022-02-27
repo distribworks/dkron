@@ -1,10 +1,9 @@
 ---
-title: "Cloud Auto-join"
 description: |-
   Dkron supports automatic cluster joining using cloud metadata on various providers.
 ---
 
-# Cloud Auto-joining
+# Cloud Auto-join
 
 As of Dkron 2.0.0, `retry-join` accepts a unified interface using the
 [go-discover](https://github.com/hashicorp/go-discover) library for doing

@@ -27,11 +27,11 @@ Dkron deployment is just a single binary, it stores the state in an internal Bun
 
 ## Installation
 
-See the [installation](/basics/installation).
+See the [installation](installation.md).
 
 ## Configuration
 
-See the [configuration](/basics/configuration).
+See the [configuration](configuration.md).
 
 ## Usage
 
