@@ -10,7 +10,7 @@ require (
 	github.com/aws/aws-sdk-go v1.42.18 // indirect
 	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869 // indirect
 	github.com/devopsfaith/krakend-usage v1.4.0
-	github.com/fluent/fluent-logger-golang v1.8.0
+	github.com/fluent/fluent-logger-golang v1.9.0
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-contrib/expvar v0.0.1
 	github.com/gin-contrib/multitemplate v0.0.0-20211002122701-e9e3201b87a0
