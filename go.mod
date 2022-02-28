@@ -4,7 +4,7 @@ require (
 	cloud.google.com/go/pubsub v1.17.1
 	github.com/DataDog/datadog-go v4.8.3+incompatible // indirect
 	github.com/Microsoft/go-winio v0.5.1 // indirect
-	github.com/Shopify/sarama v1.31.1
+	github.com/Shopify/sarama v1.32.0
 	github.com/armon/circbuf v0.0.0-20190214190532-5111143e8da2
 	github.com/armon/go-metrics v0.3.10
 	github.com/aws/aws-sdk-go v1.42.18 // indirect
@@ -53,7 +53,6 @@ require (
 	google.golang.org/api v0.61.0 // indirect
 	google.golang.org/grpc v1.44.0
 	google.golang.org/protobuf v1.27.1
-	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )
 
 go 1.16
