@@ -28,7 +28,7 @@ require (
 	github.com/hashicorp/memberlist v0.3.1
 	github.com/hashicorp/raft v1.3.5
 	github.com/hashicorp/raft-boltdb v0.0.0-20211202195631-7d34b9fb3f42
-	github.com/hashicorp/serf v0.9.6
+	github.com/hashicorp/serf v0.9.7
 	github.com/hashicorp/yamux v0.0.0-20211028200310-0bc27b27de87 // indirect
 	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0
