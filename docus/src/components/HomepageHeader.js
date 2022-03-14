@@ -26,7 +26,7 @@ export default function HomepageHeader() {
             </p>
             <div className="mt-10 sm:flex sm:justify-center">
               <div className="rounded-md shadow">
-                <a href="https://github.com/distribworks/dkron/releases" className="flex items-center justify-center w-full px-8 py-3 text-base font-medium text-white border-2 border-transparent rounded-md bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:bg-fuchsia-700 md:py-4 md:text-lg md:px-10 hover:no-underline hover:text-white/90">
+                <a href="https://github.com/distribworks/dkron/releases" className="flex items-center justify-center w-full px-8 py-3 text-base font-medium text-white border-2 border-transparent border-solid rounded-md bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:bg-fuchsia-700 md:py-4 md:text-lg md:px-10 hover:no-underline hover:text-white/90">
                   Download
                 </a>
               </div>
