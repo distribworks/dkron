@@ -84,7 +84,7 @@ const config = {
             type: 'docsVersionDropdown',
           },
           {
-            to: '/products/pro/', label: 'PRO', position: 'left', className: 'navbar-link-go-pro'
+            to: '/pro/', label: 'PRO', position: 'left', className: 'navbar-link-go-pro'
           },
         ],
       },
