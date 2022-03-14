@@ -5,6 +5,7 @@ import HomepageHeader from '../components/HomepageHeader';
 import HomepageDescPanel from '../components/HomepageDescPanel';
 import HomepageFeatures from '../components/HomepageFeatures';
 import HomepagePricing from '../components/HomepagePricing';
+import HomepageTestimonials from '../components/HomepageTestimonials';
 import HomepageUsers from '../components/HomepageUsers';
 import HomepageUseCases from '../components/HomepageUseCases';
 
@@ -27,6 +28,8 @@ export default function Home() {
           <HomepageUseCases />
 
           <HomepagePricing />
+
+          <HomepageTestimonials />
 
           <HomepageUsers />
         </main>
