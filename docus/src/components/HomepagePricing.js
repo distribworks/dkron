@@ -152,6 +152,10 @@ export default function HomepagePricing() {
                       scope="col"
                     >
                       {tier.name}
+                      <svg className="w-2 h-2 mx-2 text-gray-800/20" fill="currentColor" viewBox="0 0 8 8">
+                        <circle cx={4} cy={4} r={3} />
+                      </svg>
+                      <a className="text-xs" href={tier.href}>Learn more</a>
                     </th>
                   ))}
                 </tr>
@@ -230,24 +234,24 @@ export default function HomepagePricing() {
                       {tier.name === "Pro" ? (
                         <>
                           <a
-                            href={tier.href}
-                            target="_blank"
-                            className="block w-full py-3 text-base font-medium text-center text-white bg-white border-2 border-solid rounded-md text-fuchsia-600 hover:text-fuchsia-700 border-fuchsia-600 hover:bg-white md:py-4 md:text-lg md:px-10 hover:no-underline"
-                          >
-                            Learn more
-                          </a>
-                          <a
                             href="https://gum.co/dkron-pro"
                             target="_blank"
                             className="block w-full py-3 mt-2 text-base font-medium text-center text-white border-2 border-transparent rounded-md gumroad-button bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:bg-fuchsia-700 md:py-4 md:text-lg md:px-10 hover:no-underline hover:text-white/90"
                           >
                             Buy
                           </a>
+                          <a
+                            href={tier.href}
+                            target="_blank"
+                            className="block w-full mt-1 text-center"
+                          >
+                            Learn more
+                          </a>
                         </>
                       ) : (
                         <a
                           href={tier.href}
-                          className="block w-full py-3 text-base font-medium text-center text-white border-2 border-transparent rounded-md bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:bg-fuchsia-700 md:py-4 md:text-lg md:px-10 hover:no-underline hover:text-white/90"
+                          className="block w-full py-3 mb-5 text-base font-medium text-center text-white border-2 border-transparent rounded-md bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:bg-fuchsia-700 md:py-4 md:text-lg md:px-10 hover:no-underline hover:text-white/90"
                         >
                           Download
                         </a>
