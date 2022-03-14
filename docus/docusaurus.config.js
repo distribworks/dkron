@@ -15,6 +15,12 @@ const config = {
   favicon: 'img/favicon.ico',
   organizationName: 'distribworks', // Usually your GitHub org/user name.
   projectName: 'dkron', // Usually your repo name.
+  customFields: {
+    description: 'A distributed Cron service with, API, no SPOF and an easy to use dashboard.',
+    description_extended: 'Dkron is a system service for workload automation that runs scheduled jobs, just like unix cron service but distributed in several machines in a cluster. This is the only job scheduler in the market with truly no SPOF. It is open source and available for free.'
+  },
+
+  plugins: ['tailwindcss-loader'],
 
   presets: [
     [
@@ -50,11 +56,15 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      colorMode: {
+        defaultMode: 'light',
+        disableSwitch: true,
+      },
       navbar: {
         title: '',
         logo: {
           alt: 'Dkron Logo',
-          src: 'img/dkron-logo.png',
+          src: 'img/dkron-logo-black.png',
         },
         items: [
           {
@@ -72,6 +82,9 @@ const config = {
           },
           {
             type: 'docsVersionDropdown',
+          },
+          {
+            to: '/products/pro/', label: 'PRO', position: 'left', className: 'navbar-link-go-pro'
           },
         ],
       },
