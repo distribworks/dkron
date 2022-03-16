@@ -1,0 +1,2 @@
+# Minimal example using environment var credentials
+plugin: equinix.metal.device

@@ -3,7 +3,7 @@
 
 - hosts: localhost
   tasks:
-    - packet_device:
+    - equinix.metal.device:
         hostnames: [dkron01, dkron02, dkron03]
         operating_system: ubuntu_19_04
         plan: baremetal_0
