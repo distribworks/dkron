@@ -1,63 +1,54 @@
 import React from 'react';
-import clsx from 'clsx';
-import styles from './HomepageFeatures.module.css';
 
-const FeatureList = [
+const features = [
   {
-    title: 'Easy to Use',
-    Svg: require('../../static/img/undraw_docusaurus_mountain.svg').default,
+    title: 'Easy integration',
+    img: '../img/integration.png',
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        Dkron is easy to setup and use. Choose your OS package and it's ready to run out-of-the-box. The administration panel and it's simple JSON API makes a breeze to integrate with you current workflow or deploy system.
       </>
     ),
   },
   {
-    title: 'Focus on What Matters',
-    Svg: require('../../static/img/undraw_docusaurus_tree.svg').default,
+    title: 'Always available',
+    img: '../img/available.png',
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        Using the power of the Raft protocol, Dkron is designed to be always available. If the cluster leader node fails, a follower will replace it, all without human intervention.
       </>
     ),
   },
   {
-    title: 'Powered by React',
-    Svg: require('../../static/img/undraw_docusaurus_react.svg').default,
+    title: 'Flexible targets',
+    img: '../img/targets.png',
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        Simple but powerful tag-based target node selection for jobs. Tag node count allows to run jobs in an arbitrary number of nodes in the same group or groups.
       </>
     ),
   },
 ];
 
-function Feature({Svg, title, description}) {
-  return (
-    <div className={clsx('col col--4')}>
-      <div className="text--center">
-        <Svg className={styles.featureSvg} alt={title} />
-      </div>
-      <div className="text--center padding-horiz--md">
-        <h3>{title}</h3>
-        <p>{description}</p>
-      </div>
-    </div>
-  );
-}
 
 export default function HomepageFeatures() {
   return (
-    <section className={styles.features}>
-      <div className="container">
-        <div className="row">
-          {FeatureList.map((props, idx) => (
-            <Feature key={idx} {...props} />
+    <section className="py-12 mt-16 bg-zinc-100">
+      <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <h2 className="text-4xl font-bold text-fuchsia-700">Features</h2>
+        <dl className="space-y-10 lg:space-y-0 lg:grid lg:grid-cols-3 lg:gap-16">
+          {features.map((feature) => (
+            <div key={feature.title}>
+              <dt>
+                <div className="">
+                  <img src={feature.img} alt="" />
+                </div>
+                <p className="mt-4 text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-fuchsia-600">{feature.title}</p>
+              </dt>
+              <dd className="mt-4 ml-0 text-base text-gray-500">{feature.description}</dd>
+            </div>
           ))}
-        </div>
+        </dl>
       </div>
     </section>
   );
