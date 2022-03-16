@@ -23,7 +23,7 @@
         timeout: 500
       loop: "{{ newhosts.devices }}"
 
-- hosts: packet
+- hosts: equinix_metal
   user: root
   become: true
   become_method: sudo
@@ -36,7 +36,7 @@
 
   tasks:
     - set_fact:
-        dkron_servers: "{{ groups['packet'] | map('extract', hostvars, ['ansible_all_ipv4_addresses', 1]) | list }}"
+        dkron_servers: "{{ groups['equinix_metal'] | map('extract', hostvars, ['ansible_all_ipv4_addresses', 1]) | list }}"
       tags: config
 
     - name: Copy package

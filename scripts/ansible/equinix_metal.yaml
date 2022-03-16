@@ -1,2 +1,6 @@
 # Minimal example using environment var credentials
 plugin: equinix.metal.device
+
+# Set individual variables with compose
+compose:
+  ansible_host: (ip_addresses | selectattr('address_family', 'equalto', 4) | selectattr('public', 'equalto', true) | first).address
