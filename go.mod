@@ -51,7 +51,7 @@ require (
 	github.com/tinylib/msgp v1.1.6 // indirect
 	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd
 	google.golang.org/api v0.61.0 // indirect
-	google.golang.org/grpc v1.44.0
+	google.golang.org/grpc v1.45.0
 	google.golang.org/protobuf v1.27.1
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )
