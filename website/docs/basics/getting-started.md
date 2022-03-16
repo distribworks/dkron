@@ -41,9 +41,9 @@ By default Dkron uses the following ports:
 - `8080` for HTTP for the API and Dashboard
 - `6868` for gRPC and raft layer comunication between agents.
 
-{{% notice note %}}
+:::info
 Be sure you have opened this ports (or the ones that you configured) in your firewall or AWS security groups.
-{{% /notice %}}
+:::
 
 ### Starting a single node
 
@@ -58,15 +58,15 @@ dkron agent --server --bootstrap-expect=1
 
 Check your server is working: `curl localhost:8080/v1`
 
-{{% notice info %}}
+:::info
 For a full list of configuration parameters and its description, see the <a href="https://dkron.io/cli/dkron_agent/">CLI docs</a>
-{{% /notice %}}
+:::
 
 ### Create a Job
 
-{{% notice note %}}
+:::info
 This job will only run in just one `server` node due to the node count in the tag. Refer to the <a href="/usage/target-nodes-spec">target node spec</a> for details.
-{{% /notice %}}
+:::
 
 ```bash
 curl localhost:8080/v1/jobs -XPOST -d '{

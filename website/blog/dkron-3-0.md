@@ -1,5 +1,4 @@
 ---
-Title: Dkron 3.0 Release
 Description: "Dkron release 3.0 public release"
 Keywords:    [ "Development", "OpenSource", "Distributed systems", "cron" ]
 Tags:        [ "Development", "OpenSource", "Distributed systems", "cron" ]
@@ -7,6 +6,7 @@ date:        "2020-05-12"
 Topics:      [ "Development", "OpenSource", "Distributed Systems" ]
 Slug:        "dkron-3-0"
 ---
+# Dkron 3.0 Release
 
 I'm thrilled to announce that Dkron/Pro v3.0 is here!
 
