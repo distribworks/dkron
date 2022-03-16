@@ -1,7 +1,7 @@
 module github.com/distribworks/dkron/v3
 
 require (
-	cloud.google.com/go/pubsub v1.17.1
+	cloud.google.com/go/pubsub v1.19.0
 	github.com/DataDog/datadog-go v4.8.3+incompatible // indirect
 	github.com/Microsoft/go-winio v0.5.1 // indirect
 	github.com/Shopify/sarama v1.32.0
@@ -50,7 +50,6 @@ require (
 	github.com/tidwall/buntdb v1.2.7
 	github.com/tinylib/msgp v1.1.6 // indirect
 	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd
-	google.golang.org/api v0.61.0 // indirect
 	google.golang.org/grpc v1.45.0
 	google.golang.org/protobuf v1.27.1
 )
