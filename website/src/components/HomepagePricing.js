@@ -236,6 +236,7 @@ export default function HomepagePricing() {
                           <a
                             href="https://gum.co/dkron-pro"
                             target="_blank"
+                            rel="noopener noreferrer"
                             className="block w-full py-3 mt-2 text-base font-medium text-center text-white border-2 border-transparent rounded-md gumroad-button bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:bg-fuchsia-700 md:py-4 md:text-lg md:px-10 hover:no-underline hover:text-white/90"
                           >
                             Buy
@@ -243,6 +244,7 @@ export default function HomepagePricing() {
                           <a
                             href={tier.href}
                             target="_blank"
+                            rel="noopener noreferrer"
                             className="block w-full mt-1 text-center"
                           >
                             Learn more

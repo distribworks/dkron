@@ -51,7 +51,7 @@ export default function HomepageUsers() {
         <div className="grid grid-cols-2 gap-12 md:grid-cols-3 lg:grid-cols-4">
           {users.map((user) => (
             <div key={user.name} className="flex justify-center col-span-1 lg:col-span-1">
-              <a href={user.url} target="_blank">
+              <a href={user.url} target="_blank" rel="noopener noreferrer">
                 <img className="h-10 transition duration-200 filter grayscale hover:grayscale-0 brightness-200 hover:brightness-100" src={user.img} alt={user.name} />
               </a>
             </div>
