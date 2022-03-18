@@ -72,6 +72,9 @@ https://github.com/gromo/dkron-php-adapter
 Terraform provider
 https://github.com/bozerkins/terraform-provider-dkron
 
+Manage and run jobs in Dkron from your django project
+https://github.com/surface-security/django-dkron
+
 ## Get in touch
 
 - Twitter: [@distribworks](https://twitter.com/distribworks)
