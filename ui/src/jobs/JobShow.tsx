@@ -78,7 +78,7 @@ const SpecialOutputPanel = ({ id, record, resource }: any) => {
     return (
         <div className="execution-output">
             {record.output_truncated ? <div><FullButton record={record} /></div> : ""}
-            {record.output || "Empty output"}
+            {record.output || "Nothing to show"}
         </div>
     );
 };
