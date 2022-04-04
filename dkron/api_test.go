@@ -327,6 +327,100 @@ func TestAPIJobRestore(t *testing.T) {
 
 }
 
+func TestAPIJobOutputTruncate(t *testing.T) {
+	port := "8190"
+	baseURL := fmt.Sprintf("http://localhost:%s/v1", port)
+	dir, a := setupAPITest(t, port)
+	defer os.RemoveAll(dir)
+
+	jsonStr := []byte(`{
+		"name": "test_job",
+		"schedule": "@every 1m",
+		"executor": "shell",
+		"executor_config": {"command": "date"},
+		"owner": "mec",
+		"owner_email": "foo@bar.com",
+		"disabled": true
+	}`)
+
+	resp, err := http.Post(baseURL+"/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, http.StatusCreated, resp.StatusCode)
+
+	resp, _ = http.Get(baseURL + "/jobs/test_job/executions")
+	body, _ := ioutil.ReadAll(resp.Body)
+	resp.Body.Close()
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, string(body), "[]")
+
+	testExecution1 := &Execution{
+		JobName:    "test_job",
+		StartedAt:  time.Now().UTC(),
+		FinishedAt: time.Now().UTC(),
+		Success:    true,
+		Output:     "test",
+		NodeName:   "testNode",
+	}
+	testExecution2 := &Execution{
+		JobName:    "test_job",
+		StartedAt:  time.Now().UTC(),
+		FinishedAt: time.Now().UTC(),
+		Success:    true,
+		Output:     "test " + strings.Repeat("longer output... ", 100),
+		NodeName:   "testNode2",
+	}
+	_, err = a.Store.SetExecution(testExecution1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = a.Store.SetExecution(testExecution2)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// no truncation
+	resp, _ = http.Get(baseURL + "/jobs/test_job/executions")
+	body, _ = ioutil.ReadAll(resp.Body)
+	resp.Body.Close()
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	var executions []apiExecution
+	if err := json.Unmarshal(body, &executions); err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, 2, len(executions))
+	assert.False(t, executions[0].OutputTruncated)
+	assert.Equal(t, 1705, len(executions[0].Output))
+	assert.False(t, executions[1].OutputTruncated)
+	assert.Equal(t, 4, len(executions[1].Output))
+
+	// truncate limit to 200
+	resp, _ = http.Get(baseURL + "/jobs/test_job/executions?output_size_limit=200")
+	body, _ = ioutil.ReadAll(resp.Body)
+	resp.Body.Close()
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	if err := json.Unmarshal(body, &executions); err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, 2, len(executions))
+	assert.True(t, executions[0].OutputTruncated)
+	assert.Equal(t, 200, len(executions[0].Output))
+	assert.False(t, executions[1].OutputTruncated)
+	assert.Equal(t, 4, len(executions[1].Output))
+
+	// test single execution endpoint
+	resp, _ = http.Get(baseURL + "/jobs/test_job/executions/" + executions[0].Id)
+	body, _ = ioutil.ReadAll(resp.Body)
+	resp.Body.Close()
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	var execution Execution
+	if err := json.Unmarshal(body, &execution); err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, 1705, len(execution.Output))
+}
+
 // postJob POSTs the given json to the jobs endpoint and returns the response
 func postJob(t *testing.T, port string, jsonStr []byte) *http.Response {
 	baseURL := fmt.Sprintf("http://localhost:%s/v1", port)

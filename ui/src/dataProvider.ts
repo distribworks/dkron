@@ -18,6 +18,7 @@ const myDataProvider = {
             _order: order,
             _start: (page - 1) * perPage,
             _end: page * perPage,
+            output_size_limit: 200,
         };
         const url = `${apiUrl}/${params.target}/${params.id}/${resource}?${stringify(query)}`;
 
