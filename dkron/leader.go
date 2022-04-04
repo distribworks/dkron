@@ -91,7 +91,7 @@ RECONCILE:
 				a.logger.WithError(err).Error("dkron: failed to revoke leadership")
 			}
 
-			a.logger.WithError(err).Fatal("dkron: failed to establish leadership")
+			a.logger.WithError(err).Error("dkron: failed to establish leadership")
 
 			// TODO: review this code path
 			goto WAIT
