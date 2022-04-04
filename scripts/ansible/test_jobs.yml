@@ -4,7 +4,7 @@
 
 # at-shell-success
 
-- hosts: packet
+- hosts: equinix_metal
   user: root
   become: yes
   become_method: sudo
