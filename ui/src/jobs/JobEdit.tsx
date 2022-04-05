@@ -49,7 +49,6 @@ const EditForm = (props: any) => (
                 collapsed: false,
                 enableClipboard: true,
                 displayDataTypes: false,
-                src: {},
             }}
             helperText="Processor plugins to use for this job."
         />
@@ -60,7 +59,6 @@ const EditForm = (props: any) => (
                 collapsed: false,
                 enableClipboard: true,
                 displayDataTypes: false,
-                src: {},
             }}
             helperText="Tags of the target servers to run this job against."
         />
@@ -71,7 +69,6 @@ const EditForm = (props: any) => (
                 collapsed: false,
                 enableClipboard: true,
                 displayDataTypes: false,
-                src: {},
             }}
             helperText="Job metadata describes the job and allows filtering from the API."
         />
@@ -85,7 +82,6 @@ const EditForm = (props: any) => (
                 collapsed: true,
                 enableClipboard: false,
                 displayDataTypes: false,
-                src: {},
             }}
             helperText="Configuration arguments for the specific executor."
         />

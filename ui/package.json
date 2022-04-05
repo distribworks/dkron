@@ -1,6 +1,6 @@
 {
-  "name": "webui",
-  "version": "0.1.0",
+  "name": "dkron-ui",
+  "version": "1.0.0",
   "private": true,
   "homepage": ".",
   "dependencies": {
