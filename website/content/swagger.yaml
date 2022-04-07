@@ -260,6 +260,29 @@ paths:
             type: array
             items:
               $ref: '#/definitions/execution'
+  /jobs/{job_name}/executions/{execution}:
+    get:
+      tags:
+      - executions
+      description: |
+        Show execution.
+      operationId: showExecutionByID
+      parameters:
+      - name: job_name
+        in: path
+        description: The job that owns the execution to be fetched.
+        required: true
+        type: string
+      - name: execution
+        in: path
+        description: The executions to be fetched.
+        required: true
+        type: string
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: '#/definitions/execution'
   /busy:
     get:
       description: |
