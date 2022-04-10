@@ -8,6 +8,7 @@ import HomepagePricing from '../components/HomepagePricing';
 import HomepageTestimonials from '../components/HomepageTestimonials';
 import HomepageUsers from '../components/HomepageUsers';
 import HomepageUseCases from '../components/HomepageUseCases';
+import HomepageStats from '../components/HomepageStats';
 
 export default function Home() {
   return (
@@ -28,6 +29,8 @@ export default function Home() {
           <HomepageUseCases />
 
           <HomepagePricing />
+
+          <HomepageStats />
 
           <HomepageTestimonials />
 
