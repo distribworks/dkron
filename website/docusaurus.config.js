@@ -24,6 +24,23 @@ const config = {
 
   presets: [
     [
+      'redocusaurus',
+      {
+        // Plugin Options for loading OpenAPI files
+        specs: [
+          {
+            spec: 'openapi/openapi.yaml',
+            route: '/api/',
+          },
+        ],
+        // Theme Options for modifying how redoc renders them
+        theme: {
+          // Change with your site colors
+          primaryColor: '#1890ff',
+        },
+      },
+    ],
+    [
       'classic',
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
@@ -31,7 +48,7 @@ const config = {
           remarkPlugins: [require('mdx-mermaid')],
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
-          editUrl: 'https://github.com/distribworks/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+          editUrl: 'https://github.com/distribworks/dkron/tree/main/website/docs/',
           lastVersion: 'current',
           versions: {
             current: {
@@ -44,7 +61,7 @@ const config = {
           showReadingTime: true,
           // Please change this to your repo.
           editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+            'https://github.com/distribworks/dkron/tree/main/website/blog/',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
@@ -72,6 +89,9 @@ const config = {
             docId: 'basics/getting-started',
             position: 'left',
             label: 'Docs',
+          },
+          {
+            to: '/api/', label: 'API', position: 'left'
           },
           {to: '/blog', label: 'Blog', position: 'left'},
           {to: '/license', label: 'License', position: 'left'},
