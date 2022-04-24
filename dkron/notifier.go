@@ -7,10 +7,12 @@ import (
 	"net/http"
 	"net/smtp"
 	"net/textproto"
+	"net/url"
 	"strings"
 	"text/template"
 	"time"
 
+	"github.com/hashicorp/go-multierror"
 	"github.com/jordan-wright/email"
 	"github.com/sirupsen/logrus"
 )
@@ -21,11 +23,15 @@ type Notifier struct {
 	Job            *Job
 	Execution      *Execution
 	ExecutionGroup []*Execution
+
+	logger *logrus.Entry
 }
 
-// Notification creates a new Notifier instance
-func Notification(config *Config, execution *Execution, exGroup []*Execution, job *Job) *Notifier {
+// NewNotifier returns a new notifier
+func NewNotifier(config *Config, execution *Execution, exGroup []*Execution, job *Job, logger *logrus.Entry) *Notifier {
 	return &Notifier{
+		logger: logger,
+
 		Config:         config,
 		Execution:      execution,
 		ExecutionGroup: exGroup,
@@ -33,16 +39,43 @@ func Notification(config *Config, execution *Execution, exGroup []*Execution, jo
 	}
 }
 
-// Send sends the notifications using any configured method
-func (n *Notifier) Send(logger *logrus.Entry) error {
-	if n.Config.MailHost != "" && n.Config.MailPort != 0 && n.Job.OwnerEmail != "" {
-		return n.sendExecutionEmail(logger)
-	}
-	if n.Config.WebhookURL != "" && n.Config.WebhookPayload != "" {
-		return n.callExecutionWebhook(logger)
+func (n *Notifier) Start() error {
+	var werr error
+
+	if err := n.cronitorTelemetry("run"); err != nil {
+		werr = multierror.Append(werr, fmt.Errorf("notifier: error sending cronitor telemetry %w", err))
 	}
 
-	return nil
+	if n.Config.PreWebhookEndpoint != "" && n.Config.PreWebhookPayload != "" {
+		if err := n.callPreExecutionWebhook(); err != nil {
+			werr = multierror.Append(werr, fmt.Errorf("notifier: error sending email: %w", err))
+		}
+	}
+
+	return werr
+}
+
+// Send sends the notifications using any configured method
+func (n *Notifier) End() error {
+	var werr error
+
+	if err := n.cronitorTelemetry("complete"); err != nil {
+		werr = multierror.Append(werr, fmt.Errorf("notifier: error sending cronitor telemetry %w", err))
+	}
+
+	if n.Config.MailHost != "" && n.Config.MailPort != 0 && n.Job.OwnerEmail != "" {
+		if err := n.sendExecutionEmail(); err != nil {
+			werr = multierror.Append(werr, fmt.Errorf("notifier: error sending email: %w", err))
+		}
+	}
+
+	if n.Config.WebhookEndpoint != "" && n.Config.WebhookPayload != "" {
+		if err := n.callExecutionWebhook(); err != nil {
+			werr = multierror.Append(werr, fmt.Errorf("notifier: error posting notification: %w", err))
+		}
+	}
+
+	return werr
 }
 
 func (n *Notifier) report() string {
@@ -68,10 +101,10 @@ func (n *Notifier) report() string {
 		exgStr)
 }
 
-func (n *Notifier) buildTemplate(templ string, logger *logrus.Entry) *bytes.Buffer {
+func (n *Notifier) buildTemplate(templ string) *bytes.Buffer {
 	t, e := template.New("report").Parse(templ)
 	if e != nil {
-		logger.WithError(e).Error("notifier: error parsing template")
+		n.logger.WithError(e).Error("notifier: error parsing template")
 		return bytes.NewBuffer([]byte("Failed to parse template: " + e.Error()))
 	}
 
@@ -98,23 +131,23 @@ func (n *Notifier) buildTemplate(templ string, logger *logrus.Entry) *bytes.Buff
 	out := &bytes.Buffer{}
 	err := t.Execute(out, data)
 	if err != nil {
-		logger.WithError(err).Error("notifier: error executing template")
+		n.logger.WithError(err).Error("notifier: error executing template")
 		return bytes.NewBuffer([]byte("Failed to execute template:" + err.Error()))
 	}
 	return out
 }
 
-func (n *Notifier) sendExecutionEmail(logger *logrus.Entry) error {
+func (n *Notifier) sendExecutionEmail() error {
 	var data *bytes.Buffer
 	if n.Config.MailPayload != "" {
-		data = n.buildTemplate(n.Config.MailPayload, logger)
+		data = n.buildTemplate(n.Config.MailPayload)
 	} else {
 		data = bytes.NewBuffer([]byte(n.Execution.Output))
 	}
 	e := &email.Email{
 		To:      []string{n.Job.OwnerEmail},
 		From:    n.Config.MailFrom,
-		Subject: fmt.Sprintf("%s%s %s execution report", n.Config.MailSubjectPrefix, n.statusString(n.Execution), n.Execution.JobName),
+		Subject: fmt.Sprintf("%s%s %s execution report", n.Config.MailSubjectPrefix, n.statusString(), n.Execution.JobName),
 		Text:    []byte(data.Bytes()),
 		Headers: textproto.MIMEHeader{},
 	}
@@ -137,9 +170,39 @@ func (n *Notifier) auth() smtp.Auth {
 	return auth
 }
 
-func (n *Notifier) callExecutionWebhook(logger *logrus.Entry) error {
-	out := n.buildTemplate(n.Config.WebhookPayload, logger)
-	req, err := http.NewRequest("POST", n.Config.WebhookURL, out)
+func (n *Notifier) callPreExecutionWebhook() error {
+	out := n.buildTemplate(n.Config.PreWebhookPayload)
+	req, err := http.NewRequest("POST", n.Config.PreWebhookEndpoint, out)
+	if err != nil {
+		return err
+	}
+	for _, h := range n.Config.PreWebhookHeaders {
+		if h != "" {
+			kv := strings.Split(h, ":")
+			req.Header.Set(kv[0], strings.TrimSpace(kv[1]))
+		}
+	}
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return fmt.Errorf("notifier: Error posting notification: %s", err)
+	}
+	defer resp.Body.Close()
+
+	body, _ := ioutil.ReadAll(resp.Body)
+	n.logger.WithFields(logrus.Fields{
+		"status": resp.Status,
+		"header": resp.Header,
+		"body":   string(body),
+	}).Debug("notifier: Pre Webhook call response")
+
+	return nil
+}
+
+func (n *Notifier) callExecutionWebhook() error {
+	out := n.buildTemplate(n.Config.WebhookPayload)
+	req, err := http.NewRequest("POST", n.Config.WebhookEndpoint, out)
 	if err != nil {
 		return err
 	}
@@ -158,7 +221,7 @@ func (n *Notifier) callExecutionWebhook(logger *logrus.Entry) error {
 	defer resp.Body.Close()
 
 	body, _ := ioutil.ReadAll(resp.Body)
-	logger.WithFields(logrus.Fields{
+	n.logger.WithFields(logrus.Fields{
 		"status": resp.Status,
 		"header": resp.Header,
 		"body":   string(body),
@@ -167,9 +230,31 @@ func (n *Notifier) callExecutionWebhook(logger *logrus.Entry) error {
 	return nil
 }
 
-func (n *Notifier) statusString(execution *Execution) string {
-	if execution.Success {
+func (n *Notifier) statusString() string {
+	if n.Execution.Success {
 		return "Success"
 	}
 	return "Failed"
+}
+
+// cronitorTelemetry is called when a job starts to notify cronitor
+func (n *Notifier) cronitorTelemetry(state string) error {
+	if n.Config.CronitorEndpoint != "" {
+		params := url.Values{}
+		params.Add("host", n.Execution.NodeName)
+		params.Add("message", "Job "+state+" by Dkron")
+		params.Add("series", n.Execution.Key())
+
+		if state == "complete" && !n.Execution.Success {
+			state = "fail"
+		}
+		params.Add("state", state)
+
+		_, err := http.Get(n.Config.CronitorEndpoint + "/" + n.Execution.JobName + "?" + params.Encode())
+		if err != nil {
+			return fmt.Errorf("notifier: Error sending telemetry to cronitor: %s", err)
+		}
+	}
+
+	return nil
 }
