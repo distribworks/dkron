@@ -50,6 +50,11 @@ builds:
     binary: dkron-executor-gcppubsub
 
   - <<: *xbuild
+    main: ./builtin/bins/dkron-executor-grpc/
+    id: dkron-executor-grpc
+    binary: dkron-executor-grpc
+
+  - <<: *xbuild
     main: ./builtin/bins/dkron-processor-files/
     id: dkron-processor-files
     binary: dkron-processor-files
@@ -63,7 +68,7 @@ builds:
     main: ./builtin/bins/dkron-processor-syslog/
     id: dkron-processor-syslog
     binary: dkron-processor-syslog
-  
+
   - <<: *xbuild
     main: ./builtin/bins/dkron-processor-fluent/
     id: dkron-processor-fluent
