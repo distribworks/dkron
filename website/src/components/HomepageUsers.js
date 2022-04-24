@@ -7,9 +7,19 @@ const users = [
     img: "/img/mallgroup-logo.svg"
   },
   {
-    name: "Rubicon Project",
-    url: "https://rubiconproject.com/",
-    img: "/img/rubicon-logo.svg"
+    name: "American Express",
+    url: "https://aexp.com",
+    img: "/img/AXP_BlueBoxLogo_EXTRALARGEscale_RGB_DIGITAL_1600x1600.png"
+  },
+  {
+    name: "Flickr",
+    url: "https://flickr.com",
+    img: "/img/Flickr_logo.png"
+  },
+  {
+    name: "Socal Gas",
+    url: "https://www.socalgas.com/",
+    img: "/img/SoCal_Gas.png"
   },
   {
     name: "Jobandtalent",
@@ -27,19 +37,29 @@ const users = [
     img: "/img/voiceworks-logo.svg"
   },
   {
-    name: "benemen",
-    url: "https://rubiconproject.com/",
-    img: "/img/benemen-logo.png"
+    name: "enreach",
+    url: "https://www.enreach.fi/",
+    img: "/img/logo-enreach.svg"
   },
   {
     name: "Blackstone Publishing",
-    url: "https://rubiconproject.com/",
+    url: "https://www.blackstonepublishing.com/",
     img: "/img/Blackstone_publishing_Logo_v2.png"
   },
   {
     name: "Allianz",
-    url: "https://rubiconproject.com/",
+    url: "https://www.allianz.com/",
     img: "/img/Allianz.svg"
+  },
+  {
+    name: "Kata AI",
+    url: "https://kata.ai/",
+    img: "/img/kata_ai.png"
+  },
+  {
+    name: "delcampe",
+    url: "https://www.delcampe.net/",
+    img: "/img/logo-delcampe.svg"
   },
 ]
 
