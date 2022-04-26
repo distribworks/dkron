@@ -1,6 +1,4 @@
----
-title: Docker executor
----
+# Docker executor
 
 Docker executor can launch docker based cron jobs using the docker command of the target node.
 

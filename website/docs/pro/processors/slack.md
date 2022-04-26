@@ -1,6 +1,4 @@
----
-title: Slack processor
----
+# Slack processor
 
 The Slack processor provides slack notifications with multiple configurations and rich format.
 

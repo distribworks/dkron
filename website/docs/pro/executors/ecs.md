@@ -1,6 +1,4 @@
----
-title: AWS ECS Executor
----
+# AWS ECS Executor
 
 The ECS exeutor is capable of launching tasks in ECS clusters, then listen to a stream of CloudWatch Logs and return the output.
 

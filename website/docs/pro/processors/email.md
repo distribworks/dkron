@@ -1,6 +1,4 @@
----
-title: Email processor
----
+# Email processor
 
 The Email processor provides flexibility to job email notifications.
 

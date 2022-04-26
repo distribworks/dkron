@@ -1,6 +1,4 @@
----
-title: Elasticsearch processor
----
+# Elasticsearch processor
 
 The Elasticsearch processor can fordward execution logs to an ES cluster. It need an already available Elasticsearch installation that is visible in the same network of the target node.
 

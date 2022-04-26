@@ -24,5 +24,3 @@ Dkron provides the following built-in processors:
 [Dkro Pro](/products/pro/) provides you with several more processors.
 
 All plugins accepts one configuration option: `forward` Indicated if the plugin must forward the original execution output. This allows for chaining plugins and sending output to different targets at the same time.
-
-{{% children  %}}
