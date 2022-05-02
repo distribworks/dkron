@@ -25,7 +25,7 @@ require (
 	github.com/hashicorp/go-uuid v1.0.2
 	github.com/hashicorp/go-version v1.4.0
 	github.com/hashicorp/memberlist v0.3.1
-	github.com/hashicorp/raft v1.3.8
+	github.com/hashicorp/raft v1.3.9
 	github.com/hashicorp/raft-boltdb v0.0.0-20211202195631-7d34b9fb3f42
 	github.com/hashicorp/serf v0.9.7
 	github.com/hashicorp/yamux v0.0.0-20211028200310-0bc27b27de87 // indirect
