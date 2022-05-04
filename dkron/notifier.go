@@ -18,7 +18,7 @@ import (
 )
 
 // Notifier represents a new notification to be sent by any of the available notificators
-type Notifier struct {
+type notifier struct {
 	Config         *Config
 	Job            *Job
 	Execution      *Execution
@@ -28,8 +28,10 @@ type Notifier struct {
 }
 
 // NewNotifier returns a new notifier
-func NewNotifier(config *Config, execution *Execution, exGroup []*Execution, job *Job, logger *logrus.Entry) *Notifier {
-	return &Notifier{
+func SendPreNotifications(config *Config, execution *Execution, exGroup []*Execution, job *Job, logger *logrus.Entry) error {
+	var werr error
+
+	n := &notifier{
 		logger: logger,
 
 		Config:         config,
@@ -37,10 +39,6 @@ func NewNotifier(config *Config, execution *Execution, exGroup []*Execution, job
 		ExecutionGroup: exGroup,
 		Job:            job,
 	}
-}
-
-func (n *Notifier) Start() error {
-	var werr error
 
 	if err := n.cronitorTelemetry("run"); err != nil {
 		werr = multierror.Append(werr, fmt.Errorf("notifier: error sending cronitor telemetry %w", err))
@@ -56,7 +54,16 @@ func (n *Notifier) Start() error {
 }
 
 // Send sends the notifications using any configured method
-func (n *Notifier) End() error {
+func SendPostNotifications(config *Config, execution *Execution, exGroup []*Execution, job *Job, logger *logrus.Entry) error {
+	n := &notifier{
+		logger: logger,
+
+		Config:         config,
+		Execution:      execution,
+		ExecutionGroup: exGroup,
+		Job:            job,
+	}
+
 	var werr error
 
 	if err := n.cronitorTelemetry("complete"); err != nil {
@@ -78,7 +85,7 @@ func (n *Notifier) End() error {
 	return werr
 }
 
-func (n *Notifier) report() string {
+func (n *notifier) report() string {
 	var exgStr string
 	for _, ex := range n.ExecutionGroup {
 		exgStr = fmt.Sprintf("%s\t[Node]: %s [Start]: %s [End]: %s [Success]: %t\n",
@@ -101,7 +108,7 @@ func (n *Notifier) report() string {
 		exgStr)
 }
 
-func (n *Notifier) buildTemplate(templ string) *bytes.Buffer {
+func (n *notifier) buildTemplate(templ string) *bytes.Buffer {
 	t, e := template.New("report").Parse(templ)
 	if e != nil {
 		n.logger.WithError(e).Error("notifier: error parsing template")
@@ -137,7 +144,7 @@ func (n *Notifier) buildTemplate(templ string) *bytes.Buffer {
 	return out
 }
 
-func (n *Notifier) sendExecutionEmail() error {
+func (n *notifier) sendExecutionEmail() error {
 	var data *bytes.Buffer
 	if n.Config.MailPayload != "" {
 		data = n.buildTemplate(n.Config.MailPayload)
@@ -160,7 +167,7 @@ func (n *Notifier) sendExecutionEmail() error {
 	return nil
 }
 
-func (n *Notifier) auth() smtp.Auth {
+func (n *notifier) auth() smtp.Auth {
 	var auth smtp.Auth
 
 	if n.Config.MailUsername != "" && n.Config.MailPassword != "" {
@@ -170,7 +177,7 @@ func (n *Notifier) auth() smtp.Auth {
 	return auth
 }
 
-func (n *Notifier) callPreExecutionWebhook() error {
+func (n *notifier) callPreExecutionWebhook() error {
 	out := n.buildTemplate(n.Config.PreWebhookPayload)
 	req, err := http.NewRequest("POST", n.Config.PreWebhookEndpoint, out)
 	if err != nil {
@@ -200,7 +207,7 @@ func (n *Notifier) callPreExecutionWebhook() error {
 	return nil
 }
 
-func (n *Notifier) callExecutionWebhook() error {
+func (n *notifier) callExecutionWebhook() error {
 	out := n.buildTemplate(n.Config.WebhookPayload)
 	req, err := http.NewRequest("POST", n.Config.WebhookEndpoint, out)
 	if err != nil {
@@ -230,7 +237,7 @@ func (n *Notifier) callExecutionWebhook() error {
 	return nil
 }
 
-func (n *Notifier) statusString() string {
+func (n *notifier) statusString() string {
 	if n.Execution.Success {
 		return "Success"
 	}
@@ -238,7 +245,7 @@ func (n *Notifier) statusString() string {
 }
 
 // cronitorTelemetry is called when a job starts to notify cronitor
-func (n *Notifier) cronitorTelemetry(state string) error {
+func (n *notifier) cronitorTelemetry(state string) error {
 	if n.Config.CronitorEndpoint != "" {
 		params := url.Values{}
 		params.Add("host", n.Execution.NodeName)

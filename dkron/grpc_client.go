@@ -453,7 +453,7 @@ func (grpcc *GRPCClient) AgentRun(addr string, job *proto.Job, execution *proto.
 		}
 
 		// Notify the starting of the execution
-		if err := NewNotifier(grpcc.agent.config, NewExecutionFromProto(execution), nil, NewJobFromProto(job, grpcc.logger), grpcc.logger).Start(); err != nil {
+		if err := SendPreNotifications(grpcc.agent.config, NewExecutionFromProto(execution), nil, NewJobFromProto(job, grpcc.logger), grpcc.logger); err != nil {
 			grpcc.logger.WithFields(map[string]interface{}{
 				"job_name": job.Name,
 				"node":     grpcc.agent.config.NodeName,

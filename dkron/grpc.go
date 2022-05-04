@@ -237,7 +237,7 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.E
 	}
 
 	// Send notification
-	if err := NewNotifier(grpcs.agent.config, execution, exg, job, grpcs.logger).End(); err != nil {
+	if err := SendPostNotifications(grpcs.agent.config, execution, exg, job, grpcs.logger); err != nil {
 		return nil, err
 	}
 
