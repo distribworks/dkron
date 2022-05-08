@@ -79,7 +79,7 @@ builds:
     id: dkron
     binary: dkron
     ldflags:
-      - -s -w -X github.com/distribworks/dkron/v3/dkron.Version={{.Version}} -X github.com/distribworks/dkron/v3/dkron.Codename=merichuas
+      - -s -w -X github.com/distribworks/dkron/v3/dkron.Version={{.Version}} -X github.com/distribworks/dkron/v3/dkron.Codename=Abaniko
 
 nfpms:
   -
@@ -117,6 +117,62 @@ nfpms:
 
 snapshot:
   name_template: "{{ .Tag }}-next"
+
+dockers:
+  - image_templates:
+      - dkron/{{ .ProjectName }}:{{ .Version }}-amd64
+    dockerfile: Dockerfile.release
+    use: buildx
+    goos: linux
+    goarch: amd64
+    ids:
+      - dkron
+      - dkron-executor-http
+      - dkron-executor-shell
+      - dkron-executor-rabbitmq
+      - dkron-executor-nats
+      - dkron-executor-kafka
+      - dkron-executor-gcppubsub
+      - dkron-executor-grpc
+      - dkron-processor-files
+      - dkron-processor-log
+      - dkron-processor-syslog
+      - dkron-processor-fluent
+    build_flag_templates:
+      - --platform=linux/amd64
+
+  - image_templates:
+      - dkron/{{ .ProjectName }}:{{ .Version }}-arm64
+    dockerfile: Dockerfile.release
+    use: buildx
+    goos: linux
+    goarch: arm64
+    ids:
+      - dkron
+      - dkron-executor-http
+      - dkron-executor-shell
+      - dkron-executor-rabbitmq
+      - dkron-executor-nats
+      - dkron-executor-kafka
+      - dkron-executor-gcppubsub
+      - dkron-executor-grpc
+      - dkron-processor-files
+      - dkron-processor-log
+      - dkron-processor-syslog
+      - dkron-processor-fluent
+    build_flag_templates:
+      - --platform=linux/arm64/v8
+
+docker_manifests:
+  - name_template: dkron/{{ .ProjectName }}:{{ .Version }}
+    image_templates:
+      - dkron/{{ .ProjectName }}:{{ .Version }}-amd64
+      - dkron/{{ .ProjectName }}:{{ .Version }}-arm64
+
+  - name_template: dkron/{{ .ProjectName }}:latest
+    image_templates:
+    - dkron/{{ .ProjectName }}:{{ .Version }}-amd64
+    - dkron/{{ .ProjectName }}:{{ .Version }}-arm64
 
 changelog:
   sort: asc

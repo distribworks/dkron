@@ -4,21 +4,42 @@ fury: $(LINUX_PKGS)
 $(LINUX_PKGS):
 	fury push --as distribworks $@
 
-.PHONY: goreleaser
-goreleaser:
-	docker run --rm --privileged \
-	-v ${PWD}:/dkron \
-	-v /var/run/docker.sock:/var/run/docker.sock \
-	-w /dkron \
-	-e GITHUB_TOKEN \
-	-e DOCKER_USERNAME \
-	-e DOCKER_PASSWORD \
-	-e DOCKER_REGISTRY \
-	--entrypoint "" \
-	goreleaser/goreleaser scripts/release
+PACKAGE_NAME          := github.com/distribworks/dkron
+GOLANG_CROSS_VERSION  ?= v1.18.1
+
+.PHONY: release-dry-run
+release-dry-run:
+	@docker run \
+		--rm \
+		--privileged \
+		-v ${PWD}:/dkron \
+		-w /dkron \
+		-e GITHUB_TOKEN \
+		-e DOCKER_USERNAME \
+		-e DOCKER_PASSWORD \
+		-e DOCKER_REGISTRY \
+		-v /var/run/docker.sock:/var/run/docker.sock \
+		-v `pwd`:/go/src/$(PACKAGE_NAME) \
+		-w /go/src/$(PACKAGE_NAME) \
+		goreleaser/goreleaser-cross:${GOLANG_CROSS_VERSION} \
+		--rm-dist --skip-validate --skip-publish --timeout=1h
 
 .PHONY: release
-release: clean goreleaser
+release:
+	@docker run \
+		--rm \
+		--privileged \
+		-v ${PWD}:/dkron \
+		-w /dkron \
+		-e GITHUB_TOKEN \
+		-e DOCKER_USERNAME \
+		-e DOCKER_PASSWORD \
+		-e DOCKER_REGISTRY \
+		-v /var/run/docker.sock:/var/run/docker.sock \
+		-v `pwd`:/go/src/$(PACKAGE_NAME) \
+		-w /go/src/$(PACKAGE_NAME) \
+		goreleaser/goreleaser-cross:${GOLANG_CROSS_VERSION} \
+		--rm-dist --skip-validate --timeout=1h
 
 .PHONY: clean
 clean:
