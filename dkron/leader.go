@@ -62,6 +62,31 @@ func (a *Agent) monitorLeadership() {
 	}
 }
 
+func (a *Agent) leadershipTransfer() error {
+	retryCount := 3
+	for i := 0; i < retryCount; i++ {
+		err := a.raft.LeadershipTransfer().Error()
+		if err == nil {
+			a.sched.Stop()
+			a.logger.Info("dkron: successfully transferred leadership")
+			return nil
+		}
+
+		// Don't retry if the Raft version doesn't support leadership transfer
+		// since this will never succeed.
+		if err == raft.ErrUnsupportedProtocol {
+			return fmt.Errorf("leadership transfer not supported with Raft version lower than 3")
+		}
+
+		a.logger.Error("failed to transfer leadership attempt, will retry",
+			"attempt", i,
+			"retry_limit", retryCount,
+			"error", err,
+		)
+	}
+	return fmt.Errorf("failed to transfer leadership in %d attempts", retryCount)
+}
+
 // leaderLoop runs as long as we are the leader to run various
 // maintenance activities
 func (a *Agent) leaderLoop(stopCh chan struct{}) {
@@ -85,16 +110,23 @@ RECONCILE:
 	// Check if we need to handle initial leadership actions
 	if !establishedLeader {
 		if err := a.establishLeadership(stopCh); err != nil {
+			a.logger.WithError(err).Error("dkron: failed to establish leadership")
+
 			// Immediately revoke leadership since we didn't successfully
 			// establish leadership.
 			if err := a.revokeLeadership(); err != nil {
 				a.logger.WithError(err).Error("dkron: failed to revoke leadership")
 			}
 
-			a.logger.WithError(err).Error("dkron: failed to establish leadership")
-
-			// TODO: review this code path
-			goto WAIT
+			// Attempt to transfer leadership. If successful, leave the
+			// leaderLoop since this node is no longer the leader. Otherwise
+			// try to establish leadership again after 5 seconds.
+			if err := a.leadershipTransfer(); err != nil {
+				a.logger.Error("failed to transfer leadership", "error", err)
+				interval = time.After(5 * time.Second)
+				goto WAIT
+			}
+			return
 		}
 
 		establishedLeader = true
@@ -125,10 +157,12 @@ RECONCILE:
 	}
 
 WAIT:
-	// Wait until leadership is lost
+	// Wait until leadership is lost or periodically reconcile as long as we
+	// are the leader, or when Serf events arrive.
 	for {
 		select {
 		case <-stopCh:
+			// Lost leadership.
 			return
 		case <-a.shutdownCh:
 			return
@@ -144,9 +178,6 @@ WAIT:
 // membership and what is reflected in our strongly consistent store.
 func (a *Agent) reconcile() error {
 	defer metrics.MeasureSince([]string{"dkron", "leader", "reconcile"}, time.Now())
-
-	// TODO: Try to fix https://github.com/distribworks/dkron/issues/998
-	a.sched.Cron.Start()
 
 	members := a.serf.Members()
 	for _, member := range members {
