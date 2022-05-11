@@ -3,7 +3,6 @@ package dkron
 import (
 	"errors"
 	"expvar"
-	"fmt"
 	"strings"
 	"sync"
 
@@ -50,8 +49,10 @@ func (s *Scheduler) Start(jobs []*Job, agent *Agent) error {
 	defer s.mu.Unlock()
 
 	if s.Cron != nil {
-		// Creating a new cron is risky if not nil because the previous invocation is dirty
-		return fmt.Errorf("cron is already configured, can not start scheduler")
+		// Stop the cron scheduler first and wait for all jobs to finish
+		s.Stop()
+		// Clear the cron scheduler
+		s.Cron = nil
 	}
 
 	s.Cron = cron.New(cron.WithParser(extcron.NewParser()))

@@ -67,6 +67,7 @@ func (a *Agent) leadershipTransfer() error {
 	for i := 0; i < retryCount; i++ {
 		err := a.raft.LeadershipTransfer().Error()
 		if err == nil {
+			a.sched.Stop()
 			a.logger.Info("dkron: successfully transferred leadership")
 			return nil
 		}
@@ -177,9 +178,6 @@ WAIT:
 // membership and what is reflected in our strongly consistent store.
 func (a *Agent) reconcile() error {
 	defer metrics.MeasureSince([]string{"dkron", "leader", "reconcile"}, time.Now())
-
-	// TODO: Try to fix https://github.com/distribworks/dkron/issues/998
-	a.sched.Cron.Start()
 
 	members := a.serf.Members()
 	for _, member := range members {
