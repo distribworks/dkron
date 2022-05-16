@@ -61,6 +61,7 @@ func (s *Scheduler) Start(jobs []*Job, agent *Agent) error {
 	for _, job := range jobs {
 		job.Agent = agent
 		if err := s.AddJob(job); err != nil {
+			s.Cron = nil
 			return err
 		}
 	}
@@ -80,10 +81,7 @@ func (s *Scheduler) Stop() {
 		s.logger.Debug("scheduler: Stopping scheduler")
 		<-s.Cron.Stop().Done()
 		s.started = false
-		// Keep Cron exists and let the jobs which have been scheduled can continue to finish,
-		// even the node's leadership will be revoked.
-		// Ignore the running jobs and make s.Cron to nil may cause whole process crashed.
-		//s.Cron = nil
+		s.Cron = nil
 
 		// expvars
 		cronInspect.Do(func(kv expvar.KeyValue) {
