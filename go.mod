@@ -52,7 +52,7 @@ require (
 	github.com/tidwall/buntdb v1.2.7
 	github.com/tinylib/msgp v1.1.6 // indirect
 	golang.org/x/net v0.0.0-20220412020605-290c469a71a5
-	google.golang.org/grpc v1.46.0
+	google.golang.org/grpc v1.46.2
 	google.golang.org/protobuf v1.28.0
 )
 
