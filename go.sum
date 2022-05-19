@@ -427,8 +427,9 @@ github.com/hashicorp/raft v1.3.9/go.mod h1:4Ak7FSPnuvmb0GV6vgIAJ4vYT4bek9bb6Q+7H
 github.com/hashicorp/raft-boltdb v0.0.0-20211202195631-7d34b9fb3f42 h1:Ye8SofeDHJzu9xvvaMmpMkqHELWW7rTcXwdUR0CWW48=
 github.com/hashicorp/raft-boltdb v0.0.0-20211202195631-7d34b9fb3f42/go.mod h1:wcXL8otVu5cpJVLjcmq7pmfdRCdaP+xnvu7WQcKJAhs=
 github.com/hashicorp/serf v0.9.6/go.mod h1:TXZNMjZQijwlDvp+r0b63xZ45H7JmCmgg4gpTwn9UV4=
-github.com/hashicorp/serf v0.9.7 h1:hkdgbqizGQHuU5IPqYM1JdSMV8nKfpuOnZYXssk9muY=
 github.com/hashicorp/serf v0.9.7/go.mod h1:TXZNMjZQijwlDvp+r0b63xZ45H7JmCmgg4gpTwn9UV4=
+github.com/hashicorp/serf v0.9.8 h1:JGklO/2Drf1QGa312EieQN3zhxQ+aJg6pG+aC3MFaVo=
+github.com/hashicorp/serf v0.9.8/go.mod h1:TXZNMjZQijwlDvp+r0b63xZ45H7JmCmgg4gpTwn9UV4=
 github.com/hashicorp/vic v1.5.1-0.20190403131502-bbfe86ec9443 h1:O/pT5C1Q3mVXMyuqg7yuAWUg/jMZR1/0QTzTRdNR6Uw=
 github.com/hashicorp/vic v1.5.1-0.20190403131502-bbfe86ec9443/go.mod h1:bEpDU35nTu0ey1EXjwNwPjI9xErAsoOCmcMb9GKvyxo=
 github.com/hashicorp/yamux v0.0.0-20180604194846-3520598351bb/go.mod h1:+NfK9FKeTrX5uv1uIXGdwYDTeHna2qgaIlx54MXqjAM=
