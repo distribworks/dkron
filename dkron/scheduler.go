@@ -1,6 +1,7 @@
 package dkron
 
 import (
+	"context"
 	"errors"
 	"expvar"
 	"strings"
@@ -35,7 +36,7 @@ type Scheduler struct {
 func NewScheduler(logger *logrus.Entry) *Scheduler {
 	schedulerStarted.Set(0)
 	return &Scheduler{
-		Cron:        nil,
+		Cron:        cron.New(cron.WithParser(extcron.NewParser())),
 		started:     false,
 		EntryJobMap: sync.Map{},
 		logger:      logger,
@@ -48,14 +49,10 @@ func (s *Scheduler) Start(jobs []*Job, agent *Agent) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	if s.Cron != nil {
-		// Stop the cron scheduler first and wait for all jobs to finish
-		s.Stop()
-		// Clear the cron scheduler
-		s.Cron = nil
+	if s.started {
+		return errors.New("scheduler: cron already started, should be stopped first")
 	}
-
-	s.Cron = cron.New(cron.WithParser(extcron.NewParser()))
+	s.ClearCron()
 
 	metrics.IncrCounter([]string{"scheduler", "start"}, 1)
 	for _, job := range jobs {
@@ -72,18 +69,14 @@ func (s *Scheduler) Start(jobs []*Job, agent *Agent) error {
 }
 
 // Stop stops the scheduler effectively not running any job.
-func (s *Scheduler) Stop() {
+func (s *Scheduler) Stop() context.Context {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
+	ctx := s.Cron.Stop()
 	if s.started {
 		s.logger.Debug("scheduler: Stopping scheduler")
-		<-s.Cron.Stop().Done()
 		s.started = false
-		// Keep Cron exists and let the jobs which have been scheduled can continue to finish,
-		// even the node's leadership will be revoked.
-		// Ignore the running jobs and make s.Cron to nil may cause whole process crashed.
-		//s.Cron = nil
 
 		// expvars
 		cronInspect.Do(func(kv expvar.KeyValue) {
@@ -91,12 +84,12 @@ func (s *Scheduler) Stop() {
 		})
 	}
 	schedulerStarted.Set(0)
+	return ctx
 }
 
 // Restart the scheduler
 func (s *Scheduler) Restart(jobs []*Job, agent *Agent) {
 	s.Stop()
-	s.ClearCron()
 	if err := s.Start(jobs, agent); err != nil {
 		s.logger.Fatal(err)
 	}
@@ -104,7 +97,9 @@ func (s *Scheduler) Restart(jobs []*Job, agent *Agent) {
 
 // Clear cron separately, this can only be called when agent will be stop.
 func (s *Scheduler) ClearCron() {
-	s.Cron = nil
+	for _, e := range s.Cron.Entries() {
+		s.Cron.Remove(e.ID)
+	}
 }
 
 // Started will safely return if the scheduler is started or not
