@@ -11,7 +11,7 @@ import {
     TabbedShowLayout,
     Tab,
     ReferenceManyField,
-    useNotify, useRedirect, fetchStart, fetchEnd, Button,
+    useNotify, fetchStart, fetchEnd, Button,
 } from 'react-admin';
 import ToggleButton from "./ToggleButton"
 import RunButton from "./RunButton"
