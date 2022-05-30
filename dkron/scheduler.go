@@ -98,9 +98,10 @@ func (s *Scheduler) Restart(jobs []*Job, agent *Agent) {
 
 // Clear cron separately, this can only be called when agent will be stop.
 func (s *Scheduler) ClearCron() {
-	for _, e := range s.Cron.Entries() {
-		s.Cron.Remove(e.ID)
-	}
+	s.EntryJobMap.Range(func(key interface{}, value interface{}) bool {
+		s.RemoveJob(&Job{Name: key.(string)})
+		return true
+	})
 }
 
 // Started will safely return if the scheduler is started or not
