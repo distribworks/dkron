@@ -46,12 +46,40 @@ func TestSchedule(t *testing.T) {
 
 	assert.True(t, sched.started)
 	assert.True(t, sched.Started())
-	assert.Len(t, sched.Cron.Entries(), 1)
-
-	sched.ClearCron()
-	assert.Len(t, sched.Cron.Entries(), 0)
 
 	sched.Stop()
+}
+
+func TestClearCron(t *testing.T) {
+	log := getTestLogger()
+	sched := NewScheduler(log)
+
+	testJob := &Job{
+		Name:           "cron_job",
+		Schedule:       "@every 2s",
+		Executor:       "shell",
+		ExecutorConfig: map[string]string{"command": "echo 'test1'", "shell": "true"},
+		Owner:          "John Dough",
+		OwnerEmail:     "foo@bar.com",
+	}
+	sched.AddJob(testJob)
+
+	assert.Len(t, sched.Cron.Entries(), 1)
+	var count int
+	sched.EntryJobMap.Range(func(key, value interface{}) bool {
+		count++
+		return true
+	})
+	assert.Equal(t, 1, count)
+
+	sched.ClearCron()
+	count = 0
+	sched.EntryJobMap.Range(func(key, value interface{}) bool {
+		count++
+		return true
+	})
+	assert.Equal(t, 0, count)
+	assert.Len(t, sched.Cron.Entries(), 0)
 }
 
 func TestTimezoneAwareJob(t *testing.T) {
