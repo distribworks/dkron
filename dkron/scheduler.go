@@ -68,7 +68,8 @@ func (s *Scheduler) Start(jobs []*Job, agent *Agent) error {
 	return nil
 }
 
-// Stop stops the scheduler effectively not running any job.
+// Stop stops the cron scheduler if it is running; otherwise it does nothing.
+// A context is returned so the caller can wait for running jobs to complete.
 func (s *Scheduler) Stop() context.Context {
 	s.mu.Lock()
 	defer s.mu.Unlock()
