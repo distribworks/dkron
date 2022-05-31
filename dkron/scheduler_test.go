@@ -31,8 +31,8 @@ func TestSchedule(t *testing.T) {
 	assert.True(t, sched.Started())
 	now := time.Now().Truncate(time.Second)
 
-	entry, _ := sched.GetEntry(testJob1.Name)
-	assert.Equal(t, now.Add(time.Second*2), entry.Next)
+	ej, _ := sched.GetEntryJob(testJob1.Name)
+	assert.Equal(t, now.Add(time.Second*2), ej.entry.Next)
 
 	testJob2 := &Job{
 		Name:           "cron_job",
@@ -63,22 +63,9 @@ func TestClearCron(t *testing.T) {
 		OwnerEmail:     "foo@bar.com",
 	}
 	sched.AddJob(testJob)
-
 	assert.Len(t, sched.Cron.Entries(), 1)
-	var count int
-	sched.EntryJobMap.Range(func(key, value interface{}) bool {
-		count++
-		return true
-	})
-	assert.Equal(t, 1, count)
 
 	sched.ClearCron()
-	count = 0
-	sched.EntryJobMap.Range(func(key, value interface{}) bool {
-		count++
-		return true
-	})
-	assert.Equal(t, 0, count)
 	assert.Len(t, sched.Cron.Entries(), 0)
 }
 

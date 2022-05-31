@@ -21,25 +21,28 @@ var (
 	ErrScheduleParse = errors.New("can't parse job schedule")
 )
 
+type EntryJob struct {
+	entry *cron.Entry
+	job   *Job
+}
+
 // Scheduler represents a dkron scheduler instance, it stores the cron engine
 // and the related parameters.
 type Scheduler struct {
 	// mu is to prevent concurrent edits to Cron and Started
-	mu          sync.RWMutex
-	Cron        *cron.Cron
-	started     bool
-	EntryJobMap sync.Map
-	logger      *logrus.Entry
+	mu      sync.RWMutex
+	Cron    *cron.Cron
+	started bool
+	logger  *logrus.Entry
 }
 
 // NewScheduler creates a new Scheduler instance
 func NewScheduler(logger *logrus.Entry) *Scheduler {
 	schedulerStarted.Set(0)
 	return &Scheduler{
-		Cron:        cron.New(cron.WithParser(extcron.NewParser())),
-		started:     false,
-		EntryJobMap: sync.Map{},
-		logger:      logger,
+		Cron:    cron.New(cron.WithParser(extcron.NewParser())),
+		started: false,
+		logger:  logger,
 	}
 }
 
@@ -96,12 +99,16 @@ func (s *Scheduler) Restart(jobs []*Job, agent *Agent) {
 	}
 }
 
-// Clear cron separately, this can only be called when agent will be stop.
+// ClearCron clears the cron scheduler
 func (s *Scheduler) ClearCron() {
-	s.EntryJobMap.Range(func(key interface{}, value interface{}) bool {
-		s.RemoveJob(&Job{Name: key.(string)})
-		return true
-	})
+	for _, e := range s.Cron.Entries() {
+		if j, ok := e.Job.(*Job); !ok {
+			s.logger.Errorf("scheduler: Failed to cast job to *Job found type %T", e.Job)
+			continue
+		} else {
+			s.RemoveJob(j.Name)
+		}
+	}
 }
 
 // Started will safely return if the scheduler is started or not
@@ -112,24 +119,31 @@ func (s *Scheduler) Started() bool {
 	return s.started
 }
 
-// GetEntry returns a scheduler entry from a snapshot in
+// GetEntryJob returns a EntryJob object from a snapshot in
 // the current time, and whether or not the entry was found.
-func (s *Scheduler) GetEntry(jobName string) (cron.Entry, bool) {
+func (s *Scheduler) GetEntryJob(jobName string) (EntryJob, bool) {
 	for _, e := range s.Cron.Entries() {
-		j, _ := e.Job.(*Job)
-		j.logger = s.logger
-		if j.Name == jobName {
-			return e, true
+		if j, ok := e.Job.(*Job); !ok {
+			s.logger.Errorf("scheduler: Failed to cast job to *Job found type %T", e.Job)
+			continue
+		} else {
+			j.logger = s.logger
+			if j.Name == jobName {
+				return EntryJob{
+					entry: &e,
+					job:   j,
+				}, true
+			}
 		}
 	}
-	return cron.Entry{}, false
+	return EntryJob{}, false
 }
 
 // AddJob Adds a job to the cron scheduler
 func (s *Scheduler) AddJob(job *Job) error {
 	// Check if the job is already set and remove it if exists
-	if _, ok := s.EntryJobMap.Load(job.Name); ok {
-		s.RemoveJob(job)
+	if _, ok := s.GetEntryJob(job.Name); ok {
+		s.RemoveJob(job.Name)
 	}
 
 	if job.Disabled || job.ParentJob != "" {
@@ -151,11 +165,10 @@ func (s *Scheduler) AddJob(job *Job) error {
 		schedule = "CRON_TZ=" + job.Timezone + " " + schedule
 	}
 
-	id, err := s.Cron.AddJob(schedule, job)
+	_, err := s.Cron.AddJob(schedule, job)
 	if err != nil {
 		return err
 	}
-	s.EntryJobMap.Store(job.Name, id)
 
 	cronInspect.Set(job.Name, job)
 	metrics.IncrCounterWithLabels([]string{"scheduler", "job_add"}, 1, []metrics.Label{{Name: "job", Value: job.Name}})
@@ -164,15 +177,14 @@ func (s *Scheduler) AddJob(job *Job) error {
 }
 
 // RemoveJob removes a job from the cron scheduler if it exists.
-func (s *Scheduler) RemoveJob(job *Job) {
+func (s *Scheduler) RemoveJob(jobName string) {
 	s.logger.WithFields(logrus.Fields{
-		"job": job.Name,
+		"job": jobName,
 	}).Debug("scheduler: Removing job from cron")
-	if v, ok := s.EntryJobMap.Load(job.Name); ok {
-		s.Cron.Remove(v.(cron.EntryID))
-		s.EntryJobMap.Delete(job.Name)
 
-		cronInspect.Delete(job.Name)
-		metrics.IncrCounterWithLabels([]string{"scheduler", "job_delete"}, 1, []metrics.Label{{Name: "job", Value: job.Name}})
+	if ej, ok := s.GetEntryJob(jobName); ok {
+		s.Cron.Remove(ej.entry.ID)
+		cronInspect.Delete(jobName)
+		metrics.IncrCounterWithLabels([]string{"scheduler", "job_delete"}, 1, []metrics.Label{{Name: "job", Value: jobName}})
 	}
 }
