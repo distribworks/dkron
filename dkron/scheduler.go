@@ -103,7 +103,8 @@ func (s *Scheduler) Restart(jobs []*Job, agent *Agent) {
 func (s *Scheduler) ClearCron() {
 	for _, e := range s.Cron.Entries() {
 		if j, ok := e.Job.(*Job); !ok {
-			s.logger.Errorf("scheduler: Failed to cast job to *Job found type %T", e.Job)
+			s.logger.Errorf("scheduler: Failed to cast job to *Job found type %T and removing it", e.Job)
+			s.Cron.Remove(e.ID)
 			continue
 		} else {
 			s.RemoveJob(j.Name)
