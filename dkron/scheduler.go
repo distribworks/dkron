@@ -105,7 +105,6 @@ func (s *Scheduler) ClearCron() {
 		if j, ok := e.Job.(*Job); !ok {
 			s.logger.Errorf("scheduler: Failed to cast job to *Job found type %T and removing it", e.Job)
 			s.Cron.Remove(e.ID)
-			continue
 		} else {
 			s.RemoveJob(j.Name)
 		}
@@ -126,7 +125,6 @@ func (s *Scheduler) GetEntryJob(jobName string) (EntryJob, bool) {
 	for _, e := range s.Cron.Entries() {
 		if j, ok := e.Job.(*Job); !ok {
 			s.logger.Errorf("scheduler: Failed to cast job to *Job found type %T", e.Job)
-			continue
 		} else {
 			j.logger = s.logger
 			if j.Name == jobName {
