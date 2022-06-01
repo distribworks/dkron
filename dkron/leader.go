@@ -68,7 +68,7 @@ func (a *Agent) leadershipTransfer() error {
 		err := a.raft.LeadershipTransfer().Error()
 		if err == nil {
 			// Stop the scheduler, running jobs will continue to finish but we
-			// can not actively wait for them, blocking the executions here.
+			// can not actively wait for them blocking the execution here.
 			a.sched.Stop()
 			a.logger.Info("dkron: successfully transferred leadership")
 			return nil
@@ -233,7 +233,7 @@ func (a *Agent) establishLeadership(stopCh chan struct{}) error {
 func (a *Agent) revokeLeadership() error {
 	defer metrics.MeasureSince([]string{"dkron", "leader", "revoke_leadership"}, time.Now())
 	// Stop the scheduler, running jobs will continue to finish but we
-	// can not actively wait for them, blocking the executions here.
+	// can not actively wait for them blocking the execution here.
 	a.sched.Stop()
 
 	return nil
