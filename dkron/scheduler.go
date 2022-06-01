@@ -93,7 +93,10 @@ func (s *Scheduler) Stop() context.Context {
 
 // Restart the scheduler
 func (s *Scheduler) Restart(jobs []*Job, agent *Agent) {
+	// Stop the scheduler, running jobs will continue to finish but we
+	// can not actively wait for them, blocking the executions here.
 	s.Stop()
+
 	if err := s.Start(jobs, agent); err != nil {
 		s.logger.Fatal(err)
 	}
