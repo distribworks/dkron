@@ -6,6 +6,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixes
+
+Refactor cron lifecycle (https://github.com/distribworks/dkron/pull/1119)
+Leadership transfer (https://github.com/distribworks/dkron/pull/1109)
+
+### Changes
+
+Add prewebhook and cronitor telemetry integration (https://github.com/distribworks/dkron/pull/1099)
+Implement GRPC executor (https://github.com/distribworks/dkron/pull/1049)
+Use golang/cross to build multiarch docker (https://github.com/distribworks/dkron/pull/1105)
+Implement some suggestions to the UI (https://github.com/distribworks/dkron/pull/1120)
+New web site (https://github.com/distribworks/dkron/pull/1072)
+
+## [3.1.11] - 2022-04-07
+
+### Fixes
+
+Try to fix scheduler not starting [#1053](https://github.com/distribworks/dkron/pull/1053)
+look for plugins in the config path used (as documented) instead of hardcoded /etc/dkron [#1024](https://github.com/distribworks/dkron/pull/1024)
+Do not exit on failed leadership [#1082](https://github.com/distribworks/dkron/pull/1082)
+### Changes
+
+Allow multiple brokers in kafka executor [#1037](https://github.com/distribworks/dkron/pull/1037)
+Allow passing through a message key for Kafka executor [#1021](https://github.com/distribworks/dkron/pull/1021)
+Bump dependencies
+Create codeql-analysis.yml
+refresh current page after toggle/run job is used [#1026](https://github.com/distribworks/dkron/pull/1026)
+supported terraform provider link [#1029](https://github.com/distribworks/dkron/pull/1029)
+Update metrics docs for Prometheus config file [#1058](https://github.com/distribworks/dkron/pull/1058)
+truncate execution output in default view [#1025](https://github.com/distribworks/dkron/pull/1025)
+Add execution endpoint [#1085](https://github.com/distribworks/dkron/pull/1085)
 ## [3.1.10] - 2021-10-01
 
 ### Fixes
