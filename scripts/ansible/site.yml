@@ -3,11 +3,11 @@
 
 - hosts: localhost
   tasks:
-    - packet_device:
+    - equinix.metal.device:
         hostnames: [dkron01, dkron02, dkron03]
-        operating_system: ubuntu_19_04
-        plan: baremetal_0
-        facility: sjc1
+        operating_system: ubuntu_21_04
+        plan: c3.small.x86
+        facility: am6
         wait_for_public_IPv: 4
         project_id: 904af849-79ff-4847-90f7-dfa02367ae72
       register: newhosts
@@ -23,9 +23,9 @@
         timeout: 500
       loop: "{{ newhosts.devices }}"
 
-- hosts: packet
+- hosts: equinix_metal
   user: root
-  become: yes
+  become: true
   become_method: sudo
 
   vars:
@@ -36,7 +36,7 @@
 
   tasks:
     - set_fact:
-        dkron_servers: "{{ groups['packet'] | map('extract', hostvars, ['ansible_all_ipv4_addresses', 1]) | list }}"
+        dkron_servers: "{{ groups['equinix_metal'] | map('extract', hostvars, ['ansible_all_ipv4_addresses', 1]) | list }}"
       tags: config
 
     - name: Copy package
