@@ -16,8 +16,8 @@ func (a *Agent) Run(jobName string, ex *Execution) (*Job, error) {
 
 	// In case the job is not a child job, compute the next execution time
 	if job.ParentJob == "" {
-		if e, ok := a.sched.GetEntry(jobName); ok {
-			job.Next = e.Next
+		if ej, ok := a.sched.GetEntryJob(jobName); ok {
+			job.Next = ej.entry.Next
 			if err := a.applySetJob(job.ToProto()); err != nil {
 				return nil, fmt.Errorf("agent: Run error storing job %s before running: %w", jobName, err)
 			}
