@@ -1,0 +1,15 @@
+FROM alpine:3.15
+LABEL maintainer="Victor Castell <victor@victorcastell.com>"
+
+RUN set -x \
+	&& buildDeps='bash ca-certificates openssl tzdata' \
+	&& apk add --no-cache --update $buildDeps
+
+EXPOSE 8080 8946
+
+ENV SHELL /bin/bash
+COPY * /usr/local/bin/
+
+ENTRYPOINT ["/usr/local/bin/dkron"]
+
+CMD ["--help"]

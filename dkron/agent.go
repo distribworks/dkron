@@ -245,8 +245,7 @@ func (a *Agent) Stop() error {
 	a.logger.Info("agent: Called member stop, now stopping")
 
 	if a.config.Server && a.sched.Started() {
-		a.sched.Stop()
-		a.sched.ClearCron()
+		<-a.sched.Stop().Done()
 	}
 
 	if a.config.Server {

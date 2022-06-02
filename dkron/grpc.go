@@ -122,7 +122,7 @@ func (grpcs *GRPCServer) DeleteJob(ctx context.Context, delJobReq *proto.DeleteJ
 	jpb := job.ToProto()
 
 	// If everything is ok, remove the job
-	grpcs.agent.sched.RemoveJob(job)
+	grpcs.agent.sched.RemoveJob(job.Name)
 	if job.Ephemeral {
 		grpcs.logger.WithField("job", job.Name).Info("grpc: Done deleting ephemeral job")
 	}
@@ -237,7 +237,7 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.E
 	}
 
 	// Send notification
-	if err := Notification(grpcs.agent.config, execution, exg, job).Send(grpcs.logger); err != nil {
+	if err := SendPostNotifications(grpcs.agent.config, execution, exg, job, grpcs.logger); err != nil {
 		return nil, err
 	}
 
