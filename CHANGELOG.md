@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.2.0] - 2022-06-05
+
 ### Fixes
 
 Refactor cron lifecycle (https://github.com/distribworks/dkron/pull/1119)
@@ -18,6 +20,7 @@ Implement GRPC executor (https://github.com/distribworks/dkron/pull/1049)
 Use golang/cross to build multiarch docker (https://github.com/distribworks/dkron/pull/1105)
 Implement some suggestions to the UI (https://github.com/distribworks/dkron/pull/1120)
 New web site (https://github.com/distribworks/dkron/pull/1072)
+Bump deps
 
 ## [3.1.11] - 2022-04-07
 
