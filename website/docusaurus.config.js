@@ -29,7 +29,7 @@ const config = {
         // Plugin Options for loading OpenAPI files
         specs: [
           {
-            spec: 'openapi/openapi.yaml',
+            spec: 'static/openapi/openapi.yaml',
             route: '/api/',
           },
         ],
