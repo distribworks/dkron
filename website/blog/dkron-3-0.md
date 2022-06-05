@@ -26,8 +26,8 @@ Change the notification JS code to a pop-up like system that provides better com
 
 ## Wrap-up
 
-This update brings no public API changes, and no changes in storage format so your upgrade path should be easy if you follow the [rolling upgrade notes](https://dkron.io/usage/upgrade/#rolling-upgrade).
+This update brings no public API changes, and no changes in storage format so your upgrade path should be easy if you follow the [rolling upgrade notes](/docs/usage/upgrade/#rolling-upgrade).
 
-Download and install from [here](https://dkron.io/basics/installation/)
+Download and install from [here](/docs/basics/installation/)
 
 *Thank you to all my Dkron Pro customers for ensuring the long-term support and maintenance of Dkron. Support OSS software and your infrastructure vendors so we can support you!*

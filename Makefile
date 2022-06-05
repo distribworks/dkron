@@ -60,8 +60,8 @@ clean:
 
 .PHONY: doc apidoc test ui updatetestcert
 doc:
-	#scripts/run doc --dir website/content/cli
-	cd website; hugo -d ../public
+	#scripts/run doc --dir website/docs/cli
+	cd website; yarn build --out-dir ../public
 	ghp-import -p public
 
 test:

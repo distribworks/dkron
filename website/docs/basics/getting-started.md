@@ -59,13 +59,13 @@ dkron agent --server --bootstrap-expect=1
 Check your server is working: `curl localhost:8080/v1`
 
 :::info
-For a full list of configuration parameters and its description, see the <a href="https://dkron.io/cli/dkron_agent/">CLI docs</a>
+For a full list of configuration parameters and its description, see the [CLI docs](/docs/cli/dkron_agent)
 :::
 
 ### Create a Job
 
 :::info
-This job will only run in just one `server` node due to the node count in the tag. Refer to the <a href="/usage/target-nodes-spec">target node spec</a> for details.
+This job will only run in just one `server` node due to the node count in the tag. Refer to the [target node spec](/docs/usage/target-nodes-spec) for details.
 :::
 
 ```bash
@@ -94,4 +94,4 @@ For full Job params description refer to the Job model in the [API guide](/api)
 
 That's it!
 
-#### To start configuring an HA installation of Dkron follow the [clustering guide](/usage/clustering)
+#### To start configuring an HA installation of Dkron follow the [clustering guide](/docs/usage/clustering)

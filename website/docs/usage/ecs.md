@@ -3,7 +3,7 @@ title: Use with AWS ECS
 ---
 
 :::tip
-<a href="/products/pro">Dkron Pro</a> comes with a <a href="/pro/executors/ecs/">native ECS executor</a> out of the box.
+[Dkron Pro](/pro) comes with a [native ECS executor](/docs/pro/executors/ecs/) out of the box.
 :::
 
 ## Use with Amazon ECS

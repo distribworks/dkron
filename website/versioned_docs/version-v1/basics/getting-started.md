@@ -39,11 +39,11 @@ It is compatible with etcd, Consul, Zookeeper, Redis, DynamoDB and BoltDB. For i
 
 ## Installation
 
-See the [installation](/basics/installation).
+See the [installation](/docs/v1/basics/installation).
 
 ## Configuration
 
-See the [configuration](/basics/configuration).
+See the [configuration](/docs/v1/basics/configuration).
 
 ## Usage
 
@@ -68,7 +68,7 @@ dkron agent --server
 Time to add the first job:
 
 {{% notice note %}}
-This job will only run in just one `dkron_server` node due to the node count in the tag. Refer to the [target node spec](/usage/target-nodes-spec) for details.
+This job will only run in just one `dkron_server` node due to the node count in the tag. Refer to the [target node spec](/docs/usage/target-nodes-spec) for details.
 {{% /notice %}}
 
 ```bash
@@ -92,4 +92,4 @@ curl localhost:8080/v1/jobs -XPOST -d '{
 
 That's it!
 
-#### To start configuring an HA installation of Dkron follow the [clustering guide](/usage/clustering)
+#### To start configuring an HA installation of Dkron follow the [clustering guide](/docs/usage/clustering)

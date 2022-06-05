@@ -4,7 +4,7 @@ title: Clustering
 
 ## Configure a cluster
 
-First follow the Dkron [clustering guide](/usage/clustering) then you can continue with this guide.
+First follow the Dkron [clustering guide](/docs/usage/clustering) then you can continue with this guide.
 
 The embedded store also needs to know its peers, it needs its own configuration as in the following example:
 

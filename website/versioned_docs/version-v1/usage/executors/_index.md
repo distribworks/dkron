@@ -11,6 +11,6 @@ For example, the built-in `shell` executor, will run the indicated command in th
 
 New plugins will be added, or you can create new ones, to perform different tasks, as HTTP requests, Docker runs, anything that you can imagine.
 
-[Dkron Pro](/products/pro/) have commercially supported executors
+[Dkron Pro](/pro/) have commercially supported executors
 
 {{% children  %}}

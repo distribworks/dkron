@@ -5,7 +5,7 @@ title: Configuration
 
 ## Configuration
 
-Dkron Pro uses the [same parameters](/basics/configuration) as Dkron OSS and add some extra parameters.
+Dkron Pro uses the [same parameters](/docs/v1/basics/configuration) as Dkron OSS and add some extra parameters.
 
 ### Command line options
 

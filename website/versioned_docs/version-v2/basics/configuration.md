@@ -48,7 +48,7 @@ Config file will be loaded from the following paths:
 
 ### SEE ALSO
 
-* [dkron agent](/cli/dkron_agent/)	 - Start a dkron agent
-* [dkron doc](/cli/dkron_doc/)	 - Generate Markdown documentation for the Dkron CLI.
-* [dkron keygen](/cli/dkron_keygen/)	 - Generates a new encryption key
-* [dkron version](/cli/dkron_version/)	 - Show version
+* [dkron agent](/docs/v2/cli/dkron_agent/)	 - Start a dkron agent
+* [dkron doc](/docs/v2/cli/dkron_doc/)	 - Generate Markdown documentation for the Dkron CLI.
+* [dkron keygen](/docs/v2/cli/dkron_keygen/)	 - Generates a new encryption key
+* [dkron version](/docs/v2/cli/dkron_version/)	 - Show version
