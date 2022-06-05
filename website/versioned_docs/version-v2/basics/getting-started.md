@@ -27,11 +27,11 @@ Dkron deployment is just a single binary, it stores the state in an internal Bad
 
 ## Installation
 
-See the [installation](/basics/installation).
+See the [installation](/docs/v2/basics/installation).
 
 ## Configuration
 
-See the [configuration](/basics/configuration).
+See the [configuration](/docs/v2/basics/configuration).
 
 ## Usage
 
@@ -61,7 +61,7 @@ Check your server is working: `curl localhost:8080/v1`
 Simple as that, now it is time to add a job:
 
 {{% notice note %}}
-This job will only run in just one `server` node due to the node count in the tag. Refer to the [target node spec](/usage/target-nodes-spec) for details.
+This job will only run in just one `server` node due to the node count in the tag. Refer to the [target node spec](/docs/usage/target-nodes-spec) for details.
 {{% /notice %}}
 
 ```bash
@@ -90,4 +90,4 @@ For full Job params description refer to the Job model in the [API guide](/api)
 
 That's it!
 
-#### To start configuring an HA installation of Dkron follow the [clustering guide](/usage/clustering)
+#### To start configuring an HA installation of Dkron follow the [clustering guide](/docs/usage/clustering)

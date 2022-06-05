@@ -41,7 +41,7 @@ Settings can be specified in three ways (in order of precedence):
 
 ### SEE ALSO
 
-* [dkron agent](/cli/dkron_agent/)	 - Start a dkron agent
-* [dkron doc](/cli/dkron_doc/)	 - Generate Markdown documentation for the Dkron CLI.
-* [dkron keygen](/cli/dkron_keygen/)	 - Generates a new encryption key
-* [dkron version](/cli/dkron_version/)	 - Show version
+* [dkron agent](/docs/v1/cli/dkron_agent/)	 - Start a dkron agent
+* [dkron doc](/docs/v1/cli/dkron_doc/)	 - Generate Markdown documentation for the Dkron CLI.
+* [dkron keygen](/docs/v1/cli/dkron_keygen/)	 - Generates a new encryption key
+* [dkron version](/docs/v1/cli/dkron_version/)	 - Show version
