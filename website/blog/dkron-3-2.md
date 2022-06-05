@@ -27,6 +27,9 @@ Cronitor is tightly integrated with Dkron, it will notify the details of every e
 
 Check the service https://cronitor.io/ and follow the integration guide in the docs to set up your [Dkron-Cronitor integration](/docs/usage/cronitor).
 
+### OpenAPI
+
+We have migrated API docs from Swagger 2 spec to OpenAPI 3 format. Check the new and better [API docs](/api) and you can download the new [OpenAPI spec](/openapi/openapi.yaml) too.
 ## Upcoming features
 
 The new look of Dkron will pave the road for the upcoming v4 release. We have really interesting features almost ready for the new version, some of them are:
