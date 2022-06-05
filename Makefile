@@ -62,7 +62,7 @@ clean:
 doc:
 	#scripts/run doc --dir website/docs/cli
 	cd website; yarn build --out-dir ../public
-	#ghp-import -p public
+	ghp-import -p public
 
 test:
 	@bash --norc -i ./scripts/test
