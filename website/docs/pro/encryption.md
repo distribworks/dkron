@@ -10,9 +10,9 @@ By default Dkron Pro runs with automatically generated SSL certificates, this is
 
 Follow [this tutorial](https://github.com/coreos/docs/blob/master/os/generate-self-signed-certificates.md) to generate autosigned SSL certificates for your instances.
 
-{{% notice note %}}
+:::info
 You don't need a client certificate for Dkron server, just add "client auth" usage to your server cert.
-{{% /notice %}}
+:::
 
 ```yaml
 # dkron.yaml
