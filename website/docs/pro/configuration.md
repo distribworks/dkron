@@ -1,9 +1,4 @@
-
----
-title: Configuration
----
-
-## Configuration
+# Configuration
 
 Dkron Pro uses the [same parameters](/docs/basics/configuration) as Dkron OSS and add some extra parameters.
 

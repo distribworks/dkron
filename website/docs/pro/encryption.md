@@ -1,6 +1,4 @@
----
-title: Encryption
----
+# Encryption
 
 SSL encryption is used for communicating dkron pro nodes. Also if client auth is enabled. This means that no other software running on your local network will be able to talk to dkron servers.
 

@@ -1,12 +1,8 @@
----
-title: Access Control
----
-
 # Access Control (Preview)
 
-{{% notice info %}}
+:::info
 This feature is in preview and is subject to big changes
-{{% /notice %}}
+:::
 
 Dkron provides an optional Access Control List (ACL) system which can be used to control access to data and APIs. The ACL is Capability-based, relying on policies to determine which fine grained rules can be applied. Dkron's capability based ACL system is very similar to common ACL systems you are used to.
 

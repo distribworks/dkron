@@ -267,7 +267,7 @@ export default function HomepagePricing() {
         </div>
 
         <p className="mb-0">All sales come with a two week, 100% money back guarantee.</p>
-        <p>Looking to embed Dkron in your virtual server or appliance? <a href="ocs/v2/pro/commercial-faq">Read the Commercial FAQ.</a></p>
+        <p>Looking to embed Dkron in your virtual server or appliance? <a href="docs/pro/commercial-faq">Read the Commercial FAQ.</a></p>
       </div>
     </section>
   );
