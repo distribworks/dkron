@@ -125,7 +125,7 @@ dockers:
     use: buildx
     goos: linux
     goarch: amd64
-    ids:
+    ids: &docker-ids
       - dkron
       - dkron-executor-http
       - dkron-executor-shell
@@ -147,19 +147,7 @@ dockers:
     use: buildx
     goos: linux
     goarch: arm64
-    ids:
-      - dkron
-      - dkron-executor-http
-      - dkron-executor-shell
-      - dkron-executor-rabbitmq
-      - dkron-executor-nats
-      - dkron-executor-kafka
-      - dkron-executor-gcppubsub
-      - dkron-executor-grpc
-      - dkron-processor-files
-      - dkron-processor-log
-      - dkron-processor-syslog
-      - dkron-processor-fluent
+    ids: *docker-ids
     build_flag_templates:
       - --platform=linux/arm64/v8
 
