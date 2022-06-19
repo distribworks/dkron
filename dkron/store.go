@@ -167,7 +167,7 @@ func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
 				return err
 			}
 		} else {
-			// If comming from a backup us the previous value, don't allow overwriting this
+			// If coming from a backup us the previous value, don't allow overwriting this
 			if job.Next.Before(ej.Next) {
 				job.Next = ej.Next
 			}
@@ -423,7 +423,7 @@ func (s *Store) DeleteJob(name string) (*Job, error) {
 		return nil, err
 	}
 
-	// If the transaction succeded, remove from parent
+	// If the transaction succeeded, remove from parent
 	if job.ParentJob != "" {
 		if err := s.removeFromParent(job); err != nil {
 			return nil, err

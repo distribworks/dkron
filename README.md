@@ -28,7 +28,7 @@ Full, comprehensive documentation is viewable on the [Dkron website](http://dkro
 
 ## Development Quick start
 
-The best way to test and develop dkron is using docker, you will need [Docker](https://www.docker.com/) installed before proceding.
+The best way to test and develop dkron is using docker, you will need [Docker](https://www.docker.com/) installed before proceeding.
 
 Clone the repository.
 
