@@ -9,6 +9,7 @@ import (
 
 	"github.com/distribworks/dkron/v3/dkron"
 	dkplugin "github.com/distribworks/dkron/v3/plugin"
+	"github.com/hashicorp/go-plugin"
 	"github.com/kardianos/osext"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -28,7 +29,7 @@ type Plugins struct {
 // 1. Dkron configuration path
 // 2. Path where Dkron is installed
 //
-// Whichever file is discovered LAST wins.
+// Whichever file is discoverd LAST wins.
 func (p *Plugins) DiscoverPlugins() error {
 	p.Processors = make(map[string]dkplugin.Processor)
 	p.Executors = make(map[string]dkplugin.Executor)
