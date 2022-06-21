@@ -173,7 +173,7 @@ export default function HomepagePricing() {
                             {tier.name === "Pro" ? (
                               <>
                                 <span className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-fuchsia-600">${tier.priceYearly}</span>
-                                <span className="text-base font-medium text-gray-500">/mo</span>
+                                <span className="text-base font-medium text-gray-500">/year</span>
                               </>
                             ) : (
                               <span className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-fuchsia-600">{tier.priceYearly}</span>
