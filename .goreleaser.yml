@@ -151,16 +151,29 @@ dockers:
     build_flag_templates:
       - --platform=linux/arm64/v8
 
+  - image_templates:
+      - dkron/{{ .ProjectName }}:{{ .Version }}-armv7
+    dockerfile: Dockerfile.release
+    use: buildx
+    goos: linux
+    goarch: arm
+    goarm: '7'
+    ids: *docker-ids
+    build_flag_templates:
+      - --platform=linux/arm/v7
+
 docker_manifests:
   - name_template: dkron/{{ .ProjectName }}:{{ .Version }}
     image_templates:
       - dkron/{{ .ProjectName }}:{{ .Version }}-amd64
       - dkron/{{ .ProjectName }}:{{ .Version }}-arm64
+      - dkron/{{ .ProjectName }}:{{ .Version }}-armv7
 
   - name_template: dkron/{{ .ProjectName }}:latest
     image_templates:
     - dkron/{{ .ProjectName }}:{{ .Version }}-amd64
     - dkron/{{ .ProjectName }}:{{ .Version }}-arm64
+    - dkron/{{ .ProjectName }}:{{ .Version }}-armv7
 
 changelog:
   sort: asc
