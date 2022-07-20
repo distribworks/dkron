@@ -1,4 +1,6 @@
-server: true
+{% if dkron_server %}
+server: {{ dkron_server }}
+{% endif %}
 {% if dkron_bootstrap_expect %}
 bootstrap-expect: {{ dkron_bootstrap_expect }}
 {% endif %}
