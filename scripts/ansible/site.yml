@@ -143,19 +143,16 @@
   user: root
   become: true
   become_method: sudo
-  
+
   vars:
     version: 3.2.0
     dkron_log_level: debug
-    dkron_bootstrap_expect: 3
     dkron_data_dir: /var/lib/dkron
     dkron_server: "false"
+    dkron_servers: "{{ hostvars['dkron01']['dkron_servers'] }}"
+    dkron_bootstrap_expect: 3
 
   tasks:
-    - set_fact:
-        dkron_servers: "{{ groups['tag_agent'] | map('extract', hostvars, ['ansible_all_ipv4_addresses', 1]) | list }}"
-      tags: config
-
     - name: configure
       template: src={{ item }}.yml.j2 dest=/etc/dkron/{{ item }}.yml
       loop:

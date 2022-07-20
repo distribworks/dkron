@@ -1,7 +1,7 @@
 {% if dkron_server %}
 server: {{ dkron_server }}
 {% endif %}
-{% if dkron_bootstrap_expect %}
+{% if dkron_bootstrap_expect is defined and dkron_bootstrap_expect %}
 bootstrap-expect: {{ dkron_bootstrap_expect }}
 {% endif %}
 {% if dkron_data_dir is defined %}
