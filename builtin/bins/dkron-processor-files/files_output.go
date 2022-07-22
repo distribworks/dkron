@@ -30,7 +30,7 @@ func (l *FilesOutput) Process(args *plugin.ProcessorArgs) types.Execution {
 
 	log.WithField("file", filePath).Info("files: Writing file")
 	if err := ioutil.WriteFile(filePath, out, 0644); err != nil {
-		log.WithError(err).Error("Error writting log file")
+		log.WithError(err).Error("Error writing log file")
 	}
 
 	if !l.forward {

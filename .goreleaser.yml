@@ -20,7 +20,7 @@ builds:
       - arm64
       - arm
     goarm:
-      - 7
+      - '7'
     ldflags:
       - -s -w
 
@@ -96,9 +96,6 @@ nfpms:
     # Override default /usr/local/bin destination for binaries
     bindir: /usr/bin
 
-    empty_folders:
-      - /var/log/dkron
-
     #files:
     #  "builder/files/": "/etc/init.d"
     #  "path/**/glob": "/var/foo/glob"
@@ -109,6 +106,8 @@ nfpms:
       - src: builder/files/dkron.service
         dst: /lib/systemd/system/dkron.service
         type: config
+      - dst: /var/log/dkron
+        type: dir
 
     overrides:
       rpm:
@@ -151,16 +150,29 @@ dockers:
     build_flag_templates:
       - --platform=linux/arm64/v8
 
+  - image_templates:
+      - dkron/{{ .ProjectName }}:{{ .Version }}-armv7
+    dockerfile: Dockerfile.release
+    use: buildx
+    goos: linux
+    goarch: arm
+    goarm: '7'
+    ids: *docker-ids
+    build_flag_templates:
+      - --platform=linux/arm/v7
+
 docker_manifests:
   - name_template: dkron/{{ .ProjectName }}:{{ .Version }}
     image_templates:
       - dkron/{{ .ProjectName }}:{{ .Version }}-amd64
       - dkron/{{ .ProjectName }}:{{ .Version }}-arm64
+      - dkron/{{ .ProjectName }}:{{ .Version }}-armv7
 
   - name_template: dkron/{{ .ProjectName }}:latest
     image_templates:
     - dkron/{{ .ProjectName }}:{{ .Version }}-amd64
     - dkron/{{ .ProjectName }}:{{ .Version }}-arm64
+    - dkron/{{ .ProjectName }}:{{ .Version }}-armv7
 
 changelog:
   sort: asc
