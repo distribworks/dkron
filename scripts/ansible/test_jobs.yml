@@ -4,7 +4,7 @@
 
 # at-shell-success
 
-- hosts: equinix_metal
+- hosts: tag_server
   user: root
   become: yes
   become_method: sudo
