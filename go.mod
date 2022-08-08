@@ -11,7 +11,7 @@ require (
 	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869 // indirect
 	github.com/devopsfaith/krakend-usage v1.4.0
 	github.com/fluent/fluent-logger-golang v1.9.0
-	github.com/fullstorydev/grpcurl v1.8.6
+	github.com/fullstorydev/grpcurl v1.8.7
 	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-contrib/expvar v0.0.1
 	github.com/gin-contrib/multitemplate v0.0.0-20211002122701-e9e3201b87a0
@@ -53,7 +53,7 @@ require (
 	github.com/tinylib/msgp v1.1.6 // indirect
 	golang.org/x/net v0.0.0-20220617184016-355a448f1bc9
 	google.golang.org/grpc v1.48.0
-	google.golang.org/protobuf v1.28.0
+	google.golang.org/protobuf v1.28.1
 )
 
 go 1.16
