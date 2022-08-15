@@ -4,29 +4,29 @@ require (
 	cloud.google.com/go/pubsub v1.24.0
 	github.com/DataDog/datadog-go v4.8.3+incompatible // indirect
 	github.com/Microsoft/go-winio v0.5.1 // indirect
-	github.com/Shopify/sarama v1.34.1
+	github.com/Shopify/sarama v1.35.0
 	github.com/armon/circbuf v0.0.0-20190214190532-5111143e8da2
 	github.com/armon/go-metrics v0.4.0
 	github.com/aws/aws-sdk-go v1.42.18 // indirect
 	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869 // indirect
 	github.com/devopsfaith/krakend-usage v1.4.0
 	github.com/fluent/fluent-logger-golang v1.9.0
-	github.com/fullstorydev/grpcurl v1.8.6
+	github.com/fullstorydev/grpcurl v1.8.7
 	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-contrib/expvar v0.0.1
 	github.com/gin-contrib/multitemplate v0.0.0-20211002122701-e9e3201b87a0
 	github.com/gin-gonic/gin v1.8.1
 	github.com/golang/protobuf v1.5.2
 	github.com/hashicorp/go-discover v0.0.0-20210818145131-c573d69da192
-	github.com/hashicorp/go-hclog v1.2.1
+	github.com/hashicorp/go-hclog v1.2.2
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hashicorp/go-plugin v1.4.4
 	github.com/hashicorp/go-sockaddr v1.0.2
 	github.com/hashicorp/go-syslog v1.0.0
 	github.com/hashicorp/go-uuid v1.0.3
 	github.com/hashicorp/go-version v1.6.0
-	github.com/hashicorp/memberlist v0.3.1
-	github.com/hashicorp/raft v1.3.9
+	github.com/hashicorp/memberlist v0.4.0
+	github.com/hashicorp/raft v1.3.10
 	github.com/hashicorp/raft-boltdb v0.0.0-20211202195631-7d34b9fb3f42
 	github.com/hashicorp/serf v0.9.8
 	github.com/hashicorp/yamux v0.0.0-20211028200310-0bc27b27de87 // indirect
@@ -38,10 +38,10 @@ require (
 	github.com/nats-io/nats-server/v2 v2.1.2 // indirect
 	github.com/nats-io/nats.go v1.16.0
 	github.com/pkg/errors v0.9.1
-	github.com/prometheus/client_golang v1.12.2
+	github.com/prometheus/client_golang v1.13.0
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/ryanuber/columnize v2.1.2+incompatible
-	github.com/sirupsen/logrus v1.8.1
+	github.com/sirupsen/logrus v1.9.0
 	github.com/soheilhy/cmux v0.1.5
 	github.com/spf13/cobra v1.5.0
 	github.com/spf13/pflag v1.0.5
@@ -51,9 +51,9 @@ require (
 	github.com/tencentcloud/tencentcloud-sdk-go v3.0.83+incompatible // indirect
 	github.com/tidwall/buntdb v1.2.7
 	github.com/tinylib/msgp v1.1.6 // indirect
-	golang.org/x/net v0.0.0-20220617184016-355a448f1bc9
+	golang.org/x/net v0.0.0-20220708220712-1185a9018129
 	google.golang.org/grpc v1.48.0
-	google.golang.org/protobuf v1.28.0
+	google.golang.org/protobuf v1.28.1
 )
 
 go 1.16
