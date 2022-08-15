@@ -4,7 +4,7 @@ require (
 	cloud.google.com/go/pubsub v1.24.0
 	github.com/DataDog/datadog-go v4.8.3+incompatible // indirect
 	github.com/Microsoft/go-winio v0.5.1 // indirect
-	github.com/Shopify/sarama v1.34.1
+	github.com/Shopify/sarama v1.35.0
 	github.com/armon/circbuf v0.0.0-20190214190532-5111143e8da2
 	github.com/armon/go-metrics v0.4.0
 	github.com/aws/aws-sdk-go v1.42.18 // indirect
@@ -51,7 +51,7 @@ require (
 	github.com/tencentcloud/tencentcloud-sdk-go v3.0.83+incompatible // indirect
 	github.com/tidwall/buntdb v1.2.7
 	github.com/tinylib/msgp v1.1.6 // indirect
-	golang.org/x/net v0.0.0-20220617184016-355a448f1bc9
+	golang.org/x/net v0.0.0-20220708220712-1185a9018129
 	google.golang.org/grpc v1.48.0
 	google.golang.org/protobuf v1.28.1
 )
