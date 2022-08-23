@@ -50,6 +50,12 @@ var (
 	runningExecutions sync.Map
 )
 
+type RaftStore interface {
+	raft.StableStore
+	raft.LogStore
+	Close() error
+}
+
 // Node is a shorter, more descriptive name for serf.Member
 type Node = serf.Member
 
@@ -96,7 +102,7 @@ type Agent struct {
 	// raftLayer provides network layering of the raft RPC along with
 	// the Dkron gRPC transport layer.
 	raftLayer     *RaftLayer
-	raftStore     *raftboltdb.BoltStore
+	raftStore     RaftStore
 	raftInmem     *raft.InmemStore
 	raftTransport *raft.NetworkTransport
 
@@ -169,7 +175,10 @@ func (a *Agent) Start() error {
 	if len(a.config.RetryJoinLAN) > 0 {
 		a.retryJoinLAN()
 	} else {
-		a.join(a.config.StartJoin, true)
+		_, err := a.join(a.config.StartJoin, true)
+		if err != nil {
+			a.logger.WithError(err).WithField("servers", a.config.StartJoin).Warn("agent: Can not join")
+		}
 	}
 
 	if err := initMetrics(a); err != nil {
@@ -333,17 +342,19 @@ func (a *Agent) setupRaft() error {
 		}
 
 		// Create the BoltDB backend
-		s, err := raftboltdb.NewBoltStore(filepath.Join(a.config.DataDir, "raft", "raft.db"))
-		if err != nil {
-			return fmt.Errorf("error creating new raft store: %s", err)
+		if a.raftStore == nil {
+			s, err := raftboltdb.NewBoltStore(filepath.Join(a.config.DataDir, "raft", "raft.db"))
+			if err != nil {
+				return fmt.Errorf("error creating new raft store: %s", err)
+			}
+			a.raftStore = s
 		}
-		a.raftStore = s
-		stableStore = s
+		stableStore = a.raftStore
 
 		// Wrap the store in a LogCache to improve performance
-		cacheStore, err := raft.NewLogCache(raftLogCacheSize, s)
+		cacheStore, err := raft.NewLogCache(raftLogCacheSize, a.raftStore)
 		if err != nil {
-			s.Close()
+			a.raftStore.Close()
 			return err
 		}
 		logStore = cacheStore
