@@ -6,7 +6,7 @@ require (
 	github.com/Microsoft/go-winio v0.5.1 // indirect
 	github.com/Shopify/sarama v1.35.0
 	github.com/armon/circbuf v0.0.0-20190214190532-5111143e8da2
-	github.com/armon/go-metrics v0.4.0
+	github.com/armon/go-metrics v0.4.1
 	github.com/aws/aws-sdk-go v1.42.18 // indirect
 	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869 // indirect
 	github.com/devopsfaith/krakend-usage v1.4.0
