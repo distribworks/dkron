@@ -28,7 +28,7 @@ require (
 	github.com/hashicorp/memberlist v0.4.0
 	github.com/hashicorp/raft v1.3.10
 	github.com/hashicorp/raft-boltdb v0.0.0-20211202195631-7d34b9fb3f42
-	github.com/hashicorp/serf v0.9.8
+	github.com/hashicorp/serf v0.10.0
 	github.com/hashicorp/yamux v0.0.0-20211028200310-0bc27b27de87 // indirect
 	github.com/jhump/protoreflect v1.12.0
 	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
