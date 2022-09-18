@@ -6,6 +6,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.2.1] - 2022-09-18
+
+### Features
+
+- Optionally set an alternative raftStore
+
+### Fixes
+
+- Re-add arm-v7 docker build
+- Minor fixes
+
+### Changes
+
+- Add golintci config
+- More variety to testing infra
+- Bump deps
+
 ## [3.2.0] - 2022-06-05
 
 ### Fixes
