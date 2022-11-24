@@ -591,7 +591,7 @@ func (s *Store) SetExecution(execution *Execution) (string, error) {
 			s.logger.WithFields(logrus.Fields{
 				"job":       execs[i].JobName,
 				"execution": execs[i].Key(),
-			}).Debug("store: to detele key")
+			}).Debug("store: to delete key")
 			err = s.db.Update(func(tx *buntdb.Tx) error {
 				k := fmt.Sprintf("%s:%s:%s", executionsPrefix, execs[i].JobName, execs[i].Key())
 				_, err := tx.Delete(k)

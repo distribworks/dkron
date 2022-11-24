@@ -22,7 +22,7 @@ You can use Dkron to run the most important part of your company, scheduled jobs
 
 ## Installation
 
-[Installation instructions](https://dkron.io/basics/installation/)
+[Installation instructions](https://dkron.io/docs/basics/installation)
 
 Full, comprehensive documentation is viewable on the [Dkron website](http://dkron.io)
 
