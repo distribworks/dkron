@@ -4,6 +4,10 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/armon/circbuf"
 	dkplugin "github.com/distribworks/dkron/v3/plugin"
 	dktypes "github.com/distribworks/dkron/v3/plugin/types"
@@ -15,9 +19,6 @@ import (
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/metadata"
 	reflectpb "google.golang.org/grpc/reflection/grpc_reflection_v1alpha"
-	"strconv"
-	"strings"
-	"time"
 )
 
 const (
@@ -32,12 +33,13 @@ type GRPC struct{}
 
 // Execute Process method of the plugin
 // "executor": "grpc",
-// "executor_config": {
-//     "url": "127.0.0.1:9000/demo.DemoService/Demo", // Request url
-//     "body": "",                                    // POST body
-//     "timeout": "30",                               // Request timeout, unit seconds
-//     "expectCode": "0",                             // Expect response code, any of the described here https://grpc.github.io/grpc/core/md_doc_statuscodes.html
-// }
+//
+//	"executor_config": {
+//	    "url": "127.0.0.1:9000/demo.DemoService/Demo", // Request url
+//	    "body": "",                                    // POST body
+//	    "timeout": "30",                               // Request timeout, unit seconds
+//	    "expectCode": "0",                             // Expect response code, any of the described here https://grpc.github.io/grpc/core/md_doc_statuscodes.html
+//	}
 func (g *GRPC) Execute(args *dktypes.ExecuteRequest, _ dkplugin.StatusHelper) (*dktypes.ExecuteResponse, error) {
 	out, err := g.ExecuteImpl(args)
 	resp := &dktypes.ExecuteResponse{Output: out}
@@ -95,6 +97,8 @@ func (g *GRPC) ExecuteImpl(args *dktypes.ExecuteRequest) ([]byte, error) {
 	if grpcDialErr != nil {
 		return output.Bytes(), grpcDialErr
 	}
+	defer cc.Close() // nolint:errcheck
+
 	md := grpcurl.MetadataFromHeaders([]string{})
 	refCtx := metadata.NewOutgoingContext(ctx, md)
 	refClient = grpcreflect.NewClient(refCtx, reflectpb.NewServerReflectionClient(cc))
