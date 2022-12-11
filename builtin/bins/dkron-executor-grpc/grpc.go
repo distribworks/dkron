@@ -4,6 +4,10 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/armon/circbuf"
 	dkplugin "github.com/distribworks/dkron/v3/plugin"
 	dktypes "github.com/distribworks/dkron/v3/plugin/types"
@@ -15,9 +19,6 @@ import (
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/metadata"
 	reflectpb "google.golang.org/grpc/reflection/grpc_reflection_v1alpha"
-	"strconv"
-	"strings"
-	"time"
 )
 
 const (
@@ -95,6 +96,8 @@ func (g *GRPC) ExecuteImpl(args *dktypes.ExecuteRequest) ([]byte, error) {
 	if grpcDialErr != nil {
 		return output.Bytes(), grpcDialErr
 	}
+	defer cc.Close() // nolint:errcheck
+
 	md := grpcurl.MetadataFromHeaders([]string{})
 	refCtx := metadata.NewOutgoingContext(ctx, md)
 	refClient = grpcreflect.NewClient(refCtx, reflectpb.NewServerReflectionClient(cc))
