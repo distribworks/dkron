@@ -33,7 +33,6 @@ type GRPC struct{}
 
 // Execute Process method of the plugin
 // "executor": "grpc",
-//
 //	"executor_config": {
 //	    "url": "127.0.0.1:9000/demo.DemoService/Demo", // Request url
 //	    "body": "",                                    // POST body
