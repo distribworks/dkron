@@ -33,12 +33,12 @@ type GRPC struct{}
 
 // Execute Process method of the plugin
 // "executor": "grpc",
-//	"executor_config": {
-//	    "url": "127.0.0.1:9000/demo.DemoService/Demo", // Request url
-//	    "body": "",                                    // POST body
-//	    "timeout": "30",                               // Request timeout, unit seconds
-//	    "expectCode": "0",                             // Expect response code, any of the described here https://grpc.github.io/grpc/core/md_doc_statuscodes.html
-//	}
+// "executor_config": {
+//     "url": "127.0.0.1:9000/demo.DemoService/Demo", // Request url
+//     "body": "",                                    // POST body
+//     "timeout": "30",                               // Request timeout, unit seconds
+//     "expectCode": "0",                             // Expect response code, any of the described here https://grpc.github.io/grpc/core/md_doc_statuscodes.html
+// }
 func (g *GRPC) Execute(args *dktypes.ExecuteRequest, _ dkplugin.StatusHelper) (*dktypes.ExecuteResponse, error) {
 	out, err := g.ExecuteImpl(args)
 	resp := &dktypes.ExecuteResponse{Output: out}
