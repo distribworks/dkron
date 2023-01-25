@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"regexp"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/distribworks/dkron/v4/extcron"
@@ -303,10 +305,44 @@ func (j *Job) GetTimeLocation() *time.Location {
 	return loc
 }
 
+// scheduleHash replaces H in the cron spec by a value derived from job Name
+// such as "0 0 H * * *"
+func (j *Job) scheduleHash() string {
+	spec := j.Schedule
+	if strings.Contains(spec, "H") && strings.Count(strings.TrimSpace(spec), " ") == 5 {
+		h := 0
+		for _, c := range j.Name {
+			h += int(c)
+		}
+		parts := strings.Split(spec, " ")
+		for index, part := range parts {
+			if strings.Contains(part, "H") {
+				// mods taken in accordance with https://dkron.io/docs/usage/cron-spec/#cron-expression-format
+				ph := h
+				switch index {
+				case 2:
+					ph %= 24
+				case 3:
+					ph = (ph % 31) + 1
+				case 4:
+					ph = (ph % 12) + 1
+				case 5:
+					ph %= 7
+				default:
+					ph %= 60
+				}
+				parts[index] = strings.ReplaceAll(part, "H", strconv.Itoa(ph))
+			}
+		}
+		return strings.Join(parts, " ")
+	}
+	return spec
+}
+
 // GetNext returns the job's next schedule from now
 func (j *Job) GetNext() (time.Time, error) {
 	if j.Schedule != "" {
-		s, err := extcron.Parse(j.Schedule)
+		s, err := extcron.Parse(j.scheduleHash())
 		if err != nil {
 			return time.Time{}, err
 		}
@@ -367,7 +403,7 @@ func (j *Job) Validate() error {
 
 	// Validate schedule, allow empty schedule if parent job set.
 	if j.Schedule != "" || j.ParentJob == "" {
-		if _, err := extcron.Parse(j.Schedule); err != nil {
+		if _, err := extcron.Parse(j.scheduleHash()); err != nil {
 			return fmt.Errorf("%s: %s", ErrScheduleParse.Error(), err)
 		}
 	}
