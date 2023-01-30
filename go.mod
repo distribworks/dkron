@@ -1,7 +1,7 @@
 module github.com/distribworks/dkron/v3
 
 require (
-	cloud.google.com/go/pubsub v1.25.1
+	cloud.google.com/go/pubsub v1.28.0
 	github.com/DataDog/datadog-go v4.8.3+incompatible // indirect
 	github.com/Microsoft/go-winio v0.5.1 // indirect
 	github.com/Shopify/sarama v1.36.0
@@ -20,7 +20,7 @@ require (
 	github.com/hashicorp/go-discover v0.0.0-20210818145131-c573d69da192
 	github.com/hashicorp/go-hclog v1.4.0
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/hashicorp/go-plugin v1.4.5
+	github.com/hashicorp/go-plugin v1.4.8
 	github.com/hashicorp/go-sockaddr v1.0.2
 	github.com/hashicorp/go-syslog v1.0.0
 	github.com/hashicorp/go-uuid v1.0.3
@@ -36,9 +36,9 @@ require (
 	github.com/mattn/go-shellwords v1.0.12
 	github.com/mitchellh/go-testing-interface v1.14.1 // indirect
 	github.com/nats-io/nats-server/v2 v2.1.2 // indirect
-	github.com/nats-io/nats.go v1.21.0
+	github.com/nats-io/nats.go v1.22.1
 	github.com/pkg/errors v0.9.1
-	github.com/prometheus/client_golang v1.13.0
+	github.com/prometheus/client_golang v1.14.0
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/ryanuber/columnize v2.1.2+incompatible
 	github.com/sirupsen/logrus v1.9.0
@@ -47,11 +47,11 @@ require (
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.13.0
 	github.com/streadway/amqp v1.0.0
-	github.com/stretchr/testify v1.8.0
+	github.com/stretchr/testify v1.8.1
 	github.com/tencentcloud/tencentcloud-sdk-go v3.0.83+incompatible // indirect
 	github.com/tidwall/buntdb v1.2.7
 	github.com/tinylib/msgp v1.1.6 // indirect
-	golang.org/x/net v0.0.0-20220809184613-07c6da5e1ced
+	golang.org/x/net v0.0.0-20221014081412-f15817d10f9b
 	google.golang.org/grpc v1.51.0
 	google.golang.org/protobuf v1.28.1
 )
