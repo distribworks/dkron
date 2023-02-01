@@ -76,6 +76,11 @@ func (a *HCLogAdapter) SetLevel(hclog.Level) {
 	// we don't currently.
 }
 
+// GetLevel noop
+func (a *HCLogAdapter) GetLevel() hclog.Level {
+	return hclog.Level(logrus.ErrorLevel)
+}
+
 // With returns a new instance with the specified options
 func (a *HCLogAdapter) With(args ...interface{}) hclog.Logger {
 	e := a.CreateEntry(args)
