@@ -258,7 +258,7 @@ func (h *HTTPTransport) jobCreateOrUpdateHandler(c *gin.Context) {
 
 	// Immediately run the job if so requested
 	if _, exists := c.GetQuery("runoncreate"); exists {
-		h.agent.GRPCClient.RunJob(job.Name)
+		go h.agent.GRPCClient.RunJob(job.Name)
 	}
 
 	c.Header("Location", fmt.Sprintf("%s/%s", c.Request.RequestURI, job.Name))
@@ -364,7 +364,7 @@ func (h *HTTPTransport) executionsHandler(c *gin.Context) {
 type MId struct {
 	serf.Member
 
-	Id string `json:"id"`
+	Id         string `json:"id"`
 	StatusText string `json:"statusText"`
 }
 
