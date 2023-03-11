@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.2.2] - 2023-03-11
+
+### Changes
+
+- Bump deps
+- Update docusaurus
+
 ## [3.2.1] - 2022-09-18
 
 ### Features
