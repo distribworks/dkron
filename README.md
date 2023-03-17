@@ -81,9 +81,3 @@ https://github.com/surface-security/django-dkron
 - Chat: https://gitter.im/distribworks/dkron
 - Email: victor at distrib.works
 
-# Sponsor
-
-This project is possible thanks to the Support of Jobandtalent
-
-![](https://upload.wikimedia.org/wikipedia/en/d/db/Jobandtalent_logo.jpg)
-
