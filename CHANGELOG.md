@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.2.3] - 2023-03-17
+
+### Fixes
+
+- Fix non existing dependent job (https://github.com/distribworks/dkron/pull/1297)
+### Changes
+
+- Bump deps
+
 ## [3.2.2] - 2023-03-11
 
 ### Changes
