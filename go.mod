@@ -53,7 +53,7 @@ require (
 	github.com/tinylib/msgp v1.1.6 // indirect
 	golang.org/x/net v0.8.0
 	google.golang.org/grpc v1.53.0
-	google.golang.org/protobuf v1.28.2-0.20230222093303-bc1253ad3743
+	google.golang.org/protobuf v1.29.0
 )
 
 go 1.16
