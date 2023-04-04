@@ -36,7 +36,7 @@ This will start Dkron as a system service and the place example configuration fi
 
 ## Running in Docker
 
-Dkron provides an official Docker image vi Dockerhub that can be used for deployment on any system running Docker.
+Dkron provides an official Docker image via Docker Hub that can be used for deployment on any system running Docker.
 
 ### Launching Dkron as a new container
 
