@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/distribworks/dkron/v3/dkron"
+	"github.com/distribworks/dkron/v3/logging"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -57,6 +58,9 @@ func initConfig() {
 	replacer := strings.NewReplacer("-", "_")
 	viper.SetEnvKeyReplacer(replacer)
 	viper.AutomaticEnv() // read in environment variables that match
+
+	// Add hook to set error logs to stderr and regular logs to stdout
+	logrus.AddHook(&logging.LogSplitter{})
 
 	err := viper.ReadInConfig() // Find and read the config file
 	if err != nil {             // Handle errors reading the config file
