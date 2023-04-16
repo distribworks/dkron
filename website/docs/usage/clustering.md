@@ -28,7 +28,7 @@ bootstrap-expect: 1
 # dkron.yml
 server: true
 bootstrap-expect: 3
-join:
+retry-join:
 - 10.19.3.9
 - 10.19.4.64
 - 10.19.7.215
