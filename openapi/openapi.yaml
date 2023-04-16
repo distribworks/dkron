@@ -505,6 +505,11 @@ components:
           description: Status of the job
           readOnly: true
           example: success
+        next:
+          type: string
+          description: Next execution time
+          readOnly: true
+          format: date-time
       description: A Job represents a scheduled task to execute.
     member:
       type: object
