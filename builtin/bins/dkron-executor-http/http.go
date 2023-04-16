@@ -76,6 +76,7 @@ func (s *HTTP) ExecuteImpl(args *types.ExecuteRequest) ([]byte, error) {
 	if err != nil {
 		return output.Bytes(), err
 	}
+	req.Close = true
 
 	var headers []string
 	if args.Config["headers"] != "" {
