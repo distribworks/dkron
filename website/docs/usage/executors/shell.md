@@ -28,3 +28,15 @@ Example
   }
 }
 ```
+
+## Job execution prometheus metrics
+Path: `/metrics`  
+Port: 9422  
+or configure via environment variable `SHELL_EXECUTOR_PROMETHEUS_PORT`
+
+### Exposed metrics
+
+|   Name                 | Type  |  Description                   |  Labels  |
+|------------------------|:------|-------------------------------:|---------:|
+| dkron_job_cpu_usage    | gauge | current CPU usage by job       | job_name |
+| dkron_job_mem_usage_kb | gauge | current memory consumed by job | job_name |
