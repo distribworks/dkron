@@ -19,13 +19,21 @@ bootstrap-expect: 1
 #   - 10.0.0.1
 #   - 10.0.0.2
 #   - 10.0.0.3
-# webhook-url: https://hooks.slack.com/services/XXXXXX/XXXXXXX/XXXXXXXXXXXXXXXXXXXX
-# webhook-payload: ""{\"text\":\"A status of {{.JobName}} is {{.Success}}\",\"username\":\"DkronBot\"}""
+#
+# pre-webhook-endpoint: https://hooks.slack.com/services/XXXXXX/XXXXXXX/XXXXXXXXXXXXXXXXXXXX
+# pre-webhook-payload: ""{\"text\":\"{{.JobName}} started\",\"username\":\"DkronBot\"}""
+# pre-webhook-headers:
+#   - Content-Type:application/json
+# 
+# webhook-endpoint: https://hooks.slack.com/services/XXXXXX/XXXXXXX/XXXXXXXXXXXXXXXXXXXX
+# webhook-payload: ""{\"text\":\"{{.JobName}} finished with status {{.Success}}\",\"username\":\"DkronBot\"}""
 # webhook-headers:
 #   - Content-Type:application/json
+#
 # mail-host: email-smtp.eu-west-1.amazonaws.com
 # mail-port: 25
 # mail-username": mailuser
 # mail-password": mailpassword
 # mail-from": cron@example.com
 # mail-subject-prefix: [Dkron]
+# cronitor-endpoint: https://cronitor.link/p/XXXXXXXXXXXXXXXXXXXXXXXXXXXX

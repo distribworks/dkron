@@ -5,6 +5,7 @@ import { TagsField } from '../TagsField'
 import Leader from './Leader';
 import FailedJobs from './FailedJobs';
 import SuccessfulJobs from './SuccessfulJobs';
+import UntriggeredJobs from './UntriggeredJobs';
 import TotalJobs from './TotalJobs';
 
 let fakeProps = {
@@ -46,6 +47,8 @@ const Dashboard = () => (
                             <SuccessfulJobs value={window.DKRON_SUCCESSFUL_JOBS || "0"} />
                             <Spacer />
                             <FailedJobs value={window.DKRON_FAILED_JOBS || "0"} />
+                            <Spacer />
+                            <UntriggeredJobs value={window.DKRON_UNTRIGGERED_JOBS || "0"} />
                         </div>
                     </div>
                 </div>
@@ -59,7 +62,7 @@ const Dashboard = () => (
                         <TextField source="Name" sortable={false} />
                         <TextField source="Addr" sortable={false} />
                         <TextField source="Port" sortable={false} />
-                        <TextField source="Status" sortable={false} />
+                        <TextField label="Status" source="statusText" sortable={false} />
                         <TagsField source="Tags" sortable={false} />
                     </Datagrid>
                 </List>

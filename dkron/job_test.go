@@ -5,16 +5,26 @@ import (
 	"testing"
 	"time"
 
+	"github.com/distribworks/dkron/v3/ntime"
 	"github.com/distribworks/dkron/v3/plugin"
 	proto "github.com/distribworks/dkron/v3/plugin/types"
 	"github.com/hashicorp/serf/testutil"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
 )
 
+func getTestLogger() *logrus.Entry {
+	log := logrus.New()
+	log.Level = logrus.DebugLevel
+	entry := logrus.NewEntry(log)
+	return entry
+}
+
 func TestJobGetParent(t *testing.T) {
-	s, err := NewStore()
+	log := getTestLogger()
+	s, err := NewStore(log)
 	defer s.Shutdown()
 	require.NoError(t, err)
 
@@ -80,7 +90,7 @@ func TestNewJobFromProto(t *testing.T) {
 	}
 	in.Processors = proc
 
-	j := NewJobFromProto(in)
+	j := NewJobFromProto(in, nil)
 	assert.Equal(t, testConfig, j.Processors)
 }
 
@@ -118,6 +128,9 @@ func Test_isRunnable(t *testing.T) {
 	a.Start()
 	time.Sleep(2 * time.Second)
 
+	var exp ntime.NullableTime
+	exp.Set(time.Now().AddDate(0, 0, -1))
+
 	testCases := []struct {
 		name string
 		job  *Job
@@ -150,11 +163,31 @@ func Test_isRunnable(t *testing.T) {
 			},
 			want: true,
 		},
+		{
+			name: "disabled",
+			job: &Job{
+				Name:     "test_job",
+				Disabled: true,
+				Agent:    a,
+			},
+			want: false,
+		},
+		{
+			name: "expired",
+			job: &Job{
+				Name:      "test_job",
+				ExpiresAt: exp,
+				Agent:     a,
+			},
+			want: false,
+		},
 	}
+
+	log := getTestLogger()
 
 	for _, tt := range testCases {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equal(t, tt.want, tt.job.isRunnable())
+			assert.Equal(t, tt.want, tt.job.isRunnable(log))
 		})
 	}
 }
@@ -175,7 +208,7 @@ func (gRPCClientMock) RaftGetConfiguration(s string) (*proto.RaftGetConfiguratio
 func (gRPCClientMock) RaftRemovePeerByID(s string, a string) error { return nil }
 func (gRPCClientMock) GetActiveExecutions(s string) ([]*proto.Execution, error) {
 	return []*proto.Execution{
-		&proto.Execution{
+		{
 			JobName: "test_job",
 		},
 	}, nil

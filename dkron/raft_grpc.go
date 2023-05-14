@@ -7,23 +7,28 @@ import (
 	"time"
 
 	"github.com/hashicorp/raft"
+	"github.com/sirupsen/logrus"
 )
 
 // RaftLayer is the network layer for internode communications.
 type RaftLayer struct {
 	TLSConfig *tls.Config
 
-	ln net.Listener
+	ln     net.Listener
+	logger *logrus.Entry
 }
 
-// NewRaftLayer returns an initialized unecrypted RaftLayer.
-func NewRaftLayer() *RaftLayer {
-	return &RaftLayer{}
+// NewRaftLayer returns an initialized unencrypted RaftLayer.
+func NewRaftLayer(logger *logrus.Entry) *RaftLayer {
+	return &RaftLayer{logger: logger}
 }
 
-// NewTLSRaftLayer returns an initialized TLS-ecrypted RaftLayer.
-func NewTLSRaftLayer(tlsConfig *tls.Config) *RaftLayer {
-	return &RaftLayer{TLSConfig: tlsConfig}
+// NewTLSRaftLayer returns an initialized TLS-encrypted RaftLayer.
+func NewTLSRaftLayer(tlsConfig *tls.Config, logger *logrus.Entry) *RaftLayer {
+	return &RaftLayer{
+		TLSConfig: tlsConfig,
+		logger:    logger,
+	}
 }
 
 // Open opens the RaftLayer, binding to the supplied address.
@@ -39,7 +44,7 @@ func (t *RaftLayer) Dial(addr raft.ServerAddress, timeout time.Duration) (net.Co
 	var err error
 	var conn net.Conn
 	if t.TLSConfig != nil {
-		log.Debug("doing a TLS dial")
+		t.logger.Debug("doing a TLS dial")
 		conn, err = tls.DialWithDialer(dialer, "tcp", string(addr), t.TLSConfig)
 	} else {
 		conn, err = dialer.Dial("tcp", string(addr))

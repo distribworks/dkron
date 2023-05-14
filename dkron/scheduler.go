@@ -1,6 +1,7 @@
 package dkron
 
 import (
+	"context"
 	"errors"
 	"expvar"
 	"strings"
@@ -16,55 +17,70 @@ var (
 	cronInspect      = expvar.NewMap("cron_entries")
 	schedulerStarted = expvar.NewInt("scheduler_started")
 
-	// ErrScheduleParse is the error returned when the schdule parsing fails.
+	// ErrScheduleParse is the error returned when the schedule parsing fails.
 	ErrScheduleParse = errors.New("can't parse job schedule")
 )
+
+type EntryJob struct {
+	entry *cron.Entry
+	job   *Job
+}
 
 // Scheduler represents a dkron scheduler instance, it stores the cron engine
 // and the related parameters.
 type Scheduler struct {
-	Cron        *cron.Cron
-	Started     bool
-	EntryJobMap sync.Map
+	// mu is to prevent concurrent edits to Cron and Started
+	mu      sync.RWMutex
+	Cron    *cron.Cron
+	started bool
+	logger  *logrus.Entry
 }
 
 // NewScheduler creates a new Scheduler instance
-func NewScheduler() *Scheduler {
+func NewScheduler(logger *logrus.Entry) *Scheduler {
 	schedulerStarted.Set(0)
 	return &Scheduler{
-		Cron:        nil,
-		Started:     false,
-		EntryJobMap: sync.Map{},
+		Cron:    cron.New(cron.WithParser(extcron.NewParser())),
+		started: false,
+		logger:  logger,
 	}
 }
 
 // Start the cron scheduler, adding its corresponding jobs and
 // executing them on time.
 func (s *Scheduler) Start(jobs []*Job, agent *Agent) error {
-	s.Cron = cron.New(cron.WithParser(extcron.NewParser()))
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	if s.started {
+		return errors.New("scheduler: cron already started, should be stopped first")
+	}
+	s.ClearCron()
 
 	metrics.IncrCounter([]string{"scheduler", "start"}, 1)
 	for _, job := range jobs {
 		job.Agent = agent
-		s.AddJob(job)
+		if err := s.AddJob(job); err != nil {
+			return err
+		}
 	}
 	s.Cron.Start()
-	s.Started = true
+	s.started = true
 	schedulerStarted.Set(1)
 
 	return nil
 }
 
-// Stop stops the scheduler effectively not running any job.
-func (s *Scheduler) Stop() {
-	if s.Started {
-		log.Debug("scheduler: Stopping scheduler")
-		s.Cron.Stop()
-		s.Started = false
-		// Keep Cron exists and let the jobs which have been scheduled can continue to finish,
-		// even the node's leadership will be revoked.
-		// Ignore the running jobs and make s.Cron to nil may cause whole process crashed.
-		//s.Cron = nil
+// Stop stops the cron scheduler if it is running; otherwise it does nothing.
+// A context is returned so the caller can wait for running jobs to complete.
+func (s *Scheduler) Stop() context.Context {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	ctx := s.Cron.Stop()
+	if s.started {
+		s.logger.Debug("scheduler: Stopping scheduler")
+		s.started = false
 
 		// expvars
 		cronInspect.Do(func(kv expvar.KeyValue) {
@@ -72,44 +88,71 @@ func (s *Scheduler) Stop() {
 		})
 	}
 	schedulerStarted.Set(0)
+	return ctx
 }
 
 // Restart the scheduler
 func (s *Scheduler) Restart(jobs []*Job, agent *Agent) {
+	// Stop the scheduler, running jobs will continue to finish but we
+	// can not actively wait for them blocking the execution here.
 	s.Stop()
-	s.ClearCron()
-	s.Start(jobs, agent)
+
+	if err := s.Start(jobs, agent); err != nil {
+		s.logger.Fatal(err)
+	}
 }
 
-// Clear cron separately, this can only be called when agent will be stop.
+// ClearCron clears the cron scheduler
 func (s *Scheduler) ClearCron() {
-	s.Cron = nil
-}
-
-// GetEntry returns a scheduler entry from a snapshot in
-// the current time, and whether or not the entry was found.
-func (s *Scheduler) GetEntry(jobName string) (cron.Entry, bool) {
 	for _, e := range s.Cron.Entries() {
-		j, _ := e.Job.(*Job)
-		if j.Name == jobName {
-			return e, true
+		if j, ok := e.Job.(*Job); !ok {
+			s.logger.Errorf("scheduler: Failed to cast job to *Job found type %T and removing it", e.Job)
+			s.Cron.Remove(e.ID)
+		} else {
+			s.RemoveJob(j.Name)
 		}
 	}
-	return cron.Entry{}, false
+}
+
+// Started will safely return if the scheduler is started or not
+func (s *Scheduler) Started() bool {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	return s.started
+}
+
+// GetEntryJob returns a EntryJob object from a snapshot in
+// the current time, and whether or not the entry was found.
+func (s *Scheduler) GetEntryJob(jobName string) (EntryJob, bool) {
+	for _, e := range s.Cron.Entries() {
+		if j, ok := e.Job.(*Job); !ok {
+			s.logger.Errorf("scheduler: Failed to cast job to *Job found type %T", e.Job)
+		} else {
+			j.logger = s.logger
+			if j.Name == jobName {
+				return EntryJob{
+					entry: &e,
+					job:   j,
+				}, true
+			}
+		}
+	}
+	return EntryJob{}, false
 }
 
 // AddJob Adds a job to the cron scheduler
 func (s *Scheduler) AddJob(job *Job) error {
 	// Check if the job is already set and remove it if exists
-	if _, ok := s.EntryJobMap.Load(job.Name); ok {
-		s.RemoveJob(job)
+	if _, ok := s.GetEntryJob(job.Name); ok {
+		s.RemoveJob(job.Name)
 	}
 
 	if job.Disabled || job.ParentJob != "" {
 		return nil
 	}
 
-	log.WithFields(logrus.Fields{
+	s.logger.WithFields(logrus.Fields{
 		"job": job.Name,
 	}).Debug("scheduler: Adding job to cron")
 
@@ -124,11 +167,10 @@ func (s *Scheduler) AddJob(job *Job) error {
 		schedule = "CRON_TZ=" + job.Timezone + " " + schedule
 	}
 
-	id, err := s.Cron.AddJob(schedule, job)
+	_, err := s.Cron.AddJob(schedule, job)
 	if err != nil {
 		return err
 	}
-	s.EntryJobMap.Store(job.Name, id)
 
 	cronInspect.Set(job.Name, job)
 	metrics.IncrCounterWithLabels([]string{"scheduler", "job_add"}, 1, []metrics.Label{{Name: "job", Value: job.Name}})
@@ -136,16 +178,15 @@ func (s *Scheduler) AddJob(job *Job) error {
 	return nil
 }
 
-// RemoveJob removes a job from the cron scheduler
-func (s *Scheduler) RemoveJob(job *Job) {
-	log.WithFields(logrus.Fields{
-		"job": job.Name,
+// RemoveJob removes a job from the cron scheduler if it exists.
+func (s *Scheduler) RemoveJob(jobName string) {
+	s.logger.WithFields(logrus.Fields{
+		"job": jobName,
 	}).Debug("scheduler: Removing job from cron")
-	if v, ok := s.EntryJobMap.Load(job.Name); ok {
-		s.Cron.Remove(v.(cron.EntryID))
-		s.EntryJobMap.Delete(job.Name)
 
-		cronInspect.Delete(job.Name)
-		metrics.IncrCounterWithLabels([]string{"scheduler", "job_delete"}, 1, []metrics.Label{{Name: "job", Value: job.Name}})
+	if ej, ok := s.GetEntryJob(jobName); ok {
+		s.Cron.Remove(ej.entry.ID)
+		cronInspect.Delete(jobName)
+		metrics.IncrCounterWithLabels([]string{"scheduler", "job_delete"}, 1, []metrics.Label{{Name: "job", Value: jobName}})
 	}
 }

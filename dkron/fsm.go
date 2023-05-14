@@ -6,6 +6,7 @@ import (
 	dkronpb "github.com/distribworks/dkron/v3/plugin/types"
 	"github.com/golang/protobuf/proto"
 	"github.com/hashicorp/raft"
+	"github.com/sirupsen/logrus"
 )
 
 // MessageType is the type to encode FSM commands.
@@ -20,7 +21,7 @@ const (
 	SetExecutionType
 	// DeleteExecutionsType is the command used to delete executions from the store.
 	DeleteExecutionsType
-	// ExecutionDoneType is the command to perform the logic needed once an exeuction
+	// ExecutionDoneType is the command to perform the logic needed once an execution
 	// is done.
 	ExecutionDoneType
 )
@@ -37,13 +38,15 @@ type dkronFSM struct {
 
 	// proAppliers holds the set of pro only LogAppliers
 	proAppliers LogAppliers
+	logger      *logrus.Entry
 }
 
 // NewFSM is used to construct a new FSM with a blank state
-func newFSM(store Storage, logAppliers LogAppliers) *dkronFSM {
+func newFSM(store Storage, logAppliers LogAppliers, logger *logrus.Entry) *dkronFSM {
 	return &dkronFSM{
 		store:       store,
 		proAppliers: logAppliers,
+		logger:      logger,
 	}
 }
 
@@ -52,7 +55,7 @@ func (d *dkronFSM) Apply(l *raft.Log) interface{} {
 	buf := l.Data
 	msgType := MessageType(buf[0])
 
-	log.WithField("command", msgType).Debug("fsm: received command")
+	d.logger.WithField("command", msgType).Debug("fsm: received command")
 
 	switch msgType {
 	case SetJobType:
@@ -78,7 +81,7 @@ func (d *dkronFSM) applySetJob(buf []byte) interface{} {
 	if err := proto.Unmarshal(buf, &pj); err != nil {
 		return err
 	}
-	job := NewJobFromProto(&pj)
+	job := NewJobFromProto(&pj, d.logger)
 	if err := d.store.SetJob(job, false); err != nil {
 		return err
 	}
@@ -104,7 +107,7 @@ func (d *dkronFSM) applyExecutionDone(buf []byte) interface{} {
 	}
 	execution := NewExecutionFromProto(execDoneReq.Execution)
 
-	log.WithField("execution", execution.Key()).
+	d.logger.WithField("execution", execution.Key()).
 		WithField("output", string(execution.Output)).
 		Debug("fsm: Setting execution")
 	_, err := d.store.SetExecutionDone(execution)

@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"net"
 	"os"
 	"strconv"
@@ -80,7 +81,7 @@ type Config struct {
 	AdvertiseRPCPort int `mapstructure:"advertise-rpc-port"`
 
 	// LogLevel is the log verbosity level used.
-	// It cound be (debug|info|warn|error|fatal|panic).
+	// It can be (debug|info|warn|error|fatal|panic).
 	LogLevel string `mapstructure:"log-level"`
 
 	// Datacenter is the datacenter this Dkron server belongs to.
@@ -136,8 +137,17 @@ type Config struct {
 	// MailSubjectPrefix is the email subject prefix string to use for email notifications.
 	MailSubjectPrefix string `mapstructure:"mail-subject-prefix"`
 
-	// WebhookURL is the URL to call for notifications.
-	WebhookURL string `mapstructure:"webhook-url"`
+	// PreWebhookURL is the endpoint to call for notifications.
+	PreWebhookEndpoint string `mapstructure:"pre-webhook-endpoint"`
+
+	// PreWebhookPayload is the body template of the request for notifications.
+	PreWebhookPayload string `mapstructure:"pre-webhook-payload"`
+
+	// PreWebhookHeaders are the headers to use when calling the webhook for notifications.
+	PreWebhookHeaders []string `mapstructure:"pre-webhook-headers"`
+
+	// WebhookEndpoint is the URL to call for notifications.
+	WebhookEndpoint string `mapstructure:"webhook-endpoint" mapstructure:"webhook-url"`
 
 	// WebhookPayload is the body template of the request for notifications.
 	WebhookPayload string `mapstructure:"webhook-payload"`
@@ -167,6 +177,9 @@ type Config struct {
 
 	// DisableUsageStats disable sending anonymous usage stats
 	DisableUsageStats bool `mapstructure:"disable-usage-stats"`
+
+	// CronitorEndpoint is the endpoint to call for cronitor notifications.
+	CronitorEndpoint string `mapstructure:"cronitor-endpoint"`
 }
 
 // DefaultBindPort is the default port that dkron will use for Serf communication
@@ -210,28 +223,85 @@ func ConfigFlagSet() *flag.FlagSet {
 	c := DefaultConfig()
 	cmdFlags := flag.NewFlagSet("agent flagset", flag.ContinueOnError)
 
-	cmdFlags.Bool("server", false, "This node is running in server mode")
-	cmdFlags.String("node-name", c.NodeName, "Name of this node. Must be unique in the cluster")
-	cmdFlags.String("bind-addr", c.BindAddr, "Specifies which address the agent should bind to for network services, including the internal gossip protocol and RPC mechanism. This should be specified in IP format, and can be used to easily bind all network services to the same address. The value supports go-sockaddr/template format.")
-	cmdFlags.String("advertise-addr", "", "Address used to advertise to other nodes in the cluster. By default, the bind address is advertised. The value supports go-sockaddr/template format.")
-	cmdFlags.String("http-addr", c.HTTPAddr, "Address to bind the UI web server to. Only used when server. The value supports go-sockaddr/template format.")
-	cmdFlags.String("profile", c.Profile, "Profile is used to control the timing profiles used")
-	cmdFlags.StringSlice("join", []string{}, "An initial agent to join with. This flag can be specified multiple times")
-	cmdFlags.StringSlice("retry-join", []string{}, "Address of an agent to join at start time with retries enabled. Can be specified multiple times.")
-	cmdFlags.Int("retry-max", 0, "Maximum number of join attempts. Defaults to 0, which will retry indefinitely.")
-	cmdFlags.String("retry-interval", DefaultRetryInterval.String(), "Time to wait between join attempts.")
-	cmdFlags.Int("raft-multiplier", c.RaftMultiplier, "An integer multiplier used by servers to scale key Raft timing parameters. Omitting this value or setting it to 0 uses default timing described below. Lower values are used to tighten timing and increase sensitivity while higher values relax timings and reduce sensitivity. Tuning this affects the time it takes to detect leader failures and to perform leader elections, at the expense of requiring more network and CPU resources for better performance. By default, Dkron will use a lower-performance timing that's suitable for minimal Dkron servers, currently equivalent to setting this to a value of 5 (this default may be changed in future versions of Dkron, depending if the target minimum server profile changes). Setting this to a value of 1 will configure Raft to its highest-performance mode is recommended for production Dkron servers. The maximum allowed value is 10.")
-	cmdFlags.StringSlice("tag", []string{}, "Tag can be specified multiple times to attach multiple key/value tag pairs to the given node, specified as key=value")
-	cmdFlags.String("encrypt", "", "Key for encrypting network traffic. Must be a base64-encoded 16-byte key")
-	cmdFlags.String("log-level", c.LogLevel, "Log level (debug|info|warn|error|fatal|panic)")
-	cmdFlags.Int("rpc-port", c.RPCPort, "RPC Port used to communicate with clients. Only used when server. The RPC IP Address will be the same as the bind address")
-	cmdFlags.Int("advertise-rpc-port", 0, "Use the value of rpc-port by default")
-	cmdFlags.Int("bootstrap-expect", 0, "Provides the number of expected servers in the datacenter. Either this value should not be provided or the value must agree with other servers in the cluster. When provided, Dkron waits until the specified number of servers are available and then bootstraps the cluster. This allows an initial leader to be elected automatically. This flag requires server mode.")
-	cmdFlags.String("data-dir", c.DataDir, "Specifies the directory to use for server-specific data, including the replicated log. By default, this is the top-level data-dir, like [/var/lib/dkron]")
-	cmdFlags.String("datacenter", c.Datacenter, "Specifies the data center of the local agent. All members of a datacenter should share a local LAN connection.")
-	cmdFlags.String("region", c.Region, "Specifies the region the Dkron agent is a member of. A region typically maps to a geographic region, for example us, with potentially multiple zones, which map to datacenters such as us-west and us-east")
-	cmdFlags.String("serf-reconnect-timeout", c.SerfReconnectTimeout, "This is the amount of time to attempt to reconnect to a failed node before giving up and considering it completely gone. In Kubernetes, you might need this to about 5s, because there is no reason to try reconnects for default 24h value. Also Raft behaves oddly if node is not reaped and returned with same ID, but different IP. Format there: https://golang.org/pkg/time/#ParseDuration")
-	cmdFlags.Bool("ui", true, "Enable the web UI on this node. The node must be server.")
+	cmdFlags.Bool("server", false,
+		"This node is running in server mode")
+	cmdFlags.String("node-name", c.NodeName,
+		"Name of this node. Must be unique in the cluster")
+	cmdFlags.String("bind-addr", c.BindAddr,
+		`Specifies which address the agent should bind to for network services, 
+including the internal gossip protocol and RPC mechanism. This should be 
+specified in IP format, and can be used to easily bind all network services 
+to the same address. The value supports go-sockaddr/template format.
+`)
+	cmdFlags.String("advertise-addr", "",
+		`Address used to advertise to other nodes in the cluster. By default,
+the bind address is advertised. The value supports 
+go-sockaddr/template format.`)
+	cmdFlags.String("http-addr", c.HTTPAddr,
+		`Address to bind the UI web server to. Only used when server. The value 
+supports go-sockaddr/template format.`)
+	cmdFlags.String("profile", c.Profile,
+		"Profile is used to control the timing profiles used")
+	cmdFlags.StringSlice("join", []string{},
+		"An initial agent to join with. This flag can be specified multiple times")
+	cmdFlags.StringSlice("retry-join", []string{},
+		`Address of an agent to join at start time with retries enabled. 
+Can be specified multiple times.`)
+	cmdFlags.Int("retry-max", 0,
+		`Maximum number of join attempts. Defaults to 0, which will retry indefinitely.`)
+	cmdFlags.String("retry-interval", DefaultRetryInterval.String(),
+		"Time to wait between join attempts.")
+	cmdFlags.Int("raft-multiplier", c.RaftMultiplier,
+		`An integer multiplier used by servers to scale key Raft timing parameters.
+Omitting this value or setting it to 0 uses default timing described below. 
+Lower values are used to tighten timing and increase sensitivity while higher 
+values relax timings and reduce sensitivity. Tuning this affects the time it 
+takes to detect leader failures and to perform leader elections, at the expense 
+of requiring more network and CPU resources for better performance. By default, 
+Dkron will use a lower-performance timing that's suitable for minimal Dkron 
+servers, currently equivalent to setting this to a value of 5 (this default 
+may be changed in future versions of Dkron, depending if the target minimum 
+server profile changes). Setting this to a value of 1 will configure Raft to 
+its highest-performance mode is recommended for production Dkron servers. 
+The maximum allowed value is 10.`)
+	cmdFlags.StringSlice("tag", []string{},
+		`Tag can be specified multiple times to attach multiple key/value tag pairs 
+to the given node, specified as key=value`)
+	cmdFlags.String("encrypt", "",
+		"Key for encrypting network traffic. Must be a base64-encoded 16-byte key")
+	cmdFlags.String("log-level", c.LogLevel,
+		"Log level (debug|info|warn|error|fatal|panic)")
+	cmdFlags.Int("rpc-port", c.RPCPort,
+		`RPC Port used to communicate with clients. Only used when server. 
+The RPC IP Address will be the same as the bind address.`)
+	cmdFlags.Int("advertise-rpc-port", 0,
+		"Use the value of rpc-port by default")
+	cmdFlags.Int("bootstrap-expect", 0,
+		`Provides the number of expected servers in the datacenter. Either this value 
+should not be provided or the value must agree with other servers in the 
+cluster. When provided, Dkron waits until the specified number of servers are 
+available and then bootstraps the cluster. This allows an initial leader to be 
+elected automatically. This flag requires server mode.`)
+	cmdFlags.String("data-dir", c.DataDir,
+		`Specifies the directory to use for server-specific data, including the 
+replicated log. By default, this is the top-level data-dir, 
+like [/var/lib/dkron]`)
+	cmdFlags.String("datacenter", c.Datacenter,
+		`Specifies the data center of the local agent. All members of a datacenter 
+should share a local LAN connection.`)
+	cmdFlags.String("region", c.Region,
+		`Specifies the region the Dkron agent is a member of. A region typically maps 
+to a geographic region, for example us, with potentially multiple zones, which 
+map to datacenters such as us-west and us-east`)
+	cmdFlags.String("serf-reconnect-timeout", c.SerfReconnectTimeout,
+		`This is the amount of time to attempt to reconnect to a failed node before 
+giving up and considering it completely gone. In Kubernetes, you might need 
+this to about 5s, because there is no reason to try reconnects for default 
+24h value. Also Raft behaves oddly if node is not reaped and returned with 
+same ID, but different IP.
+Format there: https://golang.org/pkg/time/#ParseDuration`)
+	cmdFlags.Bool("ui", true,
+		"Enable the web UI on this node. The node must be server.")
 
 	// Notifications
 	cmdFlags.String("mail-host", "", "Mail server host address to use for notifications")
@@ -241,9 +311,14 @@ func ConfigFlagSet() *flag.FlagSet {
 	cmdFlags.String("mail-from", "", "From email address to use")
 	cmdFlags.String("mail-payload", "", "Notification mail payload")
 	cmdFlags.String("mail-subject-prefix", c.MailSubjectPrefix, "Notification mail subject prefix")
-	cmdFlags.String("webhook-url", "", "Webhook url to call for notifications")
+	cmdFlags.String("pre-webhook-endpoint", "", "Pre-webhook endpoint to call for notifications")
+	cmdFlags.String("pre-webhook-payload", "", "Body of the POST request to send on pre-webhook call")
+	cmdFlags.StringSlice("pre-webhook-headers", []string{}, "Headers to use when calling the pre-webhook. Can be specified multiple times")
+	cmdFlags.String("webhook-endpoint", "", "Webhook endpoint to call for notifications")
+	cmdFlags.String("webhook-url", "", "Webhook url to call for notifications. Deprecated, use webhook-endpoint instead")
 	cmdFlags.String("webhook-payload", "", "Body of the POST request to send on webhook call")
 	cmdFlags.StringSlice("webhook-headers", []string{}, "Headers to use when calling the webhook URL. Can be specified multiple times")
+	cmdFlags.String("cronitor-endpoint", "", "Cronitor endpoint to call for notifications")
 
 	// Observability
 	cmdFlags.String("dog-statsd-addr", "", "DataDog Agent address")

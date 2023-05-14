@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* You can override the default Infima variables here. */
+:root {
+  --ifm-color-primary: theme('colors.pink.500');
+  --ifm-color-primary-dark: theme('colors.pink.700');
+  --ifm-color-primary-darker: theme('colors.pink.800');
+  --ifm-color-primary-darkest: theme('colors.pink.900');
+  --ifm-color-primary-light: theme('colors.pink.400');
+  --ifm-color-primary-lighter: theme('colors.pink.300');
+  --ifm-color-primary-lightest: theme('colors.pink.200');
+  --ifm-code-font-size: 95%;
+
+  --ifm-navbar-link-hover-color: theme('colors.pink.500');
+  --ifm-navbar-link-color-active: theme('colors.pink.500');
+  --ifm-link-color: theme('colors.pink.500');
+  --ifm-menu-color-active: theme('colors.pink.500');
+}
+
+/* For readability concerns, you should choose a lighter palette in dark mode. */
+/* html[data-theme='dark'] {
+  --ifm-color-primary: #25c2a0;
+  --ifm-color-primary-dark: #21af90;
+  --ifm-color-primary-darker: #1fa588;
+  --ifm-color-primary-darkest: #1a8870;
+  --ifm-color-primary-light: #29d5b0;
+  --ifm-color-primary-lighter: #32d8b4;
+  --ifm-color-primary-lightest: #4fddbf;
+} */
+
+.docusaurus-highlight-code-line {
+  background-color: rgba(0, 0, 0, 0.1);
+  display: block;
+  margin: 0 calc(-1 * var(--ifm-pre-padding));
+  padding: 0 var(--ifm-pre-padding);
+}
+
+.navbar-link-go-pro {
+  @apply inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-pink-100 text-pink-800 hover:text-pink-900;
+}
+
+.menu__link span,
+.navbar__link span,
+.footer__link-item span,
+.theme-edit-this-page {
+  display: inline-flex;
+  align-items: center;
+}
+
+
+.footer__bottom {
+  @apply mt-16 text-sm;
+}

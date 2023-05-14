@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "./static/css/main.356b93bb.chunk.css",
+    "main.js": "./static/js/main.53fe35b8.chunk.js",
+    "main.js.map": "./static/js/main.53fe35b8.chunk.js.map",
+    "runtime-main.js": "./static/js/runtime-main.d498521d.js",
+    "runtime-main.js.map": "./static/js/runtime-main.d498521d.js.map",
+    "static/js/2.a554ca87.chunk.js": "./static/js/2.a554ca87.chunk.js",
+    "static/js/2.a554ca87.chunk.js.map": "./static/js/2.a554ca87.chunk.js.map",
+    "static/js/3.7fb5d2ce.chunk.js": "./static/js/3.7fb5d2ce.chunk.js",
+    "static/js/3.7fb5d2ce.chunk.js.map": "./static/js/3.7fb5d2ce.chunk.js.map",
+    "index.html": "./index.html",
+    "static/css/main.356b93bb.chunk.css.map": "./static/css/main.356b93bb.chunk.css.map",
+    "static/js/2.a554ca87.chunk.js.LICENSE.txt": "./static/js/2.a554ca87.chunk.js.LICENSE.txt",
+    "static/media/dkron-logo.cd9d7840.png": "./static/media/dkron-logo.cd9d7840.png"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.d498521d.js",
+    "static/js/2.a554ca87.chunk.js",
+    "static/css/main.356b93bb.chunk.css",
+    "static/js/main.53fe35b8.chunk.js"
+  ]
+}

@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"log"
+	"strings"
 
 	"github.com/Shopify/sarama"
 	"github.com/armon/circbuf"
@@ -26,6 +27,7 @@ type Kafka struct {
 // "executor": "kafka",
 // "executor_config": {
 //     "brokerAddress": "192.168.59.103:9092", // kafka broker url
+//     "key": "",
 //     "message": "",
 //     "topic": "publishTopic"
 // }
@@ -64,7 +66,7 @@ func (s *Kafka) ExecuteImpl(args *dktypes.ExecuteRequest) ([]byte, error) {
 	config.Producer.Return.Successes = true
 	config.Producer.Return.Errors = true
 
-	brokers := []string{args.Config["brokerAddress"]}
+	brokers := strings.Split(args.Config["brokerAddress"], ",")
 	producer, err := sarama.NewSyncProducer(brokers, config)
 	if err != nil {
 		// Should not reach here
@@ -78,6 +80,7 @@ func (s *Kafka) ExecuteImpl(args *dktypes.ExecuteRequest) ([]byte, error) {
 
 	msg := &sarama.ProducerMessage{
 		Topic: args.Config["topic"],
+		Key:   sarama.StringEncoder(args.Config["key"]),
 		Value: sarama.StringEncoder(args.Config["message"]),
 	}
 

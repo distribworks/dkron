@@ -10,7 +10,7 @@ Dkron is a distributed cron service, easy to setup and fault tolerant with focus
 
 - Easy: Easy to use with a great UI
 - Reliable: Completely fault tolerant
-- High scalable: Able to handle high volumes of scheduled jobs and thousands of nodes
+- Highly scalable: Able to handle high volumes of scheduled jobs and thousands of nodes
 
 Dkron is written in Go and leverage the power of the Raft protocol and Serf for providing fault tolerance, reliability and scalability while keeping simple and easily installable.
 
@@ -22,13 +22,13 @@ You can use Dkron to run the most important part of your company, scheduled jobs
 
 ## Installation
 
-[Installation instructions](https://dkron.io/basics/installation/)
+[Installation instructions](https://dkron.io/docs/basics/installation)
 
 Full, comprehensive documentation is viewable on the [Dkron website](http://dkron.io)
 
 ## Development Quick start
 
-The best way to test and develop dkron is using docker, you will need [Docker](https://www.docker.com/) installed before proceding.
+The best way to test and develop dkron is using docker, you will need [Docker](https://www.docker.com/) installed before proceeding.
 
 Clone the repository.
 
@@ -70,17 +70,14 @@ PHP client
 https://github.com/gromo/dkron-php-adapter
 
 Terraform provider
-https://github.com/peertransfer/terraform-provider-dkron
+https://github.com/bozerkins/terraform-provider-dkron
+
+Manage and run jobs in Dkron from your django project
+https://github.com/surface-security/django-dkron
 
 ## Get in touch
 
 - Twitter: [@distribworks](https://twitter.com/distribworks)
 - Chat: https://gitter.im/distribworks/dkron
 - Email: victor at distrib.works
-
-# Sponsor
-
-This project is possible thanks to the Support of Jobandtalent
-
-![](https://upload.wikimedia.org/wikipedia/en/d/db/Jobandtalent_logo.jpg)
 

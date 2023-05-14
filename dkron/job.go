@@ -10,9 +10,9 @@ import (
 	"github.com/distribworks/dkron/v3/ntime"
 	"github.com/distribworks/dkron/v3/plugin"
 	proto "github.com/distribworks/dkron/v3/plugin/types"
-	"github.com/golang/protobuf/ptypes"
 	"github.com/sirupsen/logrus"
 	"github.com/tidwall/buntdb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 const (
@@ -24,8 +24,8 @@ const (
 	StatusRunning = "running"
 	// StatusFailed is status of a job whose last run was not successful on any nodes.
 	StatusFailed = "failed"
-	// StatusPartialyFailed is status of a job whose last run was successful on only some nodes.
-	StatusPartialyFailed = "partially_failed"
+	// StatusPartiallyFailed is status of a job whose last run was successful on only some nodes.
+	StatusPartiallyFailed = "partially_failed"
 
 	// ConcurrencyAllow allows a job to execute concurrency.
 	ConcurrencyAllow = "allow"
@@ -48,7 +48,7 @@ var (
 	ErrWrongConcurrency = errors.New("invalid concurrency policy value, use \"allow\" or \"forbid\"")
 )
 
-// Job descibes a scheduled Job.
+// Job describes a scheduled Job.
 type Job struct {
 	// Job id. Must be unique, it's a copy of name.
 	ID string `json:"id"`
@@ -66,10 +66,10 @@ type Job struct {
 	// Cron expression for the job. When to run the job.
 	Schedule string `json:"schedule"`
 
-	// Owner of the job.
+	// Arbitrary string indicating the owner of the job.
 	Owner string `json:"owner"`
 
-	// Owner email of the job.
+	// Email address to use for notifications.
 	OwnerEmail string `json:"owner_email"`
 
 	// Number of successful executions of this job.
@@ -78,7 +78,7 @@ type Job struct {
 	// Number of errors running this job.
 	ErrorCount int `json:"error_count"`
 
-	// Last time this job executed succesful.
+	// Last time this job executed successfully.
 	LastSuccess ntime.NullableTime `json:"last_success"`
 
 	// Last time this job failed.
@@ -108,29 +108,35 @@ type Job struct {
 	// Job id of job that this job is dependent upon.
 	ParentJob string `json:"parent_job"`
 
-	// Processors to use for this job
+	// Processors to use for this job.
 	Processors map[string]plugin.Config `json:"processors"`
 
-	// Concurrency policy for this job (allow, forbid)
+	// Concurrency policy for this job (allow, forbid).
 	Concurrency string `json:"concurrency"`
 
-	// Executor plugin to be used in this job
+	// Executor plugin to be used in this job.
 	Executor string `json:"executor"`
 
-	// Executor args
+	// Configuration arguments for the specific executor.
 	ExecutorConfig plugin.ExecutorPluginConfig `json:"executor_config"`
 
-	// Computed job status
+	// Computed job status.
 	Status string `json:"status"`
 
-	// Computed next execution
+	// Computed next execution.
 	Next time.Time `json:"next"`
+
+	// Delete the job after the first successful execution.
+	Ephemeral bool `json:"ephemeral"`
+
+	// The job will not be executed after this time.
+	ExpiresAt ntime.NullableTime `json:"expires_at"`
+
+	logger *logrus.Entry
 }
 
 // NewJobFromProto create a new Job from a PB Job struct
-func NewJobFromProto(in *proto.Job) *Job {
-	next, _ := ptypes.Timestamp(in.GetNext())
-
+func NewJobFromProto(in *proto.Job, logger *logrus.Entry) *Job {
 	job := &Job{
 		ID:             in.Name,
 		Name:           in.Name,
@@ -151,15 +157,21 @@ func NewJobFromProto(in *proto.Job) *Job {
 		ExecutorConfig: in.ExecutorConfig,
 		Status:         in.Status,
 		Metadata:       in.Metadata,
-		Next:           next,
+		Next:           in.GetNext().AsTime(),
+		Ephemeral:      in.Ephemeral,
+		logger:         logger,
 	}
 	if in.GetLastSuccess().GetHasValue() {
-		t, _ := ptypes.Timestamp(in.GetLastSuccess().GetTime())
+		t := in.GetLastSuccess().GetTime().AsTime()
 		job.LastSuccess.Set(t)
 	}
 	if in.GetLastError().GetHasValue() {
-		t, _ := ptypes.Timestamp(in.GetLastError().GetTime())
+		t := in.GetLastError().GetTime().AsTime()
 		job.LastError.Set(t)
+	}
+	if in.GetExpiresAt().GetHasValue() {
+		t := in.GetExpiresAt().GetTime().AsTime()
+		job.ExpiresAt.Set(t)
 	}
 
 	procs := make(map[string]plugin.Config)
@@ -180,15 +192,23 @@ func (j *Job) ToProto() *proto.Job {
 		HasValue: j.LastSuccess.HasValue(),
 	}
 	if j.LastSuccess.HasValue() {
-		lastSuccess.Time, _ = ptypes.TimestampProto(j.LastSuccess.Get())
+		lastSuccess.Time = timestamppb.New(j.LastSuccess.Get())
 	}
 	lastError := &proto.Job_NullableTime{
 		HasValue: j.LastError.HasValue(),
 	}
 	if j.LastError.HasValue() {
-		lastError.Time, _ = ptypes.TimestampProto(j.LastError.Get())
+		lastError.Time = timestamppb.New(j.LastError.Get())
 	}
-	next, _ := ptypes.TimestampProto(j.Next)
+
+	next := timestamppb.New(j.Next)
+
+	expiresAt := &proto.Job_NullableTime{
+		HasValue: j.ExpiresAt.HasValue(),
+	}
+	if j.ExpiresAt.HasValue() {
+		expiresAt.Time = timestamppb.New(j.ExpiresAt.Get())
+	}
 
 	processors := make(map[string]*proto.PluginConfig)
 	for k, v := range j.Processors {
@@ -217,6 +237,8 @@ func (j *Job) ToProto() *proto.Job {
 		LastSuccess:    lastSuccess,
 		LastError:      lastError,
 		Next:           next,
+		Ephemeral:      j.Ephemeral,
+		ExpiresAt:      expiresAt,
 	}
 }
 
@@ -225,12 +247,12 @@ func (j *Job) Run() {
 	// As this function should comply with the Job interface of the cron package we will use
 	// the agent property on execution, this is why it need to check if it's set and otherwise fail.
 	if j.Agent == nil {
-		log.Fatal("job: agent not set")
+		j.logger.Fatal("job: agent not set")
 	}
 
 	// Check if it's runnable
-	if j.isRunnable() {
-		log.WithFields(logrus.Fields{
+	if j.isRunnable(j.logger) {
+		j.logger.WithFields(logrus.Fields{
 			"job":      j.Name,
 			"schedule": j.Schedule,
 		}).Debug("job: Run job")
@@ -241,7 +263,7 @@ func (j *Job) Run() {
 		ex := NewExecution(j.Name)
 
 		if _, err := j.Agent.Run(j.Name, ex); err != nil {
-			log.WithError(err).Error("job: Error running job")
+			j.logger.WithError(err).Error("job: Error running job")
 		}
 	}
 }
@@ -294,13 +316,15 @@ func (j *Job) GetNext() (time.Time, error) {
 	return time.Time{}, nil
 }
 
-func (j *Job) isRunnable() bool {
-	if j.Disabled {
+func (j *Job) isRunnable(logger *logrus.Entry) bool {
+	if j.Disabled || (j.ExpiresAt.HasValue() && time.Now().After(j.ExpiresAt.Get())) {
+		logger.WithField("job", j.Name).
+			Debug("job: Skipping execution because job is disabled or expired")
 		return false
 	}
 
 	if j.Agent.GlobalLock {
-		log.WithField("job", j.Name).
+		logger.WithField("job", j.Name).
 			Warning("job: Skipping execution because active global lock")
 		return false
 	}
@@ -308,13 +332,13 @@ func (j *Job) isRunnable() bool {
 	if j.Concurrency == ConcurrencyForbid {
 		exs, err := j.Agent.GetActiveExecutions()
 		if err != nil {
-			log.WithError(err).Error("job: Error quering for running executions")
+			logger.WithError(err).Error("job: Error quering for running executions")
 			return false
 		}
 
 		for _, e := range exs {
 			if e.JobName == j.Name {
-				log.WithFields(logrus.Fields{
+				logger.WithFields(logrus.Fields{
 					"job":         j.Name,
 					"concurrency": j.Concurrency,
 					"job_status":  j.Status,

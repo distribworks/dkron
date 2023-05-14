@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/go-plugin"
 	"github.com/kardianos/osext"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 type Plugins struct {
@@ -33,14 +34,19 @@ func (p *Plugins) DiscoverPlugins() error {
 	p.Processors = make(map[string]dkplugin.Processor)
 	p.Executors = make(map[string]dkplugin.Executor)
 
-	// Look in /etc/dkron/plugins
-	processors, err := plugin.Discover("dkron-processor-*", filepath.Join("/etc", "dkron", "plugins"))
+	pluginDir := filepath.Join("/etc", "dkron", "plugins")
+	if viper.ConfigFileUsed() != "" {
+		pluginDir = filepath.Join(filepath.Dir(viper.ConfigFileUsed()), "plugins")
+	}
+
+	// Look in /etc/dkron/plugins (or the used config path)
+	processors, err := plugin.Discover("dkron-processor-*", pluginDir)
 	if err != nil {
 		return err
 	}
 
-	// Look in /etc/dkron/plugins
-	executors, err := plugin.Discover("dkron-executor-*", filepath.Join("/etc", "dkron", "plugins"))
+	// Look in /etc/dkron/plugins (or the used config path)
+	executors, err := plugin.Discover("dkron-executor-*", pluginDir)
 	if err != nil {
 		return err
 	}

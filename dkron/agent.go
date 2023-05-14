@@ -12,7 +12,6 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
-	"strings"
 	"sync"
 	"time"
 
@@ -50,6 +49,15 @@ var (
 
 	runningExecutions sync.Map
 )
+
+type RaftStore interface {
+	raft.StableStore
+	raft.LogStore
+	Close() error
+}
+
+// Node is a shorter, more descriptive name for serf.Member
+type Node = serf.Member
 
 // Agent is the main struct that represents a dkron agent
 type Agent struct {
@@ -94,7 +102,7 @@ type Agent struct {
 	// raftLayer provides network layering of the raft RPC along with
 	// the Dkron gRPC transport layer.
 	raftLayer     *RaftLayer
-	raftStore     *raftboltdb.BoltStore
+	raftStore     RaftStore
 	raftInmem     *raft.InmemStore
 	raftTransport *raft.NetworkTransport
 
@@ -112,6 +120,9 @@ type Agent struct {
 	activeExecutions sync.Map
 
 	listener net.Listener
+
+	// logger is the log entry to use fo all logging calls
+	logger *logrus.Entry
 }
 
 // ProcessorFactory is a function type that creates a new instance
@@ -145,7 +156,11 @@ func NewAgent(config *Config, options ...AgentOption) *Agent {
 // Start the current agent by running all the necessary
 // checks and server or client routines.
 func (a *Agent) Start() error {
-	InitLogger(a.config.LogLevel, a.config.NodeName)
+	log := InitLogger(a.config.LogLevel, a.config.NodeName)
+	a.logger = log
+
+	// Initialize rand with current time
+	rand.Seed(time.Now().UnixNano())
 
 	// Normalize configured addresses
 	a.config.normalizeAddrs()
@@ -160,11 +175,14 @@ func (a *Agent) Start() error {
 	if len(a.config.RetryJoinLAN) > 0 {
 		a.retryJoinLAN()
 	} else {
-		a.join(a.config.StartJoin, true)
+		_, err := a.join(a.config.StartJoin, true)
+		if err != nil {
+			a.logger.WithError(err).WithField("servers", a.config.StartJoin).Warn("agent: Can not join")
+		}
 	}
 
 	if err := initMetrics(a); err != nil {
-		log.Fatal("agent: Can not setup metrics")
+		a.logger.Fatal("agent: Can not setup metrics")
 	}
 
 	// Expose the node name
@@ -179,7 +197,7 @@ func (a *Agent) Start() error {
 	addr := a.bindRPCAddr()
 	l, err := net.Listen("tcp", addr)
 	if err != nil {
-		log.Fatal(err)
+		a.logger.Fatal(err)
 	}
 	a.listener = l
 
@@ -193,13 +211,13 @@ func (a *Agent) Start() error {
 		}
 
 		grpcServer := grpc.NewServer(opts...)
-		as := NewAgentServer(a)
+		as := NewAgentServer(a, a.logger)
 		proto.RegisterAgentServer(grpcServer, as)
 		go grpcServer.Serve(l)
 	}
 
 	if a.GRPCClient == nil {
-		a.GRPCClient = NewGRPCClient(nil, a)
+		a.GRPCClient = NewGRPCClient(nil, a, a.logger)
 	}
 
 	tags := a.serf.LocalMember().Tags
@@ -233,16 +251,15 @@ func (a *Agent) JoinLAN(addrs []string) (int, error) {
 // was participating in leader election or not (local storage).
 // Then actually leave the cluster.
 func (a *Agent) Stop() error {
-	log.Info("agent: Called member stop, now stopping")
+	a.logger.Info("agent: Called member stop, now stopping")
+
+	if a.config.Server && a.sched.Started() {
+		<-a.sched.Stop().Done()
+	}
 
 	if a.config.Server {
 		a.raft.Shutdown()
 		a.Store.Shutdown()
-	}
-
-	if a.config.Server && a.sched.Started {
-		a.sched.Stop()
-		a.sched.ClearCron()
 	}
 
 	if err := a.serf.Leave(); err != nil {
@@ -256,6 +273,25 @@ func (a *Agent) Stop() error {
 	return nil
 }
 
+// UpdateTags updates the tag configuration for this agent
+func (a *Agent) UpdateTags(tags map[string]string) {
+	// Preserve reserved tags
+	currentTags := a.serf.LocalMember().Tags
+	for _, tagName := range []string{"role", "version", "server", "bootstrap", "expect", "port", "rpc_addr"} {
+		if val, exists := currentTags[tagName]; exists {
+			tags[tagName] = val
+		}
+	}
+	tags["dc"] = a.config.Datacenter
+	tags["region"] = a.config.Region
+
+	// Set new collection of tags
+	err := a.serf.SetTags(tags)
+	if err != nil {
+		a.logger.Warnf("Setting tags unsuccessful: %s.", err.Error())
+	}
+}
+
 func (a *Agent) setupRaft() error {
 	if a.config.BootstrapExpect > 0 {
 		if a.config.BootstrapExpect == 1 {
@@ -264,8 +300,8 @@ func (a *Agent) setupRaft() error {
 	}
 
 	logger := ioutil.Discard
-	if log.Logger.Level == logrus.DebugLevel {
-		logger = log.Logger.Writer()
+	if a.logger.Logger.Level == logrus.DebugLevel {
+		logger = a.logger.Logger.Writer()
 	}
 
 	transport := raft.NewNetworkTransport(a.raftLayer, 3, raftTimeout, logger)
@@ -306,17 +342,19 @@ func (a *Agent) setupRaft() error {
 		}
 
 		// Create the BoltDB backend
-		s, err := raftboltdb.NewBoltStore(filepath.Join(a.config.DataDir, "raft", "raft.db"))
-		if err != nil {
-			return fmt.Errorf("error creating new raft store: %s", err)
+		if a.raftStore == nil {
+			s, err := raftboltdb.NewBoltStore(filepath.Join(a.config.DataDir, "raft", "raft.db"))
+			if err != nil {
+				return fmt.Errorf("error creating new raft store: %s", err)
+			}
+			a.raftStore = s
 		}
-		a.raftStore = s
-		stableStore = s
+		stableStore = a.raftStore
 
 		// Wrap the store in a LogCache to improve performance
-		cacheStore, err := raft.NewLogCache(raftLogCacheSize, s)
+		cacheStore, err := raft.NewLogCache(raftLogCacheSize, a.raftStore)
 		if err != nil {
-			s.Close()
+			a.raftStore.Close()
 			return err
 		}
 		logStore = cacheStore
@@ -324,17 +362,17 @@ func (a *Agent) setupRaft() error {
 		// Check for peers.json file for recovery
 		peersFile := filepath.Join(a.config.DataDir, "raft", "peers.json")
 		if _, err := os.Stat(peersFile); err == nil {
-			log.Info("found peers.json file, recovering Raft configuration...")
+			a.logger.Info("found peers.json file, recovering Raft configuration...")
 			var configuration raft.Configuration
 			configuration, err = raft.ReadConfigJSON(peersFile)
 			if err != nil {
 				return fmt.Errorf("recovery failed to parse peers.json: %v", err)
 			}
-			store, err := NewStore()
+			store, err := NewStore(a.logger)
 			if err != nil {
-				log.WithError(err).Fatal("dkron: Error initializing store")
+				a.logger.WithError(err).Fatal("dkron: Error initializing store")
 			}
-			tmpFsm := newFSM(store, nil)
+			tmpFsm := newFSM(store, nil, a.logger)
 			if err := raft.RecoverCluster(config, tmpFsm,
 				logStore, stableStore, snapshots, transport, configuration); err != nil {
 				return fmt.Errorf("recovery failed: %v", err)
@@ -342,7 +380,7 @@ func (a *Agent) setupRaft() error {
 			if err := os.Remove(peersFile); err != nil {
 				return fmt.Errorf("recovery failed to delete peers.json, please delete manually (see peers.info for details): %v", err)
 			}
-			log.Info("deleted peers.json file after successful recovery")
+			a.logger.Info("deleted peers.json file after successful recovery")
 		}
 	}
 
@@ -370,7 +408,7 @@ func (a *Agent) setupRaft() error {
 
 	// Instantiate the Raft systems. The second parameter is a finite state machine
 	// which stores the actual kv pairs and is operated upon through Apply().
-	fsm := newFSM(a.Store, a.ProAppliers)
+	fsm := newFSM(a.Store, a.ProAppliers, a.logger)
 	rft, err := raft.NewRaft(config, fsm, logStore, stableStore, snapshots, transport)
 	if err != nil {
 		return fmt.Errorf("new raft: %s", err)
@@ -451,7 +489,7 @@ func (a *Agent) setupSerf() (*serf.Serf, error) {
 	serfConfig.ReconnectTimeout, err = time.ParseDuration(config.SerfReconnectTimeout)
 
 	if err != nil {
-		log.Fatal(err)
+		a.logger.Fatal(err)
 	}
 
 	// Create a channel to listen for events from Serf
@@ -459,11 +497,11 @@ func (a *Agent) setupSerf() (*serf.Serf, error) {
 	serfConfig.EventCh = a.eventCh
 
 	// Start Serf
-	log.Info("agent: Dkron agent starting")
+	a.logger.Info("agent: Dkron agent starting")
 
-	if log.Logger.Level == logrus.DebugLevel {
-		serfConfig.LogOutput = log.Logger.Writer()
-		serfConfig.MemberlistConfig.LogOutput = log.Logger.Writer()
+	if a.logger.Logger.Level == logrus.DebugLevel {
+		serfConfig.LogOutput = a.logger.Logger.Writer()
+		serfConfig.MemberlistConfig.LogOutput = a.logger.Logger.Writer()
 	} else {
 		serfConfig.LogOutput = ioutil.Discard
 		serfConfig.MemberlistConfig.LogOutput = ioutil.Discard
@@ -472,7 +510,7 @@ func (a *Agent) setupSerf() (*serf.Serf, error) {
 	// Create serf first
 	serf, err := serf.Create(serfConfig)
 	if err != nil {
-		log.Error(err)
+		a.logger.Error(err)
 		return nil, err
 	}
 	return serf, nil
@@ -491,17 +529,17 @@ func (a *Agent) SetConfig(c *Config) {
 // StartServer launch a new dkron server process
 func (a *Agent) StartServer() {
 	if a.Store == nil {
-		s, err := NewStore()
+		s, err := NewStore(a.logger)
 		if err != nil {
-			log.WithError(err).Fatal("dkron: Error initializing store")
+			a.logger.WithError(err).Fatal("dkron: Error initializing store")
 		}
 		a.Store = s
 	}
 
-	a.sched = NewScheduler()
+	a.sched = NewScheduler(a.logger)
 
 	if a.HTTPTransport == nil {
-		a.HTTPTransport = NewTransport(a)
+		a.HTTPTransport = NewTransport(a, a.logger)
 	}
 	a.HTTPTransport.ServeHTTP()
 
@@ -512,7 +550,7 @@ func (a *Agent) StartServer() {
 	// If TLS config present listen to TLS
 	if a.TLSConfig != nil {
 		// Create a RaftLayer with TLS
-		a.raftLayer = NewTLSRaftLayer(a.TLSConfig)
+		a.raftLayer = NewTLSRaftLayer(a.TLSConfig, a.logger)
 
 		// Match any connection to the recursive mux
 		tlsl := tcpm.Match(cmux.Any())
@@ -529,12 +567,12 @@ func (a *Agent) StartServer() {
 
 		go func() {
 			if err := tlsm.Serve(); err != nil {
-				log.Fatal(err)
+				a.logger.Fatal(err)
 			}
 		}()
 	} else {
 		// Declare a plain RaftLayer
-		a.raftLayer = NewRaftLayer()
+		a.raftLayer = NewRaftLayer(a.logger)
 
 		// Declare the match for gRPC
 		grpcl = tcpm.MatchWithWriters(cmux.HTTP2MatchHeaderFieldSendSettings("content-type", "application/grpc"))
@@ -544,25 +582,25 @@ func (a *Agent) StartServer() {
 	}
 
 	if a.GRPCServer == nil {
-		a.GRPCServer = NewGRPCServer(a)
+		a.GRPCServer = NewGRPCServer(a, a.logger)
 	}
 
 	if err := a.GRPCServer.Serve(grpcl); err != nil {
-		log.WithError(err).Fatal("agent: RPC server failed to start")
+		a.logger.WithError(err).Fatal("agent: RPC server failed to start")
 	}
 
 	if err := a.raftLayer.Open(raftl); err != nil {
-		log.Fatal(err)
+		a.logger.Fatal(err)
 	}
 
 	if err := a.setupRaft(); err != nil {
-		log.WithError(err).Fatal("agent: Raft layer failed to start")
+		a.logger.WithError(err).Fatal("agent: Raft layer failed to start")
 	}
 
 	// Start serving everything
 	go func() {
 		if err := tcpm.Serve(); err != nil {
-			log.Fatal(err)
+			a.logger.Fatal(err)
 		}
 	}()
 	go a.monitorLeadership()
@@ -629,17 +667,17 @@ func (a *Agent) LocalServers() (members []*ServerParts) {
 // Listens to events from Serf and handle the event.
 func (a *Agent) eventLoop() {
 	serfShutdownCh := a.serf.ShutdownCh()
-	log.Info("agent: Listen for events")
+	a.logger.Info("agent: Listen for events")
 	for {
 		select {
 		case e := <-a.eventCh:
-			log.WithField("event", e.String()).Info("agent: Received event")
+			a.logger.WithField("event", e.String()).Info("agent: Received event")
 			metrics.IncrCounter([]string{"agent", "event_received", e.String()}, 1)
 
 			// Log all member events
 			if me, ok := e.(serf.MemberEvent); ok {
 				for _, member := range me.Members {
-					log.WithFields(logrus.Fields{
+					a.logger.WithFields(logrus.Fields{
 						"node":   a.config.NodeName,
 						"member": member.Name,
 						"event":  e.EventType(),
@@ -662,12 +700,12 @@ func (a *Agent) eventLoop() {
 					a.localMemberEvent(me)
 				case serf.EventMemberUpdate, serf.EventUser, serf.EventQuery: // Ignore
 				default:
-					log.WithField("event", e.String()).Warn("agent: Unhandled serf event")
+					a.logger.WithField("event", e.String()).Warn("agent: Unhandled serf event")
 				}
 			}
 
 		case <-serfShutdownCh:
-			log.Warn("agent: Serf shutdown detected, quitting")
+			a.logger.Warn("agent: Serf shutdown detected, quitting")
 			return
 		}
 	}
@@ -675,117 +713,69 @@ func (a *Agent) eventLoop() {
 
 // Join asks the Serf instance to join. See the Serf.Join function.
 func (a *Agent) join(addrs []string, replay bool) (n int, err error) {
-	log.Infof("agent: joining: %v replay: %v", addrs, replay)
+	a.logger.Infof("agent: joining: %v replay: %v", addrs, replay)
 	n, err = a.serf.Join(addrs, !replay)
 	if n > 0 {
-		log.Infof("agent: joined: %d nodes", n)
+		a.logger.Infof("agent: joined: %d nodes", n)
 	}
 	if err != nil {
-		log.Warnf("agent: error joining: %v", err)
+		a.logger.Warnf("agent: error joining: %v", err)
 	}
 	return
 }
 
-func (a *Agent) processFilteredNodes(job *Job) (map[string]string, map[string]string, error) {
-	// The final set of nodes will be the intersection of all groups
-	tags := make(map[string]string)
-
-	// Actually copy the map
-	for key, val := range job.Tags {
-		tags[key] = val
-	}
-
-	// Always filter by region tag as we currently only target nodes
-	// on the same region.
-	tags["region"] = a.config.Region
-
-	// Make a set of all members
-	execNodes := make(map[string]serf.Member)
-	for _, member := range a.serf.Members() {
-		if member.Status == serf.StatusAlive {
-			execNodes[member.Name] = member
-		}
-	}
-
-	execNodes, tags, cardinality, err := filterNodes(execNodes, tags)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	// Create an array of node names to aid in computing resulting set based on cardinality
-	var names []string
-	for name := range execNodes {
-		names = append(names, name)
-	}
-
-	nodes := make(map[string]string)
-	rand.Seed(time.Now().UnixNano())
-	for ; cardinality > 0; cardinality-- {
-		// Pick a node, any node
-		randomIndex := rand.Intn(len(names))
-		m := execNodes[names[randomIndex]]
-
-		// Store name and address
-		if addr, ok := m.Tags["rpc_addr"]; ok {
-			nodes[m.Name] = addr
-		} else {
-			nodes[m.Name] = m.Addr.String()
-		}
-
-		// Swap picked node with the first one and shorten array, so node can't get picked again
-		names[randomIndex], names[0] = names[0], names[randomIndex]
-		names = names[1:]
-	}
-
-	return nodes, tags, nil
+func (a *Agent) getTargetNodes(tags map[string]string, selectFunc func([]Node) int) []Node {
+	bareTags, cardinality := cleanTags(tags, a.logger)
+	nodes := a.getQualifyingNodes(a.serf.Members(), bareTags)
+	return selectNodes(nodes, cardinality, selectFunc)
 }
 
-// filterNodes determines which of the execNodes have the given tags
-// Out param! The incoming execNodes map is modified.
-// Returns:
-// * the (modified) map of execNodes
-// * a map of tag values without cardinality
-// * cardinality, i.e. the max number of nodes that should be targeted, regardless of the
-//   number of nodes in the resulting map.
-// * an error if a cardinality was malformed
-func filterNodes(execNodes map[string]serf.Member, tags map[string]string) (map[string]serf.Member, map[string]string, int, error) {
-	cardinality := int(^uint(0) >> 1) // MaxInt
+// getQualifyingNodes returns all nodes in the cluster that are
+// alive, in this agent's region and have all given tags
+func (a *Agent) getQualifyingNodes(nodes []Node, bareTags map[string]string) []Node {
+	// Determine the usable set of nodes
+	qualifiers := filterArray(nodes, func(node Node) bool {
+		return node.Status == serf.StatusAlive &&
+			node.Tags["region"] == a.config.Region &&
+			nodeMatchesTags(node, bareTags)
+	})
+	return qualifiers
+}
 
-	cleanTags := make(map[string]string)
+// The default selector function for getTargetNodes/selectNodes
+func defaultSelector(nodes []Node) int {
+	return rand.Intn(len(nodes))
+}
 
-	// Filter nodes that lack tags
-	// Determine lowest cardinality along the way
-	for jtk, jtv := range tags {
-		tc := strings.Split(jtv, ":")
-		tv := tc[0]
-
-		// Set original tag to clean tag
-		cleanTags[jtk] = tv
-
-		// Remove nodes that do not have the selected tags
-		for name, member := range execNodes {
-			if mtv, tagPresent := member.Tags[jtk]; !tagPresent || mtv != tv {
-				delete(execNodes, name)
-			}
-		}
-
-		if len(tc) == 2 {
-			tagCardinality, err := strconv.Atoi(tc[1])
-			if err != nil {
-				return nil, nil, 0, err
-			}
-			if tagCardinality < cardinality {
-				cardinality = tagCardinality
-			}
-		}
+// selectNodes selects at most #cardinality from the given nodes using the selectFunc
+func selectNodes(nodes []Node, cardinality int, selectFunc func([]Node) int) []Node {
+	// Return all nodes immediately if they're all going to be selected
+	numNodes := len(nodes)
+	if numNodes <= cardinality {
+		return nodes
 	}
 
-	// limit the cardinality to the number of possible nodes
-	if len(execNodes) < cardinality {
-		cardinality = len(execNodes)
+	for ; cardinality > 0; cardinality-- {
+		// Select a node
+		chosenIndex := selectFunc(nodes[:numNodes])
+
+		// Swap picked node with the last one and reduce choices so it can't get picked again
+		nodes[numNodes-1], nodes[chosenIndex] = nodes[chosenIndex], nodes[numNodes-1]
+		numNodes--
 	}
 
-	return execNodes, cleanTags, cardinality, nil
+	return nodes[numNodes:]
+}
+
+// Returns all items from an array for which filterFunc returns true,
+func filterArray(arr []Node, filterFunc func(Node) bool) []Node {
+	for i := len(arr) - 1; i >= 0; i-- {
+		if !filterFunc(arr[i]) {
+			arr[i] = arr[len(arr)-1]
+			arr = arr[:len(arr)-1]
+		}
+	}
+	return arr
 }
 
 // This function is called when a client request the RPCAddress
@@ -881,11 +871,11 @@ func (a *Agent) checkAndSelectServer() (string, error) {
 	}
 
 	for _, peer := range peers {
-		log.WithField("peer", peer).Debug("Checking peer")
+		a.logger.WithField("peer", peer).Debug("Checking peer")
 		conn, err := net.DialTimeout("tcp", peer, 1*time.Second)
 		if err == nil {
 			conn.Close()
-			log.WithField("peer", peer).Debug("Found good peer")
+			a.logger.WithField("peer", peer).Debug("Found good peer")
 			return peer, nil
 		}
 	}
@@ -894,19 +884,19 @@ func (a *Agent) checkAndSelectServer() (string, error) {
 
 func (a *Agent) startReporter() {
 	if a.config.DisableUsageStats || a.config.DevMode {
-		log.Info("agent: usage report client disabled")
+		a.logger.Info("agent: usage report client disabled")
 		return
 	}
 
 	clusterID, err := a.config.Hash()
 	if err != nil {
-		log.Warning("agent: unable to hash the service configuration:", err.Error())
+		a.logger.Warn("agent: unable to hash the service configuration:", err.Error())
 		return
 	}
 
 	go func() {
 		serverID, _ := uuid.GenerateUUID()
-		log.Info(fmt.Sprintf("agent: registering usage stats for cluster ID '%s'", clusterID))
+		a.logger.Info(fmt.Sprintf("agent: registering usage stats for cluster ID '%s'", clusterID))
 
 		if err := client.StartReporter(context.Background(), client.Options{
 			ClusterID: clusterID,
@@ -914,7 +904,7 @@ func (a *Agent) startReporter() {
 			URL:       "https://stats.dkron.io",
 			Version:   fmt.Sprintf("%s %s", Name, Version),
 		}); err != nil {
-			log.Warning("agent: unable to create the usage report client:", err.Error())
+			a.logger.Warn("agent: unable to create the usage report client:", err.Error())
 		}
 	}()
 }

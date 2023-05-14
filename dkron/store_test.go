@@ -10,7 +10,8 @@ import (
 )
 
 func TestStore(t *testing.T) {
-	s, err := NewStore()
+	log := getTestLogger()
+	s, err := NewStore(log)
 	require.NoError(t, err)
 	defer s.Shutdown()
 
@@ -70,7 +71,7 @@ func TestStore(t *testing.T) {
 	require.NoError(t, err)
 
 	execs, err := s.GetExecutions("test", &ExecutionOptions{
-		Sort: "started_at",
+		Sort:  "started_at",
 		Order: "DESC",
 	})
 	assert.NoError(t, err)
@@ -201,7 +202,8 @@ func TestStore_GetJobsWithMetadata(t *testing.T) {
 }
 
 func Test_computeStatus(t *testing.T) {
-	s, err := NewStore()
+	log := getTestLogger()
+	s, err := NewStore(log)
 	require.NoError(t, err)
 
 	n := time.Now()
@@ -273,7 +275,7 @@ func Test_computeStatus(t *testing.T) {
 	// Tests status
 	err = s.db.View(func(tx *buntdb.Tx) error {
 		status, _ := s.computeStatus("test", 1, tx)
-		assert.Equal(t, StatusPartialyFailed, status)
+		assert.Equal(t, StatusPartiallyFailed, status)
 
 		status, _ = s.computeStatus("test", 2, tx)
 		assert.Equal(t, StatusSuccess, status)
@@ -322,7 +324,8 @@ func scaffoldJob() *Job {
 }
 
 func setupStore(t *testing.T) *Store {
-	s, err := NewStore()
+	log := getTestLogger()
+	s, err := NewStore(log)
 	require.NoError(t, err)
 	return s
 }

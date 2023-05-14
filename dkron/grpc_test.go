@@ -65,7 +65,7 @@ func TestGRPCExecutionDone(t *testing.T) {
 	require.NoError(t, err)
 
 	testExecution := &Execution{
-		JobName:    "test",
+		JobName:    testJob.Name,
 		Group:      time.Now().UnixNano(),
 		StartedAt:  time.Now(),
 		NodeName:   "testNode",
@@ -74,33 +74,68 @@ func TestGRPCExecutionDone(t *testing.T) {
 		Output:     "test",
 	}
 
-	rc := NewGRPCClient(nil, a)
-	rc.ExecutionDone(a.advertiseRPCAddr(), testExecution)
-	execs, err := a.Store.GetExecutions("test", &ExecutionOptions{})
-	require.NoError(t, err)
+	log := getTestLogger()
+	rc := NewGRPCClient(nil, a, log)
 
-	assert.Len(t, execs, 1)
-	assert.Equal(t, string(testExecution.Output), string(execs[0].Output))
+	t.Run("Should run job", func(t *testing.T) {
+		err = rc.ExecutionDone(a.advertiseRPCAddr(), testExecution)
+		require.NoError(t, err)
 
-	// Test run a dependent job
-	execs, err = a.Store.GetExecutions("child-test", &ExecutionOptions{})
-	require.NoError(t, err)
+		execs, err := a.Store.GetExecutions("test", &ExecutionOptions{})
+		require.NoError(t, err)
 
-	assert.Len(t, execs, 1)
+		assert.Len(t, execs, 1)
+		assert.Equal(t, string(testExecution.Output), string(execs[0].Output))
+	})
 
-	// Test job with dependents no delete
-	_, err = a.Store.DeleteJob(testJob.Name)
-	require.Error(t, err)
+	t.Run("Should run a dependent job", func(t *testing.T) {
+		execs, err := a.Store.GetExecutions("child-test", &ExecutionOptions{})
+		require.NoError(t, err)
 
-	// Remove dependents and parent
-	_, err = a.Store.DeleteJob(testChildJob.Name)
-	require.NoError(t, err)
-	_, err = a.Store.DeleteJob(testJob.Name)
-	require.NoError(t, err)
+		assert.Len(t, execs, 1)
+	})
 
-	// Test store execution on a deleted job
-	testExecution.FinishedAt = time.Now()
-	err = rc.ExecutionDone(a.advertiseRPCAddr(), testExecution)
+	t.Run("Should store execution on a deleted job", func(t *testing.T) {
+		// Test job with dependents no delete
+		_, err = a.Store.DeleteJob(testJob.Name)
+		require.Error(t, err)
 
-	assert.Error(t, err, ErrExecutionDoneForDeletedJob)
+		// Remove dependents and parent
+		_, err = a.Store.DeleteJob(testChildJob.Name)
+		require.NoError(t, err)
+		_, err = a.Store.DeleteJob(testJob.Name)
+		require.NoError(t, err)
+
+		// Test store execution on a deleted job
+		testExecution.FinishedAt = time.Now()
+		err = rc.ExecutionDone(a.advertiseRPCAddr(), testExecution)
+
+		assert.Error(t, err, ErrExecutionDoneForDeletedJob)
+	})
+
+	t.Run("Test ephemeral jobs", func(t *testing.T) {
+		testJob.Ephemeral = true
+
+		err = a.Store.SetJob(testJob, true)
+		require.NoError(t, err)
+
+		err = rc.ExecutionDone(a.advertiseRPCAddr(), testExecution)
+		assert.NoError(t, err)
+
+		j, err := a.Store.GetJob("test", nil)
+		assert.Error(t, err)
+		assert.Nil(t, j)
+	})
+
+	t.Run("Test job with non-existent dependent", func(t *testing.T) {
+		testJob.Name = "test2"
+		testJob.DependentJobs = []string{"non-existent"}
+		testExecution.JobName = testJob.Name
+
+		err = a.Store.SetJob(testJob, true)
+		require.NoError(t, err)
+
+		err = rc.ExecutionDone(a.advertiseRPCAddr(), testExecution)
+		assert.Error(t, err)
+	})
 }

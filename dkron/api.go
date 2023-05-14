@@ -34,19 +34,21 @@ type Transport interface {
 type HTTPTransport struct {
 	Engine *gin.Engine
 
-	agent *Agent
+	agent  *Agent
+	logger *logrus.Entry
 }
 
 // NewTransport creates an HTTPTransport with a bound agent.
-func NewTransport(a *Agent) *HTTPTransport {
+func NewTransport(a *Agent, log *logrus.Entry) *HTTPTransport {
 	return &HTTPTransport{
-		agent: a,
+		agent:  a,
+		logger: log,
 	}
 }
 
 func (h *HTTPTransport) ServeHTTP() {
 	h.Engine = gin.Default()
-	h.Engine.HTMLRender = CreateMyRender()
+	h.Engine.HTMLRender = CreateMyRender(h.logger)
 	h.Engine.Use(h.Options)
 
 	rootPath := h.Engine.Group("/")
@@ -68,7 +70,7 @@ func (h *HTTPTransport) ServeHTTP() {
 		h.agent.DashboardRoutes(rootPath)
 	}
 
-	log.WithFields(logrus.Fields{
+	h.logger.WithFields(logrus.Fields{
 		"address": h.agent.config.HTTPAddr,
 	}).Info("api: Running HTTP server")
 
@@ -117,6 +119,7 @@ func (h *HTTPTransport) APIRoutes(r *gin.RouterGroup, middleware ...gin.HandlerF
 	// Place fallback routes last
 	jobs.GET("/:job", h.jobGetHandler)
 	jobs.GET("/:job/executions", h.executionsHandler)
+	jobs.GET("/:job/executions/:execution", h.executionHandler)
 }
 
 // MetaMiddleware adds middleware to the gin Context.
@@ -179,10 +182,11 @@ func (h *HTTPTransport) jobsHandler(c *gin.Context) {
 			Order:    order,
 			Query:    q,
 			Status:   c.Query("status"),
+			Disabled: c.Query("disabled"),
 		},
 	)
 	if err != nil {
-		log.WithError(err).Error("api: Unable to get jobs, store not reachable.")
+		h.logger.WithError(err).Error("api: Unable to get jobs, store not reachable.")
 		return
 	}
 
@@ -212,7 +216,7 @@ func (h *HTTPTransport) jobGetHandler(c *gin.Context) {
 
 	job, err := h.agent.Store.GetJob(jobName, nil)
 	if err != nil {
-		log.Error(err)
+		h.logger.Error(err)
 	}
 	if job == nil {
 		c.AbortWithStatus(http.StatusNotFound)
@@ -230,7 +234,7 @@ func (h *HTTPTransport) jobCreateOrUpdateHandler(c *gin.Context) {
 	// Parse values from JSON
 	if err := c.BindJSON(&job); err != nil {
 		c.Writer.WriteString(fmt.Sprintf("Unable to parse payload: %s.", err))
-		log.Error(err)
+		h.logger.Error(err)
 		return
 	}
 
@@ -255,7 +259,7 @@ func (h *HTTPTransport) jobCreateOrUpdateHandler(c *gin.Context) {
 
 	// Immediately run the job if so requested
 	if _, exists := c.GetQuery("runoncreate"); exists {
-		h.agent.GRPCClient.RunJob(job.Name)
+		go h.agent.GRPCClient.RunJob(job.Name)
 	}
 
 	c.Header("Location", fmt.Sprintf("%s/%s", c.Request.RequestURI, job.Name))
@@ -325,6 +329,11 @@ func (h *HTTPTransport) restoreHandler(c *gin.Context) {
 	renderJSON(c, http.StatusOK, string(resp))
 }
 
+type apiExecution struct {
+	*Execution
+	OutputTruncated bool `json:"output_truncated"`
+}
+
 func (h *HTTPTransport) executionsHandler(c *gin.Context) {
 	jobName := c.Param("job")
 
@@ -333,6 +342,10 @@ func (h *HTTPTransport) executionsHandler(c *gin.Context) {
 		sort = "started_at"
 	}
 	order := c.DefaultQuery("_order", "DESC")
+	outputSizeLimit, err := strconv.Atoi(c.DefaultQuery("output_size_limit", ""))
+	if err != nil {
+		outputSizeLimit = -1
+	}
 
 	job, err := h.agent.Store.GetJob(jobName, nil)
 	if err != nil {
@@ -340,39 +353,80 @@ func (h *HTTPTransport) executionsHandler(c *gin.Context) {
 		return
 	}
 
-	executions, err := h.agent.Store.GetExecutions(job.Name, 
+	executions, err := h.agent.Store.GetExecutions(job.Name,
 		&ExecutionOptions{
 			Sort:     sort,
 			Order:    order,
 			Timezone: job.GetTimeLocation(),
 		},
 	)
-	if err != nil {
-		if err == buntdb.ErrNotFound {
-			renderJSON(c, http.StatusOK, &[]Execution{})
-			log.Error(err)
-			return
-		}
-		log.Error(err)
+	if err == buntdb.ErrNotFound {
+		executions = make([]*Execution, 0)
+	} else if err != nil {
+		h.logger.Error(err)
 		return
+	}
 
+	apiExecutions := make([]*apiExecution, len(executions))
+	for j, execution := range executions {
+		apiExecutions[j] = &apiExecution{execution, false}
+		if outputSizeLimit > -1 {
+			// truncate execution output
+			size := len(execution.Output)
+			if size > outputSizeLimit {
+				apiExecutions[j].Output = apiExecutions[j].Output[size-outputSizeLimit:]
+				apiExecutions[j].OutputTruncated = true
+			}
+		}
 	}
 
 	c.Header("X-Total-Count", strconv.Itoa(len(executions)))
-	renderJSON(c, http.StatusOK, executions)
+	renderJSON(c, http.StatusOK, apiExecutions)
+}
+
+func (h *HTTPTransport) executionHandler(c *gin.Context) {
+	jobName := c.Param("job")
+	executionName := c.Param("execution")
+
+	job, err := h.agent.Store.GetJob(jobName, nil)
+	if err != nil {
+		c.AbortWithError(http.StatusNotFound, err)
+		return
+	}
+
+	executions, err := h.agent.Store.GetExecutions(job.Name,
+		&ExecutionOptions{
+			Sort:     "",
+			Order:    "",
+			Timezone: job.GetTimeLocation(),
+		},
+	)
+
+	if err != nil {
+		h.logger.Error(err)
+		return
+	}
+
+	for _, execution := range executions {
+		if execution.Id == executionName {
+			renderJSON(c, http.StatusOK, execution)
+			return
+		}
+	}
 }
 
 type MId struct {
 	serf.Member
 
-	Id string `json:"id"`
+	Id         string `json:"id"`
+	StatusText string `json:"statusText"`
 }
 
 func (h *HTTPTransport) membersHandler(c *gin.Context) {
 	mems := []*MId{}
 	for _, m := range h.agent.serf.Members() {
 		id, _ := uuid.GenerateUUID()
-		mid := &MId{m, id}
+		mid := &MId{m, id, m.Status.String()}
 		mems = append(mems, mid)
 	}
 	c.Header("X-Total-Count", strconv.Itoa(len(mems)))

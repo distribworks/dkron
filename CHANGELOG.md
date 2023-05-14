@@ -6,6 +6,158 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.2.3] - 2023-03-17
+
+### Fixes
+
+- Fix non existing dependent job (https://github.com/distribworks/dkron/pull/1297)
+### Changes
+
+- Bump deps
+
+## [3.2.2] - 2023-03-11
+
+### Changes
+
+- Bump deps
+- Update docusaurus
+
+## [3.2.1] - 2022-09-18
+
+### Features
+
+- Optionally set an alternative raftStore
+
+### Fixes
+
+- Re-add arm-v7 docker build
+- Minor fixes
+
+### Changes
+
+- Add golintci config
+- More variety to testing infra
+- Bump deps
+
+## [3.2.0] - 2022-06-05
+
+### Fixes
+
+- Refactor cron lifecycle (https://github.com/distribworks/dkron/pull/1119)
+- Leadership transfer (https://github.com/distribworks/dkron/pull/1109)
+
+### Changes
+
+- Add prewebhook and cronitor telemetry integration (https://github.com/distribworks/dkron/pull/1099)
+- Implement GRPC executor (https://github.com/distribworks/dkron/pull/1049)
+- Use golang/cross to build multiarch docker (https://github.com/distribworks/dkron/pull/1105)
+- Implement some suggestions to the UI (https://github.com/distribworks/dkron/pull/1120)
+- New web site (https://github.com/distribworks/dkron/pull/1072)
+- Bump deps
+
+## [3.1.11] - 2022-04-07
+
+### Fixes
+
+- Try to fix scheduler not starting [#1053](https://github.com/distribworks/dkron/pull/1053)
+- look for plugins in the config path used (as documented) instead of hardcoded /etc/dkron [#1024](https://github.com/distribworks/dkron/pull/1024)
+- Do not exit on failed leadership [#1082](https://github.com/distribworks/dkron/pull/1082)
+### Changes
+
+- Allow multiple brokers in kafka executor [#1037](https://github.com/distribworks/dkron/pull/1037)
+- Allow passing through a message key for Kafka executor [#1021](https://github.com/distribworks/dkron/pull/1021)
+- Bump dependencies
+- Create codeql-analysis.yml
+- refresh current page after toggle/run job is used [#1026](https://github.com/distribworks/dkron/pull/1026)
+- supported terraform provider link [#1029](https://github.com/distribworks/dkron/pull/1029)
+- Update metrics docs for Prometheus config file [#1058](https://github.com/distribworks/dkron/pull/1058)
+- truncate execution output in default view [#1025](https://github.com/distribworks/dkron/pull/1025)
+- Add execution endpoint [#1085](https://github.com/distribworks/dkron/pull/1085)
+## [3.1.10] - 2021-10-01
+
+### Fixes
+
+- Nats executor consume all available connections [#1020](https://github.com/distribworks/dkron/pull/1020)
+
+### Changes
+
+- Update assets with latest changes
+
+## [3.1.9] - 2021-09-29
+
+### Features
+
+- Update node status text [#1012](https://github.com/distribworks/dkron/pull/1012)
+
+### Fixes
+
+- Add 'next' field to swagger definition [#991](https://github.com/distribworks/dkron/pull/991)
+- Fix comment typo [#1000](https://github.com/distribworks/dkron/pull/1000)
+- Fix typos [#1005](https://github.com/distribworks/dkron/pull/1005)
+- Fix notification bug [#993](https://github.com/distribworks/dkron/pull/993)
+- fd-leak when RPC client communication fail [#1009](https://github.com/distribworks/dkron/pull/1009)
+- Panic or network errors [#1008](https://github.com/distribworks/dkron/pull/1008)
+- Wait all jobs done [#1010](https://github.com/distribworks/dkron/pull/1010)
+- Wait for scheduler stop first [#1016](https://github.com/distribworks/dkron/pull/1016)
+
+### Changes
+
+- Swagger assets from cdn [#997](https://github.com/distribworks/dkron/pull/997)
+- Use relative API_URL [#1006](https://github.com/distribworks/dkron/pull/1006)
+
+
+## [3.1.8] - 2021-06-16
+
+### Fixes
+
+- urls were not working well in documentation [#979](https://github.com/distribworks/dkron/pull/979)
+- Improve upgrade doc [#980](https://github.com/distribworks/dkron/pull/980)
+- Update agent tags on config reload [#983](https://github.com/distribworks/dkron/pull/983)
+- Fix intermittent test false negative [#982](https://github.com/distribworks/dkron/pull/982)
+- Fix TLSRaftLayer init [#987](https://github.com/distribworks/dkron/pull/987)
+
+### Changes
+
+- Use Buildkit stable [#977](https://github.com/distribworks/dkron/pull/977)
+- Control errors on scheduler start [#978](https://github.com/distribworks/dkron/pull/978)
+
+
+## [3.1.7] - 2021-05-29
+
+### Features
+
+- Implement ephemeral and expires at feature [#972](https://github.com/distribworks/dkron/pull/972)
+- Add @minutely custom schedule again [#970](https://github.com/distribworks/dkron/pull/970)
+
+### Fixes
+
+- DataGrid UI fixes for long fields [#965](https://github.com/distribworks/dkron/pull/965)
+- Fix race conditions [#967](https://github.com/distribworks/dkron/pull/967)
+- Fix shell executor crashing on missing command [#948](https://github.com/distribworks/dkron/pull/948)
+
+### Changes
+
+- Overhaul logging to avoid package level var [#963](https://github.com/distribworks/dkron/pull/963)
+- Improve tests for http executor [#936](https://github.com/distribworks/dkron/pull/936)
+- Refactor processFilteredNodes for testing [#968](https://github.com/distribworks/dkron/pull/968)
+
+## [3.1.6] - 2021-03-23
+
+### Features
+
+- Add a filter on disabled state [#923](https://github.com/distribworks/dkron/pull/923) @educlos
+- Provide filter query by job displayName, add pristine jobs reports [#897](https://github.com/distribworks/dkron/pull/897) @MGSousa
+
+### Fixes
+
+- Fix XSS vulnerability [#922](https://github.com/distribworks/dkron/pull/922) @yvanoers
+- Correct title of NATS executor page [#929](https://github.com/distribworks/dkron/pull/929) @yvanoers
+- UI fixes [#926](https://github.com/distribworks/dkron/pull/926) @yvanoers
+
+### Changes
+
+- Use go embed for assets embedding [#931](https://github.com/distribworks/dkron/pull/931)
+
 ## [3.1.5] - 2021-03-08
 
 ### Features
@@ -214,87 +366,87 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixes
 
-- Graceful shutdown (#690) @andreygolev
-- Fixes crash when plugin configuration is not defined in a job (#689) @andreygolev
-- Defer panic fix in ExecutionDone gRPC call (#691) @andreygolev
+- Graceful shutdown [#690](https://github.com/distribworks/dkron/pull/690) @andreygolev
+- Fixes crash when plugin configuration is not defined in a job [#689](https://github.com/distribworks/dkron/pull/689) @andreygolev
+- Defer panic fix in ExecutionDone gRPC call [#691](https://github.com/distribworks/dkron/pull/691) @andreygolev
 
 ### Changes
 
 - Default config will start and bootstrap a server
-- isLeader handler added (#695)
+- isLeader handler added [#695](https://github.com/distribworks/dkron/pull/695)
 - Compile with go 1.14
-- Execution load balancing (#692) @andreygolev
-- Update Bootstrap and JQuery (#700)
-- Upgrade all dependencies (#703)
+- Execution load balancing [#692](https://github.com/distribworks/dkron/pull/692) @andreygolev
+- Update Bootstrap and JQuery [#700](https://github.com/distribworks/dkron/pull/700)
+- Upgrade all dependencies [#703](https://github.com/distribworks/dkron/pull/703)
 
 ### Breaking Changes
 
-- Decrease plugin size by 75%, refactored plugin coding interface could affect new plugins development and require adaptations for existing plugin. (#696)
-- Use BuntDB for local storage, fixes [#687](https://github.com/distribworks/dkron/issues/687), require rolling upgrade. (#702) @andreygolev
+- Decrease plugin size by 75%, refactored plugin coding interface could affect new plugins development and require adaptations for existing plugin. [#696](https://github.com/distribworks/dkron/pull/696)
+- Use BuntDB for local storage, fixes [#687](https://github.com/distribworks/dkron/issues/687), require rolling upgrade. [#702](https://github.com/distribworks/dkron/pull/702) @andreygolev
 
 ## [2.0.6] - 2020-02-14
 
 ### Fixes
 
-- Memory consumption on startup (#682)
+- Memory consumption on startup [#682](https://github.com/distribworks/dkron/pull/682)
 
 ## [2.0.5] - 2020-02-12
 
 ### Fixes
 
-- Set the agent on dependent run (#675)
-- Return the correct status code on leader endpoint (#671)
+- Set the agent on dependent run [#675](https://github.com/distribworks/dkron/pull/675)
+- Return the correct status code on leader endpoint [#671](https://github.com/distribworks/dkron/pull/671)
 
 ### Changes
 
-- Check for missing agent (#675)
-- Add code comment (#675)
+- Check for missing agent [#675](https://github.com/distribworks/dkron/pull/675)
+- Add code comment [#675](https://github.com/distribworks/dkron/pull/675)
 
 ## [2.0.4] - 2020-01-31
 
-- Remove dependency of the agent in store and reduce usage in Job (#669)
-- Upgrade gin (#669)
-- Add helper methods (#669)
-- Move directory creation to the Store instantiation (#669)
-- Accept middlewares for API routes (#669)
+- Remove dependency of the agent in store and reduce usage in Job [#669](https://github.com/distribworks/dkron/pull/669)
+- Upgrade gin [#669](https://github.com/distribworks/dkron/pull/669)
+- Add helper methods [#669](https://github.com/distribworks/dkron/pull/669)
+- Move directory creation to the Store instantiation [#669](https://github.com/distribworks/dkron/pull/669)
+- Accept middlewares for API routes [#669](https://github.com/distribworks/dkron/pull/669)
 - ACL docs
 
 ## [2.0.3] - 2020-01-04
 
 ### Fixes
 
-- Fix modal indexing in UI (#666)
+- Fix modal indexing in UI [#666](https://github.com/distribworks/dkron/pull/666)
 
 ### Changes
 
-- Bump BadgerDB to 2.0.1 (#667)
-- Allow templating of time format in notifications webhook (#665)
+- Bump BadgerDB to 2.0.1 [#667](https://github.com/distribworks/dkron/pull/667)
+- Allow templating of time format in notifications webhook [#665](https://github.com/distribworks/dkron/pull/665)
 
 ## [2.0.2] - 2019-12-11
 
 ### Features
 
-- Search all jobs in dashboards with the search box (#653)
+- Search all jobs in dashboards with the search box [#653](https://github.com/distribworks/dkron/pull/653)
 
 ### Fixes
 
-- Validate empty job names (#659)
-- Die on plugin communication error (#658)
-- Revert GetStatus with concurrency forbid (#655)
+- Validate empty job names [#659](https://github.com/distribworks/dkron/pull/659)
+- Die on plugin communication error [#658](https://github.com/distribworks/dkron/pull/658)
+- Revert GetStatus with concurrency forbid [#655](https://github.com/distribworks/dkron/pull/655)
 
 ### Changes
 
-- Upgrade Angular to latest (#641)
+- Upgrade Angular to latest [#641](https://github.com/distribworks/dkron/pull/641)
 
 ## [2.0.1] - 2019-12-03
 
 ### Fixed
 
-- Child jobs not being executed due to running Job status (#651)
+- Child jobs not being executed due to running Job status [#651](https://github.com/distribworks/dkron/pull/651)
 
 ### Refactored
 
-- Remove copied cron lib and add as dependency (#646)
+- Remove copied cron lib and add as dependency [#646](https://github.com/distribworks/dkron/pull/646)
 
 ## [2.0.0] - 2019-11-27
 
@@ -527,10 +679,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Bug fixes
 
 - Fix RPCconfig query missing address (#336 and related)
-- Fix concurrency issue due to race condition on lock jobs (#299)
-- Fix execution done missing on restart blocking concurrency forbid jobs (#349)
-- Fix plugin load paths (#275)
-- Fix RPC address lost on reload config (#262)
+- Fix concurrency issue due to race condition on lock jobs [#299](https://github.com/distribworks/dkron/pull/299)
+- Fix execution done missing on restart blocking concurrency forbid jobs [#349](https://github.com/distribworks/dkron/pull/349)
+- Fix plugin load paths [#275](https://github.com/distribworks/dkron/pull/275)
+- Fix RPC address lost on reload config [#262](https://github.com/distribworks/dkron/pull/262)
 
 ### Features and code improvements
 
