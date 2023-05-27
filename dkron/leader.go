@@ -171,7 +171,9 @@ WAIT:
 		case <-interval:
 			goto RECONCILE
 		case member := <-reconcileCh:
-			a.reconcileMember(member)
+			if err := a.reconcileMember(member); err != nil {
+				a.logger.WithError(err).Error("dkron: failed to reconcile member")
+			}
 		}
 	}
 }

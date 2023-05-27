@@ -33,7 +33,7 @@ func TestGRPCExecutionDone(t *testing.T) {
 	c.DataDir = dir
 
 	a := NewAgent(c)
-	a.Start()
+	_ = a.Start()
 
 	for {
 		if a.IsLeader() {

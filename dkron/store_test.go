@@ -13,7 +13,7 @@ func TestStore(t *testing.T) {
 	log := getTestLogger()
 	s, err := NewStore(log)
 	require.NoError(t, err)
-	defer s.Shutdown()
+	defer s.Shutdown() // nolint: errcheck
 
 	testJob := &Job{
 		Name:           "test",
@@ -218,7 +218,7 @@ func Test_computeStatus(t *testing.T) {
 		NodeName:   "testNode1",
 		Group:      1,
 	}
-	s.SetExecution(ex1)
+	_, _ = s.SetExecution(ex1)
 
 	ex2 := &Execution{
 		JobName:    "test",
@@ -229,7 +229,7 @@ func Test_computeStatus(t *testing.T) {
 		NodeName:   "testNode2",
 		Group:      1,
 	}
-	s.SetExecution(ex2)
+	_, _ = s.SetExecution(ex2)
 
 	ex3 := &Execution{
 		JobName:    "test",
@@ -240,7 +240,7 @@ func Test_computeStatus(t *testing.T) {
 		NodeName:   "testNode1",
 		Group:      2,
 	}
-	s.SetExecution(ex3)
+	_, _ = s.SetExecution(ex3)
 
 	ex4 := &Execution{
 		JobName:    "test",
@@ -251,7 +251,7 @@ func Test_computeStatus(t *testing.T) {
 		NodeName:   "testNode1",
 		Group:      2,
 	}
-	s.SetExecution(ex4)
+	_, _ = s.SetExecution(ex4)
 
 	ex5 := &Execution{
 		JobName:   "test",
@@ -261,7 +261,7 @@ func Test_computeStatus(t *testing.T) {
 		NodeName:  "testNode1",
 		Group:     3,
 	}
-	s.SetExecution(ex5)
+	_, _ = s.SetExecution(ex5)
 
 	ex6 := &Execution{
 		JobName:  "test",
@@ -270,7 +270,7 @@ func Test_computeStatus(t *testing.T) {
 		NodeName: "testNode1",
 		Group:    4,
 	}
-	s.SetExecution(ex6)
+	_, _ = s.SetExecution(ex6)
 
 	// Tests status
 	err = s.db.View(func(tx *buntdb.Tx) error {

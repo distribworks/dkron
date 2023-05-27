@@ -102,15 +102,15 @@ func TestAgentCommand_runForElection(t *testing.T) {
 	time.Sleep(2 * time.Second)
 
 	// Send a shutdown request
-	a1.Stop()
+	_ = a1.Stop()
 
 	// Wait until a follower steps as leader
 	time.Sleep(2 * time.Second)
 	assert.True(t, (a2.IsLeader() || a3.IsLeader()))
 	log.Println(a3.IsLeader())
 
-	a2.Stop()
-	a3.Stop()
+	_ = a2.Stop()
+	_ = a3.Stop()
 }
 
 func lastSelector(nodes []Node) int {
@@ -146,7 +146,7 @@ func Test_getTargetNodes(t *testing.T) {
 	c.DataDir = dir
 
 	a1 := NewAgent(c)
-	a1.Start()
+	_ = a1.Start()
 
 	time.Sleep(2 * time.Second)
 
@@ -168,7 +168,7 @@ func Test_getTargetNodes(t *testing.T) {
 	c.DataDir = dir
 
 	a2 := NewAgent(c)
-	a2.Start()
+	_ = a2.Start()
 
 	// Start another agent
 	ip3, returnFn3 := testutil.TakeIP()
@@ -192,7 +192,7 @@ func Test_getTargetNodes(t *testing.T) {
 	c.DataDir = dir
 
 	a3 := NewAgent(c)
-	a3.Start()
+	_ = a3.Start()
 
 	time.Sleep(2 * time.Second)
 
@@ -322,9 +322,9 @@ func Test_getTargetNodes(t *testing.T) {
 	})
 
 	// Clean up
-	a1.Stop()
-	a2.Stop()
-	a3.Stop()
+	_ = a1.Stop()
+	_ = a2.Stop()
+	_ = a3.Stop()
 }
 
 func TestEncrypt(t *testing.T) {
@@ -346,12 +346,12 @@ func TestEncrypt(t *testing.T) {
 	c.DataDir = dir
 
 	a := NewAgent(c)
-	a.Start()
+	_ = a.Start()
 
 	time.Sleep(2 * time.Second)
 
 	assert.True(t, a.serf.EncryptionEnabled())
-	a.Stop()
+	_ = a.Stop()
 }
 
 func Test_advertiseRPCAddr(t *testing.T) {
@@ -374,7 +374,7 @@ func Test_advertiseRPCAddr(t *testing.T) {
 	c.DataDir = dir
 
 	a := NewAgent(c)
-	a.Start()
+	_ = a.Start()
 
 	time.Sleep(2 * time.Second)
 
@@ -383,7 +383,7 @@ func Test_advertiseRPCAddr(t *testing.T) {
 
 	assert.Equal(t, exRPCAddr, advertiseRPCAddr)
 
-	a.Stop()
+	_ = a.Stop()
 }
 
 func Test_bindRPCAddr(t *testing.T) {
@@ -405,7 +405,7 @@ func Test_bindRPCAddr(t *testing.T) {
 	c.DataDir = dir
 
 	a := NewAgent(c)
-	a.Start()
+	_ = a.Start()
 
 	time.Sleep(2 * time.Second)
 
@@ -413,7 +413,7 @@ func Test_bindRPCAddr(t *testing.T) {
 	exRPCAddr := a1Addr + ":6868"
 
 	assert.Equal(t, exRPCAddr, bindRPCAddr)
-	a.Stop()
+	_ = a.Stop()
 }
 
 func TestAgentConfig(t *testing.T) {
@@ -436,7 +436,7 @@ func TestAgentConfig(t *testing.T) {
 	c.DevMode = true
 
 	a := NewAgent(c)
-	a.Start()
+	_ = a.Start()
 
 	time.Sleep(2 * time.Second)
 
@@ -444,7 +444,7 @@ func TestAgentConfig(t *testing.T) {
 	assert.NotEmpty(t, a.config.AdvertiseAddr)
 	assert.Equal(t, advAddr+":8946", a.config.AdvertiseAddr)
 
-	a.Stop()
+	_ = a.Stop()
 }
 
 func Test_getQualifyingNodes(t *testing.T) {

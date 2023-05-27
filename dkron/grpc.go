@@ -10,13 +10,13 @@ import (
 	metrics "github.com/armon/go-metrics"
 	"github.com/distribworks/dkron/v3/plugin"
 	proto "github.com/distribworks/dkron/v3/plugin/types"
-	pb "github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/raft"
 	"github.com/hashicorp/serf/serf"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
+	pb "google.golang.org/protobuf/proto"
 )
 
 var (

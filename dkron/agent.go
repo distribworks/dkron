@@ -163,7 +163,9 @@ func (a *Agent) Start() error {
 	rand.Seed(time.Now().UnixNano())
 
 	// Normalize configured addresses
-	a.config.normalizeAddrs()
+	if err := a.config.normalizeAddrs(); err != nil {
+		return err
+	}
 
 	s, err := a.setupSerf()
 	if err != nil {
@@ -213,7 +215,11 @@ func (a *Agent) Start() error {
 		grpcServer := grpc.NewServer(opts...)
 		as := NewAgentServer(a, a.logger)
 		proto.RegisterAgentServer(grpcServer, as)
-		go grpcServer.Serve(l)
+		go func() {
+			if err := grpcServer.Serve(l); err != nil {
+				a.logger.Fatal(err)
+			}
+		}()
 	}
 
 	if a.GRPCClient == nil {
@@ -223,7 +229,9 @@ func (a *Agent) Start() error {
 	tags := a.serf.LocalMember().Tags
 	tags["rpc_addr"] = a.advertiseRPCAddr() // Address that clients will use to RPC to servers
 	tags["port"] = strconv.Itoa(a.config.AdvertiseRPCPort)
-	a.serf.SetTags(tags)
+	if err := a.serf.SetTags(tags); err != nil {
+		return fmt.Errorf("agent: Error setting tags: %w", err)
+	}
 
 	go a.eventLoop()
 	a.ready = true
@@ -259,7 +267,7 @@ func (a *Agent) Stop() error {
 
 	if a.config.Server {
 		a.raft.Shutdown()
-		a.Store.Shutdown()
+		_ = a.Store.Shutdown()
 	}
 
 	if err := a.serf.Leave(); err != nil {
