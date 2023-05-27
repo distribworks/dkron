@@ -426,7 +426,7 @@ func (grpcc *GRPCClient) AgentRun(addr string, job *proto.Job, execution *proto.
 		if err != nil {
 			// At this point the execution status will be unknown, set the FinishedAt time and an explanatory message
 			execution.FinishedAt = timestamppb.Now()
-			execution.Output = []byte(err.Error())
+			execution.Output = []byte(ErrBrokenStream.Error() + ": " + err.Error())
 
 			grpcc.logger.WithError(err).Error(ErrBrokenStream)
 
