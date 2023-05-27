@@ -76,7 +76,7 @@ func (h *HTTPTransport) ServeHTTP() {
 
 	go func() {
 		if err := h.Engine.Run(h.agent.config.HTTPAddr); err != nil {
-			h.logger.WithError(err).Fatal("api: Error starting HTTP server")
+			h.logger.WithError(err).Error("api: Error starting HTTP server")
 		}
 	}()
 }
