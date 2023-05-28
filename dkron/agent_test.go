@@ -47,9 +47,8 @@ func TestAgentCommand_runForElection(t *testing.T) {
 	c.DataDir = dir
 
 	a1 := NewAgent(c)
-	if err := a1.Start(); err != nil {
-		t.Fatal(err)
-	}
+	err = a1.Start()
+	require.NoError(t, err)
 
 	time.Sleep(2 * time.Second)
 
@@ -75,9 +74,8 @@ func TestAgentCommand_runForElection(t *testing.T) {
 	c.DataDir = dir
 
 	a2 := NewAgent(c)
-	if err := a2.Start(); err != nil {
-		t.Fatal(err)
-	}
+	err = a2.Start()
+	require.NoError(t, err)
 
 	time.Sleep(2 * time.Second)
 
@@ -95,9 +93,8 @@ func TestAgentCommand_runForElection(t *testing.T) {
 	c.DataDir = dir
 
 	a3 := NewAgent(c)
-	if err := a3.Start(); err != nil {
-		t.Fatal(err)
-	}
+	err = a3.Start()
+	require.NoError(t, err)
 
 	time.Sleep(2 * time.Second)
 
@@ -109,8 +106,8 @@ func TestAgentCommand_runForElection(t *testing.T) {
 	assert.True(t, (a2.IsLeader() || a3.IsLeader()))
 	log.Println(a3.IsLeader())
 
-	_ = a2.Stop()
-	_ = a3.Stop()
+	// _ = a2.Stop()
+	// _ = a3.Stop()
 }
 
 func lastSelector(nodes []Node) int {
