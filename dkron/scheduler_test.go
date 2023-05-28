@@ -113,7 +113,6 @@ func TestScheduleStop(t *testing.T) {
 		OwnerEmail:     "foo@bar.com",
 	}
 	err = sched.Start([]*Job{testJob1}, &Agent{})
-	require.NoError(t, err)
 	assert.Error(t, err)
 
 	// Wait for the job to start
