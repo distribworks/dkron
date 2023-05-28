@@ -74,7 +74,11 @@ func (h *HTTPTransport) ServeHTTP() {
 		"address": h.agent.config.HTTPAddr,
 	}).Info("api: Running HTTP server")
 
-	go h.Engine.Run(h.agent.config.HTTPAddr)
+	go func() {
+		if err := h.Engine.Run(h.agent.config.HTTPAddr); err != nil {
+			h.logger.WithError(err).Error("api: Error starting HTTP server")
+		}
+	}()
 }
 
 // APIRoutes registers the api routes on the gin RouterGroup.
@@ -233,7 +237,7 @@ func (h *HTTPTransport) jobCreateOrUpdateHandler(c *gin.Context) {
 
 	// Parse values from JSON
 	if err := c.BindJSON(&job); err != nil {
-		c.Writer.WriteString(fmt.Sprintf("Unable to parse payload: %s.", err))
+		_, _ = c.Writer.WriteString(fmt.Sprintf("Unable to parse payload: %s.", err))
 		h.logger.Error(err)
 		return
 	}
@@ -241,7 +245,7 @@ func (h *HTTPTransport) jobCreateOrUpdateHandler(c *gin.Context) {
 	// Validate job
 	if err := job.Validate(); err != nil {
 		c.AbortWithStatus(http.StatusBadRequest)
-		c.Writer.WriteString(fmt.Sprintf("Job contains invalid value: %s.", err))
+		_, _ = c.Writer.WriteString(fmt.Sprintf("Job contains invalid value: %s.", err))
 		return
 	}
 
@@ -253,13 +257,17 @@ func (h *HTTPTransport) jobCreateOrUpdateHandler(c *gin.Context) {
 		} else {
 			c.AbortWithStatus(http.StatusInternalServerError)
 		}
-		c.Writer.WriteString(s.Message())
+		_, _ = c.Writer.WriteString(s.Message())
 		return
 	}
 
 	// Immediately run the job if so requested
 	if _, exists := c.GetQuery("runoncreate"); exists {
-		go h.agent.GRPCClient.RunJob(job.Name)
+		go func() {
+			if _, err := h.agent.GRPCClient.RunJob(job.Name); err != nil {
+				h.logger.WithError(err).Error("api: Unable to run job.")
+			}
+		}()
 	}
 
 	c.Header("Location", fmt.Sprintf("%s/%s", c.Request.RequestURI, job.Name))
@@ -272,7 +280,7 @@ func (h *HTTPTransport) jobDeleteHandler(c *gin.Context) {
 	// Call gRPC DeleteJob
 	job, err := h.agent.GRPCClient.DeleteJob(jobName)
 	if err != nil {
-		c.AbortWithError(http.StatusNotFound, err)
+		_ = c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
 	renderJSON(c, http.StatusOK, job)
@@ -284,7 +292,7 @@ func (h *HTTPTransport) jobRunHandler(c *gin.Context) {
 	// Call gRPC RunJob
 	job, err := h.agent.GRPCClient.RunJob(jobName)
 	if err != nil {
-		c.AbortWithError(http.StatusNotFound, err)
+		_ = c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
 
@@ -298,32 +306,32 @@ func (h *HTTPTransport) jobRunHandler(c *gin.Context) {
 func (h *HTTPTransport) restoreHandler(c *gin.Context) {
 	file, _, err := c.Request.FormFile("file")
 	if err != nil {
-		c.AbortWithError(http.StatusNotFound, err)
+		_ = c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
 
 	data, err := ioutil.ReadAll(file)
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		_ = c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 	var jobs []*Job
 	err = json.Unmarshal(data, &jobs)
 
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		_ = c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
 	jobTree, err := generateJobTree(jobs)
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		_ = c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 	result := h.agent.recursiveSetJob(jobTree)
 	resp, err := json.Marshal(result)
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		_ = c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 	renderJSON(c, http.StatusOK, string(resp))
@@ -349,7 +357,7 @@ func (h *HTTPTransport) executionsHandler(c *gin.Context) {
 
 	job, err := h.agent.Store.GetJob(jobName, nil)
 	if err != nil {
-		c.AbortWithError(http.StatusNotFound, err)
+		_ = c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
 
@@ -390,7 +398,7 @@ func (h *HTTPTransport) executionHandler(c *gin.Context) {
 
 	job, err := h.agent.Store.GetJob(jobName, nil)
 	if err != nil {
-		c.AbortWithError(http.StatusNotFound, err)
+		_ = c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
 
@@ -436,7 +444,7 @@ func (h *HTTPTransport) membersHandler(c *gin.Context) {
 func (h *HTTPTransport) leaderHandler(c *gin.Context) {
 	member, err := h.agent.leaderMember()
 	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
+		_ = c.AbortWithError(http.StatusInternalServerError, err)
 	}
 	if member == nil {
 		c.AbortWithStatus(http.StatusNotFound)
@@ -455,7 +463,7 @@ func (h *HTTPTransport) isLeaderHandler(c *gin.Context) {
 
 func (h *HTTPTransport) leaveHandler(c *gin.Context) {
 	if err := h.agent.Stop(); err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
+		_ = c.AbortWithError(http.StatusInternalServerError, err)
 	}
 	renderJSON(c, http.StatusOK, h.agent.peers)
 }
@@ -465,7 +473,7 @@ func (h *HTTPTransport) jobToggleHandler(c *gin.Context) {
 
 	job, err := h.agent.Store.GetJob(jobName, nil)
 	if err != nil {
-		c.AbortWithError(http.StatusNotFound, err)
+		_ = c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
 
@@ -474,7 +482,7 @@ func (h *HTTPTransport) jobToggleHandler(c *gin.Context) {
 
 	// Call gRPC SetJob
 	if err := h.agent.GRPCClient.SetJob(job); err != nil {
-		c.AbortWithError(http.StatusUnprocessableEntity, err)
+		_ = c.AbortWithError(http.StatusUnprocessableEntity, err)
 		return
 	}
 
@@ -487,7 +495,7 @@ func (h *HTTPTransport) busyHandler(c *gin.Context) {
 
 	exs, err := h.agent.GetActiveExecutions()
 	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
+		_ = c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 

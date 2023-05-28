@@ -36,7 +36,7 @@ func setupAPITest(t *testing.T, port string) (dir string, a *Agent) {
 	c.DataDir = dir
 
 	a = NewAgent(c)
-	a.Start()
+	_ = a.Start()
 
 	for {
 		if a.IsLeader() {
@@ -170,7 +170,7 @@ func TestAPIJobCreateUpdateValidationEmptyName(t *testing.T) {
 	baseURL := fmt.Sprintf("http://localhost:%s/v1", port)
 	dir, a := setupAPITest(t, port)
 	defer os.RemoveAll(dir)
-	defer a.Stop()
+	defer a.Stop() // nolint: errcheck
 
 	jsonStr := []byte(`{
 		"name": "testjob1",
@@ -253,7 +253,7 @@ func TestAPIGetNonExistentJobReturnsNotFound(t *testing.T) {
 	baseURL := fmt.Sprintf("http://localhost:%s/v1", port)
 	dir, a := setupAPITest(t, port)
 	defer os.RemoveAll(dir)
-	defer a.Stop()
+	defer a.Stop() // nolint: errcheck
 
 	resp, _ := http.Get(baseURL + "/jobs/notajob")
 
@@ -265,7 +265,7 @@ func TestAPIJobCreateUpdateJobWithInvalidParentIsNotCreated(t *testing.T) {
 	baseURL := fmt.Sprintf("http://localhost:%s/v1", port)
 	dir, a := setupAPITest(t, port)
 	defer os.RemoveAll(dir)
-	defer a.Stop()
+	defer a.Stop() // nolint: errcheck
 
 	jsonStr := []byte(`{
 		"name": "test_job",
@@ -295,7 +295,7 @@ func TestAPIJobRestore(t *testing.T) {
 	baseURL := fmt.Sprintf("http://localhost:%s/v1/restore", port)
 	dir, a := setupAPITest(t, port)
 	defer os.RemoveAll(dir)
-	defer a.Stop()
+	defer a.Stop() // nolint: errcheck
 
 	bodyBuffer := &bytes.Buffer{}
 	bodyWriter := multipart.NewWriter(bodyBuffer)
@@ -311,7 +311,7 @@ func TestAPIJobRestore(t *testing.T) {
 	}
 	defer file.Close()
 
-	io.Copy(fileWriter, file)
+	_, _ = io.Copy(fileWriter, file)
 
 	contentType := bodyWriter.FormDataContentType()
 	bodyWriter.Close()
@@ -426,7 +426,7 @@ func postJob(t *testing.T, port string, jsonStr []byte) *http.Response {
 	baseURL := fmt.Sprintf("http://localhost:%s/v1", port)
 	dir, a := setupAPITest(t, port)
 	defer os.RemoveAll(dir)
-	defer a.Stop()
+	defer a.Stop() // nolint: errcheck
 
 	resp, err := http.Post(baseURL+"/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
 	require.NoError(t, err, err)

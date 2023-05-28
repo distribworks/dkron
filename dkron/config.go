@@ -147,7 +147,7 @@ type Config struct {
 	PreWebhookHeaders []string `mapstructure:"pre-webhook-headers"`
 
 	// WebhookEndpoint is the URL to call for notifications.
-	WebhookEndpoint string `mapstructure:"webhook-endpoint" mapstructure:"webhook-url"`
+	WebhookEndpoint string `mapstructure:"webhook-endpoint"`
 
 	// WebhookPayload is the body template of the request for notifications.
 	WebhookPayload string `mapstructure:"webhook-payload"`

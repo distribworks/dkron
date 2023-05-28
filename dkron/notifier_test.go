@@ -13,7 +13,7 @@ import (
 
 func TestNotifier_callExecutionWebhook(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		io.Copy(w, r.Body)
+		_, _ = io.Copy(w, r.Body)
 	}))
 	defer ts.Close()
 
@@ -32,7 +32,7 @@ func TestNotifier_callExecutionWebhookHostHeader(t *testing.T) {
 	var got string
 	var exp = "dkron.io"
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		io.Copy(w, r.Body)
+		_, _ = io.Copy(w, r.Body)
 		got = r.Host
 	}))
 	defer ts.Close()
