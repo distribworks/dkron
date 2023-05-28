@@ -403,17 +403,17 @@ func Test_bindRPCAddr(t *testing.T) {
 	c.LogLevel = logLevel
 	c.DevMode = true
 	c.DataDir = dir
+	c.AdvertiseAddr = c.BindAddr
 
 	a := NewAgent(c)
-	_ = a.Start()
+	err = a.Start()
+	require.NoError(t, err)
 
 	time.Sleep(2 * time.Second)
 
 	bindRPCAddr := a.bindRPCAddr()
 	exRPCAddr := a1Addr + ":6868"
-
 	assert.Equal(t, exRPCAddr, bindRPCAddr)
-	_ = a.Stop()
 }
 
 func TestAgentConfig(t *testing.T) {

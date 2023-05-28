@@ -266,8 +266,13 @@ func (a *Agent) Stop() error {
 	}
 
 	if a.config.Server {
-		a.raft.Shutdown()
-		_ = a.Store.Shutdown()
+		if err := a.raft.Shutdown().Error(); err != nil {
+			return err
+		}
+
+		if err := a.Store.Shutdown(); err != nil {
+			return err
+		}
 	}
 
 	if err := a.serf.Leave(); err != nil {
