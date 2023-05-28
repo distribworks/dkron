@@ -266,6 +266,7 @@ func (a *Agent) Stop() error {
 			<-a.sched.Stop().Done()
 		}
 
+		// TODO: Check why Shutdown().Error() is not working
 		_ = a.raft.Shutdown()
 
 		if err := a.Store.Shutdown(); err != nil {
