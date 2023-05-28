@@ -6,6 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.2.4] - 2023-05-29
+
+### Fixes
+
+Do not retry job when unknown status [#1335](https://github.com/distribworks/dkron/pull/1335)
+
+### Features
+
+Prometheus metrics for shell executor [#1330](https://github.com/distribworks/dkron/pull/1330)
+
+### Changes
+
+- Bump deps
+- Fix linting issues [#1336](https://github.com/distribworks/dkron/pull/1336)
+
 ## [3.2.3] - 2023-03-17
 
 ### Fixes
