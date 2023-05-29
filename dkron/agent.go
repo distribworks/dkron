@@ -163,7 +163,7 @@ func (a *Agent) Start() error {
 	rand.Seed(time.Now().UnixNano())
 
 	// Normalize configured addresses
-	if err := a.config.normalizeAddrs(); err != nil {
+	if err := a.config.normalizeAddrs(); err != nil && !errors.Is(err, ErrResolvingHost) {
 		return err
 	}
 

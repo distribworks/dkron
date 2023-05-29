@@ -16,7 +16,10 @@ func Test_normalizeAddrs(t *testing.T) {
 	tests := []test{
 		{
 			config: Config{BindAddr: "192.168.1.1:8946"},
-			want:   Config{BindAddr: "192.168.1.1:8946"},
+			want: Config{
+				BindAddr:      "192.168.1.1:8946",
+				AdvertiseAddr: "192.168.1.1:8946",
+			},
 		},
 		{
 			config: Config{BindAddr: ":8946"},
@@ -26,7 +29,7 @@ func Test_normalizeAddrs(t *testing.T) {
 
 	for _, tc := range tests {
 		err := tc.config.normalizeAddrs()
-		require.Error(t, err)
+		require.NoError(t, err)
 		assert.EqualValues(t, tc.want, tc.config)
 	}
 }
@@ -40,8 +43,31 @@ func Test_normalizeAdvertise(t *testing.T) {
 	}
 
 	tests := []test{
-		{addr: "192.168.1.1", bind: ":8946", want: "192.168.1.1:8946", dev: false},
-		{addr: "", bind: "127.0.0.1", want: "127.0.0.1:8946", dev: true},
+		{
+			addr: "192.168.1.1",
+			bind: ":8946",
+			dev:  false,
+			want: "192.168.1.1:8946",
+		},
+		{
+			addr: "",
+			bind: "127.0.0.1",
+			dev:  true,
+			want: "127.0.0.1:8946",
+		},
+		// TODO: Revisit this test
+		// {
+		// 	addr: "",
+		// 	bind: "127.0.0.1:8946",
+		// 	dev:  true,
+		// 	want: "127.0.0.1:8946",
+		// },
+		// {
+		// 	addr: "",
+		// 	bind: "localhost:8946",
+		// 	dev:  true,
+		// 	want: "127.0.0.1:8946",
+		// },
 	}
 
 	for _, tc := range tests {
