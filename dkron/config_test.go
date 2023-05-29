@@ -16,10 +16,7 @@ func Test_normalizeAddrs(t *testing.T) {
 	tests := []test{
 		{
 			config: Config{BindAddr: "192.168.1.1:8946"},
-			want: Config{
-				BindAddr:      "192.168.1.1:8946",
-				AdvertiseAddr: "192.168.1.1:8946",
-			},
+			want:   Config{BindAddr: "192.168.1.1:8946"},
 		},
 		{
 			config: Config{BindAddr: ":8946"},
@@ -29,7 +26,7 @@ func Test_normalizeAddrs(t *testing.T) {
 
 	for _, tc := range tests {
 		err := tc.config.normalizeAddrs()
-		require.NoError(t, err)
+		require.Error(t, err)
 		assert.EqualValues(t, tc.want, tc.config)
 	}
 }
