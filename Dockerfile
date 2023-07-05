@@ -6,6 +6,8 @@ EXPOSE 8080 8946
 RUN mkdir -p /app
 WORKDIR /app
 
+ARG GOPROXY="https://goproxy.cn"
+
 COPY go.mod go.mod
 COPY go.sum go.sum
 RUN go mod download
