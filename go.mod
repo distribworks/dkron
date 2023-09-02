@@ -20,8 +20,8 @@ require (
 	github.com/hashicorp/go-discover v0.0.0-20210818145131-c573d69da192
 	github.com/hashicorp/go-hclog v1.5.0
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/hashicorp/go-plugin v1.4.10
-	github.com/hashicorp/go-sockaddr v1.0.2
+	github.com/hashicorp/go-plugin v1.5.0
+	github.com/hashicorp/go-sockaddr v1.0.4
 	github.com/hashicorp/go-syslog v1.0.0
 	github.com/hashicorp/go-uuid v1.0.3
 	github.com/hashicorp/go-version v1.6.0
