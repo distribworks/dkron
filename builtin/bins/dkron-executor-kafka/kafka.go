@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"errors"
 	"log"
 	"strings"
@@ -65,6 +66,15 @@ func (s *Kafka) ExecuteImpl(args *dktypes.ExecuteRequest) ([]byte, error) {
 	config.Producer.Retry.Max = 5
 	config.Producer.Return.Successes = true
 	config.Producer.Return.Errors = true
+
+	if args.Config["tlsEnable"] == "true" {
+		config.Net.TLS.Enable = true
+
+		config.Net.TLS.Config = &tls.Config{}
+		if args.Config["tlsInsecureSkipVerify"] == "true" {
+			config.Net.TLS.Config.InsecureSkipVerify = true
+		}
+	}
 
 	brokers := strings.Split(args.Config["brokerAddress"], ",")
 	producer, err := sarama.NewSyncProducer(brokers, config)
