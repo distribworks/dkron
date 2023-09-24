@@ -1,9 +1,6 @@
 package main
 
 import (
-	"bufio"
-	"bytes"
-	"encoding/base64"
 	"errors"
 	"fmt"
 	"log"
@@ -12,13 +9,13 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/armon/circbuf"
 	dkplugin "github.com/distribworks/dkron/v3/plugin"
 	dktypes "github.com/distribworks/dkron/v3/plugin/types"
 	"github.com/mattn/go-shellwords"
-	"github.com/struCoder/pidusage"
 )
 
 const (
@@ -67,6 +64,9 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelp
 	env := strings.Split(args.Config["env"], ",")
 	cwd := args.Config["cwd"]
 
+	executionInfo := strings.Split(fmt.Sprintf("ENV_JOB_NAME=%s", args.JobName), ",")
+	env = append(env, executionInfo...)
+
 	cmd, err := buildCmd(command, shell, env, cwd)
 	if err != nil {
 		return nil, err
@@ -79,23 +79,6 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelp
 	cmd.Stderr = reportingWriter{buffer: output, cb: cb, isError: true}
 	cmd.Stdout = reportingWriter{buffer: output, cb: cb}
 
-	stdin, err := cmd.StdinPipe()
-	if err != nil {
-		return nil, err
-	}
-
-	defer stdin.Close()
-
-	payload, err := base64.StdEncoding.DecodeString(args.Config["payload"])
-	if err != nil {
-		return nil, err
-	}
-
-	stdin.Write(payload)
-	stdin.Close()
-
-	log.Printf("shell: going to run %s", command)
-
 	jobTimeout := args.Config["timeout"]
 	var jt time.Duration
 
@@ -104,7 +87,10 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelp
 		if err != nil {
 			return nil, errors.New("shell: Error parsing job timeout")
 		}
+		cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 	}
+
+	log.Printf("shell: going to run %s", command)
 
 	err = cmd.Start()
 	if err != nil {
@@ -116,7 +102,8 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelp
 
 	if jt != 0 {
 		slowTimer := time.AfterFunc(jt, func() {
-			err = cmd.Process.Kill()
+			// Kill child process to avoid cmd.Wait()
+			err := syscall.Kill(-cmd.Process.Pid, syscall.SIGKILL) // note the minus sign
 			if err != nil {
 				jobTimeoutMessage = fmt.Sprintf("shell: Job '%s' execution time exceeding defined timeout %v. SIGKILL returned error. Job may not have been killed", command, jt)
 			} else {
@@ -124,45 +111,14 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelp
 			}
 
 			jobTimedOut = true
-			return
 		})
 
 		defer slowTimer.Stop()
 	}
 
-	// Warn if buffer is overwritten
-	if output.TotalWritten() > output.Size() {
-		log.Printf("shell: Script '%s' generated %d bytes of output, truncated to %d", command, output.TotalWritten(), output.Size())
-	}
-
-	pid := cmd.Process.Pid
 	quit := make(chan struct{})
 
-	go func() {
-		for {
-			select {
-			case <-quit:
-				return
-			default:
-				stat, err := pidusage.GetStat(pid)
-				if err != nil {
-					log.Printf("Error getting pid statistics: %v", err)
-					return
-				}
-
-				mem, err := calculateMemory(pid)
-				if err != nil {
-					log.Printf("Error calculating memory metrics: %v", err)
-					return
-				}
-
-				cpu := stat.CPU
-				updateMetric(args.JobName, memUsage, float64(mem))
-				updateMetric(args.JobName, cpuUsage, cpu)
-				time.Sleep(1 * time.Second) // Refreshing metrics in real-time each second
-			}
-		}
-	}()
+	go CollectProcessMetrics(args.JobName, cmd.Process.Pid, quit)
 
 	err = cmd.Wait()
 	close(quit) // exit metric refresh goroutine after job is finished
@@ -172,6 +128,11 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelp
 		if err != nil {
 			log.Printf("Error writing output on timeout event: %v", err)
 		}
+	}
+
+	// Warn if buffer is overwritten
+	if output.TotalWritten() > output.Size() {
+		log.Printf("shell: Script '%s' generated %d bytes of output, truncated to %d", command, output.TotalWritten(), output.Size())
 	}
 
 	// Always log output
@@ -208,31 +169,4 @@ func buildCmd(command string, useShell bool, env []string, cwd string) (cmd *exe
 	}
 	cmd.Dir = cwd
 	return
-}
-
-func calculateMemory(pid int) (uint64, error) {
-	f, err := os.Open(fmt.Sprintf("/proc/%d/smaps", pid))
-	if err != nil {
-		return 0, err
-	}
-	defer f.Close()
-
-	res := uint64(0)
-	rfx := []byte("Rss:")
-	r := bufio.NewScanner(f)
-	for r.Scan() {
-		line := r.Bytes()
-		if bytes.HasPrefix(line, rfx) {
-			var size uint64
-			_, err := fmt.Sscanf(string(line[4:]), "%d", &size)
-			if err != nil {
-				return 0, err
-			}
-			res += size
-		}
-	}
-	if err := r.Err(); err != nil {
-		return 0, err
-	}
-	return res, nil
 }
