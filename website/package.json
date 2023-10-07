@@ -24,7 +24,7 @@
     "clsx": "^1.1.1",
     "mdx-mermaid": "^v1.3.0",
     "mermaid": "^9.3.0",
-    "postcss": "^8.4.6",
+    "postcss": "^8.4.31",
     "postcss-import": "^14.0.2",
     "prism-react-renderer": "^1.2.1",
     "react": "^17.0.1",
