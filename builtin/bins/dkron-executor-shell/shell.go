@@ -134,7 +134,7 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelp
 
 	quit := make(chan struct{})
 
-	go CollectProcessMetrics(args.JobName, cmd.Process.Pid, quit)
+	go CollectProcessMetrics(args.JobName, cmd, quit)
 
 	err = cmd.Wait()
 	close(quit) // exit metric refresh goroutine after job is finished

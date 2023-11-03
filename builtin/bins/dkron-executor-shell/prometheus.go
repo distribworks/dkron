@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os/exec"
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
@@ -41,9 +42,16 @@ var (
 		Help:      "Job Execution Counter",
 	},
 		[]string{"job_name"})
+
+	jobExitCode = promauto.NewGaugeVec(prometheus.GaugeOpts{
+		Namespace: namespace,
+		Name:      "exit_code",
+		Help:      "Exit code of a job",
+	},
+		[]string{"job_name"})
 )
 
-func CollectProcessMetrics(jobname string, pid int, quit chan struct{}) {
+func CollectProcessMetrics(jobname string, cmd *exec.Cmd, quit chan struct{}) {
 	start := time.Now()
 
 	for {
@@ -53,9 +61,10 @@ func CollectProcessMetrics(jobname string, pid int, quit chan struct{}) {
 			memUsage.WithLabelValues(jobname).Set(0)
 			jobExecutionTime.WithLabelValues(jobname).Set(0)
 			jobDoneCount.WithLabelValues(jobname).Inc()
+			jobExitCode.WithLabelValues(jobname).Set(float64(cmd.ProcessState.ExitCode()))
 			return
 		default:
-			cpu, mem, err := GetTotalCPUMemUsage(pid)
+			cpu, mem, err := GetTotalCPUMemUsage(cmd.Process.Pid)
 			if err != nil {
 				log.Printf("Error getting pid statistics: %v", err)
 				return
