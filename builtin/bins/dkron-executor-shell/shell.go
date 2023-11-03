@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"log"
@@ -78,6 +79,21 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelp
 	// use same buffer for both channels, for the full return at the end
 	cmd.Stderr = reportingWriter{buffer: output, cb: cb, isError: true}
 	cmd.Stdout = reportingWriter{buffer: output, cb: cb}
+
+	stdin, err := cmd.StdinPipe()
+	if err != nil {
+		return nil, err
+	}
+
+	defer stdin.Close()
+
+	payload, err := base64.StdEncoding.DecodeString(args.Config["payload"])
+	if err != nil {
+		return nil, err
+	}
+
+	stdin.Write(payload)
+	stdin.Close()
 
 	jobTimeout := args.Config["timeout"]
 	var jt time.Duration
