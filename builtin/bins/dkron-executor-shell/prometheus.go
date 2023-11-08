@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"os/exec"
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
@@ -51,20 +50,23 @@ var (
 		[]string{"job_name"})
 )
 
-func CollectProcessMetrics(jobname string, cmd *exec.Cmd, quit chan struct{}) {
+func CollectProcessMetrics(jobname string, pid int, quit chan int) {
 	start := time.Now()
 
 	for {
 		select {
-		case <-quit:
+		case exitCode, ok := <-quit:
+			if !ok {
+				// log.Println("Exit code received and quit channel closed.")
+				return
+			}
 			cpuUsage.WithLabelValues(jobname).Set(0)
 			memUsage.WithLabelValues(jobname).Set(0)
 			jobExecutionTime.WithLabelValues(jobname).Set(0)
 			jobDoneCount.WithLabelValues(jobname).Inc()
-			jobExitCode.WithLabelValues(jobname).Set(float64(cmd.ProcessState.ExitCode()))
-			return
+			jobExitCode.WithLabelValues(jobname).Set(float64(exitCode))
 		default:
-			cpu, mem, err := GetTotalCPUMemUsage(cmd.Process.Pid)
+			cpu, mem, err := GetTotalCPUMemUsage(pid)
 			if err != nil {
 				log.Printf("Error getting pid statistics: %v", err)
 				return

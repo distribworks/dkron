@@ -132,11 +132,12 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelp
 		defer slowTimer.Stop()
 	}
 
-	quit := make(chan struct{})
+	quit := make(chan int)
 
-	go CollectProcessMetrics(args.JobName, cmd, quit)
+	go CollectProcessMetrics(args.JobName, cmd.Process.Pid, quit)
 
 	err = cmd.Wait()
+	quit <- cmd.ProcessState.ExitCode()
 	close(quit) // exit metric refresh goroutine after job is finished
 
 	if jobTimedOut {
