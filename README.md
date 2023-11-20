@@ -75,6 +75,14 @@ https://github.com/bozerkins/terraform-provider-dkron
 Manage and run jobs in Dkron from your django project
 https://github.com/surface-security/django-dkron
 
+## Contributors
+
+<a href="https://github.com/distribworks/dkron/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=distribworks/dkron" />
+</a>
+
+Made with [contrib.rocks](https://contrib.rocks).
+
 ## Get in touch
 
 - Twitter: [@distribworks](https://twitter.com/distribworks)
