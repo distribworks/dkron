@@ -22,7 +22,7 @@ func (a *Agent) nodeJoin(me serf.MemberEvent) {
 			continue
 		}
 		a.logger.WithField("server", parts.Name).Info("adding server")
-
+		a.serverLookup.AddServer(parts)
 		// Check if this server is known
 		found := false
 		a.peerLock.Lock()
@@ -174,6 +174,7 @@ func (a *Agent) nodeFailed(me serf.MemberEvent) {
 			delete(a.localPeers, raft.ServerAddress(parts.Addr.String()))
 		}
 		a.peerLock.Unlock()
+		a.serverLookup.RemoveServer(parts)
 	}
 }
 
