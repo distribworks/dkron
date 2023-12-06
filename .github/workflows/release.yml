@@ -1,13 +1,11 @@
 name: Release
 
 on:
-  push:
-    branches-ignore:
-      - '**'
-    tags:
-      - 'v*.*.*'
-      # to be used by fork patch-releases ^^
-      - 'v*.*.*-*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version (e.g., 1.0.0)
+        required: true
 
 jobs:
   goreleaser:
@@ -20,8 +18,10 @@ jobs:
 
       - name: Prepare
         id: prepare
+        env:
+          VERSION: ${{ github.event.inputs.version }}
         run: |
-            TAG=${GITHUB_REF#refs/tags/}
+            TAG=${VERSION}
             echo ::set-output name=tag_name::${TAG}
 
       - name: Set up QEMU
@@ -31,7 +31,5 @@ jobs:
         run: |
             make release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN_WRITE_PACKAGES }}
           VERSION: ${{ steps.prepare.outputs.tag_name }}
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
