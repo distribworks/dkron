@@ -26,7 +26,7 @@ require (
 	github.com/hashicorp/go-uuid v1.0.3
 	github.com/hashicorp/go-version v1.6.0
 	github.com/hashicorp/memberlist v0.5.0
-	github.com/hashicorp/raft v1.5.0
+	github.com/hashicorp/raft v1.6.0
 	github.com/hashicorp/raft-boltdb v0.0.0-20211202195631-7d34b9fb3f42
 	github.com/hashicorp/serf v0.10.1
 	github.com/jhump/protoreflect v1.15.3
@@ -50,7 +50,6 @@ require (
 	github.com/stretchr/testify v1.8.4
 	github.com/tencentcloud/tencentcloud-sdk-go v3.0.83+incompatible // indirect
 	github.com/tidwall/buntdb v1.2.7
-	github.com/tinylib/msgp v1.1.6 // indirect
 	golang.org/x/net v0.19.0
 	google.golang.org/grpc v1.57.0
 	google.golang.org/protobuf v1.31.0
