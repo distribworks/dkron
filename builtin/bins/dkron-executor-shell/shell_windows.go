@@ -11,7 +11,6 @@ import (
 	"os/exec"
 	"strconv"
 	"strings"
-	"syscall"
 	"time"
 
 	"github.com/armon/circbuf"
@@ -73,7 +72,6 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelp
 		if err != nil {
 			return nil, errors.New("shell: Error parsing job timeout")
 		}
-		cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 	}
 
 	log.Printf("shell: going to run %s", command)
