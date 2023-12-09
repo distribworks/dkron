@@ -25,7 +25,7 @@ func getTestLogger() *logrus.Entry {
 func TestJobGetParent(t *testing.T) {
 	log := getTestLogger()
 	s, err := NewStore(log)
-	defer s.Shutdown()
+	defer s.Shutdown() // nolint: errcheck
 	require.NoError(t, err)
 
 	parentTestJob := &Job{
@@ -125,7 +125,7 @@ func Test_isRunnable(t *testing.T) {
 
 	a := NewAgent(c)
 	a.GRPCClient = &gRPCClientMock{}
-	a.Start()
+	_ = a.Start()
 	time.Sleep(2 * time.Second)
 
 	var exp ntime.NullableTime

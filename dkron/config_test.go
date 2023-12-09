@@ -40,8 +40,31 @@ func Test_normalizeAdvertise(t *testing.T) {
 	}
 
 	tests := []test{
-		{addr: "192.168.1.1", bind: ":8946", want: "192.168.1.1:8946", dev: false},
-		{addr: "", bind: "127.0.0.1", want: "127.0.0.1:8946", dev: true},
+		{
+			addr: "192.168.1.1",
+			bind: ":8946",
+			dev:  false,
+			want: "192.168.1.1:8946",
+		},
+		{
+			addr: "",
+			bind: "127.0.0.1",
+			dev:  true,
+			want: "127.0.0.1:8946",
+		},
+		// TODO: Revisit this test
+		// {
+		// 	addr: "",
+		// 	bind: "127.0.0.1:8946",
+		// 	dev:  true,
+		// 	want: "127.0.0.1:8946",
+		// },
+		// {
+		// 	addr: "",
+		// 	bind: "localhost:8946",
+		// 	dev:  true,
+		// 	want: "127.0.0.1:8946",
+		// },
 	}
 
 	for _, tc := range tests {

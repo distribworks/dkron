@@ -10,6 +10,7 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/armon/circbuf"
@@ -64,6 +65,9 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelp
 	env := strings.Split(args.Config["env"], ",")
 	cwd := args.Config["cwd"]
 
+	executionInfo := strings.Split(fmt.Sprintf("ENV_JOB_NAME=%s", args.JobName), ",")
+	env = append(env, executionInfo...)
+
 	cmd, err := buildCmd(command, shell, env, cwd)
 	if err != nil {
 		return nil, err
@@ -91,8 +95,6 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelp
 	stdin.Write(payload)
 	stdin.Close()
 
-	log.Printf("shell: going to run %s", command)
-
 	jobTimeout := args.Config["timeout"]
 	var jt time.Duration
 
@@ -101,7 +103,10 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelp
 		if err != nil {
 			return nil, errors.New("shell: Error parsing job timeout")
 		}
+		cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 	}
+
+	log.Printf("shell: going to run %s", command)
 
 	err = cmd.Start()
 	if err != nil {
@@ -113,7 +118,8 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelp
 
 	if jt != 0 {
 		slowTimer := time.AfterFunc(jt, func() {
-			err = cmd.Process.Kill()
+			// Kill child process to avoid cmd.Wait()
+			err := syscall.Kill(-cmd.Process.Pid, syscall.SIGKILL) // note the minus sign
 			if err != nil {
 				jobTimeoutMessage = fmt.Sprintf("shell: Job '%s' execution time exceeding defined timeout %v. SIGKILL returned error. Job may not have been killed", command, jt)
 			} else {
@@ -121,24 +127,29 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelp
 			}
 
 			jobTimedOut = true
-			return
 		})
 
 		defer slowTimer.Stop()
 	}
 
-	// Warn if buffer is overwritten
-	if output.TotalWritten() > output.Size() {
-		log.Printf("shell: Script '%s' generated %d bytes of output, truncated to %d", command, output.TotalWritten(), output.Size())
-	}
+	quit := make(chan int)
+
+	go CollectProcessMetrics(args.JobName, cmd.Process.Pid, quit)
 
 	err = cmd.Wait()
+	quit <- cmd.ProcessState.ExitCode()
+	close(quit) // exit metric refresh goroutine after job is finished
 
 	if jobTimedOut {
 		_, err := output.Write([]byte(jobTimeoutMessage))
 		if err != nil {
 			log.Printf("Error writing output on timeout event: %v", err)
 		}
+	}
+
+	// Warn if buffer is overwritten
+	if output.TotalWritten() > output.Size() {
+		log.Printf("shell: Script '%s' generated %d bytes of output, truncated to %d", command, output.TotalWritten(), output.Size())
 	}
 
 	// Always log output

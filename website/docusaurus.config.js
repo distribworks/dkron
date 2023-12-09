@@ -22,6 +22,11 @@ const config = {
 
   plugins: ['tailwindcss-loader'],
 
+  markdown: {
+    mermaid: true,
+  },
+  themes: ['@docusaurus/theme-mermaid'],
+
   presets: [
     [
       'redocusaurus',
@@ -45,7 +50,6 @@ const config = {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
-          remarkPlugins: [require('mdx-mermaid')],
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
           editUrl: 'https://github.com/distribworks/dkron/tree/main/website/docs/',

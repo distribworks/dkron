@@ -93,6 +93,11 @@ nfpms:
       - deb
       - rpm
 
+    conflicts:
+      - dkron-pro
+    replaces:
+      - dkron-pro
+
     # Override default /usr/local/bin destination for binaries
     bindir: /usr/bin
 
@@ -108,11 +113,6 @@ nfpms:
         type: config
       - dst: /var/log/dkron
         type: dir
-
-    overrides:
-      rpm:
-        replacements:
-          amd64: x86_64
 
 snapshot:
   name_template: "{{ .Tag }}-next"

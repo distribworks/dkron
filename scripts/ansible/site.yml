@@ -5,7 +5,7 @@
   tasks:
     - equinix.metal.device:
         hostnames: [dkron01, dkron02, dkron03]
-        operating_system: ubuntu_21_04
+        operating_system: ubuntu_22_04
         plan: c3.small.x86
         facility: am6
         wait_for_public_IPv: 4
@@ -16,7 +16,7 @@
     
     - equinix.metal.device:
         hostnames: [dkron04]
-        operating_system: ubuntu_21_04
+        operating_system: ubuntu_22_04
         plan: c3.small.x86
         facility: am6
         wait_for_public_IPv: 4
@@ -42,7 +42,21 @@
   become_method: sudo
 
   vars:
-    version: 3.2.0
+    version: 3.2.2
+    datadog_api_key: "{{ lookup('ansible.builtin.env', 'DKRON_DD_API_KEY') }}"
+    datadog_checks:
+      openmetrics:
+        init_config:
+        instances:
+          - openmetrics_endpoint: http://localhost:8080/metrics/
+            namespace: "dkron"
+            metrics:
+              - dkron.*
+
+  roles:
+    - role: datadog.datadog
+      become: yes
+      tags: datadog
 
   tasks:
     - name: Copy package

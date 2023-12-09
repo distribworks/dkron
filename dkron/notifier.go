@@ -186,7 +186,11 @@ func (n *notifier) callPreExecutionWebhook() error {
 	for _, h := range n.Config.PreWebhookHeaders {
 		if h != "" {
 			kv := strings.Split(h, ":")
-			req.Header.Set(kv[0], strings.TrimSpace(kv[1]))
+			if strings.EqualFold(kv[0], "host") {
+				req.Host = strings.TrimSpace(kv[1])
+			} else {
+				req.Header.Set(kv[0], strings.TrimSpace(kv[1]))
+			}
 		}
 	}
 
@@ -216,7 +220,11 @@ func (n *notifier) callExecutionWebhook() error {
 	for _, h := range n.Config.WebhookHeaders {
 		if h != "" {
 			kv := strings.Split(h, ":")
-			req.Header.Set(kv[0], strings.TrimSpace(kv[1]))
+			if strings.EqualFold(kv[0], "host") {
+				req.Host = strings.TrimSpace(kv[1])
+			} else {
+				req.Header.Set(kv[0], strings.TrimSpace(kv[1]))
+			}
 		}
 	}
 

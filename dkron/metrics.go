@@ -54,9 +54,13 @@ func initMetrics(a *Agent) error {
 	// Initialize the global sink
 	if len(fanout) > 0 {
 		fanout = append(fanout, inm)
-		metrics.NewGlobal(metrics.DefaultConfig("dkron"), fanout)
+		if _, err := metrics.NewGlobal(metrics.DefaultConfig("dkron"), fanout); err != nil {
+			return err
+		}
 	} else {
-		metrics.NewGlobal(metrics.DefaultConfig("dkron"), inm)
+		if _, err := metrics.NewGlobal(metrics.DefaultConfig("dkron"), inm); err != nil {
+			return err
+		}
 	}
 
 	return nil

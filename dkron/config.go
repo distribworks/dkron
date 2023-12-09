@@ -147,7 +147,7 @@ type Config struct {
 	PreWebhookHeaders []string `mapstructure:"pre-webhook-headers"`
 
 	// WebhookEndpoint is the URL to call for notifications.
-	WebhookEndpoint string `mapstructure:"webhook-endpoint" mapstructure:"webhook-url"`
+	WebhookEndpoint string `mapstructure:"webhook-endpoint"`
 
 	// WebhookPayload is the body template of the request for notifications.
 	WebhookPayload string `mapstructure:"webhook-payload"`
@@ -188,6 +188,8 @@ const (
 	DefaultRPCPort       int           = 6868
 	DefaultRetryInterval time.Duration = time.Second * 30
 )
+
+var ErrResolvingHost = errors.New("error resolving hostname")
 
 // DefaultConfig returns a Config struct pointer with sensible
 // default settings.
@@ -344,14 +346,14 @@ func (c *Config) normalizeAddrs() error {
 	if c.HTTPAddr != "" {
 		ipStr, err := ParseSingleIPTemplate(c.HTTPAddr)
 		if err != nil {
-			return fmt.Errorf("bind address resolution failed: %v", err)
+			return fmt.Errorf("HTTP address resolution failed: %v", err)
 		}
 		c.HTTPAddr = ipStr
 	}
 
 	addr, err := normalizeAdvertise(c.AdvertiseAddr, c.BindAddr, DefaultBindPort, c.DevMode)
 	if err != nil {
-		return fmt.Errorf("failed to parse HTTP advertise address (%v, %v, %v, %v): %v", c.AdvertiseAddr, c.BindAddr, DefaultBindPort, c.DevMode, err)
+		return fmt.Errorf("failed to parse advertise address (%v, %v, %v, %v): %w", c.AdvertiseAddr, c.BindAddr, DefaultBindPort, c.DevMode, err)
 	}
 	c.AdvertiseAddr = addr
 
@@ -410,10 +412,10 @@ func normalizeAdvertise(addr string, bind string, defport int, dev bool) (string
 		return addr, nil
 	}
 
-	// Fallback to bind address first, and then try resolving the local hostname
+	// TODO: Revisit this as the lookup doesn't work with IP addresses
 	ips, err := net.LookupIP(bind)
 	if err != nil {
-		return "", fmt.Errorf("Error resolving bind address %q: %v", bind, err)
+		return "", ErrResolvingHost //fmt.Errorf("Error resolving bind address %q: %v", bind, err)
 	}
 
 	// Return the first non-localhost unicast address

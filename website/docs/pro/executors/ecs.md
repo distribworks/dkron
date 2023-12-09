@@ -78,4 +78,5 @@ env
 service
 overrides
 maxAttempts // Defaults to 2000, will perform a check every 6s * 2000 times waiting a total of 12000s or 3.3h
+enableExecuteCommand
 ```

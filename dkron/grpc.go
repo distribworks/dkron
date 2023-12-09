@@ -5,18 +5,19 @@ import (
 	"errors"
 	"fmt"
 	"net"
+	"strings"
 	"time"
 
 	metrics "github.com/armon/go-metrics"
 	"github.com/distribworks/dkron/v3/plugin"
 	proto "github.com/distribworks/dkron/v3/plugin/types"
-	pb "github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/raft"
 	"github.com/hashicorp/serf/serf"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
+	pb "google.golang.org/protobuf/proto"
 )
 
 var (
@@ -205,8 +206,12 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.E
 	}
 
 	// If the execution failed, retry it until retries limit (default: don't retry)
+	// Don't retry if the status is unknown
 	execution := NewExecutionFromProto(&pbex)
-	if !execution.Success && uint(execution.Attempt) < job.Retries+1 {
+	if !execution.Success &&
+		uint(execution.Attempt) < job.Retries+1 &&
+		!strings.HasPrefix(execution.Output, ErrBrokenStream.Error()) {
+		// Increment the attempt counter
 		execution.Attempt++
 
 		// Keep all execution properties intact except the last output
@@ -246,10 +251,10 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.E
 	if len(job.DependentJobs) > 0 && job.Status == StatusSuccess {
 		for _, djn := range job.DependentJobs {
 			dj, err := grpcs.agent.Store.GetJob(djn, nil)
-			dj.Agent = grpcs.agent
 			if err != nil {
 				return nil, err
 			}
+			dj.Agent = grpcs.agent
 			grpcs.logger.WithField("job", djn).Debug("grpc: Running dependent job")
 			dj.Run()
 		}

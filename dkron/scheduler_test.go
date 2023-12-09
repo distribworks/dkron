@@ -8,6 +8,7 @@ import (
 	"github.com/distribworks/dkron/v3/extcron"
 	"github.com/robfig/cron/v3"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestSchedule(t *testing.T) {
@@ -25,7 +26,8 @@ func TestSchedule(t *testing.T) {
 		Owner:          "John Dough",
 		OwnerEmail:     "foo@bar.com",
 	}
-	sched.Start([]*Job{testJob1}, &Agent{})
+	err := sched.Start([]*Job{testJob1}, &Agent{})
+	require.NoError(t, err)
 
 	assert.True(t, sched.started)
 	assert.True(t, sched.Started())
@@ -62,7 +64,8 @@ func TestClearCron(t *testing.T) {
 		Owner:          "John Dough",
 		OwnerEmail:     "foo@bar.com",
 	}
-	sched.AddJob(testJob)
+	err := sched.AddJob(testJob)
+	require.NoError(t, err)
 	assert.Len(t, sched.Cron.Entries(), 1)
 
 	sched.ClearCron()
@@ -80,7 +83,7 @@ func TestTimezoneAwareJob(t *testing.T) {
 		Executor:       "shell",
 		ExecutorConfig: map[string]string{"command": "echo 'test1'", "shell": "true"},
 	}
-	sched.Start([]*Job{tzJob}, &Agent{})
+	_ = sched.Start([]*Job{tzJob}, &Agent{})
 
 	assert.True(t, sched.started)
 	assert.True(t, sched.Started())
@@ -93,10 +96,11 @@ func TestScheduleStop(t *testing.T) {
 	sched := NewScheduler(log)
 
 	sched.Cron = cron.New(cron.WithParser(extcron.NewParser()))
-	sched.Cron.AddFunc("@every 2s", func() {
+	_, err := sched.Cron.AddFunc("@every 2s", func() {
 		time.Sleep(time.Second * 5)
 		fmt.Println("function done")
 	})
+	require.NoError(t, err)
 	sched.Cron.Start()
 	sched.started = true
 
@@ -108,7 +112,7 @@ func TestScheduleStop(t *testing.T) {
 		Owner:          "John Dough",
 		OwnerEmail:     "foo@bar.com",
 	}
-	err := sched.Start([]*Job{testJob1}, &Agent{})
+	err = sched.Start([]*Job{testJob1}, &Agent{})
 	assert.Error(t, err)
 
 	// Wait for the job to start

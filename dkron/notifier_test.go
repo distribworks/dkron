@@ -13,7 +13,7 @@ import (
 
 func TestNotifier_callExecutionWebhook(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		io.Copy(w, r.Body)
+		_, _ = io.Copy(w, r.Body)
 	}))
 	defer ts.Close()
 
@@ -26,6 +26,30 @@ func TestNotifier_callExecutionWebhook(t *testing.T) {
 	log := getTestLogger()
 	err := SendPostNotifications(c, &Execution{}, []*Execution{}, &Job{}, log)
 	assert.NoError(t, err)
+}
+
+func TestNotifier_callExecutionWebhookHostHeader(t *testing.T) {
+	var got string
+	var exp = "dkron.io"
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, _ = io.Copy(w, r.Body)
+		got = r.Host
+	}))
+	defer ts.Close()
+
+	c := &Config{
+		WebhookEndpoint: ts.URL,
+		WebhookPayload:  `payload={"text": "{{.Report}}"}`,
+		WebhookHeaders:  []string{"Content-Type: application/x-www-form-urlencoded", fmt.Sprintf("Host: %s", exp)},
+	}
+
+	log := getTestLogger()
+	err := SendPostNotifications(c, &Execution{}, []*Execution{}, &Job{}, log)
+	assert.NoError(t, err)
+
+	if exp != got {
+		t.Errorf("Exp: %s\nGot: %s", exp, got)
+	}
 }
 
 func TestNotifier_sendExecutionEmail(t *testing.T) {

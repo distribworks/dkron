@@ -6,14 +6,13 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/distribworks/dkron/v3/plugin/types"
 	dktypes "github.com/distribworks/dkron/v3/plugin/types"
 	grpc "google.golang.org/grpc"
 )
 
 type MockedExecutor struct{}
 
-func (m *MockedExecutor) Execute(ctx context.Context, in *types.ExecuteRequest, opts ...grpc.CallOption) (*types.ExecuteResponse, error) {
+func (m *MockedExecutor) Execute(ctx context.Context, in *dktypes.ExecuteRequest, opts ...grpc.CallOption) (*dktypes.ExecuteResponse, error) {
 	resp := &dktypes.ExecuteResponse{}
 	return resp, nil
 }

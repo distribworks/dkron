@@ -7,11 +7,11 @@ import (
 
 	metrics "github.com/armon/go-metrics"
 	proto "github.com/distribworks/dkron/v3/plugin/types"
-	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 // DkronGRPCClient defines the interface that any gRPC client for
@@ -425,8 +425,8 @@ func (grpcc *GRPCClient) AgentRun(addr string, job *proto.Job, execution *proto.
 		// Error received from the stream
 		if err != nil {
 			// At this point the execution status will be unknown, set the FinishedAt time and an explanatory message
-			execution.FinishedAt = ptypes.TimestampNow()
-			execution.Output = []byte(err.Error())
+			execution.FinishedAt = timestamppb.Now()
+			execution.Output = []byte(ErrBrokenStream.Error() + ": " + err.Error())
 
 			grpcc.logger.WithError(err).Error(ErrBrokenStream)
 

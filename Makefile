@@ -5,7 +5,7 @@ $(LINUX_PKGS):
 	fury push --as distribworks $@
 
 PACKAGE_NAME          := github.com/distribworks/dkron
-GOLANG_CROSS_VERSION  ?= v1.18.1
+GOLANG_CROSS_VERSION  ?= v1.21.5
 
 .PHONY: release-dry-run
 release-dry-run:
@@ -22,7 +22,7 @@ release-dry-run:
 		-v `pwd`:/go/src/$(PACKAGE_NAME) \
 		-w /go/src/$(PACKAGE_NAME) \
 		goreleaser/goreleaser-cross:${GOLANG_CROSS_VERSION} \
-		--rm-dist --skip-validate --skip-publish --timeout=1h
+		--rm-dist --skip-validate --skip-publish --timeout=1h --parallelism=1
 
 .PHONY: release
 release:
