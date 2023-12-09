@@ -6,6 +6,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.2.7] - 2023-12-09
+
+### Changes
+
+- Replace dependent class library github.com/struCoder/pidusage with github.com/shirou/gopsutil/v3/process
+- pkg import only once https://github.com/distribworks/dkron/pull/1406
+- Bump deps
+- Use Go 1.21
+
+### Features
+
+- add TLS options for kafka executor plugin https://github.com/distribworks/dkron/pull/1384
+- Resource usage from child processes spawned by the task startup process.
+- Introduce two new metrics, dkron_job_execution_time_seconds and dkron_job_execution_done_count, for improved monitoring and alerting capabilities.
+
+### Fixes
+
+- cmd.Process.Kill() does not clean up the started process, causing the job to remain running. https://github.com/distribworks/dkron/pull/1385
+- The metric dkron_job_mem_usage_kb now exclusively calculates the memory usage of the task startup process, excluding 
+- Should output.TotalWritten be judged after cmd.Wait() is executed? https://github.com/distribworks/dkron/pull/1319
+- The metrics exposed by dkron are only of summary type and cannot cover related analysis for specific jobs. https://github.com/distribworks/dkron/pull/1310
+
 ## [3.2.6] - 2023-09-02
 
 ### Changes
@@ -22,11 +44,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixes
 
-Do not retry job when unknown status [#1335](https://github.com/distribworks/dkron/pull/1335)
+- Do not retry job when unknown status [#1335](https://github.com/distribworks/dkron/pull/1335)
 
 ### Features
 
-Prometheus metrics for shell executor [#1330](https://github.com/distribworks/dkron/pull/1330)
+- Prometheus metrics for shell executor [#1330](https://github.com/distribworks/dkron/pull/1330)
 
 ### Changes
 
