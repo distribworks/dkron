@@ -1,55 +1,37 @@
 {
-  "name": "dkron-ui",
-  "version": "1.0.0",
+  "name": "ui",
   "private": true,
-  "homepage": ".",
-  "dependencies": {
-    "@testing-library/jest-dom": "^5.11.6",
-    "@testing-library/react": "^11.2.2",
-    "@testing-library/user-event": "^12.5.0",
-    "@types/react-dom": "^17.0.0",
-    "@types/react-redux": "^7.1.12",
-    "@types/react-router-dom": "^5.1.6",
-    "prop-types": "^15.7.2",
-    "ra-data-json-server": "^3.10.4",
-    "react": "^17.0.1",
-    "react-admin": "^3.10.4",
-    "react-admin-json-view": "^1.0.2",
-    "react-dom": "^17.0.1",
-    "react-router-dom": "^5.2.0",
-    "react-router-redux": "^4.0.8",
-    "react-scripts": "4.0.0",
-    "redux-persist": "^6.0.0",
-    "typescript": "~4.0.5",
-    "web-vitals": "^0.2.4"
-  },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "prebuild": "rm -rf ../dkron/ui-dist",
-    "postbuild": "mv ./build ../dkron/ui-dist",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint --fix --ext .js,.jsx,.ts,.tsx ./src",
+    "format": "prettier --write ./src"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "dependencies": {
+    "@mui/icons-material": "^5.14.19",
+    "@mui/material": "^5.14.20",
+    "ra-data-json-server": "^4.16.2",
+    "ra-data-simple-rest": "^4.16.0",
+    "react": "^18.2.0",
+    "react-admin": "^4.16.0",
+    "react-admin-json-view": "^2.0.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@types/query-string": "^6.3.0"
+    "@types/node": "^18.16.1",
+    "@types/react": "^18.0.22",
+    "@types/react-dom": "^18.0.7",
+    "@typescript-eslint/eslint-plugin": "^5.60.1",
+    "@typescript-eslint/parser": "^5.60.1",
+    "@vitejs/plugin-react": "^4.0.1",
+    "eslint": "^8.43.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "prettier": "^2.8.8",
+    "typescript": "^5.1.6",
+    "vite": "^4.3.9"
   }
 }
