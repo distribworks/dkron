@@ -9,6 +9,9 @@ import (
 
 var shellCmd = &cobra.Command{
 	Hidden: true,
+	Use:    "shell",
+	Short:  "Shell plugin for dkron",
+	Long:   ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		plugin.Serve(&plugin.ServeConfig{
 			HandshakeConfig: dkplugin.Handshake,
