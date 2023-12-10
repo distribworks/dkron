@@ -4,7 +4,6 @@ import { makeStyles } from '@mui/styles';
 import { Link } from 'react-router-dom';
 
 import cartouche from './cartouche.png';
-import cartoucheDark from './cartoucheDark.png';
 
 interface Props {
     icon: FC<any>;

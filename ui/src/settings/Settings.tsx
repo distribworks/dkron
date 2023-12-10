@@ -10,34 +10,15 @@ const useStyles = makeStyles({
     button: { margin: '1em' },
 });
 
-const Configuration = () => {
+const Settings = () => {
     const classes = useStyles();
     return (
         <Card>
-            <Title title='Configuration' />
+            <Title title='Settings' />
             <CardContent>
-                <div className={classes.label}>
-                    Theme
-                </div>
-                <Button
-                    variant="contained"
-                    className={classes.button}
-                    color={theme === 'light' ? 'primary' : 'default'}
-                    onClick={() => dispatch(changeTheme('light'))}
-                >
-                    Light
-                </Button>
-                <Button
-                    variant="contained"
-                    className={classes.button}
-                    color={theme === 'dark' ? 'primary' : 'default'}
-                    onClick={() => dispatch(changeTheme('dark'))}
-                >
-                    Dark
-                </Button>
             </CardContent>
         </Card>
     );
 };
 
-export default Configuration;
+export default Settings;

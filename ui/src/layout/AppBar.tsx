@@ -26,8 +26,8 @@ const ConfigurationMenu = forwardRef<any, any>((props, ref) => {
     return (
         <MenuItemLink
             ref={ref}
-            to="/configuration"
-            primaryText='Configuration'
+            to="/settings"
+            primaryText='Settings'
             leftIcon={<SettingsIcon />}
             onClick={props.onClick}
         />

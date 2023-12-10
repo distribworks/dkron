@@ -1,12 +1,14 @@
-import Dashboard from './dashboard';
 import { Admin, Resource, CustomRoutes } from 'react-admin';
 import { Route } from "react-router-dom";
-import dataProvider from './dataProvider';
+import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
+import { createHashHistory } from "history";
+
 import jobs from './jobs';
 import { BusyList } from './executions/BusyList';
-import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import { Layout } from './layout';
-import { createHashHistory } from "history";
+import dataProvider from './dataProvider';
+import Dashboard from './dashboard';
+import Settings from './settings/Settings';
 
 declare global {
     interface Window {
