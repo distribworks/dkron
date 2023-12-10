@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { forwardRef } from 'react';
 import { AppBar, UserMenu, MenuItemLink } from 'react-admin';
 import Typography from '@mui/material/Typography';

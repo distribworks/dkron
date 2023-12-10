@@ -27,14 +27,12 @@ const useStyles = makeStyles(theme => ({
     main: (props: Props) => ({
         overflow: 'inherit',
         padding: 16,
-        background: `url(${
-            theme.palette.type === 'dark' ? cartoucheDark : cartouche
-        }) no-repeat`,
+        background: `url(${ cartouche }) no-repeat`,
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
         '& .icon': {
-            color: theme.palette.type === 'dark' ? 'inherit' : '#dc2440',
+            color: '#dc2440',
         },
     }),
     title: {},

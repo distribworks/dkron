@@ -4,7 +4,6 @@ import Button from '@mui/material/Button';
 import { Title } from 'react-admin';
 import { makeStyles } from '@mui/styles';
 import { changeTheme } from './actions';
-import { AppState } from '../types';
 
 const useStyles = makeStyles({
     label: { width: '10em', display: 'inline-block' },
