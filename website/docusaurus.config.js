@@ -20,7 +20,19 @@ const config = {
     description_extended: 'Dkron is a system service for workload automation that runs scheduled jobs, just like unix cron service but distributed in several machines in a cluster. This is the only job scheduler in the market with truly no SPOF. It is open source and available for free.'
   },
 
-  plugins: ['tailwindcss-loader'],
+  plugins: [
+    async function myPlugin(context, options) {
+      return {
+        name: "docusaurus-tailwindcss",
+        configurePostCss(postcssOptions) {
+          // Appends TailwindCSS and AutoPrefixer.
+          postcssOptions.plugins.push(require("tailwindcss"));
+          postcssOptions.plugins.push(require("autoprefixer"));
+          return postcssOptions;
+        },
+      };
+    },
+  ],
 
   markdown: {
     mermaid: true,
