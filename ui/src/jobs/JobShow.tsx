@@ -33,7 +33,10 @@ const JobShowActions = ({ basePath, data, resource }: any) => (
 );
 
 const SuccessField = (props: any) => {
-    return (props.record["finished_at"] === null ? <Tooltip title="Running"><JobIcon /></Tooltip> : <BooleanField {...props} />);
+    return (
+        props.record !== undefined && props.record["finished_at"] === null ? 
+            <Tooltip title="Running"><JobIcon /></Tooltip> : <BooleanField {...props} />
+    );
 };
 
 const FullButton = ({record}: any) => {

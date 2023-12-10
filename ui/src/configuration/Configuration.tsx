@@ -1,5 +1,3 @@
-import * as React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
@@ -15,8 +13,6 @@ const useStyles = makeStyles({
 
 const Configuration = () => {
     const classes = useStyles();
-    const theme = useSelector((state: AppState) => state.theme);
-    const dispatch = useDispatch();
     return (
         <Card>
             <Title title='Configuration' />

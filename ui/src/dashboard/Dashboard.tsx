@@ -1,4 +1,3 @@
-import * as React from "react";
 import { Card, CardContent, CardHeader } from '@mui/material';
 import { List, Datagrid, TextField } from 'react-admin';
 import { TagsField } from '../TagsField'
