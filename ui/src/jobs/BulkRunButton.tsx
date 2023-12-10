@@ -1,10 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
 import {
     useNotify,
-    fetchStart,
-    fetchEnd,
     Button,
     useUnselectAll,
     useRefresh,
@@ -13,26 +10,23 @@ import { apiUrl } from '../dataProvider';
 import RunIcon from '@mui/icons-material/PlayArrow';
 
 const BulkRunButton = ({selectedIds}: any) => {
-    const dispatch = useDispatch();
     const notify = useNotify();
     const refresh = useRefresh();
-    const unselectAll = useUnselectAll();
+    const unselectAll = useUnselectAll;
     const [loading, setLoading] = useState(false);
     const runMany = () => {
         for(let id of selectedIds) {
             setLoading(true);
-            dispatch(fetchStart()); // start the global loading indicator
             fetch(`${apiUrl}/jobs/${id}`, { method: 'POST' })
                 .then(() => {
                     notify('Success running job');
                 })
                 .catch((e) => {
-                    notify('Error on running job', 'warning')
+                    notify('Error on running job', { type: 'warning' })
                 })
                 .finally(() => {
                     setLoading(false);
                     refresh();
-                    dispatch(fetchEnd()); // stop the global loading indicator
                 });
         }
         unselectAll('jobs');

@@ -12,6 +12,7 @@
   "dependencies": {
     "@mui/icons-material": "^5.14.19",
     "@mui/material": "^5.14.20",
+    "@mui/styles": "^5.14.20",
     "ra-data-json-server": "^4.16.2",
     "ra-data-simple-rest": "^4.16.0",
     "react": "^18.2.0",

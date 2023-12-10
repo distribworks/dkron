@@ -6,13 +6,7 @@ import jobs from './jobs';
 import { BusyList } from './executions/BusyList';
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import { Layout } from './layout';
-import customRoutes from './routes';
-import themeReducer from './themeReducer';
-import createAdminStore from './createAdminStore'
-import { Provider } from "react-redux";
 import { createHashHistory } from "history";
-import { persistStore } from 'redux-persist';
-import { PersistGate } from "redux-persist/integration/react";
 
 declare global {
     interface Window {
@@ -27,8 +21,6 @@ declare global {
 
 const authProvider = () => Promise.resolve();
 const history = createHashHistory();
-const store = createAdminStore({authProvider, dataProvider, history});
-const persistor = persistStore(store);
 
 export const App = () => <Admin
     dashboard={Dashboard}
@@ -36,8 +28,6 @@ export const App = () => <Admin
     dataProvider={dataProvider}
     history={history}
     layout={Layout}
-    customRoutes={customRoutes}
-    customReducers={{ theme: themeReducer }}
 >
     <Resource name="jobs" {...jobs} />
     <Resource name="busy" options={{ label: 'Busy' }} list={BusyList} icon={PlayCircleOutlineIcon} />

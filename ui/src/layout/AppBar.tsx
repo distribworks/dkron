@@ -3,7 +3,7 @@ import { forwardRef } from 'react';
 import { AppBar, UserMenu, MenuItemLink } from 'react-admin';
 import Typography from '@mui/material/Typography';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { makeStyles } from '@mui/material/styles';
+import { makeStyles } from '@mui/styles';
 import Clock from './Clock';
 
 import logo from '../images/dkron-logo.png';
@@ -31,7 +31,6 @@ const ConfigurationMenu = forwardRef<any, any>((props, ref) => {
             primaryText='Configuration'
             leftIcon={<SettingsIcon />}
             onClick={props.onClick}
-            sidebarIsOpen
         />
     );
 });

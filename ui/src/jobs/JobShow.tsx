@@ -11,7 +11,7 @@ import {
     TabbedShowLayout,
     Tab,
     ReferenceManyField,
-    useNotify, fetchStart, fetchEnd, Button,
+    useNotify, Button,
 } from 'react-admin';
 import ToggleButton from "./ToggleButton"
 import RunButton from "./RunButton"
@@ -21,14 +21,14 @@ import JobIcon from '@mui/icons-material/Update';
 import FullIcon from '@mui/icons-material/BatteryFull';
 import { Tooltip } from '@mui/material';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { apiUrl } from '../dataProvider';
 
+// basePath={basePath}
 const JobShowActions = ({ basePath, data, resource }: any) => (
     <TopToolbar>
         <RunButton record={data} />
         <ToggleButton record={data} />
-        <EditButton basePath={basePath} record={data} />
+        <EditButton record={data} />
     </TopToolbar>
 );
 
@@ -37,12 +37,10 @@ const SuccessField = (props: any) => {
 };
 
 const FullButton = ({record}: any) => {
-    const dispatch = useDispatch();
     const notify = useNotify();
     const [loading, setLoading] = useState(false);
     const handleClick = () => {
         setLoading(true);
-        dispatch(fetchStart()); // start the global loading indicator 
         fetch(`${apiUrl}/jobs/${record.job_name}/executions/${record.id}`)
             .then((response) => {
                 if (response.ok) {
@@ -56,11 +54,10 @@ const FullButton = ({record}: any) => {
                 record.output = data.output
             })
             .catch((e) => {
-                notify('Error on loading full output', 'warning')
+                notify('Error on loading full output', { type: 'warning' })
             })
             .finally(() => {
                 setLoading(false);
-                dispatch(fetchEnd()); // stop the global loading indicator
             });
     };
     return (
