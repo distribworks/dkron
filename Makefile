@@ -77,12 +77,13 @@ updatetestcert:
 	rm badssl.com-client.p12
 
 ui/node_modules: ui/package.json
-	cd ui; npm install
+	cd ui; yarn install
 	# touch the directory so Make understands it is up to date
 	touch ui/node_modules
 
 dkron/ui-dist: ui/node_modules ui/public/* ui/src/* ui/src/*/*
-	cd ui; npm run-script build
+	rm -rf dkron/ui-dist
+	cd ui; yarn run build --out-dir ../dkron/ui-dist
 
 plugin/types/%.pb.go: proto/%.proto
 	protoc -I proto/ --go_out=plugin/types --go_opt=paths=source_relative --go-grpc_out=plugin/types --go-grpc_opt=paths=source_relative $<
