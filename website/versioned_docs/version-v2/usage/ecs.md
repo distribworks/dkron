@@ -2,9 +2,9 @@
 title: Use with AWS ECS
 ---
 
-{{% notice note %}}
+:::note
 [Dkron Pro](/pro) comes with a [native ECS executor](/docs/v2/pro/executors/ecs) out of the box.
-{{% /notice %}}
+:::
 
 ## Use with Amazon ECS
 

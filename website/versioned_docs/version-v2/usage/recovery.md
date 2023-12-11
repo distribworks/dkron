@@ -8,9 +8,9 @@ Don't panic! This is a critical first step.
 
 Depending on your deployment configuration, it may take only a single server failure for cluster unavailability. Recovery requires an operator to intervene, but the process is straightforward.
 
-{{% notice note %}}
+:::note
 This guide is for recovery from a Dkron outage due to a majority of server nodes in a datacenter being lost. If you are looking to add or remove servers, see the [clustering](/docs/usage/clustering) guide.
-{{% /notice %}}
+:::
 
 ## Failure of a Single Server Cluster
 

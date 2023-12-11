@@ -70,10 +70,11 @@ You may use one of several pre-defined schedules in place of a cron expression.
 You may also schedule a job to execute at fixed intervals.  This is supported by
 formatting the cron spec like this:
 
-    @every <duration>
+```
+	@every <duration>
+```
 
-where "duration" is a string accepted by time.ParseDuration
-(<http://golang.org/pkg/time/#ParseDuration>).
+where "duration" is a string accepted by time.ParseDuration http://golang.org/pkg/time/#ParseDuration.
 
 For example, "@every 1h30m10s" would indicate a schedule that activates every
 1 hour, 30 minutes, 10 seconds.
@@ -87,10 +88,11 @@ it will have only 2 minutes of idle time between each run.
 You may also want to schedule a job to be executed once. This is supported by
 formatting the cron spec like this:
 
+```
     @at <datetime>
+```
 
-Where "datetime" is a string accepted by time.Parse in RFC3339 format
-(<https://golang.org/pkg/time/#Parse>).
+Where "datetime" is a string accepted by time.Parse in RFC3339 format https://golang.org/pkg/time/#Parse.
 
 For example, "@at 2018-01-02T15:04:00Z" would run the job on the specified date and time
 assuming UTC timezone.
@@ -103,7 +105,7 @@ job definition.
 If the time zone is not specified, the following rules apply:
 
 All interpretation and scheduling is done in the machine's local time zone (as
-provided by the Go time package (<http://www.golang.org/pkg/time>).
+provided by the Go time package http://www.golang.org/pkg/time.
 
 Be aware that jobs scheduled during daylight-savings leap-ahead transitions will
 not be run!

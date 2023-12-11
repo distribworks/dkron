@@ -4,9 +4,9 @@ title: Access Control
 
 # Access Control (Preview)
 
-{{% notice info %}}
+:::info
 This feature is in preview and is subject to big changes
-{{% /notice %}}
+:::
 
 Dkron provides an optional Access Control List (ACL) system which can be used to control access to data and APIs. The ACL is Capability-based, relying on policies to determine which fine grained rules can be applied. Dkron's capability based ACL system is very similar to common ACL systems you are used to.
 
@@ -20,9 +20,9 @@ The ACL system is designed to be easy to use and fast to enforce while providing
 
 * **ACL Policies.** Dkron's ACL policies are simple JSON documents that define patterns to allow access to resources. You can find below an example ACL policy that works with the default OPA policy. The ACL JSON structure is not rigid you can adapt it to add new features in combination with the OPA Policy rules.
 
-{{% notice note %}}
+:::note
 This guide is based on the usage of the default OPA Rego Policy
-{{% /notice %}}
+:::
 
 ## Configuring ACLs
 

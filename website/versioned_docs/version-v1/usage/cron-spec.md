@@ -69,7 +69,9 @@ You may use one of several pre-defined schedules in place of a cron expression.
 You may also schedule a job to execute at fixed intervals.  This is supported by
 formatting the cron spec like this:
 
+```
     @every <duration>
+```
 
 where "duration" is a string accepted by time.ParseDuration
 (http://golang.org/pkg/time/#ParseDuration).
@@ -86,7 +88,9 @@ it will have only 2 minutes of idle time between each run.
 You may also want to schedule a job to be executed once. This is supported by
 formatting the cron spec like this:
 
+```
     @at <datetime>
+```
 
 Where "datetime" is a string accepted by time.Parse in RFC3339 format
 (https://golang.org/pkg/time/#Parse).

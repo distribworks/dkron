@@ -16,9 +16,9 @@ The ACL system is designed to be easy to use and fast to enforce while providing
 
 * **ACL Policies.** Dkron's ACL policies are simple JSON documents that define patterns to allow access to resources. You can find below an example ACL policy that works with the default OPA policy. The ACL JSON structure is not rigid you can adapt it to add new features in combination with the OPA Policy rules.
 
-{{% notice note %}}
+:::info
 This guide is based on the usage of the default OPA Rego Policy
-{{% /notice %}}
+:::
 
 ## Configuring ACLs
 

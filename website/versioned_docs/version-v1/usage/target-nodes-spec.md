@@ -7,9 +7,9 @@ weight: 10
 
 You can choose whether a job is run on a node or nodes by specifying tags and a count of target nodes having this tag do you want a job to run.
 
-{{% notice note %}}
+:::note
 The target node syntax: `[tag-value]:[count]`
-{{% /notice %}}
+:::
 
 ### Examples:
 
