@@ -27,7 +27,7 @@ To load completions for every new session, execute once:
 
 #### Linux:
 
-	dkron completion zsh > "${fpath[1]}/_dkron"
+	dkron completion zsh > "~/.zsh/completion/_dkron"
 
 #### macOS:
 
