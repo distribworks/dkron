@@ -23,7 +23,6 @@ node_modules
 tags
 .sass-cache
 .idea/
-.yarn/
 
 # Production
 build
@@ -31,6 +30,7 @@ build
 # Generated files
 .docusaurus
 .cache-loader
+.yarn
 
 # Misc
 .env.local
