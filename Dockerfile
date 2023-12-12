@@ -1,5 +1,6 @@
-FROM golang:1.16
-LABEL maintainer="Victor Castell <victor@victorcastell.com>"
+FROM golang:1.21
+LABEL maintainer="Victor Castell <0x@vcastellm.xyz>"
+>>>>>>> Stashed changes
 
 EXPOSE 8080 8946
 
