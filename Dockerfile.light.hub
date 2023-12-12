@@ -8,7 +8,7 @@ RUN set -x \
 EXPOSE 8080 8946
 
 ENV SHELL /bin/bash
-COPY * /usr/local/bin/
+COPY dkron /usr/local/bin/
 
 ENTRYPOINT ["/usr/local/bin/dkron"]
 

@@ -161,6 +161,38 @@ dockers:
     build_flag_templates:
       - --platform=linux/arm/v7
 
+  - image_templates:
+      - dkron/{{ .ProjectName }}:{{ .Version }}-light-amd64
+    dockerfile: Dockerfile.release
+    use: buildx
+    goos: linux
+    goarch: amd64
+    ids: &docker-ids
+      - dkron
+    build_flag_templates:
+      - --platform=linux/amd64
+
+  - image_templates:
+      - dkron/{{ .ProjectName }}:{{ .Version }}-light-arm64
+    dockerfile: Dockerfile.release
+    use: buildx
+    goos: linux
+    goarch: arm64
+    ids: *docker-ids
+    build_flag_templates:
+      - --platform=linux/arm64/v8
+
+  - image_templates:
+      - dkron/{{ .ProjectName }}:{{ .Version }}-light-armv7
+    dockerfile: Dockerfile.release
+    use: buildx
+    goos: linux
+    goarch: arm
+    goarm: '7'
+    ids: *docker-ids
+    build_flag_templates:
+      - --platform=linux/arm/v7
+
 docker_manifests:
   - name_template: dkron/{{ .ProjectName }}:{{ .Version }}
     image_templates:
@@ -173,6 +205,12 @@ docker_manifests:
     - dkron/{{ .ProjectName }}:{{ .Version }}-amd64
     - dkron/{{ .ProjectName }}:{{ .Version }}-arm64
     - dkron/{{ .ProjectName }}:{{ .Version }}-armv7
+
+  - name_template: dkron/{{ .ProjectName }}:{{ .Version }}-light
+    image_templates:
+    - dkron/{{ .ProjectName }}:{{ .Version }}-light-amd64
+    - dkron/{{ .ProjectName }}:{{ .Version }}-light-arm64
+    - dkron/{{ .ProjectName }}:{{ .Version }}-light-armv7
 
 changelog:
   sort: asc
