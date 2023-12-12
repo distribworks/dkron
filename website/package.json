@@ -30,7 +30,7 @@
     "react": "^18.2.0",
     "react-countup": "^6.2.0",
     "react-dom": "^18.2.0",
-    "redocusaurus": "^1.0.2",
+    "redocusaurus": "^2.0.0",
     "stream": "^0.0.2",
     "swagger-ui-react": "^4.5.2",
     "tailwindcss": "^3.0.23"
