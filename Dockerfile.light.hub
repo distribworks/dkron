@@ -1,21 +1,15 @@
-# syntax=docker/dockerfile:1.2
-FROM alpine:3.12
-LABEL maintainer="Victor Castell <victor@victorcastell.com>"
-ARG TARGETPLATFORM
+FROM alpine:3.19
+LABEL maintainer="Victor Castell <0x@vcastellm.xyz>"
 
 RUN set -x \
 	&& buildDeps='bash ca-certificates openssl tzdata' \
-	&& apk add --update $buildDeps \
-	&& rm -rf /var/cache/apk/* \
-	&& mkdir -p /opt/local/dkron
+	&& apk add --no-cache --update $buildDeps
 
 EXPOSE 8080 8946
 
 ENV SHELL /bin/bash
-WORKDIR /opt/local/dkron
+COPY dkron /usr/local/bin/
 
-RUN --mount=target=/build cp /build/dist/dkron_$(echo ${TARGETPLATFORM} | tr '/' '_')/dkron .
-
-ENTRYPOINT ["/opt/local/dkron/dkron"]
+ENTRYPOINT ["/usr/local/bin/dkron"]
 
 CMD ["--help"]
