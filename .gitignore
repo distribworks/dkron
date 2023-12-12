@@ -30,6 +30,7 @@ build
 # Generated files
 .docusaurus
 .cache-loader
+.yarn
 
 # Misc
 .env.local

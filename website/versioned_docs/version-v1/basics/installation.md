@@ -13,9 +13,9 @@ Run Dkron with default setting: `dkron agent --server`
 Navigate to http://localhost:8080
 
 
-{{% notice note %}}
+:::note
 By default dkron will start with a file based, embedded KV store called BoltDB, it is functional for a single node demo but does not offers clustering or HA.
-{{% /notice %}}
+:::
 
 ## Installing the package
 

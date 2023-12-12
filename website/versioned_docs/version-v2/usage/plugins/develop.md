@@ -5,7 +5,9 @@ weight: 99
 
 ## Developing a Plugin
 
-{{% alert theme="warning" %}}**Advanced topic!** Plugin development is a highly advanced topic, and is not required knowledge for day-to-day usage. If you don't plan on writing any plugins, we recommend not reading the following section of the documentation.{{% /alert %}}
+:::warning
+**Advanced topic!** Plugin development is a highly advanced topic, and is not required knowledge for day-to-day usage. If you don't plan on writing any plugins, we recommend not reading the following section of the documentation.
+:::
 
 Developing a plugin is simple. The only knowledge necessary to write a plugin is basic command-line skills and basic knowledge of the Go programming language.
 
