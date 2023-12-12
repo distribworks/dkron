@@ -6,7 +6,7 @@ import (
 	"time"
 
 	proto "github.com/distribworks/dkron/v3/plugin/types"
-	"github.com/golang/protobuf/ptypes"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 // Execution type holds all of the details of a specific Execution.
@@ -23,7 +23,7 @@ type Execution struct {
 	// When the execution finished running.
 	FinishedAt time.Time `json:"finished_at,omitempty"`
 
-	// If this execution executed succesfully.
+	// If this execution executed successfully.
 	Success bool `json:"success"`
 
 	// Partial output of the execution.
@@ -50,8 +50,8 @@ func NewExecution(jobName string) *Execution {
 
 // NewExecutionFromProto maps a proto.ExecutionDoneRequest to an Execution object
 func NewExecutionFromProto(e *proto.Execution) *Execution {
-	startedAt, _ := ptypes.Timestamp(e.GetStartedAt())
-	finishedAt, _ := ptypes.Timestamp(e.GetFinishedAt())
+	startedAt := e.GetStartedAt().AsTime()
+	finishedAt := e.GetFinishedAt().AsTime()
 	return &Execution{
 		Id:         e.Key(),
 		JobName:    e.JobName,
@@ -68,8 +68,8 @@ func NewExecutionFromProto(e *proto.Execution) *Execution {
 // ToProto returns the protobuf struct corresponding to
 // the representation of the current execution.
 func (e *Execution) ToProto() *proto.Execution {
-	startedAt, _ := ptypes.TimestampProto(e.StartedAt)
-	finishedAt, _ := ptypes.TimestampProto(e.FinishedAt)
+	startedAt := timestamppb.New(e.StartedAt)
+	finishedAt := timestamppb.New(e.FinishedAt)
 	return &proto.Execution{
 		JobName:    e.JobName,
 		Success:    e.Success,

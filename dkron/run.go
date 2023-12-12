@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/serf/serf"
 )
 
-// Run call the agents to run a job. Returns a job with it's new status and next schedule.
+// Run call the agents to run a job. Returns a job with its new status and next schedule.
 func (a *Agent) Run(jobName string, ex *Execution) (*Job, error) {
 	job, err := a.Store.GetJob(jobName, nil)
 	if err != nil {
@@ -16,8 +16,8 @@ func (a *Agent) Run(jobName string, ex *Execution) (*Job, error) {
 
 	// In case the job is not a child job, compute the next execution time
 	if job.ParentJob == "" {
-		if e, ok := a.sched.GetEntry(jobName); ok {
-			job.Next = e.Next
+		if ej, ok := a.sched.GetEntryJob(jobName); ok {
+			job.Next = ej.entry.Next
 			if err := a.applySetJob(job.ToProto()); err != nil {
 				return nil, fmt.Errorf("agent: Run error storing job %s before running: %w", jobName, err)
 			}
@@ -28,35 +28,37 @@ func (a *Agent) Run(jobName string, ex *Execution) (*Job, error) {
 
 	// In the first execution attempt we build and filter the target nodes
 	// but we use the existing node target in case of retry.
-	var filterMap map[string]string
+	var targetNodes []Node
 	if ex.Attempt <= 1 {
-		filterMap, _, err = a.processFilteredNodes(job)
-		if err != nil {
-			return nil, fmt.Errorf("run error processing filtered nodes: %w", err)
-		}
+		targetNodes = a.getTargetNodes(job.Tags, defaultSelector)
 	} else {
-		// In case of retrying, find the rpc address of the node or return with an error
-		var addr string
+		// In case of retrying, find the node or return with an error
 		for _, m := range a.serf.Members() {
 			if ex.NodeName == m.Name {
 				if m.Status == serf.StatusAlive {
-					addr = m.Tags["rpc_addr"]
+					targetNodes = []Node{m}
+					break
 				} else {
 					return nil, fmt.Errorf("retry node is gone: %s for job %s", ex.NodeName, ex.JobName)
 				}
 			}
 		}
-		filterMap = map[string]string{ex.NodeName: addr}
 	}
 
 	// In case no nodes found, return reporting the error
-	if len(filterMap) < 1 {
+	if len(targetNodes) < 1 {
 		return nil, fmt.Errorf("no target nodes found to run job %s", ex.JobName)
 	}
-	a.logger.WithField("nodes", filterMap).Debug("agent: Filtered nodes to run")
+	a.logger.WithField("nodes", targetNodes).Debug("agent: Filtered nodes to run")
 
 	var wg sync.WaitGroup
-	for _, v := range filterMap {
+	for _, v := range targetNodes {
+		// Determine node address
+		addr, ok := v.Tags["rpc_addr"]
+		if !ok {
+			addr = v.Addr.String()
+		}
+
 		// Call here client GRPC AgentRun
 		wg.Add(1)
 		go func(node string, wg *sync.WaitGroup) {
@@ -73,7 +75,7 @@ func (a *Agent) Run(jobName string, ex *Execution) (*Job, error) {
 					"node":     node,
 				}).Error("agent: Error calling AgentRun")
 			}
-		}(v, &wg)
+		}(addr, &wg)
 	}
 
 	wg.Wait()

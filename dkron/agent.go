@@ -50,6 +50,15 @@ var (
 	runningExecutions sync.Map
 )
 
+type RaftStore interface {
+	raft.StableStore
+	raft.LogStore
+	Close() error
+}
+
+// Node is a shorter, more descriptive name for serf.Member
+type Node = serf.Member
+
 // Agent is the main struct that represents a dkron agent
 type Agent struct {
 	// ProcessorPlugins maps processor plugins
@@ -93,7 +102,7 @@ type Agent struct {
 	// raftLayer provides network layering of the raft RPC along with
 	// the Dkron gRPC transport layer.
 	raftLayer     *RaftLayer
-	raftStore     *raftboltdb.BoltStore
+	raftStore     RaftStore
 	raftInmem     *raft.InmemStore
 	raftTransport *raft.NetworkTransport
 
@@ -154,7 +163,9 @@ func (a *Agent) Start() error {
 	rand.Seed(time.Now().UnixNano())
 
 	// Normalize configured addresses
-	a.config.normalizeAddrs()
+	if err := a.config.normalizeAddrs(); err != nil && !errors.Is(err, ErrResolvingHost) {
+		return err
+	}
 
 	s, err := a.setupSerf()
 	if err != nil {
@@ -166,7 +177,10 @@ func (a *Agent) Start() error {
 	if len(a.config.RetryJoinLAN) > 0 {
 		a.retryJoinLAN()
 	} else {
-		a.join(a.config.StartJoin, true)
+		_, err := a.join(a.config.StartJoin, true)
+		if err != nil {
+			a.logger.WithError(err).WithField("servers", a.config.StartJoin).Warn("agent: Can not join")
+		}
 	}
 
 	if err := initMetrics(a); err != nil {
@@ -201,7 +215,11 @@ func (a *Agent) Start() error {
 		grpcServer := grpc.NewServer(opts...)
 		as := NewAgentServer(a, a.logger)
 		proto.RegisterAgentServer(grpcServer, as)
-		go grpcServer.Serve(l)
+		go func() {
+			if err := grpcServer.Serve(l); err != nil {
+				a.logger.Fatal(err)
+			}
+		}()
 	}
 
 	if a.GRPCClient == nil {
@@ -211,7 +229,9 @@ func (a *Agent) Start() error {
 	tags := a.serf.LocalMember().Tags
 	tags["rpc_addr"] = a.advertiseRPCAddr() // Address that clients will use to RPC to servers
 	tags["port"] = strconv.Itoa(a.config.AdvertiseRPCPort)
-	a.serf.SetTags(tags)
+	if err := a.serf.SetTags(tags); err != nil {
+		return fmt.Errorf("agent: Error setting tags: %w", err)
+	}
 
 	go a.eventLoop()
 	a.ready = true
@@ -242,13 +262,16 @@ func (a *Agent) Stop() error {
 	a.logger.Info("agent: Called member stop, now stopping")
 
 	if a.config.Server {
-		a.raft.Shutdown()
-		a.Store.Shutdown()
-	}
+		if a.sched.Started() {
+			<-a.sched.Stop().Done()
+		}
 
-	if a.config.Server && a.sched.Started() {
-		a.sched.Stop()
-		a.sched.ClearCron()
+		// TODO: Check why Shutdown().Error() is not working
+		_ = a.raft.Shutdown()
+
+		if err := a.Store.Shutdown(); err != nil {
+			return err
+		}
 	}
 
 	if err := a.serf.Leave(); err != nil {
@@ -260,6 +283,25 @@ func (a *Agent) Stop() error {
 	}
 
 	return nil
+}
+
+// UpdateTags updates the tag configuration for this agent
+func (a *Agent) UpdateTags(tags map[string]string) {
+	// Preserve reserved tags
+	currentTags := a.serf.LocalMember().Tags
+	for _, tagName := range []string{"role", "version", "server", "bootstrap", "expect", "port", "rpc_addr"} {
+		if val, exists := currentTags[tagName]; exists {
+			tags[tagName] = val
+		}
+	}
+	tags["dc"] = a.config.Datacenter
+	tags["region"] = a.config.Region
+
+	// Set new collection of tags
+	err := a.serf.SetTags(tags)
+	if err != nil {
+		a.logger.Warnf("Setting tags unsuccessful: %s.", err.Error())
+	}
 }
 
 func (a *Agent) setupRaft() error {
@@ -312,17 +354,19 @@ func (a *Agent) setupRaft() error {
 		}
 
 		// Create the BoltDB backend
-		s, err := raftboltdb.NewBoltStore(filepath.Join(a.config.DataDir, "raft", "raft.db"))
-		if err != nil {
-			return fmt.Errorf("error creating new raft store: %s", err)
+		if a.raftStore == nil {
+			s, err := raftboltdb.NewBoltStore(filepath.Join(a.config.DataDir, "raft", "raft.db"))
+			if err != nil {
+				return fmt.Errorf("error creating new raft store: %s", err)
+			}
+			a.raftStore = s
 		}
-		a.raftStore = s
-		stableStore = s
+		stableStore = a.raftStore
 
 		// Wrap the store in a LogCache to improve performance
-		cacheStore, err := raft.NewLogCache(raftLogCacheSize, s)
+		cacheStore, err := raft.NewLogCache(raftLogCacheSize, a.raftStore)
 		if err != nil {
-			s.Close()
+			a.raftStore.Close()
 			return err
 		}
 		logStore = cacheStore
@@ -518,7 +562,7 @@ func (a *Agent) StartServer() {
 	// If TLS config present listen to TLS
 	if a.TLSConfig != nil {
 		// Create a RaftLayer with TLS
-		a.raftLayer = NewTLSRaftLayer(a.TLSConfig)
+		a.raftLayer = NewTLSRaftLayer(a.TLSConfig, a.logger)
 
 		// Match any connection to the recursive mux
 		tlsl := tcpm.Match(cmux.Any())
@@ -692,87 +736,58 @@ func (a *Agent) join(addrs []string, replay bool) (n int, err error) {
 	return
 }
 
-func (a *Agent) processFilteredNodes(job *Job) (map[string]string, map[string]string, error) {
-	// The final set of nodes will be the intersection of all groups
-	tags := make(map[string]string)
-
-	// Actually copy the map
-	for key, val := range job.Tags {
-		tags[key] = val
-	}
-
-	// Always filter by region tag as we currently only target nodes
-	// on the same region.
-	tags["region"] = a.config.Region
-
-	// Make a set of all members
-	allNodes := make(map[string]serf.Member)
-	for _, member := range a.serf.Members() {
-		if member.Status == serf.StatusAlive {
-			allNodes[member.Name] = member
-		}
-	}
-
-	execNodes, tags, cardinality, err := filterNodes(allNodes, tags)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	// Create an array of node names to aid in computing resulting set based on cardinality
-	var names []string
-	for name := range execNodes {
-		names = append(names, name)
-	}
-
-	nodes := make(map[string]string)
-	for ; cardinality > 0; cardinality-- {
-		// Pick a node, any node
-		randomIndex := rand.Intn(len(names))
-		m := execNodes[names[randomIndex]]
-
-		// Store name and address
-		if addr, ok := m.Tags["rpc_addr"]; ok {
-			nodes[m.Name] = addr
-		} else {
-			nodes[m.Name] = m.Addr.String()
-		}
-
-		// Swap picked node with the first one and shorten array, so node can't get picked again
-		names[randomIndex], names[0] = names[0], names[randomIndex]
-		names = names[1:]
-	}
-
-	return nodes, tags, nil
+func (a *Agent) getTargetNodes(tags map[string]string, selectFunc func([]Node) int) []Node {
+	bareTags, cardinality := cleanTags(tags, a.logger)
+	nodes := a.getQualifyingNodes(a.serf.Members(), bareTags)
+	return selectNodes(nodes, cardinality, selectFunc)
 }
 
-// filterNodes determines which of the provided nodes have the given tags
-// Returns:
-// * the map of allNodes that match the provided tags
-// * a clean map of tag values without cardinality
-// * cardinality, i.e. the max number of nodes that should be targeted, regardless of the
-//   number of nodes in the resulting map.
-// * an error if a cardinality was malformed
-func filterNodes(allNodes map[string]serf.Member, tags map[string]string) (map[string]serf.Member, map[string]string, int, error) {
-	ct, cardinality, err := cleanTags(tags)
-	if err != nil {
-		return nil, nil, 0, err
+// getQualifyingNodes returns all nodes in the cluster that are
+// alive, in this agent's region and have all given tags
+func (a *Agent) getQualifyingNodes(nodes []Node, bareTags map[string]string) []Node {
+	// Determine the usable set of nodes
+	qualifiers := filterArray(nodes, func(node Node) bool {
+		return node.Status == serf.StatusAlive &&
+			node.Tags["region"] == a.config.Region &&
+			nodeMatchesTags(node, bareTags)
+	})
+	return qualifiers
+}
+
+// The default selector function for getTargetNodes/selectNodes
+func defaultSelector(nodes []Node) int {
+	return rand.Intn(len(nodes))
+}
+
+// selectNodes selects at most #cardinality from the given nodes using the selectFunc
+func selectNodes(nodes []Node, cardinality int, selectFunc func([]Node) int) []Node {
+	// Return all nodes immediately if they're all going to be selected
+	numNodes := len(nodes)
+	if numNodes <= cardinality {
+		return nodes
 	}
 
-	matchingNodes := make(map[string]serf.Member)
+	for ; cardinality > 0; cardinality-- {
+		// Select a node
+		chosenIndex := selectFunc(nodes[:numNodes])
 
-	// Filter nodes that lack tags
-	for name, member := range allNodes {
-		if nodeMatchesTags(member, ct) {
-			matchingNodes[name] = member
+		// Swap picked node with the last one and reduce choices so it can't get picked again
+		nodes[numNodes-1], nodes[chosenIndex] = nodes[chosenIndex], nodes[numNodes-1]
+		numNodes--
+	}
+
+	return nodes[numNodes:]
+}
+
+// Returns all items from an array for which filterFunc returns true,
+func filterArray(arr []Node, filterFunc func(Node) bool) []Node {
+	for i := len(arr) - 1; i >= 0; i-- {
+		if !filterFunc(arr[i]) {
+			arr[i] = arr[len(arr)-1]
+			arr = arr[:len(arr)-1]
 		}
 	}
-
-	// limit the cardinality to the number of possible nodes
-	if len(matchingNodes) < cardinality {
-		cardinality = len(matchingNodes)
-	}
-
-	return matchingNodes, ct, cardinality, nil
+	return arr
 }
 
 // This function is called when a client request the RPCAddress

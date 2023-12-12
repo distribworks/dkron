@@ -4,7 +4,6 @@ import {
     TextField,
     NumberField,
     DateField,
-    BooleanField,
     EditButton,
     Filter,
     TextInput,
@@ -18,6 +17,7 @@ import { Fragment } from 'react';
 import BulkRunButton from "./BulkRunButton"
 import BulkToggleButton from "./BulkToggleButton"
 import StatusField from "./StatusField"
+import EnabledField from "./EnabledField"
 import { makeStyles } from '@material-ui/core/styles';
 
 const JobFilter = (props: any) => (
@@ -75,7 +75,7 @@ const JobList = (props: any) => {
                     headerClassName={classes.hiddenOnSmallScreens} />
                 <DateField source="last_success" showTime />
                 <DateField source="last_error" showTime />
-                <BooleanField source="disabled" sortable={false} />
+                <EnabledField source="disabled" label="Enabled" sortable={false} />
                 <NumberField source="retries" sortable={false} />
                 <StatusField source="status" sortable={false} />
                 <DateField source="next" showTime />

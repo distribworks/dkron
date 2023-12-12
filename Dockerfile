@@ -1,6 +1,5 @@
 FROM golang:1.21
 LABEL maintainer="Victor Castell <0x@vcastellm.xyz>"
->>>>>>> Stashed changes
 
 EXPOSE 8080 8946
 

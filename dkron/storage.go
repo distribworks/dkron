@@ -6,7 +6,7 @@ import (
 
 // Storage is the interface that should be used by any
 // storage engine implemented for dkron. It contains the
-// minumum set of operations that are needed to have a working
+// minimum set of operations that are needed to have a working
 // dkron store.
 type Storage interface {
 	SetJob(job *Job, copyDependentJobs bool) error

@@ -13,9 +13,9 @@ import (
 	"time"
 
 	dkronpb "github.com/distribworks/dkron/v3/plugin/types"
-	"github.com/golang/protobuf/proto"
 	"github.com/sirupsen/logrus"
 	"github.com/tidwall/buntdb"
+	"google.golang.org/protobuf/proto"
 )
 
 const (
@@ -66,20 +66,20 @@ type kv struct {
 // NewStore creates a new Storage instance.
 func NewStore(logger *logrus.Entry) (*Store, error) {
 	db, err := buntdb.Open(":memory:")
-	db.CreateIndex("name", jobsPrefix+":*", buntdb.IndexJSON("name"))
-	db.CreateIndex("started_at", executionsPrefix+":*", buntdb.IndexJSON("started_at"))
-	db.CreateIndex("finished_at", executionsPrefix+":*", buntdb.IndexJSON("finished_at"))
-	db.CreateIndex("attempt", executionsPrefix+":*", buntdb.IndexJSON("attempt"))
-	db.CreateIndex("displayname", jobsPrefix+":*", buntdb.IndexJSON("displayname"))
-	db.CreateIndex("schedule", jobsPrefix+":*", buntdb.IndexJSON("schedule"))
-	db.CreateIndex("success_count", jobsPrefix+":*", buntdb.IndexJSON("success_count"))
-	db.CreateIndex("error_count", jobsPrefix+":*", buntdb.IndexJSON("error_count"))
-	db.CreateIndex("last_success", jobsPrefix+":*", buntdb.IndexJSON("last_success"))
-	db.CreateIndex("last_error", jobsPrefix+":*", buntdb.IndexJSON("last_error"))
-	db.CreateIndex("next", jobsPrefix+":*", buntdb.IndexJSON("next"))
 	if err != nil {
 		return nil, err
 	}
+	_ = db.CreateIndex("name", jobsPrefix+":*", buntdb.IndexJSON("name"))
+	_ = db.CreateIndex("started_at", executionsPrefix+":*", buntdb.IndexJSON("started_at"))
+	_ = db.CreateIndex("finished_at", executionsPrefix+":*", buntdb.IndexJSON("finished_at"))
+	_ = db.CreateIndex("attempt", executionsPrefix+":*", buntdb.IndexJSON("attempt"))
+	_ = db.CreateIndex("displayname", jobsPrefix+":*", buntdb.IndexJSON("displayname"))
+	_ = db.CreateIndex("schedule", jobsPrefix+":*", buntdb.IndexJSON("schedule"))
+	_ = db.CreateIndex("success_count", jobsPrefix+":*", buntdb.IndexJSON("success_count"))
+	_ = db.CreateIndex("error_count", jobsPrefix+":*", buntdb.IndexJSON("error_count"))
+	_ = db.CreateIndex("last_success", jobsPrefix+":*", buntdb.IndexJSON("last_success"))
+	_ = db.CreateIndex("last_error", jobsPrefix+":*", buntdb.IndexJSON("last_error"))
+	_ = db.CreateIndex("next", jobsPrefix+":*", buntdb.IndexJSON("next"))
 
 	store := &Store{
 		db:     db,
@@ -167,14 +167,17 @@ func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
 				return err
 			}
 		} else {
-			// If comming from a backup us the previous value, don't allow overwriting this
+			// If coming from a backup us the previous value, don't allow overwriting this
 			if job.Next.Before(ej.Next) {
 				job.Next = ej.Next
 			}
 		}
 
 		pbj := job.ToProto()
-		s.setJobTxFunc(pbj)(tx)
+		if err := s.setJobTxFunc(pbj)(tx); err != nil {
+			return err
+		}
+
 		return nil
 	})
 	if err != nil {
@@ -423,7 +426,7 @@ func (s *Store) DeleteJob(name string) (*Job, error) {
 		return nil, err
 	}
 
-	// If the transaction succeded, remove from parent
+	// If the transaction succeeded, remove from parent
 	if job.ParentJob != "" {
 		if err := s.removeFromParent(job); err != nil {
 			return nil, err
@@ -591,7 +594,7 @@ func (s *Store) SetExecution(execution *Execution) (string, error) {
 			s.logger.WithFields(logrus.Fields{
 				"job":       execs[i].JobName,
 				"execution": execs[i].Key(),
-			}).Debug("store: to detele key")
+			}).Debug("store: to delete key")
 			err = s.db.Update(func(tx *buntdb.Tx) error {
 				k := fmt.Sprintf("%s:%s:%s", executionsPrefix, execs[i].JobName, execs[i].Key())
 				_, err := tx.Delete(k)
@@ -613,12 +616,14 @@ func (s *Store) deleteExecutionsTxFunc(jobName string) func(tx *buntdb.Tx) error
 	return func(tx *buntdb.Tx) error {
 		var delkeys []string
 		prefix := fmt.Sprintf("%s:%s", executionsPrefix, jobName)
-		tx.Ascend("", func(key, value string) bool {
+		if err := tx.Ascend("", func(key, value string) bool {
 			if strings.HasPrefix(key, prefix) {
 				delkeys = append(delkeys, key)
 			}
 			return true
-		})
+		}); err != nil {
+			return err
+		}
 
 		for _, k := range delkeys {
 			_, _ = tx.Delete(k)
@@ -705,7 +710,7 @@ func (s *Store) computeStatus(jobName string, exGroup int64, tx *buntdb.Tx) (str
 	} else if failed > 0 && success == 0 {
 		status = StatusFailed
 	} else if failed > 0 && success > 0 {
-		status = StatusPartialyFailed
+		status = StatusPartiallyFailed
 	}
 
 	return status, nil

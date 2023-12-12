@@ -1,0 +1,615 @@
+---
+openapi: 3.0.3
+info:
+  title: Dkron REST API
+  description: |
+    You can communicate with Dkron using a RESTful JSON API over HTTP. Dkron nodes usually listen on port `8080` for API requests. All examples in this section assume that you've found a running leader at `localhost:8080`.
+
+    Dkron implements a RESTful JSON API over HTTP to communicate with software clients. Dkron listens in port `8080` by default. All examples in this section assume that you're using the default port.
+
+    Default API responses are unformatted JSON add the `pretty=true` param to format the response.
+  version: 1-oas3
+servers:
+- url: http://localhost:8080/v1
+paths:
+  /:
+    get:
+      tags:
+      - default
+      description: |
+        Gets `Status` object.
+      operationId: status
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/status'
+  /jobs:
+    get:
+      tags:
+      - jobs
+      description: |
+        List jobs.
+      operationId: getJobs
+      parameters:
+      - name: metadata
+        in: query
+        description: Filter jobs by metadata
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: array
+          items:
+            type: string
+      - name: _sort
+        in: query
+        description: Sorting field
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: _order
+        in: query
+        description: Sort order (ASC/DESC)
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: q
+        in: query
+        description: Filter query text
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: _start
+        in: query
+        description: Start index
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+      - name: _end
+        in: query
+        description: End index
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/job'
+    post:
+      tags:
+      - jobs
+      description: |
+        Create or updates a new job.
+      operationId: createOrUpdateJob
+      parameters:
+      - name: runoncreate
+        in: query
+        description: If present, regardless of any value, causes the job to be run immediately after being succesfully created or updated.
+        required: false
+        allowEmptyValue: true
+        style: form
+        explode: true
+        schema:
+          type: boolean
+      requestBody:
+        description: Updated job object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/job'
+        required: true
+      responses:
+        "201":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/job'
+  /jobs/{job_name}:
+    get:
+      tags:
+      - jobs
+      description: |
+        Show a job.
+      operationId: showJobByName
+      parameters:
+      - name: job_name
+        in: path
+        description: The job that needs to be fetched.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/job'
+    post:
+      tags:
+      - jobs
+      description: |
+        Executes a job.
+      operationId: runJob
+      parameters:
+      - name: job_name
+        in: path
+        description: The job that needs to be run.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "202":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/job'
+    delete:
+      tags:
+      - jobs
+      description: |
+        Delete a job.
+      operationId: deleteJob
+      parameters:
+      - name: job_name
+        in: path
+        description: The job that needs to be deleted.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/job'
+  /jobs/{job_name}/toggle:
+    post:
+      tags:
+      - jobs
+      description: |
+        Toggle a job.
+      operationId: toggleJob
+      parameters:
+      - name: job_name
+        in: path
+        description: The job that needs to be toggled.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/job'
+  /restore:
+    post:
+      tags:
+      - jobs
+      description: |
+        Restore jobs from json file.
+      operationId: restore
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/restore_body'
+        required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/restore'
+  /members:
+    get:
+      tags:
+      - members
+      description: |
+        List members.
+      operationId: getMember
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/member'
+  /leader:
+    get:
+      tags:
+      - default
+      description: |
+        List leader of cluster.
+      operationId: getLeader
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/member'
+  /isleader:
+    get:
+      tags:
+      - default
+      description: |
+        Check if node is a leader or follower.
+      operationId: getIsLeader
+      responses:
+        "200":
+          description: Node is a leader
+        "404":
+          description: Node is a follower
+  /leave:
+    post:
+      tags:
+      - default
+      description: |
+        Force the node to leave the cluster.
+      operationId: leave
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/member'
+  /jobs/{job_name}/executions:
+    get:
+      tags:
+      - executions
+      description: |
+        List executions.
+      operationId: listExecutionsByJob
+      parameters:
+      - name: job_name
+        in: path
+        description: The job that owns the executions to be fetched.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/execution'
+  /jobs/{job_name}/executions/{execution}:
+    get:
+      tags:
+      - executions
+      description: |
+        Show execution.
+      operationId: showExecutionByID
+      parameters:
+      - name: job_name
+        in: path
+        description: The job that owns the execution to be fetched.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: execution
+        in: path
+        description: The executions to be fetched.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/execution'
+  /busy:
+    get:
+      tags:
+      - default
+      description: |
+        Returns the running executions.
+      operationId: busy
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/execution'
+components:
+  schemas:
+    status:
+      type: object
+      properties:
+        agent:
+          type: object
+          additionalProperties:
+            type: object
+          description: Node basic details
+          readOnly: true
+        serf:
+          type: object
+          additionalProperties:
+            type: object
+          description: Serf status
+          readOnly: true
+        tags:
+          type: object
+          additionalProperties:
+            type: string
+          description: Tags asociated with this node
+          readOnly: true
+      description: Status represents details about the node.
+      readOnly: true
+    job:
+      required:
+      - name
+      - schedule
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name for the job. Use only lower case letters (unicode), digits, underscore and dash.
+          readOnly: false
+          example: job1
+        displayname:
+          type: string
+          description: Nice name for the job. Optional.
+          readOnly: false
+        schedule:
+          type: string
+          description: Cron expression for the job.
+          readOnly: false
+          example: '@every 10s'
+        timezone:
+          type: string
+          description: Timezone where the job will be executed. By default and when field is set to empty string, the job will run in local time.
+          readOnly: false
+          example: Europe/Berlin
+        owner:
+          type: string
+          description: Owner of the job
+          readOnly: false
+          example: Platform Team
+        owner_email:
+          type: string
+          description: Email of the owner
+          readOnly: false
+          example: platform@example.com
+        success_count:
+          type: integer
+          description: Number of successful executions
+          readOnly: true
+        error_count:
+          type: integer
+          description: Number of failed executions
+          readOnly: true
+        last_success:
+          type: string
+          description: Last time this job executed successfully
+          format: date-time
+          readOnly: true
+        last_error:
+          type: string
+          description: Last time this job failed
+          format: date-time
+          readOnly: true
+        disabled:
+          type: boolean
+          description: Disabled state of the job
+          readOnly: false
+        tags:
+          type: object
+          additionalProperties:
+            type: string
+          description: Target nodes tags of this job
+          readOnly: false
+          example:
+            server: "true"
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+          description: Extra metadata tags for this job
+          readOnly: false
+          example:
+            office: Barcelona
+        retries:
+          type: integer
+          description: Number of times to retry a failed job execution
+          readOnly: false
+          example: 2
+        parent_job:
+          type: string
+          description: The name/id of the job that will trigger the execution of this job
+          readOnly: false
+          example: parent_job
+        dependent_jobs:
+          type: array
+          description: Array containing the jobs that depends on this one
+          readOnly: true
+          example:
+          - dependent_job
+          items:
+            type: string
+        processors:
+          $ref: '#/components/schemas/processors'
+        concurrency:
+          type: string
+          description: Concurrency policy for the job allow/forbid
+          readOnly: false
+          example: allow
+        executor:
+          type: string
+          description: Executor plugin used to run the job
+          readOnly: false
+          example: shell
+        executor_config:
+          type: object
+          additionalProperties:
+            type: string
+          description: Executor plugin parameters
+          example:
+            command: echo 'Hello from Dkron'
+        status:
+          type: string
+          description: Status of the job
+          readOnly: true
+          example: success
+        next:
+          type: string
+          description: Next execution time
+          readOnly: true
+          format: date-time
+      description: A Job represents a scheduled task to execute.
+    member:
+      type: object
+      properties:
+        Name:
+          type: string
+          description: Node name
+          example: dkron1
+        Addr:
+          type: string
+          description: IP Address
+          example: 192.168.1.137
+        Port:
+          type: integer
+          description: Port number
+          example: 8946
+        Tags:
+          type: object
+          additionalProperties:
+            type: string
+          description: Tags asociated with this node
+          example:
+            rpc_addr: 192.168.1.137:6868
+            server: "true"
+            version": 1.0.0
+        Status:
+          type: integer
+          description: 'The serf status of the node see: https://godoc.org/github.com/hashicorp/serf/serf#MemberStatus'
+          example: 1
+        ProtocolMin:
+          type: integer
+          description: Serf protocol minimum version this node can understand or speak
+          example: 5
+        ProtocolMax:
+          type: integer
+          description: Serf protocol maximum version this node can understand or speak
+          example: 2
+        ProtocolCur:
+          type: integer
+          description: Serf protocol current version this node can understand or speak
+          example: 2
+        DelegateMin:
+          type: integer
+          description: Serf delegate protocol minimum version this node can understand or speak
+        DelegateMax:
+          type: integer
+          description: Serf delegate protocol maximum version this node can understand or speak
+          example: 5
+        DelegateCur:
+          type: integer
+          description: Serf delegate protocol current version this node can understand or speak
+          example: 4
+      description: A member represents a cluster member node.
+    execution:
+      type: object
+      properties:
+        job_name:
+          type: string
+          description: job name
+          example: job_1
+        started_at:
+          type: string
+          description: start time of the execution
+          format: date-time
+        finished_at:
+          type: string
+          description: when the execution finished running
+          format: date-time
+        success:
+          type: boolean
+          description: the execution run successfuly
+        output:
+          type: string
+          description: partial output of the command execution
+          example: Hello from Dkron
+        node_name:
+          type: string
+          description: name of the node that executed the command
+          example: dkron1
+      description: An execution represents a timed job run.
+    processors:
+      type: object
+      additionalProperties:
+        type: object
+        additionalProperties:
+          type: string
+      description: Processor plugins used to process executions results of this job
+      example:
+        files:
+          forward: true
+    restore:
+      type: string
+      description: Each job restore result.
+      example: success create job_1
+    restore_body:
+      required:
+      - file
+      type: object
+      properties:
+        file:
+          type: string
+          description: Json file that needs to be restored.
+          format: binary

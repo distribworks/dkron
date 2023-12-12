@@ -1,0 +1,11 @@
+syntax = "proto3";
+package test;
+option go_package = "github.com/distribworks/dkron/builtin/bins/dkron-executor-grpc/test";
+
+message TestRequest {
+  string body = 1;
+}
+
+service TestService {
+  rpc Test(TestRequest) returns (TestRequest) {}
+}

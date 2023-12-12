@@ -40,6 +40,7 @@ const BulkToggleButton = ({selectedIds}: any) => {
     return (
         <Button 
             label="Toggle"
+            title='Enable/disable execution of selected jobs'
             onClick={toggleMany}
             disabled={loading}
         >

@@ -4,21 +4,42 @@ fury: $(LINUX_PKGS)
 $(LINUX_PKGS):
 	fury push --as distribworks $@
 
-.PHONY: goreleaser
-goreleaser:
-	docker run --rm --privileged \
-	-v ${PWD}:/dkron \
-	-v /var/run/docker.sock:/var/run/docker.sock \
-	-w /dkron \
-	-e GITHUB_TOKEN \
-	-e DOCKER_USERNAME \
-	-e DOCKER_PASSWORD \
-	-e DOCKER_REGISTRY \
-	--entrypoint "" \
-	goreleaser/goreleaser scripts/release
+PACKAGE_NAME          := github.com/distribworks/dkron
+GOLANG_CROSS_VERSION  ?= v1.21.5
+
+.PHONY: release-dry-run
+release-dry-run:
+	@docker run \
+		--rm \
+		--privileged \
+		-v ${PWD}:/dkron \
+		-w /dkron \
+		-e GITHUB_TOKEN \
+		-e DOCKER_USERNAME \
+		-e DOCKER_PASSWORD \
+		-e DOCKER_REGISTRY \
+		-v /var/run/docker.sock:/var/run/docker.sock \
+		-v `pwd`:/go/src/$(PACKAGE_NAME) \
+		-w /go/src/$(PACKAGE_NAME) \
+		goreleaser/goreleaser-cross:${GOLANG_CROSS_VERSION} \
+		--rm-dist --skip-validate --skip-publish --timeout=1h --parallelism=1
 
 .PHONY: release
-release: clean goreleaser
+release:
+	@docker run \
+		--rm \
+		--privileged \
+		-v ${PWD}:/dkron \
+		-w /dkron \
+		-e GITHUB_TOKEN \
+		-e DOCKER_USERNAME \
+		-e DOCKER_PASSWORD \
+		-e DOCKER_REGISTRY \
+		-v /var/run/docker.sock:/var/run/docker.sock \
+		-v `pwd`:/go/src/$(PACKAGE_NAME) \
+		-w /go/src/$(PACKAGE_NAME) \
+		goreleaser/goreleaser-cross:${GOLANG_CROSS_VERSION} \
+		--rm-dist --skip-validate --timeout=1h
 
 .PHONY: clean
 clean:
@@ -39,12 +60,15 @@ clean:
 
 .PHONY: doc apidoc test ui updatetestcert
 doc:
-	#scripts/run doc --dir website/content/cli
-	cd website; hugo -d ../public
+	#scripts/run doc --dir website/docs/cli
+	cd website; yarn build --out-dir ../public
 	ghp-import -p public
 
 test:
 	@bash --norc -i ./scripts/test
+
+localtest:
+	go test -v ./... | sed ''/PASS/s//$$(printf "\033[32mPASS\033[0m")/'' | sed ''/FAIL/s//$$(printf "\033[31mFAIL\033[0m")/''
 
 updatetestcert:
 	wget https://badssl.com/certs/badssl.com-client.p12 -q -O badssl.com-client.p12

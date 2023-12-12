@@ -73,6 +73,11 @@ func (s *Nats) ExecuteImpl(args *dktypes.ExecuteRequest) ([]byte, error) {
 	if debug {
 		log.Printf("request  %#v\n\n", nc)
 	}
+	
+	if nc.IsConnected() {
+		defer nc.Flush()
+		defer nc.Close()
+	}
 
 	return output.Bytes(), nil
 }

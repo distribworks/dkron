@@ -4,7 +4,7 @@
 
 # at-shell-success
 
-- hosts: packet
+- hosts: tag_server
   user: root
   become: yes
   become_method: sudo

@@ -18,14 +18,17 @@ type RaftLayer struct {
 	logger *logrus.Entry
 }
 
-// NewRaftLayer returns an initialized unecrypted RaftLayer.
+// NewRaftLayer returns an initialized unencrypted RaftLayer.
 func NewRaftLayer(logger *logrus.Entry) *RaftLayer {
 	return &RaftLayer{logger: logger}
 }
 
-// NewTLSRaftLayer returns an initialized TLS-ecrypted RaftLayer.
-func NewTLSRaftLayer(tlsConfig *tls.Config) *RaftLayer {
-	return &RaftLayer{TLSConfig: tlsConfig}
+// NewTLSRaftLayer returns an initialized TLS-encrypted RaftLayer.
+func NewTLSRaftLayer(tlsConfig *tls.Config, logger *logrus.Entry) *RaftLayer {
+	return &RaftLayer{
+		TLSConfig: tlsConfig,
+		logger:    logger,
+	}
 }
 
 // Open opens the RaftLayer, binding to the supplied address.

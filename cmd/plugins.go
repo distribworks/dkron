@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/go-plugin"
 	"github.com/kardianos/osext"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 type Plugins struct {
@@ -33,14 +34,19 @@ func (p *Plugins) DiscoverPlugins() error {
 	p.Processors = make(map[string]dkplugin.Processor)
 	p.Executors = make(map[string]dkplugin.Executor)
 
-	// Look in /etc/dkron/plugins
-	processors, err := plugin.Discover("dkron-processor-*", filepath.Join("/etc", "dkron", "plugins"))
+	pluginDir := filepath.Join("/etc", "dkron", "plugins")
+	if viper.ConfigFileUsed() != "" {
+		pluginDir = filepath.Join(filepath.Dir(viper.ConfigFileUsed()), "plugins")
+	}
+
+	// Look in /etc/dkron/plugins (or the used config path)
+	processors, err := plugin.Discover("dkron-processor-*", pluginDir)
 	if err != nil {
 		return err
 	}
 
-	// Look in /etc/dkron/plugins
-	executors, err := plugin.Discover("dkron-executor-*", filepath.Join("/etc", "dkron", "plugins"))
+	// Look in /etc/dkron/plugins (or the used config path)
+	executors, err := plugin.Discover("dkron-executor-*", pluginDir)
 	if err != nil {
 		return err
 	}
@@ -64,13 +70,12 @@ func (p *Plugins) DiscoverPlugins() error {
 	}
 
 	for _, file := range processors {
-
 		pluginName, ok := getPluginName(file)
 		if !ok {
 			continue
 		}
 
-		raw, err := p.pluginFactory(file, dkplugin.ProcessorPluginName)
+		raw, err := p.pluginFactory(file, []string{}, dkplugin.ProcessorPluginName)
 		if err != nil {
 			return err
 		}
@@ -78,18 +83,23 @@ func (p *Plugins) DiscoverPlugins() error {
 	}
 
 	for _, file := range executors {
-
 		pluginName, ok := getPluginName(file)
 		if !ok {
 			continue
 		}
 
-		raw, err := p.pluginFactory(file, dkplugin.ExecutorPluginName)
+		raw, err := p.pluginFactory(file, []string{}, dkplugin.ExecutorPluginName)
 		if err != nil {
 			return err
 		}
 		p.Executors[pluginName] = raw.(dkplugin.Executor)
 	}
+
+	raw, err := p.pluginFactory(exePath, []string{"shell"}, dkplugin.ExecutorPluginName)
+	if err != nil {
+		return err
+	}
+	p.Executors["shell"] = raw.(dkplugin.Executor)
 
 	return nil
 }
@@ -107,10 +117,10 @@ func getPluginName(file string) (string, bool) {
 	return name, true
 }
 
-func (p *Plugins) pluginFactory(path string, pluginType string) (interface{}, error) {
+func (p *Plugins) pluginFactory(path string, args []string, pluginType string) (interface{}, error) {
 	// Build the plugin client configuration and init the plugin
 	var config plugin.ClientConfig
-	config.Cmd = exec.Command(path)
+	config.Cmd = exec.Command(path, args...)
 	config.HandshakeConfig = dkplugin.Handshake
 	config.Managed = true
 	config.Plugins = dkplugin.PluginMap

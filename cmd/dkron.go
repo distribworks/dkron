@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/distribworks/dkron/v3/dkron"
+	"github.com/distribworks/dkron/v3/logging"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -58,13 +59,16 @@ func initConfig() {
 	viper.SetEnvKeyReplacer(replacer)
 	viper.AutomaticEnv() // read in environment variables that match
 
+	// Add hook to set error logs to stderr and regular logs to stdout
+	logrus.AddHook(&logging.LogSplitter{})
+
 	err := viper.ReadInConfig() // Find and read the config file
 	if err != nil {             // Handle errors reading the config file
 		logrus.WithError(err).Info("No valid config found: Applying default values.")
 	}
 
 	if err := viper.Unmarshal(config); err != nil {
-		logrus.WithError(err).Fatal("config: Error unmarshaling config")
+		logrus.WithError(err).Fatal("config: Error unmarshalling config")
 	}
 
 	cliTags := viper.GetStringSlice("tag")
@@ -73,7 +77,7 @@ func initConfig() {
 	if len(cliTags) > 0 {
 		tags, err = UnmarshalTags(cliTags)
 		if err != nil {
-			logrus.WithError(err).Fatal("config: Error unmarshaling cli tags")
+			logrus.WithError(err).Fatal("config: Error unmarshalling cli tags")
 		}
 	} else {
 		tags = viper.GetStringMapString("tags")

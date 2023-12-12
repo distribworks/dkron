@@ -62,7 +62,7 @@ const Dashboard = () => (
                         <TextField source="Name" sortable={false} />
                         <TextField source="Addr" sortable={false} />
                         <TextField source="Port" sortable={false} />
-                        <TextField source="Status" sortable={false} />
+                        <TextField label="Status" source="statusText" sortable={false} />
                         <TagsField source="Tags" sortable={false} />
                     </Datagrid>
                 </List>

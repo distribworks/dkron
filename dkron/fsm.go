@@ -4,9 +4,9 @@ import (
 	"io"
 
 	dkronpb "github.com/distribworks/dkron/v3/plugin/types"
-	"github.com/golang/protobuf/proto"
 	"github.com/hashicorp/raft"
 	"github.com/sirupsen/logrus"
+	"google.golang.org/protobuf/proto"
 )
 
 // MessageType is the type to encode FSM commands.
@@ -21,7 +21,7 @@ const (
 	SetExecutionType
 	// DeleteExecutionsType is the command used to delete executions from the store.
 	DeleteExecutionsType
-	// ExecutionDoneType is the command to perform the logic needed once an exeuction
+	// ExecutionDoneType is the command to perform the logic needed once an execution
 	// is done.
 	ExecutionDoneType
 )
@@ -149,7 +149,7 @@ type dkronSnapshot struct {
 
 func (d *dkronSnapshot) Persist(sink raft.SnapshotSink) error {
 	if err := d.store.Snapshot(sink); err != nil {
-		sink.Cancel()
+		_ = sink.Cancel()
 		return err
 	}
 

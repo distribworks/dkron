@@ -10,3 +10,4 @@ website
 dkron-*
 main
 *.data
+node_modules

@@ -25,3 +25,9 @@ func WithStore(store Storage) AgentOption {
 		agent.Store = store
 	}
 }
+
+func WithRaftStore(raftStore RaftStore) AgentOption {
+	return func(agent *Agent) {
+		agent.raftStore = raftStore
+	}
+}

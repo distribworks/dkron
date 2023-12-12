@@ -18,41 +18,34 @@ func Test_cleanTags(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name:    "Clean Tags",
-			args:    args{map[string]string{"key1": "value1", "key2": "value2"}},
-			want:    map[string]string{"key1": "value1", "key2": "value2"},
-			want1:   maxInt,
-			wantErr: false,
+			name:  "Clean Tags",
+			args:  args{map[string]string{"key1": "value1", "key2": "value2"}},
+			want:  map[string]string{"key1": "value1", "key2": "value2"},
+			want1: maxInt,
 		},
 		{
-			name:    "With Cardinality",
-			args:    args{map[string]string{"key1": "value1", "key2": "value2:5"}},
-			want:    map[string]string{"key1": "value1", "key2": "value2"},
-			want1:   5,
-			wantErr: false,
+			name:  "With Cardinality",
+			args:  args{map[string]string{"key1": "value1", "key2": "value2:5"}},
+			want:  map[string]string{"key1": "value1", "key2": "value2"},
+			want1: 5,
 		},
 		{
-			name:    "With Multiple Cardinalities",
-			args:    args{map[string]string{"key1": "value1:2", "key2": "value2:5"}},
-			want:    map[string]string{"key1": "value1", "key2": "value2"},
-			want1:   2,
-			wantErr: false,
+			name:  "With Multiple Cardinalities",
+			args:  args{map[string]string{"key1": "value1:2", "key2": "value2:5"}},
+			want:  map[string]string{"key1": "value1", "key2": "value2"},
+			want1: 2,
 		},
 		{
-			name:    "With String Cardinality",
-			args:    args{map[string]string{"key1": "value1", "key2": "value2:cardinality"}},
-			want:    nil,
-			want1:   0,
-			wantErr: true,
+			name:  "With String Cardinality",
+			args:  args{map[string]string{"key1": "value1", "key2": "value2:cardinality"}},
+			want:  map[string]string{"key1": "value1", "key2": "value2"},
+			want1: 0,
 		},
 	}
+	logger := getTestLogger()
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, got1, err := cleanTags(tt.args.tags)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("cleanTags() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
+			got, got1 := cleanTags(tt.args.tags, logger)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Logf("got map: %#v", got)
 				t.Logf("want map: %#v", tt.want)

@@ -7,8 +7,8 @@ import (
 	"github.com/armon/circbuf"
 	metrics "github.com/armon/go-metrics"
 	"github.com/distribworks/dkron/v3/plugin/types"
-	"github.com/golang/protobuf/ptypes"
 	"github.com/sirupsen/logrus"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 const (
@@ -67,7 +67,7 @@ func (as *AgentServer) AgentRun(req *types.AgentRunRequest, stream types.Agent_A
 	exc := job.ExecutorConfig
 
 	// Send the first update with the initial execution state to be stored in the server
-	execution.StartedAt = ptypes.TimestampNow()
+	execution.StartedAt = timestamppb.Now()
 	execution.NodeName = as.agent.config.NodeName
 
 	if err := stream.Send(&types.AgentRunStream{
@@ -98,20 +98,20 @@ func (as *AgentServer) AgentRun(req *types.AgentRunRequest, stream types.Agent_A
 		if err != nil {
 			as.logger.WithError(err).WithField("job", job.Name).WithField("plugin", executor).Error("grpc_agent: command error output")
 			success = false
-			output.Write([]byte(err.Error() + "\n"))
+			_, _ = output.Write([]byte(err.Error() + "\n"))
 		} else {
 			success = true
 		}
 
 		if out != nil {
-			output.Write(out.Output)
+			_, _ = output.Write(out.Output)
 		}
 	} else {
 		as.logger.WithField("executor", jex).Error("grpc_agent: Specified executor is not present")
-		output.Write([]byte("grpc_agent: Specified executor is not present"))
+		_, _ = output.Write([]byte("grpc_agent: Specified executor is not present"))
 	}
 
-	execution.FinishedAt = ptypes.TimestampNow()
+	execution.FinishedAt = timestamppb.Now()
 	execution.Success = success
 	execution.Output = output.Bytes()
 

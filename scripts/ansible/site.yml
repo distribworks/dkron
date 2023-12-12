@@ -3,13 +3,26 @@
 
 - hosts: localhost
   tasks:
-    - packet_device:
+    - equinix.metal.device:
         hostnames: [dkron01, dkron02, dkron03]
-        operating_system: ubuntu_19_04
-        plan: baremetal_0
-        facility: sjc1
+        operating_system: ubuntu_22_04
+        plan: c3.small.x86
+        facility: am6
         wait_for_public_IPv: 4
         project_id: 904af849-79ff-4847-90f7-dfa02367ae72
+        tags:
+          - server
+      register: newhosts
+    
+    - equinix.metal.device:
+        hostnames: [dkron04]
+        operating_system: ubuntu_22_04
+        plan: c3.small.x86
+        facility: am6
+        wait_for_public_IPv: 4
+        project_id: 904af849-79ff-4847-90f7-dfa02367ae72
+        tags:
+          - agent
       register: newhosts
     
     - debug: var=newhosts
@@ -23,22 +36,29 @@
         timeout: 500
       loop: "{{ newhosts.devices }}"
 
-- hosts: packet
+- hosts: equinix_metal
   user: root
-  become: yes
+  become: true
   become_method: sudo
 
   vars:
-    version: 3.1.4
-    dkron_log_level: debug
-    dkron_bootstrap_expect: 3
-    dkron_data_dir: /var/lib/dkron
+    version: 3.2.2
+    datadog_api_key: "{{ lookup('ansible.builtin.env', 'DKRON_DD_API_KEY') }}"
+    datadog_checks:
+      openmetrics:
+        init_config:
+        instances:
+          - openmetrics_endpoint: http://localhost:8080/metrics/
+            namespace: "dkron"
+            metrics:
+              - dkron.*
+
+  roles:
+    - role: datadog.datadog
+      become: yes
+      tags: datadog
 
   tasks:
-    - set_fact:
-        dkron_servers: "{{ groups['packet'] | map('extract', hostvars, ['ansible_all_ipv4_addresses', 1]) | list }}"
-      tags: config
-
     - name: Copy package
       copy:
         src: ../../dist/dkron_{{ version }}_linux_amd64.deb
@@ -56,18 +76,6 @@
         mode: 755
         state: directory
     
-    - name: configure
-      template: src={{ item }}.yml.j2 dest=/etc/dkron/{{ item }}.yml
-      loop:
-        - dkron
-      tags: config
-
-    - name: ensure service is running and enabled
-      systemd:
-        name: dkron
-        enabled: yes
-        state: restarted
-
     ### File descriptor and memory tweaks
 
     - name: Increase sysctl open files system wide
@@ -115,3 +123,58 @@
         name: net.ipv4.tcp_wmem
         value: "4096 16384 16777216"
       tags: performance
+
+- hosts: tag_server
+  user: root
+  become: true
+  become_method: sudo
+
+  vars:
+    version: 3.2.0
+    dkron_log_level: debug
+    dkron_bootstrap_expect: 3
+    dkron_data_dir: /var/lib/dkron
+    dkron_server: "true"
+
+  tasks:
+    - set_fact:
+        dkron_servers: "{{ groups['tag_server'] | map('extract', hostvars, ['ansible_all_ipv4_addresses', 1]) | list }}"
+      tags: config
+
+    - name: configure
+      template: src={{ item }}.yml.j2 dest=/etc/dkron/{{ item }}.yml
+      loop:
+        - dkron
+      tags: config
+
+    - name: ensure service is running and enabled
+      systemd:
+        name: dkron
+        enabled: yes
+        state: restarted
+
+- hosts: tag_agent
+  user: root
+  become: true
+  become_method: sudo
+
+  vars:
+    version: 3.2.0
+    dkron_log_level: debug
+    dkron_data_dir: /var/lib/dkron
+    dkron_server: "false"
+    dkron_servers: "{{ hostvars['dkron01']['dkron_servers'] }}"
+    dkron_bootstrap_expect: 3
+
+  tasks:
+    - name: configure
+      template: src={{ item }}.yml.j2 dest=/etc/dkron/{{ item }}.yml
+      loop:
+        - dkron
+      tags: config
+
+    - name: ensure service is running and enabled
+      systemd:
+        name: dkron
+        enabled: yes
+        state: restarted
