@@ -16,6 +16,7 @@ type ServerLookup struct {
 
 func NewServerLookup() *ServerLookup {
 	return &ServerLookup{
+		lock:            sync.RWMutex{},
 		addressToServer: make(map[raft.ServerAddress]*ServerParts),
 		idToServer:      make(map[raft.ServerID]*ServerParts),
 	}

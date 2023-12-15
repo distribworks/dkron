@@ -143,8 +143,9 @@ type AgentOption func(agent *Agent)
 // and running a Dkron instance.
 func NewAgent(config *Config, options ...AgentOption) *Agent {
 	agent := &Agent{
-		config:      config,
-		retryJoinCh: make(chan error),
+		config:       config,
+		retryJoinCh:  make(chan error),
+		serverLookup: NewServerLookup(),
 	}
 
 	for _, option := range options {
@@ -553,7 +554,6 @@ func (a *Agent) SetConfig(c *Config) {
 
 // StartServer launch a new dkron server process
 func (a *Agent) StartServer() {
-	a.serverLookup = NewServerLookup()
 	if a.Store == nil {
 		s, err := NewStore(a.logger)
 		if err != nil {
@@ -725,7 +725,7 @@ func (a *Agent) eventLoop() {
 				case serf.EventMemberReap:
 					a.localMemberEvent(me)
 				case serf.EventMemberUpdate:
-					a.logger.WithField("event", e.String()).Info("agent: event member update")
+					a.localMemberEvent(me)
 				case serf.EventUser, serf.EventQuery: // Ignore
 				default:
 					a.logger.WithField("event", e.String()).Warn("agent: Unhandled serf event")
