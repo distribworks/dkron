@@ -21,7 +21,7 @@ func (a *Agent) nodeJoin(me serf.MemberEvent) {
 			a.logger.WithField("member", m.Name).Warn("non-server in gossip pool")
 			continue
 		}
-		a.logger.WithField("server", parts.Name).Info("adding server")
+		a.logger.WithField("server", parts.Name).Info("Adding LAN adding server")
 		a.serverLookup.AddServer(parts)
 		// Check if this server is known
 		found := false
@@ -199,5 +199,18 @@ func (a *Agent) localMemberEvent(me serf.MemberEvent) {
 		case a.reconcileCh <- m:
 		default:
 		}
+	}
+}
+
+func (a *Agent) lanNodeUpdate(me serf.MemberEvent) {
+	for _, m := range me.Members {
+		ok, parts := isServer(m)
+		if !ok {
+			continue
+		}
+		a.logger.Info("Updating LAN server", "server", parts.String())
+
+		// Update server lookup
+		a.serverLookup.AddServer(parts)
 	}
 }

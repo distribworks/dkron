@@ -725,6 +725,7 @@ func (a *Agent) eventLoop() {
 				case serf.EventMemberReap:
 					a.localMemberEvent(me)
 				case serf.EventMemberUpdate:
+					a.lanNodeUpdate(me)
 					a.localMemberEvent(me)
 				case serf.EventUser, serf.EventQuery: // Ignore
 				default:
