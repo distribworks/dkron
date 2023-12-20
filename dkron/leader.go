@@ -285,17 +285,12 @@ func (a *Agent) addRaftPeer(m serf.Member, parts *ServerParts) error {
 			if server.Address == raft.ServerAddress(addr) && server.ID == raft.ServerID(parts.ID) {
 				return nil
 			}
-			future := a.raft.RemoveServer(server.ID, 0, 0)
 			if server.Address == raft.ServerAddress(addr) {
+				future := a.raft.RemoveServer(server.ID, 0, 0)
 				if err := future.Error(); err != nil {
 					return fmt.Errorf("error removing server with duplicate address %q: %s", server.Address, err)
 				}
 				a.logger.WithField("server", server.Address).Info("dkron: removed server with duplicate address")
-			} else {
-				if err := future.Error(); err != nil {
-					return fmt.Errorf("error removing server with duplicate ID %q: %s", server.ID, err)
-				}
-				a.logger.WithField("server", server.ID).Info("dkron: removed server with duplicate ID")
 			}
 		}
 	}
