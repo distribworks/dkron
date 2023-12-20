@@ -327,10 +327,6 @@ func (a *Agent) setupRaft() error {
 		ServerAddressProvider: serverAddressProvider,
 	}
 	transport := raft.NewNetworkTransportWithConfig(transConfig)
-	rpcIP := net.ParseIP(a.config.Tags["rpc_addr"])
-	port, err := strconv.Atoi(a.config.Tags["port"])
-	rpcAddr := &net.TCPAddr{IP: rpcIP, Port: port}
-	a.serverLookup.AddServer(&ServerParts{ID: a.config.NodeName, RPCAddr: rpcAddr})
 	a.raftTransport = transport
 
 	config := raft.DefaultConfig()

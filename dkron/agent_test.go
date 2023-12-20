@@ -16,7 +16,7 @@ import (
 )
 
 var (
-	logLevel = "error"
+	logLevel = "info"
 )
 
 func TestAgentCommand_runForElection(t *testing.T) {
@@ -634,5 +634,97 @@ func Test_selectNodes(t *testing.T) {
 				assert.Contains(t, actual, expectedItem)
 			}
 		})
+	}
+}
+
+func Test_clusterWillRecoverAfterIpChange(t *testing.T) {
+	a1, rfn1 := buildAndRunAgent("test8", []string{}, 3)
+	defer rfn1()
+	a2, rfn2 := buildAndRunAgent("test9", []string{a1.bindRPCAddr()[:len(a1.bindRPCAddr())-4] + "8946"}, 3)
+	defer rfn2()
+	a3, rfn3 := buildAndRunAgent("test10", []string{a1.bindRPCAddr()[:len(a1.bindRPCAddr())-4] + "8946", a2.bindRPCAddr()[:len(a2.bindRPCAddr())-4] + "8946"}, 3)
+	defer rfn3()
+	time.Sleep(2 * time.Second)
+	assert.True(t, a1.IsLeader() || a2.IsLeader() || a3.IsLeader())
+	servers := a1.raft.GetConfiguration().Configuration().Servers
+	assert.Equal(t, 3, len(servers))
+	servers = a2.raft.GetConfiguration().Configuration().Servers
+	assert.Equal(t, 3, len(servers))
+	servers = a3.raft.GetConfiguration().Configuration().Servers
+	assert.Equal(t, 3, len(servers))
+
+	_ = a1.Stop()
+
+	time.Sleep(30 * time.Second)
+
+	assert.True(t, !a1.IsLeader() && (a2.IsLeader() || a3.IsLeader()))
+
+	//servers = a2.raft.GetConfiguration().Configuration().Servers
+	//assert.Equal(t, 2, len(servers))
+	//servers = a3.raft.GetConfiguration().Configuration().Servers
+	//assert.Equal(t, 2, len(servers))
+
+	_ = a2.Stop()
+
+	time.Sleep(20 * time.Second)
+
+	assert.True(t, !a1.IsLeader() && !a2.IsLeader() && !a3.IsLeader())
+
+	//servers = a3.raft.GetConfiguration().Configuration().Servers
+	//assert.Equal(t, 1, len(servers))
+
+	a1, rfn1 = buildAndRunAgent("test8", []string{a3.bindRPCAddr()[:len(a3.bindRPCAddr())-4] + "8946"}, 3)
+	defer rfn1()
+	a2, rfn2 = buildAndRunAgent("test9", []string{a3.bindRPCAddr()[:len(a3.bindRPCAddr())-4] + "8946"}, 3)
+	defer rfn2()
+
+	time.Sleep(10 * time.Second)
+
+	assert.True(t, a1.IsLeader() || a2.IsLeader() || a3.IsLeader())
+	servers = a1.raft.GetConfiguration().Configuration().Servers
+	assert.Equal(t, 3, len(servers))
+	servers = a2.raft.GetConfiguration().Configuration().Servers
+	assert.Equal(t, 3, len(servers))
+	servers = a3.raft.GetConfiguration().Configuration().Servers
+	assert.Equal(t, 3, len(servers))
+}
+
+func buildAndRunAgent(
+	nodeName string,
+	startJoin []string,
+	bootstrapExpect int,
+) (*Agent, func()) {
+
+	dir, err := os.MkdirTemp("", fmt.Sprintf("test-%s", nodeName))
+	if err != nil {
+		panic(err.Error())
+	}
+	defer os.RemoveAll(dir)
+	ip, returnFn := testutil.TakeIP()
+	defer returnFn()
+	addr := ip.String()
+
+	// Start another agent
+	c := DefaultConfig()
+	c.BindAddr = addr
+	c.StartJoin = startJoin
+	c.NodeName = nodeName
+	c.Server = true
+	c.LogLevel = logLevel
+	c.BootstrapExpect = bootstrapExpect
+	c.DevMode = true
+	c.DataDir = dir
+	c.RaftMultiplier = 1
+
+	a2 := NewAgent(c)
+	err = a2.Start()
+	if err != nil {
+		panic(err.Error())
+	}
+
+	return a2, func() {
+		_ = a2.Stop()
+		returnFn()
+		_ = os.RemoveAll(dir)
 	}
 }
