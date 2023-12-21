@@ -318,13 +318,11 @@ func (a *Agent) setupRaft() error {
 		logger = a.logger.Logger.Writer()
 	}
 
-	var serverAddressProvider raft.ServerAddressProvider = a.serverLookup
-
 	transConfig := &raft.NetworkTransportConfig{
 		Stream:                a.raftLayer,
 		MaxPool:               3,
-		Timeout:               10 * time.Second,
-		ServerAddressProvider: serverAddressProvider,
+		Timeout:               raftTimeout,
+		ServerAddressProvider: a.serverLookup,
 	}
 	transport := raft.NewNetworkTransportWithConfig(transConfig)
 	a.raftTransport = transport
