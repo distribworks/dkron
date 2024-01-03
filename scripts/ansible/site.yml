@@ -2,43 +2,33 @@
 #  Install Dkron beta on a clean instance
 
 - hosts: localhost
+  vars:
+    project_id: 904af849-79ff-4847-90f7-dfa02367ae72
+
   tasks:
     - equinix.cloud.metal_device:
         hostname: "{{ item }}"
         operating_system: ubuntu_22_04
         plan: c3.small.x86
         metro: am
-        project_id: 904af849-79ff-4847-90f7-dfa02367ae72
+        project_id: "{{ project_id }}"
         tags:
           - server
-      register: newhosts
       loop:
         - dkron01
         - dkron02
         - dkron03
     
     - equinix.cloud.metal_device:
-        hostnames: [dkron04]
+        hostname: dkron04
         operating_system: ubuntu_22_04
         plan: c3.small.x86
         metro: am
-        project_id: 904af849-79ff-4847-90f7-dfa02367ae72
+        project_id: "{{ project_id }}"
         tags:
           - agent
-      register: anotherhost
-    
-    - debug: var=newhosts
 
-    - name: wait for ssh
-      wait_for:
-        delay: 1
-        host: "{{ item.public_ipv4 }}"
-        port: 22
-        state: started
-        timeout: 500
-      loop: "{{ newhosts.results }}"
-
-- hosts: equinix_metal
+- hosts: all
   user: root
   become: true
   become_method: sudo
@@ -57,7 +47,7 @@
 
   roles:
     - role: datadog.datadog
-      become: yes
+      become: true
       tags: datadog
 
   tasks:
