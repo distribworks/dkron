@@ -22,8 +22,8 @@ func (ta *testAddr) String() string {
 func TestAddServer(t *testing.T) {
 	// arrange
 	lookup := NewServerLookup()
-	id1, addr1 := "svr-1", "127.0.0.1:8300"
-	id2, addr2 := "svr-2", "127.0.0.2:8300"
+	id1, addr1 := "server-1", "127.0.0.1:8300"
+	id2, addr2 := "server-2", "127.0.0.2:8300"
 	server1, server2 := buildServerParts(id1, addr1), buildServerParts(id2, addr2)
 
 	// act
@@ -56,8 +56,8 @@ func TestAddServer(t *testing.T) {
 func TestRemoveServer(t *testing.T) {
 	// arrange
 	lookup := NewServerLookup()
-	id1, addr1 := "svr-1", "127.0.0.1:8300"
-	id2, addr2 := "svr-2", "127.0.0.2:8300"
+	id1, addr1 := "server-1", "127.0.0.1:8300"
+	id2, addr2 := "server-2", "127.0.0.2:8300"
 	server1, server2 := buildServerParts(id1, addr1), buildServerParts(id2, addr2)
 	lookup.AddServer(server1)
 	lookup.AddServer(server2)
