@@ -1,5 +1,5 @@
 # Minimal example using environment var credentials
-plugin: equinix.metal.device
+plugin: equinix.cloud.metal_device
 
 keyed_groups:
   # Add hosts to tag_Name groups for each tag
