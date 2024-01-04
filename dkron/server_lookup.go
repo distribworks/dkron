@@ -26,7 +26,7 @@ func (sl *ServerLookup) AddServer(server *ServerParts) {
 	sl.lock.Lock()
 	defer sl.lock.Unlock()
 	sl.addressToServer[raft.ServerAddress(server.RPCAddr.String())] = server
-	sl.idToServer[raft.ServerID(server.Name)] = server
+	sl.idToServer[raft.ServerID(server.ID)] = server
 }
 
 func (sl *ServerLookup) RemoveServer(server *ServerParts) {
