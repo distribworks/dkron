@@ -32,9 +32,8 @@ func TestAddServer(t *testing.T) {
 
 	// assert
 	servers := lookup.Servers()
-	require.EqualValuesf(t, 2, len(servers), "Expected 1 servers but got %v", len(servers))
-	require.Containsf(t, servers, server1, "Expected server %v to be in the list of servers", server1)
-	require.Containsf(t, servers, server2, "Expected server %v to be in the list of servers", server2)
+	expectedServers := []*ServerParts{server1, server2}
+	require.EqualValuesf(t, expectedServers, servers, "Expected %v but got %v", expectedServers, servers)
 
 	got, err := lookup.ServerAddr(raft.ServerID(id1))
 	require.NoErrorf(t, err, "Unexpected error: %v", err)
@@ -67,8 +66,8 @@ func TestRemoveServer(t *testing.T) {
 
 	// assert
 	servers := lookup.Servers()
-	require.EqualValuesf(t, 1, len(servers), "Expected 0 servers but got %v", len(servers))
-	require.Containsf(t, servers, server2, "Expected server %v to be in the list of servers", server2)
+	expectedServers := []*ServerParts{server2}
+	require.EqualValuesf(t, expectedServers, servers, "Expected %v but got %v", expectedServers, servers)
 
 	require.Nilf(t, lookup.Server(raft.ServerAddress(addr1)), "Expected lookup to return nil")
 	addr, err := lookup.ServerAddr(raft.ServerID(id1))
