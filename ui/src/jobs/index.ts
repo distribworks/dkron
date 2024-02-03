@@ -1,7 +1,7 @@
 import JobList from './JobList';
 import { JobEdit, JobCreate } from './JobEdit';
 import JobShow from './JobShow';
-import JobIcon from '@material-ui/icons/Update';
+import JobIcon from '@mui/icons-material/Update';
 
 const jobs = {
     list: JobList,

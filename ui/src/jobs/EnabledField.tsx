@@ -1,10 +1,9 @@
-import * as React from "react";
-import SuccessIcon from '@material-ui/icons/CheckCircle';
-import FailedIcon from '@material-ui/icons/Cancel';
-import { Tooltip } from '@material-ui/core';
+import SuccessIcon from '@mui/icons-material/CheckCircle';
+import FailedIcon from '@mui/icons-material/Cancel';
+import { Tooltip } from '@mui/material';
 
 const EnabledField = (props: any) => {
-    if (props.record[props.source] === true) {
+    if (props.record !== undefined && props.record[props.source] === true) {
         return <Tooltip title="Disabled"><FailedIcon htmlColor="red" /></Tooltip>
     } else {
         return <Tooltip title="Enabled"><SuccessIcon htmlColor="green" /></Tooltip>

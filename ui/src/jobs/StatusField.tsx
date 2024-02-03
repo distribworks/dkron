@@ -1,8 +1,8 @@
 import * as React from "react";
-import SuccessIcon from '@material-ui/icons/CheckCircle';
-import FailedIcon from '@material-ui/icons/Cancel';
-import UntriggeredIcon from '@material-ui/icons/Timer';
-import { Tooltip } from '@material-ui/core';
+import SuccessIcon from '@mui/icons-material/CheckCircle';
+import FailedIcon from '@mui/icons-material/Cancel';
+import UntriggeredIcon from '@mui/icons-material/Timer';
+import { Tooltip } from '@mui/material';
 
 const StatusField = (props: any) => {
 	if (props.record === undefined) {
