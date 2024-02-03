@@ -25,11 +25,6 @@ builds:
       - -s -w
 
   - <<: *xbuild
-    main: ./builtin/bins/dkron-executor-shell/
-    id: dkron-executor-shell
-    binary: dkron-executor-shell
-
-  - <<: *xbuild
     main: ./builtin/bins/dkron-executor-rabbitmq/
     id: dkron-executor-rabbitmq
     binary: dkron-executor-rabbitmq
@@ -127,7 +122,6 @@ dockers:
     ids: &docker-ids
       - dkron
       - dkron-executor-http
-      - dkron-executor-shell
       - dkron-executor-rabbitmq
       - dkron-executor-nats
       - dkron-executor-kafka
