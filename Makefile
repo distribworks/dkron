@@ -83,7 +83,7 @@ ui/node_modules: ui/package.json
 
 dkron/ui-dist: ui/node_modules ui/public/* ui/src/* ui/src/*/*
 	rm -rf dkron/ui-dist
-	cd ui; yarn run build --out-dir ../dkron/ui-dist
+	cd ui; bun run build --out-dir ../dkron/ui-dist
 
 plugin/types/%.pb.go: proto/%.proto
 	protoc -I proto/ --go_out=plugin/types --go_opt=paths=source_relative --go-grpc_out=plugin/types --go-grpc_opt=paths=source_relative $<
