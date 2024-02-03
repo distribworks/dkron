@@ -113,9 +113,10 @@ type Agent struct {
 
 	// peers is used to track the known Dkron servers. This is
 	// used for region forwarding and clustering.
-	peers      map[string][]*ServerParts
-	localPeers map[raft.ServerAddress]*ServerParts
-	peerLock   sync.RWMutex
+	peers        map[string][]*ServerParts
+	localPeers   map[raft.ServerAddress]*ServerParts
+	peerLock     sync.RWMutex
+	serverLookup *ServerLookup
 
 	activeExecutions sync.Map
 
@@ -142,8 +143,9 @@ type AgentOption func(agent *Agent)
 // and running a Dkron instance.
 func NewAgent(config *Config, options ...AgentOption) *Agent {
 	agent := &Agent{
-		config:      config,
-		retryJoinCh: make(chan error),
+		config:       config,
+		retryJoinCh:  make(chan error),
+		serverLookup: NewServerLookup(),
 	}
 
 	for _, option := range options {
@@ -316,7 +318,13 @@ func (a *Agent) setupRaft() error {
 		logger = a.logger.Logger.Writer()
 	}
 
-	transport := raft.NewNetworkTransport(a.raftLayer, 3, raftTimeout, logger)
+	transConfig := &raft.NetworkTransportConfig{
+		Stream:                a.raftLayer,
+		MaxPool:               3,
+		Timeout:               raftTimeout,
+		ServerAddressProvider: a.serverLookup,
+	}
+	transport := raft.NewNetworkTransportWithConfig(transConfig)
 	a.raftTransport = transport
 
 	config := raft.DefaultConfig()
@@ -710,7 +718,10 @@ func (a *Agent) eventLoop() {
 					a.localMemberEvent(me)
 				case serf.EventMemberReap:
 					a.localMemberEvent(me)
-				case serf.EventMemberUpdate, serf.EventUser, serf.EventQuery: // Ignore
+				case serf.EventMemberUpdate:
+					a.lanNodeUpdate(me)
+					a.localMemberEvent(me)
+				case serf.EventUser, serf.EventQuery: // Ignore
 				default:
 					a.logger.WithField("event", e.String()).Warn("agent: Unhandled serf event")
 				}
