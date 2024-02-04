@@ -1,3 +1,4 @@
+//go:build !windows
 // +build !windows
 
 package shell
@@ -29,11 +30,15 @@ func setCmdAttr(cmd *exec.Cmd, config map[string]string) error {
 		} else {
 			gid, _ = strconv.Atoi(u.Gid)
 		}
-		cmd.SysProcAttr = &syscall.SysProcAttr{}
+		cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 		cmd.SysProcAttr.Credential = &syscall.Credential{
 			Uid: uint32(uid),
 			Gid: uint32(gid),
 		}
 	}
 	return nil
+}
+
+func processKill(cmd *exec.Cmd) error {
+	return syscall.Kill(-cmd.Process.Pid, syscall.SIGKILL) // note the minus sign
 }
