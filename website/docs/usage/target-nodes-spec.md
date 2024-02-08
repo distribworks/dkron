@@ -81,7 +81,17 @@ Dkron will try to run the job in the amount of nodes indicated by that count hav
 
 ### Details and limitations
 
-* Tags specified in a Job are combined using `AND`, therefore a job that specifies several tags like:
+#### Reserved tags
+
+The `region` tag is reserved for multi-region setup purposes and should not be used for any other purpose. 
+
+Dkron will always run jobs in nodes with the same region tag.
+
+You should use an alternative name.
+
+#### Combinations
+
+Tags specified in a Job are combined using `AND`, therefore a job that specifies several tags like:
 
 ```json
 {
@@ -93,6 +103,8 @@ Dkron will try to run the job in the amount of nodes indicated by that count hav
 ```
 
 Will try to run the job in nodes that have all speciefied tags.
+
+#### Tags Limit
 
 There is no limit in the tags that a job can have but having a Job with several tags with count like:
 
