@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useState } from 'react';
 import { useNotify, useRefresh, Button } from 'react-admin';
 import { apiUrl } from '../dataProvider';
