@@ -77,7 +77,7 @@ updatetestcert:
 	rm badssl.com-client.p12
 
 ui/node_modules: ui/package.json
-	cd ui; yarn install
+	cd ui; bun install
 	# touch the directory so Make understands it is up to date
 	touch ui/node_modules
 

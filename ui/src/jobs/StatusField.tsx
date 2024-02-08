@@ -1,4 +1,3 @@
-import * as React from "react";
 import SuccessIcon from '@mui/icons-material/CheckCircle';
 import FailedIcon from '@mui/icons-material/Cancel';
 import UntriggeredIcon from '@mui/icons-material/Timer';

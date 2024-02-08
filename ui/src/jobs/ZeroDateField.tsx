@@ -1,4 +1,3 @@
-import * as React from "react";
 import { DateField, DateFieldProps } from 'react-admin';
 
 export const ZeroDateField: React.FC<DateFieldProps> = (props) => {
