@@ -15,6 +15,8 @@ import (
 	"github.com/spf13/viper"
 )
 
+var embededPlugins = []string{"shell", "http"}
+
 type Plugins struct {
 	Processors map[string]dkplugin.Processor
 	Executors  map[string]dkplugin.Executor
@@ -95,11 +97,14 @@ func (p *Plugins) DiscoverPlugins() error {
 		p.Executors[pluginName] = raw.(dkplugin.Executor)
 	}
 
-	raw, err := p.pluginFactory(exePath, []string{"shell"}, dkplugin.ExecutorPluginName)
-	if err != nil {
-		return err
+	// Load the embeded plugins
+	for _, pluginName := range embededPlugins {
+		raw, err := p.pluginFactory(exePath, []string{pluginName}, dkplugin.ExecutorPluginName)
+		if err != nil {
+			return err
+		}
+		p.Executors[pluginName] = raw.(dkplugin.Executor)
 	}
-	p.Executors["shell"] = raw.(dkplugin.Executor)
 
 	return nil
 }
