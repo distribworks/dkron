@@ -5,9 +5,9 @@ release:
 
 builds:
   - &xbuild
-    main: ./builtin/bins/dkron-executor-http/
-    id: dkron-executor-http
-    binary: dkron-executor-http
+    main: .
+    id: dkron
+    binary: dkron
     env:
       - CGO_ENABLED=0
     goos:
@@ -22,7 +22,7 @@ builds:
     goarm:
       - '7'
     ldflags:
-      - -s -w
+      - -s -w -X github.com/distribworks/dkron/v4/dkron.Version={{.Version}} -X github.com/distribworks/dkron/v4/dkron.Codename=Abaniko
 
   - <<: *xbuild
     main: ./builtin/bins/dkron-executor-rabbitmq/
@@ -69,13 +69,6 @@ builds:
     id: dkron-processor-fluent
     binary: dkron-processor-fluent
 
-  - <<: *xbuild
-    main: .
-    id: dkron
-    binary: dkron
-    ldflags:
-      - -s -w -X github.com/distribworks/dkron/v4/dkron.Version={{.Version}} -X github.com/distribworks/dkron/v4/dkron.Codename=Abaniko
-
 nfpms:
   -
     vendor: Distributed Works
@@ -121,7 +114,6 @@ dockers:
     goarch: amd64
     ids: &docker-ids
       - dkron
-      - dkron-executor-http
       - dkron-executor-rabbitmq
       - dkron-executor-nats
       - dkron-executor-kafka
