@@ -1,7 +1,7 @@
 package main
 
 import (
-	dkplugin "github.com/distribworks/dkron/v3/plugin"
+	dkplugin "github.com/distribworks/dkron/v4/plugin"
 	"github.com/hashicorp/go-plugin"
 )
 

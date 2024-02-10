@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	dkplugin "github.com/distribworks/dkron/v3/plugin"
-	"github.com/distribworks/dkron/v3/plugin/shell"
+	dkplugin "github.com/distribworks/dkron/v4/plugin"
+	"github.com/distribworks/dkron/v4/plugin/shell"
 	"github.com/hashicorp/go-plugin"
 	"github.com/spf13/cobra"
 )

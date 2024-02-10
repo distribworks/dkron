@@ -2,12 +2,13 @@ package main
 
 import (
 	"context"
-	"github.com/distribworks/dkron/v3/builtin/bins/dkron-executor-grpc/test"
-	dktypes "github.com/distribworks/dkron/v3/plugin/types"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
 	"net"
 	"testing"
+
+	"github.com/distribworks/dkron/v4/builtin/bins/dkron-executor-grpc/test"
+	dktypes "github.com/distribworks/dkron/v4/plugin/types"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
 type DemoServer struct {

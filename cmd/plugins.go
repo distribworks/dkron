@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/distribworks/dkron/v3/dkron"
-	dkplugin "github.com/distribworks/dkron/v3/plugin"
+	"github.com/distribworks/dkron/v4/dkron"
+	dkplugin "github.com/distribworks/dkron/v4/plugin"
 	"github.com/hashicorp/go-plugin"
 	"github.com/kardianos/osext"
 	"github.com/sirupsen/logrus"
