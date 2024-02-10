@@ -74,7 +74,7 @@ builds:
     id: dkron
     binary: dkron
     ldflags:
-      - -s -w -X github.com/distribworks/dkron/v3/dkron.Version={{.Version}} -X github.com/distribworks/dkron/v3/dkron.Codename=Abaniko
+      - -s -w -X github.com/distribworks/dkron/v4/dkron.Version={{.Version}} -X github.com/distribworks/dkron/v4/dkron.Codename=Abaniko
 
 nfpms:
   -

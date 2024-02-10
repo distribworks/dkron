@@ -58,10 +58,10 @@ clean:
 	GOBIN=`pwd` go clean -i ./builtin/...
 	GOBIN=`pwd` go clean
 
-.PHONY: doc apidoc test ui updatetestcert
-doc:
+.PHONY: docs apidoc test ui updatetestcert
+docs:
 	#scripts/run doc --dir website/docs/cli
-	cd website; yarn build --out-dir ../public
+	cd website; bun run build --out-dir ../public
 	ghp-import -p public
 
 test:

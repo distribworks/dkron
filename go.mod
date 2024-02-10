@@ -1,4 +1,4 @@
-module github.com/distribworks/dkron/v3
+module github.com/distribworks/dkron/v4
 
 require (
 	cloud.google.com/go/pubsub v1.33.0

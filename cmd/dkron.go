@@ -5,8 +5,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/distribworks/dkron/v3/dkron"
-	"github.com/distribworks/dkron/v3/logging"
+	"github.com/distribworks/dkron/v4/dkron"
+	"github.com/distribworks/dkron/v4/logging"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"

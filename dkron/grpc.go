@@ -9,8 +9,8 @@ import (
 	"time"
 
 	metrics "github.com/armon/go-metrics"
-	"github.com/distribworks/dkron/v3/plugin"
-	proto "github.com/distribworks/dkron/v3/plugin/types"
+	"github.com/distribworks/dkron/v4/plugin"
+	proto "github.com/distribworks/dkron/v4/plugin/types"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/raft"
 	"github.com/hashicorp/serf/serf"
