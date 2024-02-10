@@ -2,47 +2,39 @@
 #  Install Dkron beta on a clean instance
 
 - hosts: localhost
+  vars:
+    project_id: 904af849-79ff-4847-90f7-dfa02367ae72
+
   tasks:
-    - equinix.metal.device:
-        hostnames: [dkron01, dkron02, dkron03]
+    - equinix.cloud.metal_device:
+        hostname: "{{ item }}"
         operating_system: ubuntu_22_04
         plan: c3.small.x86
-        facility: am6
-        wait_for_public_IPv: 4
-        project_id: 904af849-79ff-4847-90f7-dfa02367ae72
+        metro: am
+        project_id: "{{ project_id }}"
         tags:
           - server
-      register: newhosts
+      loop:
+        - dkron01
+        - dkron02
+        - dkron03
     
-    - equinix.metal.device:
-        hostnames: [dkron04]
+    - equinix.cloud.metal_device:
+        hostname: dkron04
         operating_system: ubuntu_22_04
         plan: c3.small.x86
-        facility: am6
-        wait_for_public_IPv: 4
-        project_id: 904af849-79ff-4847-90f7-dfa02367ae72
+        metro: am
+        project_id: "{{ project_id }}"
         tags:
           - agent
-      register: newhosts
-    
-    - debug: var=newhosts
 
-    - name: wait for ssh
-      wait_for:
-        delay: 1
-        host: "{{ item.public_ipv4 }}"
-        port: 22
-        state: started
-        timeout: 500
-      loop: "{{ newhosts.devices }}"
-
-- hosts: equinix_metal
+- hosts: all
   user: root
   become: true
   become_method: sudo
 
   vars:
-    version: 3.2.2
+    version: 3.2.7
     datadog_api_key: "{{ lookup('ansible.builtin.env', 'DKRON_DD_API_KEY') }}"
     datadog_checks:
       openmetrics:
@@ -55,7 +47,7 @@
 
   roles:
     - role: datadog.datadog
-      become: yes
+      become: true
       tags: datadog
 
   tasks:
@@ -130,7 +122,7 @@
   become_method: sudo
 
   vars:
-    version: 3.2.0
+    version: 3.2.7
     dkron_log_level: debug
     dkron_bootstrap_expect: 3
     dkron_data_dir: /var/lib/dkron

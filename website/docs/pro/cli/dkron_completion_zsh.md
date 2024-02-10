@@ -19,13 +19,15 @@ to enable it.  You can execute the following once:
 
 To load completions in your current shell session:
 
+```
 	source <(dkron completion zsh)
+```
 
 To load completions for every new session, execute once:
 
 #### Linux:
 
-	dkron completion zsh > "${fpath[1]}/_dkron"
+	dkron completion zsh > "~/.zsh/completion/_dkron"
 
 #### macOS:
 

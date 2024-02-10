@@ -25,9 +25,9 @@ All the execution responses will be gathered by the scheduler and stored in the 
 
 Dkron relies on the key-value store for data storage, an instance of the distributed store can be run in the same machines as Dkron or connect it to an already existing cluster.
 
-{{% notice note %}}
+:::note
 By default dkron will start with a file based, embedded KV store called BoltDB, it is functional for a single node demo but does not offers clustering or HA.
-{{% /notice %}}
+:::
 
 It is compatible with etcd, Consul, Zookeeper, Redis, DynamoDB and BoltDB. For instructions on how to install and configure any one of these systems refer to their official sites:
 
@@ -53,9 +53,9 @@ By default Dkron uses the following ports:
 - `8080` for HTTP for the API and Dashboard
 - `6868` for RPC comunication between agents.
 
-{{% notice note %}}
+:::note
 Be sure you have opened this ports (or the ones that you configured) in your firewall or AWS security groups.
-{{% /notice %}}
+:::
 
 By default dkron will use the embedded BoltDB KV store. A different store can be specified setting `backend` and `backend-machines` flag in the config file, env variables or as a command line flag.
 
@@ -67,9 +67,9 @@ dkron agent --server
 
 Time to add the first job:
 
-{{% notice note %}}
+:::note
 This job will only run in just one `dkron_server` node due to the node count in the tag. Refer to the [target node spec](/docs/usage/target-nodes-spec) for details.
-{{% /notice %}}
+:::
 
 ```bash
 curl localhost:8080/v1/jobs -XPOST -d '{
