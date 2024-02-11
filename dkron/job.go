@@ -310,28 +310,28 @@ func (j *Job) GetTimeLocation() *time.Location {
 func (j *Job) scheduleHash() string {
 	spec := j.Schedule
 	if strings.Contains(spec, "H") && strings.Count(strings.TrimSpace(spec), " ") == 5 {
-		h := 0
+		hash := 0
 		for _, c := range j.Name {
-			h += int(c)
+			hash += int(c)
 		}
 		parts := strings.Split(spec, " ")
 		for index, part := range parts {
 			if strings.Contains(part, "H") {
 				// mods taken in accordance with https://dkron.io/docs/usage/cron-spec/#cron-expression-format
-				ph := h
+				partHash := hash
 				switch index {
 				case 2:
-					ph %= 24
+					partHash %= 24
 				case 3:
-					ph = (ph % 31) + 1
+					partHash = (partHash % 31) + 1
 				case 4:
-					ph = (ph % 12) + 1
+					partHash = (partHash % 12) + 1
 				case 5:
-					ph %= 7
+					partHash %= 7
 				default:
-					ph %= 60
+					partHash %= 60
 				}
-				parts[index] = strings.ReplaceAll(part, "H", strconv.Itoa(ph))
+				parts[index] = strings.ReplaceAll(part, "H", strconv.Itoa(partHash))
 			}
 		}
 		return strings.Join(parts, " ")
