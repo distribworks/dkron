@@ -306,17 +306,17 @@ func (j *Job) GetTimeLocation() *time.Location {
 }
 
 // scheduleHash replaces H in the cron spec by a value derived from job Name
-// such as "0 0 H * * *"
+// such as "0 0 ~ * * *"
 func (j *Job) scheduleHash() string {
 	spec := j.Schedule
-	if strings.Contains(spec, "H") && strings.Count(strings.TrimSpace(spec), " ") == 5 {
+	if strings.Contains(spec, "~") && strings.Count(strings.TrimSpace(spec), " ") == 5 {
 		hash := 0
 		for _, c := range j.Name {
 			hash += int(c)
 		}
 		parts := strings.Split(spec, " ")
 		for index, part := range parts {
-			if strings.Contains(part, "H") {
+			if strings.Contains(part, "~") {
 				// mods taken in accordance with https://dkron.io/docs/usage/cron-spec/#cron-expression-format
 				partHash := hash
 				switch index {
@@ -331,7 +331,7 @@ func (j *Job) scheduleHash() string {
 				default:
 					partHash %= 60
 				}
-				parts[index] = strings.ReplaceAll(part, "H", strconv.Itoa(partHash))
+				parts[index] = strings.ReplaceAll(part, "~", strconv.Itoa(partHash))
 			}
 		}
 		return strings.Join(parts, " ")
