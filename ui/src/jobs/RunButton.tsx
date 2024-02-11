@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { useNotify, useRefresh, Button } from 'react-admin';
+import { useNotify, useRefresh, Button, useRecordContext } from 'react-admin';
 import { apiUrl } from '../dataProvider';
 import RunIcon from '@mui/icons-material/PlayArrow';
 
-const RunButton = ({record}: any) => {
+const RunButton = () => {
+    const record = useRecordContext();
     const refresh = useRefresh();
     const notify = useNotify();
     const [loading, setLoading] = useState(false);

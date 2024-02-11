@@ -25,8 +25,8 @@ import { apiUrl } from '../dataProvider';
 // basePath={basePath}
 const JobShowActions = ({ basePath, data, resource }: any) => (
     <TopToolbar>
-        <RunButton record={data} />
-        <ToggleButton record={data} />
+        <RunButton />
+        <ToggleButton />
         <EditButton record={data} />
     </TopToolbar>
 );
@@ -99,7 +99,6 @@ const JobShow = (props: any) => (
                 <JsonField
                     source="processors"
                     reactJsonOptions={{
-                        // Props passed to react-json-view
                         name: null,
                         collapsed: false,
                         enableClipboard: false,
@@ -109,7 +108,6 @@ const JobShow = (props: any) => (
                 <JsonField
                     source="tags"
                     reactJsonOptions={{
-                        // Props passed to react-json-view
                         name: null,
                         collapsed: false,
                         enableClipboard: false,
@@ -117,9 +115,18 @@ const JobShow = (props: any) => (
                     }}
                 />
                 <JsonField
+                    source="metadata"
+                    reactJsonOptions={{
+                        name: null,
+                        collapsed: false,
+                        enableClipboard: true,
+                        displayDataTypes: false,
+                    }}
+                />
+                <TextField source="executor" />
+                <JsonField
                     source="executor_config"
                     reactJsonOptions={{
-                        // Props passed to react-json-view
                         name: null,
                         collapsed: false,
                         enableClipboard: false,
