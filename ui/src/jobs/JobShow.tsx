@@ -25,8 +25,8 @@ import { apiUrl } from '../dataProvider';
 // basePath={basePath}
 const JobShowActions = ({ basePath, data, resource }: any) => (
     <TopToolbar>
-        <RunButton record={data} />
-        <ToggleButton record={data} />
+        <RunButton />
+        <ToggleButton />
         <EditButton record={data} />
     </TopToolbar>
 );
