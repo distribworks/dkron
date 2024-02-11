@@ -60,8 +60,12 @@ clean:
 
 .PHONY: docs apidoc test ui updatetestcert
 docs:
-	#scripts/run doc --dir website/docs/cli
-	cd website; bun run build --out-dir ../public
+	# scripts/run doc --dir website/docs/cli
+	
+	# Build with docker while bun reach compatibility with docusaurs
+	# cd website; bun run yarn build --out-dir ../public
+	docker run -v `pwd`:/app --workdir /app/website node yarn build --out-dir ../public
+	
 	ghp-import -p public
 
 test:
