@@ -33,6 +33,9 @@ const (
 	ConcurrencyAllow = "allow"
 	// ConcurrencyForbid forbids a job from executing concurrency.
 	ConcurrencyForbid = "forbid"
+
+	// HashSymbol is the "magic" character used in scheduled to be replaced with a value based on job name
+	HashSymbol = "~"
 )
 
 var (
@@ -305,38 +308,58 @@ func (j *Job) GetTimeLocation() *time.Location {
 	return loc
 }
 
+// nameHash returns hash code of the job name
+func (j *Job) nameHash() int {
+	hash := 0
+	for _, c := range j.Name {
+		hash += int(c)
+	}
+	return hash
+}
+
 // scheduleHash replaces H in the cron spec by a value derived from job Name
 // such as "0 0 ~ * * *"
 func (j *Job) scheduleHash() string {
 	spec := j.Schedule
-	if strings.Contains(spec, "~") && strings.Count(strings.TrimSpace(spec), " ") == 5 {
-		hash := 0
-		for _, c := range j.Name {
-			hash += int(c)
-		}
-		parts := strings.Split(spec, " ")
-		for index, part := range parts {
-			if strings.Contains(part, "~") {
-				// mods taken in accordance with https://dkron.io/docs/usage/cron-spec/#cron-expression-format
-				partHash := hash
-				switch index {
-				case 2:
-					partHash %= 24
-				case 3:
-					partHash = (partHash % 31) + 1
-				case 4:
-					partHash = (partHash % 12) + 1
-				case 5:
-					partHash %= 7
-				default:
-					partHash %= 60
-				}
-				parts[index] = strings.ReplaceAll(part, "~", strconv.Itoa(partHash))
-			}
-		}
-		return strings.Join(parts, " ")
+
+	if !strings.Contains(spec, HashSymbol) {
+		return spec
 	}
-	return spec
+
+	hash := j.nameHash()
+	parts := strings.Split(spec, " ")
+	partIndex := 0
+	for index, part := range parts {
+		if strings.HasPrefix(part, "@") {
+			// this is a pre-defined scheduled, ignore everything
+			return spec
+		}
+		if strings.HasPrefix(part, "TZ=") || strings.HasPrefix(part, "CRON_TZ=") {
+			// do not increase partIndex
+			continue
+		}
+
+		if strings.Contains(part, HashSymbol) {
+			// mods taken in accordance with https://dkron.io/docs/usage/cron-spec/#cron-expression-format
+			partHash := hash
+			switch partIndex {
+			case 2:
+				partHash %= 24
+			case 3:
+				partHash = (partHash % 28) + 1
+			case 4:
+				partHash = (partHash % 12) + 1
+			case 5:
+				partHash %= 7
+			default:
+				partHash %= 60
+			}
+			parts[index] = strings.ReplaceAll(part, HashSymbol, strconv.Itoa(partHash))
+		}
+
+		partIndex++
+	}
+	return strings.Join(parts, " ")
 }
 
 // GetNext returns the job's next schedule from now
