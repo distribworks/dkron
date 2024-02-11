@@ -2,11 +2,32 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://dkron.io/blog</id>
     <title>Dkron Blog</title>
-    <updated>2021-06-01T00:00:00.000Z</updated>
+    <updated>2024-02-11T00:00:00.000Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://dkron.io/blog"/>
     <subtitle>Dkron Blog</subtitle>
     <icon>https://dkron.io/img/favicon.ico</icon>
+    <entry>
+        <title type="html"><![CDATA[Dkron 4.0 Beta]]></title>
+        <id>https://dkron.io/blog/dkron-4-0-beta</id>
+        <link href="https://dkron.io/blog/dkron-4-0-beta"/>
+        <updated>2024-02-11T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Introducing Dkron v4.0.0-beta1]]></summary>
+        <content type="html"><![CDATA[<h2 id="introducing-dkron-v400-beta1">Introducing Dkron v4.0.0-beta1</h2>
+<p>We are excited to announce the release of Dkron v4.0.0-beta1, which comes with major improvements and better performance. If you are using Dkron for distributed cron jobs, now is the perfect time to give the beta a try!</p>
+<p>Stay tunned to upcoming beta releases here <a href="https://github.com/distribworks/dkron/releases">https://github.com/distribworks/dkron/releases</a></p>
+<h2 id="new-features">New Features</h2>
+<h3 id="run-dkron-as-a-single-binary">Run Dkron as a Single Binary</h3>
+<p>The new release includes the ability to run Dkron as a single binary, as it embeds the shell plugin. This makes it even easier and faster to get started with Dkron for simple cron job management, especially for those who only need to run shell jobs.</p>
+<h3 id="docker-light-image">Docker Light Image</h3>
+<p>We are thrilled to announce the release of a new Docker light image for Dkron v4.0.0-beta1. This image contains only the main Dkron binary with the built-in shell plugin and no other plugins, all in a single file. If you're looking for a lean and efficient way to run Dkron, this is it! You can find the image on Docker Hub.</p>
+<h3 id="reporting-issues">Reporting Issues</h3>
+<p>As this is a beta release, we encourage users to report any issues they encounter to help us make the final release even better. Your feedback is essential in ensuring that the final release meets your expectations.</p>
+<h3 id="changelog">Changelog</h3>
+<p>The release includes a substantial list of changes, including the bumping of various dependencies, clean up in CI, handling of IP changes, removal of the old UI, and many more improvements and fixes. You can view the <a href="https://github.com/distribworks/dkron/releases/tag/v4.0.0-beta1">full changelog here</a>.</p>
+<p>We are looking forward to your feedback on this beta release, and we hope that Dkron v4.0 Beta will bring added value and convenience to your cron job management.</p>
+<p>Happy scheduling! 🚀🎉</p>]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Dkron 3.2]]></title>
         <id>https://dkron.io/blog/dkron-3-2</id>
@@ -23,7 +44,7 @@
 <p>Cronitor is tightly integrated with Dkron, it will notify the details of every execution and Cronitor can offer multiple channels for alerting you in case something goes wrong.</p>
 <p>Check the service <a href="https://cronitor.io/">https://cronitor.io/</a> and follow the integration guide in the docs to set up your <a href="https://dkron.io/docs/usage/cronitor">Dkron-Cronitor integration</a>.</p>
 <h3 id="openapi">OpenAPI</h3>
-<p>We have migrated API docs from Swagger 2 spec to OpenAPI 3 format. Check the new and better <a href="https://dkron.io/api">API docs</a> and you can download the new <a target="_blank" href="https://dkron.io/assets/files/openapi-fb8f75133b4cfe75e6d1204f857a389e.yaml">OpenAPI spec</a> too.</p>
+<p>We have migrated API docs from Swagger 2 spec to OpenAPI 3 format. Check the new and better <a href="https://dkron.io/api">API docs</a> and you can download the new <a target="_blank" data-nobrokenlinkcheck="true" href="https://dkron.io/assets/files/openapi-fb8f75133b4cfe75e6d1204f857a389e.yaml">OpenAPI spec</a> too.</p>
 <h2 id="upcoming-features">Upcoming features</h2>
 <p>The new look of Dkron will pave the road for the upcoming v4 release. We have really interesting features almost ready for the new version, some of them are:</p>
 <ul>
