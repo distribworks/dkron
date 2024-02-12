@@ -3,7 +3,7 @@ package http
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -43,13 +43,13 @@ func newTestServer() *httptest.Server {
 		// Echo POST body back to request
 		case "/echo":
 			if r.Method == http.MethodPost {
-				in, err := ioutil.ReadAll(r.Body)
+				in, err := io.ReadAll(r.Body)
 				if err != nil {
 					w.WriteHeader(500)
 					return
 				}
 				r.Body.Close()
-				w.Write(in)
+				_, _ = w.Write(in)
 				w.WriteHeader(200)
 				return
 			}
@@ -81,7 +81,7 @@ func TestExecute(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			http := &HTTP{}
+			http := New()
 			pa := &types.ExecuteRequest{
 				JobName: tt.name,
 				Config:  tt.config,
@@ -113,7 +113,7 @@ func TestNoVerifyPeer(t *testing.T) {
 			"tlsNoVerifyPeer": "true",
 		},
 	}
-	http := &HTTP{}
+	http := New()
 	output, _ := http.Execute(pa, nil)
 	fmt.Println(string(output.Output))
 	fmt.Println(output.Error)
@@ -133,7 +133,7 @@ func TestClientSSLCert(t *testing.T) {
 			"tlsCertificateKeyFile": "testdata/badssl.com-client-key-decrypted.pem",
 		},
 	}
-	http := &HTTP{}
+	http := New()
 	output, _ := http.Execute(pa, nil)
 	fmt.Println(string(output.Output))
 	fmt.Println(output.Error)
@@ -152,7 +152,7 @@ func TestRootCA(t *testing.T) {
 			"tlsRootCAsFile": "testdata/badssl-ca-untrusted-root.crt",
 		},
 	}
-	http := &HTTP{}
+	http := New()
 	output, _ := http.Execute(pa, nil)
 	fmt.Println(string(output.Output))
 	fmt.Println(output.Error)

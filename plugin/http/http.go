@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -31,6 +32,14 @@ const (
 
 // HTTP process http request
 type HTTP struct {
+	clientPool map[string]http.Client
+}
+
+// New
+func New() *HTTP {
+	return &HTTP{
+		clientPool: make(map[string]http.Client),
+	}
 }
 
 // Execute Process method of the plugin
@@ -96,18 +105,31 @@ func (s *HTTP) ExecuteImpl(args *types.ExecuteRequest) ([]byte, error) {
 		log.Printf("request  %#v\n\n", req)
 	}
 
-	client, warns := createClient(args.Config)
-	for _, warn := range warns {
-		output.Write([]byte(fmt.Sprintf("Warning: %s.\n", warn.Error())))
+	// get client from pool
+	var (
+		client http.Client
+		ok     bool
+	)
+
+	cc := args.Config["timeout"] + args.Config["tlsRootCAsFile"] + args.Config["tlsCertificateFile"] + args.Config["tlsCertificateKeyFile"]
+
+	if client, ok = s.clientPool[cc]; !ok {
+		var warns []error
+		client, warns = createClient(args.Config)
+		for _, warn := range warns {
+			_, _ = output.Write([]byte(fmt.Sprintf("Warning: %s.\n", warn.Error())))
+		}
+		s.clientPool[cc] = client
 	}
 
+	// do request
 	resp, err := client.Do(req)
 	if err != nil {
 		return output.Bytes(), err
 	}
 
 	defer resp.Body.Close()
-	out, err := ioutil.ReadAll(resp.Body)
+	out, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return output.Bytes(), err
 	}
