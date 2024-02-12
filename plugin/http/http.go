@@ -116,6 +116,7 @@ func (s *HTTP) ExecuteImpl(args *types.ExecuteRequest) ([]byte, error) {
 		for _, warn := range warns {
 			_, _ = output.Write([]byte(fmt.Sprintf("Warning: %s.\n", warn.Error())))
 		}
+		s.clientPool[string(bs)] = client
 	}
 
 	// do request
