@@ -2,7 +2,6 @@ package http
 
 import (
 	"bytes"
-	"crypto/sha256"
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/json"
@@ -106,17 +105,14 @@ func (s *HTTP) ExecuteImpl(args *types.ExecuteRequest) ([]byte, error) {
 	)
 
 	cc := args.Config["timeout"] + args.Config["tlsRootCAsFile"] + args.Config["tlsCertificateFile"] + args.Config["tlsCertificateKeyFile"]
-	h := sha256.New()
-	h.Write([]byte(cc))
-	bs := h.Sum(nil)
 
-	if client, ok = s.clientPool[string(bs)]; !ok {
+	if client, ok = s.clientPool[cc]; !ok {
 		var warns []error
 		client, warns = createClient(args.Config)
 		for _, warn := range warns {
 			_, _ = output.Write([]byte(fmt.Sprintf("Warning: %s.\n", warn.Error())))
 		}
-		s.clientPool[string(bs)] = client
+		s.clientPool[cc] = client
 	}
 
 	// do request
