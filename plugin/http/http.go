@@ -35,6 +35,13 @@ type HTTP struct {
 	clientPool map[string]http.Client
 }
 
+// New
+func New() *HTTP {
+	return &HTTP{
+		clientPool: make(map[string]http.Client),
+	}
+}
+
 // Execute Process method of the plugin
 // "executor": "http",
 //
