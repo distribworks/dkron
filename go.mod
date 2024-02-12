@@ -13,7 +13,7 @@ require (
 	github.com/fluent/fluent-logger-golang v1.9.0
 	github.com/fullstorydev/grpcurl v1.8.9
 	github.com/gin-contrib/cors v1.5.0
-	github.com/gin-contrib/expvar v0.0.1
+	github.com/gin-contrib/expvar v1.0.0
 	github.com/gin-contrib/multitemplate v0.0.0-20211002122701-e9e3201b87a0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/golang/protobuf v1.5.3
