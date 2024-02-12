@@ -2,11 +2,13 @@ package http
 
 import (
 	"bytes"
+	"crypto/sha256"
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -31,6 +33,7 @@ const (
 
 // HTTP process http request
 type HTTP struct {
+	clientPool map[string]http.Client
 }
 
 // Execute Process method of the plugin
@@ -96,18 +99,33 @@ func (s *HTTP) ExecuteImpl(args *types.ExecuteRequest) ([]byte, error) {
 		log.Printf("request  %#v\n\n", req)
 	}
 
-	client, warns := createClient(args.Config)
-	for _, warn := range warns {
-		output.Write([]byte(fmt.Sprintf("Warning: %s.\n", warn.Error())))
+	// get client from pool
+	var (
+		client http.Client
+		ok     bool
+	)
+
+	cc := args.Config["timeout"] + args.Config["tlsRootCAsFile"] + args.Config["tlsCertificateFile"] + args.Config["tlsCertificateKeyFile"]
+	h := sha256.New()
+	h.Write([]byte(cc))
+	bs := h.Sum(nil)
+
+	if client, ok = s.clientPool[string(bs)]; !ok {
+		var warns []error
+		client, warns = createClient(args.Config)
+		for _, warn := range warns {
+			_, _ = output.Write([]byte(fmt.Sprintf("Warning: %s.\n", warn.Error())))
+		}
 	}
 
+	// do request
 	resp, err := client.Do(req)
 	if err != nil {
 		return output.Bytes(), err
 	}
 
 	defer resp.Body.Close()
-	out, err := ioutil.ReadAll(resp.Body)
+	out, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return output.Bytes(), err
 	}
