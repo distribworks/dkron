@@ -13,6 +13,7 @@ require (
 	github.com/devopsfaith/krakend-usage v1.4.0
 	github.com/fluent/fluent-logger-golang v1.9.0
 	github.com/fullstorydev/grpcurl v1.8.9
+	github.com/getkin/kin-openapi v0.123.0 // indirect
 	github.com/gin-contrib/cors v1.5.0
 	github.com/gin-contrib/expvar v0.0.1
 	github.com/gin-gonic/gin v1.9.1
@@ -32,6 +33,7 @@ require (
 	github.com/jhump/protoreflect v1.15.5
 	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0
+	github.com/labstack/echo/v4 v4.11.4 // indirect
 	github.com/mattn/go-shellwords v1.0.12
 	github.com/mitchellh/go-testing-interface v1.14.1 // indirect
 	github.com/nats-io/nats.go v1.32.0

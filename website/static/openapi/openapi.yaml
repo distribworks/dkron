@@ -11,6 +11,7 @@ info:
   version: 1-oas3
 servers:
 - url: http://localhost:8080/v1
+
 paths:
   /:
     get:
@@ -463,6 +464,9 @@ components:
       - name
       - schedule
       type: object
+      x-go-type: types.Job
+      x-go-imports:
+        - path: github.com/distribworks/dkron/v4/types
       properties:
         name:
           type: string
@@ -591,6 +595,9 @@ components:
       description: A Job represents a scheduled task to execute.
     member:
       type: object
+      x-go-type: types.Member
+      x-go-imports:
+        - path: github.com/distribworks/dkron/v4/types
       properties:
         Name:
           type: string
@@ -652,6 +659,9 @@ components:
       description: A member represents a cluster member node.
     execution:
       type: object
+      x-go-type: types.Execution
+      x-go-imports:
+        - path: github.com/distribworks/dkron/v4/types
       properties:
         job_name:
           type: string
@@ -706,6 +716,9 @@ components:
           format: binary
     policy:
       type: object
+      x-go-type: types.Policy
+      x-go-imports:
+        - path: github.com/distribworks/dkron/v4/types
       properties:
         Name:
           type: string
@@ -717,3 +730,11 @@ components:
           description: Policy rules
           examples:
             - PolicyJSON
+  securitySchemes:
+    TokenAuth:
+      type: apiKey
+      in: header
+      name: X-Dkron-Token
+  
+security:
+  - TokenAuth: []

@@ -94,6 +94,9 @@ proto: types/dkron.pb.go types/executor.pb.go types/pro.pb.go
 types/%.pb.go: proto/%.proto
 	protoc -I proto/ --go_out=types --go_opt=paths=source_relative --go-grpc_out=types --go-grpc_opt=paths=source_relative $<
 
+client:
+	oapi-codegen -package client website/static/openapi/openapi.yaml > client/client.go
+
 ui: dkron/ui-dist
 
 main: dkron/ui-dist types/dkron.pb.go types/executor.pb.go *.go */*.go */*/*.go */*/*/*.go
