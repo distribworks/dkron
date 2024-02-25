@@ -9,11 +9,11 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/distribworks/dkron/v4/types"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/expvar"
 	"github.com/gin-gonic/gin"
 	"github.com/hashicorp/go-uuid"
-	"github.com/hashicorp/serf/serf"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 	"github.com/tidwall/buntdb"
@@ -420,18 +420,11 @@ func (h *HTTPTransport) executionHandler(c *gin.Context) {
 	}
 }
 
-type MId struct {
-	serf.Member
-
-	Id         string `json:"id"`
-	StatusText string `json:"statusText"`
-}
-
 func (h *HTTPTransport) membersHandler(c *gin.Context) {
-	mems := []*MId{}
+	mems := []*types.Member{}
 	for _, m := range h.agent.serf.Members() {
 		id, _ := uuid.GenerateUUID()
-		mid := &MId{m, id, m.Status.String()}
+		mid := &types.Member{m, id, m.Status.String()}
 		mems = append(mems, mid)
 	}
 	c.Header("X-Total-Count", strconv.Itoa(len(mems)))
