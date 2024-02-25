@@ -10,7 +10,7 @@ import (
 	"github.com/armon/circbuf"
 
 	dkplugin "github.com/distribworks/dkron/v4/plugin"
-	dktypes "github.com/distribworks/dkron/v4/plugin/types"
+	dktypes "github.com/distribworks/dkron/v4/types"
 )
 
 const (

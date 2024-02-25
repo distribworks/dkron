@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/distribworks/dkron/v4/plugin"
-	"github.com/distribworks/dkron/v4/plugin/types"
+	"github.com/distribworks/dkron/v4/types"
 	"github.com/golang/protobuf/ptypes"
 	"github.com/stretchr/testify/assert"
 )

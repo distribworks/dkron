@@ -9,7 +9,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/distribworks/dkron/v4/plugin/types"
+	"github.com/distribworks/dkron/v4/types"
 	"github.com/stretchr/testify/assert"
 )
 

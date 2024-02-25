@@ -8,7 +8,7 @@ import (
 	"github.com/nats-io/nats.go"
 
 	dkplugin "github.com/distribworks/dkron/v4/plugin"
-	dktypes "github.com/distribworks/dkron/v4/plugin/types"
+	dktypes "github.com/distribworks/dkron/v4/types"
 )
 
 const (

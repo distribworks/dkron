@@ -10,7 +10,7 @@ import (
 
 	metrics "github.com/armon/go-metrics"
 	"github.com/distribworks/dkron/v4/plugin"
-	proto "github.com/distribworks/dkron/v4/plugin/types"
+	proto "github.com/distribworks/dkron/v4/types"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/raft"
 	"github.com/hashicorp/serf/serf"

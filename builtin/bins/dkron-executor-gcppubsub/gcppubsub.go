@@ -8,7 +8,7 @@ import (
 
 	"cloud.google.com/go/pubsub"
 	dkplugin "github.com/distribworks/dkron/v4/plugin"
-	dktypes "github.com/distribworks/dkron/v4/plugin/types"
+	dktypes "github.com/distribworks/dkron/v4/types"
 )
 
 // GCPPubSub plugin publish message to topic when Execute method is called.

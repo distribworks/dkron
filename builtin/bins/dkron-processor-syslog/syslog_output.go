@@ -4,7 +4,7 @@ import (
 	"strconv"
 
 	"github.com/distribworks/dkron/v4/plugin"
-	"github.com/distribworks/dkron/v4/plugin/types"
+	"github.com/distribworks/dkron/v4/types"
 	gsyslog "github.com/hashicorp/go-syslog"
 	log "github.com/sirupsen/logrus"
 )

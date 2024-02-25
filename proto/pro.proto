@@ -1,0 +1,31 @@
+// protoc -I proto/ --go_out=proto --go_opt=paths=source_relative --go-grpc_out=proto --go-grpc_opt=paths=source_relative proto/pro.proto
+syntax = "proto3";
+
+package types;
+option go_package = "github.com/distribworks/dkron/types";
+
+message Policy {
+    string name = 1;
+    string rules = 2;
+}
+
+message ACLPolicyUpsertRequest {
+    Policy policy = 1;
+}
+
+message ACLPolicyUpsertResponse {
+    bool success = 1;
+}
+
+message ACLPolicyDeleteRequest {
+    string name = 1;
+}
+
+message ACLPolicyDeleteResponse {
+    bool success = 1;
+}
+
+service DkronPro {
+    rpc ACLPolicyUpsert (ACLPolicyUpsertRequest) returns (ACLPolicyUpsertResponse);
+    rpc ACLPolicyDelete (ACLPolicyDeleteRequest) returns (ACLPolicyDeleteResponse);
+}

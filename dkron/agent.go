@@ -18,7 +18,7 @@ import (
 	metrics "github.com/armon/go-metrics"
 	"github.com/devopsfaith/krakend-usage/client"
 	"github.com/distribworks/dkron/v4/plugin"
-	proto "github.com/distribworks/dkron/v4/plugin/types"
+	proto "github.com/distribworks/dkron/v4/types"
 	"github.com/hashicorp/go-uuid"
 	"github.com/hashicorp/memberlist"
 	"github.com/hashicorp/raft"

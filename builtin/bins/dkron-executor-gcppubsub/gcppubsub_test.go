@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"cloud.google.com/go/pubsub"
-	dktypes "github.com/distribworks/dkron/v4/plugin/types"
+	dktypes "github.com/distribworks/dkron/v4/types"
 	"github.com/stretchr/testify/assert"
 )
 
