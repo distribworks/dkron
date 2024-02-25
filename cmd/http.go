@@ -16,7 +16,7 @@ var httpCmd = &cobra.Command{
 		plugin.Serve(&plugin.ServeConfig{
 			HandshakeConfig: dkplugin.Handshake,
 			Plugins: map[string]plugin.Plugin{
-				"executor": &dkplugin.ExecutorPlugin{Executor: &http.HTTP{}},
+				"executor": &dkplugin.ExecutorPlugin{Executor: http.New()},
 			},
 
 			// A non-nil value here enables gRPC serving for this plugin...
