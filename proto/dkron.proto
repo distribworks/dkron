@@ -1,4 +1,4 @@
-// protoc -I proto/ --go_out=plugin/types --go_opt=paths=source_relative --go-grpc_out=plugin/types --go-grpc_opt=paths=source_relative dkron.proto
+// protoc -I proto/ --go_out=types --go_opt=paths=source_relative --go-grpc_out=types --go-grpc_opt=paths=source_relative dkron.proto
 syntax = "proto3";
 
 package types;
