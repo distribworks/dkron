@@ -6,7 +6,7 @@ import (
 
 	"github.com/armon/circbuf"
 	metrics "github.com/armon/go-metrics"
-	"github.com/distribworks/dkron/v4/plugin/types"
+	"github.com/distribworks/dkron/v4/types"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )

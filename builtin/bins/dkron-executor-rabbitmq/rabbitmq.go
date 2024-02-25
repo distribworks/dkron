@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	dkplugin "github.com/distribworks/dkron/v4/plugin"
-	dktypes "github.com/distribworks/dkron/v4/plugin/types"
+	dktypes "github.com/distribworks/dkron/v4/types"
 	"github.com/streadway/amqp"
 )
 

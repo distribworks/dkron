@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/distribworks/dkron/v4/builtin/bins/dkron-executor-grpc/test"
-	dktypes "github.com/distribworks/dkron/v4/plugin/types"
+	dktypes "github.com/distribworks/dkron/v4/types"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )

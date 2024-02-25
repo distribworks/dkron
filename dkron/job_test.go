@@ -7,7 +7,7 @@ import (
 
 	"github.com/distribworks/dkron/v4/ntime"
 	"github.com/distribworks/dkron/v4/plugin"
-	proto "github.com/distribworks/dkron/v4/plugin/types"
+	proto "github.com/distribworks/dkron/v4/types"
 	"github.com/hashicorp/serf/testutil"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"

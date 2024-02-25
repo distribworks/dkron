@@ -89,12 +89,14 @@ dkron/ui-dist: ui/node_modules ui/public/* ui/src/* ui/src/*/*
 	rm -rf dkron/ui-dist
 	cd ui; bun run build --out-dir ../dkron/ui-dist
 
-plugin/types/%.pb.go: proto/%.proto
-	protoc -I proto/ --go_out=plugin/types --go_opt=paths=source_relative --go-grpc_out=plugin/types --go-grpc_opt=paths=source_relative $<
+proto: types/dkron.pb.go types/executor.pb.go types/pro.pb.go
+
+types/%.pb.go: proto/%.proto
+	protoc -I proto/ --go_out=types --go_opt=paths=source_relative --go-grpc_out=types --go-grpc_opt=paths=source_relative $<
 
 ui: dkron/ui-dist
 
-main: dkron/ui-dist plugin/types/dkron.pb.go plugin/types/executor.pb.go *.go */*.go */*/*.go */*/*/*.go
+main: dkron/ui-dist types/dkron.pb.go types/executor.pb.go *.go */*.go */*/*.go */*/*/*.go
 	GOBIN=`pwd` go install ./builtin/...
 	go mod tidy
 	go build main.go
