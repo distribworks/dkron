@@ -4,7 +4,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/distribworks/dkron/v3/plugin"
+	"github.com/distribworks/dkron/v4/plugin"
 	"github.com/fluent/fluent-logger-golang/fluent"
 	log "github.com/sirupsen/logrus"
 )

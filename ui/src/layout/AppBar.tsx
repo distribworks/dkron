@@ -1,24 +1,32 @@
-import * as React from 'react';
 import { forwardRef } from 'react';
-import { AppBar, UserMenu, MenuItemLink } from 'react-admin';
-import Typography from '@material-ui/core/Typography';
-import SettingsIcon from '@material-ui/icons/Settings';
-import { makeStyles } from '@material-ui/core/styles';
+import { styled } from '@mui/material/styles';
+import { AppBar, UserMenu, MenuItemLink, Link } from 'react-admin';
+import Typography from '@mui/material/Typography';
+import SettingsIcon from '@mui/icons-material/Settings';
+import BookIcon from '@mui/icons-material/Book';
 import Clock from './Clock';
 
 import logo from '../images/dkron-logo.png';
 
-const useStyles = makeStyles({
-    title: {
+const PREFIX = 'CustomAppBar';
+
+const classes = {
+    title: `${PREFIX}-title`,
+    spacer: `${PREFIX}-spacer`,
+    logo: `${PREFIX}-logo`
+};
+
+const StyledAppBar = styled(AppBar)({
+    [`& .${classes.title}`]: {
         flex: 1,
         textOverflow: 'ellipsis',
         whiteSpace: 'nowrap',
         overflow: 'hidden',
     },
-    spacer: {
+    [`& .${classes.spacer}`]: {
         flex: 1,
     },
-    logo: {
+    [`& .${classes.logo}`]: {
         maxWidth: "125px"
     },
 });
@@ -27,25 +35,29 @@ const ConfigurationMenu = forwardRef<any, any>((props, ref) => {
     return (
         <MenuItemLink
             ref={ref}
-            to="/configuration"
-            primaryText='Configuration'
+            to="/settings"
+            primaryText='Settings'
             leftIcon={<SettingsIcon />}
             onClick={props.onClick}
-            sidebarIsOpen
         />
     );
 });
 
 const CustomUserMenu = (props: any) => (
     <UserMenu {...props}>
-        <ConfigurationMenu />
+        <MenuItemLink
+            to="https://dkron.io/docs/basics/getting-started"
+            primaryText='Docs'
+            leftIcon={<BookIcon />}
+        />
+        {/* <ConfigurationMenu /> */}
     </UserMenu>
 );
 
 const CustomAppBar = (props: any) => {
-    const classes = useStyles();
+
     return (
-        <AppBar {...props} elevation={1} userMenu={<CustomUserMenu />}>
+        <StyledAppBar {...props} elevation={1} userMenu={<CustomUserMenu />}>
             <Typography
                 variant="h6"
                 color="inherit"
@@ -53,11 +65,13 @@ const CustomAppBar = (props: any) => {
                 id="react-admin-title"
             />
             <div>
-                <img src={logo} alt="logo" className={classes.logo} />
+                <Link to="/" color="inherit" underline="none">
+                    <img src={logo} alt="logo" className={classes.logo} />
+                </Link>
             </div>
             <span className={classes.spacer} />
             <Clock/>
-        </AppBar>
+        </StyledAppBar>
     );
 };
 

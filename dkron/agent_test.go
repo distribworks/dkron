@@ -16,7 +16,7 @@ import (
 )
 
 var (
-	logLevel = "error"
+	logLevel = "info"
 )
 
 func TestAgentCommand_runForElection(t *testing.T) {

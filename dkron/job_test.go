@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/distribworks/dkron/v3/ntime"
-	"github.com/distribworks/dkron/v3/plugin"
-	proto "github.com/distribworks/dkron/v3/plugin/types"
+	"github.com/distribworks/dkron/v4/ntime"
+	"github.com/distribworks/dkron/v4/plugin"
+	proto "github.com/distribworks/dkron/v4/plugin/types"
 	"github.com/hashicorp/serf/testutil"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"

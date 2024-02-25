@@ -4,8 +4,8 @@ import (
 	"encoding/base64"
 	"errors"
 
-	dkplugin "github.com/distribworks/dkron/v3/plugin"
-	dktypes "github.com/distribworks/dkron/v3/plugin/types"
+	dkplugin "github.com/distribworks/dkron/v4/plugin"
+	dktypes "github.com/distribworks/dkron/v4/plugin/types"
 	"github.com/streadway/amqp"
 )
 
@@ -15,11 +15,12 @@ type RabbitMQ struct {
 
 // Execute method of the plugin
 // "executor": "rabbitmq",
-// "executor_config": {
-//     "url": "amqp://guest:guest@localhost:5672/", // rabbitmq server url
-//     "text": "hello world!",                  				// or "base64" to send bytes as rabbitmq message
-//     "queue": "test",             				//
-// }
+//
+//	"executor_config": {
+//	    "url": "amqp://guest:guest@localhost:5672/", // rabbitmq server url
+//	    "text": "hello world!",                  				// or "base64" to send bytes as rabbitmq message
+//	    "queue": "test",             				//
+//	}
 func (r *RabbitMQ) Execute(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelper) (*dktypes.ExecuteResponse, error) {
 	out, err := r.ExecuteImpl(args, cb)
 	resp := &dktypes.ExecuteResponse{Output: out}

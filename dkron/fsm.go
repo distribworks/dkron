@@ -3,7 +3,7 @@ package dkron
 import (
 	"io"
 
-	dkronpb "github.com/distribworks/dkron/v3/plugin/types"
+	dkronpb "github.com/distribworks/dkron/v4/plugin/types"
 	"github.com/hashicorp/raft"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/proto"

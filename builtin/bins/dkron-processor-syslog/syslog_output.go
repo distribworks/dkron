@@ -3,8 +3,8 @@ package main
 import (
 	"strconv"
 
-	"github.com/distribworks/dkron/v3/plugin"
-	"github.com/distribworks/dkron/v3/plugin/types"
+	"github.com/distribworks/dkron/v4/plugin"
+	"github.com/distribworks/dkron/v4/plugin/types"
 	gsyslog "github.com/hashicorp/go-syslog"
 	log "github.com/sirupsen/logrus"
 )

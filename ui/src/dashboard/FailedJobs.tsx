@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FC } from 'react';
-import Icon from '@material-ui/icons/ThumbDown';
+import Icon from '@mui/icons-material/ThumbDown';
 
 import CardWithIcon from './CardWithIcon';
 

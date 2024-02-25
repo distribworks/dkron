@@ -1,5 +1,5 @@
 ---
-openapi: 3.0.3
+openapi: 3.1.0
 info:
   title: Dkron REST API
   description: |
@@ -365,6 +365,74 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/execution'
+
+  /acl/policies/{name}:
+    get:
+      tags:
+      - policies
+      description: |
+        Show a policy.
+      operationId: showPolicyByName
+      parameters:
+      - name: name
+        in: path
+        description: The policy that needs to be fetched.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/policy'
+    post:
+      tags:
+      - policies
+      description: |
+        Store or updates a policy.
+      operationId: upsertPolicy
+      parameters:
+      - name: name
+        in: path
+        description: The policy name to store.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "202":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/policy'
+    delete:
+      tags:
+      - policies
+      description: |
+        Delete a policy.
+      operationId: deletePolicy
+      parameters:
+      - name: name
+        in: path
+        description: The policy that needs to be deleted.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/policy'
 components:
   schemas:
     status:
@@ -400,7 +468,8 @@ components:
           type: string
           description: Name for the job. Use only lower case letters (unicode), digits, underscore and dash.
           readOnly: false
-          example: job1
+          examples:
+            - job1
         displayname:
           type: string
           description: Nice name for the job. Optional.
@@ -409,22 +478,26 @@ components:
           type: string
           description: Cron expression for the job.
           readOnly: false
-          example: '@every 10s'
+          examples: 
+            - '@every 10s'
         timezone:
           type: string
           description: Timezone where the job will be executed. By default and when field is set to empty string, the job will run in local time.
           readOnly: false
-          example: Europe/Berlin
+          examples: 
+            - Europe/Berlin
         owner:
           type: string
           description: Owner of the job
           readOnly: false
-          example: Platform Team
+          examples: 
+            - Platform Team
         owner_email:
           type: string
           description: Email of the owner
           readOnly: false
-          example: platform@example.com
+          examples: 
+            - platform@example.com
         success_count:
           type: integer
           description: Number of successful executions
@@ -453,32 +526,34 @@ components:
             type: string
           description: Target nodes tags of this job
           readOnly: false
-          example:
-            server: "true"
+          examples:
+            - server: "true"
         metadata:
           type: object
           additionalProperties:
             type: string
           description: Extra metadata tags for this job
           readOnly: false
-          example:
-            office: Barcelona
+          examples:
+            - office: Barcelona
         retries:
           type: integer
           description: Number of times to retry a failed job execution
           readOnly: false
-          example: 2
+          examples:
+            - 2
         parent_job:
           type: string
           description: The name/id of the job that will trigger the execution of this job
           readOnly: false
-          example: parent_job
+          examples:
+            - parent_job
         dependent_jobs:
           type: array
           description: Array containing the jobs that depends on this one
           readOnly: true
-          example:
-          - dependent_job
+          examples:
+            - dependent_job
           items:
             type: string
         processors:
@@ -487,24 +562,27 @@ components:
           type: string
           description: Concurrency policy for the job allow/forbid
           readOnly: false
-          example: allow
+          examples:
+            - allow
         executor:
           type: string
           description: Executor plugin used to run the job
           readOnly: false
-          example: shell
+          examples:
+            - shell
         executor_config:
           type: object
           additionalProperties:
             type: string
           description: Executor plugin parameters
-          example:
-            command: echo 'Hello from Dkron'
+          examples:
+            - command: echo 'Hello from Dkron'
         status:
           type: string
           description: Status of the job
           readOnly: true
-          example: success
+          examples:
+             - success
         next:
           type: string
           description: Next execution time
@@ -517,51 +595,60 @@ components:
         Name:
           type: string
           description: Node name
-          example: dkron1
+          examples:
+            - dkron1
         Addr:
           type: string
           description: IP Address
-          example: 192.168.1.137
+          examples:
+            - 192.168.1.137
         Port:
           type: integer
           description: Port number
-          example: 8946
+          examples:
+            - 8946
         Tags:
           type: object
           additionalProperties:
             type: string
           description: Tags asociated with this node
-          example:
-            rpc_addr: 192.168.1.137:6868
-            server: "true"
-            version": 1.0.0
+          examples:
+            - rpc_addr: 192.168.1.137:6868
+              server: "true"
+              version": 1.0.0
         Status:
           type: integer
           description: 'The serf status of the node see: https://godoc.org/github.com/hashicorp/serf/serf#MemberStatus'
-          example: 1
+          examples:
+            - 1
         ProtocolMin:
           type: integer
           description: Serf protocol minimum version this node can understand or speak
-          example: 5
+          examples:
+            - 5
         ProtocolMax:
           type: integer
           description: Serf protocol maximum version this node can understand or speak
-          example: 2
+          examples:
+            - 2
         ProtocolCur:
           type: integer
           description: Serf protocol current version this node can understand or speak
-          example: 2
+          examples:
+            - 2
         DelegateMin:
           type: integer
           description: Serf delegate protocol minimum version this node can understand or speak
         DelegateMax:
           type: integer
           description: Serf delegate protocol maximum version this node can understand or speak
-          example: 5
+          examples:
+            - 5
         DelegateCur:
           type: integer
           description: Serf delegate protocol current version this node can understand or speak
-          example: 4
+          examples:
+            - 4
       description: A member represents a cluster member node.
     execution:
       type: object
@@ -569,7 +656,8 @@ components:
         job_name:
           type: string
           description: job name
-          example: job_1
+          examples:
+            - job_1
         started_at:
           type: string
           description: start time of the execution
@@ -584,11 +672,13 @@ components:
         output:
           type: string
           description: partial output of the command execution
-          example: Hello from Dkron
+          examples:
+            - Hello from Dkron
         node_name:
           type: string
           description: name of the node that executed the command
-          example: dkron1
+          examples:
+            - dkron1
       description: An execution represents a timed job run.
     processors:
       type: object
@@ -597,13 +687,14 @@ components:
         additionalProperties:
           type: string
       description: Processor plugins used to process executions results of this job
-      example:
-        files:
-          forward: true
+      examples: 
+        - files:
+            forward: true
     restore:
       type: string
       description: Each job restore result.
-      example: success create job_1
+      examples:
+        - success create job_1
     restore_body:
       required:
       - file
@@ -613,3 +704,16 @@ components:
           type: string
           description: Json file that needs to be restored.
           format: binary
+    policy:
+      type: object
+      properties:
+        Name:
+          type: string
+          description: Policy name
+          examples:
+            - read_all
+        Rules:
+          type: string
+          description: Policy rules
+          examples:
+            - PolicyJSON

@@ -48,7 +48,6 @@ func NewTransport(a *Agent, log *logrus.Entry) *HTTPTransport {
 
 func (h *HTTPTransport) ServeHTTP() {
 	h.Engine = gin.Default()
-	h.Engine.HTMLRender = CreateMyRender(h.logger)
 	h.Engine.Use(h.Options)
 
 	rootPath := h.Engine.Group("/")
@@ -66,8 +65,6 @@ func (h *HTTPTransport) ServeHTTP() {
 	h.APIRoutes(rootPath)
 	if h.agent.config.UI {
 		h.UI(rootPath)
-	} else {
-		h.agent.DashboardRoutes(rootPath)
 	}
 
 	h.logger.WithFields(logrus.Fields{

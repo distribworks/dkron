@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/distribworks/dkron/v3/dkron"
+	"github.com/distribworks/dkron/v4/dkron"
 	"github.com/hashicorp/serf/serf"
 	"github.com/spf13/cobra"
 )

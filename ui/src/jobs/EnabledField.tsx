@@ -1,10 +1,12 @@
-import * as React from "react";
-import SuccessIcon from '@material-ui/icons/CheckCircle';
-import FailedIcon from '@material-ui/icons/Cancel';
-import { Tooltip } from '@material-ui/core';
+import SuccessIcon from '@mui/icons-material/CheckCircle';
+import FailedIcon from '@mui/icons-material/Cancel';
+import { Tooltip } from '@mui/material';
+import { useRecordContext } from 'react-admin';
 
-const EnabledField = (props: any) => {
-    if (props.record[props.source] === true) {
+const EnabledField = () => {
+    const record = useRecordContext();
+
+    if (record.disabled) {
         return <Tooltip title="Disabled"><FailedIcon htmlColor="red" /></Tooltip>
     } else {
         return <Tooltip title="Enabled"><SuccessIcon htmlColor="green" /></Tooltip>

@@ -9,8 +9,8 @@ import (
 	"time"
 
 	metrics "github.com/armon/go-metrics"
-	"github.com/distribworks/dkron/v3/plugin"
-	proto "github.com/distribworks/dkron/v3/plugin/types"
+	"github.com/distribworks/dkron/v4/plugin"
+	proto "github.com/distribworks/dkron/v4/plugin/types"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hashicorp/raft"
 	"github.com/hashicorp/serf/serf"
@@ -217,14 +217,19 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *proto.E
 		// Keep all execution properties intact except the last output
 		execution.Output = ""
 
+		eb := execution.CalculateExponentialBackoff()
 		grpcs.logger.WithFields(logrus.Fields{
 			"attempt":   execution.Attempt,
 			"execution": execution,
+			"backoff":   eb,
 		}).Debug("grpc: Retrying execution")
+
+		time.Sleep(eb)
 
 		if _, err := grpcs.agent.Run(job.Name, execution); err != nil {
 			return nil, err
 		}
+
 		return &proto.ExecutionDoneResponse{
 			From:    grpcs.agent.config.NodeName,
 			Payload: []byte("retry"),
