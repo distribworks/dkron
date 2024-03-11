@@ -51,7 +51,7 @@ require (
 	github.com/tidwall/buntdb v1.2.7
 	github.com/ugorji/go v1.2.7 // indirect
 	golang.org/x/net v0.21.0
-	google.golang.org/grpc v1.61.0
+	google.golang.org/grpc v1.62.1
 	google.golang.org/protobuf v1.32.0
 )
 
