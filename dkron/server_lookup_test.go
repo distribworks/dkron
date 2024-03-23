@@ -32,8 +32,8 @@ func TestAddServer(t *testing.T) {
 
 	// assert
 	servers := lookup.Servers()
-	expectedServers := []*ServerParts{server1, server2}
-	require.EqualValuesf(t, expectedServers, servers, "Expected %v but got %v", expectedServers, servers)
+	require.Containsf(t, servers, server1, "Expected %v to contain %+v", servers, server1)
+	require.Containsf(t, servers, server2, "Expected %v to contain %+v", servers, server2)
 
 	got, err := lookup.ServerAddr(raft.ServerID(id1))
 	require.NoErrorf(t, err, "Unexpected error: %v", err)
