@@ -3,7 +3,9 @@ syntax = "proto3";
 
 package types;
 option go_package = "github.com/distribworks/dkron/types";
+import "google/protobuf/empty.proto";
 
+// Policy is a policy definition
 message Policy {
     string name = 1;
     string rules = 2;
@@ -25,7 +27,59 @@ message ACLPolicyDeleteResponse {
     bool success = 1;
 }
 
+message ACLPolicyInfoRequest {
+    string name = 1;
+}
+
+message ACLPolicyInfoResponse {
+    Policy policy = 1;
+}
+
+message ACLPolicyListResponse {
+    repeated Policy policies = 1;
+}
+
+// Token is a token string
+message Token {
+    string token = 1;
+}
+
+message ACLTokenUpsertRequest {
+    Token token = 1;
+}
+
+message ACLTokenUpsertResponse {
+    bool success = 1;
+}
+
+message ACLTokenDeleteRequest {
+    string token = 1;
+}
+
+message ACLTokenDeleteResponse {
+    bool success = 1;
+}
+
+message ACLTokenInfoRequest {
+    string token = 1;
+}
+
+message ACLTokenInfoResponse {
+    Token token = 1;
+}
+
+message ACLTokenListResponse {
+    repeated Token tokens = 1;
+}
+
+// DkronPro is the DkronPro service definition
 service DkronPro {
     rpc ACLPolicyUpsert (ACLPolicyUpsertRequest) returns (ACLPolicyUpsertResponse);
     rpc ACLPolicyDelete (ACLPolicyDeleteRequest) returns (ACLPolicyDeleteResponse);
+    rpc ACLPolicyInfo (ACLPolicyInfoRequest) returns (ACLPolicyInfoResponse);
+    rpc ACLPolicyList (google.protobuf.Empty) returns (ACLPolicyListResponse);
+    rpc ACLTokenUpsert (ACLTokenUpsertRequest) returns (ACLTokenUpsertResponse);
+    rpc ACLTokenDelete (ACLTokenDeleteRequest) returns (ACLTokenDeleteResponse);
+    rpc ACLTokenInfo (ACLTokenInfoRequest) returns (ACLTokenInfoResponse);
+    rpc ACLTokenList (google.protobuf.Empty) returns (ACLTokenListResponse);
 }
