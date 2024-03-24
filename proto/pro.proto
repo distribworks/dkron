@@ -4,6 +4,7 @@ syntax = "proto3";
 package types;
 option go_package = "github.com/distribworks/dkron/types";
 import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
 
 // Policy is a policy definition
 message Policy {
@@ -41,7 +42,13 @@ message ACLPolicyListResponse {
 
 // Token is a token string
 message Token {
-    string token = 1;
+    string accesor = 1;
+    string secret = 2;
+    string name = 3;
+    string type = 4;
+    google.protobuf.Timestamp create_time = 5;
+    google.protobuf.Timestamp expire_time = 6; 
+    repeated Policy policies = 7;
 }
 
 message ACLTokenUpsertRequest {
