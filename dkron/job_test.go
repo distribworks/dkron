@@ -192,6 +192,18 @@ func Test_isRunnable(t *testing.T) {
 	}
 }
 
+func Test_scheduleHash(t *testing.T) {
+	job := &Job{
+		Name: "test_job",
+	}
+	job.Schedule = "0 0 ~ * * *"
+	assert.Equal(t, "0 0 18 * * *", job.scheduleHash())
+	job.Schedule = "TZ=Europe/Madrid 0 0 1 * ~ *"
+	assert.Equal(t, "TZ=Europe/Madrid 0 0 1 * 7 *", job.scheduleHash())
+	job.Schedule = "TZ=Europe/Madrid @at something with ~"
+	assert.Equal(t, "TZ=Europe/Madrid @at something with ~", job.scheduleHash())
+}
+
 type gRPCClientMock struct {
 }
 
