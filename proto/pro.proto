@@ -42,7 +42,7 @@ message ACLPolicyListResponse {
 
 // Token is a token string
 message Token {
-    string accesor = 1;
+    string accessor = 1;
     string secret = 2;
     string name = 3;
     string type = 4;
