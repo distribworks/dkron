@@ -53,7 +53,7 @@ message Token {
     TokenType type = 4;
     google.protobuf.Timestamp create_time = 5;
     google.protobuf.Timestamp expire_time = 6; 
-    repeated Policy policies = 7;
+    repeated string policies = 7;
 }
 
 message ACLTokenUpsertRequest {
