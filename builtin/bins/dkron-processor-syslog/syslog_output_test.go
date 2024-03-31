@@ -6,11 +6,11 @@ import (
 	"github.com/distribworks/dkron/v4/plugin"
 	"github.com/distribworks/dkron/v4/types"
 	"github.com/stretchr/testify/assert"
-	"google.golang.org/protobuf/ptypes"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func TestProcess(t *testing.T) {
-	now := ptypes.TimestampNow()
+	now := timestamppb.Now()
 
 	pa := &plugin.ProcessorArgs{
 		Execution: types.Execution{
