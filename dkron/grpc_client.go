@@ -6,11 +6,11 @@ import (
 	"time"
 
 	metrics "github.com/armon/go-metrics"
-	proto "github.com/distribworks/dkron/v4/types"
-	"github.com/golang/protobuf/ptypes/empty"
+	"github.com/distribworks/dkron/v4/types"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -24,11 +24,11 @@ type DkronGRPCClient interface {
 	DeleteJob(string) (*Job, error)
 	Leave(string) error
 	RunJob(string) (*Job, error)
-	RaftGetConfiguration(string) (*proto.RaftGetConfigurationResponse, error)
+	RaftGetConfiguration(string) (*types.RaftGetConfigurationResponse, error)
 	RaftRemovePeerByID(string, string) error
-	GetActiveExecutions(string) ([]*proto.Execution, error)
-	SetExecution(execution *proto.Execution) error
-	AgentRun(addr string, job *proto.Job, execution *proto.Execution) error
+	GetActiveExecutions(string) ([]*types.Execution, error)
+	SetExecution(execution *types.Execution) error
+	AgentRun(addr string, job *types.Job, execution *types.Execution) error
 }
 
 // GRPCClient is the local implementation of the DkronGRPCClient interface.
@@ -80,8 +80,8 @@ func (grpcc *GRPCClient) ExecutionDone(addr string, execution *Execution) error 
 	}
 	defer conn.Close()
 
-	d := proto.NewDkronClient(conn)
-	edr, err := d.ExecutionDone(context.Background(), &proto.ExecutionDoneRequest{Execution: execution.ToProto()})
+	d := types.NewDkronClient(conn)
+	edr, err := d.ExecutionDone(context.Background(), &types.ExecutionDoneRequest{Execution: execution.ToProto()})
 	if err != nil {
 		if err.Error() == fmt.Sprintf("rpc error: code = Unknown desc = %s", ErrNotLeader.Error()) {
 			grpcc.logger.Info("grpc: ExecutionDone forwarded to the leader")
@@ -120,8 +120,8 @@ func (grpcc *GRPCClient) GetJob(addr, jobName string) (*Job, error) {
 	defer conn.Close()
 
 	// Synchronous call
-	d := proto.NewDkronClient(conn)
-	gjr, err := d.GetJob(context.Background(), &proto.GetJobRequest{JobName: jobName})
+	d := types.NewDkronClient(conn)
+	gjr, err := d.GetJob(context.Background(), &types.GetJobRequest{JobName: jobName})
 	if err != nil {
 		grpcc.logger.WithError(err).WithFields(logrus.Fields{
 			"method":      "GetJob",
@@ -149,8 +149,8 @@ func (grpcc *GRPCClient) Leave(addr string) error {
 	defer conn.Close()
 
 	// Synchronous call
-	d := proto.NewDkronClient(conn)
-	_, err = d.Leave(context.Background(), &empty.Empty{})
+	d := types.NewDkronClient(conn)
+	_, err = d.Leave(context.Background(), &emptypb.Empty{})
 	if err != nil {
 		grpcc.logger.WithError(err).WithFields(logrus.Fields{
 			"method":      "Leave",
@@ -180,8 +180,8 @@ func (grpcc *GRPCClient) SetJob(job *Job) error {
 	defer conn.Close()
 
 	// Synchronous call
-	d := proto.NewDkronClient(conn)
-	_, err = d.SetJob(context.Background(), &proto.SetJobRequest{
+	d := types.NewDkronClient(conn)
+	_, err = d.SetJob(context.Background(), &types.SetJobRequest{
 		Job: job.ToProto(),
 	})
 	if err != nil {
@@ -212,8 +212,8 @@ func (grpcc *GRPCClient) DeleteJob(jobName string) (*Job, error) {
 	defer conn.Close()
 
 	// Synchronous call
-	d := proto.NewDkronClient(conn)
-	res, err := d.DeleteJob(context.Background(), &proto.DeleteJobRequest{
+	d := types.NewDkronClient(conn)
+	res, err := d.DeleteJob(context.Background(), &types.DeleteJobRequest{
 		JobName: jobName,
 	})
 	if err != nil {
@@ -247,8 +247,8 @@ func (grpcc *GRPCClient) RunJob(jobName string) (*Job, error) {
 	defer conn.Close()
 
 	// Synchronous call
-	d := proto.NewDkronClient(conn)
-	res, err := d.RunJob(context.Background(), &proto.RunJobRequest{
+	d := types.NewDkronClient(conn)
+	res, err := d.RunJob(context.Background(), &types.RunJobRequest{
 		JobName: jobName,
 	})
 	if err != nil {
@@ -265,7 +265,7 @@ func (grpcc *GRPCClient) RunJob(jobName string) (*Job, error) {
 }
 
 // RaftGetConfiguration get the current raft configuration of peers
-func (grpcc *GRPCClient) RaftGetConfiguration(addr string) (*proto.RaftGetConfigurationResponse, error) {
+func (grpcc *GRPCClient) RaftGetConfiguration(addr string) (*types.RaftGetConfigurationResponse, error) {
 	var conn *grpc.ClientConn
 
 	// Initiate a connection with the server
@@ -280,8 +280,8 @@ func (grpcc *GRPCClient) RaftGetConfiguration(addr string) (*proto.RaftGetConfig
 	defer conn.Close()
 
 	// Synchronous call
-	d := proto.NewDkronClient(conn)
-	res, err := d.RaftGetConfiguration(context.Background(), &empty.Empty{})
+	d := types.NewDkronClient(conn)
+	res, err := d.RaftGetConfiguration(context.Background(), &emptypb.Empty{})
 	if err != nil {
 		grpcc.logger.WithError(err).WithFields(logrus.Fields{
 			"method":      "RaftGetConfiguration",
@@ -309,9 +309,9 @@ func (grpcc *GRPCClient) RaftRemovePeerByID(addr, peerID string) error {
 	defer conn.Close()
 
 	// Synchronous call
-	d := proto.NewDkronClient(conn)
+	d := types.NewDkronClient(conn)
 	_, err = d.RaftRemovePeerByID(context.Background(),
-		&proto.RaftRemovePeerByIDRequest{Id: peerID},
+		&types.RaftRemovePeerByIDRequest{Id: peerID},
 	)
 	if err != nil {
 		grpcc.logger.WithError(err).WithFields(logrus.Fields{
@@ -325,7 +325,7 @@ func (grpcc *GRPCClient) RaftRemovePeerByID(addr, peerID string) error {
 }
 
 // GetActiveExecutions returns the active executions of a server node
-func (grpcc *GRPCClient) GetActiveExecutions(addr string) ([]*proto.Execution, error) {
+func (grpcc *GRPCClient) GetActiveExecutions(addr string) ([]*types.Execution, error) {
 	var conn *grpc.ClientConn
 
 	// Initiate a connection with the server
@@ -340,8 +340,8 @@ func (grpcc *GRPCClient) GetActiveExecutions(addr string) ([]*proto.Execution, e
 	defer conn.Close()
 
 	// Synchronous call
-	d := proto.NewDkronClient(conn)
-	gaer, err := d.GetActiveExecutions(context.Background(), &empty.Empty{})
+	d := types.NewDkronClient(conn)
+	gaer, err := d.GetActiveExecutions(context.Background(), &emptypb.Empty{})
 	if err != nil {
 		grpcc.logger.WithError(err).WithFields(logrus.Fields{
 			"method":      "GetActiveExecutions",
@@ -354,7 +354,7 @@ func (grpcc *GRPCClient) GetActiveExecutions(addr string) ([]*proto.Execution, e
 }
 
 // SetExecution calls the leader passing the execution
-func (grpcc *GRPCClient) SetExecution(execution *proto.Execution) error {
+func (grpcc *GRPCClient) SetExecution(execution *types.Execution) error {
 	var conn *grpc.ClientConn
 
 	addr := grpcc.agent.raft.Leader()
@@ -371,7 +371,7 @@ func (grpcc *GRPCClient) SetExecution(execution *proto.Execution) error {
 	defer conn.Close()
 
 	// Synchronous call
-	d := proto.NewDkronClient(conn)
+	d := types.NewDkronClient(conn)
 	_, err = d.SetExecution(context.Background(), execution)
 	if err != nil {
 		grpcc.logger.WithError(err).WithFields(logrus.Fields{
@@ -384,7 +384,7 @@ func (grpcc *GRPCClient) SetExecution(execution *proto.Execution) error {
 }
 
 // AgentRun runs a job in the given agent
-func (grpcc *GRPCClient) AgentRun(addr string, job *proto.Job, execution *proto.Execution) error {
+func (grpcc *GRPCClient) AgentRun(addr string, job *types.Job, execution *types.Execution) error {
 	defer metrics.MeasureSince([]string{"grpc_client", "agent_run"}, time.Now())
 	var conn *grpc.ClientConn
 
@@ -400,8 +400,8 @@ func (grpcc *GRPCClient) AgentRun(addr string, job *proto.Job, execution *proto.
 	defer conn.Close()
 
 	// Streaming call
-	a := proto.NewAgentClient(conn)
-	stream, err := a.AgentRun(context.Background(), &proto.AgentRunRequest{
+	a := types.NewAgentClient(conn)
+	stream, err := a.AgentRun(context.Background(), &types.AgentRunRequest{
 		Job:       job,
 		Execution: execution,
 	})
