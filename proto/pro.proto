@@ -40,12 +40,17 @@ message ACLPolicyListResponse {
     repeated Policy policies = 1;
 }
 
-// Token is a token string
+enum TokenType {
+    management = 0;
+    client = 1;
+}
+
+// Token is the representation of a token
 message Token {
     string accessor = 1;
     string secret = 2;
     string name = 3;
-    string type = 4;
+    TokenType type = 4;
     google.protobuf.Timestamp create_time = 5;
     google.protobuf.Timestamp expire_time = 6; 
     repeated Policy policies = 7;
