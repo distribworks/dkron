@@ -65,7 +65,7 @@ message ACLTokenUpsertResponse {
 }
 
 message ACLTokenDeleteRequest {
-    string token = 1;
+    string accessor = 1;
 }
 
 message ACLTokenDeleteResponse {
@@ -73,7 +73,7 @@ message ACLTokenDeleteResponse {
 }
 
 message ACLTokenInfoRequest {
-    string token = 1;
+    string accessor = 1;
 }
 
 message ACLTokenInfoResponse {

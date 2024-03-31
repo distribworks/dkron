@@ -42,7 +42,8 @@ Example using an existing taskdef
     "cluster": "default",
     "env": "ENVIRONMENT=variable",
     "service": "mycontainer",
-    "overrides": "echo,\"Hello from dkron\""
+    "overrides": "echo,\"Hello from dkron\"",
+    "propagateTags": "TASK_DEFINITION"
   }
 }
 ```
