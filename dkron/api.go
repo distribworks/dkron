@@ -232,11 +232,17 @@ func (h *HTTPTransport) jobCreateOrUpdateHandler(c *gin.Context) {
 		Concurrency: ConcurrencyAllow,
 	}
 
-	// Parse values from JSON
-	if err := c.BindJSON(&job); err != nil {
-		_, _ = c.Writer.WriteString(fmt.Sprintf("Unable to parse payload: %s.", err))
-		h.logger.Error(err)
-		return
+	// Check if the job is already in the context set by the middleware
+	val, exists := c.Get("job")
+	if exists {
+		job = val.(Job)
+	} else {
+		// Parse values from JSON
+		if err := c.BindJSON(&job); err != nil {
+			_, _ = c.Writer.WriteString(fmt.Sprintf("Unable to parse payload: %s.", err))
+			h.logger.Error(err)
+			return
+		}
 	}
 
 	// Validate job
