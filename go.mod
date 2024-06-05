@@ -50,7 +50,7 @@ require (
 	github.com/tencentcloud/tencentcloud-sdk-go v3.0.83+incompatible // indirect
 	github.com/tidwall/buntdb v1.2.7
 	github.com/ugorji/go v1.2.7 // indirect
-	golang.org/x/net v0.22.0
+	golang.org/x/net v0.23.0
 	google.golang.org/grpc v1.62.1
 	google.golang.org/protobuf v1.33.1-0.20240408130810-98873a205002
 )
