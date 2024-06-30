@@ -8,7 +8,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/distribworks/dkron/v3/dkron"
+	"github.com/distribworks/dkron/v4/dkron"
 	"github.com/hashicorp/go-plugin"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -29,6 +29,9 @@ var agentCmd = &cobra.Command{
 	Short: "Start a dkron agent",
 	Long: `Start a dkron agent that schedules jobs, listens for executions and runs executors.
 It also runs a web UI.`,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return initConfig()
+	},
 	// Run will execute the main functions of the agent command.
 	// This includes the main eventloop and starting the server if enabled.
 	//
@@ -42,8 +45,9 @@ It also runs a web UI.`,
 func init() {
 	dkronCmd.AddCommand(agentCmd)
 
+	agentCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file path")
 	agentCmd.Flags().AddFlagSet(dkron.ConfigFlagSet())
-	viper.BindPFlags(agentCmd.Flags())
+	_ = viper.BindPFlags(agentCmd.Flags())
 }
 
 func agentRun(args ...string) error {

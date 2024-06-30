@@ -4,8 +4,8 @@ import (
 	"embed"
 	"fmt"
 	"html/template"
+	"io"
 	"io/fs"
-	"io/ioutil"
 	"net/http"
 	"strings"
 
@@ -18,7 +18,7 @@ const uiPathPrefix = "ui/"
 var uiDist embed.FS
 
 // UI registers UI specific routes on the gin RouterGroup.
-func (h *HTTPTransport) UI(r *gin.RouterGroup) {
+func (h *HTTPTransport) UI(r *gin.RouterGroup, uifs embed.FS) {
 	// If we are visiting from a browser redirect to the dashboard
 	r.GET("/", func(c *gin.Context) {
 		switch c.NegotiateFormat(gin.MIMEHTML) {
@@ -31,7 +31,7 @@ func (h *HTTPTransport) UI(r *gin.RouterGroup) {
 
 	ui := r.Group("/" + uiPathPrefix)
 
-	assets, err := fs.Sub(uiDist, "ui-dist")
+	assets, err := fs.Sub(uifs, "ui-dist")
 	if err != nil {
 		h.logger.Fatal(err)
 	}
@@ -39,7 +39,7 @@ func (h *HTTPTransport) UI(r *gin.RouterGroup) {
 	if err != nil {
 		h.logger.Fatal(err)
 	}
-	b, err := ioutil.ReadAll(a)
+	b, err := io.ReadAll(a)
 	if err != nil {
 		h.logger.Fatal(err)
 	}

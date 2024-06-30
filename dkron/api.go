@@ -9,11 +9,11 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/distribworks/dkron/v4/types"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/expvar"
 	"github.com/gin-gonic/gin"
 	"github.com/hashicorp/go-uuid"
-	"github.com/hashicorp/serf/serf"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 	"github.com/tidwall/buntdb"
@@ -48,7 +48,6 @@ func NewTransport(a *Agent, log *logrus.Entry) *HTTPTransport {
 
 func (h *HTTPTransport) ServeHTTP() {
 	h.Engine = gin.Default()
-	h.Engine.HTMLRender = CreateMyRender(h.logger)
 	h.Engine.Use(h.Options)
 
 	rootPath := h.Engine.Group("/")
@@ -65,9 +64,7 @@ func (h *HTTPTransport) ServeHTTP() {
 
 	h.APIRoutes(rootPath)
 	if h.agent.config.UI {
-		h.UI(rootPath)
-	} else {
-		h.agent.DashboardRoutes(rootPath)
+		h.UI(rootPath, uiDist)
 	}
 
 	h.logger.WithFields(logrus.Fields{
@@ -235,11 +232,17 @@ func (h *HTTPTransport) jobCreateOrUpdateHandler(c *gin.Context) {
 		Concurrency: ConcurrencyAllow,
 	}
 
-	// Parse values from JSON
-	if err := c.BindJSON(&job); err != nil {
-		_, _ = c.Writer.WriteString(fmt.Sprintf("Unable to parse payload: %s.", err))
-		h.logger.Error(err)
-		return
+	// Check if the job is already in the context set by the middleware
+	val, exists := c.Get("job")
+	if exists {
+		job = val.(Job)
+	} else {
+		// Parse values from JSON
+		if err := c.BindJSON(&job); err != nil {
+			_, _ = c.Writer.WriteString(fmt.Sprintf("Unable to parse payload: %s.", err))
+			h.logger.Error(err)
+			return
+		}
 	}
 
 	// Validate job
@@ -423,18 +426,11 @@ func (h *HTTPTransport) executionHandler(c *gin.Context) {
 	}
 }
 
-type MId struct {
-	serf.Member
-
-	Id         string `json:"id"`
-	StatusText string `json:"statusText"`
-}
-
 func (h *HTTPTransport) membersHandler(c *gin.Context) {
-	mems := []*MId{}
+	mems := []*types.Member{}
 	for _, m := range h.agent.serf.Members() {
 		id, _ := uuid.GenerateUUID()
-		mid := &MId{m, id, m.Status.String()}
+		mid := &types.Member{m, id, m.Status.String()}
 		mems = append(mems, mid)
 	}
 	c.Header("X-Total-Count", strconv.Itoa(len(mems)))

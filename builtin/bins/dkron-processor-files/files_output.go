@@ -6,8 +6,8 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/distribworks/dkron/v3/plugin"
-	"github.com/distribworks/dkron/v3/plugin/types"
+	"github.com/distribworks/dkron/v4/plugin"
+	"github.com/distribworks/dkron/v4/types"
 	log "github.com/sirupsen/logrus"
 )
 

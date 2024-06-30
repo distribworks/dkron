@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FC } from 'react';
-import Icon from '@material-ui/icons/DeviceHub';
+import Icon from '@mui/icons-material/DeviceHub';
 
 import CardWithIcon from './CardWithIcon';
 

@@ -3,6 +3,7 @@ package dkron
 import (
 	"fmt"
 	"net"
+	"strings"
 	"sync"
 	"time"
 
@@ -284,17 +285,12 @@ func (a *Agent) addRaftPeer(m serf.Member, parts *ServerParts) error {
 			if server.Address == raft.ServerAddress(addr) && server.ID == raft.ServerID(parts.ID) {
 				return nil
 			}
-			future := a.raft.RemoveServer(server.ID, 0, 0)
 			if server.Address == raft.ServerAddress(addr) {
+				future := a.raft.RemoveServer(server.ID, 0, 0)
 				if err := future.Error(); err != nil {
 					return fmt.Errorf("error removing server with duplicate address %q: %s", server.Address, err)
 				}
 				a.logger.WithField("server", server.Address).Info("dkron: removed server with duplicate address")
-			} else {
-				if err := future.Error(); err != nil {
-					return fmt.Errorf("error removing server with duplicate ID %q: %s", server.ID, err)
-				}
-				a.logger.WithField("server", server.ID).Info("dkron: removed server with duplicate ID")
 			}
 		}
 	}
@@ -315,6 +311,15 @@ func (a *Agent) addRaftPeer(m serf.Member, parts *ServerParts) error {
 // removeRaftPeer is used to remove a Raft peer when a dkron server leaves
 // or is reaped
 func (a *Agent) removeRaftPeer(m serf.Member, parts *ServerParts) error {
+
+	// Do not remove ourself. This can only happen if the current leader
+	// is leaving. Instead, we should allow a follower to take-over and
+	// deregister us later.
+	if strings.EqualFold(m.Name, a.config.NodeName) {
+		a.logger.Warn("removing self should be done by follower", "name", a.config.NodeName)
+		return nil
+	}
+
 	// See if it's already in the configuration. It's harmless to re-remove it
 	// but we want to avoid doing that if possible to prevent useless Raft
 	// log entries.

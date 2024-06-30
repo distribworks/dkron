@@ -24,6 +24,13 @@ jobs:
             TAG=${GITHUB_REF#refs/tags/}
             echo ::set-output name=tag_name::${TAG}
 
+      - name: Clean up
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "/usr/local/share/boost"
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
 

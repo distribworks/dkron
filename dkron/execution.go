@@ -2,12 +2,15 @@ package dkron
 
 import (
 	"fmt"
+	"math"
 	"strconv"
 	"time"
 
-	proto "github.com/distribworks/dkron/v3/plugin/types"
+	proto "github.com/distribworks/dkron/v4/types"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
+
+const defaultRetryInterval = 500 * time.Millisecond
 
 // Execution type holds all of the details of a specific Execution.
 type Execution struct {
@@ -90,4 +93,14 @@ func (e *Execution) Key() string {
 // GetGroup is the getter for the execution group.
 func (e *Execution) GetGroup() string {
 	return strconv.FormatInt(e.Group, 10)
+}
+
+func (e *Execution) CalculateExponentialBackoff() time.Duration {
+	now := time.Now()
+	if now.Before(e.StartedAt) {
+		return 0
+	}
+	diff := now.Sub(e.StartedAt)
+	backoff := math.Log2(float64(diff/defaultRetryInterval)) + float64(e.Attempt)
+	return time.Duration(backoff) * defaultRetryInterval
 }

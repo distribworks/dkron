@@ -7,8 +7,8 @@ import (
 	"github.com/armon/circbuf"
 	"github.com/nats-io/nats.go"
 
-	dkplugin "github.com/distribworks/dkron/v3/plugin"
-	dktypes "github.com/distribworks/dkron/v3/plugin/types"
+	dkplugin "github.com/distribworks/dkron/v4/plugin"
+	dktypes "github.com/distribworks/dkron/v4/types"
 )
 
 const (
@@ -24,13 +24,14 @@ type Nats struct {
 
 // Execute Process method of the plugin
 // "executor": "nats",
-// "executor_config": {
-//     "url": "tls://nats.demo.io:4443", // nats server url
-//     "message": "",
-//     "subject": "Subject",
-//     "userName":"test@hbh.dfg",
-//     "password":"dfdffs"
-// }
+//
+//	"executor_config": {
+//	    "url": "tls://nats.demo.io:4443", // nats server url
+//	    "message": "",
+//	    "subject": "Subject",
+//	    "userName":"test@hbh.dfg",
+//	    "password":"dfdffs"
+//	}
 func (s *Nats) Execute(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelper) (*dktypes.ExecuteResponse, error) {
 
 	out, err := s.ExecuteImpl(args)
@@ -73,7 +74,7 @@ func (s *Nats) ExecuteImpl(args *dktypes.ExecuteRequest) ([]byte, error) {
 	if debug {
 		log.Printf("request  %#v\n\n", nc)
 	}
-	
+
 	if nc.IsConnected() {
 		defer nc.Flush()
 		defer nc.Close()

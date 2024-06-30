@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/distribworks/dkron/v3/plugin"
+	"github.com/distribworks/dkron/v4/plugin"
 )
 
 func main() {
