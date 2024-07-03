@@ -32,7 +32,7 @@ scrape_configs:
   - job_name: "dkron_metrics"
     # metrics_path defaults to '/metrics'
     static_configs:
-      - targets: ["localhost:6080"]
+      - targets: ["localhost:8080"]
 ```
 
 ## Metrics
