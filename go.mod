@@ -50,8 +50,8 @@ require (
 	github.com/tencentcloud/tencentcloud-sdk-go v3.0.83+incompatible // indirect
 	github.com/tidwall/buntdb v1.2.7
 	golang.org/x/net v0.26.0
-	google.golang.org/grpc v1.64.0
-	google.golang.org/protobuf v1.34.0
+	google.golang.org/grpc v1.65.0
+	google.golang.org/protobuf v1.34.1
 )
 
 go 1.16
