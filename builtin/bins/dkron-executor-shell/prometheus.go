@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"strconv"
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
@@ -40,7 +41,7 @@ var (
 		Name:      "execution_done_count",
 		Help:      "Job Execution Counter",
 	},
-		[]string{"job_name"})
+		[]string{"job_name", "exit_code"})
 
 	jobExitCode = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
@@ -60,10 +61,11 @@ func CollectProcessMetrics(jobname string, pid int, quit chan int) {
 				// log.Println("Exit code received and quit channel closed.")
 				return
 			}
+			exitCodeStr := strconv.Itoa(exitCode)
 			cpuUsage.WithLabelValues(jobname).Set(0)
 			memUsage.WithLabelValues(jobname).Set(0)
 			jobExecutionTime.WithLabelValues(jobname).Set(0)
-			jobDoneCount.WithLabelValues(jobname).Inc()
+			jobDoneCount.WithLabelValues(jobname, exitCodeStr).Inc()
 			jobExitCode.WithLabelValues(jobname).Set(float64(exitCode))
 		default:
 			cpu, mem, err := GetTotalCPUMemUsage(pid)
