@@ -53,7 +53,7 @@ day-of-week blank.
 
 Tilde ( ~ )
 
-Tilde will be replaced by a numeric value valid for the range where it is used. It allows periodically scheduled tasks to produce even load on the system. For example, scheduling multiple hourly jobs to "0 H * * * *" rather than "0 0 * * * *" will run the jobs at different minutes of every hour. It can be thought of as a random value over a range, but it actually is a hash of the job name, not a random function, so that the value remains stable for any given job. 
+Tilde will be replaced by a numeric value valid for the range where it is used. It allows periodically scheduled tasks to produce even load on the system. For example, scheduling multiple hourly jobs to "0 ~ * * * *" rather than "0 0 * * * *" will run the jobs at different minutes of every hour. It can be thought of as a random value over a range, but it actually is a hash of the job name, not a random function, so that the value remains stable for any given job. 
 
 ### Predefined schedules
 
