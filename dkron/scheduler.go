@@ -159,7 +159,7 @@ func (s *Scheduler) AddJob(job *Job) error {
 	// If Timezone is set on the job, and not explicitly in its schedule,
 	// AND its not a descriptor (that don't support timezones), add the
 	// timezone to the schedule so robfig/cron knows about it.
-	schedule := job.Schedule
+	schedule := job.scheduleHash()
 	if job.Timezone != "" &&
 		!strings.HasPrefix(schedule, "@") &&
 		!strings.HasPrefix(schedule, "TZ=") &&

@@ -9,12 +9,12 @@ A cron expression represents a set of times, using 6 space-separated fields.
 
 	Field name   | Mandatory? | Allowed values  | Allowed special characters
 	----------   | ---------- | --------------  | --------------------------
-	Seconds      | Yes        | 0-59            | * / , -
-	Minutes      | Yes        | 0-59            | * / , -
-	Hours        | Yes        | 0-23            | * / , -
-	Day of month | Yes        | 1-31            | * / , - ?
-	Month        | Yes        | 1-12 or JAN-DEC | * / , -
-	Day of week  | Yes        | 0-6 or SUN-SAT  | * / , - ?
+	Seconds      | Yes        | 0-59            | * / , - ~
+	Minutes      | Yes        | 0-59            | * / , - ~
+	Hours        | Yes        | 0-23            | * / , - ~
+	Day of month | Yes        | 1-31            | * / , - ? ~
+	Month        | Yes        | 1-12 or JAN-DEC | * / , - ~
+	Day of week  | Yes        | 0-6 or SUN-SAT  | * / , - ? ~
 
 Note: Month and Day-of-week field values are case insensitive.  "SUN", "Sun",
 and "sun" are equally accepted.
@@ -50,6 +50,10 @@ Question mark ( ? )
 
 Question mark may be used instead of '*' for leaving either day-of-month or
 day-of-week blank.
+
+Tilde ( ~ )
+
+Tilde will be replaced by a numeric value valid for the range where it is used. It allows periodically scheduled tasks to produce even load on the system. For example, scheduling multiple hourly jobs to "0 ~ * * * *" rather than "0 0 * * * *" will run the jobs at different minutes of every hour. It can be thought of as a random value over a range, but it actually is a hash of the job name, not a random function, so that the value remains stable for any given job. 
 
 ### Predefined schedules
 
