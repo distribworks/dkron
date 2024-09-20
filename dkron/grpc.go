@@ -8,10 +8,10 @@ import (
 	"strings"
 	"time"
 
-	metrics "github.com/armon/go-metrics"
 	"github.com/distribworks/dkron/v3/plugin"
 	proto "github.com/distribworks/dkron/v3/plugin/types"
 	"github.com/golang/protobuf/ptypes/empty"
+	metrics "github.com/hashicorp/go-metrics"
 	"github.com/hashicorp/raft"
 	"github.com/hashicorp/serf/serf"
 	"github.com/sirupsen/logrus"

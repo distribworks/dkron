@@ -5,9 +5,9 @@ import (
 	"io"
 	"time"
 
-	metrics "github.com/armon/go-metrics"
 	proto "github.com/distribworks/dkron/v3/plugin/types"
 	"github.com/golang/protobuf/ptypes/empty"
+	metrics "github.com/hashicorp/go-metrics"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"

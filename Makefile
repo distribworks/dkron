@@ -89,7 +89,8 @@ plugin/types/%.pb.go: proto/%.proto
 
 ui: dkron/ui-dist
 
-main: dkron/ui-dist plugin/types/dkron.pb.go plugin/types/executor.pb.go *.go */*.go */*/*.go */*/*/*.go
+#main: dkron/ui-dist plugin/types/dkron.pb.go plugin/types/executor.pb.go *.go */*.go */*/*.go */*/*/*.go
+main: plugin/types/dkron.pb.go plugin/types/executor.pb.go *.go */*.go */*/*.go */*/*/*.go
 	GOBIN=`pwd` go install ./builtin/...
 	go mod tidy
 	go build main.go

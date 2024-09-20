@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/armon/circbuf"
-	metrics "github.com/armon/go-metrics"
 	"github.com/distribworks/dkron/v3/plugin/types"
+	metrics "github.com/hashicorp/go-metrics"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
