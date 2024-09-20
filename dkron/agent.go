@@ -15,10 +15,10 @@ import (
 	"sync"
 	"time"
 
-	metrics "github.com/armon/go-metrics"
 	"github.com/devopsfaith/krakend-usage/client"
 	"github.com/distribworks/dkron/v3/plugin"
 	proto "github.com/distribworks/dkron/v3/plugin/types"
+	metrics "github.com/hashicorp/go-metrics"
 	"github.com/hashicorp/go-uuid"
 	"github.com/hashicorp/memberlist"
 	"github.com/hashicorp/raft"

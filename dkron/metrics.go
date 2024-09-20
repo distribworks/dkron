@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/armon/go-metrics"
-	"github.com/armon/go-metrics/datadog"
-	"github.com/armon/go-metrics/prometheus"
+	"github.com/hashicorp/go-metrics"
+	"github.com/hashicorp/go-metrics/datadog"
+	"github.com/hashicorp/go-metrics/prometheus"
 )
 
 func initMetrics(a *Agent) error {

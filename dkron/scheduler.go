@@ -7,8 +7,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/armon/go-metrics"
 	"github.com/distribworks/dkron/v3/extcron"
+	"github.com/hashicorp/go-metrics"
 	"github.com/robfig/cron/v3"
 	"github.com/sirupsen/logrus"
 )
