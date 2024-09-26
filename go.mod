@@ -49,6 +49,7 @@ require (
 	github.com/stretchr/testify v1.9.0
 	github.com/tencentcloud/tencentcloud-sdk-go v3.0.83+incompatible // indirect
 	github.com/tidwall/buntdb v1.2.7
+	github.com/xdg-go/scram v1.1.2
 	golang.org/x/net v0.29.0
 	google.golang.org/grpc v1.64.0
 	google.golang.org/protobuf v1.34.2

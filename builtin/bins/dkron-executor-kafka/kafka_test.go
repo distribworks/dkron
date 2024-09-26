@@ -45,3 +45,51 @@ func TestProduceExecuteWithoutKey(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestProduceExecuteWithSASL_SHA256(t *testing.T) {
+	pa := &dktypes.ExecuteRequest{
+		JobName: "testJobWithSASL_SHA256",
+		Config: map[string]string{
+			"topic":                 "test",
+			"brokerAddress":         "testaddress",
+			"message":               "{\"hello\":11}",
+			"saslUsername":          "test",
+			"saslPassword":          "dfdffs",
+			"saslMechanism":         "sha256",
+			"tlsEnable":             "true",
+			"tlsInsecureSkipVerify": "true",
+			"debug":                 "true",
+		},
+	}
+	kafka := &Kafka{}
+	output, err := kafka.Execute(pa, nil)
+	fmt.Println(string(output.Output))
+	fmt.Println(err)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestProduceExecuteWithSASL_SHA512(t *testing.T) {
+	pa := &dktypes.ExecuteRequest{
+		JobName: "testJobWithSASL_SHA512",
+		Config: map[string]string{
+			"topic":                 "test",
+			"brokerAddress":         "testaddress",
+			"message":               "{\"hello\":11}",
+			"saslUsername":          "test",
+			"saslPassword":          "dfdffs",
+			"saslMechanism":         "sha512",
+			"tlsEnable":             "true",
+			"tlsInsecureSkipVerify": "true",
+			"debug":                 "true",
+		},
+	}
+	kafka := &Kafka{}
+	output, err := kafka.Execute(pa, nil)
+	fmt.Println(string(output.Output))
+	fmt.Println(err)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
