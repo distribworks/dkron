@@ -26,8 +26,7 @@ const LoginPage = (props: LoginFormProps) => {
     const { className } = props;
     const [loading, setLoading] = useSafeSetState(false);
 
-    const handleSubmit = e => {
-        e.preventDefault();
+    const handleSubmit = (values: FormData) => {
         setLoading(true);
         login({ token }).catch(() => {
             setLoading(false);
@@ -36,7 +35,8 @@ const LoginPage = (props: LoginFormProps) => {
     };
 
     return (
-        <Card className={LoginClasses.card}>
+        <Root>
+            <Card className={LoginClasses.card}>
                 <div className={LoginClasses.avatar}>
                     <Avatar className={LoginClasses.icon}>{avatarIcon}</Avatar>
                 </div>
@@ -74,8 +74,8 @@ const LoginPage = (props: LoginFormProps) => {
                         </Button>
                     </CardContent>
                 </StyledForm>
-        </Card>
-        
+            </Card>
+        </Root>
     );
 };
 
