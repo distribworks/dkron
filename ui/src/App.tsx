@@ -20,18 +20,24 @@ declare global {
         DKRON_FAILED_JOBS: string;
         DKRON_SUCCESSFUL_JOBS: string;
         DKRON_TOTAL_JOBS: string;
+        DKRON_ACL_ENABLED: boolean;
     }
 }
 
 const history = createHashHistory();
+let auth = () => Promise.resolve();
+if (window.DKRON_ACL_ENABLED) {
+    auth = authProvider;
+}
 
 export const App = () => <Admin
     dashboard={Dashboard}
     loginPage={LoginPage}
-    authProvider={authProvider}
+    authProvider={auth}
     dataProvider={dataProvider}
     layout={Layout}
 >
+
     <Resource name="jobs" {...jobs} />
     <Resource name="busy" options={{ label: 'Busy' }} list={BusyList} icon={PlayCircleOutlineIcon} />
     <Resource name="executions" />
