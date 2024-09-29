@@ -32,7 +32,7 @@ const EditForm = (record: any) => (
         <TextInput source="displayname" helperText="Display name of the job. If present, displayed instead of the name." />
         <TextInput source="timezone" helperText="The timezone where the cron expression will be evaluated in." />
         <TextInput source="schedule" helperText="Cron expression for the job. When to run the job." validate={required()} />
-        <TextInput source="owner" helperText="Arbitrary string indicating the owner of the job." />
+        <TextInput source="owner" helperText="Arbitrary string indicating the owner of the job." disabled />
         <TextInput source="owner_email" helperText="Email address to use for notifications."/>
         <TextInput source="parent_job" helperText="Job id of job that this job is dependent upon." />
         <BooleanInput source="ephemeral" helperText="Delete the job after the first successful execution." />
