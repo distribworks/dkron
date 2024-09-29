@@ -61,7 +61,7 @@ func (h *HTTPTransport) ServeHTTP() {
 
 	h.APIRoutes(rootPath)
 	if h.agent.config.UI {
-		h.UI(rootPath, &uiDist)
+		h.UI(rootPath, false)
 	}
 
 	h.logger.WithFields(logrus.Fields{
