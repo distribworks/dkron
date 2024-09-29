@@ -18,7 +18,11 @@ const uiPathPrefix = "ui/"
 var uiDist embed.FS
 
 // UI registers UI specific routes on the gin RouterGroup.
-func (h *HTTPTransport) UI(r *gin.RouterGroup, uifs embed.FS) {
+func (h *HTTPTransport) UI(r *gin.RouterGroup, uifs *embed.FS) {
+	if uifs == nil {
+		uifs = &uiDist
+	}
+
 	// If we are visiting from a browser redirect to the dashboard
 	r.GET("/", func(c *gin.Context) {
 		switch c.NegotiateFormat(gin.MIMEHTML) {
