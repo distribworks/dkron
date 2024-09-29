@@ -7,8 +7,10 @@ import jobs from './jobs';
 import { BusyList } from './executions/BusyList';
 import { Layout } from './layout';
 import dataProvider from './dataProvider';
+import authProvider from './authProvider';
 import Dashboard from './dashboard';
 import Settings from './settings/Settings';
+import LoginPage from './LoginPage';
 
 declare global {
     interface Window {
@@ -21,11 +23,11 @@ declare global {
     }
 }
 
-const authProvider = () => Promise.resolve();
 const history = createHashHistory();
 
 export const App = () => <Admin
     dashboard={Dashboard}
+    loginPage={LoginPage}
     authProvider={authProvider}
     dataProvider={dataProvider}
     layout={Layout}
