@@ -25,15 +25,11 @@ declare global {
 }
 
 const history = createHashHistory();
-let auth = () => Promise.resolve();
-if (window.DKRON_ACL_ENABLED) {
-    auth = authProvider;
-}
-
+ 
 export const App = () => <Admin
     dashboard={Dashboard}
     loginPage={LoginPage}
-    authProvider={auth}
+    authProvider={window.DKRON_ACL_ENABLED ? authProvider : undefined}
     dataProvider={dataProvider}
     layout={Layout}
 >
