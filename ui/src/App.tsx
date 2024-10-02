@@ -7,8 +7,10 @@ import jobs from './jobs';
 import { BusyList } from './executions/BusyList';
 import { Layout } from './layout';
 import dataProvider from './dataProvider';
+import authProvider from './authProvider';
 import Dashboard from './dashboard';
 import Settings from './settings/Settings';
+import LoginPage from './LoginPage';
 
 declare global {
     interface Window {
@@ -18,18 +20,20 @@ declare global {
         DKRON_FAILED_JOBS: string;
         DKRON_SUCCESSFUL_JOBS: string;
         DKRON_TOTAL_JOBS: string;
+        DKRON_ACL_ENABLED: boolean;
     }
 }
 
-const authProvider = () => Promise.resolve();
 const history = createHashHistory();
-
+ 
 export const App = () => <Admin
     dashboard={Dashboard}
-    authProvider={authProvider}
+    loginPage={LoginPage}
+    authProvider={window.DKRON_ACL_ENABLED ? authProvider : undefined}
     dataProvider={dataProvider}
     layout={Layout}
 >
+
     <Resource name="jobs" {...jobs} />
     <Resource name="busy" options={{ label: 'Busy' }} list={BusyList} icon={PlayCircleOutlineIcon} />
     <Resource name="executions" />

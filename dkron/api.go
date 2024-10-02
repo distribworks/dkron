@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"sort"
 	"strconv"
-	"time"
 
 	"github.com/distribworks/dkron/v4/types"
 	"github.com/gin-contrib/cors"
@@ -48,23 +47,21 @@ func NewTransport(a *Agent, log *logrus.Entry) *HTTPTransport {
 
 func (h *HTTPTransport) ServeHTTP() {
 	h.Engine = gin.Default()
-	h.Engine.Use(h.Options)
 
 	rootPath := h.Engine.Group("/")
 
-	rootPath.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},
-		AllowMethods:     []string{"*"},
-		AllowHeaders:     []string{"*"},
-		ExposeHeaders:    []string{"*"},
-		AllowCredentials: true,
-		MaxAge:           12 * time.Hour,
-	}))
+	config := cors.DefaultConfig()
+	config.AllowAllOrigins = true
+	config.AllowMethods = []string{"*"}
+	config.AllowHeaders = []string{"*"}
+	config.ExposeHeaders = []string{"*"}
+
+	rootPath.Use(cors.New(config))
 	rootPath.Use(h.MetaMiddleware())
 
 	h.APIRoutes(rootPath)
 	if h.agent.config.UI {
-		h.UI(rootPath, uiDist)
+		h.UI(rootPath, false)
 	}
 
 	h.logger.WithFields(logrus.Fields{
@@ -128,19 +125,6 @@ func (h *HTTPTransport) MetaMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Header("X-Whom", h.agent.config.NodeName)
 		c.Next()
-	}
-}
-
-func (h *HTTPTransport) Options(c *gin.Context) {
-	if c.Request.Method != "OPTIONS" {
-		c.Next()
-	} else {
-		c.Header("Allow", "HEAD,GET,POST,PUT,PATCH,DELETE,OPTIONS")
-		c.Header("Content-Type", "application/json")
-		gh := cors.Default()
-		gh(c)
-
-		c.AbortWithStatus(http.StatusOK)
 	}
 }
 
