@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNotify, useRefresh, Button, useRecordContext } from 'react-admin';
-import { apiUrl } from '../dataProvider';
+import { apiUrl, httpClient } from '../dataProvider';
 import ToggleIcon from '@mui/icons-material/Pause';
 
 const ToggleButton = () => {
@@ -10,7 +10,7 @@ const ToggleButton = () => {
     const [loading, setLoading] = useState(false);
     const handleClick = () => {
         setLoading(true);
-        fetch(`${apiUrl}/jobs/${record.id}/toggle`, { method: 'POST' })
+        httpClient(`${apiUrl}/jobs/${record.id}/toggle`, { method: 'POST' }) 
             .then(() => {
                 notify('Job toggled');
                 refresh();

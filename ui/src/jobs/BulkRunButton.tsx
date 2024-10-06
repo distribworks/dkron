@@ -6,7 +6,7 @@ import {
     useUnselectAll,
     useRefresh,
 } from 'react-admin';
-import { apiUrl } from '../dataProvider';
+import { apiUrl, httpClient } from '../dataProvider';
 import RunIcon from '@mui/icons-material/PlayArrow';
 
 const BulkRunButton = ({selectedIds}: any) => {
@@ -17,7 +17,7 @@ const BulkRunButton = ({selectedIds}: any) => {
     const runMany = () => {
         for(let id of selectedIds) {
             setLoading(true);
-            fetch(`${apiUrl}/jobs/${id}`, { method: 'POST' })
+            httpClient(`${apiUrl}/jobs/${id}`, { method: 'POST' })
                 .then(() => {
                     notify('Success running job');
                 })

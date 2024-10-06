@@ -20,7 +20,7 @@ import JobIcon from '@mui/icons-material/Update';
 import FullIcon from '@mui/icons-material/BatteryFull';
 import { Tooltip } from '@mui/material';
 import { useState } from 'react';
-import { apiUrl } from '../dataProvider';
+import { apiUrl, httpClient } from '../dataProvider';
 
 // basePath={basePath}
 const JobShowActions = ({ basePath, data, resource }: any) => (
@@ -43,7 +43,7 @@ const FullButton = ({record}: any) => {
     const [loading, setLoading] = useState(false);
     const handleClick = () => {
         setLoading(true);
-        fetch(`${apiUrl}/jobs/${record.job_name}/executions/${record.id}`)
+        httpClient(`${apiUrl}/jobs/${record.job_name}/executions/${record.id}`)
             .then((response) => {
                 if (response.ok) {
                     notify('Success loading full output');

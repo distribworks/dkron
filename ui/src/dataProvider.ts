@@ -5,7 +5,7 @@ import { DataProvider } from 'react-admin';
 
 export const apiUrl = window.DKRON_API_URL || 'http://localhost:8080/v1'
 
-const httpClient = (url: String, options: fetchUtils.Options = {}) => {
+export const httpClient = (url: String, options: fetchUtils.Options = {}) => {
     if (!options.headers) {
         options.headers = fetchUtils.createHeadersFromOptions(options);
     }
