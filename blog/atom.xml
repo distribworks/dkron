@@ -2,11 +2,29 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://dkron.io/blog</id>
     <title>Dkron Blog</title>
-    <updated>2024-02-11T00:00:00.000Z</updated>
+    <updated>2024-10-06T00:00:00.000Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://dkron.io/blog"/>
     <subtitle>Dkron Blog</subtitle>
     <icon>https://dkron.io/img/favicon.ico</icon>
+    <entry>
+        <title type="html"><![CDATA[Dkron Pro 4.0 Beta]]></title>
+        <id>https://dkron.io/blog/dkron-pro-4-0-beta</id>
+        <link href="https://dkron.io/blog/dkron-pro-4-0-beta"/>
+        <updated>2024-10-06T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[After the announcement of Dkron Open Source 4.0 Beta, I'm thrilled to announce that Dkron Pro v4.0.0-beta1 has been released. This is the first major release in more than a year, and we hope you will be happy with it.]]></summary>
+        <content type="html"><![CDATA[<p>After the <a href="https://dkron.io/blog/dkron-4-0-beta">announcement of Dkron Open Source 4.0 Beta</a>, I'm thrilled to announce that Dkron Pro v4.0.0-beta1 has been released. This is the first major release in more than a year, and we hope you will be happy with it.</p>
+<p>We are so happy because this release brings maturity to the system, meaning it's becoming adult and really featured.
+On one side, we're leaving behind the old UI; it's not included anymore in this version, and we've bumped the UI to React Admin v5, meaning that it's crisper, more responsive, and better looking than ever.</p>
+<p>The basic usage is better covered than ever by including the shell and the HTTP executors inside the main binary, so now with just the single Dkron binary, it packs the basic functionality.</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="the-new-acl-system">The new ACL system<a href="https://dkron.io/blog/dkron-pro-4-0-beta#the-new-acl-system" class="hash-link" aria-label="Direct link to The new ACL system" title="Direct link to The new ACL system">​</a></h2>
+<p>Regarding security, this is the big announcement for Pro v4: the completely new and rebuilt from the ground-up ACL system.
+We don't want to hide it; it's heavily inspired by the ACL system in the popular Hashicorp's Nomad, but with a different flavor.
+<a href="https://dkron.io/docs/pro/acls">Check the docs</a> and follow the tutorial on how to use it; it's easy.</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="try-it">Try it<a href="https://dkron.io/blog/dkron-pro-4-0-beta#try-it" class="hash-link" aria-label="Direct link to Try it" title="Direct link to Try it">​</a></h2>
+<p><a href="https://dkron.io/pro">Try it for free</a>: just download and install Dkron Pro v4.0.0-beta using your preferred method, docker image, packages, or binary build. Try it and let us know how it feels.</p>
+<p>Thank you!</p>]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Dkron 4.0 Beta]]></title>
         <id>https://dkron.io/blog/dkron-4-0-beta</id>
