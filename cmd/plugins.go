@@ -7,13 +7,15 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/distribworks/dkron/v3/dkron"
-	dkplugin "github.com/distribworks/dkron/v3/plugin"
+	"github.com/distribworks/dkron/v4/dkron"
+	dkplugin "github.com/distribworks/dkron/v4/plugin"
 	"github.com/hashicorp/go-plugin"
 	"github.com/kardianos/osext"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
+
+var embededPlugins = []string{"shell", "http"}
 
 type Plugins struct {
 	Processors map[string]dkplugin.Processor
@@ -70,13 +72,12 @@ func (p *Plugins) DiscoverPlugins() error {
 	}
 
 	for _, file := range processors {
-
 		pluginName, ok := getPluginName(file)
 		if !ok {
 			continue
 		}
 
-		raw, err := p.pluginFactory(file, dkplugin.ProcessorPluginName)
+		raw, err := p.pluginFactory(file, []string{}, dkplugin.ProcessorPluginName)
 		if err != nil {
 			return err
 		}
@@ -84,13 +85,21 @@ func (p *Plugins) DiscoverPlugins() error {
 	}
 
 	for _, file := range executors {
-
 		pluginName, ok := getPluginName(file)
 		if !ok {
 			continue
 		}
 
-		raw, err := p.pluginFactory(file, dkplugin.ExecutorPluginName)
+		raw, err := p.pluginFactory(file, []string{}, dkplugin.ExecutorPluginName)
+		if err != nil {
+			return err
+		}
+		p.Executors[pluginName] = raw.(dkplugin.Executor)
+	}
+
+	// Load the embeded plugins
+	for _, pluginName := range embededPlugins {
+		raw, err := p.pluginFactory(exePath, []string{pluginName}, dkplugin.ExecutorPluginName)
 		if err != nil {
 			return err
 		}
@@ -113,10 +122,10 @@ func getPluginName(file string) (string, bool) {
 	return name, true
 }
 
-func (p *Plugins) pluginFactory(path string, pluginType string) (interface{}, error) {
+func (p *Plugins) pluginFactory(path string, args []string, pluginType string) (interface{}, error) {
 	// Build the plugin client configuration and init the plugin
 	var config plugin.ClientConfig
-	config.Cmd = exec.Command(path)
+	config.Cmd = exec.Command(path, args...)
 	config.HandshakeConfig = dkplugin.Handshake
 	config.Managed = true
 	config.Plugins = dkplugin.PluginMap

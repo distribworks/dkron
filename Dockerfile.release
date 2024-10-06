@@ -1,5 +1,5 @@
-FROM alpine:3.15
-LABEL maintainer="Victor Castell <victor@victorcastell.com>"
+FROM alpine:3.20
+LABEL maintainer="Victor Castell <0x@vcastellm.xyz>"
 
 RUN set -x \
 	&& buildDeps='bash ca-certificates openssl tzdata' \

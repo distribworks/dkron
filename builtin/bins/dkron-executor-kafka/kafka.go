@@ -9,8 +9,8 @@ import (
 	"github.com/Shopify/sarama"
 	"github.com/armon/circbuf"
 
-	dkplugin "github.com/distribworks/dkron/v3/plugin"
-	dktypes "github.com/distribworks/dkron/v3/plugin/types"
+	dkplugin "github.com/distribworks/dkron/v4/plugin"
+	dktypes "github.com/distribworks/dkron/v4/types"
 )
 
 const (
@@ -26,12 +26,13 @@ type Kafka struct {
 
 // Execute Process method of the plugin
 // "executor": "kafka",
-// "executor_config": {
-//     "brokerAddress": "192.168.59.103:9092", // kafka broker url
-//     "key": "",
-//     "message": "",
-//     "topic": "publishTopic"
-// }
+//
+//	"executor_config": {
+//	    "brokerAddress": "192.168.59.103:9092", // kafka broker url
+//	    "key": "",
+//	    "message": "",
+//	    "topic": "publishTopic"
+//	}
 func (s *Kafka) Execute(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelper) (*dktypes.ExecuteResponse, error) {
 
 	out, err := s.ExecuteImpl(args)

@@ -8,7 +8,7 @@ import (
 	"sync"
 
 	"github.com/armon/go-metrics"
-	"github.com/distribworks/dkron/v3/extcron"
+	"github.com/distribworks/dkron/v4/extcron"
 	"github.com/robfig/cron/v3"
 	"github.com/sirupsen/logrus"
 )
@@ -159,7 +159,7 @@ func (s *Scheduler) AddJob(job *Job) error {
 	// If Timezone is set on the job, and not explicitly in its schedule,
 	// AND its not a descriptor (that don't support timezones), add the
 	// timezone to the schedule so robfig/cron knows about it.
-	schedule := job.Schedule
+	schedule := job.scheduleHash()
 	if job.Timezone != "" &&
 		!strings.HasPrefix(schedule, "@") &&
 		!strings.HasPrefix(schedule, "TZ=") &&

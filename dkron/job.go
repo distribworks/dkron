@@ -4,12 +4,14 @@ import (
 	"errors"
 	"fmt"
 	"regexp"
+	"strconv"
+	"strings"
 	"time"
 
-	"github.com/distribworks/dkron/v3/extcron"
-	"github.com/distribworks/dkron/v3/ntime"
-	"github.com/distribworks/dkron/v3/plugin"
-	proto "github.com/distribworks/dkron/v3/plugin/types"
+	"github.com/distribworks/dkron/v4/extcron"
+	"github.com/distribworks/dkron/v4/ntime"
+	"github.com/distribworks/dkron/v4/plugin"
+	proto "github.com/distribworks/dkron/v4/types"
 	"github.com/sirupsen/logrus"
 	"github.com/tidwall/buntdb"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -31,6 +33,9 @@ const (
 	ConcurrencyAllow = "allow"
 	// ConcurrencyForbid forbids a job from executing concurrency.
 	ConcurrencyForbid = "forbid"
+
+	// HashSymbol is the "magic" character used in scheduled to be replaced with a value based on job name
+	HashSymbol = "~"
 )
 
 var (
@@ -303,10 +308,64 @@ func (j *Job) GetTimeLocation() *time.Location {
 	return loc
 }
 
+// nameHash returns hash code of the job name
+func (j *Job) nameHash() int {
+	hash := 0
+	for _, c := range j.Name {
+		hash += int(c)
+	}
+	return hash
+}
+
+// scheduleHash replaces H in the cron spec by a value derived from job Name
+// such as "0 0 ~ * * *"
+func (j *Job) scheduleHash() string {
+	spec := j.Schedule
+
+	if !strings.Contains(spec, HashSymbol) {
+		return spec
+	}
+
+	hash := j.nameHash()
+	parts := strings.Split(spec, " ")
+	partIndex := 0
+	for index, part := range parts {
+		if strings.HasPrefix(part, "@") {
+			// this is a pre-defined scheduled, ignore everything
+			return spec
+		}
+		if strings.HasPrefix(part, "TZ=") || strings.HasPrefix(part, "CRON_TZ=") {
+			// do not increase partIndex
+			continue
+		}
+
+		if strings.Contains(part, HashSymbol) {
+			// mods taken in accordance with https://dkron.io/docs/usage/cron-spec/#cron-expression-format
+			partHash := hash
+			switch partIndex {
+			case 2:
+				partHash %= 24
+			case 3:
+				partHash = (partHash % 28) + 1
+			case 4:
+				partHash = (partHash % 12) + 1
+			case 5:
+				partHash %= 7
+			default:
+				partHash %= 60
+			}
+			parts[index] = strings.ReplaceAll(part, HashSymbol, strconv.Itoa(partHash))
+		}
+
+		partIndex++
+	}
+	return strings.Join(parts, " ")
+}
+
 // GetNext returns the job's next schedule from now
 func (j *Job) GetNext() (time.Time, error) {
 	if j.Schedule != "" {
-		s, err := extcron.Parse(j.Schedule)
+		s, err := extcron.Parse(j.scheduleHash())
 		if err != nil {
 			return time.Time{}, err
 		}
@@ -367,7 +426,7 @@ func (j *Job) Validate() error {
 
 	// Validate schedule, allow empty schedule if parent job set.
 	if j.Schedule != "" || j.ParentJob == "" {
-		if _, err := extcron.Parse(j.Schedule); err != nil {
+		if _, err := extcron.Parse(j.scheduleHash()); err != nil {
 			return fmt.Errorf("%s: %s", ErrScheduleParse.Error(), err)
 		}
 	}

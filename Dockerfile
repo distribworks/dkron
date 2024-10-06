@@ -1,5 +1,5 @@
-FROM golang:1.18
-LABEL maintainer="Victor Castell <victor@victorcastell.com>"
+FROM golang:1.22
+LABEL maintainer="Victor Castell <0x@vcastellm.xyz>"
 
 EXPOSE 8080 8946
 

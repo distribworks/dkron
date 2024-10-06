@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	dktypes "github.com/distribworks/dkron/v3/plugin/types"
+	dktypes "github.com/distribworks/dkron/v4/types"
 )
 
 func TestPublishExecute(t *testing.T) {

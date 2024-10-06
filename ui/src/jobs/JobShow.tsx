@@ -1,4 +1,3 @@
-import * as React from "react";
 import { 
     Datagrid,
     TextField,
@@ -11,39 +10,42 @@ import {
     TabbedShowLayout,
     Tab,
     ReferenceManyField,
-    useNotify, fetchStart, fetchEnd, Button,
+    useNotify,
+    Button,
+    useRecordContext
 } from 'react-admin';
 import ToggleButton from "./ToggleButton"
 import RunButton from "./RunButton"
 import { JsonField } from "react-admin-json-view";
 import ZeroDateField from "./ZeroDateField";
-import JobIcon from '@material-ui/icons/Update';
-import FullIcon from '@material-ui/icons/BatteryFull';
-import { Tooltip } from '@material-ui/core';
+import JobIcon from '@mui/icons-material/Update';
+import FullIcon from '@mui/icons-material/BatteryFull';
+import { Tooltip } from '@mui/material';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { apiUrl } from '../dataProvider';
+import { apiUrl, httpClient } from '../dataProvider';
 
+// basePath={basePath}
 const JobShowActions = ({ basePath, data, resource }: any) => (
     <TopToolbar>
-        <RunButton record={data} />
-        <ToggleButton record={data} />
-        <EditButton basePath={basePath} record={data} />
+        <RunButton />
+        <ToggleButton />
+        <EditButton record={data} />
     </TopToolbar>
 );
 
 const SuccessField = (props: any) => {
-    return (props.record["finished_at"] === null ? <Tooltip title="Running"><JobIcon /></Tooltip> : <BooleanField {...props} />);
+    return (
+        props.record !== undefined && props.record["finished_at"] === null ? 
+            <Tooltip title="Running"><JobIcon /></Tooltip> : <BooleanField {...props} />
+    );
 };
 
 const FullButton = ({record}: any) => {
-    const dispatch = useDispatch();
     const notify = useNotify();
     const [loading, setLoading] = useState(false);
     const handleClick = () => {
         setLoading(true);
-        dispatch(fetchStart()); // start the global loading indicator 
-        fetch(`${apiUrl}/jobs/${record.job_name}/executions/${record.id}`)
+        httpClient(`${apiUrl}/jobs/${record.job_name}/executions/${record.id}`)
             .then((response) => {
                 if (response.ok) {
                     notify('Success loading full output');
@@ -56,11 +58,10 @@ const FullButton = ({record}: any) => {
                 record.output = data.output
             })
             .catch((e) => {
-                notify('Error on loading full output', 'warning')
+                notify('Error on loading full output', { type: 'warning' })
             })
             .finally(() => {
                 setLoading(false);
-                dispatch(fetchEnd()); // stop the global loading indicator
             });
     };
     return (
@@ -74,7 +75,9 @@ const FullButton = ({record}: any) => {
     );
 };
 
-const SpecialOutputPanel = ({ id, record, resource }: any) => {
+const SpecialOutputPanel = () => {
+    const record = useRecordContext();
+    if (!record) return null;
     return (
         <div className="execution-output">
             {record.output_truncated ? <div><FullButton record={record} /></div> : ""}
@@ -100,7 +103,6 @@ const JobShow = (props: any) => (
                 <JsonField
                     source="processors"
                     reactJsonOptions={{
-                        // Props passed to react-json-view
                         name: null,
                         collapsed: false,
                         enableClipboard: false,
@@ -110,7 +112,6 @@ const JobShow = (props: any) => (
                 <JsonField
                     source="tags"
                     reactJsonOptions={{
-                        // Props passed to react-json-view
                         name: null,
                         collapsed: false,
                         enableClipboard: false,
@@ -118,9 +119,18 @@ const JobShow = (props: any) => (
                     }}
                 />
                 <JsonField
+                    source="metadata"
+                    reactJsonOptions={{
+                        name: null,
+                        collapsed: false,
+                        enableClipboard: true,
+                        displayDataTypes: false,
+                    }}
+                />
+                <TextField source="executor" />
+                <JsonField
                     source="executor_config"
                     reactJsonOptions={{
-                        // Props passed to react-json-view
                         name: null,
                         collapsed: false,
                         enableClipboard: false,

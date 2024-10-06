@@ -19,14 +19,14 @@
         - dkron02
         - dkron03
     
-    - equinix.cloud.metal_device:
-        hostname: dkron04
-        operating_system: ubuntu_22_04
-        plan: c3.small.x86
-        metro: am
-        project_id: "{{ project_id }}"
-        tags:
-          - agent
+    # - equinix.cloud.metal_device:
+    #     hostname: dkron04
+    #     operating_system: ubuntu_22_04
+    #     plan: c3.small.x86
+    #     metro: am
+    #     project_id: "{{ project_id }}"
+    #     tags:
+    #       - agent
 
 - hosts: all
   user: root
@@ -34,7 +34,7 @@
   become_method: sudo
 
   vars:
-    version: 3.2.7
+    version: 4.0.0-beta6
     datadog_api_key: "{{ lookup('ansible.builtin.env', 'DKRON_DD_API_KEY') }}"
     datadog_checks:
       openmetrics:
@@ -122,7 +122,6 @@
   become_method: sudo
 
   vars:
-    version: 3.2.7
     dkron_log_level: debug
     dkron_bootstrap_expect: 3
     dkron_data_dir: /var/lib/dkron
@@ -151,7 +150,6 @@
   become_method: sudo
 
   vars:
-    version: 3.2.0
     dkron_log_level: debug
     dkron_data_dir: /var/lib/dkron
     dkron_server: "false"

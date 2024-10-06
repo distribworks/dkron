@@ -1,6 +1,5 @@
-import * as React from 'react';
 import { Route } from 'react-router-dom';
-import Configuration from './configuration/Configuration';
+import Configuration from './settings/Settings';
 
 const Routes = [
     <Route exact path="/configuration" render={() => <Configuration />} />,

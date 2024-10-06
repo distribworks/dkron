@@ -1,29 +1,25 @@
-import * as React from 'react';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { useNotify, useRefresh, fetchStart, fetchEnd, Button } from 'react-admin';
-import { apiUrl } from '../dataProvider';
-import ToggleIcon from '@material-ui/icons/Pause';
+import { useNotify, useRefresh, Button, useRecordContext } from 'react-admin';
+import { apiUrl, httpClient } from '../dataProvider';
+import ToggleIcon from '@mui/icons-material/Pause';
 
-const ToggleButton = ({record}: any) => {
-    const dispatch = useDispatch();
+const ToggleButton = () => {
+    const record = useRecordContext();
     const refresh = useRefresh();
     const notify = useNotify();
     const [loading, setLoading] = useState(false);
     const handleClick = () => {
         setLoading(true);
-        dispatch(fetchStart()); // start the global loading indicator 
-        fetch(`${apiUrl}/jobs/${record.id}/toggle`, { method: 'POST' })
+        httpClient(`${apiUrl}/jobs/${record.id}/toggle`, { method: 'POST' }) 
             .then(() => {
                 notify('Job toggled');
                 refresh();
             })
             .catch((e) => {
-                notify('Error on toggle job', 'warning')
+                notify('Error on toggle job', { type: 'warning' })
             })
             .finally(() => {
                 setLoading(false);
-                dispatch(fetchEnd()); // stop the global loading indicator
             });
     };
     return (

@@ -1,8 +1,4 @@
-# Access Control (Preview)
-
-:::info
-This feature is in preview and is subject to big changes
-:::
+# Access Control Lists
 
 Dkron provides an optional Access Control List (ACL) system which can be used to control access to data and APIs. The ACL is Capability-based, relying on policies to determine which fine grained rules can be applied. Dkron's capability based ACL system is very similar to common ACL systems you are used to.
 
@@ -16,17 +12,23 @@ The ACL system is designed to be easy to use and fast to enforce while providing
 
 * **ACL Policies.** Dkron's ACL policies are simple JSON documents that define patterns to allow access to resources. You can find below an example ACL policy that works with the default OPA policy. The ACL JSON structure is not rigid you can adapt it to add new features in combination with the OPA Policy rules.
 
-:::info
-This guide is based on the usage of the default OPA Rego Policy
-:::
+## Tutorial
 
-## Configuring ACLs
+### Configuring ACLs
 
-ACLs are not enabled by default and must be enabled. To enable ACLs simply create an ACL policy using the API. Below you can find the most basic example of an ACL policy:
+ACLs are not enabled by default and must be enabled. To enable ACLs setup the `acl` section in your config file:
+
+```toml
+acl:
+  enabled: true
+```
+
+Below you can find the most basic example of an ACL policy:
 
 Basic example policy:
-```
-curl localhost:8080/v1/acl/policies -d '{
+
+```json
+{
     "path": {
         "/v1": {
             "capabilities": [
@@ -48,13 +50,96 @@ curl localhost:8080/v1/acl/policies -d '{
 
 This policy allows any request to the API. As you can see paths uses glob patterns, and capabilities allow operations on resources.
 
-ACLs also allows templating, providing the ability to allow or deny operations to certain resource by patterns without having to hardcode values in policies.
+This is a much more granular policy file used as default policy:
 
-For example, we can for limit job actions on certain resources based on the provided token via the accepted header `X-Dkron-Token` on the request:
-
-Example policy:
+```json
+{
+    "path": {
+        "/v1/members": {
+            "capabilities": ["read"]
+        },
+        "/v1/jobs": {
+            "capabilities": [
+                "list",
+                "read",
+                "create",
+                "update",
+                "delete"
+            ]
+        },
+        "/v1/jobs/*": {
+            "capabilities": [
+                "create",
+                "read",
+                "update",
+                "delete"
+            ]
+        },            
+        "/v1/jobs/*/run": {
+            "capabilities": ["create"]
+        },
+        "/v1/jobs/*/toggle": {
+            "capabilities": ["create"]
+        },
+        "/v1/jobs/*/executions*": {
+            "capabilities": ["read"]
+        },
+        "/v1/jobs/*/executions/*": {
+            "capabilities": ["read"]
+        },
+        "/v1/leader": {
+            "capabilities": ["read"]
+        },
+        "/v1/isleader": {
+            "capabilities": ["read"]
+        },
+        "/v1/leave": {
+            "capabilities": ["create"]
+        },
+        "/v1/restore": {
+            "capabilities": ["create"]
+        },
+        "/v1/busy": {
+            "capabilities": ["read"]
+        }
+    }
+}
 ```
-curl localhost:8080/v1/acl/policies -d '{
+
+### Setup
+
+The first step after enabling the ACL system and restart is to setup the management token. Run this command to setup the first token that will be the management user:
+
+```
+dkron acl bootstrap
+```
+
+:::info
+Adjust your `--rpc-addr` param if necessary.
+:::
+
+After this step you will obtain the details of the management token, something similar to:
+```
+Accessor ID: fc4a83e5-4657-4c18-92b0-723d7c5f6c1f
+Secret: ca40c646-4a86-425d-ae55-b27fdd99d8c4
+Name: bootstrap
+Type: management
+CreateTime: 2024-10-06 11:03:36.605368 +0000 UTC
+Policies: default
+```
+
+From this point you need to use the "Secret" to communicate with the API of Dkron. If you navigate to you Dkron installation is should show the login page:
+
+![](../../static/img/sign-in.jpg)
+
+Enter the secret and click on "Sign in", after that you should be able to use the UI without limitations.
+
+Check the full documentation on all the available [ACL management commands](cli/dkron_acl).
+
+### Use the readonly policy
+
+```json
+{
     "path": {
         "/v1/members": {
             "capabilities": ["read"]
@@ -65,26 +150,52 @@ curl localhost:8080/v1/acl/policies -d '{
                 "read"
             ]
         },
-        "/v1/jobs/{{.Token}}-*": {
+        "/v1/jobs/*": {
             "capabilities": [
-                "create",
-                "read",
-                "update",
-                "delete"
+                "read"
             ]
+        },            
+        "/v1/jobs/*/executions*": {
+            "capabilities": ["read"]
+        },
+        "/v1/jobs/*/executions/*": {
+            "capabilities": ["read"]
+        },
+        "/v1/leader": {
+            "capabilities": ["read"]
+        },
+        "/v1/isleader": {
+            "capabilities": ["read"]
+        },
+        "/v1/busy": {
+            "capabilities": ["read"]
         }
     }
-}'
+}
 ```
 
-This policy will allow all operations on jobs starting with `[Token]-job_name`, but will deny manipulation of jobs that doesn't match the pattern.
+Write the readonly file content json to a local file named `readonly.json` and create the readonly policy:
+
+```
+dkron acl policy apply --name readonly --rules-file ./readonly.json
+```
+
+
+Create a new token for a readonly user:
+
+```
+dkron acl token create --name alice --type client --policy readonly
+```
+
+Handle the details to the user.
 
 ## Disable ACLs
 
-As an administrator you will need to edit policies. Currently to be able to edit ACLs if you get locked out, you need to edit the default Rego file and disable enforcement completely. Edit the file located in `policies/main.rego` and change the `default allow` directive to `true`:
+To diable the ACL system you need to set the configuration value in your dkron configuration file to `false`
 
-```
-default allow = false -> true
+```toml
+acl:
+  enabled: false
 ```
 
-This way the policy engine always evaluates to true, allowing any operation again. To restore ACL enforcemen, edit again the `default allow` line and set it back to `false`.
+Restart your system for the change to have effect, after the restart you should be able to access the system without any restriction.

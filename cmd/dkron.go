@@ -5,8 +5,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/distribworks/dkron/v3/dkron"
-	"github.com/distribworks/dkron/v3/logging"
+	"github.com/distribworks/dkron/v4/dkron"
+	"github.com/distribworks/dkron/v4/logging"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -36,14 +36,8 @@ func Execute() {
 	}
 }
 
-func init() {
-	cobra.OnInitialize(initConfig)
-
-	dkronCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file path")
-}
-
 // initConfig reads in config file and ENV variables if set.
-func initConfig() {
+func initConfig() error {
 	if cfgFile != "" {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
@@ -68,7 +62,7 @@ func initConfig() {
 	}
 
 	if err := viper.Unmarshal(config); err != nil {
-		logrus.WithError(err).Fatal("config: Error unmarshalling config")
+		return fmt.Errorf("config: Error unmarshalling config: %s", err)
 	}
 
 	cliTags := viper.GetStringSlice("tag")
@@ -77,7 +71,7 @@ func initConfig() {
 	if len(cliTags) > 0 {
 		tags, err = UnmarshalTags(cliTags)
 		if err != nil {
-			logrus.WithError(err).Fatal("config: Error unmarshalling cli tags")
+			return fmt.Errorf("config: Error unmarshalling cli tags: %s", err)
 		}
 	} else {
 		tags = viper.GetStringMapString("tags")
@@ -86,4 +80,6 @@ func initConfig() {
 	config.Tags = tags
 
 	dkron.InitLogger(viper.GetString("log-level"), config.NodeName)
+
+	return nil
 }

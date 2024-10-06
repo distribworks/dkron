@@ -3,11 +3,14 @@ project_name: dkron
 release:
   prerelease: auto
 
+env:
+  - IMAGE_PREFIX={{ if index .Env "IMAGE_PREFIX"  }}{{ .Env.IMAGE_PREFIX }}{{ else }}dkron{{ end }}
+
 builds:
   - &xbuild
-    main: ./builtin/bins/dkron-executor-http/
-    id: dkron-executor-http
-    binary: dkron-executor-http
+    main: .
+    id: dkron
+    binary: dkron
     env:
       - CGO_ENABLED=0
     goos:
@@ -22,12 +25,7 @@ builds:
     goarm:
       - '7'
     ldflags:
-      - -s -w
-
-  - <<: *xbuild
-    main: ./builtin/bins/dkron-executor-shell/
-    id: dkron-executor-shell
-    binary: dkron-executor-shell
+      - -s -w -X github.com/distribworks/dkron/v4/dkron.Version={{.Version}} -X github.com/distribworks/dkron/v4/dkron.Codename=Abaniko
 
   - <<: *xbuild
     main: ./builtin/bins/dkron-executor-rabbitmq/
@@ -74,13 +72,6 @@ builds:
     id: dkron-processor-fluent
     binary: dkron-processor-fluent
 
-  - <<: *xbuild
-    main: .
-    id: dkron
-    binary: dkron
-    ldflags:
-      - -s -w -X github.com/distribworks/dkron/v3/dkron.Version={{.Version}} -X github.com/distribworks/dkron/v3/dkron.Codename=Abaniko
-
 nfpms:
   -
     vendor: Distributed Works
@@ -119,15 +110,13 @@ snapshot:
 
 dockers:
   - image_templates:
-      - dkron/{{ .ProjectName }}:{{ .Version }}-amd64
+      - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-amd64"
     dockerfile: Dockerfile.release
     use: buildx
     goos: linux
     goarch: amd64
     ids: &docker-ids
       - dkron
-      - dkron-executor-http
-      - dkron-executor-shell
       - dkron-executor-rabbitmq
       - dkron-executor-nats
       - dkron-executor-kafka
@@ -141,7 +130,7 @@ dockers:
       - --platform=linux/amd64
 
   - image_templates:
-      - dkron/{{ .ProjectName }}:{{ .Version }}-arm64
+      - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-arm64"
     dockerfile: Dockerfile.release
     use: buildx
     goos: linux
@@ -151,7 +140,39 @@ dockers:
       - --platform=linux/arm64/v8
 
   - image_templates:
-      - dkron/{{ .ProjectName }}:{{ .Version }}-armv7
+      - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-armv7"
+    dockerfile: Dockerfile.release
+    use: buildx
+    goos: linux
+    goarch: arm
+    goarm: '7'
+    ids: *docker-ids
+    build_flag_templates:
+      - --platform=linux/arm/v7
+
+  - image_templates:
+      - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-light-amd64"
+    dockerfile: Dockerfile.release
+    use: buildx
+    goos: linux
+    goarch: amd64
+    ids: &docker-ids
+      - dkron
+    build_flag_templates:
+      - --platform=linux/amd64
+
+  - image_templates:
+      - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-light-arm64"
+    dockerfile: Dockerfile.release
+    use: buildx
+    goos: linux
+    goarch: arm64
+    ids: *docker-ids
+    build_flag_templates:
+      - --platform=linux/arm64/v8
+
+  - image_templates:
+      - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-light-armv7"
     dockerfile: Dockerfile.release
     use: buildx
     goos: linux
@@ -162,17 +183,29 @@ dockers:
       - --platform=linux/arm/v7
 
 docker_manifests:
-  - name_template: dkron/{{ .ProjectName }}:{{ .Version }}
+  - name_template: "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}"
     image_templates:
-      - dkron/{{ .ProjectName }}:{{ .Version }}-amd64
-      - dkron/{{ .ProjectName }}:{{ .Version }}-arm64
-      - dkron/{{ .ProjectName }}:{{ .Version }}-armv7
+      - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-amd64"
+      - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-arm64"
+      - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-armv7"
 
-  - name_template: dkron/{{ .ProjectName }}:latest
+  - name_template: "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:latest"
     image_templates:
-    - dkron/{{ .ProjectName }}:{{ .Version }}-amd64
-    - dkron/{{ .ProjectName }}:{{ .Version }}-arm64
-    - dkron/{{ .ProjectName }}:{{ .Version }}-armv7
+    - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-amd64"
+    - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-arm64"
+    - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-armv7"
+
+  - name_template: "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-light"
+    image_templates:
+    - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-light-amd64"
+    - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-light-arm64"
+    - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-light-armv7"
+
+  - name_template: "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:light"
+    image_templates:
+    - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-light-amd64"
+    - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-light-arm64"
+    - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-light-armv7"
 
 changelog:
   sort: asc

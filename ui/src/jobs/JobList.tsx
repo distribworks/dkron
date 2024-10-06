@@ -1,4 +1,3 @@
-import * as React from "react";
 import {
     Datagrid,
     TextField,
@@ -18,7 +17,7 @@ import BulkRunButton from "./BulkRunButton"
 import BulkToggleButton from "./BulkToggleButton"
 import StatusField from "./StatusField"
 import EnabledField from "./EnabledField"
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@mui/styles';
 
 const JobFilter = (props: any) => (
     <Filter {...props}>

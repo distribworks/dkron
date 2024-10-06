@@ -1,11 +1,25 @@
 import { fetchUtils } from 'ra-core';
 import jsonServerProvider from 'ra-data-json-server';
 import { stringify } from 'query-string';
+import { DataProvider } from 'react-admin';
 
 export const apiUrl = window.DKRON_API_URL || 'http://localhost:8080/v1'
-const dataProvider = jsonServerProvider(apiUrl);
 
-const myDataProvider = {
+export const httpClient = (url: String, options: fetchUtils.Options = {}) => {
+    if (!options.headers) {
+        options.headers = fetchUtils.createHeadersFromOptions(options);
+    }
+
+    const token = localStorage.getItem('token');
+    if (token) {
+        options.headers.set('Authorization', `Bearer ${token}`);
+    }
+    return fetchUtils.fetchJson(url, options);
+};
+
+const dataProvider = jsonServerProvider(apiUrl, httpClient);
+
+const dkronDataProvider: DataProvider = {
     ...dataProvider,
     getManyReference: (resource: any, params: any) => {
         const { page, perPage } = params.pagination;
@@ -22,7 +36,7 @@ const myDataProvider = {
         };
         const url = `${apiUrl}/${params.target}/${params.id}/${resource}?${stringify(query)}`;
 
-        return fetchUtils.fetchJson(url).then(({ headers, json }) => {
+        return httpClient(url).then(({ headers, json }) => {
             if (!headers.has('x-total-count')) {
                 throw new Error(
                     'The X-Total-Count header is missing in the HTTP Response. The jsonServer Data Provider expects responses for lists of resources to contain this header with the total number of results to build the pagination. If you are using CORS, did you declare X-Total-Count in the Access-Control-Expose-Headers header?'
@@ -39,4 +53,4 @@ const myDataProvider = {
     }
 }
 
-export default myDataProvider;
+export default dkronDataProvider;

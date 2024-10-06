@@ -7,13 +7,12 @@ import (
 	"net/http"
 	"sort"
 	"strconv"
-	"time"
 
+	"github.com/distribworks/dkron/v4/types"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/expvar"
 	"github.com/gin-gonic/gin"
 	"github.com/hashicorp/go-uuid"
-	"github.com/hashicorp/serf/serf"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 	"github.com/tidwall/buntdb"
@@ -48,26 +47,21 @@ func NewTransport(a *Agent, log *logrus.Entry) *HTTPTransport {
 
 func (h *HTTPTransport) ServeHTTP() {
 	h.Engine = gin.Default()
-	h.Engine.HTMLRender = CreateMyRender(h.logger)
-	h.Engine.Use(h.Options)
 
 	rootPath := h.Engine.Group("/")
 
-	rootPath.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},
-		AllowMethods:     []string{"*"},
-		AllowHeaders:     []string{"*"},
-		ExposeHeaders:    []string{"*"},
-		AllowCredentials: true,
-		MaxAge:           12 * time.Hour,
-	}))
+	config := cors.DefaultConfig()
+	config.AllowAllOrigins = true
+	config.AllowMethods = []string{"*"}
+	config.AllowHeaders = []string{"*"}
+	config.ExposeHeaders = []string{"*"}
+
+	rootPath.Use(cors.New(config))
 	rootPath.Use(h.MetaMiddleware())
 
 	h.APIRoutes(rootPath)
 	if h.agent.config.UI {
-		h.UI(rootPath)
-	} else {
-		h.agent.DashboardRoutes(rootPath)
+		h.UI(rootPath, false)
 	}
 
 	h.logger.WithFields(logrus.Fields{
@@ -131,19 +125,6 @@ func (h *HTTPTransport) MetaMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Header("X-Whom", h.agent.config.NodeName)
 		c.Next()
-	}
-}
-
-func (h *HTTPTransport) Options(c *gin.Context) {
-	if c.Request.Method != "OPTIONS" {
-		c.Next()
-	} else {
-		c.Header("Allow", "HEAD,GET,POST,PUT,PATCH,DELETE,OPTIONS")
-		c.Header("Content-Type", "application/json")
-		gh := cors.Default()
-		gh(c)
-
-		c.AbortWithStatus(http.StatusOK)
 	}
 }
 
@@ -235,11 +216,23 @@ func (h *HTTPTransport) jobCreateOrUpdateHandler(c *gin.Context) {
 		Concurrency: ConcurrencyAllow,
 	}
 
-	// Parse values from JSON
-	if err := c.BindJSON(&job); err != nil {
-		_, _ = c.Writer.WriteString(fmt.Sprintf("Unable to parse payload: %s.", err))
-		h.logger.Error(err)
-		return
+	// Check if the job is already in the context set by the middleware
+	val, exists := c.Get("job")
+	if exists {
+		job = val.(Job)
+	} else {
+		// Parse values from JSON
+		if err := c.BindJSON(&job); err != nil {
+			_, _ = c.Writer.WriteString(fmt.Sprintf("Unable to parse payload: %s.", err))
+			h.logger.Error(err)
+			return
+		}
+		// Get the owner from the context, if it exists
+		// this is coming from the ACL middleware
+		accessor := c.GetString("accessor")
+		if accessor != "" {
+			job.Owner = accessor
+		}
 	}
 
 	// Validate job
@@ -423,18 +416,11 @@ func (h *HTTPTransport) executionHandler(c *gin.Context) {
 	}
 }
 
-type MId struct {
-	serf.Member
-
-	Id         string `json:"id"`
-	StatusText string `json:"statusText"`
-}
-
 func (h *HTTPTransport) membersHandler(c *gin.Context) {
-	mems := []*MId{}
+	mems := []*types.Member{}
 	for _, m := range h.agent.serf.Members() {
 		id, _ := uuid.GenerateUUID()
-		mid := &MId{m, id, m.Status.String()}
+		mid := &types.Member{m, id, m.Status.String()}
 		mems = append(mems, mid)
 	}
 	c.Header("X-Total-Count", strconv.Itoa(len(mems)))
