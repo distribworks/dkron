@@ -134,7 +134,7 @@ From this point you need to use the "Secret" to communicate with the API of Dkro
 
 Enter the secret and click on "Sign in", after that you should be able to use the UI without limitations.
 
-Check the full documentation on all the available ACL management commands.
+Check the full documentation on all the available [ACL management commands](cli/dkron_acl).
 
 ### Use the readonly policy
 
