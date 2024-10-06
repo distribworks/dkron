@@ -18,7 +18,7 @@ export default function HomepageBanner() {
           </div>
           <div className="flex-shrink-0 order-3 w-full mt-2 sm:order-2 sm:mt-0 sm:w-auto">
             <a
-              href="/blog/dkron-4-0-beta/"
+              href="/blog/dkron-pro-4-0-beta/"
               className="flex items-center justify-center px-4 py-2 text-sm font-medium bg-white border border-transparent rounded-sm shadow-sm text-fuchsia-600 hover:bg-indigo-50"
             >
               Learn more
