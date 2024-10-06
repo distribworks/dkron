@@ -138,7 +138,56 @@ Check the full documentation on all the available ACL management commands.
 
 ### Use the readonly policy
 
+```json
+{
+    "path": {
+        "/v1/members": {
+            "capabilities": ["read"]
+        },
+        "/v1/jobs": {
+            "capabilities": [
+                "list",
+                "read"
+            ]
+        },
+        "/v1/jobs/*": {
+            "capabilities": [
+                "read"
+            ]
+        },            
+        "/v1/jobs/*/executions*": {
+            "capabilities": ["read"]
+        },
+        "/v1/jobs/*/executions/*": {
+            "capabilities": ["read"]
+        },
+        "/v1/leader": {
+            "capabilities": ["read"]
+        },
+        "/v1/isleader": {
+            "capabilities": ["read"]
+        },
+        "/v1/busy": {
+            "capabilities": ["read"]
+        }
+    }
+}
+```
 
+Write the readonly file content json to a local file named `readonly.json` and create the readonly policy:
+
+```
+dkron acl policy apply --name readonly --rules-file ./readonly.json
+```
+
+
+Create a new token for a readonly user:
+
+```
+dkron acl token create --name alice --type client --policy readonly
+```
+
+Handle the details to the user.
 
 ## Disable ACLs
 
