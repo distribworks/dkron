@@ -22,7 +22,7 @@ release-dry-run:
 		-v `pwd`:/go/src/$(PACKAGE_NAME) \
 		-w /go/src/$(PACKAGE_NAME) \
 		goreleaser/goreleaser-cross:${GOLANG_CROSS_VERSION} \
-		--clean --skip-validate --skip-publish --timeout=1h --parallelism=1
+		--clean --skip=validate,publish --timeout=1h --parallelism=1
 
 .PHONY: release
 release:
@@ -39,7 +39,7 @@ release:
 		-v `pwd`:/go/src/$(PACKAGE_NAME) \
 		-w /go/src/$(PACKAGE_NAME) \
 		goreleaser/goreleaser-cross:${GOLANG_CROSS_VERSION} \
-		--clean --skip-validate --timeout=1h
+		--clean --skip=validate --timeout=1h
 
 .PHONY: clean
 clean:
