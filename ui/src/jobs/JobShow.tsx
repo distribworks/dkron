@@ -10,7 +10,9 @@ import {
     TabbedShowLayout,
     Tab,
     ReferenceManyField,
-    useNotify, Button,
+    useNotify,
+    Button,
+    useRecordContext
 } from 'react-admin';
 import ToggleButton from "./ToggleButton"
 import RunButton from "./RunButton"
@@ -20,7 +22,7 @@ import JobIcon from '@mui/icons-material/Update';
 import FullIcon from '@mui/icons-material/BatteryFull';
 import { Tooltip } from '@mui/material';
 import { useState } from 'react';
-import { apiUrl } from '../dataProvider';
+import { apiUrl, httpClient } from '../dataProvider';
 
 // basePath={basePath}
 const JobShowActions = ({ basePath, data, resource }: any) => (
@@ -43,7 +45,7 @@ const FullButton = ({record}: any) => {
     const [loading, setLoading] = useState(false);
     const handleClick = () => {
         setLoading(true);
-        fetch(`${apiUrl}/jobs/${record.job_name}/executions/${record.id}`)
+        httpClient(`${apiUrl}/jobs/${record.job_name}/executions/${record.id}`)
             .then((response) => {
                 if (response.ok) {
                     notify('Success loading full output');
@@ -73,7 +75,9 @@ const FullButton = ({record}: any) => {
     );
 };
 
-const SpecialOutputPanel = ({ id, record, resource }: any) => {
+const SpecialOutputPanel = () => {
+    const record = useRecordContext();
+    if (!record) return null;
     return (
         <div className="execution-output">
             {record.output_truncated ? <div><FullButton record={record} /></div> : ""}

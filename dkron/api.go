@@ -227,6 +227,12 @@ func (h *HTTPTransport) jobCreateOrUpdateHandler(c *gin.Context) {
 			h.logger.Error(err)
 			return
 		}
+		// Get the owner from the context, if it exists
+		// this is coming from the ACL middleware
+		accessor := c.GetString("accessor")
+		if accessor != "" {
+			job.Owner = accessor
+		}
 	}
 
 	// Validate job

@@ -5,7 +5,7 @@ import {
     useUnselectAll,
     useRefresh,
 } from 'react-admin';
-import { apiUrl } from '../dataProvider';
+import { apiUrl, httpClient } from '../dataProvider';
 import RunIcon from '@mui/icons-material/PlayArrow';
 
 const BulkToggleButton = ({selectedIds}: any) => {
@@ -16,7 +16,7 @@ const BulkToggleButton = ({selectedIds}: any) => {
     const toggleMany = () => {
         for(let id of selectedIds) {
             setLoading(true);
-            fetch(`${apiUrl}/jobs/${id}/toggle`, { method: 'POST' })
+            httpClient(`${apiUrl}/jobs/${id}/toggle`, { method: 'POST' })
                 .then(() => {
                     notify('Job toggled');
                 })

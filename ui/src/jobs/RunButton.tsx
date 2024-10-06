@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNotify, useRefresh, Button, useRecordContext } from 'react-admin';
-import { apiUrl } from '../dataProvider';
+import { apiUrl, httpClient } from '../dataProvider';
 import RunIcon from '@mui/icons-material/PlayArrow';
 
 const RunButton = () => {
@@ -10,7 +10,7 @@ const RunButton = () => {
     const [loading, setLoading] = useState(false);
     const handleClick = () => {
         setLoading(true);
-        fetch(`${apiUrl}/jobs/${record.id}`, { method: 'POST' })
+        httpClient(`${apiUrl}/jobs/${record.id}`, { method: 'POST' })
             .then(() => {
                 notify('Success running job');
                 refresh();
