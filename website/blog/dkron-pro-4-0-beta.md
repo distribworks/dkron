@@ -9,7 +9,7 @@ Slug:        "dkron-pro-4-0-beta"
 
 # Dkron Pro 4.0 Beta
 
-After the [announcement of Dkron Open Source 4.0 Beta](dkron-4-0-beta), I'm thrilled to announce that Dkron Pro v4.0.0-beta1 has been released. This is the first major release in more than a year, and we hope you will be happy with it.
+After the [announcement of Dkron Open Source 4.0 Beta](/blog/dkron-4-0-beta), I'm thrilled to announce that Dkron Pro v4.0.0-beta1 has been released. This is the first major release in more than a year, and we hope you will be happy with it.
 
 We are so happy because this release brings maturity to the system, meaning it's becoming adult and really featured.
 On one side, we're leaving behind the old UI; it's not included anymore in this version, and we've bumped the UI to React Admin v5, meaning that it's crisper, more responsive, and better looking than ever.
