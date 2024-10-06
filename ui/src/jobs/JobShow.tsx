@@ -10,7 +10,9 @@ import {
     TabbedShowLayout,
     Tab,
     ReferenceManyField,
-    useNotify, Button,
+    useNotify,
+    Button,
+    useRecordContext
 } from 'react-admin';
 import ToggleButton from "./ToggleButton"
 import RunButton from "./RunButton"
@@ -73,7 +75,9 @@ const FullButton = ({record}: any) => {
     );
 };
 
-const SpecialOutputPanel = ({ id, record, resource }: any) => {
+const SpecialOutputPanel = () => {
+    const record = useRecordContext();
+    if (!record) return null;
     return (
         <div className="execution-output">
             {record.output_truncated ? <div><FullButton record={record} /></div> : ""}
