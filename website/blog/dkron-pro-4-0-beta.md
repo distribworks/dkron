@@ -11,7 +11,7 @@ Slug:        "dkron-pro-4-0-beta"
 
 After the [announcement of Dkron Open Source 4.0 Beta](/blog/dkron-4-0-beta), I'm thrilled to announce that Dkron Pro v4.0.0-beta1 has been released. This is the first major release in more than a year, and we hope you will be happy with it.
 
-We are so happy because this release brings maturity to the system, meaning it's becoming adult and really featured.
+We are so happy because this release brings maturity to the system, meaning it's becoming adult and fully featured.
 On one side, we're leaving behind the old UI; it's not included anymore in this version, and we've bumped the UI to React Admin v5, meaning that it's crisper, more responsive, and better looking than ever.
 
 The basic usage is better covered than ever by including the shell and the HTTP executors inside the main binary, so now with just the single Dkron binary, it packs the basic functionality.
@@ -19,7 +19,7 @@ The basic usage is better covered than ever by including the shell and the HTTP 
 ## The new ACL system
 
 Regarding security, this is the big announcement for Pro v4: the completely new and rebuilt from the ground-up ACL system.
-We don't want to hide it; it's heavily inspired by the ACL system in the popular Hashicorp's Nomad, but with a different flavor.
+We don't want to hide it; it's heavily inspired by the ACL system in the popular Hashicorp's Nomad, but with a different flavour.
 [Check the docs](/docs/pro/acls) and follow the tutorial on how to use it; it's easy.
 
 ## Try it
