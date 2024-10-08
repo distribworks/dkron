@@ -15,12 +15,12 @@
             <pubDate>Sun, 06 Oct 2024 00:00:00 GMT</pubDate>
             <description><![CDATA[After the announcement of Dkron Open Source 4.0 Beta, I'm thrilled to announce that Dkron Pro v4.0.0-beta1 has been released. This is the first major release in more than a year, and we hope you will be happy with it.]]></description>
             <content:encoded><![CDATA[<p>After the <a href="https://dkron.io/blog/dkron-4-0-beta">announcement of Dkron Open Source 4.0 Beta</a>, I'm thrilled to announce that Dkron Pro v4.0.0-beta1 has been released. This is the first major release in more than a year, and we hope you will be happy with it.</p>
-<p>We are so happy because this release brings maturity to the system, meaning it's becoming adult and really featured.
+<p>We are so happy because this release brings maturity to the system, meaning it's becoming adult and fully featured.
 On one side, we're leaving behind the old UI; it's not included anymore in this version, and we've bumped the UI to React Admin v5, meaning that it's crisper, more responsive, and better looking than ever.</p>
 <p>The basic usage is better covered than ever by including the shell and the HTTP executors inside the main binary, so now with just the single Dkron binary, it packs the basic functionality.</p>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="the-new-acl-system">The new ACL system<a href="https://dkron.io/blog/dkron-pro-4-0-beta#the-new-acl-system" class="hash-link" aria-label="Direct link to The new ACL system" title="Direct link to The new ACL system">​</a></h2>
 <p>Regarding security, this is the big announcement for Pro v4: the completely new and rebuilt from the ground-up ACL system.
-We don't want to hide it; it's heavily inspired by the ACL system in the popular Hashicorp's Nomad, but with a different flavor.
+We don't want to hide it; it's heavily inspired by the ACL system in the popular Hashicorp's Nomad, but with a different flavour.
 <a href="https://dkron.io/docs/pro/acls">Check the docs</a> and follow the tutorial on how to use it; it's easy.</p>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="try-it">Try it<a href="https://dkron.io/blog/dkron-pro-4-0-beta#try-it" class="hash-link" aria-label="Direct link to Try it" title="Direct link to Try it">​</a></h2>
 <p><a href="https://dkron.io/pro">Try it for free</a>: just download and install Dkron Pro v4.0.0-beta using your preferred method, docker image, packages, or binary build. Try it and let us know how it feels.</p>
