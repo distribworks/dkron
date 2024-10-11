@@ -25,7 +25,7 @@ builds:
     goarm:
       - '7'
     ldflags:
-      - -s -w -X github.com/distribworks/dkron/v4/dkron.Version={{.Version}} -X github.com/distribworks/dkron/v4/dkron.Codename=Abaniko
+      - -s -w -X github.com/distribworks/dkron/v4/dkron.Version={{.Version}} -X github.com/distribworks/dkron/v4/dkron.Codename=Apat
 
   - <<: *xbuild
     main: ./builtin/bins/dkron-executor-rabbitmq/
