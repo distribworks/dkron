@@ -34,7 +34,7 @@
   become_method: sudo
 
   vars:
-    version: 4.0.0-beta6
+    version: 4.0.0
     datadog_api_key: "{{ lookup('ansible.builtin.env', 'DKRON_DD_API_KEY') }}"
     datadog_checks:
       openmetrics:
