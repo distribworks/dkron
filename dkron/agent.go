@@ -15,8 +15,8 @@ import (
 	"sync"
 	"time"
 
-	metrics "github.com/armon/go-metrics"
 	"github.com/devopsfaith/krakend-usage/client"
+	metrics "github.com/hashicorp/go-metrics"
 	"github.com/distribworks/dkron/v4/plugin"
 	proto "github.com/distribworks/dkron/v4/types"
 	"github.com/hashicorp/go-uuid"

@@ -6,7 +6,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/Shopify/sarama"
+	"github.com/IBM/sarama"
 	"github.com/armon/circbuf"
 
 	dkplugin "github.com/distribworks/dkron/v4/plugin"
