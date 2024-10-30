@@ -77,6 +77,28 @@ func (s *Kafka) ExecuteImpl(args *dktypes.ExecuteRequest) ([]byte, error) {
 		}
 	}
 
+	if args.Config["saslUsername"] != "" && args.Config["saslPassword"] != "" {
+		config.Net.SASL.Enable = true
+		config.Net.SASL.User = args.Config["saslUsername"]
+		config.Net.SASL.Password = args.Config["saslPassword"]
+		config.Net.SASL.Handshake = true
+
+		if args.Config["saslMechanism"] == "sha512" {
+			config.Net.SASL.SCRAMClientGeneratorFunc = func() sarama.SCRAMClient {
+				return &XDGSCRAMClient{HashGeneratorFcn: SHA512}
+			}
+			config.Net.SASL.Mechanism = sarama.SASLTypeSCRAMSHA512
+		} else if args.Config["saslMechanism"] == "sha256" {
+			config.Net.SASL.SCRAMClientGeneratorFunc = func() sarama.SCRAMClient {
+				return &XDGSCRAMClient{HashGeneratorFcn: SHA256}
+			}
+			config.Net.SASL.Mechanism = sarama.SASLTypeSCRAMSHA256
+		} else {
+			return output.Bytes(), errors.New("invalid SASL mechanism, must be 'sha256' or 'sha512'")
+		}
+
+	}
+
 	brokers := strings.Split(args.Config["brokerAddress"], ",")
 	producer, err := sarama.NewSyncProducer(brokers, config)
 	if err != nil {
