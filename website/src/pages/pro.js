@@ -128,9 +128,11 @@ function Pro() {
                     publishable-key="pk_live_n6ljeJ5r4kqdnSbPQn4dQECe"
                   >
                   </stripe-buy-button>
-                  Licenses are not transferable to another company. We will transfer the license from a user-specific email to a group email address (e.g. john_smith@example.com -> tech@example.com) but only for the same domain. It is strongly recommended that you buy the license using a group email address so the license is not attached to any one employee’s email address.
                   </div>
                 </div>
+                <p className="max-w-md mx-auto mt-3 text-lg text-gray-100 sm:text-xl md:mt-5 md:max-w-3xl">
+                    Licenses are not transferable to another company. We will transfer the license from a user-specific email to a group email address (e.g. john_smith@example.com -> tech@example.com) but only for the same domain. It is strongly recommended that you buy the license using a group email address so the license is not attached to any one employee’s email address.
+                </p>
               </div>
             </div>
           </div>
