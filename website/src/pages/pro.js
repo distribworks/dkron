@@ -119,10 +119,16 @@ function Pro() {
                 </p>
                 <div className="mt-10 sm:flex sm:justify-center">
                   <div className="rounded-md shadow">
-                    <script src="https://gumroad.com/js/gumroad.js"></script>
-                    <a href="https://gum.co/dkron-pro" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center w-full px-8 py-3 text-base font-medium bg-white rounded-md gumroad-button text-fuchsia-600 hover:text-fuchsia-700 hover:bg-white md:py-4 md:text-lg md:px-10 hover:no-underline">
-                      Buy
-                    </a>
+                  <script async
+                    src="https://js.stripe.com/v3/buy-button.js">
+                  </script>
+
+                  <stripe-buy-button
+                    buy-button-id="buy_btn_1QJdcgGdKp7xg5G2AI7KpOfe"
+                    publishable-key="pk_live_n6ljeJ5r4kqdnSbPQn4dQECe"
+                  >
+                  </stripe-buy-button>
+                  Licenses are not transferable to another company. We will transfer the license from a user-specific email to a group email address (e.g. john_smith@example.com -> tech@example.com) but only for the same domain. It is strongly recommended that you buy the license using a group email address so the license is not attached to any one employee’s email address.
                   </div>
                 </div>
               </div>

@@ -11,7 +11,7 @@ const tiers = [
   {
     name: 'Pro',
     href: '/pro/',
-    priceYearly: 750,
+    priceYearly: 450,
   }
 ]
 const sections = [
