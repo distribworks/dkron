@@ -7,7 +7,7 @@ require (
 	github.com/armon/go-metrics v0.4.1
 	github.com/devopsfaith/krakend-usage v1.4.0
 	github.com/fluent/fluent-logger-golang v1.9.0
-	github.com/fullstorydev/grpcurl v1.9.1
+	github.com/fullstorydev/grpcurl v1.9.2
 	github.com/getkin/kin-openapi v0.128.0
 	github.com/gin-contrib/cors v1.7.2
 	github.com/gin-contrib/expvar v1.0.1
