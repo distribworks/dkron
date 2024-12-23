@@ -13,6 +13,9 @@ message:                The body of the message to produce
 topic:                  The Kafka topic for this message
 tlsEnable:              Enables TLS if set to true. Optional
 tlsInsecureSkipVerify:  Disables verification of the remote SSL certificate's validity if set to true. Optional
+saslUsername:           The SASL username for authentication. If set, saslPassword and saslMechanism must also be provided.
+saslPassword:           The SASL password for authentication. If set, saslUsername and saslMechanism must also be provided.
+saslMechanism:          The SASL SCRAM mechanism to use, either "sha256" or "sha512". This is required if both saslUsername and saslPassword are provided.
 debug:                  Turns on debugging output if not empty
 ```
 
