@@ -47,15 +47,15 @@ const FullButton = ({record}: any) => {
         setLoading(true);
         httpClient(`${apiUrl}/jobs/${record.job_name}/executions/${record.id}`)
             .then((response) => {
-                if (response.ok) {
+                if (response.status === 200) {
                     notify('Success loading full output');
-                    return response.json()
+                    return response.json
                 }
                 throw response
             })
             .then((data) => {
-                record.output_truncated = false
-                record.output = data.output
+                record.output_truncated = false;
+                record.output = data.output;
             })
             .catch((e) => {
                 notify('Error on loading full output', { type: 'warning' })
@@ -64,6 +64,9 @@ const FullButton = ({record}: any) => {
                 setLoading(false);
             });
     };
+
+    if (record.output_truncated === false) return record.output;
+
     return (
         <Button 
             label="Load full output"
@@ -72,7 +75,7 @@ const FullButton = ({record}: any) => {
         >
             <FullIcon/>
         </Button>
-    );
+    )
 };
 
 const SpecialOutputPanel = () => {
