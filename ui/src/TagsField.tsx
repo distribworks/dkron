@@ -1,6 +1,8 @@
 import { Chip } from '@mui/material';
+import { useRecordContext } from 'react-admin';
 
-export const TagsField = ({ record }: any) => {
+export const TagsField = () => {
+    const record = useRecordContext();
     if (record === undefined) {
 		return null
     } else {
@@ -10,7 +12,4 @@ export const TagsField = ({ record }: any) => {
             ))}
         </ul>
     }
-};
-TagsField.defaultProps = {
-    addLabel: true
 };
