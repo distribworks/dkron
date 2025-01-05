@@ -10,7 +10,7 @@ require (
 	github.com/fullstorydev/grpcurl v1.9.2
 	github.com/getkin/kin-openapi v0.128.0
 	github.com/gin-contrib/cors v1.7.3
-	github.com/gin-contrib/expvar v1.0.1
+	github.com/gin-contrib/expvar v1.0.2
 	github.com/gin-gonic/gin v1.10.0
 	github.com/hashicorp/go-discover v0.0.0-20240829174204-275a71457aa4
 	github.com/hashicorp/go-hclog v1.6.3
