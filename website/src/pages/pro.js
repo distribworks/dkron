@@ -124,7 +124,7 @@ function Pro() {
                   </script>
 
                   <stripe-buy-button
-                    buy-button-id="buy_btn_1QJdcgGdKp7xg5G2AI7KpOfe"
+                    buy-button-id="buy_btn_1QMBWYGdKp7xg5G2QGV8LyLq"
                     publishable-key="pk_live_n6ljeJ5r4kqdnSbPQn4dQECe"
                   >
                   </stripe-buy-button>
