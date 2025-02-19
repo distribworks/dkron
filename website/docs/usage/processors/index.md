@@ -21,6 +21,6 @@ Dkron provides the following built-in processors:
 0. syslog - Output to the syslog (Good performance, needs parsing)
 0. files - Output to multiple files (Good performance, needs parsing)
 
-[Dkro Pro](/pro/) provides you with several more processors.
+[Dkron Pro](/pro/) provides you with several more processors.
 
 All plugins accepts one configuration option: `forward` Indicated if the plugin must forward the original execution output. This allows for chaining plugins and sending output to different targets at the same time.
