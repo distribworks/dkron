@@ -234,12 +234,11 @@ export default function HomepagePricing() {
                       {tier.name === "Pro" ? (
                         <>
                           <a
-                            href="https://gum.co/dkron-pro"
+                            href="https://buy.stripe.com/9AQ9BP1UV8jkgowaEF"
                             target="_blank"
-                            rel="noopener noreferrer"
                             className="block w-full py-3 mt-2 text-base font-medium text-center text-white border-2 border-transparent rounded-md gumroad-button bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:bg-fuchsia-700 md:py-4 md:text-lg md:px-10 hover:no-underline hover:text-white/90"
                           >
-                            Buy
+                            Subscribe
                           </a>
                           <a
                             href={tier.href}
