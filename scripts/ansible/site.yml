@@ -1,54 +1,13 @@
 ---
 #  Install Dkron beta on a clean instance
 
-- hosts: localhost
-  vars:
-    project_id: 904af849-79ff-4847-90f7-dfa02367ae72
-
-  tasks:
-    - equinix.cloud.metal_device:
-        hostname: "{{ item }}"
-        operating_system: ubuntu_22_04
-        plan: c3.small.x86
-        metro: am
-        project_id: "{{ project_id }}"
-        tags:
-          - server
-      loop:
-        - dkron01
-        - dkron02
-        - dkron03
-    
-    # - equinix.cloud.metal_device:
-    #     hostname: dkron04
-    #     operating_system: ubuntu_22_04
-    #     plan: c3.small.x86
-    #     metro: am
-    #     project_id: "{{ project_id }}"
-    #     tags:
-    #       - agent
-
 - hosts: all
   user: root
   become: true
   become_method: sudo
 
   vars:
-    version: 4.0.0
-    datadog_api_key: "{{ lookup('ansible.builtin.env', 'DKRON_DD_API_KEY') }}"
-    datadog_checks:
-      openmetrics:
-        init_config:
-        instances:
-          - openmetrics_endpoint: http://localhost:8080/metrics/
-            namespace: "dkron"
-            metrics:
-              - dkron.*
-
-  roles:
-    - role: datadog.datadog
-      become: true
-      tags: datadog
+    version: 4.0.3
 
   tasks:
     - name: Copy package
