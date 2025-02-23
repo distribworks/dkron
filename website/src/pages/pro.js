@@ -119,15 +119,13 @@ function Pro() {
                 </p>
                 <div className="mt-10 sm:flex sm:justify-center">
                   <div className="rounded-md shadow">
-                  <script async
-                    src="https://js.stripe.com/v3/buy-button.js">
-                  </script>
-
-                  <stripe-buy-button
-                    buy-button-id="buy_btn_1QMBWYGdKp7xg5G2QGV8LyLq"
-                    publishable-key="pk_live_n6ljeJ5r4kqdnSbPQn4dQECe"
+                  <a 
+                    href="https://buy.stripe.com/9AQ9BP1UV8jkgowaEF"
+                    target="_blank"
+                    className="block w-full py-3 mt-2 text-base font-medium text-center text-white border-2 border-transparent rounded-md gumroad-button bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:bg-fuchsia-700 md:py-4 md:text-lg md:px-10 hover:no-underline hover:text-white/90"
                   >
-                  </stripe-buy-button>
+                    Subscribe
+                  </a>
                   </div>
                 </div>
                 <p className="max-w-md mx-auto mt-3 text-lg text-gray-100 sm:text-xl md:mt-5 md:max-w-3xl">
