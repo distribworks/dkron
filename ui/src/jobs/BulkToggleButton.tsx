@@ -4,14 +4,16 @@ import {
     Button,
     useUnselectAll,
     useRefresh,
+    useListContext,
 } from 'react-admin';
 import { apiUrl, httpClient } from '../dataProvider';
 import RunIcon from '@mui/icons-material/PlayArrow';
 
-const BulkToggleButton = ({selectedIds}: any) => {
+const BulkToggleButton = ({...props}: any) => {
     const notify = useNotify();
     const refresh = useRefresh();
     const unselectAll = useUnselectAll;
+    const { selectedIds } = useListContext();
     const [loading, setLoading] = useState(false);
     const toggleMany = () => {
         for(let id of selectedIds) {
