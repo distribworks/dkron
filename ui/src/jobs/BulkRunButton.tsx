@@ -1,19 +1,20 @@
-import * as React from 'react';
 import { useState } from 'react';
 import {
     useNotify,
     Button,
     useUnselectAll,
     useRefresh,
+    useListContext,
 } from 'react-admin';
 import { apiUrl, httpClient } from '../dataProvider';
 import RunIcon from '@mui/icons-material/PlayArrow';
 
-const BulkRunButton = ({selectedIds}: any) => {
+const BulkRunButton = ({...props}: any) => {
     const notify = useNotify();
     const refresh = useRefresh();
     const unselectAll = useUnselectAll;
     const [loading, setLoading] = useState(false);
+    const { selectedIds } = useListContext();
     const runMany = () => {
         for(let id of selectedIds) {
             setLoading(true);

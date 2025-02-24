@@ -31,11 +31,11 @@ const JobFilter = (props: any) => (
     </Filter>
 );
 
-const JobBulkActionButtons = (props: any) => (
+const JobBulkActionButtons = () => (
     <Fragment>
-        <BulkRunButton {...props} />
-        <BulkToggleButton {...props} />
-        <BulkDeleteButton {...props} />
+        <BulkRunButton />
+        <BulkToggleButton />
+        <BulkDeleteButton />
     </Fragment>
 );
 
@@ -56,8 +56,8 @@ const useStyles = makeStyles(theme => ({
 const JobList = (props: any) => {
     const classes = useStyles();
     return (
-        <List {...props} filters={<JobFilter />} bulkActionButtons={<JobBulkActionButtons />} pagination={<JobPagination />}>
-            <Datagrid rowClick="show" classes={{rowCell: classes.cell}}>
+        <List {...props} filters={<JobFilter />} pagination={<JobPagination />}>
+            <Datagrid rowClick="show" classes={{rowCell: classes.cell}} bulkActionButtons={<JobBulkActionButtons />}>
                 <TextField source="id"
                     cellClassName={classes.hiddenOnSmallScreens}
                     headerClassName={classes.hiddenOnSmallScreens} />
