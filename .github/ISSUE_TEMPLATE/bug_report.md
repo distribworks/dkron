@@ -23,9 +23,10 @@ A clear and concise description of what you expected to happen.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
-** Specifications:**
+**Specifications:**
  - OS: [e.g. linux]
- - Version [e.g. 2.0.1]
+ - Version: [e.g. 2.0.1]
+ - Executor: [e.g. shell]
 
 **Additional context**
 Add any other context about the problem here.
