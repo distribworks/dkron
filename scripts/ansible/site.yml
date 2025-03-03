@@ -2,12 +2,12 @@
 #  Install Dkron beta on a clean instance
 
 - hosts: all
-  user: root
+  user: ubuntu
   become: true
   become_method: sudo
 
   vars:
-    version: 4.0.3
+    version: 4.0.4
 
   tasks:
     - name: Copy package
@@ -75,8 +75,8 @@
         value: "4096 16384 16777216"
       tags: performance
 
-- hosts: tag_server
-  user: root
+- hosts: server
+  user: ubuntu
   become: true
   become_method: sudo
 
@@ -87,10 +87,6 @@
     dkron_server: "true"
 
   tasks:
-    - set_fact:
-        dkron_servers: "{{ groups['tag_server'] | map('extract', hostvars, ['ansible_all_ipv4_addresses', 1]) | list }}"
-      tags: config
-
     - name: configure
       template: src={{ item }}.yml.j2 dest=/etc/dkron/{{ item }}.yml
       loop:
@@ -103,8 +99,8 @@
         enabled: yes
         state: restarted
 
-- hosts: tag_agent
-  user: root
+- hosts: agent
+  user: ubuntu
   become: true
   become_method: sudo
 

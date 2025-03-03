@@ -23,6 +23,7 @@ node_modules
 tags
 .sass-cache
 .idea/
+hosts.yaml
 
 # Production
 build

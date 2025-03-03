@@ -4,8 +4,8 @@
 
 # at-shell-success
 
-- hosts: tag_server
-  user: root
+- hosts: server
+  user: ubuntu
   become: yes
   become_method: sudo
 
