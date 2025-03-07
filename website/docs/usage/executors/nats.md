@@ -6,7 +6,7 @@ Currently, only username/password authentication is supported.
 
 ## Configuration
 
-Params
+Params:
 
 ```
 url:      Comma separated list of NATS server URLs
@@ -17,16 +17,17 @@ password: password for authentication
 debug:    If not empty, turns on debugging. Will log the NATS specific job config and the request sent.
 ```
 
-Example
+Example:
 
 ```json
 {
-   "executor": "nats",
-   "executor_config": {
-       "url": "tls://nats.demo.io:4443", 
-       "message": "the message",
-       "subject": "myfavoritesubject",
-       "userName":"someusername",
-       "password":"somepassword"
+  "executor": "nats",
+  "executor_config": {
+    "url": "tls://nats.demo.io:4443",
+    "message": "the message",
+    "subject": "myfavoritesubject",
+    "userName": "someusername",
+    "password": "somepassword"
+  }
 }
 ```
