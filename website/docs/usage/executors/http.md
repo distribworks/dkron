@@ -21,20 +21,20 @@ tlsCertificateKeyFile: Path to the PEM file containing the client certificate pr
 tlsRootCAsFile:        Path to the PEM file containing certificates to use as root CAs. Optional.
 ```
 
-Example
+Example:
 
 ```json
 {
   "executor": "http",
   "executor_config": {
-      "method": "GET",
-      "url": "http://example.com",
-      "headers": "[]",
-      "body": "",
-      "timeout": "30",
-      "expectCode": "200",
-      "expectBody": "",
-      "debug": "true"
+    "method": "GET",
+    "url": "http://example.com",
+    "headers": "[]",
+    "body": "",
+    "timeout": "30",
+    "expectCode": "200",
+    "expectBody": "",
+    "debug": "true"
   }
 }
 ```
