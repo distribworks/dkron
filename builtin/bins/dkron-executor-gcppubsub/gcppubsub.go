@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"cloud.google.com/go/pubsub"
 	dkplugin "github.com/distribworks/dkron/v4/plugin"
@@ -40,9 +41,11 @@ func (g *GCPPubSub) Execute(args *dktypes.ExecuteRequest, _ dkplugin.StatusHelpe
 	return resp, nil
 }
 
-// ExecuteImpl do http request
+// ExecuteImpl publish message to PubSub topic
 func (g *GCPPubSub) ExecuteImpl(args *dktypes.ExecuteRequest) ([]byte, error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
+	defer cancel()
+
 	projectID := args.Config[configProjectName]
 	topicName := args.Config[configTopicName]
 
