@@ -11,8 +11,7 @@ import (
 )
 
 // RabbitMQ process publish rabbitmq message when Execute method is called.
-type RabbitMQ struct {
-}
+type RabbitMQ struct{}
 
 // Execute method of the plugin
 // "executor": "rabbitmq",
@@ -28,6 +27,7 @@ type RabbitMQ struct {
 //			"message.delivery_mode": "2",
 //			"message.messageId": "4373732772",
 //			"message.body": "{\"key\":\"value\"}"
+//			"message.base64Body": "base64encodedBody"
 //	}
 func (r *RabbitMQ) Execute(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelper) (*dktypes.ExecuteResponse, error) {
 	out, err := r.ExecuteImpl(args, cb)
@@ -56,8 +56,8 @@ func (r *RabbitMQ) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusH
 		return nil, errors.New("RabbitMQ queue name is empty")
 	}
 
-	if cfg["message.body"] != "" && args.Config["message.base64"] != "" {
-		return nil, errors.New("RabbitMQ message.body and message.base64 are both set")
+	if cfg["message.body"] != "" && cfg["message.base64Body"] != "" {
+		return nil, errors.New("RabbitMQ message.body and message.base64Body are both set")
 	}
 
 	// establish connection
@@ -83,7 +83,7 @@ func (r *RabbitMQ) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusH
 	}(ch)
 
 	// create queue if necessary
-	if err := createQueueIfNecessary(args.Config, queueName, ch); err != nil {
+	if err := createQueueIfNecessary(cfg, queueName, ch); err != nil {
 		return nil, err
 	}
 
