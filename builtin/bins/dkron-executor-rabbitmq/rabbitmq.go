@@ -7,6 +7,7 @@ import (
 
 	dkplugin "github.com/distribworks/dkron/v4/plugin"
 	dktypes "github.com/distribworks/dkron/v4/types"
+	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 )
 
@@ -68,9 +69,10 @@ func (r *RabbitMQ) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusH
 	defer func(conn *amqp.Connection) {
 		err := conn.Close()
 		if err != nil {
-			// DO NOTHING
+			log.Error("Failed to close amqp connection", log.WithError(err))
 		}
 	}(conn)
+
 	ch, err := conn.Channel()
 	if err != nil {
 		return nil, err
@@ -78,7 +80,7 @@ func (r *RabbitMQ) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusH
 	defer func(ch *amqp.Channel) {
 		err := ch.Close()
 		if err != nil {
-			// DO NOTHING
+			log.Error("Failed to close channel", log.WithError(err))
 		}
 	}(ch)
 
