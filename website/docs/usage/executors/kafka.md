@@ -4,7 +4,7 @@ A basic Kafka executor that produces a message on a Kafka broker.
 
 ## Configuration
 
-Params
+Params:
 
 ```
 brokerAddress:          Comma separated string containing "IP:port" of the brokers
@@ -19,14 +19,16 @@ saslMechanism:          The SASL SCRAM mechanism to use, either "sha256" or "sha
 debug:                  Turns on debugging output if not empty
 ```
 
-Example
+Example:
 
 ```json
-"executor": "kafka",
-"executor_config": {
+{
+  "executor": "kafka",
+  "executor_config": {
     "brokerAddress": "localhost:9092,another.host:9092",
     "key": "My key",
     "message": "My message",
     "topic": "my_topic"
+  }
 }
 ```
