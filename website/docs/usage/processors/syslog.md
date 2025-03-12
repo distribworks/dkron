@@ -2,9 +2,9 @@
 title: Syslog Processor
 ---
 
-Syslog processor writes the execution output to the system syslog daemon
+Syslog processor writes the execution output to the system syslog daemon.
 
-Note: Only work on linux systems
+Note: Only works on linux systems
 
 ## Configuration
 
@@ -16,16 +16,16 @@ Example
 
 ```json
 {
-    "name": "job_name",
-    "command": "echo 'Hello syslog'",
-    "schedule": "@every 2m",
-    "tags": {
-        "role": "web"
-    },
-    "processors": {
-        "syslog": {
-            "forward": "true"
-        }
+  "name": "job_name",
+  "command": "echo 'Hello syslog'",
+  "schedule": "@every 2m",
+  "tags": {
+    "role": "web"
+  },
+  "processors": {
+    "syslog": {
+      "forward": "true"
     }
+  }
 }
 ```
