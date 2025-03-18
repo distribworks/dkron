@@ -2,6 +2,7 @@
 syntax = "proto3";
 
 package types;
+
 option go_package = "github.com/distribworks/dkron/plugin/types";
 
 message ExecuteRequest {
@@ -11,12 +12,12 @@ message ExecuteRequest {
 }
 
 message ExecuteResponse {
-    bytes output = 1;
-    string error = 2;
+  bytes output = 1;
+  string error = 2;
 }
 
 service Executor {
-    rpc Execute (ExecuteRequest) returns (ExecuteResponse);
+  rpc Execute(ExecuteRequest) returns (ExecuteResponse);
 }
 
 message StatusUpdateRequest {
