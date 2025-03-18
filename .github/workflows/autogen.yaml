@@ -1,0 +1,59 @@
+name: Autogen
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - v*
+    paths:
+      - "website/static/openapi/**"
+
+  pull_request:
+    types: [ opened, synchronize ]
+    paths:
+      - "website/static/openapi/**"
+
+  workflow_dispatch:
+
+jobs:
+  validate:
+    name: Validate the OpenAPI spec
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Swagger Editor Validator
+        uses: swaggerexpert/swagger-editor-validate@v1
+        with:
+          definition-file: ./website/static/openapi/openapi.yaml
+
+  generate:
+    name: Generate the OpenAPI client
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.23.0
+
+      - name: Install Oapi Codegen and generate client
+        run: |
+          go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest
+          oapi-codegen -package client website/static/openapi/openapi.yaml > ./client/client.go
+
+      - name: Push the generated code
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "[Autogen] Generated client from OpenAPI spec"
