@@ -2,10 +2,11 @@
 syntax = "proto3";
 
 package types;
-option go_package = "github.com/distribworks/dkron/plugin/types";
 
-import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/distribworks/dkron/plugin/types";
 
 message Job {
   string name = 1;
@@ -54,7 +55,7 @@ message DeleteJobRequest {
   string job_name = 1;
 }
 
-message DeleteJobResponse{
+message DeleteJobResponse {
   Job job = 1;
 }
 
@@ -68,10 +69,10 @@ message GetJobResponse {
 
 message Execution {
   string job_name = 1;
-	bool success = 2;
-	bytes output = 3;
-	string node_name = 4;
-	int64 group = 5;
+  bool success = 2;
+  bytes output = 3;
+  string node_name = 4;
+  int64 group = 5;
   uint32 attempt = 6;
   google.protobuf.Timestamp started_at = 7;
   google.protobuf.Timestamp finished_at = 8;
@@ -104,16 +105,16 @@ message ToggleJobResponse {
 
 message RaftServer {
   string id = 1;
-	string node = 2;
-	string address = 3;
-	bool leader = 4;
-	bool voter = 5; 
-	string raft_protocol = 6;
+  string node = 2;
+  string address = 3;
+  bool leader = 4;
+  bool voter = 5;
+  string raft_protocol = 6;
 }
 
 message RaftGetConfigurationResponse {
   repeated RaftServer servers = 1;
-  uint64 index = 2;   
+  uint64 index = 2;
 }
 
 message RaftRemovePeerByIDRequest {
@@ -134,17 +135,17 @@ message GetActiveExecutionsResponse {
 }
 
 service Dkron {
-  rpc GetJob (GetJobRequest) returns (GetJobResponse);
-  rpc ExecutionDone (ExecutionDoneRequest) returns (ExecutionDoneResponse);
-  rpc Leave (google.protobuf.Empty) returns (google.protobuf.Empty);
-  rpc SetJob (SetJobRequest) returns (SetJobResponse);
-  rpc DeleteJob (DeleteJobRequest) returns (DeleteJobResponse);
-  rpc RunJob (RunJobRequest) returns (RunJobResponse);
-  rpc ToggleJob (ToggleJobRequest) returns (ToggleJobResponse);
-  rpc RaftGetConfiguration (google.protobuf.Empty) returns (RaftGetConfigurationResponse);
-  rpc RaftRemovePeerByID (RaftRemovePeerByIDRequest) returns (google.protobuf.Empty);
-  rpc GetActiveExecutions (google.protobuf.Empty) returns  (GetActiveExecutionsResponse);
-  rpc SetExecution (Execution) returns (google.protobuf.Empty);
+  rpc GetJob(GetJobRequest) returns (GetJobResponse);
+  rpc ExecutionDone(ExecutionDoneRequest) returns (ExecutionDoneResponse);
+  rpc Leave(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc SetJob(SetJobRequest) returns (SetJobResponse);
+  rpc DeleteJob(DeleteJobRequest) returns (DeleteJobResponse);
+  rpc RunJob(RunJobRequest) returns (RunJobResponse);
+  rpc ToggleJob(ToggleJobRequest) returns (ToggleJobResponse);
+  rpc RaftGetConfiguration(google.protobuf.Empty) returns (RaftGetConfigurationResponse);
+  rpc RaftRemovePeerByID(RaftRemovePeerByIDRequest) returns (google.protobuf.Empty);
+  rpc GetActiveExecutions(google.protobuf.Empty) returns (GetActiveExecutionsResponse);
+  rpc SetExecution(Execution) returns (google.protobuf.Empty);
 }
 
 message AgentRunRequest {
@@ -153,5 +154,5 @@ message AgentRunRequest {
 }
 
 service Agent {
-  rpc AgentRun (AgentRunRequest) returns (stream AgentRunStream);
+  rpc AgentRun(AgentRunRequest) returns (stream AgentRunStream);
 }
