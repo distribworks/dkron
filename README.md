@@ -12,11 +12,16 @@ Dkron is a distributed cron service, easy to setup and fault tolerant with focus
 - Reliable: Completely fault tolerant
 - Highly scalable: Able to handle high volumes of scheduled jobs and thousands of nodes
 
-Dkron is written in Go and leverage the power of the Raft protocol and Serf for providing fault tolerance, reliability and scalability while keeping simple and easily installable.
+Dkron is written in Go and leverage the power of the Raft protocol and Serf for providing fault tolerance, reliability
+and scalability while keeping simple and easily installable.
 
-Dkron is inspired by the google whitepaper [Reliable Cron across the Planet](https://queue.acm.org/detail.cfm?id=2745840) and by Airbnb Chronos borrowing the same features from it.
+Dkron is inspired by the google
+whitepaper [Reliable Cron across the Planet](https://queue.acm.org/detail.cfm?id=2745840) and by Airbnb Chronos
+borrowing the same features from it.
 
-Dkron runs on Linux, OSX and Windows. It can be used to run scheduled commands on a server cluster using any combination of servers for each job. It has no single points of failure due to the use of the Gossip protocol and fault tolerant distributed databases.
+Dkron runs on Linux, OSX and Windows. It can be used to run scheduled commands on a server cluster using any combination
+of servers for each job. It has no single points of failure due to the use of the Gossip protocol and fault tolerant
+distributed databases.
 
 You can use Dkron to run the most important part of your company, scheduled jobs.
 
@@ -24,36 +29,56 @@ You can use Dkron to run the most important part of your company, scheduled jobs
 
 [Installation instructions](https://dkron.io/docs/basics/installation)
 
-Full, comprehensive documentation is viewable on the [Dkron website](http://dkron.io)
+Full, comprehensive documentation is accessible on the [Dkron website](http://dkron.io)
 
-## Development Quick start
+## Quickstart
 
-The best way to test and develop dkron is using docker, you will need [Docker](https://www.docker.com/) installed before proceeding.
+### Deploying Dkron using Docker
 
-Clone the repository.
+The best way to test and develop dkron is using docker, you will need [Docker](https://www.docker.com/) with Docker
+compose installed before proceeding.
 
-Next, run the included Docker Compose config:
-
-`docker-compose up`
-
-This will start Dkron instances. To add more Dkron instances to the clusters:
-
-```
-docker-compose up --scale dkron-server=4
-docker-compose up --scale dkron-agent=10
+```bash
+docker compose up -d
 ```
 
-Check the port mapping using `docker-compose ps` and use the browser to navigate to the Dkron dashboard using one of the ports mapped by compose.
+The UI should be available on http://localhost:8080/ui.
+
+### Using Dkron
 
 To add jobs to the system read the [API docs](https://dkron.io/api/).
 
-## Frontend development
+### Scaling the cluster
+
+To add more Dkron instances to the cluster:
+
+```bash
+docker compose up -d --scale dkron-server=4
+docker compose up -d --scale dkron-agent=10
+```
+
+## Development
+
+To develop Dkron, you can deploy the cluster with local changes applied with the following steps:
+
+1. Clone the repository.
+
+2. Run the `docker compose`:
+
+    ```bash
+    docker compose -f docker-compose.dev.yml up
+    ```
+
+### Frontend development
 
 Dkron dashboard is built using [React Admin](https://marmelab.com/react-admin/) as a single page application.
 
-To start developing the dashboard enter the `ui` directory and run `npm install` to get the frontend dependencies and then start the local server with `npm start` it should start a new local web server and open a new browser window serving de web ui.
+To start developing the dashboard enter the `ui` directory and run `npm install` to get the frontend dependencies and
+then start the local server with `npm start` it should start a new local web server and open a new browser window
+serving de web ui.
 
-Make your changes to the code, then run `make ui` to generate assets files. This is a method of embedding resources in Go applications.
+Make your changes to the code, then run `make ui` to generate assets files. This is a method of embedding resources in
+Go applications.
 
 ### Resources
 
