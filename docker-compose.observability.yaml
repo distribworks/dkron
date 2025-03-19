@@ -1,0 +1,38 @@
+services:
+
+  # Complete observability stack.
+  grafana-lgtm-stack:
+    image: grafana/otel-lgtm:0.9.1
+    hostname: lgtm-stack
+    environment:
+      - ENABLE_LOGS_OTELCOL=true
+    ports:
+      - "3000:3000"
+    volumes:
+      - prometheus:/prometheus
+      - loki:/data/loki
+      - grafana:/var/lib/grafana
+      - ./otel-collector.yaml:/otel-lgtm/otelcol-config.yaml  # OTel collector config contains configuration for scraping Dkron
+
+  dkron:
+    environment:
+      - DKRON_ENABLE_PROMETHEUS=true
+      - DKRON_OTEL_ENDPOINT=lgtm-stack:4317
+      - OTEL_EXPORTER_OTLP_INSECURE=true
+
+  dkron-server:
+    environment:
+      - DKRON_ENABLE_PROMETHEUS=true
+      - DKRON_OTEL_ENDPOINT=lgtm-stack:4317
+      - OTEL_EXPORTER_OTLP_INSECURE=true
+
+  dkron-agent:
+    environment:
+      - DKRON_ENABLE_PROMETHEUS=true
+      - DKRON_OTEL_ENDPOINT=lgtm-stack:4317
+      - OTEL_EXPORTER_OTLP_INSECURE=true
+
+volumes:
+  prometheus:
+  loki:
+  grafana:
