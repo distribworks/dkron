@@ -55,5 +55,18 @@ jobs:
 
       - name: Push the generated code
         uses: stefanzweifel/git-auto-commit-action@v5
+        if: github.event_name == 'pull_request'
         with:
           commit_message: "[Autogen] Generated client from OpenAPI spec"
+
+      - name: Create a pull request
+        if : github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "[Autogen] Generated client from OpenAPI spec"
+          title: "[Autogen] OpenAPI client update"
+          body: "OpenAPI client was (re)generated from the latest OpenAPI spec."
+          branch: "openapi/client/autogen-${{ github.sha }}"
+          base: main
+          labels: openapi-client, autogen
