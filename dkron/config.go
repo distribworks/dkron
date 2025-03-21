@@ -180,6 +180,9 @@ type Config struct {
 
 	// CronitorEndpoint is the endpoint to call for cronitor notifications.
 	CronitorEndpoint string `mapstructure:"cronitor-endpoint"`
+
+	// OpenTelemetryEndpoint is the gRPC endpoint to send OpenTelemetry traces to. If empty, no traces will be sent.
+	OpenTelemetryEndpoint string `mapstructure:"otel-endpoint"`
 }
 
 // DefaultBindPort is the default port that dkron will use for Serf communication
@@ -327,6 +330,7 @@ Format there: https://golang.org/pkg/time/#ParseDuration`)
 	cmdFlags.StringSlice("dog-statsd-tags", []string{}, "Datadog tags, specified as key:value")
 	cmdFlags.String("statsd-addr", "", "Statsd address")
 	cmdFlags.Bool("enable-prometheus", false, "Enable serving prometheus metrics")
+	cmdFlags.String("otel-endpoint", "", "OpenTelemetry gRPC endpoint")
 	cmdFlags.Bool("disable-usage-stats", c.DisableUsageStats, "Disable sending anonymous usage stats")
 
 	return cmdFlags

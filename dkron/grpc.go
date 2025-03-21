@@ -8,12 +8,13 @@ import (
 	"strings"
 	"time"
 
-	metrics "github.com/armon/go-metrics"
+	"github.com/armon/go-metrics"
 	"github.com/distribworks/dkron/v4/plugin"
 	"github.com/distribworks/dkron/v4/types"
 	"github.com/hashicorp/raft"
 	"github.com/hashicorp/serf/serf"
 	"github.com/sirupsen/logrus"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
@@ -56,7 +57,8 @@ func NewGRPCServer(agent *Agent, logger *logrus.Entry) DkronGRPCServer {
 
 // Serve creates and start a new gRPC dkron server
 func (grpcs *GRPCServer) Serve(lis net.Listener) error {
-	grpcServer := grpc.NewServer()
+	serverOpts := grpc.StatsHandler(otelgrpc.NewServerHandler()) // Add otel support
+	grpcServer := grpc.NewServer(serverOpts)
 	types.RegisterDkronServer(grpcServer, grpcs)
 
 	as := NewAgentServer(grpcs.agent, grpcs.logger)
@@ -136,7 +138,7 @@ func (grpcs *GRPCServer) GetJob(ctx context.Context, getJobReq *types.GetJobRequ
 	defer metrics.MeasureSince([]string{"grpc", "get_job"}, time.Now())
 	grpcs.logger.WithField("job", getJobReq.JobName).Debug("grpc: Received GetJob")
 
-	j, err := grpcs.agent.Store.GetJob(getJobReq.JobName, nil)
+	j, err := grpcs.agent.Store.GetJob(ctx, getJobReq.JobName, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -172,7 +174,7 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *types.E
 
 	// This is the leader at this point, so process the execution, encode the value and apply the log to the cluster.
 	// Get the defined output types for the job, and call them
-	job, err := grpcs.agent.Store.GetJob(execDoneReq.Execution.JobName, nil)
+	job, err := grpcs.agent.Store.GetJob(ctx, execDoneReq.Execution.JobName, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -199,7 +201,7 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *types.E
 	}
 
 	// Retrieve the fresh, updated job from the store to work on stored values
-	job, err = grpcs.agent.Store.GetJob(job.Name, nil)
+	job, err = grpcs.agent.Store.GetJob(ctx, job.Name, nil)
 	if err != nil {
 		grpcs.logger.WithError(err).WithField("job", execDoneReq.Execution.JobName).Error("grpc: Error retrieving job from store")
 		return nil, err
@@ -226,7 +228,7 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *types.E
 
 		time.Sleep(eb)
 
-		if _, err := grpcs.agent.Run(job.Name, execution); err != nil {
+		if _, err := grpcs.agent.Run(ctx, job.Name, execution); err != nil {
 			return nil, err
 		}
 
@@ -236,11 +238,9 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *types.E
 		}, nil
 	}
 
-	exg, err := grpcs.agent.Store.GetExecutionGroup(execution,
-		&ExecutionOptions{
-			Timezone: job.GetTimeLocation(),
-		},
-	)
+	exg, err := grpcs.agent.Store.GetExecutionGroup(ctx, execution, &ExecutionOptions{
+		Timezone: job.GetTimeLocation(),
+	})
 	if err != nil {
 		grpcs.logger.WithError(err).WithField("group", execution.Group).Error("grpc: Error getting execution group.")
 		return nil, err
@@ -255,7 +255,7 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *types.E
 	// Check first if there's dependent jobs and then check for the job status to begin execution dependent jobs on success.
 	if len(job.DependentJobs) > 0 && job.Status == StatusSuccess {
 		for _, djn := range job.DependentJobs {
-			dj, err := grpcs.agent.Store.GetJob(djn, nil)
+			dj, err := grpcs.agent.Store.GetJob(ctx, djn, nil)
 			if err != nil {
 				return nil, err
 			}
@@ -289,7 +289,7 @@ func (grpcs *GRPCServer) Leave(ctx context.Context, in *emptypb.Empty) (*emptypb
 // RunJob runs a job in the cluster
 func (grpcs *GRPCServer) RunJob(ctx context.Context, req *types.RunJobRequest) (*types.RunJobResponse, error) {
 	ex := NewExecution(req.JobName)
-	job, err := grpcs.agent.Run(req.JobName, ex)
+	job, err := grpcs.agent.Run(ctx, req.JobName, ex)
 	if err != nil {
 		return nil, err
 	}

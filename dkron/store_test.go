@@ -32,17 +32,17 @@ func TestStore(t *testing.T) {
 	}
 
 	// Check that we still get an empty job list
-	jobs, err := s.GetJobs(nil)
+	jobs, err := s.GetJobs(nil, nil)
 	assert.NoError(t, err)
 	assert.NotNil(t, jobs, "jobs nil, expecting empty slice")
 	assert.Empty(t, jobs)
 
-	err = s.SetJob(testJob, true)
+	err = s.SetJob(nil, testJob, true)
 	assert.NoError(t, err)
-	err = s.SetJob(testJob2, true)
+	err = s.SetJob(nil, testJob2, true)
 	assert.NoError(t, err)
 
-	jobs, err = s.GetJobs(nil)
+	jobs, err = s.GetJobs(nil, nil)
 	assert.NoError(t, err)
 	assert.Len(t, jobs, 2)
 	assert.Equal(t, "test", jobs[0].Name)
@@ -56,7 +56,7 @@ func TestStore(t *testing.T) {
 		NodeName:   "testNode",
 	}
 
-	_, err = s.SetExecution(testExecution)
+	_, err = s.SetExecution(nil, testExecution)
 	require.NoError(t, err)
 
 	testExecution2 := &Execution{
@@ -67,10 +67,10 @@ func TestStore(t *testing.T) {
 		Output:     "test",
 		NodeName:   "testNode",
 	}
-	_, err = s.SetExecution(testExecution2)
+	_, err = s.SetExecution(nil, testExecution2)
 	require.NoError(t, err)
 
-	execs, err := s.GetExecutions("test", &ExecutionOptions{
+	execs, err := s.GetExecutions(nil, "test", &ExecutionOptions{
 		Sort:  "started_at",
 		Order: "DESC",
 	})
@@ -80,13 +80,13 @@ func TestStore(t *testing.T) {
 	assert.Equal(t, testExecution, execs[0])
 	assert.Len(t, execs, 1)
 
-	_, err = s.DeleteJob("test")
+	_, err = s.DeleteJob(nil, "test")
 	assert.NoError(t, err)
 
-	_, err = s.DeleteJob("test")
+	_, err = s.DeleteJob(nil, "test")
 	assert.EqualError(t, err, buntdb.ErrNotFound.Error())
 
-	_, err = s.DeleteJob("test2")
+	_, err = s.DeleteJob(nil, "test2")
 	assert.NoError(t, err)
 }
 
@@ -164,11 +164,11 @@ func TestStore_ChildIsUpdatedAfterDeletingParentJob(t *testing.T) {
 	storeJob(t, s, "parent1")
 	storeChildJob(t, s, "child1", "parent1")
 
-	_, err := s.DeleteJob("parent1")
+	_, err := s.DeleteJob(nil, "parent1")
 	assert.EqualError(t, err, ErrDependentJobs.Error())
 
 	deleteJob(t, s, "child1")
-	_, err = s.DeleteJob("parent1")
+	_, err = s.DeleteJob(nil, "parent1")
 	assert.NoError(t, err)
 }
 
@@ -185,18 +185,18 @@ func TestStore_GetJobsWithMetadata(t *testing.T) {
 	var options JobOptions
 	options.Metadata = make(map[string]string)
 	options.Metadata["t1"] = "v1"
-	jobs, err := s.GetJobs(&options)
+	jobs, err := s.GetJobs(nil, &options)
 	assert.NoError(t, err)
 	assert.Equal(t, 2, len(jobs))
 
 	options.Metadata["t2"] = "v2"
-	jobs, err = s.GetJobs(&options)
+	jobs, err = s.GetJobs(nil, &options)
 	assert.NoError(t, err)
 	assert.Equal(t, 1, len(jobs))
 	assert.Equal(t, "job2", jobs[0].Name)
 
 	options.Metadata["t3"] = "v3"
-	jobs, err = s.GetJobs(&options)
+	jobs, err = s.GetJobs(nil, &options)
 	assert.NoError(t, err)
 	assert.Equal(t, 0, len(jobs))
 }
@@ -218,7 +218,7 @@ func Test_computeStatus(t *testing.T) {
 		NodeName:   "testNode1",
 		Group:      1,
 	}
-	_, _ = s.SetExecution(ex1)
+	_, _ = s.SetExecution(nil, ex1)
 
 	ex2 := &Execution{
 		JobName:    "test",
@@ -229,7 +229,7 @@ func Test_computeStatus(t *testing.T) {
 		NodeName:   "testNode2",
 		Group:      1,
 	}
-	_, _ = s.SetExecution(ex2)
+	_, _ = s.SetExecution(nil, ex2)
 
 	ex3 := &Execution{
 		JobName:    "test",
@@ -240,7 +240,7 @@ func Test_computeStatus(t *testing.T) {
 		NodeName:   "testNode1",
 		Group:      2,
 	}
-	_, _ = s.SetExecution(ex3)
+	_, _ = s.SetExecution(nil, ex3)
 
 	ex4 := &Execution{
 		JobName:    "test",
@@ -251,7 +251,7 @@ func Test_computeStatus(t *testing.T) {
 		NodeName:   "testNode1",
 		Group:      2,
 	}
-	_, _ = s.SetExecution(ex4)
+	_, _ = s.SetExecution(nil, ex4)
 
 	ex5 := &Execution{
 		JobName:   "test",
@@ -261,7 +261,7 @@ func Test_computeStatus(t *testing.T) {
 		NodeName:  "testNode1",
 		Group:     3,
 	}
-	_, _ = s.SetExecution(ex5)
+	_, _ = s.SetExecution(nil, ex5)
 
 	ex6 := &Execution{
 		JobName:  "test",
@@ -270,7 +270,7 @@ func Test_computeStatus(t *testing.T) {
 		NodeName: "testNode1",
 		Group:    4,
 	}
-	_, _ = s.SetExecution(ex6)
+	_, _ = s.SetExecution(nil, ex6)
 
 	// Tests status
 	err = s.db.View(func(tx *buntdb.Tx) error {
@@ -296,21 +296,21 @@ func Test_computeStatus(t *testing.T) {
 func storeJob(t *testing.T, s *Store, jobName string) {
 	job := scaffoldJob()
 	job.Name = jobName
-	require.NoError(t, s.SetJob(job, false))
+	require.NoError(t, s.SetJob(nil, job, false))
 }
 
 func storeJobWithMetadata(t *testing.T, s *Store, jobName string, metadata map[string]string) {
 	job := scaffoldJob()
 	job.Name = jobName
 	job.Metadata = metadata
-	require.NoError(t, s.SetJob(job, false))
+	require.NoError(t, s.SetJob(nil, job, false))
 }
 
 func storeChildJob(t *testing.T, s *Store, jobName string, parentName string) {
 	job := scaffoldJob()
 	job.Name = jobName
 	job.ParentJob = parentName
-	require.NoError(t, s.SetJob(job, false))
+	require.NoError(t, s.SetJob(nil, job, false))
 }
 
 func scaffoldJob() *Job {
@@ -331,12 +331,12 @@ func setupStore(t *testing.T) *Store {
 }
 
 func loadJob(t *testing.T, s *Store, name string) *Job {
-	job, err := s.GetJob(name, nil)
+	job, err := s.GetJob(nil, name, nil)
 	require.NoError(t, err)
 	return job
 }
 
 func deleteJob(t *testing.T, s *Store, name string) {
-	_, err := s.DeleteJob(name)
+	_, err := s.DeleteJob(nil, name)
 	require.NoError(t, err)
 }

@@ -5,9 +5,10 @@ import (
 	"io"
 	"time"
 
-	metrics "github.com/armon/go-metrics"
+	"github.com/armon/go-metrics"
 	"github.com/distribworks/dkron/v4/types"
 	"github.com/sirupsen/logrus"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -47,6 +48,7 @@ func NewGRPCClient(dialOpt grpc.DialOption, agent *Agent, logger *logrus.Entry) 
 		dialOpt: []grpc.DialOption{
 			dialOpt,
 			grpc.WithBlock(),
+			grpc.WithStatsHandler(otelgrpc.NewClientHandler()), // Add tracing to gRPC client
 		},
 		agent:  agent,
 		logger: logger,

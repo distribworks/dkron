@@ -56,7 +56,7 @@ func (h *HTTPTransport) UI(r *gin.RouterGroup, aclEnabled bool) {
 		if err == nil && p != "/" && p != "/index.html" {
 			ctx.FileFromFS(p, http.FS(assets))
 		} else {
-			jobs, err := h.agent.Store.GetJobs(nil)
+			jobs, err := h.agent.Store.GetJobs(nil, nil)
 			if err != nil {
 				h.logger.Error(err)
 			}
