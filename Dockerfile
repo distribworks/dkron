@@ -22,4 +22,7 @@ COPY . .
 
 RUN go install ./...
 
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=5 \
+  CMD curl --fail http://localhost:8080/health || exit 1
+
 CMD ["dkron"]
