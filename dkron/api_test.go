@@ -371,11 +371,11 @@ func TestAPIJobOutputTruncate(t *testing.T) {
 		Output:     "test " + strings.Repeat("longer output... ", 100),
 		NodeName:   "testNode2",
 	}
-	_, err = a.Store.SetExecution(testExecution1)
+	_, err = a.Store.SetExecution(nil, testExecution1)
 	if err != nil {
 		t.Fatal(err)
 	}
-	_, err = a.Store.SetExecution(testExecution2)
+	_, err = a.Store.SetExecution(nil, testExecution2)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -82,7 +82,7 @@ func (d *dkronFSM) applySetJob(buf []byte) interface{} {
 		return err
 	}
 	job := NewJobFromProto(&pj, d.logger)
-	if err := d.store.SetJob(job, false); err != nil {
+	if err := d.store.SetJob(nil, job, false); err != nil {
 		return err
 	}
 	return nil
@@ -93,7 +93,7 @@ func (d *dkronFSM) applyDeleteJob(buf []byte) interface{} {
 	if err := proto.Unmarshal(buf, &djr); err != nil {
 		return err
 	}
-	job, err := d.store.DeleteJob(djr.GetJobName())
+	job, err := d.store.DeleteJob(nil, djr.GetJobName())
 	if err != nil {
 		return err
 	}
@@ -110,7 +110,7 @@ func (d *dkronFSM) applyExecutionDone(buf []byte) interface{} {
 	d.logger.WithField("execution", execution.Key()).
 		WithField("output", string(execution.Output)).
 		Debug("fsm: Setting execution")
-	_, err := d.store.SetExecutionDone(execution)
+	_, err := d.store.SetExecutionDone(nil, execution)
 
 	return err
 }
@@ -121,7 +121,7 @@ func (d *dkronFSM) applySetExecution(buf []byte) interface{} {
 		return err
 	}
 	execution := NewExecutionFromProto(&pbex)
-	key, err := d.store.SetExecution(execution)
+	key, err := d.store.SetExecution(nil, execution)
 	if err != nil {
 		return err
 	}
