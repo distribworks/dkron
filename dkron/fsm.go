@@ -1,6 +1,7 @@
 package dkron
 
 import (
+	"context"
 	"io"
 
 	dkronpb "github.com/distribworks/dkron/v4/types"
@@ -57,15 +58,17 @@ func (d *dkronFSM) Apply(l *raft.Log) interface{} {
 
 	d.logger.WithField("command", msgType).Debug("fsm: received command")
 
+	ctx := context.Background()
+
 	switch msgType {
 	case SetJobType:
-		return d.applySetJob(buf[1:])
+		return d.applySetJob(ctx, buf[1:])
 	case DeleteJobType:
-		return d.applyDeleteJob(buf[1:])
+		return d.applyDeleteJob(ctx, buf[1:])
 	case ExecutionDoneType:
-		return d.applyExecutionDone(buf[1:])
+		return d.applyExecutionDone(ctx, buf[1:])
 	case SetExecutionType:
-		return d.applySetExecution(buf[1:])
+		return d.applySetExecution(ctx, buf[1:])
 	}
 
 	// Check enterprise only message types.
@@ -76,31 +79,31 @@ func (d *dkronFSM) Apply(l *raft.Log) interface{} {
 	return nil
 }
 
-func (d *dkronFSM) applySetJob(buf []byte) interface{} {
+func (d *dkronFSM) applySetJob(ctx context.Context, buf []byte) interface{} {
 	var pj dkronpb.Job
 	if err := proto.Unmarshal(buf, &pj); err != nil {
 		return err
 	}
 	job := NewJobFromProto(&pj, d.logger)
-	if err := d.store.SetJob(nil, job, false); err != nil {
+	if err := d.store.SetJob(ctx, job, false); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (d *dkronFSM) applyDeleteJob(buf []byte) interface{} {
+func (d *dkronFSM) applyDeleteJob(ctx context.Context, buf []byte) interface{} {
 	var djr dkronpb.DeleteJobRequest
 	if err := proto.Unmarshal(buf, &djr); err != nil {
 		return err
 	}
-	job, err := d.store.DeleteJob(nil, djr.GetJobName())
+	job, err := d.store.DeleteJob(ctx, djr.GetJobName())
 	if err != nil {
 		return err
 	}
 	return job
 }
 
-func (d *dkronFSM) applyExecutionDone(buf []byte) interface{} {
+func (d *dkronFSM) applyExecutionDone(ctx context.Context, buf []byte) interface{} {
 	var execDoneReq dkronpb.ExecutionDoneRequest
 	if err := proto.Unmarshal(buf, &execDoneReq); err != nil {
 		return err
@@ -110,18 +113,18 @@ func (d *dkronFSM) applyExecutionDone(buf []byte) interface{} {
 	d.logger.WithField("execution", execution.Key()).
 		WithField("output", string(execution.Output)).
 		Debug("fsm: Setting execution")
-	_, err := d.store.SetExecutionDone(nil, execution)
+	_, err := d.store.SetExecutionDone(ctx, execution)
 
 	return err
 }
 
-func (d *dkronFSM) applySetExecution(buf []byte) interface{} {
+func (d *dkronFSM) applySetExecution(ctx context.Context, buf []byte) interface{} {
 	var pbex dkronpb.Execution
 	if err := proto.Unmarshal(buf, &pbex); err != nil {
 		return err
 	}
 	execution := NewExecutionFromProto(&pbex)
-	key, err := d.store.SetExecution(nil, execution)
+	key, err := d.store.SetExecution(ctx, execution)
 	if err != nil {
 		return err
 	}
