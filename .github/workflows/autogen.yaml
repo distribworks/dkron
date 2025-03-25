@@ -1,0 +1,72 @@
+name: Autogen
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - v*
+    paths:
+      - "website/static/openapi/**"
+
+  pull_request:
+    types: [ opened, synchronize ]
+    paths:
+      - "website/static/openapi/**"
+
+  workflow_dispatch:
+
+jobs:
+  validate:
+    name: Validate the OpenAPI spec
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Swagger Editor Validator
+        uses: swaggerexpert/swagger-editor-validate@v1
+        with:
+          definition-file: ./website/static/openapi/openapi.yaml
+
+  generate:
+    name: Generate the OpenAPI client
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.23.0
+
+      - name: Install Oapi Codegen and generate client
+        run: |
+          go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest
+          make client
+
+      - name: Push the generated code
+        uses: stefanzweifel/git-auto-commit-action@v5
+        if: github.event_name == 'pull_request'
+        with:
+          commit_message: "[Autogen] Generated client from OpenAPI spec"
+
+      - name: Create a pull request
+        if : github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "[Autogen] Generated client from OpenAPI spec"
+          title: "[Autogen] OpenAPI client update"
+          body: "OpenAPI client was (re)generated from the latest OpenAPI spec."
+          branch: "openapi/client/autogen-${{ github.sha }}"
+          base: main
+          labels: openapi-client, autogen
