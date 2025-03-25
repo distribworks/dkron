@@ -51,7 +51,7 @@ jobs:
       - name: Install Oapi Codegen and generate client
         run: |
           go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest
-          oapi-codegen -package client website/static/openapi/openapi.yaml > ./client/client.go
+          make client
 
       - name: Push the generated code
         uses: stefanzweifel/git-auto-commit-action@v5
