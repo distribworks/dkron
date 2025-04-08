@@ -30,7 +30,7 @@ require (
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0
 	github.com/labstack/echo/v4 v4.13.3
 	github.com/mattn/go-shellwords v1.0.12
-	github.com/nats-io/nats.go v1.40.0
+	github.com/nats-io/nats.go v1.41.0
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.21.1
