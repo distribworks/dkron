@@ -1,12 +1,10 @@
 // protoc -I proto/ --go_out=types --go_opt=paths=source_relative --go-grpc_out=types --go-grpc_opt=paths=source_relative dkron.proto
 syntax = "proto3";
 
-package types;
+package types.v1;
 
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
-
-option go_package = "github.com/distribworks/dkron/plugin/types";
 
 message Job {
   string name = 1;
@@ -121,38 +119,28 @@ message RaftRemovePeerByIDRequest {
   string id = 1;
 }
 
-message AgentRunStream {
-  Execution execution = 1;
-}
-
-message AgentRunResponse {
-  string from = 1;
-  bytes payload = 2;
-}
-
 message GetActiveExecutionsResponse {
   repeated Execution executions = 1;
 }
 
+// buf:lint:ignore SERVICE_SUFFIX
+// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
 service Dkron {
   rpc GetJob(GetJobRequest) returns (GetJobResponse);
   rpc ExecutionDone(ExecutionDoneRequest) returns (ExecutionDoneResponse);
+  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
   rpc Leave(google.protobuf.Empty) returns (google.protobuf.Empty);
   rpc SetJob(SetJobRequest) returns (SetJobResponse);
   rpc DeleteJob(DeleteJobRequest) returns (DeleteJobResponse);
   rpc RunJob(RunJobRequest) returns (RunJobResponse);
   rpc ToggleJob(ToggleJobRequest) returns (ToggleJobResponse);
+  // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
   rpc RaftGetConfiguration(google.protobuf.Empty) returns (RaftGetConfigurationResponse);
+  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
   rpc RaftRemovePeerByID(RaftRemovePeerByIDRequest) returns (google.protobuf.Empty);
   rpc GetActiveExecutions(google.protobuf.Empty) returns (GetActiveExecutionsResponse);
+  // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
   rpc SetExecution(Execution) returns (google.protobuf.Empty);
-}
-
-message AgentRunRequest {
-  Job job = 1;
-  Execution execution = 2;
-}
-
-service Agent {
-  rpc AgentRun(AgentRunRequest) returns (stream AgentRunStream);
 }

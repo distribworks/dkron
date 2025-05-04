@@ -10,12 +10,11 @@ inputs:
 plugins:
   #- remote: buf.build/protocolbuffers/go:v1.31.0
   - local: protoc-gen-go
-    out: types
+    out: gen/proto
     opt:
       - paths=source_relative
   #- remote: buf.build/grpc/go:v1.5.1
   - local: protoc-gen-go-grpc
-    out: types
+    out: gen/proto
     opt:
       - paths=source_relative
-

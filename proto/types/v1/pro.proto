@@ -1,12 +1,10 @@
 // protoc -I proto/ --go_out=proto --go_opt=paths=source_relative --go-grpc_out=proto --go-grpc_opt=paths=source_relative proto/pro.proto
 syntax = "proto3";
 
-package types;
+package types.v1;
 
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
-
-option go_package = "github.com/distribworks/dkron/types";
 
 // Policy is a policy definition
 message Policy {
@@ -42,9 +40,12 @@ message ACLPolicyListResponse {
   repeated Policy policies = 1;
 }
 
+// buf:lint:ignore ENUM_VALUE_SAME_NAME
 enum TokenType {
-  management = 0;
-  client = 1;
+  // buf:lint:ignore ENUM_ZERO_VALUE_SUFFIX
+  TOKEN_TYPE_MANAGEMENT = 0;
+  TOKEN_TYPE_CLIENT = 1;
+  TOKEN_TYPE_UNSPECIFIED = 2;
 }
 
 // Token is the representation of a token
@@ -87,13 +88,18 @@ message ACLTokenListResponse {
 }
 
 // DkronPro is the DkronPro service definition
+// buf:lint:ignore SERVICE_SUFFIX
+// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 service DkronPro {
   rpc ACLPolicyUpsert(ACLPolicyUpsertRequest) returns (ACLPolicyUpsertResponse);
   rpc ACLPolicyDelete(ACLPolicyDeleteRequest) returns (ACLPolicyDeleteResponse);
   rpc ACLPolicyInfo(ACLPolicyInfoRequest) returns (ACLPolicyInfoResponse);
+
+  // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
   rpc ACLPolicyList(google.protobuf.Empty) returns (ACLPolicyListResponse);
   rpc ACLTokenUpsert(ACLTokenUpsertRequest) returns (ACLTokenUpsertResponse);
   rpc ACLTokenDelete(ACLTokenDeleteRequest) returns (ACLTokenDeleteResponse);
   rpc ACLTokenInfo(ACLTokenInfoRequest) returns (ACLTokenInfoResponse);
+  // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
   rpc ACLTokenList(google.protobuf.Empty) returns (ACLTokenListResponse);
 }
