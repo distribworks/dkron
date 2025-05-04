@@ -5,25 +5,51 @@ sidebar_position: 1
 
 ## Introduction
 
-Dkron nodes can work in two modes, agents or servers.
+Dkron is a distributed job scheduling system that runs across multiple nodes. Understanding its architecture will help you deploy it effectively.
 
-A Dkron agent is a cluster member that can handle job executions, run your scripts and return the resulting output to the server.
+### Node Types
 
-A Dkron server is also a cluster member that send job execution queries to agents or other servers, so servers can execute jobs too.
+Dkron nodes can work in two modes:
 
-The main distinction is that servers order job executions, can be used to schedule jobs, handles data storage and participate on leader election.
+- **Agents**: Cluster members that handle job executions, run scripts, and return the output to servers.
+- **Servers**: Cluster members that send job execution queries and also handle scheduling, data storage, and leader election.
 
-Dkron clusters have a leader, the leader is responsible of starting job execution queries in the cluster.
+```mermaid
+flowchart TD
+    Leader[Server Node\n(Leader)] <--> Follower1[Server Node\n(Follower)]
+    Leader <--> Follower2[Server Node\n(Follower)]
+    Leader --> Agent1[Agent Node]
+    Leader --> Agent2[Agent Node]
+    Follower1 --> Agent1
+    Follower2 --> Agent2
+```
 
-Any Dkron agent or server acts as a cluster member and it's available to run scheduled jobs.
+### Leadership and Job Execution
 
-Default is for all nodes to execute each job. You can control what nodes run a job by specifying tags and a count of target nodes having this tag. This gives an unprecedented level of flexibility in runnig jobs across a cluster of any size and with any combination of machines you need.
+- A single server node is elected as the **leader** in each Dkron cluster
+- The leader is responsible for initiating job execution queries across the cluster
+- Any Dkron agent or server can run scheduled jobs
+- By default, all nodes execute each job, but this is configurable
 
-All the execution responses will be gathered by the scheduler and stored in the database.
+### Job Targeting
 
-## State storage
+You can control which nodes run a job by:
+- Specifying tags on nodes
+- Setting a count of target nodes with specific tags in your job definition
 
-Dkron deployment is just a single binary, it stores the state in an internal BuntDB instance and replicate all changes between all server nodes using the Raft protocol, it doesn't need any other storage system outside itself.
+This provides flexibility in running jobs across clusters of any size with precise node targeting.
+
+### Execution Flow
+
+1. The leader schedules a job based on its timing configuration
+2. Target nodes are selected based on tags and count
+3. Selected nodes execute the job
+4. Execution responses are collected by the scheduler
+5. Results are stored in the database
+
+## State Storage
+
+Dkron deployment is just a single binary. It stores state in an internal BoltDB instance and replicates all changes between server nodes using the Raft protocol. No external storage system is required.
 
 ## Installation
 
