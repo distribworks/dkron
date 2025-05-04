@@ -192,4 +192,4 @@ If environment variables aren't working:
 
 - [Process Output with Processors](/docs/usage/processors)
 - [Job Chaining for Complex Workflows](/docs/usage/chaining)
-- [Security Best Practices](/docs/usage/security)
+- [Security Best Practices](/docs/usage/concepts#security-considerations)

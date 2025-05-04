@@ -29,7 +29,7 @@ These executors are available as separate plugins in the open source version:
 | [NATS](/docs/usage/executors/nats) | Publishes messages to NATS servers | Microservices communication, event publishing |
 | [RabbitMQ](/docs/usage/executors/rabbitmq) | Sends messages to RabbitMQ exchanges | Message queuing, work distribution |
 | [gRPC](/docs/usage/executors/grpc) | Makes calls to gRPC services | Microservices integration, efficient RPC |
-| [Google Pub/Sub](/docs/usage/executors/gcppubsub) | Publishes messages to Google Pub/Sub topics | Cloud-native event publishing |
+| [Google Pub/Sub](/docs/usage/executors/gcp-pubsub) | Publishes messages to Google Pub/Sub topics | Cloud-native event publishing |
 
 ## Pro Executors
 
@@ -83,7 +83,7 @@ To develop a custom executor:
 2. Follow the [Go plugin system](https://golang.org/pkg/plugin/) requirements
 3. Build and deploy your executor to the Dkron plugins directory
 
-See the [plugin development guide](/docs/usage/plugin-development) for more details.
+See the [plugin development guide](/docs/usage/plugins/develop) for more details.
 
 ## Best Practices
 
