@@ -1,11 +1,22 @@
 version: 2
 updates:
-- package-ecosystem: gomod
-  directory: "/"
-  schedule:
-    interval: weekly
-  open-pull-requests-limit: 10
-  ignore:
-  - dependency-name: github.com/tidwall/buntdb
-    versions:
-    - 1.1.8
+  # Keep Go modules updated
+  - package-ecosystem: "gomod"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 10
+
+  # Disable updates for Javascript/npm in the /ui directory
+  - package-ecosystem: "npm"
+    directory: "/ui"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 0 # This disables PR creation
+
+  # Disable updates for Javascript/npm in the /website directory
+  - package-ecosystem: "npm"
+    directory: "/website"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 0 # This disables PR creation
