@@ -14,16 +14,6 @@ Dkron nodes can work in two modes:
 - **Agents**: Cluster members that handle job executions, run scripts, and return the output to servers.
 - **Servers**: Cluster members that send job execution queries and also handle scheduling, data storage, and leader election.
 
-```mermaid
-flowchart TD
-    Leader[Server Node\n(Leader)] <--> Follower1[Server Node\n(Follower)]
-    Leader <--> Follower2[Server Node\n(Follower)]
-    Leader --> Agent1[Agent Node]
-    Leader --> Agent2[Agent Node]
-    Follower1 --> Agent1
-    Follower2 --> Agent2
-```
-
 ### Leadership and Job Execution
 
 - A single server node is elected as the **leader** in each Dkron cluster
