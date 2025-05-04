@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             (unknown)
-// source: pro.proto
+// source: types/v1/pro.proto
 
-package types
+package typesv1
 
 import (
 	context "context"
@@ -26,10 +26,14 @@ type DkronProClient interface {
 	ACLPolicyUpsert(ctx context.Context, in *ACLPolicyUpsertRequest, opts ...grpc.CallOption) (*ACLPolicyUpsertResponse, error)
 	ACLPolicyDelete(ctx context.Context, in *ACLPolicyDeleteRequest, opts ...grpc.CallOption) (*ACLPolicyDeleteResponse, error)
 	ACLPolicyInfo(ctx context.Context, in *ACLPolicyInfoRequest, opts ...grpc.CallOption) (*ACLPolicyInfoResponse, error)
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
 	ACLPolicyList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ACLPolicyListResponse, error)
 	ACLTokenUpsert(ctx context.Context, in *ACLTokenUpsertRequest, opts ...grpc.CallOption) (*ACLTokenUpsertResponse, error)
 	ACLTokenDelete(ctx context.Context, in *ACLTokenDeleteRequest, opts ...grpc.CallOption) (*ACLTokenDeleteResponse, error)
 	ACLTokenInfo(ctx context.Context, in *ACLTokenInfoRequest, opts ...grpc.CallOption) (*ACLTokenInfoResponse, error)
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	ACLTokenList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ACLTokenListResponse, error)
 }
 
@@ -43,7 +47,7 @@ func NewDkronProClient(cc grpc.ClientConnInterface) DkronProClient {
 
 func (c *dkronProClient) ACLPolicyUpsert(ctx context.Context, in *ACLPolicyUpsertRequest, opts ...grpc.CallOption) (*ACLPolicyUpsertResponse, error) {
 	out := new(ACLPolicyUpsertResponse)
-	err := c.cc.Invoke(ctx, "/types.DkronPro/ACLPolicyUpsert", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/types.v1.DkronPro/ACLPolicyUpsert", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +56,7 @@ func (c *dkronProClient) ACLPolicyUpsert(ctx context.Context, in *ACLPolicyUpser
 
 func (c *dkronProClient) ACLPolicyDelete(ctx context.Context, in *ACLPolicyDeleteRequest, opts ...grpc.CallOption) (*ACLPolicyDeleteResponse, error) {
 	out := new(ACLPolicyDeleteResponse)
-	err := c.cc.Invoke(ctx, "/types.DkronPro/ACLPolicyDelete", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/types.v1.DkronPro/ACLPolicyDelete", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +65,7 @@ func (c *dkronProClient) ACLPolicyDelete(ctx context.Context, in *ACLPolicyDelet
 
 func (c *dkronProClient) ACLPolicyInfo(ctx context.Context, in *ACLPolicyInfoRequest, opts ...grpc.CallOption) (*ACLPolicyInfoResponse, error) {
 	out := new(ACLPolicyInfoResponse)
-	err := c.cc.Invoke(ctx, "/types.DkronPro/ACLPolicyInfo", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/types.v1.DkronPro/ACLPolicyInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +74,7 @@ func (c *dkronProClient) ACLPolicyInfo(ctx context.Context, in *ACLPolicyInfoReq
 
 func (c *dkronProClient) ACLPolicyList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ACLPolicyListResponse, error) {
 	out := new(ACLPolicyListResponse)
-	err := c.cc.Invoke(ctx, "/types.DkronPro/ACLPolicyList", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/types.v1.DkronPro/ACLPolicyList", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -79,7 +83,7 @@ func (c *dkronProClient) ACLPolicyList(ctx context.Context, in *emptypb.Empty, o
 
 func (c *dkronProClient) ACLTokenUpsert(ctx context.Context, in *ACLTokenUpsertRequest, opts ...grpc.CallOption) (*ACLTokenUpsertResponse, error) {
 	out := new(ACLTokenUpsertResponse)
-	err := c.cc.Invoke(ctx, "/types.DkronPro/ACLTokenUpsert", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/types.v1.DkronPro/ACLTokenUpsert", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +92,7 @@ func (c *dkronProClient) ACLTokenUpsert(ctx context.Context, in *ACLTokenUpsertR
 
 func (c *dkronProClient) ACLTokenDelete(ctx context.Context, in *ACLTokenDeleteRequest, opts ...grpc.CallOption) (*ACLTokenDeleteResponse, error) {
 	out := new(ACLTokenDeleteResponse)
-	err := c.cc.Invoke(ctx, "/types.DkronPro/ACLTokenDelete", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/types.v1.DkronPro/ACLTokenDelete", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -97,7 +101,7 @@ func (c *dkronProClient) ACLTokenDelete(ctx context.Context, in *ACLTokenDeleteR
 
 func (c *dkronProClient) ACLTokenInfo(ctx context.Context, in *ACLTokenInfoRequest, opts ...grpc.CallOption) (*ACLTokenInfoResponse, error) {
 	out := new(ACLTokenInfoResponse)
-	err := c.cc.Invoke(ctx, "/types.DkronPro/ACLTokenInfo", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/types.v1.DkronPro/ACLTokenInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +110,7 @@ func (c *dkronProClient) ACLTokenInfo(ctx context.Context, in *ACLTokenInfoReque
 
 func (c *dkronProClient) ACLTokenList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ACLTokenListResponse, error) {
 	out := new(ACLTokenListResponse)
-	err := c.cc.Invoke(ctx, "/types.DkronPro/ACLTokenList", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/types.v1.DkronPro/ACLTokenList", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -120,10 +124,14 @@ type DkronProServer interface {
 	ACLPolicyUpsert(context.Context, *ACLPolicyUpsertRequest) (*ACLPolicyUpsertResponse, error)
 	ACLPolicyDelete(context.Context, *ACLPolicyDeleteRequest) (*ACLPolicyDeleteResponse, error)
 	ACLPolicyInfo(context.Context, *ACLPolicyInfoRequest) (*ACLPolicyInfoResponse, error)
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
 	ACLPolicyList(context.Context, *emptypb.Empty) (*ACLPolicyListResponse, error)
 	ACLTokenUpsert(context.Context, *ACLTokenUpsertRequest) (*ACLTokenUpsertResponse, error)
 	ACLTokenDelete(context.Context, *ACLTokenDeleteRequest) (*ACLTokenDeleteResponse, error)
 	ACLTokenInfo(context.Context, *ACLTokenInfoRequest) (*ACLTokenInfoResponse, error)
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	ACLTokenList(context.Context, *emptypb.Empty) (*ACLTokenListResponse, error)
 	mustEmbedUnimplementedDkronProServer()
 }
@@ -179,7 +187,7 @@ func _DkronPro_ACLPolicyUpsert_Handler(srv interface{}, ctx context.Context, dec
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/types.DkronPro/ACLPolicyUpsert",
+		FullMethod: "/types.v1.DkronPro/ACLPolicyUpsert",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DkronProServer).ACLPolicyUpsert(ctx, req.(*ACLPolicyUpsertRequest))
@@ -197,7 +205,7 @@ func _DkronPro_ACLPolicyDelete_Handler(srv interface{}, ctx context.Context, dec
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/types.DkronPro/ACLPolicyDelete",
+		FullMethod: "/types.v1.DkronPro/ACLPolicyDelete",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DkronProServer).ACLPolicyDelete(ctx, req.(*ACLPolicyDeleteRequest))
@@ -215,7 +223,7 @@ func _DkronPro_ACLPolicyInfo_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/types.DkronPro/ACLPolicyInfo",
+		FullMethod: "/types.v1.DkronPro/ACLPolicyInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DkronProServer).ACLPolicyInfo(ctx, req.(*ACLPolicyInfoRequest))
@@ -233,7 +241,7 @@ func _DkronPro_ACLPolicyList_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/types.DkronPro/ACLPolicyList",
+		FullMethod: "/types.v1.DkronPro/ACLPolicyList",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DkronProServer).ACLPolicyList(ctx, req.(*emptypb.Empty))
@@ -251,7 +259,7 @@ func _DkronPro_ACLTokenUpsert_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/types.DkronPro/ACLTokenUpsert",
+		FullMethod: "/types.v1.DkronPro/ACLTokenUpsert",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DkronProServer).ACLTokenUpsert(ctx, req.(*ACLTokenUpsertRequest))
@@ -269,7 +277,7 @@ func _DkronPro_ACLTokenDelete_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/types.DkronPro/ACLTokenDelete",
+		FullMethod: "/types.v1.DkronPro/ACLTokenDelete",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DkronProServer).ACLTokenDelete(ctx, req.(*ACLTokenDeleteRequest))
@@ -287,7 +295,7 @@ func _DkronPro_ACLTokenInfo_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/types.DkronPro/ACLTokenInfo",
+		FullMethod: "/types.v1.DkronPro/ACLTokenInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DkronProServer).ACLTokenInfo(ctx, req.(*ACLTokenInfoRequest))
@@ -305,7 +313,7 @@ func _DkronPro_ACLTokenList_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/types.DkronPro/ACLTokenList",
+		FullMethod: "/types.v1.DkronPro/ACLTokenList",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DkronProServer).ACLTokenList(ctx, req.(*emptypb.Empty))
@@ -317,7 +325,7 @@ func _DkronPro_ACLTokenList_Handler(srv interface{}, ctx context.Context, dec fu
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var DkronPro_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "types.DkronPro",
+	ServiceName: "types.v1.DkronPro",
 	HandlerType: (*DkronProServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -354,5 +362,5 @@ var DkronPro_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "pro.proto",
+	Metadata: "types/v1/pro.proto",
 }

@@ -1,7 +1,7 @@
-package types
+package typesv1
 
 import (
-	fmt "fmt"
+	"fmt"
 )
 
 // Key computes the execution key

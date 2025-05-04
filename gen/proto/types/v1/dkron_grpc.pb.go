@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             (unknown)
-// source: dkron.proto
+// source: types/v1/dkron.proto
 
-package types
+package typesv1
 
 import (
 	context "context"
@@ -25,14 +25,26 @@ const _ = grpc.SupportPackageIsVersion7
 type DkronClient interface {
 	GetJob(ctx context.Context, in *GetJobRequest, opts ...grpc.CallOption) (*GetJobResponse, error)
 	ExecutionDone(ctx context.Context, in *ExecutionDoneRequest, opts ...grpc.CallOption) (*ExecutionDoneResponse, error)
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	Leave(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	SetJob(ctx context.Context, in *SetJobRequest, opts ...grpc.CallOption) (*SetJobResponse, error)
 	DeleteJob(ctx context.Context, in *DeleteJobRequest, opts ...grpc.CallOption) (*DeleteJobResponse, error)
 	RunJob(ctx context.Context, in *RunJobRequest, opts ...grpc.CallOption) (*RunJobResponse, error)
 	ToggleJob(ctx context.Context, in *ToggleJobRequest, opts ...grpc.CallOption) (*ToggleJobResponse, error)
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
 	RaftGetConfiguration(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*RaftGetConfigurationResponse, error)
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	RaftRemovePeerByID(ctx context.Context, in *RaftRemovePeerByIDRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
 	GetActiveExecutions(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetActiveExecutionsResponse, error)
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	SetExecution(ctx context.Context, in *Execution, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
@@ -46,7 +58,7 @@ func NewDkronClient(cc grpc.ClientConnInterface) DkronClient {
 
 func (c *dkronClient) GetJob(ctx context.Context, in *GetJobRequest, opts ...grpc.CallOption) (*GetJobResponse, error) {
 	out := new(GetJobResponse)
-	err := c.cc.Invoke(ctx, "/types.Dkron/GetJob", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/types.v1.Dkron/GetJob", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +67,7 @@ func (c *dkronClient) GetJob(ctx context.Context, in *GetJobRequest, opts ...grp
 
 func (c *dkronClient) ExecutionDone(ctx context.Context, in *ExecutionDoneRequest, opts ...grpc.CallOption) (*ExecutionDoneResponse, error) {
 	out := new(ExecutionDoneResponse)
-	err := c.cc.Invoke(ctx, "/types.Dkron/ExecutionDone", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/types.v1.Dkron/ExecutionDone", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +76,7 @@ func (c *dkronClient) ExecutionDone(ctx context.Context, in *ExecutionDoneReques
 
 func (c *dkronClient) Leave(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/types.Dkron/Leave", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/types.v1.Dkron/Leave", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +85,7 @@ func (c *dkronClient) Leave(ctx context.Context, in *emptypb.Empty, opts ...grpc
 
 func (c *dkronClient) SetJob(ctx context.Context, in *SetJobRequest, opts ...grpc.CallOption) (*SetJobResponse, error) {
 	out := new(SetJobResponse)
-	err := c.cc.Invoke(ctx, "/types.Dkron/SetJob", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/types.v1.Dkron/SetJob", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +94,7 @@ func (c *dkronClient) SetJob(ctx context.Context, in *SetJobRequest, opts ...grp
 
 func (c *dkronClient) DeleteJob(ctx context.Context, in *DeleteJobRequest, opts ...grpc.CallOption) (*DeleteJobResponse, error) {
 	out := new(DeleteJobResponse)
-	err := c.cc.Invoke(ctx, "/types.Dkron/DeleteJob", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/types.v1.Dkron/DeleteJob", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -91,7 +103,7 @@ func (c *dkronClient) DeleteJob(ctx context.Context, in *DeleteJobRequest, opts 
 
 func (c *dkronClient) RunJob(ctx context.Context, in *RunJobRequest, opts ...grpc.CallOption) (*RunJobResponse, error) {
 	out := new(RunJobResponse)
-	err := c.cc.Invoke(ctx, "/types.Dkron/RunJob", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/types.v1.Dkron/RunJob", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -100,7 +112,7 @@ func (c *dkronClient) RunJob(ctx context.Context, in *RunJobRequest, opts ...grp
 
 func (c *dkronClient) ToggleJob(ctx context.Context, in *ToggleJobRequest, opts ...grpc.CallOption) (*ToggleJobResponse, error) {
 	out := new(ToggleJobResponse)
-	err := c.cc.Invoke(ctx, "/types.Dkron/ToggleJob", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/types.v1.Dkron/ToggleJob", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -109,7 +121,7 @@ func (c *dkronClient) ToggleJob(ctx context.Context, in *ToggleJobRequest, opts 
 
 func (c *dkronClient) RaftGetConfiguration(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*RaftGetConfigurationResponse, error) {
 	out := new(RaftGetConfigurationResponse)
-	err := c.cc.Invoke(ctx, "/types.Dkron/RaftGetConfiguration", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/types.v1.Dkron/RaftGetConfiguration", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -118,7 +130,7 @@ func (c *dkronClient) RaftGetConfiguration(ctx context.Context, in *emptypb.Empt
 
 func (c *dkronClient) RaftRemovePeerByID(ctx context.Context, in *RaftRemovePeerByIDRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/types.Dkron/RaftRemovePeerByID", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/types.v1.Dkron/RaftRemovePeerByID", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -127,7 +139,7 @@ func (c *dkronClient) RaftRemovePeerByID(ctx context.Context, in *RaftRemovePeer
 
 func (c *dkronClient) GetActiveExecutions(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetActiveExecutionsResponse, error) {
 	out := new(GetActiveExecutionsResponse)
-	err := c.cc.Invoke(ctx, "/types.Dkron/GetActiveExecutions", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/types.v1.Dkron/GetActiveExecutions", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +148,7 @@ func (c *dkronClient) GetActiveExecutions(ctx context.Context, in *emptypb.Empty
 
 func (c *dkronClient) SetExecution(ctx context.Context, in *Execution, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/types.Dkron/SetExecution", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/types.v1.Dkron/SetExecution", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -149,14 +161,26 @@ func (c *dkronClient) SetExecution(ctx context.Context, in *Execution, opts ...g
 type DkronServer interface {
 	GetJob(context.Context, *GetJobRequest) (*GetJobResponse, error)
 	ExecutionDone(context.Context, *ExecutionDoneRequest) (*ExecutionDoneResponse, error)
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	Leave(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	SetJob(context.Context, *SetJobRequest) (*SetJobResponse, error)
 	DeleteJob(context.Context, *DeleteJobRequest) (*DeleteJobResponse, error)
 	RunJob(context.Context, *RunJobRequest) (*RunJobResponse, error)
 	ToggleJob(context.Context, *ToggleJobRequest) (*ToggleJobResponse, error)
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
 	RaftGetConfiguration(context.Context, *emptypb.Empty) (*RaftGetConfigurationResponse, error)
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	RaftRemovePeerByID(context.Context, *RaftRemovePeerByIDRequest) (*emptypb.Empty, error)
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
 	GetActiveExecutions(context.Context, *emptypb.Empty) (*GetActiveExecutionsResponse, error)
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	SetExecution(context.Context, *Execution) (*emptypb.Empty, error)
 	mustEmbedUnimplementedDkronServer()
 }
@@ -221,7 +245,7 @@ func _Dkron_GetJob_Handler(srv interface{}, ctx context.Context, dec func(interf
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/types.Dkron/GetJob",
+		FullMethod: "/types.v1.Dkron/GetJob",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DkronServer).GetJob(ctx, req.(*GetJobRequest))
@@ -239,7 +263,7 @@ func _Dkron_ExecutionDone_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/types.Dkron/ExecutionDone",
+		FullMethod: "/types.v1.Dkron/ExecutionDone",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DkronServer).ExecutionDone(ctx, req.(*ExecutionDoneRequest))
@@ -257,7 +281,7 @@ func _Dkron_Leave_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/types.Dkron/Leave",
+		FullMethod: "/types.v1.Dkron/Leave",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DkronServer).Leave(ctx, req.(*emptypb.Empty))
@@ -275,7 +299,7 @@ func _Dkron_SetJob_Handler(srv interface{}, ctx context.Context, dec func(interf
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/types.Dkron/SetJob",
+		FullMethod: "/types.v1.Dkron/SetJob",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DkronServer).SetJob(ctx, req.(*SetJobRequest))
@@ -293,7 +317,7 @@ func _Dkron_DeleteJob_Handler(srv interface{}, ctx context.Context, dec func(int
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/types.Dkron/DeleteJob",
+		FullMethod: "/types.v1.Dkron/DeleteJob",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DkronServer).DeleteJob(ctx, req.(*DeleteJobRequest))
@@ -311,7 +335,7 @@ func _Dkron_RunJob_Handler(srv interface{}, ctx context.Context, dec func(interf
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/types.Dkron/RunJob",
+		FullMethod: "/types.v1.Dkron/RunJob",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DkronServer).RunJob(ctx, req.(*RunJobRequest))
@@ -329,7 +353,7 @@ func _Dkron_ToggleJob_Handler(srv interface{}, ctx context.Context, dec func(int
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/types.Dkron/ToggleJob",
+		FullMethod: "/types.v1.Dkron/ToggleJob",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DkronServer).ToggleJob(ctx, req.(*ToggleJobRequest))
@@ -347,7 +371,7 @@ func _Dkron_RaftGetConfiguration_Handler(srv interface{}, ctx context.Context, d
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/types.Dkron/RaftGetConfiguration",
+		FullMethod: "/types.v1.Dkron/RaftGetConfiguration",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DkronServer).RaftGetConfiguration(ctx, req.(*emptypb.Empty))
@@ -365,7 +389,7 @@ func _Dkron_RaftRemovePeerByID_Handler(srv interface{}, ctx context.Context, dec
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/types.Dkron/RaftRemovePeerByID",
+		FullMethod: "/types.v1.Dkron/RaftRemovePeerByID",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DkronServer).RaftRemovePeerByID(ctx, req.(*RaftRemovePeerByIDRequest))
@@ -383,7 +407,7 @@ func _Dkron_GetActiveExecutions_Handler(srv interface{}, ctx context.Context, de
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/types.Dkron/GetActiveExecutions",
+		FullMethod: "/types.v1.Dkron/GetActiveExecutions",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DkronServer).GetActiveExecutions(ctx, req.(*emptypb.Empty))
@@ -401,7 +425,7 @@ func _Dkron_SetExecution_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/types.Dkron/SetExecution",
+		FullMethod: "/types.v1.Dkron/SetExecution",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DkronServer).SetExecution(ctx, req.(*Execution))
@@ -413,7 +437,7 @@ func _Dkron_SetExecution_Handler(srv interface{}, ctx context.Context, dec func(
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Dkron_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "types.Dkron",
+	ServiceName: "types.v1.Dkron",
 	HandlerType: (*DkronServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -462,118 +486,5 @@ var Dkron_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "dkron.proto",
-}
-
-// AgentClient is the client API for Agent service.
-//
-// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type AgentClient interface {
-	AgentRun(ctx context.Context, in *AgentRunRequest, opts ...grpc.CallOption) (Agent_AgentRunClient, error)
-}
-
-type agentClient struct {
-	cc grpc.ClientConnInterface
-}
-
-func NewAgentClient(cc grpc.ClientConnInterface) AgentClient {
-	return &agentClient{cc}
-}
-
-func (c *agentClient) AgentRun(ctx context.Context, in *AgentRunRequest, opts ...grpc.CallOption) (Agent_AgentRunClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Agent_ServiceDesc.Streams[0], "/types.Agent/AgentRun", opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &agentAgentRunClient{stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
-}
-
-type Agent_AgentRunClient interface {
-	Recv() (*AgentRunStream, error)
-	grpc.ClientStream
-}
-
-type agentAgentRunClient struct {
-	grpc.ClientStream
-}
-
-func (x *agentAgentRunClient) Recv() (*AgentRunStream, error) {
-	m := new(AgentRunStream)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-// AgentServer is the server API for Agent service.
-// All implementations must embed UnimplementedAgentServer
-// for forward compatibility
-type AgentServer interface {
-	AgentRun(*AgentRunRequest, Agent_AgentRunServer) error
-	mustEmbedUnimplementedAgentServer()
-}
-
-// UnimplementedAgentServer must be embedded to have forward compatible implementations.
-type UnimplementedAgentServer struct {
-}
-
-func (UnimplementedAgentServer) AgentRun(*AgentRunRequest, Agent_AgentRunServer) error {
-	return status.Errorf(codes.Unimplemented, "method AgentRun not implemented")
-}
-func (UnimplementedAgentServer) mustEmbedUnimplementedAgentServer() {}
-
-// UnsafeAgentServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to AgentServer will
-// result in compilation errors.
-type UnsafeAgentServer interface {
-	mustEmbedUnimplementedAgentServer()
-}
-
-func RegisterAgentServer(s grpc.ServiceRegistrar, srv AgentServer) {
-	s.RegisterService(&Agent_ServiceDesc, srv)
-}
-
-func _Agent_AgentRun_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(AgentRunRequest)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
-	}
-	return srv.(AgentServer).AgentRun(m, &agentAgentRunServer{stream})
-}
-
-type Agent_AgentRunServer interface {
-	Send(*AgentRunStream) error
-	grpc.ServerStream
-}
-
-type agentAgentRunServer struct {
-	grpc.ServerStream
-}
-
-func (x *agentAgentRunServer) Send(m *AgentRunStream) error {
-	return x.ServerStream.SendMsg(m)
-}
-
-// Agent_ServiceDesc is the grpc.ServiceDesc for Agent service.
-// It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
-var Agent_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "types.Agent",
-	HandlerType: (*AgentServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams: []grpc.StreamDesc{
-		{
-			StreamName:    "AgentRun",
-			Handler:       _Agent_AgentRun_Handler,
-			ServerStreams: true,
-		},
-	},
-	Metadata: "dkron.proto",
+	Metadata: "types/v1/dkron.proto",
 }

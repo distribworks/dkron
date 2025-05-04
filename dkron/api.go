@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/distribworks/dkron/v4/types"
+	typesv1 "github.com/distribworks/dkron/v4/gen/proto/types/v1"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/expvar"
 	"github.com/gin-gonic/gin"
@@ -436,10 +436,10 @@ func (h *HTTPTransport) executionHandler(c *gin.Context) {
 }
 
 func (h *HTTPTransport) membersHandler(c *gin.Context) {
-	mems := []*types.Member{}
+	mems := []*typesv1.Member{}
 	for _, m := range h.agent.serf.Members() {
 		id, _ := uuid.GenerateUUID()
-		mid := &types.Member{
+		mid := &typesv1.Member{
 			Member:     m,
 			Id:         id,
 			StatusText: m.Status.String(),

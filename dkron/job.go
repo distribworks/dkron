@@ -10,9 +10,9 @@ import (
 	"time"
 
 	"github.com/distribworks/dkron/v4/extcron"
+	proto "github.com/distribworks/dkron/v4/gen/proto/types/v1"
 	"github.com/distribworks/dkron/v4/ntime"
 	"github.com/distribworks/dkron/v4/plugin"
-	proto "github.com/distribworks/dkron/v4/types"
 	"github.com/sirupsen/logrus"
 	"github.com/tidwall/buntdb"
 	"google.golang.org/protobuf/types/known/timestamppb"
