@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
 import { styled } from '@mui/material/styles';
-import { AppBar, UserMenu, MenuItemLink, Link } from 'react-admin';
+import { AppBar, UserMenu, MenuItemLink, Logout, Link } from 'react-admin';
 import Typography from '@mui/material/Typography';
 import SettingsIcon from '@mui/icons-material/Settings';
 import BookIcon from '@mui/icons-material/Book';
@@ -51,6 +51,7 @@ const CustomUserMenu = (props: any) => (
             leftIcon={<BookIcon />}
         />
         {/* <ConfigurationMenu /> */}
+        <Logout />
     </UserMenu>
 );
 
@@ -70,7 +71,7 @@ const CustomAppBar = (props: any) => {
                 </Link>
             </div>
             <span className={classes.spacer} />
-            <Clock/>
+            <Clock />
         </StyledAppBar>
     );
 };
