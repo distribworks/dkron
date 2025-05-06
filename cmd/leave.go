@@ -31,6 +31,7 @@ var leaveCmd = &cobra.Command{
 			return err
 		}
 
+		log.Info("Left the cluster successfully")
 		return nil
 	},
 }
