@@ -3,7 +3,7 @@ package plugin
 import (
 	"context"
 
-	"github.com/distribworks/dkron/v4/types"
+	typesv1 "github.com/distribworks/dkron/v4/gen/proto/types/v1"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
 )
@@ -14,7 +14,7 @@ type StatusHelper interface {
 
 // Executor is the interface that we're exposing as a plugin.
 type Executor interface {
-	Execute(args *types.ExecuteRequest, cb StatusHelper) (*types.ExecuteResponse, error)
+	Execute(args *typesv1.ExecuteRequest, cb StatusHelper) (*typesv1.ExecuteResponse, error)
 }
 
 // ExecutorPluginConfig is the plugin config
@@ -29,12 +29,12 @@ type ExecutorPlugin struct {
 }
 
 func (p *ExecutorPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
-	types.RegisterExecutorServer(s, ExecutorServer{Impl: p.Executor, broker: broker})
+	typesv1.RegisterExecutorServiceServer(s, ExecutorServer{Impl: p.Executor, broker: broker})
 	return nil
 }
 
 func (p *ExecutorPlugin) GRPCClient(ctx context.Context, broker *plugin.GRPCBroker, c *grpc.ClientConn) (interface{}, error) {
-	return &ExecutorClient{client: types.NewExecutorClient(c), broker: broker}, nil
+	return &ExecutorClient{client: typesv1.NewExecutorServiceClient(c), broker: broker}, nil
 }
 
 type Broker interface {
@@ -45,11 +45,11 @@ type Broker interface {
 // Here is the gRPC client that GRPCClient talks to.
 type ExecutorClient struct {
 	// This is the real implementation
-	client types.ExecutorClient
+	client typesv1.ExecutorServiceClient
 	broker Broker
 }
 
-func (m *ExecutorClient) Execute(args *types.ExecuteRequest, cb StatusHelper) (*types.ExecuteResponse, error) {
+func (m *ExecutorClient) Execute(args *typesv1.ExecuteRequest, cb StatusHelper) (*typesv1.ExecuteResponse, error) {
 	// This is where the magic conversion to Proto happens
 	statusHelperServer := &GRPCStatusHelperServer{Impl: cb}
 
@@ -57,7 +57,7 @@ func (m *ExecutorClient) Execute(args *types.ExecuteRequest, cb StatusHelper) (*
 	var s *grpc.Server
 	serverFunc := func(opts []grpc.ServerOption) *grpc.Server {
 		s = grpc.NewServer(opts...)
-		types.RegisterStatusHelperServer(s, statusHelperServer)
+		typesv1.RegisterStatusHelperServiceServer(s, statusHelperServer)
 		initChan <- true
 
 		return s
@@ -87,28 +87,30 @@ func (m *ExecutorClient) Execute(args *types.ExecuteRequest, cb StatusHelper) (*
 // Here is the gRPC server that GRPCClient talks to.
 type ExecutorServer struct {
 	// This is the real implementation
-	types.ExecutorServer
+	typesv1.ExecutorServiceServer
 	Impl   Executor
 	broker *plugin.GRPCBroker
 }
 
 // Execute is where the magic happens
-func (m ExecutorServer) Execute(ctx context.Context, req *types.ExecuteRequest) (*types.ExecuteResponse, error) {
+func (m ExecutorServer) Execute(ctx context.Context, req *typesv1.ExecuteRequest) (*typesv1.ExecuteResponse, error) {
 	conn, err := m.broker.Dial(req.StatusServer)
 	if err != nil {
 		return nil, err
 	}
 	defer conn.Close()
 
-	a := &GRPCStatusHelperClient{types.NewStatusHelperClient(conn)}
+	a := &GRPCStatusHelperClient{typesv1.NewStatusHelperServiceClient(conn)}
 	return m.Impl.Execute(req, a)
 }
 
 // GRPCStatusHelperClient is an implementation of status updates over RPC.
-type GRPCStatusHelperClient struct{ client types.StatusHelperClient }
+type GRPCStatusHelperClient struct {
+	client typesv1.StatusHelperServiceClient
+}
 
 func (m *GRPCStatusHelperClient) Update(b []byte, c bool) (int64, error) {
-	resp, err := m.client.Update(context.Background(), &types.StatusUpdateRequest{
+	resp, err := m.client.Update(context.Background(), &typesv1.StatusUpdateRequest{
 		Output: b,
 		Error:  c,
 	})
@@ -121,14 +123,14 @@ func (m *GRPCStatusHelperClient) Update(b []byte, c bool) (int64, error) {
 // GRPCStatusHelperServer is the gRPC server that GRPCClient talks to.
 type GRPCStatusHelperServer struct {
 	// This is the real implementation
-	types.StatusHelperServer
+	typesv1.StatusHelperServiceServer
 	Impl StatusHelper
 }
 
-func (m *GRPCStatusHelperServer) Update(ctx context.Context, req *types.StatusUpdateRequest) (resp *types.StatusUpdateResponse, err error) {
+func (m *GRPCStatusHelperServer) Update(ctx context.Context, req *typesv1.StatusUpdateRequest) (resp *typesv1.StatusUpdateResponse, err error) {
 	r, err := m.Impl.Update(req.Output, req.Error)
 	if err != nil {
 		return nil, err
 	}
-	return &types.StatusUpdateResponse{R: r}, err
+	return &typesv1.StatusUpdateResponse{R: r}, err
 }

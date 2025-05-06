@@ -87,8 +87,20 @@ dkron/ui-dist: ui/node_modules ui/public/* ui/src/* ui/src/*/*
 	rm -rf dkron/ui-dist
 	cd ui; yarn build --out-dir ../dkron/ui-dist
 
-proto: types/dkron.pb.go types/executor.pb.go types/pro.pb.go
+# deprecated
+# proto: types/dkron.pb.go types/executor.pb.go types/pro.pb.go
+.PHONY: proto
+proto:
+	@echo "Generating protobuf files using Buf"
+	buf generate
 
+lint: proto-lint
+
+proto-lint:
+	@echo "Linting protobuf files using Buf"
+	buf lint
+
+# deprecated
 types/%.pb.go: proto/%.proto
 	protoc -I proto/ --go_out=types --go_opt=paths=source_relative --go-grpc_out=types --go-grpc_opt=paths=source_relative $<
 
