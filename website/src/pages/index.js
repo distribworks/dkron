@@ -36,6 +36,7 @@ export default function Home() {
 
           <HomepageUsers />
         </main>
+        <img height="1" width="1" alt="" src="https://px.ads.linkedin.com/collect/?pid=8378297&fmt=gif" />
       </Layout>
     </>
   );
