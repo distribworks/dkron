@@ -89,12 +89,12 @@ WAIT:
 	case s := <-signalCh:
 		sig = s
 	case err := <-agent.RetryJoinCh():
-		fmt.Println("[ERR] agent: Retry join failed: ", err)
+		log.WithError(err).Error("agent: Retry join failed")
 		return 1
 	case <-ShutdownCh:
 		sig = os.Interrupt
 	}
-	fmt.Printf("Caught signal: %v", sig)
+	log.Infof("Caught signal: %v", sig)
 
 	// Check if this is a SIGHUP
 	if sig == syscall.SIGHUP {
@@ -111,8 +111,7 @@ WAIT:
 	log.Info("agent: Gracefully shutting down agent...")
 	go func() {
 		if err := agent.Stop(); err != nil {
-			fmt.Printf("Error: %s", err)
-			log.Error(fmt.Sprintf("Error: %s", err))
+			log.WithError(err).Error("unable to stop agent")
 			return
 		}
 	}()
@@ -145,7 +144,7 @@ WAIT:
 
 // handleReload is invoked when we should reload our configs, e.g. SIGHUP
 func handleReload() {
-	fmt.Println("Reloading configuration...")
+	log.Info("Reloading configuration...")
 	initConfig()
 	//Config reloading will also reload Notification settings
 	agent.UpdateTags(config.Tags)
