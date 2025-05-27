@@ -68,7 +68,7 @@ var raftRemovePeerCmd = &cobra.Command{
 		if err := gc.RaftRemovePeerByID(ip, peerID); err != nil {
 			return err
 		}
-		fmt.Println("Peer removed")
+		log.Info("Peer removed")
 
 		return nil
 	},
