@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
@@ -37,6 +38,7 @@ type GRPC struct{}
 //	"executor_config": {
 //	    "url": "127.0.0.1:9000/demo.DemoService/Demo", // Request url
 //	    "body": "",                                    // POST body
+//	    "headers": "[]",                               // Json string, such as "[\"Content-Type: application/json\"]"
 //	    "timeout": "30",                               // Request timeout, unit seconds
 //	    "expectCode": "0",                             // Expect response code, any of the described here https://grpc.github.io/grpc/core/md_doc_statuscodes.html
 //	}
@@ -82,6 +84,13 @@ func (g *GRPC) ExecuteImpl(args *dktypes.ExecuteRequest) ([]byte, error) {
 		expectedStatusCode = codes.Code(t)
 	}
 
+	var headers []string
+	if args.Config["headers"] != "" {
+		if err := json.Unmarshal([]byte(args.Config["headers"]), &headers); err != nil {
+			return output.Bytes(), errors.New("Parsing headers failed")
+		}
+	}
+
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeout)*time.Second)
 	defer cancel()
 
@@ -99,7 +108,7 @@ func (g *GRPC) ExecuteImpl(args *dktypes.ExecuteRequest) ([]byte, error) {
 	}
 	defer cc.Close() // nolint:errcheck
 
-	md := grpcurl.MetadataFromHeaders([]string{})
+	md := grpcurl.MetadataFromHeaders(headers)
 	refCtx := metadata.NewOutgoingContext(ctx, md)
 	refClient = grpcreflect.NewClient(refCtx, reflectpb.NewServerReflectionClient(cc))
 	descSource = grpcurl.DescriptorSourceFromServer(ctx, refClient)
@@ -117,7 +126,7 @@ func (g *GRPC) ExecuteImpl(args *dktypes.ExecuteRequest) ([]byte, error) {
 		Formatter: formatter,
 	}
 
-	rpcCallErr := grpcurl.InvokeRPC(ctx, descSource, cc, strings.Join(segments[1:], "/"), []string{}, h, rf.Next)
+	rpcCallErr := grpcurl.InvokeRPC(ctx, descSource, cc, strings.Join(segments[1:], "/"), headers, h, rf.Next)
 	if rpcCallErr != nil {
 		return output.Bytes(), errors.Wrap(rpcCallErr, "Failed querying reflection server")
 	}
