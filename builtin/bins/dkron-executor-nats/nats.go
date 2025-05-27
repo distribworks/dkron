@@ -7,8 +7,8 @@ import (
 	"github.com/armon/circbuf"
 	"github.com/nats-io/nats.go"
 
+	dktypes "github.com/distribworks/dkron/v4/gen/proto/types/v1"
 	dkplugin "github.com/distribworks/dkron/v4/plugin"
-	dktypes "github.com/distribworks/dkron/v4/types"
 )
 
 const (
