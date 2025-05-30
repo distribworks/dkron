@@ -180,6 +180,21 @@ type Config struct {
 
 	// CronitorEndpoint is the endpoint to call for cronitor notifications.
 	CronitorEndpoint string `mapstructure:"cronitor-endpoint"`
+
+	// sso endpoint
+	CASURL string `mapstructure:"cas-url"`
+
+	// sso username white list
+	CASUsernameWhiteList []string `mapstructure:"cas-username-white-list"`
+
+	// hubble
+	HubbleURL string `mapstructure:"hubble-url"`
+
+	//hubble token
+	HubbleToken string `mapstructure:"hubble-token"`
+
+	// hubble template
+	HubbleTemplate map[string]string `mapstructure:"hubble-template"`
 }
 
 // DefaultBindPort is the default port that dkron will use for Serf communication
@@ -217,6 +232,8 @@ func DefaultConfig() *Config {
 		RaftMultiplier:       1,
 		SerfReconnectTimeout: "24h",
 		UI:                   true,
+		CASURL:               "https://test-sso.iqiyi.com/cas",
+		CASUsernameWhiteList: []string{},
 	}
 }
 

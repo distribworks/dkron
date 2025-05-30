@@ -90,6 +90,45 @@ func TestNotifier_sendExecutionEmail(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func TestNotifier_sendSecureExecutionEmail(t *testing.T) {
+	c := &Config{
+		MailHost:          "mail.iqiyi.com",
+		MailPort:          465,
+		MailUsername:      "iig_ads_support_send",
+		MailPassword:      "3fhn43TD_@7M",
+		MailFrom:          "iig_ads_support_send@qiyi.com",
+		MailTls:           false,
+		MailSubjectPrefix: "[Test]",
+	}
+
+	job := &Job{
+		OwnerEmail: "kexiaocheng@qiyi.com",
+	}
+
+	ex1 := &Execution{
+		JobName:    "test",
+		StartedAt:  time.Now(),
+		FinishedAt: time.Now(),
+		Success:    true,
+		NodeName:   "test-node",
+		Output:     "test-output",
+	}
+
+	exg := []*Execution{
+		{
+			JobName:   "test",
+			StartedAt: time.Now(),
+			NodeName:  "test-node2",
+			Output:    "test-output",
+		},
+		ex1,
+	}
+
+	log := getTestLogger()
+	err := SendPostNotifications(c, ex1, exg, job, log)
+	assert.NoError(t, err)
+}
+
 func Test_auth(t *testing.T) {
 	n1 := &notifier{
 		Config: &Config{

@@ -5,18 +5,24 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
+	"slices"
 	"sort"
 	"strconv"
+	"strings"
 
 	"github.com/distribworks/dkron/v4/types"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/expvar"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"github.com/hashicorp/go-uuid"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 	"github.com/tidwall/buntdb"
 	status "google.golang.org/grpc/status"
+	"gopkg.in/cas.v2"
 )
 
 const (
@@ -47,6 +53,9 @@ func NewTransport(a *Agent, log *logrus.Entry) *HTTPTransport {
 
 func (h *HTTPTransport) ServeHTTP() {
 	h.Engine = gin.Default()
+	store := cookie.NewStore([]byte("secret"))
+	store.Options(sessions.Options{MaxAge: 3600 * 24 * 7})
+	h.Engine.Use(sessions.Sessions("dkronsession", store))
 
 	rootPath := h.Engine.Group("/")
 
@@ -55,9 +64,79 @@ func (h *HTTPTransport) ServeHTTP() {
 	config.AllowMethods = []string{"*"}
 	config.AllowHeaders = []string{"*"}
 	config.ExposeHeaders = []string{"*"}
+	// CAS Authentication Middleware
+	casURL, _ := url.Parse(h.agent.config.CASURL)
+	casClient := cas.NewClient(&cas.Options{
+		URL: casURL,
+	})
 
+	rootPath.Use(gin.Logger())
 	rootPath.Use(cors.New(config))
 	rootPath.Use(h.MetaMiddleware())
+	rootPath.Use(gin.Recovery())
+	// rootPath.Use(AuthMiddleware())
+	rootPath.Use(func(c *gin.Context) {
+		if strings.HasPrefix(c.Request.URL.Path, "/ui") || strings.HasPrefix(c.Request.URL.Path, "/metrics") {
+			c.Next()
+		}
+		session := sessions.Default(c)
+		user := session.Get("user")
+		h.logger.WithFields(logrus.Fields{
+			"address": h.agent.config.HTTPAddr,
+			"user":    user,
+		}).Info("api: root auth middleware")
+
+		if user == nil {
+			ticket := c.Query("ticket")
+			if ticket != "" {
+				scheme := "http"
+				if c.Request.TLS != nil {
+					scheme = "https"
+				}
+				serviceUrl, _ := url.JoinPath(scheme+"://", c.Request.Host, c.Request.URL.Path)
+				client := &http.Client{}
+				validator := cas.NewServiceTicketValidator(client, casURL)
+				serviceEnUrl, _ := url.Parse(serviceUrl)
+				success, err := validator.ValidateTicket(serviceEnUrl, c.Query("ticket"))
+				if err == nil {
+					if success != nil {
+						// 1. If the user is authenticated, set the session
+						if !slices.Contains(h.agent.config.CASUsernameWhiteList, success.User) {
+							h.logger.WithFields(logrus.Fields{
+								"err": "user not in whitelist",
+							}).Info("validate err")
+							casClient.RedirectToLogin(c.Writer, c.Request)
+							return
+						}
+						session := sessions.Default(c)
+						session.Set("user", success.User)
+						session.Save()
+						h.logger.WithFields(logrus.Fields{
+							"address":      h.agent.config.HTTPAddr,
+							"user":         success.User,
+							"session user": session.Get("user"),
+						}).Info("api: http request auth ticket validate success")
+					} else {
+						h.logger.WithFields(logrus.Fields{
+							"err": err,
+						}).Info("validate err")
+						casClient.RedirectToLogin(c.Writer, c.Request)
+					}
+				} else {
+					// 2. If the user is not authenticated, redirect to login
+					casClient.RedirectToLogin(c.Writer, c.Request)
+					c.Abort()
+					return
+				}
+				defer client.CloseIdleConnections()
+			} else {
+				casClient.RedirectToLogin(c.Writer, c.Request)
+				c.Abort()
+				return
+			}
+		}
+		c.Next()
+	})
 
 	h.APIRoutes(rootPath)
 	if h.agent.config.UI {
@@ -73,6 +152,19 @@ func (h *HTTPTransport) ServeHTTP() {
 			h.logger.WithError(err).Error("api: Error starting HTTP server")
 		}
 	}()
+}
+
+func AuthMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		session := sessions.Default(c)
+		user := session.Get("user")
+		if user == nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "未登录"})
+			c.Abort()
+			return
+		}
+		c.Next()
+	}
 }
 
 // APIRoutes registers the api routes on the gin RouterGroup.

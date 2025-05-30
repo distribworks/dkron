@@ -2,6 +2,7 @@ package dkron
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -79,6 +80,12 @@ func SendPostNotifications(config *Config, execution *Execution, exGroup []*Exec
 	if n.Config.WebhookEndpoint != "" && n.Config.WebhookPayload != "" {
 		if err := n.callExecutionWebhook(); err != nil {
 			werr = multierror.Append(werr, fmt.Errorf("notifier: error posting notification: %w", err))
+		}
+	}
+
+	if n.Config.HubbleURL != "" && n.Config.HubbleToken != "" {
+		if err := n.sendHubbleNotification(); err != nil {
+			werr = multierror.Append(werr, fmt.Errorf("notifier: error sending Hubble notification: %w", err))
 		}
 	}
 
@@ -164,6 +171,37 @@ func (n *notifier) sendExecutionEmail() error {
 		return fmt.Errorf("notifier: Error sending email %s", err)
 	}
 
+	return nil
+}
+
+func (n *notifier) sendHubbleNotification() error {
+	decodeData := make(map[string]string, len(n.Config.HubbleTemplate))
+	for k, v := range n.Config.HubbleTemplate {
+		decodeData[k] = v
+	}
+	if n.Execution.Success {
+		decodeData["status"] = "OK"
+	} else {
+		decodeData["status"] = "PROBLEM"
+	}
+	jsonByte, err := json.Marshal(decodeData)
+	if err != nil {
+		return fmt.Errorf("notifier: Error marshalling Hubble template: %s", err)
+	}
+	decodeData["value"] = `{ "job_name":"` + n.Execution.JobName + `","node_name":"` + n.Execution.NodeName + `","status":"` + n.statusString() + `","output":"` + n.Execution.Output + `"}`
+	fmt.Println("Hubble decodeData: ", decodeData)
+	req, err := http.NewRequest("POST", n.Config.HubbleURL, bytes.NewBuffer(jsonByte))
+	if err != nil {
+		return fmt.Errorf("notifier: Error creating Hubble notification request: %s", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("usertoken", n.Config.HubbleToken)
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return fmt.Errorf("notifier: Error posting Hubble notification: %s", err)
+	}
+	defer resp.Body.Close()
 	return nil
 }
 

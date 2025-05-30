@@ -32,6 +32,7 @@ export const App = () => <Admin
     authProvider={window.DKRON_ACL_ENABLED ? authProvider : undefined}
     dataProvider={dataProvider}
     layout={Layout}
+    requireAuth
 >
 
     <Resource name="jobs" {...jobs} />
