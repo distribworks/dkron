@@ -12,3 +12,4 @@ Dkron Pro uses the [same parameters](/docs/basics/configuration) as Dkron OSS an
 * `--trusted-ca-file` - Path to the client server TLS trusted CA cert file
 * `--client-cert-auth` - Enable client cert authentication
 * `--auto-tls` - Client TLS using generated certificates
+* `--fast` - Enable Raft Fastlog storage engine
