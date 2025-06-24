@@ -82,7 +82,7 @@ func (d *dkronFSM) applySetJob(buf []byte) interface{} {
 		return err
 	}
 	job := NewJobFromProto(&pj, d.logger)
-	if err := d.store.SetJob(job, false); err != nil {
+	if err := d.store.SetJob(job, true); err != nil {
 		return err
 	}
 	return nil

@@ -141,6 +141,63 @@ func TestAPIJobCreateUpdateParentJob_NoParent(t *testing.T) {
 	assert.Contains(t, string(errJSON)+"\n", string(body))
 }
 
+func TestAPIJobCreateUpdateParentJob_KeepDependents(t *testing.T) {
+	port := "8101"
+	baseURL := fmt.Sprintf("http://localhost:%s/v1", port)
+	dir, a := setupAPITest(t, port)
+	defer os.RemoveAll(dir)
+	defer a.Stop() // nolint: errcheck
+
+	jsonStr := []byte(`{
+		"name": "parentjobkeep",
+		"schedule": "@every 1m",
+		"executor": "shell",
+		"executor_config": {"command": "date"},
+		"disabled": true
+	}`)
+
+	resp, err := http.Post(baseURL+"/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
+	require.NoError(t, err, err)
+	assert.Equal(t, http.StatusCreated, resp.StatusCode)
+
+	jsonStr = []byte(`{
+		"name": "childjobkeep",
+		"parent_job": "parentjobkeep",
+		"schedule": "@every 1m",
+		"executor": "shell",
+		"executor_config": {"command": "date"},
+		"disabled": true
+	}`)
+
+	resp, err = http.Post(baseURL+"/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
+	require.NoError(t, err, err)
+	assert.Equal(t, http.StatusCreated, resp.StatusCode)
+
+	jsonStr = []byte(`{
+		"name": "parentjobkeep",
+		"schedule": "@every 1m",
+		"executor": "shell",
+		"executor_config": {"command": "date"},
+		"disabled": true
+	}`)
+
+	resp, err = http.Post(baseURL+"/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
+	require.NoError(t, err, err)
+	assert.Equal(t, http.StatusCreated, resp.StatusCode)
+
+	resp, err = http.Get(baseURL + "/jobs/parentjobkeep")
+	body, _ := io.ReadAll(resp.Body)
+	resp.Body.Close()
+
+	var updatedJob Job
+	if err := json.Unmarshal(body, &updatedJob); err != nil {
+		t.Fatal(err)
+	}
+
+	require.Len(t, updatedJob.DependentJobs, 1)
+	assert.Equal(t, "childjobkeep", updatedJob.DependentJobs[0])
+}
+
 func TestAPIJobCreateUpdateValidationBadName(t *testing.T) {
 	resp := postJob(t, "8094", []byte(`{
 		"name": "BAD JOB NAME!",
