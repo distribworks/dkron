@@ -1,6 +1,7 @@
 package dkron
 
 import (
+	"context"
 	"io/ioutil"
 	"os"
 	"testing"
@@ -50,7 +51,9 @@ func TestGRPCExecutionDone(t *testing.T) {
 		Disabled:       true,
 	}
 
-	err = a.Store.SetJob(testJob, true)
+	ctx := context.Background()
+
+	err = a.Store.SetJob(ctx, testJob, true)
 	require.NoError(t, err)
 
 	testChildJob := &Job{
@@ -61,7 +64,7 @@ func TestGRPCExecutionDone(t *testing.T) {
 		Disabled:       false,
 	}
 
-	err = a.Store.SetJob(testChildJob, true)
+	err = a.Store.SetJob(ctx, testChildJob, true)
 	require.NoError(t, err)
 
 	testExecution := &Execution{
@@ -81,7 +84,7 @@ func TestGRPCExecutionDone(t *testing.T) {
 		err = rc.ExecutionDone(a.advertiseRPCAddr(), testExecution)
 		require.NoError(t, err)
 
-		execs, err := a.Store.GetExecutions("test", &ExecutionOptions{})
+		execs, err := a.Store.GetExecutions(ctx, "test", &ExecutionOptions{})
 		require.NoError(t, err)
 
 		assert.Len(t, execs, 1)
@@ -89,7 +92,7 @@ func TestGRPCExecutionDone(t *testing.T) {
 	})
 
 	t.Run("Should run a dependent job", func(t *testing.T) {
-		execs, err := a.Store.GetExecutions("child-test", &ExecutionOptions{})
+		execs, err := a.Store.GetExecutions(ctx, "child-test", &ExecutionOptions{})
 		require.NoError(t, err)
 
 		assert.Len(t, execs, 1)
@@ -97,13 +100,13 @@ func TestGRPCExecutionDone(t *testing.T) {
 
 	t.Run("Should store execution on a deleted job", func(t *testing.T) {
 		// Test job with dependents no delete
-		_, err = a.Store.DeleteJob(testJob.Name)
+		_, err = a.Store.DeleteJob(ctx, testJob.Name)
 		require.Error(t, err)
 
 		// Remove dependents and parent
-		_, err = a.Store.DeleteJob(testChildJob.Name)
+		_, err = a.Store.DeleteJob(ctx, testChildJob.Name)
 		require.NoError(t, err)
-		_, err = a.Store.DeleteJob(testJob.Name)
+		_, err = a.Store.DeleteJob(ctx, testJob.Name)
 		require.NoError(t, err)
 
 		// Test store execution on a deleted job
@@ -116,13 +119,13 @@ func TestGRPCExecutionDone(t *testing.T) {
 	t.Run("Test ephemeral jobs", func(t *testing.T) {
 		testJob.Ephemeral = true
 
-		err = a.Store.SetJob(testJob, true)
+		err = a.Store.SetJob(ctx, testJob, true)
 		require.NoError(t, err)
 
 		err = rc.ExecutionDone(a.advertiseRPCAddr(), testExecution)
 		assert.NoError(t, err)
 
-		j, err := a.Store.GetJob("test", nil)
+		j, err := a.Store.GetJob(ctx, "test", nil)
 		assert.Error(t, err)
 		assert.Nil(t, j)
 	})
@@ -132,7 +135,7 @@ func TestGRPCExecutionDone(t *testing.T) {
 		testJob.DependentJobs = []string{"non-existent"}
 		testExecution.JobName = testJob.Name
 
-		err = a.Store.SetJob(testJob, true)
+		err = a.Store.SetJob(ctx, testJob, true)
 		require.NoError(t, err)
 
 		err = rc.ExecutionDone(a.advertiseRPCAddr(), testExecution)

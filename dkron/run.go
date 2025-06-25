@@ -1,15 +1,21 @@
 package dkron
 
 import (
+	"context"
 	"fmt"
 	"sync"
 
 	"github.com/hashicorp/serf/serf"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 )
 
 // Run call the agents to run a job. Returns a job with its new status and next schedule.
-func (a *Agent) Run(jobName string, ex *Execution) (*Job, error) {
-	job, err := a.Store.GetJob(jobName, nil)
+func (a *Agent) Run(ctx context.Context, jobName string, ex *Execution) (*Job, error) {
+	ctx, span := a.tracer.Start(ctx, "agent.Run", trace.WithAttributes(attribute.String("job_name", jobName)))
+	defer span.End()
+
+	job, err := a.Store.GetJob(ctx, jobName, nil)
 	if err != nil {
 		return nil, fmt.Errorf("agent: Run error retrieving job: %s from store: %w", jobName, err)
 	}

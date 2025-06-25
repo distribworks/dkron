@@ -1,6 +1,7 @@
 package dkron
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"regexp"
@@ -267,7 +268,7 @@ func (j *Job) Run() {
 		// Simple execution wrapper
 		ex := NewExecution(j.Name)
 
-		if _, err := j.Agent.Run(j.Name, ex); err != nil {
+		if _, err := j.Agent.Run(context.Background(), j.Name, ex); err != nil {
 			j.logger.WithError(err).Error("job: Error running job")
 		}
 	}
@@ -279,7 +280,7 @@ func (j *Job) String() string {
 }
 
 // GetParent returns the parent job of a job
-func (j *Job) GetParent(store *Store) (*Job, error) {
+func (j *Job) GetParent(ctx context.Context, store *Store) (*Job, error) {
 	if j.Name == j.ParentJob {
 		return nil, ErrSameParent
 	}
@@ -288,7 +289,7 @@ func (j *Job) GetParent(store *Store) (*Job, error) {
 		return nil, ErrNoParent
 	}
 
-	parentJob, err := store.GetJob(j.ParentJob, nil)
+	parentJob, err := store.GetJob(ctx, j.ParentJob, nil)
 	if err != nil {
 		if err == buntdb.ErrNotFound {
 			return nil, ErrParentJobNotFound

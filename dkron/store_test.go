@@ -1,17 +1,19 @@
 package dkron
 
 import (
+	"context"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/tidwall/buntdb"
+	"go.opentelemetry.io/otel"
 )
 
 func TestStore(t *testing.T) {
 	log := getTestLogger()
-	s, err := NewStore(log)
+	s, err := NewStore(log, otel.Tracer("test"))
 	require.NoError(t, err)
 	defer s.Shutdown() // nolint: errcheck
 
@@ -31,18 +33,19 @@ func TestStore(t *testing.T) {
 		Disabled:       true,
 	}
 
+	ctx := context.Background()
 	// Check that we still get an empty job list
-	jobs, err := s.GetJobs(nil)
+	jobs, err := s.GetJobs(ctx, nil)
 	assert.NoError(t, err)
 	assert.NotNil(t, jobs, "jobs nil, expecting empty slice")
 	assert.Empty(t, jobs)
 
-	err = s.SetJob(testJob, true)
+	err = s.SetJob(ctx, testJob, true)
 	assert.NoError(t, err)
-	err = s.SetJob(testJob2, true)
+	err = s.SetJob(ctx, testJob2, true)
 	assert.NoError(t, err)
 
-	jobs, err = s.GetJobs(nil)
+	jobs, err = s.GetJobs(ctx, nil)
 	assert.NoError(t, err)
 	assert.Len(t, jobs, 2)
 	assert.Equal(t, "test", jobs[0].Name)
@@ -56,7 +59,7 @@ func TestStore(t *testing.T) {
 		NodeName:   "testNode",
 	}
 
-	_, err = s.SetExecution(testExecution)
+	_, err = s.SetExecution(ctx, testExecution)
 	require.NoError(t, err)
 
 	testExecution2 := &Execution{
@@ -67,10 +70,10 @@ func TestStore(t *testing.T) {
 		Output:     "test",
 		NodeName:   "testNode",
 	}
-	_, err = s.SetExecution(testExecution2)
+	_, err = s.SetExecution(ctx, testExecution2)
 	require.NoError(t, err)
 
-	execs, err := s.GetExecutions("test", &ExecutionOptions{
+	execs, err := s.GetExecutions(ctx, "test", &ExecutionOptions{
 		Sort:  "started_at",
 		Order: "DESC",
 	})
@@ -80,13 +83,13 @@ func TestStore(t *testing.T) {
 	assert.Equal(t, testExecution, execs[0])
 	assert.Len(t, execs, 1)
 
-	_, err = s.DeleteJob("test")
+	_, err = s.DeleteJob(ctx, "test")
 	assert.NoError(t, err)
 
-	_, err = s.DeleteJob("test")
+	_, err = s.DeleteJob(ctx, "test")
 	assert.EqualError(t, err, buntdb.ErrNotFound.Error())
 
-	_, err = s.DeleteJob("test2")
+	_, err = s.DeleteJob(ctx, "test2")
 	assert.NoError(t, err)
 }
 
@@ -160,15 +163,16 @@ func TestStore_JobBecomesIndependentJob(t *testing.T) {
 
 func TestStore_ChildIsUpdatedAfterDeletingParentJob(t *testing.T) {
 	s := setupStore(t)
+	ctx := context.Background()
 
 	storeJob(t, s, "parent1")
 	storeChildJob(t, s, "child1", "parent1")
 
-	_, err := s.DeleteJob("parent1")
+	_, err := s.DeleteJob(ctx, "parent1")
 	assert.EqualError(t, err, ErrDependentJobs.Error())
 
 	deleteJob(t, s, "child1")
-	_, err = s.DeleteJob("parent1")
+	_, err = s.DeleteJob(ctx, "parent1")
 	assert.NoError(t, err)
 }
 
@@ -182,31 +186,34 @@ func TestStore_GetJobsWithMetadata(t *testing.T) {
 	metadata["t2"] = "v2"
 	storeJobWithMetadata(t, s, "job2", metadata)
 
+	ctx := context.Background()
+
 	var options JobOptions
 	options.Metadata = make(map[string]string)
 	options.Metadata["t1"] = "v1"
-	jobs, err := s.GetJobs(&options)
+	jobs, err := s.GetJobs(ctx, &options)
 	assert.NoError(t, err)
 	assert.Equal(t, 2, len(jobs))
 
 	options.Metadata["t2"] = "v2"
-	jobs, err = s.GetJobs(&options)
+	jobs, err = s.GetJobs(ctx, &options)
 	assert.NoError(t, err)
 	assert.Equal(t, 1, len(jobs))
 	assert.Equal(t, "job2", jobs[0].Name)
 
 	options.Metadata["t3"] = "v3"
-	jobs, err = s.GetJobs(&options)
+	jobs, err = s.GetJobs(ctx, &options)
 	assert.NoError(t, err)
 	assert.Equal(t, 0, len(jobs))
 }
 
 func Test_computeStatus(t *testing.T) {
 	log := getTestLogger()
-	s, err := NewStore(log)
+	s, err := NewStore(log, otel.Tracer("test"))
 	require.NoError(t, err)
 
 	n := time.Now()
+	ctx := context.Background()
 
 	// Prepare executions
 	ex1 := &Execution{
@@ -218,7 +225,7 @@ func Test_computeStatus(t *testing.T) {
 		NodeName:   "testNode1",
 		Group:      1,
 	}
-	_, _ = s.SetExecution(ex1)
+	_, _ = s.SetExecution(ctx, ex1)
 
 	ex2 := &Execution{
 		JobName:    "test",
@@ -229,7 +236,7 @@ func Test_computeStatus(t *testing.T) {
 		NodeName:   "testNode2",
 		Group:      1,
 	}
-	_, _ = s.SetExecution(ex2)
+	_, _ = s.SetExecution(ctx, ex2)
 
 	ex3 := &Execution{
 		JobName:    "test",
@@ -240,7 +247,7 @@ func Test_computeStatus(t *testing.T) {
 		NodeName:   "testNode1",
 		Group:      2,
 	}
-	_, _ = s.SetExecution(ex3)
+	_, _ = s.SetExecution(ctx, ex3)
 
 	ex4 := &Execution{
 		JobName:    "test",
@@ -251,7 +258,7 @@ func Test_computeStatus(t *testing.T) {
 		NodeName:   "testNode1",
 		Group:      2,
 	}
-	_, _ = s.SetExecution(ex4)
+	_, _ = s.SetExecution(ctx, ex4)
 
 	ex5 := &Execution{
 		JobName:   "test",
@@ -261,7 +268,7 @@ func Test_computeStatus(t *testing.T) {
 		NodeName:  "testNode1",
 		Group:     3,
 	}
-	_, _ = s.SetExecution(ex5)
+	_, _ = s.SetExecution(ctx, ex5)
 
 	ex6 := &Execution{
 		JobName:  "test",
@@ -270,7 +277,7 @@ func Test_computeStatus(t *testing.T) {
 		NodeName: "testNode1",
 		Group:    4,
 	}
-	_, _ = s.SetExecution(ex6)
+	_, _ = s.SetExecution(ctx, ex6)
 
 	// Tests status
 	err = s.db.View(func(tx *buntdb.Tx) error {
@@ -296,21 +303,21 @@ func Test_computeStatus(t *testing.T) {
 func storeJob(t *testing.T, s *Store, jobName string) {
 	job := scaffoldJob()
 	job.Name = jobName
-	require.NoError(t, s.SetJob(job, false))
+	require.NoError(t, s.SetJob(context.Background(), job, false))
 }
 
 func storeJobWithMetadata(t *testing.T, s *Store, jobName string, metadata map[string]string) {
 	job := scaffoldJob()
 	job.Name = jobName
 	job.Metadata = metadata
-	require.NoError(t, s.SetJob(job, false))
+	require.NoError(t, s.SetJob(context.Background(), job, false))
 }
 
 func storeChildJob(t *testing.T, s *Store, jobName string, parentName string) {
 	job := scaffoldJob()
 	job.Name = jobName
 	job.ParentJob = parentName
-	require.NoError(t, s.SetJob(job, false))
+	require.NoError(t, s.SetJob(context.Background(), job, false))
 }
 
 func scaffoldJob() *Job {
@@ -325,18 +332,18 @@ func scaffoldJob() *Job {
 
 func setupStore(t *testing.T) *Store {
 	log := getTestLogger()
-	s, err := NewStore(log)
+	s, err := NewStore(log, otel.Tracer("test"))
 	require.NoError(t, err)
 	return s
 }
 
 func loadJob(t *testing.T, s *Store, name string) *Job {
-	job, err := s.GetJob(name, nil)
+	job, err := s.GetJob(context.Background(), name, nil)
 	require.NoError(t, err)
 	return job
 }
 
 func deleteJob(t *testing.T, s *Store, name string) {
-	_, err := s.DeleteJob(name)
+	_, err := s.DeleteJob(context.Background(), name)
 	require.NoError(t, err)
 }

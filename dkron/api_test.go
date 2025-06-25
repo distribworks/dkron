@@ -2,6 +2,7 @@ package dkron
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -355,6 +356,7 @@ func TestAPIJobOutputTruncate(t *testing.T) {
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, string(body), "[]")
 
+	ctx := context.Background()
 	testExecution1 := &Execution{
 		JobName:    "test_job",
 		StartedAt:  time.Now().UTC(),
@@ -371,11 +373,11 @@ func TestAPIJobOutputTruncate(t *testing.T) {
 		Output:     "test " + strings.Repeat("longer output... ", 100),
 		NodeName:   "testNode2",
 	}
-	_, err = a.Store.SetExecution(testExecution1)
+	_, err = a.Store.SetExecution(ctx, testExecution1)
 	if err != nil {
 		t.Fatal(err)
 	}
-	_, err = a.Store.SetExecution(testExecution2)
+	_, err = a.Store.SetExecution(ctx, testExecution2)
 	if err != nil {
 		t.Fatal(err)
 	}

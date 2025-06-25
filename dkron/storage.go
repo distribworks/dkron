@@ -1,6 +1,7 @@
 package dkron
 
 import (
+	"context"
 	"io"
 )
 
@@ -9,15 +10,15 @@ import (
 // minimum set of operations that are needed to have a working
 // dkron store.
 type Storage interface {
-	SetJob(job *Job, copyDependentJobs bool) error
-	DeleteJob(name string) (*Job, error)
-	SetExecution(execution *Execution) (string, error)
-	SetExecutionDone(execution *Execution) (bool, error)
-	GetJobs(options *JobOptions) ([]*Job, error)
-	GetJob(name string, options *JobOptions) (*Job, error)
-	GetExecutions(jobName string, opts *ExecutionOptions) ([]*Execution, error)
-	GetExecutionGroup(execution *Execution, opts *ExecutionOptions) ([]*Execution, error)
-	GetGroupedExecutions(jobName string, opts *ExecutionOptions) (map[int64][]*Execution, []int64, error)
+	SetJob(ctx context.Context, job *Job, copyDependentJobs bool) error
+	DeleteJob(ctx context.Context, name string) (*Job, error)
+	SetExecution(ctx context.Context, execution *Execution) (string, error)
+	SetExecutionDone(ctx context.Context, execution *Execution) (bool, error)
+	GetJobs(ctx context.Context, options *JobOptions) ([]*Job, error)
+	GetJob(ctx context.Context, name string, options *JobOptions) (*Job, error)
+	GetExecutions(ctx context.Context, jobName string, opts *ExecutionOptions) ([]*Execution, error)
+	GetExecutionGroup(ctx context.Context, execution *Execution, opts *ExecutionOptions) ([]*Execution, error)
+	GetGroupedExecutions(ctx context.Context, jobName string, opts *ExecutionOptions) (map[int64][]*Execution, []int64, error)
 	Shutdown() error
 	Snapshot(w io.WriteCloser) error
 	Restore(r io.ReadCloser) error
