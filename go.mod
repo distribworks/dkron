@@ -11,7 +11,7 @@ require (
 	github.com/gin-contrib/cors v1.7.5
 	github.com/gin-contrib/expvar v1.0.3
 	github.com/gin-gonic/gin v1.10.1
-	github.com/hashicorp/go-discover v1.0.0
+	github.com/hashicorp/go-discover v1.1.0
 	github.com/hashicorp/go-hclog v1.6.3
 	github.com/hashicorp/go-metrics v0.5.4
 	github.com/hashicorp/go-multierror v1.1.1
