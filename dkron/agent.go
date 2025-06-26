@@ -16,9 +16,9 @@ import (
 	"time"
 
 	"github.com/devopsfaith/krakend-usage/client"
-	metrics "github.com/hashicorp/go-metrics"
 	"github.com/distribworks/dkron/v4/plugin"
 	proto "github.com/distribworks/dkron/v4/types"
+	"github.com/hashicorp/go-metrics"
 	"github.com/hashicorp/go-uuid"
 	"github.com/hashicorp/memberlist"
 	"github.com/hashicorp/raft"
@@ -26,6 +26,8 @@ import (
 	"github.com/hashicorp/serf/serf"
 	"github.com/sirupsen/logrus"
 	"github.com/soheilhy/cmux"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 )
@@ -124,6 +126,8 @@ type Agent struct {
 
 	// logger is the log entry to use fo all logging calls
 	logger *logrus.Entry
+
+	tracer trace.Tracer
 }
 
 // ProcessorFactory is a function type that creates a new instance
@@ -146,6 +150,7 @@ func NewAgent(config *Config, options ...AgentOption) *Agent {
 		config:       config,
 		retryJoinCh:  make(chan error),
 		serverLookup: NewServerLookup(),
+		tracer:       otel.Tracer("dkron-agent"),
 	}
 
 	for _, option := range options {
@@ -187,6 +192,15 @@ func (a *Agent) Start() error {
 
 	if err := initMetrics(a); err != nil {
 		a.logger.Fatal("agent: Can not setup metrics")
+	}
+
+	// Setup tracing
+	if a.config.OpenTelemetryEndpoint != "" {
+		a.logger.Info("agent: Initializing OpenTelemetry")
+		_, err := initTracer(context.Background(), a.config.OpenTelemetryEndpoint)
+		if err != nil {
+			a.logger.Fatal("agent: Can not setup tracing")
+		}
 	}
 
 	// Expose the node name
@@ -388,7 +402,9 @@ func (a *Agent) setupRaft() error {
 			if err != nil {
 				return fmt.Errorf("recovery failed to parse peers.json: %v", err)
 			}
-			store, err := NewStore(a.logger)
+
+			storeTracer := otel.Tracer("dkron-store")
+			store, err := NewStore(a.logger, storeTracer)
 			if err != nil {
 				a.logger.WithError(err).Fatal("dkron: Error initializing store")
 			}
@@ -549,7 +565,8 @@ func (a *Agent) SetConfig(c *Config) {
 // StartServer launch a new dkron server process
 func (a *Agent) StartServer() {
 	if a.Store == nil {
-		s, err := NewStore(a.logger)
+		storeTracer := otel.Tracer("dkron-store")
+		s, err := NewStore(a.logger, storeTracer)
 		if err != nil {
 			a.logger.WithError(err).Fatal("dkron: Error initializing store")
 		}

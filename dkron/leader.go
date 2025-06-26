@@ -1,13 +1,14 @@
 package dkron
 
 import (
+	"context"
 	"fmt"
 	"net"
 	"strings"
 	"sync"
 	"time"
 
-	metrics "github.com/hashicorp/go-metrics"
+	"github.com/hashicorp/go-metrics"
 	"github.com/hashicorp/raft"
 	"github.com/hashicorp/serf/serf"
 )
@@ -223,8 +224,11 @@ func (a *Agent) reconcileMember(member serf.Member) error {
 func (a *Agent) establishLeadership(stopCh chan struct{}) error {
 	defer metrics.MeasureSince([]string{"dkron", "leader", "establish_leadership"}, time.Now())
 
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
+	defer cancel()
+
 	a.logger.Info("agent: Starting scheduler")
-	jobs, err := a.Store.GetJobs(nil)
+	jobs, err := a.Store.GetJobs(ctx, nil)
 	if err != nil {
 		return err
 	}
