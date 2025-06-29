@@ -21,8 +21,8 @@ import (
 	"time"
 
 	"github.com/armon/circbuf"
+	types "github.com/distribworks/dkron/v4/gen/proto/types/v1"
 	dkplugin "github.com/distribworks/dkron/v4/plugin"
-	"github.com/distribworks/dkron/v4/types"
 	lru "github.com/hashicorp/golang-lru"
 )
 
@@ -203,12 +203,12 @@ func (s *HTTP) generateClientKey(config map[string]string) string {
 	// Only include configuration that affects the HTTP client behavior
 	relevantKeys := []string{
 		"timeout",
-		"tlsNoVerifyPeer", 
+		"tlsNoVerifyPeer",
 		"tlsRootCAsFile",
 		"tlsCertificateFile",
 		"tlsCertificateKeyFile",
 	}
-	
+
 	// Create a sorted map to ensure consistent key generation
 	var keyParts []string
 	for _, key := range relevantKeys {
@@ -216,10 +216,10 @@ func (s *HTTP) generateClientKey(config map[string]string) string {
 			keyParts = append(keyParts, fmt.Sprintf("%s=%s", key, value))
 		}
 	}
-	
+
 	// Sort to ensure consistent ordering
 	sort.Strings(keyParts)
-	
+
 	// Create hash of the configuration
 	hasher := sha256.New()
 	hasher.Write([]byte(strings.Join(keyParts, "|")))
