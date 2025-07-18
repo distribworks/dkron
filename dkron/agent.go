@@ -16,8 +16,8 @@ import (
 	"time"
 
 	"github.com/devopsfaith/krakend-usage/client"
+	typesv1 "github.com/distribworks/dkron/v4/gen/proto/types/v1"
 	"github.com/distribworks/dkron/v4/plugin"
-	proto "github.com/distribworks/dkron/v4/types"
 	"github.com/hashicorp/go-metrics"
 	"github.com/hashicorp/go-uuid"
 	"github.com/hashicorp/memberlist"
@@ -230,7 +230,7 @@ func (a *Agent) Start() error {
 
 		grpcServer := grpc.NewServer(opts...)
 		as := NewAgentServer(a, a.logger)
-		proto.RegisterAgentServer(grpcServer, as)
+		typesv1.RegisterAgentServiceServer(grpcServer, as)
 		go func() {
 			if err := grpcServer.Serve(l); err != nil {
 				a.logger.Fatal(err)
@@ -834,7 +834,7 @@ func (a *Agent) bindRPCAddr() string {
 
 // applySetJob is a helper method to be called when
 // a job property need to be modified from the leader.
-func (a *Agent) applySetJob(job *proto.Job) error {
+func (a *Agent) applySetJob(job *typesv1.Job) error {
 	cmd, err := Encode(SetJobType, job)
 	if err != nil {
 		return err
@@ -870,8 +870,8 @@ func (a *Agent) GetRunningJobs() int {
 }
 
 // GetActiveExecutions returns running executions globally
-func (a *Agent) GetActiveExecutions() ([]*proto.Execution, error) {
-	var executions []*proto.Execution
+func (a *Agent) GetActiveExecutions() ([]*typesv1.Execution, error) {
+	var executions []*typesv1.Execution
 
 	for _, s := range a.LocalServers() {
 		exs, err := a.GRPCClient.GetActiveExecutions(s.RPCAddr.String())
