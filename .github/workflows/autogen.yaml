@@ -34,10 +34,16 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
-      - name: Swagger Editor Validator
-        uses: swaggerexpert/swagger-editor-validate@v1
-        with:
-          definition-file: ./website/static/openapi/openapi.yaml
+      - name: Set up node
+        uses: actions/setup-node@v4
+
+      - name: Install Redocly CLI
+        run: npm install -g @redocly/cli@latest
+
+      - name: Run linting
+        run: |
+              redocly lint --skip-rule=info-license --skip-rule=no-server-example.com --skip-rule=operation-summary \
+              --skip-rule=operation-4xx-response ./website/static/openapi/openapi.yaml --format=github-actions
 
   generate:
     name: Generate the OpenAPI client

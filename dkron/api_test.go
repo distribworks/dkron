@@ -67,17 +67,14 @@ func TestAPIJobCreateUpdate(t *testing.T) {
 	}`)
 
 	resp, err := http.Post(baseURL+"/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 	body, _ := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
 	assert.Equal(t, http.StatusCreated, resp.StatusCode)
 
 	var origJob Job
-	if err := json.Unmarshal(body, &origJob); err != nil {
-		t.Fatal(err)
-	}
+	err = json.Unmarshal(body, &origJob)
+	require.NoError(t, err)
 
 	jsonStr1 := []byte(`{
 		"name": "test_job",
