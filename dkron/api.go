@@ -177,6 +177,7 @@ func (h *HTTPTransport) jobsHandler(c *gin.Context) {
 	})
 	if err != nil {
 		h.logger.WithError(err).Error("api: Unable to get jobs, store not reachable.")
+		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
@@ -313,9 +314,9 @@ func (h *HTTPTransport) restoreHandler(c *gin.Context) {
 		_ = c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
+
 	var jobs []*Job
 	err = json.Unmarshal(data, &jobs)
-
 	if err != nil {
 		_ = c.AbortWithError(http.StatusBadRequest, err)
 		return
@@ -326,12 +327,14 @@ func (h *HTTPTransport) restoreHandler(c *gin.Context) {
 		_ = c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
+
 	result := h.agent.recursiveSetJob(jobTree)
 	resp, err := json.Marshal(result)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
+
 	renderJSON(c, http.StatusOK, string(resp))
 }
 
