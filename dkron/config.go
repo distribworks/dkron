@@ -128,6 +128,12 @@ type Config struct {
 	// MailPassword is the SMTP server password to use for email notifications.
 	MailPassword string `mapstructure:"mail-password"`
 
+	// MailPasswordUrl is the URL to fetch the SMTP server password from for email notifications.
+	MailPasswordUrl string `mapstructure:"mail-password-url"`
+
+	// MailToken is the token to update password for email notifications.
+	MailPasswordToken string `mapstructure:"mail-password-token"`
+
 	// MailFrom is the email sender to use for email notifications.
 	MailFrom string `mapstructure:"mail-from"`
 

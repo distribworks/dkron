@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/smtp"
@@ -26,6 +27,12 @@ type notifier struct {
 	ExecutionGroup []*Execution
 
 	logger *logrus.Entry
+}
+
+type MailPasswordResponse struct {
+	Code int    `json:"code"`
+	Password string `json:"password"`
+	Expire string `json:"expire"`
 }
 
 // NewNotifier returns a new notifier
@@ -205,11 +212,47 @@ func (n *notifier) sendHubbleNotification() error {
 	return nil
 }
 
+func (n *notifier) updateEmailPasswd() (string, error) {
+	params := url.Values{}
+	params.Add("token", n.Config.MailPasswordToken)
+	params.Add("domainuser", n.Config.MailUsername)
+	req, err := http.NewRequest("GET", n.Config.MailPasswordUrl, nil)
+	if err != nil {
+		return "", fmt.Errorf("notifier: Error creating mail token request: %s", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.URL.RawQuery = params.Encode()
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("notifier: Error get mail token notification: %s", err)
+	}
+	defer resp.Body.Close()
+	bodeBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("notifier: Error reading mail token response body: %s", err)
+	}
+	// fmt.Println("Response Body:", string(bodeBytes))
+	var passwordData MailPasswordResponse
+	err = json.Unmarshal(bodeBytes, &passwordData);
+	if err != nil {
+		return "", fmt.Errorf("notifier: Error unmarshalling  mail token response body: %s", err)
+	}
+	// fmt.Println("in body password: ", passwordData.Password)
+	return passwordData.Password, nil
+}
+
+
 func (n *notifier) auth() smtp.Auth {
 	var auth smtp.Auth
 
 	if n.Config.MailUsername != "" && n.Config.MailPassword != "" {
-		auth = smtp.PlainAuth("", n.Config.MailUsername, n.Config.MailPassword, n.Config.MailHost)
+		mailPassword, err := n.updateEmailPasswd()
+		if err != nil {
+			mailPassword = n.Config.MailPassword
+		}
+		// fmt.Println("password: ", mailPassword)
+		auth = smtp.PlainAuth("", n.Config.MailUsername,  mailPassword, n.Config.MailHost)
 	}
 
 	return auth

@@ -1,0 +1,36 @@
+{
+    "server": true,
+    "region": "adfek8s",
+    "log-level": "info",
+    "enable-prometheus": true,
+    "tags": {
+      "service": "schd"
+    },
+    "keyspace": "adfe-dkron-k8s",
+    "encrypt": "tWjgEC7yDwKjTDo/bs0R2w==",
+    "bootstrap-expect": 3,
+    "retry-join": [
+      "provider=k8s label_selector=\"app=adfe-dkron,component=server\" namespace=\"qke-generic-adfe-dkron\""
+    ],
+    "data-dir": "/data/apps/dkron/data",
+    "mail-host": "in2mailproxy.qiyi.domain",
+    "mail-port": 465,
+    "mail-username": "iig_adssrv_sender",
+    "mail-password": "4nk7P*R4bK6_",
+    "mail-from": "iig_adssrv_sender@qiyi.com",
+    "mail-subject_prefix": [
+      "ADFECRON"
+    ],
+    "cas-url": "https://test-sso.iqiyi.com/cas",
+    "cas-username-white-list": ["kexiaocheng"],
+    "hubble-url": "http://hubble.qiyi.domain/api/alarm/alarmevent",
+    "hubble-token": "5c7df",
+    "hubble-template": {
+      "grp": "adfe-dkron",
+      "usernames": "kexiaocheng",
+      "triggername": "adfe-dkron",
+      "status": "PROBLEM",
+      "alertlevel": "p3",
+      "value": "0"
+    }
+  }
