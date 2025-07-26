@@ -228,10 +228,12 @@ func (h *HTTPTransport) jobCreateOrUpdateHandler(c *gin.Context) {
 	} else {
 		// Parse values from JSON
 		if err := c.BindJSON(&job); err != nil {
-			_, _ = c.Writer.WriteString(fmt.Sprintf("Unable to parse payload: %s.", err))
 			h.logger.Error(err)
+			c.AbortWithStatus(http.StatusBadRequest)
+			_, _ = c.Writer.WriteString(fmt.Sprintf("Unable to parse payload: %s.", err))
 			return
 		}
+
 		// Get the owner from the context, if it exists
 		// this is coming from the ACL middleware
 		accessor := c.GetString("accessor")
@@ -243,18 +245,20 @@ func (h *HTTPTransport) jobCreateOrUpdateHandler(c *gin.Context) {
 	// Validate job
 	if err := job.Validate(); err != nil {
 		c.AbortWithStatus(http.StatusBadRequest)
-		_, _ = c.Writer.WriteString(fmt.Sprintf("Job contains invalid value: %s.", err))
+		_, _ = c.Writer.WriteString(fmt.Sprintf("Job validation failed: %s.", err))
 		return
 	}
 
 	// Call gRPC SetJob
 	if err := h.agent.GRPCClient.SetJob(&job); err != nil {
 		s := status.Convert(err)
+
 		if s.Message() == ErrParentJobNotFound.Error() {
-			c.AbortWithStatus(http.StatusNotFound)
+			c.Status(http.StatusNotFound)
 		} else {
-			c.AbortWithStatus(http.StatusInternalServerError)
+			c.Status(http.StatusInternalServerError)
 		}
+
 		_, _ = c.Writer.WriteString(s.Message())
 		return
 	}
