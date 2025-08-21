@@ -710,6 +710,8 @@ func (a *Agent) eventLoop() {
 		case e := <-a.eventCh:
 			a.logger.WithField("event", e.String()).Info("agent: Received event")
 			metrics.IncrCounter([]string{"agent", "event_received", e.String()}, 1)
+			// Prometheus mirror
+			agentEventReceivedTotal.WithLabelValues(e.String()).Inc()
 
 			// Log all member events
 			if me, ok := e.(serf.MemberEvent); ok {
