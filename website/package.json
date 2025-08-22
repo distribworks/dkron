@@ -23,7 +23,7 @@
     "buffer": "^6.0.3",
     "clsx": "^1.1.1",
     "mdx-mermaid": "^2.0.1",
-    "mermaid": "^10.9.3",
+    "mermaid": "^10.9.4",
     "postcss": "^8.4.6",
     "postcss-import": "^14.0.2",
     "prism-react-renderer": "^1.2.1",
