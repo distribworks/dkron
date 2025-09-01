@@ -8,7 +8,7 @@ require (
 	github.com/devopsfaith/krakend-usage v1.4.0
 	github.com/fluent/fluent-logger-golang v1.10.0
 	github.com/fullstorydev/grpcurl v1.9.3
-	github.com/gin-contrib/cors v1.7.5
+	github.com/gin-contrib/cors v1.7.6
 	github.com/gin-contrib/expvar v1.0.3
 	github.com/gin-gonic/gin v1.10.1
 	github.com/hashicorp/go-discover v1.1.0
