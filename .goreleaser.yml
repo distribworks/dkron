@@ -1,216 +1,217 @@
 project_name: dkron
 
 release:
-  prerelease: auto
+    prerelease: auto
 
 env:
-  - IMAGE_PREFIX={{ if index .Env "IMAGE_PREFIX"  }}{{ .Env.IMAGE_PREFIX }}{{ else }}dkron{{ end }}
+    - IMAGE_PREFIX={{ if index .Env "IMAGE_PREFIX"  }}{{ .Env.IMAGE_PREFIX }}{{ else }}dkron{{ end }}
 
 builds:
-  - &xbuild
-    main: .
-    id: dkron
-    binary: dkron
-    env:
-      - CGO_ENABLED=0
-    goos:
-      - freebsd
-      - windows
-      - darwin
-      - linux
-    goarch:
-      - amd64
-      - arm64
-      - arm
-    goarm:
-      - '7'
-    ldflags:
-      - -s -w -X github.com/distribworks/dkron/v4/dkron.Version={{.Version}} -X github.com/distribworks/dkron/v4/dkron.Codename=Apat
+    - &xbuild
+      main: .
+      id: dkron
+      binary: dkron
+      flags:
+          - -tags=hashicorpmetrics
+      env:
+          - CGO_ENABLED=0
+      goos:
+          - freebsd
+          - windows
+          - darwin
+          - linux
+      goarch:
+          - amd64
+          - arm64
+          - arm
+      goarm:
+          - "7"
+      ldflags:
+          - -s -w -X github.com/distribworks/dkron/v4/dkron.Version={{.Version}} -X github.com/distribworks/dkron/v4/dkron.Codename=Apat
 
-  - <<: *xbuild
-    main: ./builtin/bins/dkron-executor-rabbitmq/
-    id: dkron-executor-rabbitmq
-    binary: dkron-executor-rabbitmq
+    - <<: *xbuild
+      main: ./builtin/bins/dkron-executor-rabbitmq/
+      id: dkron-executor-rabbitmq
+      binary: dkron-executor-rabbitmq
 
-  - <<: *xbuild
-    main: ./builtin/bins/dkron-executor-nats/
-    id: dkron-executor-nats
-    binary: dkron-executor-nats
+    - <<: *xbuild
+      main: ./builtin/bins/dkron-executor-nats/
+      id: dkron-executor-nats
+      binary: dkron-executor-nats
 
-  - <<: *xbuild
-    main: ./builtin/bins/dkron-executor-kafka/
-    id: dkron-executor-kafka
-    binary: dkron-executor-kafka
+    - <<: *xbuild
+      main: ./builtin/bins/dkron-executor-kafka/
+      id: dkron-executor-kafka
+      binary: dkron-executor-kafka
 
-  - <<: *xbuild
-    main: ./builtin/bins/dkron-executor-gcppubsub/
-    id: dkron-executor-gcppubsub
-    binary: dkron-executor-gcppubsub
+    - <<: *xbuild
+      main: ./builtin/bins/dkron-executor-gcppubsub/
+      id: dkron-executor-gcppubsub
+      binary: dkron-executor-gcppubsub
 
-  - <<: *xbuild
-    main: ./builtin/bins/dkron-executor-grpc/
-    id: dkron-executor-grpc
-    binary: dkron-executor-grpc
+    - <<: *xbuild
+      main: ./builtin/bins/dkron-executor-grpc/
+      id: dkron-executor-grpc
+      binary: dkron-executor-grpc
 
-  - <<: *xbuild
-    main: ./builtin/bins/dkron-processor-files/
-    id: dkron-processor-files
-    binary: dkron-processor-files
+    - <<: *xbuild
+      main: ./builtin/bins/dkron-processor-files/
+      id: dkron-processor-files
+      binary: dkron-processor-files
 
-  - <<: *xbuild
-    main: ./builtin/bins/dkron-processor-log/
-    id: dkron-processor-log
-    binary: dkron-processor-log
+    - <<: *xbuild
+      main: ./builtin/bins/dkron-processor-log/
+      id: dkron-processor-log
+      binary: dkron-processor-log
 
-  - <<: *xbuild
-    main: ./builtin/bins/dkron-processor-syslog/
-    id: dkron-processor-syslog
-    binary: dkron-processor-syslog
+    - <<: *xbuild
+      main: ./builtin/bins/dkron-processor-syslog/
+      id: dkron-processor-syslog
+      binary: dkron-processor-syslog
 
-  - <<: *xbuild
-    main: ./builtin/bins/dkron-processor-fluent/
-    id: dkron-processor-fluent
-    binary: dkron-processor-fluent
+    - <<: *xbuild
+      main: ./builtin/bins/dkron-processor-fluent/
+      id: dkron-processor-fluent
+      binary: dkron-processor-fluent
 
 nfpms:
-  -
-    vendor: Distributed Works
-    homepage: https://dkron.io
-    maintainer: Victor Castell <victor@distrib.works>
-    description: Distributed, fault tolerant job scheduling system
-    license: LGPL 3.0
+    - vendor: Distributed Works
+      homepage: https://dkron.io
+      maintainer: Victor Castell <victor@distrib.works>
+      description: Distributed, fault tolerant job scheduling system
+      license: LGPL 3.0
 
-    formats:
-      - deb
-      - rpm
+      formats:
+          - deb
+          - rpm
 
-    conflicts:
-      - dkron-pro
-    replaces:
-      - dkron-pro
+      conflicts:
+          - dkron-pro
+      replaces:
+          - dkron-pro
 
-    # Override default /usr/local/bin destination for binaries
-    bindir: /usr/bin
+      # Override default /usr/local/bin destination for binaries
+      bindir: /usr/bin
 
-    #files:
-    #  "builder/files/": "/etc/init.d"
-    #  "path/**/glob": "/var/foo/glob"
-    contents:
-      - src: builder/files/dkron.yml
-        dst: /etc/dkron/dkron.yml
-        type: config
-      - src: builder/files/dkron.service
-        dst: /lib/systemd/system/dkron.service
-        type: config
-      - dst: /var/log/dkron
-        type: dir
+      #files:
+      #  "builder/files/": "/etc/init.d"
+      #  "path/**/glob": "/var/foo/glob"
+      contents:
+          - src: builder/files/dkron.yml
+            dst: /etc/dkron/dkron.yml
+            type: config
+          - src: builder/files/dkron.service
+            dst: /lib/systemd/system/dkron.service
+            type: config
+          - dst: /var/log/dkron
+            type: dir
 
 snapshot:
-  name_template: "{{ .Tag }}-next"
+    name_template: "{{ .Tag }}-next"
 
 dockers:
-  - image_templates:
-      - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-amd64"
-    dockerfile: Dockerfile.release
-    use: buildx
-    goos: linux
-    goarch: amd64
-    ids: &docker-ids
-      - dkron
-      - dkron-executor-rabbitmq
-      - dkron-executor-nats
-      - dkron-executor-kafka
-      - dkron-executor-gcppubsub
-      - dkron-executor-grpc
-      - dkron-processor-files
-      - dkron-processor-log
-      - dkron-processor-syslog
-      - dkron-processor-fluent
-    build_flag_templates:
-      - --platform=linux/amd64
+    - image_templates:
+          - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-amd64"
+      dockerfile: Dockerfile.release
+      use: buildx
+      goos: linux
+      goarch: amd64
+      ids: &docker-ids
+          - dkron
+          - dkron-executor-rabbitmq
+          - dkron-executor-nats
+          - dkron-executor-kafka
+          - dkron-executor-gcppubsub
+          - dkron-executor-grpc
+          - dkron-processor-files
+          - dkron-processor-log
+          - dkron-processor-syslog
+          - dkron-processor-fluent
+      build_flag_templates:
+          - --platform=linux/amd64
 
-  - image_templates:
-      - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-arm64"
-    dockerfile: Dockerfile.release
-    use: buildx
-    goos: linux
-    goarch: arm64
-    ids: *docker-ids
-    build_flag_templates:
-      - --platform=linux/arm64/v8
+    - image_templates:
+          - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-arm64"
+      dockerfile: Dockerfile.release
+      use: buildx
+      goos: linux
+      goarch: arm64
+      ids: *docker-ids
+      build_flag_templates:
+          - --platform=linux/arm64/v8
 
-  - image_templates:
-      - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-armv7"
-    dockerfile: Dockerfile.release
-    use: buildx
-    goos: linux
-    goarch: arm
-    goarm: '7'
-    ids: *docker-ids
-    build_flag_templates:
-      - --platform=linux/arm/v7
+    - image_templates:
+          - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-armv7"
+      dockerfile: Dockerfile.release
+      use: buildx
+      goos: linux
+      goarch: arm
+      goarm: "7"
+      ids: *docker-ids
+      build_flag_templates:
+          - --platform=linux/arm/v7
 
-  - image_templates:
-      - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-light-amd64"
-    dockerfile: Dockerfile.release
-    use: buildx
-    goos: linux
-    goarch: amd64
-    ids: &docker-ids
-      - dkron
-    build_flag_templates:
-      - --platform=linux/amd64
+    - image_templates:
+          - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-light-amd64"
+      dockerfile: Dockerfile.release
+      use: buildx
+      goos: linux
+      goarch: amd64
+      ids: &docker-ids
+          - dkron
+      build_flag_templates:
+          - --platform=linux/amd64
 
-  - image_templates:
-      - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-light-arm64"
-    dockerfile: Dockerfile.release
-    use: buildx
-    goos: linux
-    goarch: arm64
-    ids: *docker-ids
-    build_flag_templates:
-      - --platform=linux/arm64/v8
+    - image_templates:
+          - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-light-arm64"
+      dockerfile: Dockerfile.release
+      use: buildx
+      goos: linux
+      goarch: arm64
+      ids: *docker-ids
+      build_flag_templates:
+          - --platform=linux/arm64/v8
 
-  - image_templates:
-      - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-light-armv7"
-    dockerfile: Dockerfile.release
-    use: buildx
-    goos: linux
-    goarch: arm
-    goarm: '7'
-    ids: *docker-ids
-    build_flag_templates:
-      - --platform=linux/arm/v7
+    - image_templates:
+          - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-light-armv7"
+      dockerfile: Dockerfile.release
+      use: buildx
+      goos: linux
+      goarch: arm
+      goarm: "7"
+      ids: *docker-ids
+      build_flag_templates:
+          - --platform=linux/arm/v7
 
 docker_manifests:
-  - name_template: "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}"
-    image_templates:
-      - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-amd64"
-      - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-arm64"
-      - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-armv7"
+    - name_template: "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}"
+      image_templates:
+          - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-amd64"
+          - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-arm64"
+          - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-armv7"
 
-  - name_template: "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:latest"
-    image_templates:
-    - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-amd64"
-    - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-arm64"
-    - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-armv7"
+    - name_template: "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:latest"
+      image_templates:
+          - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-amd64"
+          - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-arm64"
+          - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-armv7"
 
-  - name_template: "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-light"
-    image_templates:
-    - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-light-amd64"
-    - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-light-arm64"
-    - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-light-armv7"
+    - name_template: "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-light"
+      image_templates:
+          - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-light-amd64"
+          - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-light-arm64"
+          - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-light-armv7"
 
-  - name_template: "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:light"
-    image_templates:
-    - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-light-amd64"
-    - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-light-arm64"
-    - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-light-armv7"
+    - name_template: "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:light"
+      image_templates:
+          - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-light-amd64"
+          - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-light-arm64"
+          - "{{ .Env.IMAGE_PREFIX }}/{{ .ProjectName }}:{{ .Version }}-light-armv7"
 
 changelog:
-  sort: asc
-  filters:
-    exclude:
-    - '^docs:'
-    - '^test:'
-    - '^Merge pull request'
+    sort: asc
+    filters:
+        exclude:
+            - "^docs:"
+            - "^test:"
+            - "^Merge pull request"
