@@ -8,9 +8,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/armon/go-metrics"
 	"github.com/distribworks/dkron/v4/plugin"
 	"github.com/distribworks/dkron/v4/types"
+	"github.com/hashicorp/go-metrics"
 	"github.com/hashicorp/raft"
 	"github.com/hashicorp/serf/serf"
 	"github.com/sirupsen/logrus"
@@ -210,6 +210,12 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *types.E
 	// If the execution failed, retry it until retries limit (default: don't retry)
 	// Don't retry if the status is unknown
 	execution := NewExecutionFromProto(&pbex)
+	// Prometheus job execution counters
+	if execution.Success {
+		jobExecutionsSucceededTotal.WithLabelValues(job.Name).Inc()
+	} else {
+		jobExecutionsFailedTotal.WithLabelValues(job.Name).Inc()
+	}
 	if !execution.Success &&
 		uint(execution.Attempt) < job.Retries+1 &&
 		!strings.HasPrefix(execution.Output, ErrBrokenStream.Error()) {
