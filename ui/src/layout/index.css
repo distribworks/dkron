@@ -23,3 +23,70 @@ body {
   .clock {
     width: 100px;
   }
+
+  /* Dark mode fixes for react-json-view components */
+  @media (prefers-color-scheme: dark) {
+    .react-json-view {
+      background-color: transparent !important;
+    }
+    
+    .react-json-view .pretty-json-container {
+      color: #e0e0e0 !important;
+    }
+    
+    .react-json-view .object-key-val span[style*="color"] {
+      color: #90caf9 !important;
+    }
+    
+    .react-json-view .string-value {
+      color: #a5d6a7 !important;
+    }
+    
+    .react-json-view .object-key {
+      color: #ffcc02 !important;
+    }
+    
+    .react-json-view .brace-row {
+      color: #e0e0e0 !important;
+    }
+    
+    .react-json-view .punctuation {
+      color: #e0e0e0 !important;
+    }
+  }
+
+  /* Additional fallback for when dark mode is detected via MUI theme */
+  [data-mui-color-scheme="dark"] .react-json-view,
+  .MuiCssBaseline-root[data-mui-color-scheme="dark"] .react-json-view {
+    background-color: transparent !important;
+  }
+  
+  [data-mui-color-scheme="dark"] .react-json-view .pretty-json-container,
+  .MuiCssBaseline-root[data-mui-color-scheme="dark"] .react-json-view .pretty-json-container {
+    color: #e0e0e0 !important;
+  }
+  
+  [data-mui-color-scheme="dark"] .react-json-view .object-key-val span[style*="color"],
+  .MuiCssBaseline-root[data-mui-color-scheme="dark"] .react-json-view .object-key-val span[style*="color"] {
+    color: #90caf9 !important;
+  }
+  
+  [data-mui-color-scheme="dark"] .react-json-view .string-value,
+  .MuiCssBaseline-root[data-mui-color-scheme="dark"] .react-json-view .string-value {
+    color: #a5d6a7 !important;
+  }
+  
+  [data-mui-color-scheme="dark"] .react-json-view .object-key,
+  .MuiCssBaseline-root[data-mui-color-scheme="dark"] .react-json-view .object-key {
+    color: #ffcc02 !important;
+  }
+  
+  [data-mui-color-scheme="dark"] .react-json-view .brace-row,
+  .MuiCssBaseline-root[data-mui-color-scheme="dark"] .react-json-view .brace-row {
+    color: #e0e0e0 !important;
+  }
+  
+  [data-mui-color-scheme="dark"] .react-json-view .punctuation,
+  .MuiCssBaseline-root[data-mui-color-scheme="dark"] .react-json-view .punctuation {
+    color: #e0e0e0 !important;
+  }
