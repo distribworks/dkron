@@ -11094,9 +11094,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mermaid@npm:^10.9.3":
-  version: 10.9.3
-  resolution: "mermaid@npm:10.9.3"
+"mermaid@npm:^10.9.4":
+  version: 10.9.4
+  resolution: "mermaid@npm:10.9.4"
   dependencies:
     "@braintree/sanitize-url": "npm:^6.0.1"
     "@types/d3-scale": "npm:^4.0.3"
@@ -11118,7 +11118,7 @@ __metadata:
     ts-dedent: "npm:^2.2.0"
     uuid: "npm:^9.0.0"
     web-worker: "npm:^1.2.0"
-  checksum: 5f60222b34f4d27f18575f95a428e80135f0bbb3c1aade8de65e8d6c30a4f28a22f0547fcdb01d9bfcad95715631e8dc84017b7dd297bbb292ff3465dc887a16
+  checksum: e43cf876b76a7137961ed0557810b974bcf3948cc1b60b8b233b7b284b0aef48e7c425bb873723151b6eda4faca9f585e156f32def2d9bda0cad870cda353087
   languageName: node
   linkType: hard
 
@@ -12269,7 +12269,7 @@ __metadata:
     buffer: "npm:^6.0.3"
     clsx: "npm:^1.1.1"
     mdx-mermaid: "npm:^2.0.1"
-    mermaid: "npm:^10.9.3"
+    mermaid: "npm:^10.9.4"
     postcss: "npm:^8.4.6"
     postcss-import: "npm:^14.0.2"
     prism-react-renderer: "npm:^1.2.1"
