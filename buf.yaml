@@ -1,4 +1,11 @@
 version: v2
+breaking:
+  use:
+    - FILE
+  ignore:
+    - "./proto/dkron.proto"
+    - "./proto/executor.proto"
+    - "./proto/pro.proto"
 modules:
   - path: proto
     name: buf.build/distribworks/dkron

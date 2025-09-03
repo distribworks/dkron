@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/armon/go-metrics"
+	typesv1 "github.com/distribworks/dkron/v4/gen/proto/types/v1"
 	"github.com/distribworks/dkron/v4/plugin"
-	"github.com/distribworks/dkron/v4/types"
 	"github.com/hashicorp/raft"
 	"github.com/hashicorp/serf/serf"
 	"github.com/sirupsen/logrus"
@@ -36,13 +36,13 @@ var (
 
 // DkronGRPCServer defines the basics that a gRPC server should implement.
 type DkronGRPCServer interface {
-	types.DkronServer
+	typesv1.DkronServer
 	Serve(net.Listener) error
 }
 
 // GRPCServer is the local implementation of the gRPC server interface.
 type GRPCServer struct {
-	types.DkronServer
+	typesv1.DkronServer
 	agent  *Agent
 	logger *logrus.Entry
 }
@@ -59,10 +59,10 @@ func NewGRPCServer(agent *Agent, logger *logrus.Entry) DkronGRPCServer {
 func (grpcs *GRPCServer) Serve(lis net.Listener) error {
 	serverOpts := grpc.StatsHandler(otelgrpc.NewServerHandler()) // Add otel support
 	grpcServer := grpc.NewServer(serverOpts)
-	types.RegisterDkronServer(grpcServer, grpcs)
+	typesv1.RegisterDkronServer(grpcServer, grpcs)
 
 	as := NewAgentServer(grpcs.agent, grpcs.logger)
-	types.RegisterAgentServer(grpcServer, as)
+	typesv1.RegisterAgentServiceServer(grpcServer, as)
 	go grpcServer.Serve(lis)
 
 	return nil
@@ -83,7 +83,7 @@ func Encode(t MessageType, msg interface{}) ([]byte, error) {
 // SetJob broadcast a state change to the cluster members that will store the job.
 // Then restart the scheduler
 // This only works on the leader
-func (grpcs *GRPCServer) SetJob(ctx context.Context, setJobReq *types.SetJobRequest) (*types.SetJobResponse, error) {
+func (grpcs *GRPCServer) SetJob(ctx context.Context, setJobReq *typesv1.SetJobRequest) (*typesv1.SetJobResponse, error) {
 	defer metrics.MeasureSince([]string{"grpc", "set_job"}, time.Now())
 	grpcs.logger.WithFields(logrus.Fields{
 		"job": setJobReq.Job.Name,
@@ -100,12 +100,12 @@ func (grpcs *GRPCServer) SetJob(ctx context.Context, setJobReq *types.SetJobRequ
 		return nil, err
 	}
 
-	return &types.SetJobResponse{}, nil
+	return &typesv1.SetJobResponse{}, nil
 }
 
 // DeleteJob broadcast a state change to the cluster members that will delete the job.
 // This only works on the leader
-func (grpcs *GRPCServer) DeleteJob(ctx context.Context, delJobReq *types.DeleteJobRequest) (*types.DeleteJobResponse, error) {
+func (grpcs *GRPCServer) DeleteJob(ctx context.Context, delJobReq *typesv1.DeleteJobRequest) (*typesv1.DeleteJobResponse, error) {
 	defer metrics.MeasureSince([]string{"grpc", "delete_job"}, time.Now())
 	grpcs.logger.WithField("job", delJobReq.GetJobName()).Debug("grpc: Received DeleteJob")
 
@@ -130,11 +130,11 @@ func (grpcs *GRPCServer) DeleteJob(ctx context.Context, delJobReq *types.DeleteJ
 		grpcs.logger.WithField("job", job.Name).Info("grpc: Done deleting ephemeral job")
 	}
 
-	return &types.DeleteJobResponse{Job: jpb}, nil
+	return &typesv1.DeleteJobResponse{Job: jpb}, nil
 }
 
 // GetJob loads the job from the datastore
-func (grpcs *GRPCServer) GetJob(ctx context.Context, getJobReq *types.GetJobRequest) (*types.GetJobResponse, error) {
+func (grpcs *GRPCServer) GetJob(ctx context.Context, getJobReq *typesv1.GetJobRequest) (*typesv1.GetJobResponse, error) {
 	defer metrics.MeasureSince([]string{"grpc", "get_job"}, time.Now())
 	grpcs.logger.WithField("job", getJobReq.JobName).Debug("grpc: Received GetJob")
 
@@ -143,8 +143,8 @@ func (grpcs *GRPCServer) GetJob(ctx context.Context, getJobReq *types.GetJobRequ
 		return nil, err
 	}
 
-	gjr := &types.GetJobResponse{
-		Job: &types.Job{},
+	gjr := &typesv1.GetJobResponse{
+		Job: &typesv1.Job{},
 	}
 
 	// Copy the data structure
@@ -156,7 +156,7 @@ func (grpcs *GRPCServer) GetJob(ctx context.Context, getJobReq *types.GetJobRequ
 }
 
 // ExecutionDone saves the execution to the store
-func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *types.ExecutionDoneRequest) (*types.ExecutionDoneResponse, error) {
+func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *typesv1.ExecutionDoneRequest) (*typesv1.ExecutionDoneResponse, error) {
 	defer metrics.MeasureSince([]string{"grpc", "execution_done"}, time.Now())
 	grpcs.logger.WithFields(logrus.Fields{
 		"group": execDoneReq.Execution.Group,
@@ -232,7 +232,7 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *types.E
 			return nil, err
 		}
 
-		return &types.ExecutionDoneResponse{
+		return &typesv1.ExecutionDoneResponse{
 			From:    grpcs.agent.config.NodeName,
 			Payload: []byte("retry"),
 		}, nil
@@ -266,16 +266,16 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *types.E
 	}
 
 	if job.Ephemeral && job.Status == StatusSuccess {
-		if _, err := grpcs.DeleteJob(ctx, &types.DeleteJobRequest{JobName: job.Name}); err != nil {
+		if _, err := grpcs.DeleteJob(ctx, &typesv1.DeleteJobRequest{JobName: job.Name}); err != nil {
 			return nil, err
 		}
-		return &types.ExecutionDoneResponse{
+		return &typesv1.ExecutionDoneResponse{
 			From:    grpcs.agent.config.NodeName,
 			Payload: []byte("deleted"),
 		}, nil
 	}
 
-	return &types.ExecutionDoneResponse{
+	return &typesv1.ExecutionDoneResponse{
 		From:    grpcs.agent.config.NodeName,
 		Payload: []byte("saved"),
 	}, nil
@@ -287,7 +287,7 @@ func (grpcs *GRPCServer) Leave(ctx context.Context, in *emptypb.Empty) (*emptypb
 }
 
 // RunJob runs a job in the cluster
-func (grpcs *GRPCServer) RunJob(ctx context.Context, req *types.RunJobRequest) (*types.RunJobResponse, error) {
+func (grpcs *GRPCServer) RunJob(ctx context.Context, req *typesv1.RunJobRequest) (*typesv1.RunJobResponse, error) {
 	ex := NewExecution(req.JobName)
 	job, err := grpcs.agent.Run(ctx, req.JobName, ex)
 	if err != nil {
@@ -295,16 +295,16 @@ func (grpcs *GRPCServer) RunJob(ctx context.Context, req *types.RunJobRequest) (
 	}
 	jpb := job.ToProto()
 
-	return &types.RunJobResponse{Job: jpb}, nil
+	return &typesv1.RunJobResponse{Job: jpb}, nil
 }
 
 // ToggleJob toggle the enablement of a job
-func (grpcs *GRPCServer) ToggleJob(ctx context.Context, getJobReq *types.ToggleJobRequest) (*types.ToggleJobResponse, error) {
+func (grpcs *GRPCServer) ToggleJob(ctx context.Context, getJobReq *typesv1.ToggleJobRequest) (*typesv1.ToggleJobResponse, error) {
 	return nil, nil
 }
 
 // RaftGetConfiguration get raft config
-func (grpcs *GRPCServer) RaftGetConfiguration(ctx context.Context, in *emptypb.Empty) (*types.RaftGetConfigurationResponse, error) {
+func (grpcs *GRPCServer) RaftGetConfiguration(ctx context.Context, in *emptypb.Empty) (*typesv1.RaftGetConfigurationResponse, error) {
 	// We can't fetch the leader and the configuration atomically with
 	// the current Raft API.
 	future := grpcs.agent.raft.GetConfiguration()
@@ -326,7 +326,7 @@ func (grpcs *GRPCServer) RaftGetConfiguration(ctx context.Context, in *emptypb.E
 
 	// Fill out the reply.
 	leader := grpcs.agent.raft.Leader()
-	reply := &types.RaftGetConfigurationResponse{}
+	reply := &typesv1.RaftGetConfigurationResponse{}
 	reply.Index = future.Index()
 	for _, server := range future.Configuration().Servers {
 		node := "(unknown)"
@@ -338,7 +338,7 @@ func (grpcs *GRPCServer) RaftGetConfiguration(ctx context.Context, in *emptypb.E
 			}
 		}
 
-		entry := &types.RaftServer{
+		entry := &typesv1.RaftServer{
 			Id:           string(server.ID),
 			Node:         node,
 			Address:      string(server.Address),
@@ -355,7 +355,7 @@ func (grpcs *GRPCServer) RaftGetConfiguration(ctx context.Context, in *emptypb.E
 // quorum but no longer known to Serf or the catalog) by address in the form of
 // "IP:port". The reply argument is not used, but is required to fulfill the RPC
 // interface.
-func (grpcs *GRPCServer) RaftRemovePeerByID(ctx context.Context, in *types.RaftRemovePeerByIDRequest) (*emptypb.Empty, error) {
+func (grpcs *GRPCServer) RaftRemovePeerByID(ctx context.Context, in *typesv1.RaftRemovePeerByIDRequest) (*emptypb.Empty, error) {
 	// Since this is an operation designed for humans to use, we will return
 	// an error if the supplied id isn't among the peers since it's
 	// likely they screwed up.
@@ -392,24 +392,24 @@ REMOVE:
 }
 
 // GetActiveExecutions returns the active executions on the server node
-func (grpcs *GRPCServer) GetActiveExecutions(ctx context.Context, in *emptypb.Empty) (*types.GetActiveExecutionsResponse, error) {
+func (grpcs *GRPCServer) GetActiveExecutions(ctx context.Context, in *emptypb.Empty) (*typesv1.GetActiveExecutionsResponse, error) {
 	defer metrics.MeasureSince([]string{"grpc", "agent_run"}, time.Now())
 
-	var executions []*types.Execution
+	var executions []*typesv1.Execution
 	grpcs.agent.activeExecutions.Range(func(k, v interface{}) bool {
-		e := v.(*types.Execution)
+		e := v.(*typesv1.Execution)
 		executions = append(executions, e)
 		return true
 	})
 
-	return &types.GetActiveExecutionsResponse{
+	return &typesv1.GetActiveExecutionsResponse{
 		Executions: executions,
 	}, nil
 }
 
 // SetExecution broadcast a state change to the cluster members that will store the execution.
 // This only works on the leader
-func (grpcs *GRPCServer) SetExecution(ctx context.Context, execution *types.Execution) (*emptypb.Empty, error) {
+func (grpcs *GRPCServer) SetExecution(ctx context.Context, execution *typesv1.Execution) (*emptypb.Empty, error) {
 	defer metrics.MeasureSince([]string{"grpc", "set_execution"}, time.Now())
 	grpcs.logger.WithFields(logrus.Fields{
 		"execution": execution.Key(),
