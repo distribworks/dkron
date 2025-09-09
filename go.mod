@@ -2,7 +2,7 @@ module github.com/distribworks/dkron/v4
 
 require (
 	cloud.google.com/go/pubsub v1.50.1
-	github.com/IBM/sarama v1.45.2
+	github.com/IBM/sarama v1.46.0
 	github.com/armon/circbuf v0.0.0-20190214190532-5111143e8da2
 	github.com/armon/go-metrics v0.4.1
 	github.com/devopsfaith/krakend-usage v1.4.0
@@ -182,7 +182,7 @@ require (
 	github.com/prometheus/client_model v0.6.2 // indirect
 	github.com/prometheus/common v0.66.1 // indirect
 	github.com/prometheus/procfs v0.16.1 // indirect
-	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
+	github.com/rcrowley/go-metrics v0.0.0-20250401214520-65e299d6c5c9 // indirect
 	github.com/renier/xmlrpc v0.0.0-20170708154548-ce4a1a486c03 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/sagikazarmark/locafero v0.7.0 // indirect
