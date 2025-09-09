@@ -40,7 +40,7 @@ jobs:
       - name: Install Redocly CLI
         run: npm install -g @redocly/cli@latest
 
-      - name: Run linting
+      - name: Run linter
         run: |
               redocly lint --skip-rule=info-license --skip-rule=no-server-example.com --skip-rule=operation-summary \
               --skip-rule=operation-4xx-response ./website/static/openapi/openapi.yaml --format=github-actions
