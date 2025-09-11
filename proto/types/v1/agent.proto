@@ -1,0 +1,25 @@
+// protoc -I proto/ --go_out=types --go_opt=paths=source_relative --go-grpc_out=types --go-grpc_opt=paths=source_relative dkron.proto
+syntax = "proto3";
+
+package types.v1;
+
+import "types/v1/dkron.proto";
+
+service AgentService {
+  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+  rpc AgentRun(AgentRunRequest) returns (stream AgentRunStream);
+}
+
+message AgentRunRequest {
+  Job job = 1;
+  Execution execution = 2;
+}
+
+message AgentRunStream {
+  Execution execution = 1;
+}
+
+message AgentRunResponse {
+  string from = 1;
+  bytes payload = 2;
+}

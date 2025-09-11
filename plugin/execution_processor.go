@@ -3,7 +3,7 @@ package plugin
 import (
 	"net/rpc"
 
-	"github.com/distribworks/dkron/v4/types"
+	types "github.com/distribworks/dkron/v4/gen/proto/types/v1"
 	"github.com/hashicorp/go-plugin"
 )
 
