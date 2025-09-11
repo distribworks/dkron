@@ -10,13 +10,13 @@ info:
     Default API responses are unformatted JSON add the `pretty=true` param to format the response.
   version: 1-oas3
 servers:
-- url: http://localhost:8080/v1
+  - url: http://localhost:8080/v1
 
 paths:
   /:
     get:
       tags:
-      - default
+        - default
       description: |
         Gets `Status` object.
       operationId: status
@@ -30,61 +30,61 @@ paths:
   /jobs:
     get:
       tags:
-      - jobs
+        - jobs
       description: |
         List jobs.
       operationId: getJobs
       parameters:
-      - name: metadata
-        in: query
-        description: Filter jobs by metadata
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: array
-          items:
+        - name: metadata
+          in: query
+          description: Filter jobs by metadata
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: _sort
+          in: query
+          description: Sorting field
+          required: false
+          style: form
+          explode: true
+          schema:
             type: string
-      - name: _sort
-        in: query
-        description: Sorting field
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: _order
-        in: query
-        description: Sort order (ASC/DESC)
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: q
-        in: query
-        description: Filter query text
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: _start
-        in: query
-        description: Start index
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: integer
-      - name: _end
-        in: query
-        description: End index
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: integer
+        - name: _order
+          in: query
+          description: Sort order (ASC/DESC)
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: q
+          in: query
+          description: Filter query text
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: _start
+          in: query
+          description: Start index
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: integer
+        - name: _end
+          in: query
+          description: End index
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: integer
       responses:
         "200":
           description: Successful response
@@ -94,22 +94,25 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/job'
+        "500":
+          description: Internal error
+
     post:
       tags:
-      - jobs
+        - jobs
       description: |
         Create or updates a new job.
       operationId: createOrUpdateJob
       parameters:
-      - name: runoncreate
-        in: query
-        description: If present, regardless of any value, causes the job to be run immediately after being succesfully created or updated.
-        required: false
-        allowEmptyValue: true
-        style: form
-        explode: true
-        schema:
-          type: boolean
+        - name: runoncreate
+          in: query
+          description: If present, regardless of any value, causes the job to be run immediately after being succesfully created or updated.
+          required: false
+          allowEmptyValue: true
+          style: form
+          explode: true
+          schema:
+            type: boolean
       requestBody:
         description: Updated job object
         content:
@@ -124,22 +127,86 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/job'
+        "400":
+          description: Bad request, the job is invalid
+          content:
+            text/plain:
+              schema:
+                type: string
+                examples:
+                  - "Bad request, the job is invalid. Please check the job definition."
+        "500":
+          description: Internal error
+          content:
+            text/plain:
+              schema:
+                type: string
+                examples:
+                  - "Internal error, please try again later."
+
+    patch:
+      tags:
+        - jobs
+      description: |
+        Create or updates a new job.
+      operationId: createOrUpdateJobPatch
+      parameters:
+        - name: runoncreate
+          in: query
+          description: If present, regardless of any value, causes the job to be run immediately after being succesfully created or updated.
+          required: false
+          allowEmptyValue: true
+          style: form
+          explode: true
+          schema:
+            type: boolean
+      requestBody:
+        description: Updated job object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/job'
+        required: true
+      responses:
+        "201":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/job'
+        "400":
+          description: Bad request, the job is invalid
+          content:
+            text/plain:
+              schema:
+                type: string
+                examples:
+                  - "Internal error, please try again later."
+        "500":
+          description: Internal error
+          content:
+            text/plain:
+              schema:
+                type: string
+                examples:
+                  - "Internal error, please try again later."
+
   /jobs/{job_name}:
     get:
       tags:
-      - jobs
+        - jobs
       description: |
         Show a job.
       operationId: showJobByName
       parameters:
-      - name: job_name
-        in: path
-        description: The job that needs to be fetched.
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
+        - name: job_name
+          in: path
+          description: The job that needs to be fetched.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
       responses:
         "200":
           description: Successful response
@@ -149,19 +216,19 @@ paths:
                 $ref: '#/components/schemas/job'
     post:
       tags:
-      - jobs
+        - jobs
       description: |
         Executes a job.
       operationId: runJob
       parameters:
-      - name: job_name
-        in: path
-        description: The job that needs to be run.
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
+        - name: job_name
+          in: path
+          description: The job that needs to be run.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
       responses:
         "202":
           description: Successful response
@@ -171,19 +238,19 @@ paths:
                 $ref: '#/components/schemas/job'
     delete:
       tags:
-      - jobs
+        - jobs
       description: |
         Delete a job.
       operationId: deleteJob
       parameters:
-      - name: job_name
-        in: path
-        description: The job that needs to be deleted.
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
+        - name: job_name
+          in: path
+          description: The job that needs to be deleted.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
       responses:
         "200":
           description: Successful response
@@ -194,19 +261,19 @@ paths:
   /jobs/{job_name}/toggle:
     post:
       tags:
-      - jobs
+        - jobs
       description: |
         Toggle a job.
       operationId: toggleJob
       parameters:
-      - name: job_name
-        in: path
-        description: The job that needs to be toggled.
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
+        - name: job_name
+          in: path
+          description: The job that needs to be toggled.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
       responses:
         "200":
           description: Successful response
@@ -217,7 +284,7 @@ paths:
   /restore:
     post:
       tags:
-      - jobs
+        - jobs
       description: |
         Restore jobs from json file.
       operationId: restore
@@ -239,7 +306,7 @@ paths:
   /members:
     get:
       tags:
-      - members
+        - members
       description: |
         List members.
       operationId: getMember
@@ -255,7 +322,7 @@ paths:
   /leader:
     get:
       tags:
-      - default
+        - default
       description: |
         List leader of cluster.
       operationId: getLeader
@@ -269,7 +336,7 @@ paths:
   /isleader:
     get:
       tags:
-      - default
+        - default
       description: |
         Check if node is a leader or follower.
       operationId: getIsLeader
@@ -281,7 +348,7 @@ paths:
   /leave:
     post:
       tags:
-      - default
+        - default
       description: |
         Force the node to leave the cluster.
       operationId: leave
@@ -297,19 +364,19 @@ paths:
   /jobs/{job_name}/executions:
     get:
       tags:
-      - executions
+        - executions
       description: |
         List executions.
       operationId: listExecutionsByJob
       parameters:
-      - name: job_name
-        in: path
-        description: The job that owns the executions to be fetched.
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
+        - name: job_name
+          in: path
+          description: The job that owns the executions to be fetched.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
       responses:
         "200":
           description: Successful response
@@ -322,27 +389,27 @@ paths:
   /jobs/{job_name}/executions/{execution}:
     get:
       tags:
-      - executions
+        - executions
       description: |
         Show execution.
       operationId: showExecutionByID
       parameters:
-      - name: job_name
-        in: path
-        description: The job that owns the execution to be fetched.
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-      - name: execution
-        in: path
-        description: The executions to be fetched.
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
+        - name: job_name
+          in: path
+          description: The job that owns the execution to be fetched.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+        - name: execution
+          in: path
+          description: The executions to be fetched.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
       responses:
         "200":
           description: Successful response
@@ -353,7 +420,7 @@ paths:
   /busy:
     get:
       tags:
-      - default
+        - default
       description: |
         Returns the running executions.
       operationId: busy
@@ -370,19 +437,19 @@ paths:
   /acl/policies/{name}:
     get:
       tags:
-      - policies
+        - policies
       description: |
         Show a policy.
       operationId: showPolicyByName
       parameters:
-      - name: name
-        in: path
-        description: The policy that needs to be fetched.
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
+        - name: name
+          in: path
+          description: The policy that needs to be fetched.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
       responses:
         "200":
           description: Successful response
@@ -392,19 +459,19 @@ paths:
                 $ref: '#/components/schemas/policy'
     post:
       tags:
-      - policies
+        - policies
       description: |
         Store or updates a policy.
       operationId: upsertPolicy
       parameters:
-      - name: name
-        in: path
-        description: The policy name to store.
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
+        - name: name
+          in: path
+          description: The policy name to store.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
       responses:
         "202":
           description: Successful response
@@ -414,19 +481,19 @@ paths:
                 $ref: '#/components/schemas/policy'
     delete:
       tags:
-      - policies
+        - policies
       description: |
         Delete a policy.
       operationId: deletePolicy
       parameters:
-      - name: name
-        in: path
-        description: The policy that needs to be deleted.
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
+        - name: name
+          in: path
+          description: The policy that needs to be deleted.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
       responses:
         "200":
           description: Successful response
@@ -461,8 +528,8 @@ components:
       readOnly: true
     job:
       required:
-      - name
-      - schedule
+        - name
+        - schedule
       type: object
       x-go-type: types.Job
       x-go-imports:
@@ -482,25 +549,25 @@ components:
           type: string
           description: Cron expression for the job.
           readOnly: false
-          examples: 
+          examples:
             - '@every 10s'
         timezone:
           type: string
           description: Timezone where the job will be executed. By default and when field is set to empty string, the job will run in local time.
           readOnly: false
-          examples: 
+          examples:
             - Europe/Berlin
         owner:
           type: string
           description: Owner of the job
           readOnly: false
-          examples: 
+          examples:
             - Platform Team
         owner_email:
           type: string
           description: Email of the owner
           readOnly: false
-          examples: 
+          examples:
             - platform@example.com
         success_count:
           type: integer
@@ -586,7 +653,7 @@ components:
           description: Status of the job
           readOnly: true
           examples:
-             - success
+            - success
         next:
           type: string
           description: Next execution time
@@ -697,7 +764,7 @@ components:
         additionalProperties:
           type: string
       description: Processor plugins used to process executions results of this job
-      examples: 
+      examples:
         - files:
             forward: true
     restore:
@@ -707,7 +774,7 @@ components:
         - success create job_1
     restore_body:
       required:
-      - file
+        - file
       type: object
       properties:
         file:
@@ -735,6 +802,6 @@ components:
       type: apiKey
       in: header
       name: X-Dkron-Token
-  
+
 security:
-  - TokenAuth: []
+  - TokenAuth: [ ]
