@@ -19,6 +19,6 @@ RUN go mod verify
 COPY . .
 
 RUN go install ./builtin/...
-RUN go build -tags=hashicorpmetrics main.go
+RUN go build -tags=hashicorpmetrics -o /go/bin/dkron main.go
 
 CMD ["dkron"]
