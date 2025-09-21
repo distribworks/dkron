@@ -2,7 +2,7 @@ module github.com/distribworks/dkron/v4
 
 require (
 	cloud.google.com/go/pubsub v1.50.1
-	github.com/IBM/sarama v1.46.0
+	github.com/IBM/sarama v1.46.1
 	github.com/armon/circbuf v0.0.0-20190214190532-5111143e8da2
 	github.com/armon/go-metrics v0.4.1
 	github.com/devopsfaith/krakend-usage v1.4.0
