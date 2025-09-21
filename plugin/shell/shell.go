@@ -132,7 +132,8 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelp
 
 	quit := make(chan int)
 
-	go CollectProcessMetrics(args.JobName, cmd.Process.Pid, quit)
+	// FIXME: Debug metrics collection
+	// go CollectProcessMetrics(args.JobName, cmd.Process.Pid, quit)
 
 	err = cmd.Wait()
 	quit <- cmd.ProcessState.ExitCode()
