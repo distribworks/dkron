@@ -17,8 +17,8 @@ import (
 	"time"
 
 	"github.com/armon/circbuf"
+	types "github.com/distribworks/dkron/v4/gen/proto/types/v1"
 	dkplugin "github.com/distribworks/dkron/v4/plugin"
-	"github.com/distribworks/dkron/v4/types"
 )
 
 const (
