@@ -135,7 +135,11 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelp
 
 	// go CollectProcessMetrics(args.JobName, cmd.Process.Pid, quit)
 
-	// err = cmd.Wait()
+	err = cmd.Wait()
+	if err != nil {
+		log.Printf("shell: Job '%s' execution failed with error: %v", command, err)
+	}
+
 	// quit <- cmd.ProcessState.ExitCode()
 	// close(quit) // exit metric refresh goroutine after job is finished
 
