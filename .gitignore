@@ -9,6 +9,7 @@ downloads/
 .vagrant
 vendor/
 main
+dkron-binary
 /dkron-processor-*
 /dkron-executor-*
 *.log
