@@ -34,10 +34,19 @@ const JobShowActions = ({ basePath, data, resource }: any) => (
 );
 
 const SuccessField = (props: any) => {
-    return (
-        props.record !== undefined && props.record["finished_at"] === null ? 
-            <Tooltip title="Running"><JobIcon /></Tooltip> : <BooleanField {...props} />
-    );
+    if (props.record !== undefined) {
+        // If job is still running (finished_at is null)
+        if (props.record["finished_at"] === null) {
+            return <Tooltip title="Running"><JobIcon /></Tooltip>;
+        }
+        // If job has finished, show success or failed based on success field
+        if (props.record["success"] === true) {
+            return <Tooltip title="Success"><span style={{ color: 'green' }}>Success</span></Tooltip>;
+        } else {
+            return <Tooltip title="Failed"><span style={{ color: 'red' }}>Failed</span></Tooltip>;
+        }
+    }
+    return <BooleanField {...props} />;
 };
 
 const FullButton = ({record}: any) => {
