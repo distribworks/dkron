@@ -13,8 +13,8 @@ import (
 	"time"
 
 	"github.com/armon/circbuf"
+	dktypes "github.com/distribworks/dkron/v4/gen/proto/types/v1"
 	dkplugin "github.com/distribworks/dkron/v4/plugin"
-	dktypes "github.com/distribworks/dkron/v4/types"
 	"github.com/mattn/go-shellwords"
 )
 
