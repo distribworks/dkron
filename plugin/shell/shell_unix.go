@@ -12,6 +12,8 @@ import (
 )
 
 func setCmdAttr(cmd *exec.Cmd, config map[string]string) error {
+	cmd.SysProcAttr = &syscall.SysProcAttr{}
+
 	su := config["su"]
 	if su != "" {
 		var uid, gid int
@@ -37,8 +39,8 @@ func setCmdAttr(cmd *exec.Cmd, config map[string]string) error {
 	}
 
 	jobTimeout := config["timeout"]
-	if jobTimeout != "" {
-		cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
+	if jobTimeout != "" && cmd.SysProcAttr == nil {
+		cmd.SysProcAttr.Setpgid = true
 	}
 	return nil
 }
