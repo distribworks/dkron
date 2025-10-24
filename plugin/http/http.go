@@ -2,8 +2,10 @@ package http
 
 import (
 	"bytes"
+	"crypto/sha256"
 	"crypto/tls"
 	"crypto/x509"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -12,13 +14,16 @@ import (
 	"log"
 	"net/http"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/armon/circbuf"
 	dkplugin "github.com/distribworks/dkron/v4/plugin"
 	"github.com/distribworks/dkron/v4/types"
+	lru "github.com/hashicorp/golang-lru"
 )
 
 const (
@@ -28,17 +33,33 @@ const (
 	// This is to prevent Serf's memory from growing to an enormous
 	// amount due to a faulty handler.
 	maxBufSize = 256000
+	// maxClientPoolSize limits the number of HTTP clients cached
+	// This prevents unbounded memory growth in the client pool
+	maxClientPoolSize = 100
 )
 
 // HTTP process http request
 type HTTP struct {
-	clientPool map[string]http.Client
+	clientPool *lru.Cache
+	mu         sync.RWMutex
 }
 
 // New
 func New() *HTTP {
+	cache, err := lru.NewWithEvict(maxClientPoolSize, func(key interface{}, value interface{}) {
+		// Optionally close idle connections when evicting clients
+		if client, ok := value.(http.Client); ok {
+			if transport, ok := client.Transport.(*http.Transport); ok {
+				transport.CloseIdleConnections()
+			}
+		}
+	})
+	if err != nil {
+		// Fallback to a smaller cache if creation fails
+		cache, _ = lru.New(10)
+	}
 	return &HTTP{
-		clientPool: make(map[string]http.Client),
+		clientPool: cache,
 	}
 }
 
@@ -111,15 +132,24 @@ func (s *HTTP) ExecuteImpl(args *types.ExecuteRequest) ([]byte, error) {
 		ok     bool
 	)
 
-	cc := args.Config["timeout"] + args.Config["tlsRootCAsFile"] + args.Config["tlsCertificateFile"] + args.Config["tlsCertificateKeyFile"]
+	clientKey := s.generateClientKey(args.Config)
 
-	if client, ok = s.clientPool[cc]; !ok {
+	s.mu.RLock()
+	if cachedClient, found := s.clientPool.Get(clientKey); found {
+		client = cachedClient.(http.Client)
+		ok = true
+	}
+	s.mu.RUnlock()
+
+	if !ok {
 		var warns []error
 		client, warns = createClient(args.Config)
 		for _, warn := range warns {
 			_, _ = output.Write([]byte(fmt.Sprintf("Warning: %s.\n", warn.Error())))
 		}
-		s.clientPool[cc] = client
+		s.mu.Lock()
+		s.clientPool.Add(clientKey, client)
+		s.mu.Unlock()
 	}
 
 	// do request
@@ -167,6 +197,35 @@ func (s *HTTP) ExecuteImpl(args *types.ExecuteRequest) ([]byte, error) {
 	return output.Bytes(), nil
 }
 
+// generateClientKey creates a unique key for the client pool based on configuration
+// This fixes the key collision issue by using proper hashing instead of string concatenation
+func (s *HTTP) generateClientKey(config map[string]string) string {
+	// Only include configuration that affects the HTTP client behavior
+	relevantKeys := []string{
+		"timeout",
+		"tlsNoVerifyPeer", 
+		"tlsRootCAsFile",
+		"tlsCertificateFile",
+		"tlsCertificateKeyFile",
+	}
+	
+	// Create a sorted map to ensure consistent key generation
+	var keyParts []string
+	for _, key := range relevantKeys {
+		if value, exists := config[key]; exists && value != "" {
+			keyParts = append(keyParts, fmt.Sprintf("%s=%s", key, value))
+		}
+	}
+	
+	// Sort to ensure consistent ordering
+	sort.Strings(keyParts)
+	
+	// Create hash of the configuration
+	hasher := sha256.New()
+	hasher.Write([]byte(strings.Join(keyParts, "|")))
+	return hex.EncodeToString(hasher.Sum(nil))
+}
+
 // createClient always returns a new http client. Any errors returned are
 // errors in the configuration.
 func createClient(config map[string]string) (http.Client, []error) {
@@ -199,8 +258,20 @@ func createClient(config map[string]string) (http.Client, []error) {
 		}
 	}
 
+	// Create transport with proper connection pooling settings
+	transport := &http.Transport{
+		TLSClientConfig: tlsconf,
+		// Set reasonable connection pool limits to prevent resource leaks
+		MaxIdleConns:          10,
+		MaxIdleConnsPerHost:   5,
+		MaxConnsPerHost:       20,
+		IdleConnTimeout:       30 * time.Second,
+		TLSHandshakeTimeout:   10 * time.Second,
+		ExpectContinueTimeout: 1 * time.Second,
+	}
+
 	return http.Client{
-		Transport: &http.Transport{TLSClientConfig: tlsconf},
+		Transport: transport,
 		Timeout:   time.Duration(_timeout) * time.Second,
 	}, errs
 }
