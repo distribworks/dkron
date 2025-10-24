@@ -13,7 +13,7 @@ import (
 	"sync"
 	"time"
 
-	dkronpb "github.com/distribworks/dkron/v4/types"
+	dkronpb "github.com/distribworks/dkron/v4/gen/proto/types/v1"
 	"github.com/sirupsen/logrus"
 	"github.com/tidwall/buntdb"
 	"go.opentelemetry.io/otel/attribute"
