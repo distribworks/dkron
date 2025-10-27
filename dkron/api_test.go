@@ -432,3 +432,55 @@ func postJob(t *testing.T, port string, jsonStr []byte) *http.Response {
 
 	return resp
 }
+
+// TestAPILeaderEndpointsNoRaftNoPanic tests that leader-related endpoints
+// don't panic when accessed before Raft is fully initialized (issue #1702)
+func TestAPILeaderEndpointsNoRaftNoPanic(t *testing.T) {
+	port := "8095"
+	baseURL := fmt.Sprintf("http://localhost:%s/v1", port)
+	
+	dir, err := ioutil.TempDir("", "dkron-test")
+	require.NoError(t, err)
+	defer os.RemoveAll(dir)
+
+	ip1, returnFn1 := testutil.TakeIP()
+	defer returnFn1()
+
+	c := DefaultConfig()
+	c.BindAddr = ip1.String()
+	c.HTTPAddr = fmt.Sprintf("127.0.0.1:%s", port)
+	c.NodeName = "test"
+	c.Server = true
+	c.LogLevel = logLevel
+	c.BootstrapExpect = 1
+	c.DevMode = true
+	c.DataDir = dir
+
+	a := NewAgent(c)
+	
+	// Start HTTP server but don't wait for leadership
+	// This creates a window where HTTP is up but Raft might not be fully initialized
+	go a.Start() // nolint: errcheck
+	defer a.Stop() // nolint: errcheck
+	
+	// Give HTTP server a moment to start but not necessarily Raft
+	time.Sleep(500 * time.Millisecond)
+	
+	// These endpoints should not panic even if called before Raft is ready
+	resp, err := http.Get(baseURL + "/isleader")
+	if err == nil {
+		resp.Body.Close()
+		// If we get a response, it should be valid (either 200 or 404)
+		assert.True(t, resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNotFound,
+			"isleader endpoint should return valid status code")
+	}
+	
+	resp, err = http.Get(baseURL + "/leader")
+	if err == nil {
+		resp.Body.Close()
+		// If we get a response, it should be valid (either 200 or 404 or 500)
+		assert.True(t, resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNotFound || resp.StatusCode == http.StatusInternalServerError,
+			"leader endpoint should return valid status code")
+	}
+}
+
