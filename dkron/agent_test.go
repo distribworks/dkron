@@ -636,3 +636,31 @@ func Test_selectNodes(t *testing.T) {
 		})
 	}
 }
+
+// TestAgent_RaftNotInitializedNoPanic tests that calling raft-dependent methods
+// before raft is initialized doesn't cause a nil pointer panic (issue #1702)
+func TestAgent_RaftNotInitializedNoPanic(t *testing.T) {
+	dir, err := ioutil.TempDir("", "dkron-test")
+	require.NoError(t, err)
+	defer os.RemoveAll(dir)
+
+	c := DefaultConfig()
+	c.NodeName = "test"
+	c.Server = true
+	c.LogLevel = logLevel
+	c.DataDir = dir
+
+	a := NewAgent(c)
+	
+	// Call methods that access a.raft before Start() is called
+	// These should not panic
+	assert.False(t, a.IsLeader(), "IsLeader should return false when raft is not initialized")
+	
+	leader := a.Leader()
+	assert.Equal(t, "", string(leader), "Leader should return empty string when raft is not initialized")
+	
+	member, err := a.leaderMember()
+	assert.Nil(t, member, "leaderMember should return nil when raft is not initialized")
+	assert.Equal(t, ErrLeaderNotFound, err, "leaderMember should return ErrLeaderNotFound when raft is not initialized")
+}
+
