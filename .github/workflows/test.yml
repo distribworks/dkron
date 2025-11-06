@@ -33,11 +33,8 @@ jobs:
         run: go get -v -t -d ./...
 
       - name: Test without docker
-        run: go test -v -timeout 200s ./...
-
-      - name: Generate coverage report
-        run: go test -coverprofile=coverage.txt
-        
+        run: go test -v -timeout 200s -coverprofile=coverage.txt ./...
+  
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
         with:
