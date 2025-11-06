@@ -290,10 +290,14 @@ func (s *Store) SetExecutionDone(ctx context.Context, execution *Execution) (boo
 			pbj.LastSuccess.HasValue = true
 			pbj.LastSuccess.Time = pbe.FinishedAt
 			pbj.SuccessCount++
+			// Emit metrics for successful job execution
+			jobExecutionSuccessCounter.WithLabelValues(execution.JobName).Inc()
 		} else {
 			pbj.LastError.HasValue = true
 			pbj.LastError.Time = pbe.FinishedAt
 			pbj.ErrorCount++
+			// Emit metrics for failed job execution
+			jobExecutionFailureCounter.WithLabelValues(execution.JobName).Inc()
 		}
 
 		status, err := s.computeStatus(pbj.Name, pbe.Group, tx)
