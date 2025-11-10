@@ -27,6 +27,7 @@ const sections = [
       { name: "Concurrency control", tiers: { Free: true, Pro: true } },
       { name: "Metrics", tiers: { Free: true, Pro: true } },
       { name: "Embedded storage engine", tiers: { Free: true, Pro: true } },
+      { name: "Fast mode", tiers: { Pro: true } },
       { name: "Docker executor", tiers: { Pro: true } },
       { name: "AWS ECS executor", tiers: { Pro: true } },
       { name: "Elasticsearch processor", tiers: { Pro: true } },

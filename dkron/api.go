@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"sort"
 	"strconv"
+	"strings"
 
 	"github.com/distribworks/dkron/v4/types"
 	"github.com/gin-contrib/cors"
@@ -16,7 +17,8 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 	"github.com/tidwall/buntdb"
-	status "google.golang.org/grpc/status"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
+	"google.golang.org/grpc/status"
 )
 
 const (
@@ -56,6 +58,11 @@ func (h *HTTPTransport) ServeHTTP() {
 	config.AllowHeaders = []string{"*"}
 	config.ExposeHeaders = []string{"*"}
 
+	// Skip tracing on auxiliary endpoints
+	filter := func(c *gin.Context) bool {
+		return !(strings.Contains(c.FullPath(), "metrics") || strings.Contains(c.FullPath(), "health") || strings.Contains(c.FullPath(), "ui"))
+	}
+	rootPath.Use(otelgin.Middleware("dkron-api", otelgin.WithGinFilter(filter))) // Adds OpenTelemetry tracing to HTTP API
 	rootPath.Use(cors.New(config))
 	rootPath.Use(h.MetaMiddleware())
 
@@ -160,18 +167,17 @@ func (h *HTTPTransport) jobsHandler(c *gin.Context) {
 	order := c.DefaultQuery("_order", "ASC")
 	q := c.Query("q")
 
-	jobs, err := h.agent.Store.GetJobs(
-		&JobOptions{
-			Metadata: metadata,
-			Sort:     sort,
-			Order:    order,
-			Query:    q,
-			Status:   c.Query("status"),
-			Disabled: c.Query("disabled"),
-		},
-	)
+	jobs, err := h.agent.Store.GetJobs(c.Request.Context(), &JobOptions{
+		Metadata: metadata,
+		Sort:     sort,
+		Order:    order,
+		Query:    q,
+		Status:   c.Query("status"),
+		Disabled: c.Query("disabled"),
+	})
 	if err != nil {
 		h.logger.WithError(err).Error("api: Unable to get jobs, store not reachable.")
+		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
@@ -199,7 +205,7 @@ func (h *HTTPTransport) jobsHandler(c *gin.Context) {
 func (h *HTTPTransport) jobGetHandler(c *gin.Context) {
 	jobName := c.Param("job")
 
-	job, err := h.agent.Store.GetJob(jobName, nil)
+	job, err := h.agent.Store.GetJob(c.Request.Context(), jobName, nil)
 	if err != nil {
 		h.logger.Error(err)
 	}
@@ -223,10 +229,12 @@ func (h *HTTPTransport) jobCreateOrUpdateHandler(c *gin.Context) {
 	} else {
 		// Parse values from JSON
 		if err := c.BindJSON(&job); err != nil {
-			_, _ = c.Writer.WriteString(fmt.Sprintf("Unable to parse payload: %s.", err))
 			h.logger.Error(err)
+			c.AbortWithStatus(http.StatusBadRequest)
+			_, _ = c.Writer.WriteString(fmt.Sprintf("Unable to parse payload: %s.", err))
 			return
 		}
+
 		// Get the owner from the context, if it exists
 		// this is coming from the ACL middleware
 		accessor := c.GetString("accessor")
@@ -238,18 +246,20 @@ func (h *HTTPTransport) jobCreateOrUpdateHandler(c *gin.Context) {
 	// Validate job
 	if err := job.Validate(); err != nil {
 		c.AbortWithStatus(http.StatusBadRequest)
-		_, _ = c.Writer.WriteString(fmt.Sprintf("Job contains invalid value: %s.", err))
+		_, _ = c.Writer.WriteString(fmt.Sprintf("Job validation failed: %s.", err))
 		return
 	}
 
 	// Call gRPC SetJob
 	if err := h.agent.GRPCClient.SetJob(&job); err != nil {
 		s := status.Convert(err)
+
 		if s.Message() == ErrParentJobNotFound.Error() {
-			c.AbortWithStatus(http.StatusNotFound)
+			c.Status(http.StatusNotFound)
 		} else {
-			c.AbortWithStatus(http.StatusInternalServerError)
+			c.Status(http.StatusInternalServerError)
 		}
+
 		_, _ = c.Writer.WriteString(s.Message())
 		return
 	}
@@ -308,9 +318,9 @@ func (h *HTTPTransport) restoreHandler(c *gin.Context) {
 		_ = c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
+
 	var jobs []*Job
 	err = json.Unmarshal(data, &jobs)
-
 	if err != nil {
 		_ = c.AbortWithError(http.StatusBadRequest, err)
 		return
@@ -321,12 +331,14 @@ func (h *HTTPTransport) restoreHandler(c *gin.Context) {
 		_ = c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
+
 	result := h.agent.recursiveSetJob(jobTree)
 	resp, err := json.Marshal(result)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
+
 	renderJSON(c, http.StatusOK, string(resp))
 }
 
@@ -348,19 +360,17 @@ func (h *HTTPTransport) executionsHandler(c *gin.Context) {
 		outputSizeLimit = -1
 	}
 
-	job, err := h.agent.Store.GetJob(jobName, nil)
+	job, err := h.agent.Store.GetJob(c.Request.Context(), jobName, nil)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
 
-	executions, err := h.agent.Store.GetExecutions(job.Name,
-		&ExecutionOptions{
-			Sort:     sort,
-			Order:    order,
-			Timezone: job.GetTimeLocation(),
-		},
-	)
+	executions, err := h.agent.Store.GetExecutions(c.Request.Context(), job.Name, &ExecutionOptions{
+		Sort:     sort,
+		Order:    order,
+		Timezone: job.GetTimeLocation(),
+	})
 	if err == buntdb.ErrNotFound {
 		executions = make([]*Execution, 0)
 	} else if err != nil {
@@ -389,19 +399,17 @@ func (h *HTTPTransport) executionHandler(c *gin.Context) {
 	jobName := c.Param("job")
 	executionName := c.Param("execution")
 
-	job, err := h.agent.Store.GetJob(jobName, nil)
+	job, err := h.agent.Store.GetJob(c.Request.Context(), jobName, nil)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
 
-	executions, err := h.agent.Store.GetExecutions(job.Name,
-		&ExecutionOptions{
-			Sort:     "",
-			Order:    "",
-			Timezone: job.GetTimeLocation(),
-		},
-	)
+	executions, err := h.agent.Store.GetExecutions(c.Request.Context(), job.Name, &ExecutionOptions{
+		Sort:     "",
+		Order:    "",
+		Timezone: job.GetTimeLocation(),
+	})
 
 	if err != nil {
 		h.logger.Error(err)
@@ -457,7 +465,7 @@ func (h *HTTPTransport) leaveHandler(c *gin.Context) {
 func (h *HTTPTransport) jobToggleHandler(c *gin.Context) {
 	jobName := c.Param("job")
 
-	job, err := h.agent.Store.GetJob(jobName, nil)
+	job, err := h.agent.Store.GetJob(c.Request.Context(), jobName, nil)
 	if err != nil {
 		_ = c.AbortWithError(http.StatusNotFound, err)
 		return

@@ -2,6 +2,7 @@ package dkron
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -66,17 +67,14 @@ func TestAPIJobCreateUpdate(t *testing.T) {
 	}`)
 
 	resp, err := http.Post(baseURL+"/jobs", "encoding/json", bytes.NewBuffer(jsonStr))
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 	body, _ := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
 	assert.Equal(t, http.StatusCreated, resp.StatusCode)
 
 	var origJob Job
-	if err := json.Unmarshal(body, &origJob); err != nil {
-		t.Fatal(err)
-	}
+	err = json.Unmarshal(body, &origJob)
+	require.NoError(t, err)
 
 	jsonStr1 := []byte(`{
 		"name": "test_job",
@@ -355,6 +353,7 @@ func TestAPIJobOutputTruncate(t *testing.T) {
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, string(body), "[]")
 
+	ctx := context.Background()
 	testExecution1 := &Execution{
 		JobName:    "test_job",
 		StartedAt:  time.Now().UTC(),
@@ -371,11 +370,11 @@ func TestAPIJobOutputTruncate(t *testing.T) {
 		Output:     "test " + strings.Repeat("longer output... ", 100),
 		NodeName:   "testNode2",
 	}
-	_, err = a.Store.SetExecution(testExecution1)
+	_, err = a.Store.SetExecution(ctx, testExecution1)
 	if err != nil {
 		t.Fatal(err)
 	}
-	_, err = a.Store.SetExecution(testExecution2)
+	_, err = a.Store.SetExecution(ctx, testExecution2)
 	if err != nil {
 		t.Fatal(err)
 	}

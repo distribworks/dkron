@@ -2,6 +2,7 @@ package dkron
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -15,6 +16,8 @@ import (
 	dkronpb "github.com/distribworks/dkron/v4/types"
 	"github.com/sirupsen/logrus"
 	"github.com/tidwall/buntdb"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -28,7 +31,7 @@ const (
 
 var (
 	// ErrDependentJobs is returned when deleting a job that has dependent jobs
-	ErrDependentJobs = errors.New("store: could not delete job with dependent jobs, delete childs first")
+	ErrDependentJobs = errors.New("store: could not delete job with dependent jobs, delete children first")
 )
 
 // Store is the local implementation of the Storage interface.
@@ -36,8 +39,9 @@ var (
 // BuntDB.
 type Store struct {
 	db   *buntdb.DB
-	lock *sync.Mutex // for
+	lock *sync.Mutex
 
+	tracer trace.Tracer
 	logger *logrus.Entry
 }
 
@@ -64,7 +68,7 @@ type kv struct {
 }
 
 // NewStore creates a new Storage instance.
-func NewStore(logger *logrus.Entry) (*Store, error) {
+func NewStore(logger *logrus.Entry, tracer trace.Tracer) (*Store, error) {
 	db, err := buntdb.Open(":memory:")
 	if err != nil {
 		return nil, err
@@ -85,6 +89,7 @@ func NewStore(logger *logrus.Entry) (*Store, error) {
 		db:     db,
 		lock:   &sync.Mutex{},
 		logger: logger,
+		tracer: tracer,
 	}
 
 	return store, nil
@@ -114,7 +119,10 @@ func (s *Store) DB() *buntdb.DB {
 }
 
 // SetJob stores a job in the storage
-func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
+func (s *Store) SetJob(ctx context.Context, job *Job, copyDependentJobs bool) error {
+	ctx, span := s.tracer.Start(ctx, "buntdb.set.job")
+	defer span.End()
+
 	var pbej dkronpb.Job
 	var ej *Job
 
@@ -124,7 +132,7 @@ func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
 
 	// Abort if parent not found before committing job to the store
 	if job.ParentJob != "" {
-		if j, _ := s.GetJob(job.ParentJob, nil); j == nil {
+		if j, _ := s.GetJob(ctx, job.ParentJob, nil); j == nil {
 			return ErrParentJobNotFound
 		}
 	}
@@ -186,10 +194,10 @@ func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
 
 	// If the parent job changed update the parents of the old (if any) and new jobs
 	if job.ParentJob != ej.ParentJob {
-		if err := s.removeFromParent(ej); err != nil {
+		if err := s.removeFromParent(ctx, ej); err != nil {
 			return err
 		}
-		if err := s.addToParent(job); err != nil {
+		if err := s.addToParent(ctx, job); err != nil {
 			return err
 		}
 	}
@@ -199,13 +207,16 @@ func (s *Store) SetJob(job *Job, copyDependentJobs bool) error {
 
 // Removes the given job from its parent.
 // Does nothing if nil is passed as child.
-func (s *Store) removeFromParent(child *Job) error {
+func (s *Store) removeFromParent(ctx context.Context, child *Job) error {
+	ctx, span := s.tracer.Start(ctx, "buntdb.remove_from_parent")
+	defer span.End()
+
 	// Do nothing if no job was given or job has no parent
 	if child == nil || child.ParentJob == "" {
 		return nil
 	}
 
-	parent, err := child.GetParent(s)
+	parent, err := child.GetParent(ctx, s)
 	if err != nil {
 		return err
 	}
@@ -219,7 +230,7 @@ func (s *Store) removeFromParent(child *Job) error {
 		}
 	}
 	parent.DependentJobs = djs
-	if err := s.SetJob(parent, false); err != nil {
+	if err := s.SetJob(ctx, parent, false); err != nil {
 		return err
 	}
 
@@ -227,19 +238,22 @@ func (s *Store) removeFromParent(child *Job) error {
 }
 
 // Adds the given job to its parent.
-func (s *Store) addToParent(child *Job) error {
+func (s *Store) addToParent(ctx context.Context, child *Job) error {
+	ctx, span := s.tracer.Start(ctx, "buntdb.add_to_parent")
+	defer span.End()
+
 	// Do nothing if job has no parent
 	if child.ParentJob == "" {
 		return nil
 	}
 
-	parent, err := child.GetParent(s)
+	parent, err := child.GetParent(ctx, s)
 	if err != nil {
 		return err
 	}
 
 	parent.DependentJobs = append(parent.DependentJobs, child.Name)
-	if err := s.SetJob(parent, false); err != nil {
+	if err := s.SetJob(ctx, parent, false); err != nil {
 		return err
 	}
 
@@ -248,7 +262,10 @@ func (s *Store) addToParent(child *Job) error {
 
 // SetExecutionDone saves the execution and updates the job with the corresponding
 // results
-func (s *Store) SetExecutionDone(execution *Execution) (bool, error) {
+func (s *Store) SetExecutionDone(ctx context.Context, execution *Execution) (bool, error) {
+	ctx, span := s.tracer.Start(ctx, "buntdb.set.execution_done")
+	defer span.End()
+
 	err := s.db.Update(func(tx *buntdb.Tx) error {
 		// Load the job from the store
 		var pbj dkronpb.Job
@@ -314,7 +331,10 @@ func (s *Store) jobHasMetadata(job *Job, metadata map[string]string) bool {
 }
 
 // GetJobs returns all jobs
-func (s *Store) GetJobs(options *JobOptions) ([]*Job, error) {
+func (s *Store) GetJobs(ctx context.Context, options *JobOptions) ([]*Job, error) {
+	ctx, span := s.tracer.Start(ctx, "buntdb.get.jobs")
+	defer span.End()
+
 	if options == nil {
 		options = &JobOptions{
 			Sort: "name",
@@ -359,7 +379,10 @@ func (s *Store) GetJobs(options *JobOptions) ([]*Job, error) {
 }
 
 // GetJob finds and return a Job from the store
-func (s *Store) GetJob(name string, options *JobOptions) (*Job, error) {
+func (s *Store) GetJob(ctx context.Context, name string, options *JobOptions) (*Job, error) {
+	ctx, span := s.tracer.Start(ctx, "buntdb.get.job", trace.WithAttributes(attribute.String("job_name", name)))
+	defer span.End()
+
 	var pbj dkronpb.Job
 
 	err := s.db.View(s.getJobTxFunc(name, &pbj))
@@ -399,7 +422,10 @@ func (s *Store) getJobTxFunc(name string, pbj *dkronpb.Job) func(tx *buntdb.Tx) 
 
 // DeleteJob deletes the given job from the store, along with
 // all its executions and references to it.
-func (s *Store) DeleteJob(name string) (*Job, error) {
+func (s *Store) DeleteJob(ctx context.Context, name string) (*Job, error) {
+	ctx, span := s.tracer.Start(ctx, "buntdb.delete.job", trace.WithAttributes(attribute.String("job_name", name)))
+	defer span.End()
+
 	var job *Job
 	err := s.db.Update(func(tx *buntdb.Tx) error {
 		// Get the job
@@ -428,7 +454,7 @@ func (s *Store) DeleteJob(name string) (*Job, error) {
 
 	// If the transaction succeeded, remove from parent
 	if job.ParentJob != "" {
-		if err := s.removeFromParent(job); err != nil {
+		if err := s.removeFromParent(ctx, job); err != nil {
 			return nil, err
 		}
 	}
@@ -437,7 +463,10 @@ func (s *Store) DeleteJob(name string) (*Job, error) {
 }
 
 // GetExecutions returns the executions given a Job name.
-func (s *Store) GetExecutions(jobName string, opts *ExecutionOptions) ([]*Execution, error) {
+func (s *Store) GetExecutions(ctx context.Context, jobName string, opts *ExecutionOptions) ([]*Execution, error) {
+	ctx, span := s.tracer.Start(ctx, "buntdb.get.executions", trace.WithAttributes(attribute.String("job_name", jobName)))
+	defer span.End()
+
 	prefix := fmt.Sprintf("%s:%s:", executionsPrefix, jobName)
 
 	kvs, err := s.list(prefix, true, opts)
@@ -484,8 +513,11 @@ func (*Store) listTxFunc(prefix string, kvs *[]kv, found *bool, opts *ExecutionO
 }
 
 // GetExecutionGroup returns all executions in the same group of a given execution
-func (s *Store) GetExecutionGroup(execution *Execution, opts *ExecutionOptions) ([]*Execution, error) {
-	res, err := s.GetExecutions(execution.JobName, opts)
+func (s *Store) GetExecutionGroup(ctx context.Context, execution *Execution, opts *ExecutionOptions) ([]*Execution, error) {
+	ctx, span := s.tracer.Start(ctx, "buntdb.get.executions_group")
+	defer span.End()
+
+	res, err := s.GetExecutions(ctx, execution.JobName, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -501,8 +533,11 @@ func (s *Store) GetExecutionGroup(execution *Execution, opts *ExecutionOptions) 
 
 // GetGroupedExecutions returns executions for a job grouped and with an ordered index
 // to facilitate access.
-func (s *Store) GetGroupedExecutions(jobName string, opts *ExecutionOptions) (map[int64][]*Execution, []int64, error) {
-	execs, err := s.GetExecutions(jobName, opts)
+func (s *Store) GetGroupedExecutions(ctx context.Context, jobName string, opts *ExecutionOptions) (map[int64][]*Execution, []int64, error) {
+	ctx, span := s.tracer.Start(ctx, "buntdb.get.grouped_executions", trace.WithAttributes(attribute.String("job_name", jobName)))
+	defer span.End()
+
+	execs, err := s.GetExecutions(ctx, jobName, opts)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -556,7 +591,10 @@ func (*Store) setExecutionTxFunc(key string, pbe *dkronpb.Execution) func(tx *bu
 }
 
 // SetExecution Save a new execution and returns the key of the new saved item or an error.
-func (s *Store) SetExecution(execution *Execution) (string, error) {
+func (s *Store) SetExecution(ctx context.Context, execution *Execution) (string, error) {
+	ctx, span := s.tracer.Start(ctx, "buntdb.set.executions")
+	defer span.End()
+
 	pbe := execution.ToProto()
 	key := fmt.Sprintf("%s:%s:%s", executionsPrefix, execution.JobName, execution.Key())
 
@@ -576,7 +614,7 @@ func (s *Store) SetExecution(execution *Execution) (string, error) {
 		return "", err
 	}
 
-	execs, err := s.GetExecutions(execution.JobName, &ExecutionOptions{})
+	execs, err := s.GetExecutions(ctx, execution.JobName, &ExecutionOptions{})
 	if err != nil && err != buntdb.ErrNotFound {
 		s.logger.WithError(err).
 			WithField("job", execution.JobName).
@@ -640,11 +678,17 @@ func (s *Store) Shutdown() error {
 
 // Snapshot creates a backup of the data stored in BuntDB
 func (s *Store) Snapshot(w io.WriteCloser) error {
+	_, span := s.tracer.Start(context.Background(), "buntdb.create.snapshot")
+	defer span.End()
+
 	return s.db.Save(w)
 }
 
 // Restore load data created with backup in to Bunt
 func (s *Store) Restore(r io.ReadCloser) error {
+	_, span := s.tracer.Start(context.Background(), "buntdb.restore.snapshot")
+	defer span.End()
+
 	return s.db.Load(r)
 }
 

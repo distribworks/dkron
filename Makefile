@@ -61,7 +61,7 @@ clean:
 .PHONY: docs apidoc test ui updatetestcert
 docs:
 	# scripts/run doc --dir website/docs/cli
-	
+
 	# Build with docker while bun reach compatibility with docusaurs
 	cd website; yarn build --out-dir ../public
 	ghp-import -p public
@@ -100,4 +100,4 @@ ui: dkron/ui-dist
 main: dkron/ui-dist types/dkron.pb.go types/executor.pb.go *.go */*.go */*/*.go */*/*/*.go
 	GOBIN=`pwd` go install ./builtin/...
 	go mod tidy
-	go build main.go
+	go build -tags=hashicorpmetrics main.go

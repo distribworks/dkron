@@ -174,6 +174,12 @@ const config = {
         darkTheme: darkCodeTheme,
       },
     }),
+    scripts: [
+      {
+        src: "/js/linkedin.js",
+        defer: true,
+      },
+    ],
 };
 
 module.exports = config;

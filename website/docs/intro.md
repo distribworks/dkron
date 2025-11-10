@@ -118,16 +118,12 @@ Dkron uses tags to control which nodes execute specific jobs:
 Dkron provides several options to control job concurrency:
 
 - **Concurrency**: Allow (or disallow) concurrent executions of the same job
-- **Executor Concurrency**: Limit concurrent executions on a single node
-- **Global Concurrency**: Control concurrent executions across the entire cluster
 
 ### Status Codes and Retries
 
 Jobs can be configured with:
 
-- **Success Status Codes**: Define which exit codes indicate success
 - **Retries**: Number of times to retry a failed execution
-- **Retry Interval**: Time to wait between retries
 
 ### Job Dependencies
 

@@ -1,6 +1,7 @@
 package dkron
 
 import (
+	"context"
 	"encoding/json"
 	"testing"
 	"time"
@@ -12,6 +13,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.opentelemetry.io/otel"
 	"google.golang.org/grpc"
 )
 
@@ -24,9 +26,11 @@ func getTestLogger() *logrus.Entry {
 
 func TestJobGetParent(t *testing.T) {
 	log := getTestLogger()
-	s, err := NewStore(log)
+	s, err := NewStore(log, otel.Tracer("test"))
 	defer s.Shutdown() // nolint: errcheck
 	require.NoError(t, err)
+
+	ctx := context.Background()
 
 	parentTestJob := &Job{
 		Name:           "parent_test",
@@ -35,7 +39,7 @@ func TestJobGetParent(t *testing.T) {
 		Schedule:       "@every 2s",
 	}
 
-	if err := s.SetJob(parentTestJob, true); err != nil {
+	if err := s.SetJob(ctx, parentTestJob, true); err != nil {
 		t.Fatalf("error creating job: %s", err)
 	}
 
@@ -46,31 +50,31 @@ func TestJobGetParent(t *testing.T) {
 		ParentJob:      "parent_test",
 	}
 
-	err = s.SetJob(dependentTestJob, true)
+	err = s.SetJob(ctx, dependentTestJob, true)
 	assert.NoError(t, err)
 
-	parentTestJob, err = dependentTestJob.GetParent(s)
+	parentTestJob, err = dependentTestJob.GetParent(ctx, s)
 	assert.NoError(t, err)
 	assert.Equal(t, []string{dependentTestJob.Name}, parentTestJob.DependentJobs)
 
-	ptj, err := dependentTestJob.GetParent(s)
+	ptj, err := dependentTestJob.GetParent(ctx, s)
 	assert.NoError(t, err)
 	assert.Equal(t, parentTestJob.Name, ptj.Name)
 
 	// Remove the parent job
 	dependentTestJob.ParentJob = ""
 	dependentTestJob.Schedule = "@every 2m"
-	err = s.SetJob(dependentTestJob, true)
+	err = s.SetJob(ctx, dependentTestJob, true)
 	assert.NoError(t, err)
 
-	dtj, _ := s.GetJob(dependentTestJob.Name, nil)
+	dtj, _ := s.GetJob(ctx, dependentTestJob.Name, nil)
 	assert.NoError(t, err)
 	assert.Equal(t, "", dtj.ParentJob)
 
-	_, err = dtj.GetParent(s)
+	_, err = dtj.GetParent(ctx, s)
 	assert.EqualError(t, ErrNoParent, err.Error())
 
-	ptj, err = s.GetJob(parentTestJob.Name, nil)
+	ptj, err = s.GetJob(ctx, parentTestJob.Name, nil)
 	assert.NoError(t, err)
 	assert.Nil(t, ptj.DependentJobs)
 }
