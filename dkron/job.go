@@ -135,6 +135,9 @@ type Job struct {
 	// Delete the job after the first successful execution.
 	Ephemeral bool `json:"ephemeral"`
 
+	// The job will not be executed before this time.
+	StartsAt ntime.NullableTime `json:"starts_at"`
+
 	// The job will not be executed after this time.
 	ExpiresAt ntime.NullableTime `json:"expires_at"`
 
@@ -175,6 +178,10 @@ func NewJobFromProto(in *proto.Job, logger *logrus.Entry) *Job {
 		t := in.GetLastError().GetTime().AsTime()
 		job.LastError.Set(t)
 	}
+	if in.GetStartsAt().GetHasValue() {
+		t := in.GetStartsAt().GetTime().AsTime()
+		job.StartsAt.Set(t)
+	}
 	if in.GetExpiresAt().GetHasValue() {
 		t := in.GetExpiresAt().GetTime().AsTime()
 		job.ExpiresAt.Set(t)
@@ -208,6 +215,13 @@ func (j *Job) ToProto() *proto.Job {
 	}
 
 	next := timestamppb.New(j.Next)
+
+	startsAt := &proto.Job_NullableTime{
+		HasValue: j.StartsAt.HasValue(),
+	}
+	if j.StartsAt.HasValue() {
+		startsAt.Time = timestamppb.New(j.StartsAt.Get())
+	}
 
 	expiresAt := &proto.Job_NullableTime{
 		HasValue: j.ExpiresAt.HasValue(),
@@ -245,6 +259,7 @@ func (j *Job) ToProto() *proto.Job {
 		Next:           next,
 		Ephemeral:      j.Ephemeral,
 		ExpiresAt:      expiresAt,
+		StartsAt:       startsAt,
 	}
 }
 
@@ -365,6 +380,10 @@ func (j *Job) scheduleHash() string {
 
 // GetNext returns the job's next schedule from now
 func (j *Job) GetNext() (time.Time, error) {
+	if j.StartsAt.HasValue() && time.Now().Before(j.StartsAt.Get()) {
+		return j.StartsAt.Get(), nil
+	}
+
 	if j.Schedule != "" {
 		s, err := extcron.Parse(j.scheduleHash())
 		if err != nil {
@@ -377,9 +396,21 @@ func (j *Job) GetNext() (time.Time, error) {
 }
 
 func (j *Job) isRunnable(logger *logrus.Entry) bool {
-	if j.Disabled || (j.ExpiresAt.HasValue() && time.Now().After(j.ExpiresAt.Get())) {
+	if j.Disabled {
 		logger.WithField("job", j.Name).
-			Debug("job: Skipping execution because job is disabled or expired")
+			Debug("job: Skipping execution because job is disabled")
+		return false
+	}
+
+	if j.StartsAt.HasValue() && time.Now().Before(j.StartsAt.Get()) {
+		logger.WithField("job", j.Name).
+			Debug("job: Skipping execution because job is not started")
+		return false
+	}
+
+	if j.ExpiresAt.HasValue() && time.Now().After(j.ExpiresAt.Get()) {
+		logger.WithField("job", j.Name).
+			Debug("job: Skipping execution because job is expired")
 		return false
 	}
 
