@@ -404,7 +404,7 @@ func (j *Job) isRunnable(logger *logrus.Entry) bool {
 
 	if j.StartsAt.HasValue() && time.Now().Before(j.StartsAt.Get()) {
 		logger.WithField("job", j.Name).
-			Debug("job: Skipping execution because job is not started")
+			Debug("job: Skipping execution because job not due to start yet")
 		return false
 	}
 
