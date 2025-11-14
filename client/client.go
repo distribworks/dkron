@@ -16,11 +16,11 @@ import (
 	"path"
 	"strings"
 
+	"github.com/distribworks/dkron/v4/types"
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/labstack/echo/v4"
 	"github.com/oapi-codegen/runtime"
 	openapi_types "github.com/oapi-codegen/runtime/types"
-	"github.com/distribworks/dkron/v4/types"
 )
 
 const (
@@ -84,11 +84,20 @@ type GetJobsParams struct {
 	End *int `form:"_end,omitempty" json:"_end,omitempty"`
 }
 
+// CreateOrUpdateJobPatchParams defines parameters for CreateOrUpdateJobPatch.
+type CreateOrUpdateJobPatchParams struct {
+	// Runoncreate If present, regardless of any value, causes the job to be run immediately after being succesfully created or updated.
+	Runoncreate *bool `form:"runoncreate,omitempty" json:"runoncreate,omitempty"`
+}
+
 // CreateOrUpdateJobParams defines parameters for CreateOrUpdateJob.
 type CreateOrUpdateJobParams struct {
 	// Runoncreate If present, regardless of any value, causes the job to be run immediately after being succesfully created or updated.
 	Runoncreate *bool `form:"runoncreate,omitempty" json:"runoncreate,omitempty"`
 }
+
+// CreateOrUpdateJobPatchJSONRequestBody defines body for CreateOrUpdateJobPatch for application/json ContentType.
+type CreateOrUpdateJobPatchJSONRequestBody = Job
 
 // CreateOrUpdateJobJSONRequestBody defines body for CreateOrUpdateJob for application/json ContentType.
 type CreateOrUpdateJobJSONRequestBody = Job
@@ -189,6 +198,11 @@ type ClientInterface interface {
 
 	// GetJobs request
 	GetJobs(ctx context.Context, params *GetJobsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateOrUpdateJobPatchWithBody request with any body
+	CreateOrUpdateJobPatchWithBody(ctx context.Context, params *CreateOrUpdateJobPatchParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateOrUpdateJobPatch(ctx context.Context, params *CreateOrUpdateJobPatchParams, body CreateOrUpdateJobPatchJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// CreateOrUpdateJobWithBody request with any body
 	CreateOrUpdateJobWithBody(ctx context.Context, params *CreateOrUpdateJobParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -300,6 +314,30 @@ func (c *Client) GetIsLeader(ctx context.Context, reqEditors ...RequestEditorFn)
 
 func (c *Client) GetJobs(ctx context.Context, params *GetJobsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetJobsRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateOrUpdateJobPatchWithBody(ctx context.Context, params *CreateOrUpdateJobPatchParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateOrUpdateJobPatchRequestWithBody(c.Server, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateOrUpdateJobPatch(ctx context.Context, params *CreateOrUpdateJobPatchParams, body CreateOrUpdateJobPatchJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateOrUpdateJobPatchRequest(c.Server, params, body)
 	if err != nil {
 		return nil, err
 	}
@@ -766,6 +804,68 @@ func NewGetJobsRequest(server string, params *GetJobsParams) (*http.Request, err
 	return req, nil
 }
 
+// NewCreateOrUpdateJobPatchRequest calls the generic CreateOrUpdateJobPatch builder with application/json body
+func NewCreateOrUpdateJobPatchRequest(server string, params *CreateOrUpdateJobPatchParams, body CreateOrUpdateJobPatchJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateOrUpdateJobPatchRequestWithBody(server, params, "application/json", bodyReader)
+}
+
+// NewCreateOrUpdateJobPatchRequestWithBody generates requests for CreateOrUpdateJobPatch with any type of body
+func NewCreateOrUpdateJobPatchRequestWithBody(server string, params *CreateOrUpdateJobPatchParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/jobs")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if params.Runoncreate != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "runoncreate", runtime.ParamLocationQuery, *params.Runoncreate); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("PATCH", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
 // NewCreateOrUpdateJobRequest calls the generic CreateOrUpdateJob builder with application/json body
 func NewCreateOrUpdateJobRequest(server string, params *CreateOrUpdateJobParams, body CreateOrUpdateJobJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
@@ -1213,6 +1313,11 @@ type ClientWithResponsesInterface interface {
 	// GetJobsWithResponse request
 	GetJobsWithResponse(ctx context.Context, params *GetJobsParams, reqEditors ...RequestEditorFn) (*GetJobsResponse, error)
 
+	// CreateOrUpdateJobPatchWithBodyWithResponse request with any body
+	CreateOrUpdateJobPatchWithBodyWithResponse(ctx context.Context, params *CreateOrUpdateJobPatchParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateOrUpdateJobPatchResponse, error)
+
+	CreateOrUpdateJobPatchWithResponse(ctx context.Context, params *CreateOrUpdateJobPatchParams, body CreateOrUpdateJobPatchJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateOrUpdateJobPatchResponse, error)
+
 	// CreateOrUpdateJobWithBodyWithResponse request with any body
 	CreateOrUpdateJobWithBodyWithResponse(ctx context.Context, params *CreateOrUpdateJobParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateOrUpdateJobResponse, error)
 
@@ -1396,6 +1501,28 @@ func (r GetJobsResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r GetJobsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateOrUpdateJobPatchResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *Job
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateOrUpdateJobPatchResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateOrUpdateJobPatchResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1707,6 +1834,23 @@ func (c *ClientWithResponses) GetJobsWithResponse(ctx context.Context, params *G
 	return ParseGetJobsResponse(rsp)
 }
 
+// CreateOrUpdateJobPatchWithBodyWithResponse request with arbitrary body returning *CreateOrUpdateJobPatchResponse
+func (c *ClientWithResponses) CreateOrUpdateJobPatchWithBodyWithResponse(ctx context.Context, params *CreateOrUpdateJobPatchParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateOrUpdateJobPatchResponse, error) {
+	rsp, err := c.CreateOrUpdateJobPatchWithBody(ctx, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateOrUpdateJobPatchResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateOrUpdateJobPatchWithResponse(ctx context.Context, params *CreateOrUpdateJobPatchParams, body CreateOrUpdateJobPatchJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateOrUpdateJobPatchResponse, error) {
+	rsp, err := c.CreateOrUpdateJobPatch(ctx, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateOrUpdateJobPatchResponse(rsp)
+}
+
 // CreateOrUpdateJobWithBodyWithResponse request with arbitrary body returning *CreateOrUpdateJobResponse
 func (c *ClientWithResponses) CreateOrUpdateJobWithBodyWithResponse(ctx context.Context, params *CreateOrUpdateJobParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateOrUpdateJobResponse, error) {
 	rsp, err := c.CreateOrUpdateJobWithBody(ctx, params, contentType, body, reqEditors...)
@@ -1980,6 +2124,32 @@ func ParseGetJobsResponse(rsp *http.Response) (*GetJobsResponse, error) {
 			return nil, err
 		}
 		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateOrUpdateJobPatchResponse parses an HTTP response from a CreateOrUpdateJobPatchWithResponse call
+func ParseCreateOrUpdateJobPatchResponse(rsp *http.Response) (*CreateOrUpdateJobPatchResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateOrUpdateJobPatchResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest Job
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
 
 	}
 
@@ -2296,6 +2466,9 @@ type ServerInterface interface {
 	// (GET /jobs)
 	GetJobs(ctx echo.Context, params GetJobsParams) error
 
+	// (PATCH /jobs)
+	CreateOrUpdateJobPatch(ctx echo.Context, params CreateOrUpdateJobPatchParams) error
+
 	// (POST /jobs)
 	CreateOrUpdateJob(ctx echo.Context, params CreateOrUpdateJobParams) error
 
@@ -2474,6 +2647,26 @@ func (w *ServerInterfaceWrapper) GetJobs(ctx echo.Context) error {
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.GetJobs(ctx, params)
+	return err
+}
+
+// CreateOrUpdateJobPatch converts echo context to params.
+func (w *ServerInterfaceWrapper) CreateOrUpdateJobPatch(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(TokenAuthScopes, []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CreateOrUpdateJobPatchParams
+	// ------------- Optional query parameter "runoncreate" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "runoncreate", ctx.QueryParams(), &params.Runoncreate)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter runoncreate: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.CreateOrUpdateJobPatch(ctx, params)
 	return err
 }
 
@@ -2692,6 +2885,7 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.GET(baseURL+"/busy", wrapper.Busy)
 	router.GET(baseURL+"/isleader", wrapper.GetIsLeader)
 	router.GET(baseURL+"/jobs", wrapper.GetJobs)
+	router.PATCH(baseURL+"/jobs", wrapper.CreateOrUpdateJobPatch)
 	router.POST(baseURL+"/jobs", wrapper.CreateOrUpdateJob)
 	router.DELETE(baseURL+"/jobs/:job_name", wrapper.DeleteJob)
 	router.GET(baseURL+"/jobs/:job_name", wrapper.ShowJobByName)
@@ -2709,56 +2903,59 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"H4sIAAAAAAAC/+xbfW/cNtL/KoT6AG2BzcpO0zypgQMaJ26bXJoYsXu4Q2I4XGm0y4QiVZKyvWfsdz/M",
+	"kNJqV9R6nc1b7/JPXiRqZsj5zW+GQ+51kumy0gqUs8nBdWKzGZSc/glXkNVOaIX/ycFmRlT+v8lDxdq3",
+	"zEBlwKIAxpkTJeTsrZ4wU6txMkoqoyswTgDJLIQSdgb5OXd9qZczUMzNoCO7GY/SlFDTZJQU2pT4dZJz",
+	"B3dQXzJK3LyC5CCxzuCgxSh5qyfnipfQ14K20ZtRAle8rCRa9oo+2E/OIqKUzmFAFj5luiCjcRhzM+6C",
+	"+ZDT40yXJVf5mrb8ndEqrk7Xrqojq1Nx4wSXzL9vtAbxyyVbU/QbSKlZYXTJHqPOqErruHEDTqF35NZG",
+	"ZVfVds6wdZaBtX3hq842tWJhaFHL+VLSRGsJXCWLRftIT95C5pJRcnVnqu+IstIGAfzqOqm4myUHyVS4",
+	"WT0ZZ7pMc4GmTC61eWdTWvn04l6KgmyyOAsiglx6Oj5qp+ihFIkA9hQx3oU+hk5eS/Q7t++Y0w0Q+mGQ",
+	"aZXVxoDK5n3Rj5YvWaWlyOas0IaWHrHLpdSXaaHNRKyjil5FPZxDBSoH5c7f6knEEQ+N4XOWaeW4wDhr",
+	"tFmPaP+5ZRrjU+Df6+GzogBNEA5KUtSzxQDPXyg5Tw6cqaE1lqMJZKuwfCIh71v5OLxh1nHX4hEV9qFC",
+	"cirJ5/HIfS4yIBroru2YvaD3XI5jMAZjtDnPdK0icfK8Lidg0KaCC7SxxbVNBucslIMpGBJOw7XpSz4K",
+	"b1gl66lQrLYIMU3hspx/1xl2BlJGcdBoOc+0KsQUlfE8F37SxysYjWBok1UVN7wEB8auGkMJhhjwIIFs",
+	"ptm365T0LQXhalyTqZUwYKOkhLFH7zkRR+Cd7chIcuvOyZV9uc+4DVxHMMdw894ckj7g1zVtg/wX0dcm",
+	"jyUTEhW+n/oSHM+54zs52hnOGkHM8akNMeMtXne3LgqRocBDbjKQWvG4fwfisheSf1hgWsk5k/oSDMu4",
+	"BSbBIdLYd7USmc7h+xHLxVQ4O2K1ysHYTBtgmBdzbmfjfqofyPRwFYtsuHKdLLUJbDf6Q18qiODuBT5e",
+	"5bOuwceSO9THToGX8aIBBZxDyYWMEAg+bqR7C1blV0H+z+EhZs2omoqbhuJ7Wk5nnlBTkXdm4vPHpZCS",
+	"OSOmUzBrFR4NjSGpqyxqi9EYH9oQiP/PQJEcJN+ky3I2DbVs2hlJ6ceZgPwhBkdvWqJYcGbOeEPpy/js",
+	"FVp3z2Kk3pQEkSRvNNbQWD5YKnQ7kF9bh5/hAsyc7e/Z4eJtmCaX9dv25Zrjro4s0Ak9H4ZpQ3NnWwRC",
+	"GHtzNl3S4G0zKjLVDrx3ys0UHJX11rPeIFSvEwvmAgM7QWPifIer/W8snPqRE96wyxkYaCOHgmYCbUYY",
+	"s8M5y6HgtXTEbbRfKgTInAnLLDiqOcvKzZmf1GhVFhYMQjGpMy4JEetIO6pxgdJDMFLEdgoUPX/WwmBx",
+	"9ioJu6gW5GefqDp/qic+tyFGYqW5f7NanWeytg5M8w7d2q/LH+Z5ROCTY4YvENqr67X/093x/v0H4/3x",
+	"/g//Hw3OxyBhyh08qiNyT8AULA8jWGW005mWzBf/jl2AIWogzNHuMuMq5DeH/teG2Qr4u1Wr7kWZqDHk",
+	"d361tSElvxJlXb6vIT9uNkSo7Q0R6taG9DU/jxccKCbSD9iwQz/WJkJZ+JQp4q1VUQ9+unc/uhTHYX7D",
+	"4PhQmLi7Uf8wJj4UFG7QPwiFnRBwIxRPBvIcVjIW1duVhEfqLMABmzlX2YM0nepcZ2NtpmmHz2bczkSm",
+	"TZWiDPrjm9+JdIK+Fcv2o5ad7pq6ppZxqzPBcSdxKdxsuWLrqctU2Tkn3lvls4P7D+4/QHpfSW2jJLjg",
+	"dYIfjPfGe7F096kaNX5hqRykTgkuziqlx6P+2PdVInGPdcU5H9g+v6xlrHIM0gy9XSvd6dXTkxfP4/n0",
+	"k6ySN6JfNA/Ba2vY9YqctXVptIUmgW17F8GOTknHDNhauo1VViHC8hfaXHKT+9pvES23DFinTcT1Rzyb",
+	"+Qa1HxEUj+PFLMsMYC4abg8HMecTnUfghyZHCnNLvW0ZGsYKIKf9xgQaq/Jxt1yfCMXNPLmpICNlscW4",
+	"oaLvFEo5OC6kZXyia9fSXr9S4lPwdfsNWBmCBqXdCbcia1QO1/SdeYApdlB6siT1bbS5j8vCN+hfbDPC",
+	"QlYb4eYnuNX1Vp3qd6Ae1sga1wlm1mQGPKeixLdckn/eob7bHRq5BBWvxN9hnixQrlCF7sPlX7qmfJvp",
+	"sqyVyDAwaFokj9VWqCnj7OXRySnu15D12MPjJ0xfgGG/nZ4ej8NIv6mqbc2lnDMprAPFtGJIe+zNg70H",
+	"e29oR4wfI8DBOjtmDyXuAX2I4kaGFtNCRn0Ebm1dhnia6/rbC2CFrlXOeHN2xCStA+OOvaE90Exbd0DK",
+	"xq/Va+VNEyi+DJuG4ZlgtPaWwerCXXIDLJMCJTTT9RMkm7sznLTbuVvOzUBYa4zPZkeIkv08wgO/eLbS",
+	"yoJlaFatPKMgHGlKPPeHVG8qA87N/4Ywe+NbuThBP5pGNILGrwkxwiGtJX56uEqobVkcYGlwR3P7A/Wm",
+	"KlC8EslB8sN4f7yHVMLdjLCa4h9TiFTTv4Kz7I3npzfMI97rxgiktu+TvGUwiqYwU5R1d28vHLO4hqaq",
+	"SqKnhFbpW+vPNH1/6KbuUeALCos1Olm2JhrtPqcTb7xKgmeSM3yY8kymVKQIsOk1huLCT1uCi6SIx/Sc",
+	"8XAEFJu7HxKSOzXnmg48Jst+TRsOk3opx5uQ+wxYSWSng4JLCyPPH1SCtOwRaqZl3vHctFzMSD9pTmix",
+	"FFtUo3w0b4Uy8D281fgmOVuM4pg8menLjQ7BAd4dh/Pnfpne2ykFuGz21Sldp1TaxrxCRZw2rK5y7pDp",
+	"Nnjoj8qCcbcOGToodJpRafYZXXL3y3IJ0tqktvNBFn8JrjbK+gwSsvCy5I856BDF7QjF9uh50wJA94h/",
+	"9Qh6V6YX1lcag8vyaAbZOyYK31IQCNlQm2jDCi3ppCu2Or+Ce2KfNeVcbJEiVXZHPs713t69TQMb9Rvm",
+	"11whiM7tmbCObg4M2P8UP74h8n4R0oHx9w8m8/bssRt3Ppgo7P6sgfZGIe46oyOQGNrCtrcPmiDE2idZ",
+	"jHpso41DFFPbfTuDzq02Ltkq8jcoZdogQL57ePIofXx08uj7LZXTZztpD94gwczBldtO85+7TZmOrYTK",
+	"4WrbVcYvYjq753GblR6p/FYqge51ba/w7FMQ21t/OvJelDZKfozRyBPlwCgumb820WUG4gJKztxls9g5",
+	"J7VPVtKzgks654wQhB/+wvxBg5/qyTGJ7fEF3XQ6Kis3/weXdeulNbMLFvoaI2Zgyk0uwVKDias5u8AP",
+	"RyzjNW6P2uNq34SpcSNYQo5bdzlnvMAImABGvm8M0bWM0BzKl9NbrdeGoWNqpZX/Ooagzi2mCIJoP3wY",
+	"2k0fpBogzPQx4r3gz73bDuVqQbPoQXr/Y1s1gNx7vWBCrkorycWazm6bbxXaI1ZJ4BYYHftPuVBMcgdm",
+	"HGve9gw75HnTrVievArczl9wKfJOeH1GI7eK5WihvWsof43ir1H8kaL4hsgbs2MfMRkV3s2AHAqhqLP7",
+	"PxXfTQmfXjeX5LdrRA3EuX8fje/+frq9Efb+/af2Zv8X2+64DeJj9Lup+TTgBHz7VE+2bztFHXG7ntN/",
+	"vyPiedDffKb0N+CNl7XaJR7CL2c+owvufiEuiFBV2rkFuLEHsbnPhEPaX3nYw/lt/aUvQ1urc4L91w2i",
+	"T98x63jxJjen1+2/F4MuJ3psxw1RZOvxw/mTxzv6+zO6exQzdUcgdu81f6F03gHgRwCc09Opv6sRp/1T",
+	"ej9M+v79LrzvLfiafpfcf0MfnXi+6ZwXzRXfgcbzxrb5B5lvuJC88/mBBH6xAYi/aJNB5yenmtEH/ueg",
+	"w0vwjKR+ikRRtpfyPuy5ipd7Q9oPgwZAEO4L/rVWoZm3X4XOxbY4Pl6Ge210fEI/s3vbXDeLFqtB3qae",
+	"RFlLJypuXFpoU95pflG2XVisXJBbrN5ZizcfPoI3mlX7AO5o+Klz/YpYvnPx6tUZEqu/OetTQG1kcpDM",
+	"nKsO0nT19lF6sZ8szhb/CQAA//8RqYVFij8AAA==",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
