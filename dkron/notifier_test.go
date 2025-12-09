@@ -3,6 +3,7 @@ package dkron
 import (
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -10,6 +11,19 @@ import (
 
 	"github.com/stretchr/testify/assert"
 )
+
+// checkMailHogAvailable verifies that MailHog is running and accessible.
+// This is useful for providing clear error messages in tests.
+func checkMailHogAvailable(t *testing.T, host string, port int) {
+	t.Helper()
+	address := fmt.Sprintf("%s:%d", host, port)
+	conn, err := net.DialTimeout("tcp", address, 2*time.Second)
+	if err != nil {
+		t.Skipf("MailHog is not available at %s. Start it with: docker run -p 8025:8025 -p 1025:1025 mailhog/mailhog", address)
+		return
+	}
+	conn.Close()
+}
 
 func TestNotifier_callExecutionWebhook(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -53,11 +67,22 @@ func TestNotifier_callExecutionWebhookHostHeader(t *testing.T) {
 }
 
 func TestNotifier_sendExecutionEmail(t *testing.T) {
+	// This test requires MailHog to be running for email testing.
+	// MailHog is a local SMTP server that captures emails without sending them.
+	// Start MailHog with: docker run -p 8025:8025 -p 1025:1025 mailhog/mailhog
+	// View captured emails at: http://localhost:8025
+	// See docs/EMAIL_TESTING.md for more information.
+	// In GitHub Actions, MailHog runs automatically as a service container.
+
+	mailHost := "localhost"
+	mailPort := 1025
+
+	// Check if MailHog is available (will skip test if not, except in CI)
+	checkMailHogAvailable(t, mailHost, mailPort)
+
 	c := &Config{
-		MailHost:          "smtp.mailtrap.io",
-		MailPort:          2525,
-		MailUsername:      "45326e3b115066bbb",
-		MailPassword:      "7f496ed2b06688",
+		MailHost:          mailHost,
+		MailPort:          uint16(mailPort), // MailHog SMTP port
 		MailFrom:          "dkron@dkron.io",
 		MailSubjectPrefix: "[Test]",
 	}
