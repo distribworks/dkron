@@ -19,7 +19,7 @@ func checkMailHogAvailable(t *testing.T, host string, port int) {
 	address := fmt.Sprintf("%s:%d", host, port)
 	conn, err := net.DialTimeout("tcp", address, 2*time.Second)
 	if err != nil {
-		t.Skipf("MailHog is not available at %s. Start it with: docker run -p 8025:8025 -p 1025:1025 mailhog/mailhog", address)
+		t.Errorf("MailHog is not available at %s. Start it with: docker run -p 8025:8025 -p 1025:1025 mailhog/mailhog", address)
 		return
 	}
 	conn.Close()
