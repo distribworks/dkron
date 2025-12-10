@@ -16,12 +16,12 @@ The main test workflow is defined in `.github/workflows/test.yml`.
 
 The following services are automatically started for testing:
 
-#### MailHog (Email Testing)
+#### Mailpit (Email Testing)
 
-MailHog runs as a service container during all test runs to enable email notification testing without external dependencies.
+Mailpit runs as a service container during all test runs to enable email notification testing without external dependencies.
 
 **Configuration:**
-- Image: `mailhog/mailhog`
+- Image: `axllent/mailpit`
 - SMTP Port: `1025`
 - Web UI Port: `8025` (not accessible in CI)
 
@@ -35,8 +35,8 @@ To ensure your tests will pass in GitHub Actions, run them with the same environ
 ### 1. Start Required Services
 
 ```bash
-# Start MailHog for email testing
-docker run -d --rm --name mailhog -p 1025:1025 -p 8025:8025 mailhog/mailhog
+# Start Mailpit for email testing
+docker run -d --rm --name mailpit -p 1025:1025 -p 8025:8025 axllent/mailpit
 ```
 
 ### 2. Run Tests
@@ -83,13 +83,13 @@ Test coverage is automatically uploaded to Codecov after successful test runs.
 
 ## Email Testing
 
-Email notification tests require MailHog to be running. In GitHub Actions, this is handled automatically via service containers.
+Email notification tests require Mailpit to be running. In GitHub Actions, this is handled automatically via service containers.
 
 **Key Points:**
-- ✅ MailHog runs automatically in CI
+- ✅ Mailpit runs automatically in CI
 - ✅ No credentials or secrets required
 - ✅ Tests use `localhost:1025` for SMTP
-- ✅ If MailHog is not available locally, tests are skipped (not failed)
+- ✅ If Mailpit is not available locally, tests are skipped (not failed)
 
 See [docs/EMAIL_TESTING.md](../docs/EMAIL_TESTING.md) for detailed email testing documentation.
 
@@ -97,7 +97,7 @@ See [docs/EMAIL_TESTING.md](../docs/EMAIL_TESTING.md) for detailed email testing
 
 Some tests may be skipped in certain conditions:
 
-- **Email tests**: Skipped if MailHog is not available (only in local development, not in CI)
+- **Email tests**: Skipped if Mailpit is not available (only in local development, not in CI)
 
 ## Troubleshooting CI Failures
 
@@ -105,7 +105,7 @@ Some tests may be skipped in certain conditions:
 
 If email tests fail in CI:
 
-1. **Check MailHog Service**: Ensure the service is defined in `.github/workflows/test.yml`
+1. **Check Mailpit Service**: Ensure the service is defined in `.github/workflows/test.yml`
 2. **Verify Port Configuration**: SMTP should be on port `1025`
 3. **Check Test Configuration**: Verify `dkron/notifier_test.go` uses `localhost:1025`
 
@@ -181,5 +181,5 @@ on:
 
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
 - [Service Containers](https://docs.github.com/en/actions/using-containerized-services/about-service-containers)
-- [MailHog Documentation](https://github.com/mailhog/MailHog)
+- [Mailpit Documentation](https://github.com/axllent/mailpit)
 - [Email Testing Guide](../docs/EMAIL_TESTING.md)

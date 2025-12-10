@@ -19,8 +19,8 @@ jobs:
         name: Test
         runs-on: ubuntu-latest
         services:
-            mailhog:
-                image: mailhog/mailhog
+            mailpit:
+                image: axllent/mailpit
                 ports:
                     - 1025:1025
                     - 8025:8025

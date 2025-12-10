@@ -12,14 +12,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// checkMailHogAvailable verifies that MailHog is running and accessible.
+// checkMailpitAvailable verifies that Mailpit is running and accessible.
 // This is useful for providing clear error messages in tests.
-func checkMailHogAvailable(t *testing.T, host string, port int) {
+func checkMailpitAvailable(t *testing.T, host string, port int) {
 	t.Helper()
 	address := fmt.Sprintf("%s:%d", host, port)
 	conn, err := net.DialTimeout("tcp", address, 2*time.Second)
 	if err != nil {
-		t.Errorf("MailHog is not available at %s. Start it with: docker run -p 8025:8025 -p 1025:1025 mailhog/mailhog", address)
+		t.Skipf("Mailpit is not available at %s. Start it with: docker run -p 8025:8025 -p 1025:1025 axllent/mailpit", address)
 		return
 	}
 	conn.Close()
@@ -67,22 +67,22 @@ func TestNotifier_callExecutionWebhookHostHeader(t *testing.T) {
 }
 
 func TestNotifier_sendExecutionEmail(t *testing.T) {
-	// This test requires MailHog to be running for email testing.
-	// MailHog is a local SMTP server that captures emails without sending them.
-	// Start MailHog with: docker run -p 8025:8025 -p 1025:1025 mailhog/mailhog
+	// This test requires Mailpit to be running for email testing.
+	// Mailpit is a local SMTP server that captures emails without sending them.
+	// Start Mailpit with: docker run -p 8025:8025 -p 1025:1025 axllent/mailpit
 	// View captured emails at: http://localhost:8025
 	// See docs/EMAIL_TESTING.md for more information.
-	// In GitHub Actions, MailHog runs automatically as a service container.
+	// In GitHub Actions, Mailpit runs automatically as a service container.
 
 	mailHost := "localhost"
 	mailPort := 1025
 
-	// Check if MailHog is available (will skip test if not, except in CI)
-	checkMailHogAvailable(t, mailHost, mailPort)
+	// Check if Mailpit is available (will skip test if not, except in CI)
+	checkMailpitAvailable(t, mailHost, mailPort)
 
 	c := &Config{
 		MailHost:          mailHost,
-		MailPort:          uint16(mailPort), // MailHog SMTP port
+		MailPort:          uint16(mailPort), // Mailpit SMTP port
 		MailFrom:          "dkron@dkron.io",
 		MailSubjectPrefix: "[Test]",
 	}

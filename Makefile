@@ -73,13 +73,13 @@ localtest:
 	go test -v ./... | sed ''/PASS/s//$$(printf "\033[32mPASS\033[0m")/'' | sed ''/FAIL/s//$$(printf "\033[31mFAIL\033[0m")/''
 
 test-email:
-	@echo "Starting MailHog for email testing..."
-	@docker run -d --rm --name dkron-mailhog -p 8025:8025 -p 1025:1025 mailhog/mailhog 2>/dev/null || true
-	@echo "MailHog started. Web UI available at http://localhost:8025"
+	@echo "Starting Mailpit for email testing..."
+	@docker run -d --rm --name dkron-mailpit -p 8025:8025 -p 1025:1025 axllent/mailpit 2>/dev/null || true
+	@echo "Mailpit started. Web UI available at http://localhost:8025"
 	@echo "Running email notification tests..."
 	@go test -v -run TestNotifier_sendExecutionEmail ./dkron
 	@echo "Tests complete. View captured emails at http://localhost:8025"
-	@echo "To stop MailHog, run: docker stop dkron-mailhog"
+	@echo "To stop Mailpit, run: docker stop dkron-mailpit"
 
 updatetestcert:
 	wget https://badssl.com/certs/badssl.com-client.p12 -q -O badssl.com-client.p12
