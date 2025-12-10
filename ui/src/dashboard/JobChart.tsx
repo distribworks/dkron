@@ -19,18 +19,24 @@ const aMonthAgo = subDays(new Date(), 30);
 const dateFormatter = (date: number): string =>
     new Date(date).toLocaleDateString();
 
-const aggregateJobsByHour = (jobs: any): { [key: string]: number } =>
-    jobs
-        .reduce((acc, curr) => {
+interface JobData {
+    date: string;
+    total: number;
+}
+
+const aggregateJobsByHour = (jobs: JobData[]): TotalByDay[] =>
+    Object.entries(
+        jobs.reduce((acc: { [key: string]: number }, curr: JobData) => {
             const day = format(new Date(curr.date), 'yyyy-MM-dd');
             if (!acc[day]) {
                 acc[day] = 0;
             }
             acc[day] += curr.total;
             return acc;
-        }, {} as { [key: string]: number });
+        }, {} as { [key: string]: number })
+    ).map(([date, total]) => ({ date: new Date(date).getTime(), total }));
 
-const JobChart = (props: { jobs?: any }) => {
+const JobChart = (props: { jobs?: JobData[] }) => {
     const { jobs } = props;
     if (!jobs) return null;
 
@@ -40,7 +46,7 @@ const JobChart = (props: { jobs?: any }) => {
             <CardContent>
                 <div style={{ width: '100%', height: 300 }}>
                     <ResponsiveContainer>
-                        <AreaChart data={aggregateJobsByHour(props)}>
+                        <AreaChart data={aggregateJobsByHour(jobs)}>
                             <defs>
                                 <linearGradient
                                     id="colorUv"

@@ -94,7 +94,7 @@ ui/node_modules: ui/package.json
 
 dkron/ui-dist: ui/node_modules ui/public/* ui/src/* ui/src/*/*
 	rm -rf dkron/ui-dist
-	cd ui; yarn build --out-dir ../dkron/ui-dist
+	cd ui; pnpm build --out-dir ../dkron/ui-dist
 
 proto: types/dkron.pb.go types/executor.pb.go types/pro.pb.go
 

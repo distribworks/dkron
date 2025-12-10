@@ -168,7 +168,7 @@ const JobShow = (props: any) => (
             <DateField source="started_at" showTime />
             <ZeroDateField source="finished_at" showTime />
             <TextField source="node_name" sortable={false} />
-            <SuccessField source="success" sortable={false} />
+            <SuccessField />
             <NumberField source="attempt" />
           </Datagrid>
         </ReferenceManyField>

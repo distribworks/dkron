@@ -2,7 +2,7 @@ import { Route } from 'react-router-dom';
 import Configuration from './settings/Settings';
 
 const Routes = [
-    <Route exact path="/configuration" render={() => <Configuration />} />,
+    <Route path="/configuration" element={<Configuration />} />,
 ];
 
 export default Routes;
