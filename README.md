@@ -69,6 +69,42 @@ To develop Dkron, you can deploy the cluster with local changes applied with the
     docker compose -f docker-compose.dev.yml up
     ```
 
+### Email Testing
+
+For testing email notifications during development, MailHog is included in the development docker-compose setup. MailHog provides a local SMTP server that captures outgoing emails without sending them to real recipients.
+
+Start MailHog with the development environment:
+
+```bash
+docker compose -f docker-compose.dev.yml up mailhog
+```
+
+Or run it standalone:
+
+```bash
+docker run -p 8025:8025 -p 1025:1025 mailhog/mailhog
+```
+
+View captured emails at: http://localhost:8025
+
+For more information, see [docs/EMAIL_TESTING.md](docs/EMAIL_TESTING.md).
+
+### Testing CI Locally
+
+To validate that your changes will pass in GitHub Actions before pushing:
+
+```bash
+./scripts/test-ci-locally.sh
+```
+
+This script:
+- Starts MailHog (simulating the CI service container)
+- Runs tests with the same configuration as GitHub Actions
+- Provides clear pass/fail results
+- Allows you to inspect emails in the MailHog UI
+
+See [.github/TESTING.md](.github/TESTING.md) for more information about CI testing.
+
 ### Frontend development
 
 Dkron dashboard is built using [React Admin](https://marmelab.com/react-admin/) as a single page application.
