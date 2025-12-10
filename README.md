@@ -71,18 +71,18 @@ To develop Dkron, you can deploy the cluster with local changes applied with the
 
 ### Email Testing
 
-For testing email notifications during development, MailHog is included in the development docker-compose setup. MailHog provides a local SMTP server that captures outgoing emails without sending them to real recipients.
+For testing email notifications during development, Mailpit is included in the development docker-compose setup. Mailpit provides a local SMTP server that captures outgoing emails without sending them to real recipients.
 
-Start MailHog with the development environment:
+Start Mailpit with the development environment:
 
 ```bash
-docker compose -f docker-compose.dev.yml up mailhog
+docker compose -f docker-compose.dev.yml up mailpit
 ```
 
 Or run it standalone:
 
 ```bash
-docker run -p 8025:8025 -p 1025:1025 mailhog/mailhog
+docker run -p 8025:8025 -p 1025:1025 axllent/mailpit
 ```
 
 View captured emails at: http://localhost:8025
@@ -98,10 +98,10 @@ To validate that your changes will pass in GitHub Actions before pushing:
 ```
 
 This script:
-- Starts MailHog (simulating the CI service container)
+- Starts Mailpit (simulating the CI service container)
 - Runs tests with the same configuration as GitHub Actions
 - Provides clear pass/fail results
-- Allows you to inspect emails in the MailHog UI
+- Allows you to inspect emails in the Mailpit UI
 
 See [.github/TESTING.md](.github/TESTING.md) for more information about CI testing.
 

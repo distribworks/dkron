@@ -1,28 +1,112 @@
 package dkron
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"net"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
-// checkMailHogAvailable verifies that MailHog is running and accessible.
+// checkMailpitAvailable verifies that Mailpit is running and accessible.
 // This is useful for providing clear error messages in tests.
-func checkMailHogAvailable(t *testing.T, host string, port int) {
+func checkMailpitAvailable(t *testing.T, host string, port int) {
 	t.Helper()
 	address := fmt.Sprintf("%s:%d", host, port)
 	conn, err := net.DialTimeout("tcp", address, 2*time.Second)
 	if err != nil {
-		t.Errorf("MailHog is not available at %s. Start it with: docker run -p 8025:8025 -p 1025:1025 mailhog/mailhog", address)
+		t.Skipf("Mailpit is not available at %s. Start it with: docker run -p 8025:8025 -p 1025:1025 axllent/mailpit", address)
 		return
 	}
 	conn.Close()
+}
+
+// mailpitMessage represents a message in the Mailpit API response
+type mailpitMessage struct {
+	ID      string           `json:"ID"`
+	From    mailpitAddress   `json:"From"`
+	To      []mailpitAddress `json:"To"`
+	Subject string           `json:"Subject"`
+	Snippet string           `json:"Snippet"`
+	Created time.Time        `json:"Created"`
+}
+
+// mailpitAddress represents an email address in the Mailpit API
+type mailpitAddress struct {
+	Name    string `json:"Name"`
+	Address string `json:"Address"`
+}
+
+// mailpitMessagesResponse represents the response from the Mailpit messages API
+type mailpitMessagesResponse struct {
+	Total    int              `json:"total"`
+	Messages []mailpitMessage `json:"messages"`
+}
+
+// mailpitMessageDetail represents a detailed message from the Mailpit API
+type mailpitMessageDetail struct {
+	ID      string           `json:"ID"`
+	From    mailpitAddress   `json:"From"`
+	To      []mailpitAddress `json:"To"`
+	Subject string           `json:"Subject"`
+	Text    string           `json:"Text"`
+	HTML    string           `json:"HTML"`
+	Created time.Time        `json:"Created"`
+}
+
+// getMailpitMessages retrieves all messages from Mailpit API
+func getMailpitMessages(t *testing.T, apiURL string) []mailpitMessage {
+	t.Helper()
+
+	resp, err := http.Get(apiURL + "/api/v1/messages")
+	require.NoError(t, err, "Failed to call Mailpit API")
+	defer resp.Body.Close()
+
+	require.Equal(t, http.StatusOK, resp.StatusCode, "Mailpit API returned non-200 status")
+
+	var result mailpitMessagesResponse
+	err = json.NewDecoder(resp.Body).Decode(&result)
+	require.NoError(t, err, "Failed to decode Mailpit API response")
+
+	return result.Messages
+}
+
+// getMailpitMessage retrieves a specific message detail from Mailpit API
+func getMailpitMessage(t *testing.T, apiURL, messageID string) *mailpitMessageDetail {
+	t.Helper()
+
+	resp, err := http.Get(fmt.Sprintf("%s/api/v1/message/%s", apiURL, messageID))
+	require.NoError(t, err, "Failed to call Mailpit API for message detail")
+	defer resp.Body.Close()
+
+	require.Equal(t, http.StatusOK, resp.StatusCode, "Mailpit API returned non-200 status for message detail")
+
+	var result mailpitMessageDetail
+	err = json.NewDecoder(resp.Body).Decode(&result)
+	require.NoError(t, err, "Failed to decode Mailpit message detail response")
+
+	return &result
+}
+
+// deleteAllMailpitMessages deletes all messages from Mailpit
+func deleteAllMailpitMessages(t *testing.T, apiURL string) {
+	t.Helper()
+
+	req, err := http.NewRequest("DELETE", apiURL+"/api/v1/messages", nil)
+	require.NoError(t, err, "Failed to create delete request")
+
+	resp, err := http.DefaultClient.Do(req)
+	if err == nil {
+		defer resp.Body.Close()
+	}
+	// Don't fail if delete fails - it's just cleanup
 }
 
 func TestNotifier_callExecutionWebhook(t *testing.T) {
@@ -67,22 +151,26 @@ func TestNotifier_callExecutionWebhookHostHeader(t *testing.T) {
 }
 
 func TestNotifier_sendExecutionEmail(t *testing.T) {
-	// This test requires MailHog to be running for email testing.
-	// MailHog is a local SMTP server that captures emails without sending them.
-	// Start MailHog with: docker run -p 8025:8025 -p 1025:1025 mailhog/mailhog
+	// This test requires Mailpit to be running for email testing.
+	// Mailpit is a local SMTP server that captures emails without sending them.
+	// Start Mailpit with: docker run -p 8025:8025 -p 1025:1025 axllent/mailpit
 	// View captured emails at: http://localhost:8025
 	// See docs/EMAIL_TESTING.md for more information.
-	// In GitHub Actions, MailHog runs automatically as a service container.
+	// In GitHub Actions, Mailpit runs automatically as a service container.
 
 	mailHost := "localhost"
 	mailPort := 1025
+	mailpitAPIURL := "http://localhost:8025"
 
-	// Check if MailHog is available (will skip test if not, except in CI)
-	checkMailHogAvailable(t, mailHost, mailPort)
+	// Check if Mailpit is available (will skip test if not, except in CI)
+	checkMailpitAvailable(t, mailHost, mailPort)
+
+	// Clean up any existing messages before the test
+	deleteAllMailpitMessages(t, mailpitAPIURL)
 
 	c := &Config{
 		MailHost:          mailHost,
-		MailPort:          uint16(mailPort), // MailHog SMTP port
+		MailPort:          uint16(mailPort), // Mailpit SMTP port
 		MailFrom:          "dkron@dkron.io",
 		MailSubjectPrefix: "[Test]",
 	}
@@ -112,7 +200,46 @@ func TestNotifier_sendExecutionEmail(t *testing.T) {
 
 	log := getTestLogger()
 	err := SendPostNotifications(c, ex1, exg, job, log)
-	assert.NoError(t, err)
+	require.NoError(t, err, "Failed to send email notification")
+
+	// Give Mailpit a moment to process the email
+	time.Sleep(100 * time.Millisecond)
+
+	// Verify email was received using Mailpit API
+	messages := getMailpitMessages(t, mailpitAPIURL)
+	require.NotEmpty(t, messages, "No emails were captured by Mailpit")
+
+	// Find our test email
+	var testEmail *mailpitMessage
+	for i := range messages {
+		if strings.Contains(messages[i].Subject, "[Test]") &&
+			strings.Contains(messages[i].Subject, "test execution report") {
+			testEmail = &messages[i]
+			break
+		}
+	}
+	require.NotNil(t, testEmail, "Test email not found in Mailpit")
+
+	// Verify email metadata
+	assert.Equal(t, "dkron@dkron.io", testEmail.From.Address, "From address mismatch")
+	assert.Equal(t, "cron@job.com", testEmail.To[0].Address, "To address mismatch")
+	assert.Contains(t, testEmail.Subject, "[Test]", "Subject should contain prefix")
+	assert.Contains(t, testEmail.Subject, "Success", "Subject should indicate success")
+	assert.Contains(t, testEmail.Subject, "test", "Subject should contain job name")
+
+	// Get full message details
+	messageDetail := getMailpitMessage(t, mailpitAPIURL, testEmail.ID)
+	require.NotNil(t, messageDetail, "Failed to get message detail")
+
+	// Verify email content
+	// Note: Without a custom MailPayload, the email body only contains the execution output
+	assert.Contains(t, messageDetail.Text, "test-output", "Email body should contain execution output")
+
+	t.Logf("Successfully verified email via Mailpit API:")
+	t.Logf("  Subject: %s", messageDetail.Subject)
+	t.Logf("  From: %s", messageDetail.From.Address)
+	t.Logf("  To: %s", messageDetail.To[0].Address)
+	t.Logf("  Message ID: %s", messageDetail.ID)
 }
 
 func Test_auth(t *testing.T) {
@@ -152,7 +279,7 @@ func TestNotifier_buildTemplate(t *testing.T) {
 			JobName:   "test",
 			StartedAt: time.Now(),
 			NodeName:  "test-node2",
-			Output:    "test-output",
+			Output:    "test-output\r\ntest-node",
 		},
 		ex1,
 	}

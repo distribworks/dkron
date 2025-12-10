@@ -30,8 +30,8 @@ services:
         environment:
             - GODEBUG=netdns=go
 
-    mailhog:
-        image: mailhog/mailhog
+    mailpit:
+        image: axllent/mailpit
         ports:
             - "8025:8025"
             - "1025:1025"
