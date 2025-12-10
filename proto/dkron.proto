@@ -36,6 +36,7 @@ message Job {
   map<string, PluginConfig> processors = 27;
   bool ephemeral = 28;
   NullableTime expires_at = 29;
+  NullableTime starts_at = 30;
 }
 
 message PluginConfig {
