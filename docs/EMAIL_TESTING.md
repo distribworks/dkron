@@ -4,7 +4,7 @@ This document describes how to test email notifications in Dkron using Mailpit.
 
 ## What is Mailpit?
 
-[Mailpit](https://github.com/axllent/mailpit) is a modern email testing tool for developers. It's an actively maintained, feature-rich alternative to MailHog that runs a fake SMTP server to capture outgoing emails instead of sending them to real recipients. This allows you to:
+[Mailpit](https://github.com/axllent/mailpit) is a modern email testing tool for developers. It runs a fake SMTP server to capture outgoing emails instead of sending them to real recipients. This allows you to:
 
 - Test email functionality without sending real emails
 - Inspect email content, headers, and formatting via a web UI
@@ -68,7 +68,7 @@ MailFrom: dkron@example.com
 
 ## Running Email Tests
 
-The email notification tests in `dkron/notifier_test.go` are configured to use Mailpit by default.
+The email notification tests in `dkron/notifier_test.go` are configured to use Mailpit by default. The tests automatically verify that emails are correctly sent and received using Mailpit's REST API.
 
 To run the email notification test:
 
@@ -125,6 +125,22 @@ This configuration:
 - Connects to Mailpit's SMTP server at `localhost:1025`
 - Sets the sender address to `dkron@dkron.io`
 - Adds a `[Test]` prefix to all email subjects
+- Uses Mailpit API at `http://localhost:8025` to verify email delivery
+
+### API Verification
+
+The test automatically verifies email delivery using Mailpit's REST API:
+
+```go
+// The test performs the following verifications:
+// 1. Checks that email was received
+// 2. Verifies From address is correct
+// 3. Verifies To address matches recipient
+// 4. Confirms subject contains expected text
+// 5. Validates email body contains execution output
+```
+
+This ensures that emails are not just sent, but actually captured correctly by Mailpit.
 
 ## Troubleshooting
 
@@ -195,8 +211,8 @@ When tests run in GitHub Actions:
 Since GitHub Actions runners don't expose web UIs, you cannot view the Mailpit web interface during CI runs. However, you can:
 
 1. Verify emails are sent successfully by checking test results
-2. Add assertions in tests to verify email content
-3. Use Mailpit's API to retrieve and inspect emails programmatically if needed
+2. Tests automatically use Mailpit's API to verify email content
+3. Email assertions include subject, sender, recipient, and body content
 
 ### Testing Locally Before CI
 
@@ -216,19 +232,10 @@ Or use the validation script:
 ./scripts/test-ci-locally.sh
 ```
 
-## Advantages Over Other Tools
+## Advantages Over External Services
 
 Mailpit provides several advantages for local development and testing:
 
-### Compared to MailHog
-- **Modern & Maintained**: Active development vs. archived project
-- **Better Performance**: Faster and more efficient
-- **Superior UI**: Modern, responsive interface with better UX
-- **More Features**: Search, tagging, message storage options
-- **Smaller Image**: ~15MB vs. ~30MB Docker image
-- **Better API**: More comprehensive RESTful API
-
-### Compared to External Services (Mailtrap, etc.)
 - **Free and Open Source**: No account required, runs completely locally
 - **No External Dependencies**: Doesn't require internet connection
 - **Simple Setup**: Single Docker command to get started
@@ -248,6 +255,31 @@ MailUsername: your-username
 MailPassword: your-password
 MailFrom: noreply@yourdomain.com
 ```
+
+## Using Mailpit API in Tests
+
+The email notification tests demonstrate how to use Mailpit's API for verification:
+
+### Get All Messages
+
+```go
+resp, err := http.Get("http://localhost:8025/api/v1/messages")
+```
+
+### Get Specific Message
+
+```go
+resp, err := http.Get(fmt.Sprintf("http://localhost:8025/api/v1/message/%s", messageID))
+```
+
+### Delete All Messages
+
+```go
+req, err := http.NewRequest("DELETE", "http://localhost:8025/api/v1/messages", nil)
+resp, err := http.DefaultClient.Do(req)
+```
+
+See `dkron/notifier_test.go` for a complete example of API usage in tests.
 
 ## Additional Resources
 

@@ -17,7 +17,7 @@ open http://localhost:8025
 
 ## What is Mailpit?
 
-Mailpit is a modern email testing tool that captures outgoing emails without sending them. It's the actively maintained successor to MailHog.
+Mailpit is a modern email testing tool that captures outgoing emails without sending them.
 
 **Key Features:**
 - 🚀 Fast and lightweight (~15MB Docker image)
@@ -61,6 +61,8 @@ make test-email
 go test -v -run TestNotifier_sendExecutionEmail ./dkron
 ```
 
+**Note:** Tests automatically verify email delivery using Mailpit's REST API, checking sender, recipient, subject, and content.
+
 ### Run All Tests (CI Mode)
 
 ```bash
@@ -78,6 +80,8 @@ Open http://localhost:8025 in your browser to:
 - Toggle dark mode
 - Inspect headers and raw MIME
 - Delete or mark emails
+
+**API Access:** Tests use the REST API at `http://localhost:8025/api/v1/` for automated verification.
 
 ## Configuration
 
@@ -160,27 +164,9 @@ curl -I http://localhost:8025
 nc -zv localhost 1025
 ```
 
-## Migrating from MailHog
+## API Usage
 
-Mailpit is a drop-in replacement:
-
-1. Stop MailHog containers:
-   ```bash
-   docker stop $(docker ps -a -q --filter="ancestor=mailhog/mailhog")
-   ```
-
-2. Start Mailpit:
-   ```bash
-   docker run -p 8025:8025 -p 1025:1025 axllent/mailpit
-   ```
-
-3. Run tests - everything works the same!
-
-**Note:** Same ports, same configuration, better features.
-
-## API Usage (Optional)
-
-Mailpit provides a REST API for automation:
+Mailpit provides a REST API for automation and verification. The Dkron email tests use this API to verify email delivery:
 
 ```bash
 # List all messages
@@ -192,27 +178,21 @@ curl http://localhost:8025/api/v1/search?query=test
 # Get specific message
 curl http://localhost:8025/api/v1/message/{id}
 
-# Delete all messages
+# Delete all messages (cleanup)
 curl -X DELETE http://localhost:8025/api/v1/messages
 ```
 
-See [API docs](https://mailpit.axllent.org/docs/api-v1/) for more.
+**Test Integration:** See `dkron/notifier_test.go` for a complete example of using the API to verify:
+- Email was received
+- Sender/recipient addresses
+- Subject line content
+- Email body text
 
-## Comparison: MailHog vs Mailpit
-
-| Feature | MailHog | Mailpit |
-|---------|---------|---------|
-| Status | 🔴 Archived | ✅ Active |
-| Size | 30MB | 15MB |
-| UI | Basic | Modern |
-| Search | Limited | Full-text |
-| Dark Mode | ❌ | ✅ |
-| Performance | Good | Excellent |
+See [API docs](https://mailpit.axllent.org/docs/api-v1/) for complete reference.
 
 ## Next Steps
 
 - 📖 Read full guide: [docs/EMAIL_TESTING.md](EMAIL_TESTING.md)
-- 🔄 Migration details: [docs/MAILPIT_MIGRATION.md](MAILPIT_MIGRATION.md)
 - 🤖 CI integration: [docs/GITHUB_ACTIONS_MAILPIT.md](GITHUB_ACTIONS_MAILPIT.md)
 - 🧪 CI testing: [.github/TESTING.md](../.github/TESTING.md)
 

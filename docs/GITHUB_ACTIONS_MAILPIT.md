@@ -180,17 +180,37 @@ make test-email
 
 The Mailpit web UI (port 8025) is not accessible from outside the GitHub Actions runner. You cannot view the web interface during CI runs.
 
-### Alternatives
+### API-Based Verification
 
-1. **Test Assertions**: Add assertions in tests to verify email content
-2. **Log Output**: Use `t.Logf()` to log email details in test output
-3. **Mailpit API**: Query the Mailpit API programmatically if needed:
+The email notification tests automatically use Mailpit's REST API to verify email delivery. This provides comprehensive validation without requiring web UI access:
+
+**Automatic Verification in Tests:**
+1. ✅ Email was successfully received by Mailpit
+2. ✅ From address matches expected sender
+3. ✅ To address matches expected recipient
+4. ✅ Subject line contains expected text
+5. ✅ Email body contains execution output and details
+
+**Example from `dkron/notifier_test.go`:**
 
 ```go
-// Example: Retrieve emails via Mailpit API
-resp, err := http.Get("http://localhost:8025/api/v1/messages")
-// Parse JSON and verify email properties
+// Get all messages from Mailpit API
+messages := getMailpitMessages(t, "http://localhost:8025")
+
+// Find and verify the test email
+for _, msg := range messages {
+    if strings.Contains(msg.Subject, "[Test]") {
+        // Get full message details
+        detail := getMailpitMessage(t, apiURL, msg.ID)
+        
+        // Verify content
+        assert.Equal(t, "dkron@dkron.io", detail.From.Address)
+        assert.Contains(t, detail.Text, "test-output")
+    }
+}
 ```
+
+This approach ensures reliable email testing in CI without manual inspection.
 
 ## Troubleshooting
 
@@ -308,29 +328,6 @@ if err != nil {
 checkMailpitAvailable(t, host, port)
 ```
 
-## Migration from MailHog
-
-If migrating from MailHog to Mailpit:
-
-### Checklist
-
-- [x] Update workflow to use `axllent/mailpit` image
-- [x] Update test helper function names
-- [x] Update documentation references
-- [x] Test locally with `./scripts/test-ci-locally.sh`
-- [x] Verify tests pass in GitHub Actions
-
-### Benefits Gained
-
-| Aspect | MailHog | Mailpit |
-|--------|---------|---------|
-| Maintenance | Archived | Active |
-| Docker Image | ~30MB | ~15MB |
-| UI | Basic | Modern |
-| Performance | Good | Excellent |
-| Features | Limited | Rich |
-| CI Speed | Good | Better |
-
 ## Monitoring and Maintenance
 
 ### Workflow Health
@@ -374,22 +371,40 @@ When updating Go version in workflow:
 - **Quick Processing**: Emails processed instantly
 - **Efficient Storage**: In-memory storage for test duration
 
-### API Usage (Optional)
+### API Usage in Tests
 
-You can use Mailpit's API in tests for advanced verification:
+The Dkron tests use Mailpit's API for comprehensive email verification. This is the recommended approach for CI testing:
 
+**Messages API:**
 ```go
 // List all messages
 resp, err := http.Get("http://localhost:8025/api/v1/messages")
 
-// Get specific message
-resp, err := http.Get("http://localhost:8025/api/v1/message/MESSAGE_ID")
-
-// Search messages
-resp, err := http.Get("http://localhost:8025/api/v1/search?query=subject:test")
+// Response includes: total count, message list with ID, From, To, Subject
+var result mailpitMessagesResponse
+json.NewDecoder(resp.Body).Decode(&result)
 ```
 
-See [Mailpit API documentation](https://mailpit.axllent.org/docs/api-v1/) for details.
+**Message Detail API:**
+```go
+// Get specific message with full content
+resp, err := http.Get("http://localhost:8025/api/v1/message/MESSAGE_ID")
+
+// Response includes: full Text/HTML content, headers, attachments
+var detail mailpitMessageDetail
+json.NewDecoder(resp.Body).Decode(&detail)
+```
+
+**Cleanup API:**
+```go
+// Delete all messages (useful for test isolation)
+req, err := http.NewRequest("DELETE", "http://localhost:8025/api/v1/messages", nil)
+http.DefaultClient.Do(req)
+```
+
+See [Mailpit API documentation](https://mailpit.axllent.org/docs/api-v1/) for complete API reference.
+
+**Real Example:** Check `dkron/notifier_test.go` for a complete implementation showing how to verify email delivery, content, and metadata using the API.
 
 ## Additional Resources
 
@@ -399,7 +414,6 @@ See [Mailpit API documentation](https://mailpit.axllent.org/docs/api-v1/) for de
 - [Mailpit Documentation](https://mailpit.axllent.org/)
 - [Email Testing Guide](EMAIL_TESTING.md)
 - [CI Testing Guide](../.github/TESTING.md)
-- [Migration Documentation](MAILPIT_MIGRATION.md)
 
 ## Support
 
