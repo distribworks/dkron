@@ -11,7 +11,12 @@ const config = {
     url: "https://dkron.io",
     baseUrl: "/",
     onBrokenLinks: "throw",
-    onBrokenMarkdownLinks: "warn",
+    markdown: {
+        mermaid: true,
+        hooks: {
+            onBrokenMarkdownLinks: "warn",
+        },
+    },
     favicon: "img/favicon.ico",
     organizationName: "distribworks", // Usually your GitHub org/user name.
     projectName: "dkron", // Usually your repo name.
@@ -36,10 +41,7 @@ const config = {
         },
     ],
 
-    markdown: {
-        mermaid: true,
-    },
-    themes: ["@docusaurus/theme-mermaid", "@docusaurus/theme-search-algolia"],
+    themes: ["@docusaurus/theme-mermaid"],
 
     presets: [
         [
