@@ -130,6 +130,51 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelp
 		defer slowTimer.Stop()
 	}
 
+	// Parse memory limit if specified
+	memLimit, err := parseMemoryLimit(args.Config["mem_limit"])
+	if err != nil {
+		return nil, fmt.Errorf("shell: Error parsing job memory limit: %v", err)
+	}
+
+	var memLimitExceededMessage string
+	var memLimitExceeded bool
+
+	quit := make(chan int)
+
+	// Start memory monitoring if limit is set
+	if memLimit > 0 {
+		go func() {
+			ticker := time.NewTicker(1 * time.Second) // Check every second
+			defer ticker.Stop()
+			
+			for {
+				select {
+				case <-quit:
+					return
+				case <-ticker.C:
+					// Get memory usage for the process and its children
+					_, totalMem, err := GetTotalCPUMemUsage(cmd.Process.Pid)
+					if err != nil {
+						// Process might have already finished
+						continue
+					}
+					
+					if totalMem > float64(memLimit) {
+						// Memory limit exceeded, kill the process
+						err := processKill(cmd)
+						if err != nil {
+							memLimitExceededMessage = fmt.Sprintf("shell: Job '%s' memory usage (%.0f bytes) exceeding defined limit (%d bytes). SIGKILL returned error. Job may not have been killed", command, totalMem, memLimit)
+						} else {
+							memLimitExceededMessage = fmt.Sprintf("shell: Job '%s' memory usage (%.0f bytes) exceeding defined limit (%d bytes). Job was killed", command, totalMem, memLimit)
+						}
+						memLimitExceeded = true
+						return
+					}
+				}
+			}
+		}()
+	}
+
 	// FIXME: Debug metrics collection
 	// quit := make(chan int)
 
@@ -147,6 +192,13 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelp
 		_, err := output.Write([]byte(jobTimeoutMessage))
 		if err != nil {
 			log.Printf("Error writing output on timeout event: %v", err)
+		}
+	}
+
+	if memLimitExceeded {
+		_, err := output.Write([]byte(memLimitExceededMessage))
+		if err != nil {
+			log.Printf("Error writing output on memory limit exceeded event: %v", err)
 		}
 	}
 
@@ -189,4 +241,76 @@ func buildCmd(command string, useShell bool, env []string, cwd string) (cmd *exe
 	}
 	cmd.Dir = cwd
 	return
+}
+
+// parseMemoryLimit converts a memory limit string to bytes.
+// Accepts formats like "1024", "1024MB", "1GB", "512KB", etc.
+// Returns 0 if no limit is specified (empty string).
+func parseMemoryLimit(limit string) (int64, error) {
+	if limit == "" {
+		return 0, nil // No limit
+	}
+
+	// Try to parse as a plain number (bytes)
+	if value, err := strconv.ParseInt(limit, 10, 64); err == nil {
+		if value <= 0 {
+			return 0, fmt.Errorf("memory limit must be greater than 0")
+		}
+		return value, nil
+	}
+
+	// Try to parse with units
+	limit = strings.ToUpper(strings.TrimSpace(limit))
+	
+	// Extract the numeric part and unit
+	var numStr string
+	var unit string
+	
+	// Find where the number ends and unit begins
+	i := 0
+	for i < len(limit) && (limit[i] >= '0' && limit[i] <= '9' || limit[i] == '.') {
+		i++
+	}
+	
+	if i == 0 {
+		return 0, fmt.Errorf("invalid memory limit format: %s", limit)
+	}
+	
+	numStr = limit[:i]
+	unit = limit[i:]
+	
+	// Parse the numeric part
+	value, err := strconv.ParseFloat(numStr, 64)
+	if err != nil {
+		return 0, fmt.Errorf("invalid numeric value in memory limit: %s", numStr)
+	}
+	
+	if value <= 0 {
+		return 0, fmt.Errorf("memory limit must be greater than 0")
+	}
+	
+	// Validate and convert unit to bytes
+	var multiplier int64
+	switch unit {
+	case "", "B", "BYTES":
+		multiplier = 1
+	case "KB", "K":
+		multiplier = 1024
+	case "MB", "M":
+		multiplier = 1024 * 1024
+	case "GB", "G":
+		multiplier = 1024 * 1024 * 1024
+	case "TB", "T":
+		multiplier = 1024 * 1024 * 1024 * 1024
+	default:
+		return 0, fmt.Errorf("unsupported memory unit: %s (supported: B, KB, MB, GB, TB)", unit)
+	}
+	
+	// Check for overflow
+	bytes := int64(value * float64(multiplier))
+	if bytes <= 0 {
+		return 0, fmt.Errorf("memory limit too large or causes overflow")
+	}
+	
+	return bytes, nil
 }

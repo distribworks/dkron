@@ -479,6 +479,13 @@ func (j *Job) Validate() error {
 		}
 	}
 
+	if j.Executor == "shell" && j.ExecutorConfig["mem_limit"] != "" {
+		err := validateMemoryLimit(j.ExecutorConfig["mem_limit"])
+		if err != nil {
+			return fmt.Errorf("Error parsing job memory limit value: %v", err)
+		}
+	}
+
 	return nil
 }
 
@@ -555,4 +562,75 @@ func findParentJobInChildJobs(jobs []*Job, job *Job) bool {
 		}
 	}
 	return false
+}
+
+// validateMemoryLimit validates a memory limit string and returns an error if invalid.
+// Accepts formats like "1024", "1024MB", "1GB", "512KB", etc.
+func validateMemoryLimit(limit string) error {
+	if limit == "" {
+		return nil // Empty limit is valid (no limit)
+	}
+
+	// Try to parse as a plain number (bytes)
+	if value, err := strconv.ParseInt(limit, 10, 64); err == nil {
+		if value <= 0 {
+			return fmt.Errorf("memory limit must be greater than 0")
+		}
+		return nil
+	}
+
+	// Try to parse with units
+	limit = strings.ToUpper(strings.TrimSpace(limit))
+	
+	// Extract the numeric part and unit
+	var numStr string
+	var unit string
+	
+	// Find where the number ends and unit begins
+	i := 0
+	for i < len(limit) && (limit[i] >= '0' && limit[i] <= '9' || limit[i] == '.') {
+		i++
+	}
+	
+	if i == 0 {
+		return fmt.Errorf("invalid memory limit format: %s", limit)
+	}
+	
+	numStr = limit[:i]
+	unit = limit[i:]
+	
+	// Parse the numeric part
+	value, err := strconv.ParseFloat(numStr, 64)
+	if err != nil {
+		return fmt.Errorf("invalid numeric value in memory limit: %s", numStr)
+	}
+	
+	if value <= 0 {
+		return fmt.Errorf("memory limit must be greater than 0")
+	}
+	
+	// Validate and convert unit to bytes
+	var multiplier int64
+	switch unit {
+	case "", "B", "BYTES":
+		multiplier = 1
+	case "KB", "K":
+		multiplier = 1024
+	case "MB", "M":
+		multiplier = 1024 * 1024
+	case "GB", "G":
+		multiplier = 1024 * 1024 * 1024
+	case "TB", "T":
+		multiplier = 1024 * 1024 * 1024 * 1024
+	default:
+		return fmt.Errorf("unsupported memory unit: %s (supported: B, KB, MB, GB, TB)", unit)
+	}
+	
+	// Check for overflow
+	bytes := int64(value * float64(multiplier))
+	if bytes <= 0 {
+		return fmt.Errorf("memory limit too large or causes overflow")
+	}
+	
+	return nil
 }

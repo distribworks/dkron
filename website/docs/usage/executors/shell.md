@@ -20,6 +20,7 @@ The shell executor runs commands on the target node's operating system. It can:
 | `env` | No | Environment variables in the format "KEY1=value1,KEY2=value2" |
 | `cwd` | No | The working directory to run the command from |
 | `timeout` | No | Maximum execution time after which the job is forcefully terminated |
+| `mem_limit` | No | Maximum memory usage after which the job is forcefully terminated. Supports units: B, KB, MB, GB, TB |
 
 ## Basic Usage Examples
 
@@ -80,6 +81,31 @@ The shell executor runs commands on the target node's operating system. It can:
   "executor_config": {
     "command": "/opt/scripts/long_running_task.sh",
     "timeout": "1h30m"
+  }
+}
+```
+
+### Setting a Memory Limit
+
+```json
+{
+  "executor": "shell",
+  "executor_config": {
+    "command": "/opt/scripts/memory_intensive_task.sh",
+    "mem_limit": "512MB"
+  }
+}
+```
+
+### Combining Timeout and Memory Limit
+
+```json
+{
+  "executor": "shell",
+  "executor_config": {
+    "command": "/opt/scripts/resource_intensive_task.sh",
+    "timeout": "30m",
+    "mem_limit": "1GB"
   }
 }
 ```
@@ -180,6 +206,14 @@ If jobs are timing out:
 - Adjust the `timeout` parameter to match the expected runtime
 - Optimize the command to run more efficiently
 - Consider breaking large jobs into smaller, chained jobs
+
+### Memory Limits
+
+If jobs are being killed due to memory limits:
+- Adjust the `mem_limit` parameter to accommodate the job's memory requirements
+- Optimize the command to use less memory (e.g., process data in chunks)
+- Monitor memory usage patterns to set appropriate limits
+- Consider if the job should run on a node with more available memory
 
 ### Environment Variables
 
