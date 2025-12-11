@@ -64,9 +64,7 @@ const JobList = (props: any) => {
     return (
         <List {...props} filters={<JobFilter />} pagination={<JobPagination />}>
             <StyledDatagrid rowClick="show" bulkActionButtons={<JobBulkActionButtons />}>
-                <TextField source="id"
-                    cellClassName={classes.hiddenOnSmallScreens}
-                    headerClassName={classes.hiddenOnSmallScreens} />
+                <TextField source="id" />
                 <TextField source="displayname" label="Display name" />
                 <TextField source="timezone" sortable={false}
                     cellClassName={classes.hiddenOnSmallScreens}
