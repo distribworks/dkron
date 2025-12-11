@@ -69,6 +69,25 @@ func (t *NullableTime) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 
+	// First try standard JSON unmarshal (RFC3339)
+	err := json.Unmarshal(data, &t.time)
+	if err == nil {
+		t.hasValue = true
+		return nil
+	}
+
+	// Try parsing as datetime-local format (from HTML input: "2006-01-02T15:04")
+	var s string
+	if jsonErr := json.Unmarshal(data, &s); jsonErr != nil {
+		return err // Return original error if we can't even get a string
+	}
+
+	parsed, parseErr := time.Parse("2006-01-02T15:04", s)
+	if parseErr != nil {
+		return err // Return original error if this format doesn't work either
+	}
+
 	t.hasValue = true
-	return json.Unmarshal(data, &t.time)
+	t.time = parsed
+	return nil
 }

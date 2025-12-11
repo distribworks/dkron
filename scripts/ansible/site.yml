@@ -7,7 +7,7 @@
   become_method: sudo
 
   vars:
-    version: 4.0.4
+    version: 4.0.9-beta1
 
   tasks:
     - name: Copy package

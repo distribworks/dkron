@@ -44,6 +44,7 @@ Config file will be loaded from the following paths:
 # mail-password": mailpassword
 # mail-from": cron@example.com
 # mail-subject_prefix: [Dkron]
+# mail-payload: "Job {{.JobName}} finished with status {{.Success}} on node {{.NodeName}}\n\nOutput:\n{{.Output}}"
 ```
 
 ## Important Configuration Parameters
@@ -104,6 +105,7 @@ Here's a detailed explanation of the key configuration parameters:
 | `mail-password` | Password for mail server authentication. |
 | `mail-from` | From email address to use in notifications. |
 | `mail-subject-prefix` | Prefix for the email subject line. Default: `[Dkron]` |
+| `mail-payload` | Custom Go template for the email body. If not set, defaults to the execution output. Available template variables: `{{.Report}}`, `{{.JobName}}`, `{{.ReportingNode}}`, `{{.StartTime}}`, `{{.FinishedAt}}`, `{{.Success}}`, `{{.NodeName}}`, `{{.Output}}` |
 
 ### Metrics Configuration
 
