@@ -99,6 +99,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/job'
+        '500':
+          description: Internal error
     post:
       tags:
         - jobs
@@ -131,6 +133,72 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/job'
+        '400':
+          description: Bad request, the job is invalid
+          content:
+            text/plain:
+              schema:
+                type: string
+                examples:
+                  - >-
+                    Bad request, the job is invalid. Please check the job
+                    definition.
+        '500':
+          description: Internal error
+          content:
+            text/plain:
+              schema:
+                type: string
+                examples:
+                  - Internal error, please try again later.
+    patch:
+      tags:
+        - jobs
+      description: |
+        Create or updates a new job.
+      operationId: createOrUpdateJobPatch
+      parameters:
+        - name: runoncreate
+          in: query
+          description: >-
+            If present, regardless of any value, causes the job to be run
+            immediately after being succesfully created or updated.
+          required: false
+          allowEmptyValue: true
+          style: form
+          explode: true
+          schema:
+            type: boolean
+      requestBody:
+        description: Updated job object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/job'
+        required: true
+      responses:
+        '201':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/job'
+        '400':
+          description: Bad request, the job is invalid
+          content:
+            text/plain:
+              schema:
+                type: string
+                examples:
+                  - Internal error, please try again later.
+        '500':
+          description: Internal error
+          content:
+            text/plain:
+              schema:
+                type: string
+                examples:
+                  - Internal error, please try again later.
   /jobs/{job_name}:
     get:
       tags:
@@ -601,6 +669,16 @@ components:
           type: string
           description: Next execution time
           readOnly: true
+          format: date-time
+        starts_at:
+          type: string
+          description: Job start time
+          readOnly: false
+          format: date-time
+        expires_at:
+          type: string
+          description: Job expiration time
+          readOnly: false
           format: date-time
       description: A Job represents a scheduled task to execute.
     member:
