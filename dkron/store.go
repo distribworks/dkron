@@ -13,6 +13,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/armon/go-metrics"
 	dkronpb "github.com/distribworks/dkron/v4/types"
 	"github.com/sirupsen/logrus"
 	"github.com/tidwall/buntdb"
@@ -291,13 +292,13 @@ func (s *Store) SetExecutionDone(ctx context.Context, execution *Execution) (boo
 			pbj.LastSuccess.Time = pbe.FinishedAt
 			pbj.SuccessCount++
 			// Emit metrics for successful job execution
-			jobExecutionSuccessCounter.WithLabelValues(execution.JobName).Inc()
+			metrics.IncrCounterWithLabels([]string{"job", "executions_succeeded_total"}, 1, []metrics.Label{{Name: "job_name", Value: execution.JobName}})
 		} else {
 			pbj.LastError.HasValue = true
 			pbj.LastError.Time = pbe.FinishedAt
 			pbj.ErrorCount++
 			// Emit metrics for failed job execution
-			jobExecutionFailureCounter.WithLabelValues(execution.JobName).Inc()
+			metrics.IncrCounterWithLabels([]string{"job", "executions_failed_total"}, 1, []metrics.Label{{Name: "job_name", Value: execution.JobName}})
 		}
 
 		status, err := s.computeStatus(pbj.Name, pbe.Group, tx)
