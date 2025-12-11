@@ -9,6 +9,7 @@ const ToggleButton = () => {
     const notify = useNotify();
     const [loading, setLoading] = useState(false);
     const handleClick = () => {
+        if (!record) return;
         setLoading(true);
         httpClient(`${apiUrl}/jobs/${record.id}/toggle`, { method: 'POST' }) 
             .then(() => {

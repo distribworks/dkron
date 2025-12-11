@@ -17,7 +17,7 @@ import BulkRunButton from "./BulkRunButton"
 import BulkToggleButton from "./BulkToggleButton"
 import StatusField from "./StatusField"
 import EnabledField from "./EnabledField"
-import { makeStyles } from '@mui/styles';
+import { styled } from '@mui/material/styles';
 
 const JobFilter = (props: any) => (
     <Filter {...props}>
@@ -41,23 +41,29 @@ const JobBulkActionButtons = () => (
 
 const JobPagination = (props: any) => <Pagination rowsPerPageOptions={[5, 10, 25, 50, 100]} {...props} />;
 
-const useStyles = makeStyles(theme => ({
-    hiddenOnSmallScreens: {
+const PREFIX = 'JobList';
+
+const classes = {
+    hiddenOnSmallScreens: `${PREFIX}-hiddenOnSmallScreens`,
+    cell: `${PREFIX}-cell`,
+};
+
+const StyledDatagrid = styled(Datagrid)(({ theme }) => ({
+    [`& .${classes.hiddenOnSmallScreens}`]: {
         display: 'table-cell',
         [theme.breakpoints.down('md')]: {
             display: 'none',
         },
     },
-    cell: {
+    [`& .${classes.cell}`]: {
         padding: "6px 8px 6px 8px",
     },
 }));
 
 const JobList = (props: any) => {
-    const classes = useStyles();
     return (
         <List {...props} filters={<JobFilter />} pagination={<JobPagination />}>
-            <Datagrid rowClick="show" classes={{rowCell: classes.cell}} bulkActionButtons={<JobBulkActionButtons />}>
+            <StyledDatagrid rowClick="show" bulkActionButtons={<JobBulkActionButtons />}>
                 <TextField source="id"
                     cellClassName={classes.hiddenOnSmallScreens}
                     headerClassName={classes.hiddenOnSmallScreens} />
@@ -74,12 +80,12 @@ const JobList = (props: any) => {
                     headerClassName={classes.hiddenOnSmallScreens} />
                 <DateField source="last_success" showTime />
                 <DateField source="last_error" showTime />
-                <EnabledField source="disabled" label="Enabled" sortable={false} />
+                <EnabledField label="Enabled" />
                 <NumberField source="retries" sortable={false} />
-                <StatusField source="status" sortable={false} />
+                <StatusField />
                 <DateField source="next" showTime />
                 <EditButton/>
-            </Datagrid>
+            </StyledDatagrid>
         </List>
     );
 };
