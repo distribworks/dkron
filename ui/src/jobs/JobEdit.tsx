@@ -36,6 +36,7 @@ const EditForm = (record: any) => (
         <TextInput source="owner_email" helperText="Email address to use for notifications."/>
         <TextInput source="parent_job" helperText="Job id of job that this job is dependent upon." />
         <BooleanInput source="ephemeral" helperText="Delete the job after the first successful execution." />
+        <DateTimeInput source="starts_at" helperText="The job will not be executed before this time." />
         <DateTimeInput source="expires_at" helperText="The job will not be executed after this time." />
         <SelectInput source="concurrency" 
             choices={[
