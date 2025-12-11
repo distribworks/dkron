@@ -2,6 +2,7 @@ package dkron
 
 import (
 	"context"
+	"errors"
 	"io"
 
 	dkronpb "github.com/distribworks/dkron/v4/types"
@@ -85,7 +86,7 @@ func (d *dkronFSM) applySetJob(ctx context.Context, buf []byte) interface{} {
 		return err
 	}
 	job := NewJobFromProto(&pj, d.logger)
-	if err := d.store.SetJob(ctx, job, false); err != nil {
+	if err := d.store.SetJob(ctx, job, true); err != nil {
 		return err
 	}
 	return nil
