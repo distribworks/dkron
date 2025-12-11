@@ -659,6 +659,16 @@ components:
           description: Next execution time
           readOnly: true
           format: date-time
+        starts_at:
+          type: string
+          description: Job start time
+          readOnly: false
+          format: date-time
+        expires_at:
+          type: string
+          description: Job expiration time
+          readOnly: false
+          format: date-time
       description: A Job represents a scheduled task to execute.
     member:
       type: object

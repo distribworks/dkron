@@ -58,7 +58,7 @@ clean:
 	GOBIN=`pwd` go clean -i ./builtin/...
 	GOBIN=`pwd` go clean
 
-.PHONY: docs apidoc test ui updatetestcert
+.PHONY: docs apidoc test ui updatetestcert test-email
 docs:
 	# scripts/run doc --dir website/docs/cli
 
@@ -72,20 +72,29 @@ test:
 localtest:
 	go test -v ./... | sed ''/PASS/s//$$(printf "\033[32mPASS\033[0m")/'' | sed ''/FAIL/s//$$(printf "\033[31mFAIL\033[0m")/''
 
+test-email:
+	@echo "Starting Mailpit for email testing..."
+	@docker run -d --rm --name dkron-mailpit -p 8025:8025 -p 1025:1025 axllent/mailpit 2>/dev/null || true
+	@echo "Mailpit started. Web UI available at http://localhost:8025"
+	@echo "Running email notification tests..."
+	@go test -v -run TestNotifier_sendExecutionEmail ./dkron
+	@echo "Tests complete. View captured emails at http://localhost:8025"
+	@echo "To stop Mailpit, run: docker stop dkron-mailpit"
+
 updatetestcert:
 	wget https://badssl.com/certs/badssl.com-client.p12 -q -O badssl.com-client.p12
-	openssl pkcs12 -in badssl.com-client.p12 -nocerts -nodes -passin pass:badssl.com -out plugin/http/testdata/badssl.com-client-key-decrypted.pem
-	openssl pkcs12 -in badssl.com-client.p12 -nokeys -passin pass:badssl.com -out plugin/http/testdata/badssl.com-client.pem
+	openssl pkcs12 -in badssl.com-client.p12 -nocerts -nodes -passin pass:badssl.com -legacy -out plugin/http/testdata/badssl.com-client-key-decrypted.pem
+	openssl pkcs12 -in badssl.com-client.p12 -nokeys -passin pass:badssl.com -legacy -out plugin/http/testdata/badssl.com-client.pem
 	rm badssl.com-client.p12
 
 ui/node_modules: ui/package.json
-	cd ui; bun install
+	cd ui; pnpm install
 	# touch the directory so Make understands it is up to date
 	touch ui/node_modules
 
 dkron/ui-dist: ui/node_modules ui/public/* ui/src/* ui/src/*/*
 	rm -rf dkron/ui-dist
-	cd ui; yarn build --out-dir ../dkron/ui-dist
+	cd ui; pnpm build --out-dir ../dkron/ui-dist
 
 proto: types/dkron.pb.go types/executor.pb.go types/pro.pb.go
 

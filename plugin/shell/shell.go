@@ -176,11 +176,17 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelp
 	}
 
 	// FIXME: Debug metrics collection
+	// quit := make(chan int)
+
 	// go CollectProcessMetrics(args.JobName, cmd.Process.Pid, quit)
 
 	err = cmd.Wait()
-	quit <- cmd.ProcessState.ExitCode()
-	close(quit) // exit metric refresh goroutine after job is finished
+	if err != nil {
+		log.Printf("shell: Job '%s' execution failed with error: %v", command, err)
+	}
+
+	// quit <- cmd.ProcessState.ExitCode()
+	// close(quit) // exit metric refresh goroutine after job is finished
 
 	if jobTimedOut {
 		_, err := output.Write([]byte(jobTimeoutMessage))

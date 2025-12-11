@@ -7,12 +7,12 @@ export const apiUrl = window.DKRON_API_URL || 'http://localhost:8080/v1'
 
 export const httpClient = (url: String, options: fetchUtils.Options = {}) => {
     if (!options.headers) {
-        options.headers = fetchUtils.createHeadersFromOptions(options);
+        options.headers = new Headers({ Accept: 'application/json' });
     }
 
     const token = localStorage.getItem('token');
     if (token) {
-        options.headers.set('Authorization', `Bearer ${token}`);
+        (options.headers as Headers).set('Authorization', `Bearer ${token}`);
     }
     return fetchUtils.fetchJson(url, options);
 };

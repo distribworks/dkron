@@ -7,6 +7,8 @@ import { useRecordContext } from 'react-admin';
 const StatusField = () => {
 	const record = useRecordContext();
 	
+	if (!record) return null;
+
 	if (record.status === 'success') {
 		return <Tooltip title="Success"><SuccessIcon htmlColor="green" /></Tooltip> 
 	} else if (record.status === 'failed') {

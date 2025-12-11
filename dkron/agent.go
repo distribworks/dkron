@@ -283,7 +283,9 @@ func (a *Agent) Stop() error {
 		}
 
 		// TODO: Check why Shutdown().Error() is not working
-		_ = a.raft.Shutdown()
+		if a.raft != nil {
+			_ = a.raft.Shutdown()
+		}
 
 		if err := a.Store.Shutdown(); err != nil {
 			return err
@@ -646,6 +648,9 @@ func (a *Agent) StartServer() {
 
 // Utility method to get leader nodename
 func (a *Agent) leaderMember() (*serf.Member, error) {
+	if a.raft == nil {
+		return nil, ErrLeaderNotFound
+	}
 	l := a.raft.Leader()
 	for _, member := range a.serf.Members() {
 		if member.Tags["rpc_addr"] == string(l) {
@@ -657,6 +662,9 @@ func (a *Agent) leaderMember() (*serf.Member, error) {
 
 // IsLeader checks if this server is the cluster leader
 func (a *Agent) IsLeader() bool {
+	if a.raft == nil {
+		return false
+	}
 	return a.raft.State() == raft.Leader
 }
 
@@ -672,6 +680,9 @@ func (a *Agent) LocalMember() serf.Member {
 
 // Leader is used to return the Raft leader
 func (a *Agent) Leader() raft.ServerAddress {
+	if a.raft == nil {
+		return ""
+	}
 	return a.raft.Leader()
 }
 
@@ -835,6 +846,9 @@ func (a *Agent) bindRPCAddr() string {
 // applySetJob is a helper method to be called when
 // a job property need to be modified from the leader.
 func (a *Agent) applySetJob(job *proto.Job) error {
+	if a.raft == nil {
+		return fmt.Errorf("raft not initialized")
+	}
 	cmd, err := Encode(SetJobType, job)
 	if err != nil {
 		return err
@@ -856,6 +870,9 @@ func (a *Agent) applySetJob(job *proto.Job) error {
 
 // RaftApply applies a command to the Raft log
 func (a *Agent) RaftApply(cmd []byte) raft.ApplyFuture {
+	if a.raft == nil {
+		return nil
+	}
 	return a.raft.Apply(cmd, raftTimeout)
 }
 

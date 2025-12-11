@@ -1,4 +1,4 @@
-import { AuthProvider } from 'react-admin';
+import { AuthProvider, UserIdentity } from 'react-admin';
 
 const authProvider: AuthProvider = {
     login: ({ token }) => {
@@ -20,7 +20,7 @@ const authProvider: AuthProvider = {
         // other error code (404, 500, etc): no need to log out
         return Promise.resolve();
     },
-    getIdentity: () => Promise.resolve(),
+    getIdentity: () => Promise.resolve({ id: 'user', fullName: 'User' } as UserIdentity),
     getPermissions: () => Promise.resolve(),
 };
 
