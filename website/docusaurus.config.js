@@ -188,7 +188,7 @@ const config = {
                 appId: "M5K5E6F8F3",
                 // Public API key: it is safe to commit it
                 apiKey: "a982a80736a4c0775dc829d142d311b6",
-                indexName: "Dkron docs",
+                indexName: "Documentation site",
             },
         }),
     scripts: [
