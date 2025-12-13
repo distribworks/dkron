@@ -2,7 +2,6 @@ package dkron
 
 import (
 	"context"
-	"errors"
 	"io"
 
 	dkronpb "github.com/distribworks/dkron/v4/types"
