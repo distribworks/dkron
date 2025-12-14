@@ -542,7 +542,7 @@ func TestAPILeaderEndpointsNoRaftNoPanic(t *testing.T) {
 }
 
 func TestAPIPauseUnpause(t *testing.T) {
-	port := "8096"
+	port := "8097"
 	baseURL := fmt.Sprintf("http://localhost:%s/v1", port)
 	dir, a := setupAPITest(t, port)
 	defer os.RemoveAll(dir)
