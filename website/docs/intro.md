@@ -57,7 +57,7 @@ Dkron's architecture consists of several key components:
    - Are ready to become the leader if the current leader fails
    - Maintain a replicated log of all operations
 
-4. **Embedded Data Store**: Dkron uses an embedded BoltDB database to store:
+4. **Embedded Data Store**: Dkron uses an embedded BuntDB database to store:
    - Job definitions
    - Execution history
    - Cluster state
