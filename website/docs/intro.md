@@ -60,6 +60,9 @@ Dkron's architecture consists of several key components:
 4. **Embedded Data Store**: Dkron uses an embedded BuntDB database to store:
    - Job definitions
    - Execution history
+   
+   And a separate BoltDB instance for:
+   - Raft consensus log
    - Cluster state
 
 5. **Serf Layer**: Handles cluster membership, failure detection, and messaging between nodes using the gossip protocol.
@@ -169,7 +172,8 @@ sequenceDiagram
 - Uses executor plugins for actual job execution
 
 **Storage Layer**
-- BuntDB embedded key-value store
+- BuntDB embedded key-value store for application data
+- BoltDB for Raft consensus log storage
 - Stores job definitions and execution history
 - Replicated via Raft across all server nodes
 
