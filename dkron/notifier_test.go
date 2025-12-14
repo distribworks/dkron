@@ -19,7 +19,7 @@ import (
 // This is useful for providing clear error messages in tests.
 func checkMailpitAvailable(t *testing.T, host string, port int) {
 	t.Helper()
-	address := fmt.Sprintf("%s:%d", host, port)
+	address := net.JoinHostPort(host, fmt.Sprintf("%d", port))
 	conn, err := net.DialTimeout("tcp", address, 2*time.Second)
 	if err != nil {
 		t.Skipf("Mailpit is not available at %s. Start it with: docker run -p 8025:8025 -p 1025:1025 axllent/mailpit", address)
