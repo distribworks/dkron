@@ -86,3 +86,26 @@ func Test_normalizeAdvertise(t *testing.T) {
 		}
 	}
 }
+
+// TestDockerCustomAddressPool tests the scenario from the issue where
+// Docker uses custom address pools and assigns IPs like 172.80.0.2
+func TestDockerCustomAddressPool(t *testing.T) {
+	// Simulate Docker scenario with custom address pool
+	// The bind address would be resolved from template "{{ GetPrivateIP }}:8946"
+	// to something like "172.80.0.2:8946"
+	
+	cfg := Config{
+		BindAddr: "172.80.0.2:8946",  // Simulates Docker custom pool IP
+	}
+	
+	err := cfg.normalizeAddrs()
+	
+	// Should not error - this was the bug
+	require.NoError(t, err, "normalizeAddrs should not fail with IP:port in bind address")
+	
+	// Should have set advertise address
+	assert.NotEmpty(t, cfg.AdvertiseAddr, "AdvertiseAddr should be set")
+	
+	// The advertise address should contain the IP from bind
+	assert.Contains(t, cfg.AdvertiseAddr, "172.80.0.2", "AdvertiseAddr should use the bind IP")
+}
