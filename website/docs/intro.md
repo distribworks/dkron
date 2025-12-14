@@ -107,56 +107,43 @@ sequenceDiagram
     
     %% Request arrives
     Client->>AS: HTTP Request<br/>jobRunHandler()
-    AS->>AS: (grpcc) RunJob()
-    AS->>Leader: gRPC Call
+    AS->>Leader: (grpcc) RunJob()<br/>via gRPC
     
     %% Leader processing
     Leader->>Leader: (grpcs) RunJob()
     Note over Leader: Verify leadership
     Leader->>Leader: (a *Agent) Run()
     
-    Leader->>Store: GetJob()
+    Leader->>Store: (a.Store) GetJob()
     Store-->>Leader: Job details
     
-    Leader->>Leader: (s *Store) GetJob()
     Leader->>Leader: (a *Agent) getTargetNodes()
-    Note over Leader: Select nodes based on tags
+    Note over Leader: Select nodes based on<br/>job tags & node tags
     
     %% Execution on worker
-    Leader->>Worker: (grpcc) AgentRun()<br/>via gRPC
+    Leader->>Worker: (grpcc) AgentRun()<br/>via gRPC streaming
     
-    Worker->>Worker: (c *agentClient) AgentRun()
-    Note over Worker: Stream execution status
+    activate Worker
+    Worker->>Worker: (as *AgentServer) AgentRun()
+    Worker->>Leader: Stream: Initial execution state
     
-    Worker->>Executor: (m *ExecutorClient) Execute()
-    Note over Executor: Execute job<br/>(shell, http, etc)
+    Worker->>Executor: executor.Execute()
+    Note over Executor: Execute job via plugin<br/>(shell, http, kafka, etc)
     
-    Executor->>Worker: Streaming output via<br/>GRPCStatusHelperServer
-    
-    Worker->>Executor: (c *executorClient) Execute()
-    Executor->>Executor: (s *shell) Execute()
-    Note over Executor: Actual job execution
-    
+    activate Executor
+    Executor->>Worker: Stream output via<br/>statusAgentHelper
     Executor-->>Worker: Execution result
-    Worker->>Leader: Stream updates via<br/>GRPCStatusHelperClient
+    deactivate Executor
+    
+    Worker->>Leader: Stream: Final execution result
+    deactivate Worker
     
     %% Completion and storage
-    Worker->>Leader: Execution complete
     Leader->>Leader: (grpcs) ExecutionDone()
     Leader->>Leader: grpcs.agent.raft.Apply()
     Note over Leader: Apply to Raft log
     
     Leader->>Store: Store execution result
-    
-    %% Leadership monitoring
-    Note over Leader: Background Process
-    Leader->>Leader: (a *Agent) monitorLeadership()
-    Leader->>Leader: (a *Agent) establishLeadership()
-    Leader->>Leader: (s *Scheduler) Start()
-    
-    Leader->>Leader: (j *Job) Run()
-    Note over Leader: Job.isRunnable() check
-    
     Leader-->>Client: Response
 ```
 
@@ -177,7 +164,7 @@ sequenceDiagram
 
 **Worker Agent**
 - Executes jobs assigned by the leader
-- Streams execution progress back to leader
+- Streams execution progress back to leader in real-time
 - Can be any node in the cluster (including the leader)
 - Uses executor plugins for actual job execution
 
@@ -186,25 +173,33 @@ sequenceDiagram
 - Stores job definitions and execution history
 - Replicated via Raft across all server nodes
 
+**Executor Plugins**
+- Pluggable execution backends (shell, HTTP, Kafka, NATS, etc.)
+- Implement the actual job execution logic
+- Stream output back to the worker agent during execution
+
 **Communication**
 - HTTP/REST API for external clients
-- gRPC for inter-node communication
+- gRPC with bidirectional streaming for inter-node communication
 - Serf for cluster membership and failure detection
 - Raft for consensus and state replication
 
 ### Leadership and Fault Tolerance
 
-The leader continuously monitors its leadership status through the `monitorLeadership()` function. When a node becomes leader:
+Dkron uses a leader-follower model for high availability:
 
-1. It calls `establishLeadership()` to initialize leader duties
-2. Starts the `Scheduler` to begin scheduling jobs
-3. Reconciles cluster members via Serf
+**Leader Responsibilities:**
+- Monitors leadership status through `monitorLeadership()` 
+- When elected, calls `establishLeadership()` to initialize duties
+- Starts the `Scheduler` to begin scheduling jobs
+- Reconciles cluster members via Serf
 
-If the leader fails:
-- Raft automatically elects a new leader from follower nodes
+**Fault Tolerance:**
+- If the leader fails, Raft automatically elects a new leader from follower nodes
 - The new leader takes over scheduling without job loss
 - Running jobs continue to completion on their worker nodes
 - Serf detects the failure and updates cluster membership
+- State is preserved through Raft's replicated log
 
 ## Key Concepts
 
