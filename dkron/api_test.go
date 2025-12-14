@@ -140,7 +140,7 @@ func TestAPIJobCreateUpdateParentJob_NoParent(t *testing.T) {
 }
 
 func TestAPIJobCreateUpdateParentJob_KeepDependents(t *testing.T) {
-	port := "8101"
+	port := "8111"
 	baseURL := fmt.Sprintf("http://localhost:%s/v1", port)
 	dir, a := setupAPITest(t, port)
 	defer os.RemoveAll(dir)
@@ -495,7 +495,7 @@ func postJob(t *testing.T, port string, jsonStr []byte) *http.Response {
 func TestAPILeaderEndpointsNoRaftNoPanic(t *testing.T) {
 	port := "8095"
 	baseURL := fmt.Sprintf("http://localhost:%s/v1", port)
-	
+
 	dir, err := ioutil.TempDir("", "dkron-test")
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
@@ -514,15 +514,15 @@ func TestAPILeaderEndpointsNoRaftNoPanic(t *testing.T) {
 	c.DataDir = dir
 
 	a := NewAgent(c)
-	
+
 	// Start HTTP server but don't wait for leadership
 	// This creates a window where HTTP is up but Raft might not be fully initialized
-	go a.Start() // nolint: errcheck
+	go a.Start()   // nolint: errcheck
 	defer a.Stop() // nolint: errcheck
-	
+
 	// Give HTTP server a moment to start but not necessarily Raft
 	time.Sleep(500 * time.Millisecond)
-	
+
 	// These endpoints should not panic even if called before Raft is ready
 	resp, err := http.Get(baseURL + "/isleader")
 	if err == nil {
@@ -531,7 +531,7 @@ func TestAPILeaderEndpointsNoRaftNoPanic(t *testing.T) {
 		assert.True(t, resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNotFound,
 			"isleader endpoint should return valid status code")
 	}
-	
+
 	resp, err = http.Get(baseURL + "/leader")
 	if err == nil {
 		resp.Body.Close()
@@ -540,4 +540,3 @@ func TestAPILeaderEndpointsNoRaftNoPanic(t *testing.T) {
 			"leader endpoint should return valid status code")
 	}
 }
-
