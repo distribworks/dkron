@@ -90,6 +90,122 @@ flowchart LR
 5. **Processing Output**: Job output is processed by configured processors.
 6. **Results Storage**: Execution results are stored in the distributed data store.
 
+## Architecture: Job Execution Flow
+
+This diagram illustrates the detailed function call flow when a job is executed in Dkron. It shows the interaction between three main components: the Agent Server (which receives requests), the Leader Server (which orchestrates scheduling), and the Worker Agent (which executes jobs).
+
+```mermaid
+sequenceDiagram
+    participant Client as Client/Scheduler
+    participant AS as Agent Server
+    participant Leader as Leader Server<br/>(Raft Leader)
+    participant Store as Storage<br/>(BuntDB)
+    participant Worker as Worker Agent
+    participant Executor as Executor Plugin
+    
+    Note over Client,Executor: Job Execution Request Flow
+    
+    %% Request arrives
+    Client->>AS: HTTP Request<br/>jobRunHandler()
+    AS->>AS: (grpcc) RunJob()
+    AS->>Leader: gRPC Call
+    
+    %% Leader processing
+    Leader->>Leader: (grpcs) RunJob()
+    Note over Leader: Verify leadership
+    Leader->>Leader: (a *Agent) Run()
+    
+    Leader->>Store: GetJob()
+    Store-->>Leader: Job details
+    
+    Leader->>Leader: (s *Store) GetJob()
+    Leader->>Leader: (a *Agent) getTargetNodes()
+    Note over Leader: Select nodes based on tags
+    
+    %% Execution on worker
+    Leader->>Worker: (grpcc) AgentRun()<br/>via gRPC
+    
+    Worker->>Worker: (c *agentClient) AgentRun()
+    Note over Worker: Stream execution status
+    
+    Worker->>Executor: (m *ExecutorClient) Execute()
+    Note over Executor: Execute job<br/>(shell, http, etc)
+    
+    Executor->>Worker: Streaming output via<br/>GRPCStatusHelperServer
+    
+    Worker->>Executor: (c *executorClient) Execute()
+    Executor->>Executor: (s *shell) Execute()
+    Note over Executor: Actual job execution
+    
+    Executor-->>Worker: Execution result
+    Worker->>Leader: Stream updates via<br/>GRPCStatusHelperClient
+    
+    %% Completion and storage
+    Worker->>Leader: Execution complete
+    Leader->>Leader: (grpcs) ExecutionDone()
+    Leader->>Leader: grpcs.agent.raft.Apply()
+    Note over Leader: Apply to Raft log
+    
+    Leader->>Store: Store execution result
+    
+    %% Leadership monitoring
+    Note over Leader: Background Process
+    Leader->>Leader: (a *Agent) monitorLeadership()
+    Leader->>Leader: (a *Agent) establishLeadership()
+    Leader->>Leader: (s *Scheduler) Start()
+    
+    Leader->>Leader: (j *Job) Run()
+    Note over Leader: Job.isRunnable() check
+    
+    Leader-->>Client: Response
+```
+
+### Key Architecture Components
+
+**Agent Server**
+- Entry point for HTTP/gRPC requests
+- Routes job execution requests to the leader
+- Can forward requests if not the leader
+
+**Leader Server (Raft Leader)**
+- Elected via Raft consensus protocol
+- Orchestrates all job scheduling via the `Scheduler`
+- Selects target nodes based on job tags
+- Coordinates execution across worker nodes
+- Applies state changes to Raft log for consistency
+- Stores execution results in BuntDB
+
+**Worker Agent**
+- Executes jobs assigned by the leader
+- Streams execution progress back to leader
+- Can be any node in the cluster (including the leader)
+- Uses executor plugins for actual job execution
+
+**Storage Layer**
+- BuntDB embedded key-value store
+- Stores job definitions and execution history
+- Replicated via Raft across all server nodes
+
+**Communication**
+- HTTP/REST API for external clients
+- gRPC for inter-node communication
+- Serf for cluster membership and failure detection
+- Raft for consensus and state replication
+
+### Leadership and Fault Tolerance
+
+The leader continuously monitors its leadership status through the `monitorLeadership()` function. When a node becomes leader:
+
+1. It calls `establishLeadership()` to initialize leader duties
+2. Starts the `Scheduler` to begin scheduling jobs
+3. Reconciles cluster members via Serf
+
+If the leader fails:
+- Raft automatically elects a new leader from follower nodes
+- The new leader takes over scheduling without job loss
+- Running jobs continue to completion on their worker nodes
+- Serf detects the failure and updates cluster membership
+
 ## Key Concepts
 
 ### Jobs
