@@ -5,13 +5,14 @@ import (
 
 	"github.com/distribworks/dkron/v4/types"
 	"github.com/hashicorp/go-plugin"
+	"google.golang.org/protobuf/proto"
 )
 
 // Processor is an interface that wraps the Process method.
 // Plugins must implement this interface.
 type Processor interface {
 	// Main plugin method, will be called when an execution is done.
-	Process(args *ProcessorArgs) types.Execution
+	Process(args *ProcessorArgs) *types.Execution
 }
 
 // ProcessorPlugin RPC implementation
@@ -32,7 +33,7 @@ func (p *ProcessorPlugin) Client(b *plugin.MuxBroker, c *rpc.Client) (interface{
 // ProcessorArgs holds the Execution and PluginConfig for a Processor.
 type ProcessorArgs struct {
 	// The execution to pass to the processor
-	Execution types.Execution
+	Execution *types.Execution
 	// The configuration for this plugin call
 	Config Config
 }
@@ -47,7 +48,7 @@ type ProcessorClient struct {
 }
 
 // Process method that actually call the plugin Process method.
-func (e *ProcessorClient) Process(args *ProcessorArgs) types.Execution {
+func (e *ProcessorClient) Process(args *ProcessorArgs) *types.Execution {
 	var resp types.Execution
 	err := e.Client.Call("Plugin.Process", args, &resp)
 	if err != nil {
@@ -56,7 +57,7 @@ func (e *ProcessorClient) Process(args *ProcessorArgs) types.Execution {
 		panic(err)
 	}
 
-	return resp
+	return &resp
 }
 
 // ProcessorServer is the RPC server that client talks to, conforming to
@@ -69,6 +70,7 @@ type ProcessorServer struct {
 
 // Process will call the actual Process method of the plugin
 func (e *ProcessorServer) Process(args *ProcessorArgs, resp *types.Execution) error {
-	*resp = e.Processor.Process(args)
+	result := e.Processor.Process(args)
+	proto.Merge(resp, result)
 	return nil
 }

@@ -16,7 +16,7 @@ type LogOutput struct {
 }
 
 // Process method prints the execution output to the stdout
-func (l *LogOutput) Process(args *plugin.ProcessorArgs) types.Execution {
+func (l *LogOutput) Process(args *plugin.ProcessorArgs) *types.Execution {
 	log.SetFormatter(&log.TextFormatter{FullTimestamp: true})
 
 	l.parseConfig(args.Config)

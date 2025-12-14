@@ -21,7 +21,7 @@ type FilesOutput struct {
 }
 
 // Process method writes the execution output to a file
-func (l *FilesOutput) Process(args *plugin.ProcessorArgs) types.Execution {
+func (l *FilesOutput) Process(args *plugin.ProcessorArgs) *types.Execution {
 	log.SetFormatter(&log.TextFormatter{FullTimestamp: true})
 	l.parseConfig(args.Config)
 

@@ -13,7 +13,7 @@ type SyslogOutput struct {
 	forward bool
 }
 
-func (l *SyslogOutput) Process(args *plugin.ProcessorArgs) types.Execution {
+func (l *SyslogOutput) Process(args *plugin.ProcessorArgs) *types.Execution {
 	logger, err := gsyslog.NewLogger(gsyslog.LOG_INFO, "CRON", "[dkron]")
 	if err != nil {
 		log.WithError(err).Error("Error creating logger")
