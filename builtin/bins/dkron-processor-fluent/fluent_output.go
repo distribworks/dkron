@@ -9,7 +9,7 @@ import (
 )
 
 // Process sends log to Fluent
-func (l *FluentOutput) Process(args *plugin.ProcessorArgs) types.Execution {
+func (l *FluentOutput) Process(args *plugin.ProcessorArgs) *types.Execution {
 
 	l.parseConfig(args.Config)
 

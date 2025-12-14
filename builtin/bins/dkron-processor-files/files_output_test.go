@@ -14,7 +14,7 @@ func TestProcess(t *testing.T) {
 	now := timestamppb.Now()
 
 	pa := &plugin.ProcessorArgs{
-		Execution: types.Execution{
+		Execution: &types.Execution{
 			StartedAt: now,
 			NodeName:  "testNode",
 			Output:    []byte("test"),

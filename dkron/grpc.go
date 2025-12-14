@@ -179,7 +179,7 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *types.E
 		return nil, err
 	}
 
-	pbex := *execDoneReq.Execution
+	pbex := execDoneReq.Execution
 	for k, v := range job.Processors {
 		grpcs.logger.WithField("plugin", k).Info("grpc: Processing execution with plugin")
 		if processor, ok := grpcs.agent.ProcessorPlugins[k]; ok {
@@ -190,7 +190,7 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *types.E
 		}
 	}
 
-	execDoneReq.Execution = &pbex
+	execDoneReq.Execution = pbex
 	cmd, err := Encode(ExecutionDoneType, execDoneReq)
 	if err != nil {
 		return nil, err
@@ -209,7 +209,7 @@ func (grpcs *GRPCServer) ExecutionDone(ctx context.Context, execDoneReq *types.E
 
 	// If the execution failed, retry it until retries limit (default: don't retry)
 	// Don't retry if the status is unknown
-	execution := NewExecutionFromProto(&pbex)
+	execution := NewExecutionFromProto(pbex)
 	if !execution.Success &&
 		uint(execution.Attempt) < job.Retries+1 &&
 		!strings.HasPrefix(execution.Output, ErrBrokenStream.Error()) {
