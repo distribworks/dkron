@@ -10,33 +10,41 @@ import (
 func Test_normalizeAddrs(t *testing.T) {
 	type test struct {
 		config Config
-		want   Config
+		// After normalization, these fields should be populated
+		expectAdvertiseSet bool
 	}
 
 	tests := []test{
 		{
 			config: Config{BindAddr: "192.168.1.1:8946"},
-			want:   Config{BindAddr: "192.168.1.1:8946"},
+			expectAdvertiseSet: true, // Should successfully set advertise addr
 		},
 		{
 			config: Config{BindAddr: ":8946"},
-			want:   Config{BindAddr: ":8946"},
+			expectAdvertiseSet: false, // Empty host part cannot be looked up, will error
 		},
 	}
 
 	for _, tc := range tests {
 		err := tc.config.normalizeAddrs()
-		require.Error(t, err)
-		assert.EqualValues(t, tc.want, tc.config)
+		if tc.expectAdvertiseSet {
+			// Should succeed and set advertise address
+			require.NoError(t, err)
+			assert.NotEmpty(t, tc.config.AdvertiseAddr, "AdvertiseAddr should be set")
+		} else {
+			// Should fail to resolve
+			require.Error(t, err)
+		}
 	}
 }
 
 func Test_normalizeAdvertise(t *testing.T) {
 	type test struct {
-		addr string
-		bind string
-		dev  bool
-		want string
+		addr         string
+		bind         string
+		dev          bool
+		want         string
+		wantAltIPv6  string // Alternative expected value for IPv6
 	}
 
 	tests := []test{
@@ -52,24 +60,53 @@ func Test_normalizeAdvertise(t *testing.T) {
 			dev:  true,
 			want: "127.0.0.1:8946",
 		},
-		// TODO: Revisit this test
-		// {
-		// 	addr: "",
-		// 	bind: "127.0.0.1:8946",
-		// 	dev:  true,
-		// 	want: "127.0.0.1:8946",
-		// },
-		// {
-		// 	addr: "",
-		// 	bind: "localhost:8946",
-		// 	dev:  true,
-		// 	want: "127.0.0.1:8946",
-		// },
+		{
+			addr: "",
+			bind: "127.0.0.1:8946",
+			dev:  true,
+			want: "127.0.0.1:8946",
+		},
+		{
+			addr:         "",
+			bind:         "localhost:8946",
+			dev:          true,
+			want:         "127.0.0.1:8946",
+			wantAltIPv6:  "[::1]:8946",
+		},
 	}
 
 	for _, tc := range tests {
 		addr, err := normalizeAdvertise(tc.addr, tc.bind, DefaultBindPort, tc.dev)
 		require.NoError(t, err)
-		assert.Equal(t, tc.want, addr)
+		if tc.wantAltIPv6 != "" && addr == tc.wantAltIPv6 {
+			// Accept IPv6 loopback as well
+			assert.Equal(t, tc.wantAltIPv6, addr)
+		} else {
+			assert.Equal(t, tc.want, addr)
+		}
 	}
+}
+
+// TestDockerCustomAddressPool tests the scenario from the issue where
+// Docker uses custom address pools and assigns IPs like 172.80.0.2
+func TestDockerCustomAddressPool(t *testing.T) {
+	// Simulate Docker scenario with custom address pool.
+	// In production, DefaultConfig() sets BindAddr to "{{ GetPrivateIP }}:8946"
+	// which gets resolved to an actual IP like "172.80.0.2:8946" when Docker
+	// uses a custom address pool (e.g., 172.80.0.0/16).
+	
+	cfg := Config{
+		BindAddr: "172.80.0.2:8946",  // Simulates Docker custom pool IP
+	}
+	
+	err := cfg.normalizeAddrs()
+	
+	// Should not error - this was the bug
+	require.NoError(t, err, "normalizeAddrs should not fail with IP:port in bind address")
+	
+	// Should have set advertise address
+	assert.NotEmpty(t, cfg.AdvertiseAddr, "AdvertiseAddr should be set")
+	
+	// The advertise address should contain the IP from bind
+	assert.Contains(t, cfg.AdvertiseAddr, "172.80.0.2", "AdvertiseAddr should use the bind IP")
 }
