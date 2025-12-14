@@ -128,6 +128,10 @@ type Agent struct {
 	logger *logrus.Entry
 
 	tracer trace.Tracer
+
+	// pauseNewJobs controls whether new jobs can be created or updated
+	pauseNewJobs bool
+	pauseMu      sync.RWMutex
 }
 
 // ProcessorFactory is a function type that creates a new instance
@@ -964,4 +968,27 @@ func (a *Agent) startReporter() {
 			a.logger.Warn("agent: unable to create the usage report client:", err.Error())
 		}
 	}()
+}
+
+// PauseNewJobs pauses new job submissions
+func (a *Agent) PauseNewJobs() {
+	a.pauseMu.Lock()
+	defer a.pauseMu.Unlock()
+	a.pauseNewJobs = true
+	a.logger.Info("agent: New job submissions paused")
+}
+
+// UnpauseNewJobs resumes new job submissions
+func (a *Agent) UnpauseNewJobs() {
+	a.pauseMu.Lock()
+	defer a.pauseMu.Unlock()
+	a.pauseNewJobs = false
+	a.logger.Info("agent: New job submissions resumed")
+}
+
+// IsNewJobsPaused returns whether new job submissions are paused
+func (a *Agent) IsNewJobsPaused() bool {
+	a.pauseMu.RLock()
+	defer a.pauseMu.RUnlock()
+	return a.pauseNewJobs
 }
