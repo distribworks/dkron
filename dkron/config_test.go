@@ -21,7 +21,7 @@ func Test_normalizeAddrs(t *testing.T) {
 		},
 		{
 			config: Config{BindAddr: ":8946"},
-			expectAdvertiseSet: false, // `:8946` cannot be resolved, will error
+			expectAdvertiseSet: false, // Empty host part cannot be looked up, will error
 		},
 	}
 
@@ -90,9 +90,10 @@ func Test_normalizeAdvertise(t *testing.T) {
 // TestDockerCustomAddressPool tests the scenario from the issue where
 // Docker uses custom address pools and assigns IPs like 172.80.0.2
 func TestDockerCustomAddressPool(t *testing.T) {
-	// Simulate Docker scenario with custom address pool
-	// The bind address would be resolved from template "{{ GetPrivateIP }}:8946"
-	// to something like "172.80.0.2:8946"
+	// Simulate Docker scenario with custom address pool.
+	// In production, DefaultConfig() sets BindAddr to "{{ GetPrivateIP }}:8946"
+	// which gets resolved to an actual IP like "172.80.0.2:8946" when Docker
+	// uses a custom address pool (e.g., 172.80.0.0/16).
 	
 	cfg := Config{
 		BindAddr: "172.80.0.2:8946",  // Simulates Docker custom pool IP
