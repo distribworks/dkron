@@ -421,9 +421,30 @@ func (j *Job) isRunnable(logger *logrus.Entry) bool {
 	}
 
 	if j.Concurrency == ConcurrencyForbid {
+		// Check for running executions in persistent storage first
+		// This is the source of truth and survives node restarts
+		ctx := context.Background()
+		runningExecs, err := j.Agent.Store.GetRunningExecutions(ctx, j.Name)
+		if err != nil {
+			logger.WithError(err).Error("job: Error querying for running executions in storage")
+			return false
+		}
+
+		if len(runningExecs) > 0 {
+			logger.WithFields(logrus.Fields{
+				"job":            j.Name,
+				"concurrency":    j.Concurrency,
+				"job_status":     j.Status,
+				"running_count":  len(runningExecs),
+			}).Info("job: Skipping concurrent execution (found running executions in storage)")
+			return false
+		}
+
+		// Also check in-memory activeExecutions as a secondary check
+		// This catches executions that just started and may not be in storage yet
 		exs, err := j.Agent.GetActiveExecutions()
 		if err != nil {
-			logger.WithError(err).Error("job: Error quering for running executions")
+			logger.WithError(err).Error("job: Error querying for active executions")
 			return false
 		}
 
@@ -433,7 +454,7 @@ func (j *Job) isRunnable(logger *logrus.Entry) bool {
 					"job":         j.Name,
 					"concurrency": j.Concurrency,
 					"job_status":  j.Status,
-				}).Info("job: Skipping concurrent execution")
+				}).Info("job: Skipping concurrent execution (found in active executions)")
 				return false
 			}
 		}

@@ -536,6 +536,34 @@ func (s *Store) GetExecutionGroup(ctx context.Context, execution *Execution, opt
 	return executions, nil
 }
 
+// GetRunningExecutions returns all executions for a job that have started but not finished.
+// An execution is considered running if it has a StartedAt time but FinishedAt is zero.
+// Note: This method loads all executions and filters in memory. Since the store limits
+// executions to MaxExecutions (100) per job and BuntDB is in-memory, this is acceptable.
+// For jobs with concurrent executions forbidden, there should typically be 0-1 running executions.
+func (s *Store) GetRunningExecutions(ctx context.Context, jobName string) ([]*Execution, error) {
+	ctx, span := s.tracer.Start(ctx, "buntdb.get.running_executions", trace.WithAttributes(attribute.String("job_name", jobName)))
+	defer span.End()
+
+	allExecs, err := s.GetExecutions(ctx, jobName, &ExecutionOptions{})
+	if err != nil {
+		if err == buntdb.ErrNotFound {
+			return []*Execution{}, nil
+		}
+		return nil, err
+	}
+
+	var runningExecs []*Execution
+	for _, exec := range allExecs {
+		// An execution is running if it has started but not finished
+		if !exec.StartedAt.IsZero() && exec.FinishedAt.IsZero() {
+			runningExecs = append(runningExecs, exec)
+		}
+	}
+
+	return runningExecs, nil
+}
+
 // GetGroupedExecutions returns executions for a job grouped and with an ordered index
 // to facilitate access.
 func (s *Store) GetGroupedExecutions(ctx context.Context, jobName string, opts *ExecutionOptions) (map[int64][]*Execution, []int64, error) {

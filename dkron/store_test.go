@@ -298,6 +298,88 @@ func Test_computeStatus(t *testing.T) {
 	require.NoError(t, err)
 }
 
+func TestStore_GetRunningExecutions(t *testing.T) {
+	log := getTestLogger()
+	s, err := NewStore(log, otel.Tracer("test"))
+	require.NoError(t, err)
+	defer s.Shutdown() // nolint: errcheck
+
+	ctx := context.Background()
+
+	// Create a test job
+	testJob := &Job{
+		Name:           "test",
+		Schedule:       "@every 2s",
+		Executor:       "shell",
+		ExecutorConfig: map[string]string{"command": "/bin/false"},
+		Disabled:       true,
+	}
+	err = s.SetJob(ctx, testJob, true)
+	require.NoError(t, err)
+
+	// Test 1: No executions - should return empty slice
+	runningExecs, err := s.GetRunningExecutions(ctx, "test")
+	assert.NoError(t, err)
+	assert.Empty(t, runningExecs)
+
+	// Test 2: Add a running execution (StartedAt set, FinishedAt zero)
+	runningExecution := &Execution{
+		JobName:    "test",
+		StartedAt:  time.Now().UTC(),
+		FinishedAt: time.Time{}, // Zero time means not finished
+		Success:    false,
+		Output:     "running",
+		NodeName:   "testNode1",
+		Group:      time.Now().UnixNano(),
+		Attempt:    1,
+	}
+	_, err = s.SetExecution(ctx, runningExecution)
+	require.NoError(t, err)
+
+	// Should find the running execution
+	runningExecs, err = s.GetRunningExecutions(ctx, "test")
+	assert.NoError(t, err)
+	assert.Len(t, runningExecs, 1)
+	assert.Equal(t, "test", runningExecs[0].JobName)
+	assert.Equal(t, "testNode1", runningExecs[0].NodeName)
+
+	// Test 3: Add a finished execution (both StartedAt and FinishedAt set)
+	finishedExecution := &Execution{
+		JobName:    "test",
+		StartedAt:  time.Now().UTC(),
+		FinishedAt: time.Now().UTC(), // Finished
+		Success:    true,
+		Output:     "finished",
+		NodeName:   "testNode2",
+		Group:      time.Now().UnixNano(),
+		Attempt:    1,
+	}
+	_, err = s.SetExecution(ctx, finishedExecution)
+	require.NoError(t, err)
+
+	// Should still find only the running execution
+	runningExecs, err = s.GetRunningExecutions(ctx, "test")
+	assert.NoError(t, err)
+	assert.Len(t, runningExecs, 1)
+	assert.Equal(t, "testNode1", runningExecs[0].NodeName)
+
+	// Test 4: Mark the running execution as done
+	runningExecution.FinishedAt = time.Now().UTC()
+	runningExecution.Success = true
+	_, err = s.SetExecutionDone(ctx, runningExecution)
+	require.NoError(t, err)
+
+	// Should now find no running executions
+	runningExecs, err = s.GetRunningExecutions(ctx, "test")
+	assert.NoError(t, err)
+	assert.Empty(t, runningExecs)
+
+	// Test 5: Test with non-existent job - should return empty slice, not error
+	runningExecs, err = s.GetRunningExecutions(ctx, "nonexistent")
+	assert.NoError(t, err)
+	assert.Empty(t, runningExecs)
+}
+
 // Following are supporting functions for the tests
 
 func storeJob(t *testing.T, s *Store, jobName string) {
