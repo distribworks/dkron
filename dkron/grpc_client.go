@@ -234,6 +234,10 @@ func (grpcc *GRPCClient) DeleteJob(jobName string) (*Job, error) {
 
 // DeleteExecutions calls the leader to delete all executions for a job and reset counters
 func (grpcc *GRPCClient) DeleteExecutions(jobName string) (*Job, error) {
+	if jobName == "" {
+		return nil, fmt.Errorf("job name cannot be empty")
+	}
+
 	var conn *grpc.ClientConn
 
 	addr := grpcc.agent.raft.Leader()

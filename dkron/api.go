@@ -413,7 +413,12 @@ func (h *HTTPTransport) executionsDeleteHandler(c *gin.Context) {
 	// Call gRPC DeleteExecutions
 	job, err := h.agent.GRPCClient.DeleteExecutions(jobName)
 	if err != nil {
-		_ = c.AbortWithError(http.StatusNotFound, err)
+		// Check for specific error types to return appropriate status codes
+		if err.Error() == "rpc error: code = NotFound desc = not found" {
+			_ = c.AbortWithError(http.StatusNotFound, err)
+		} else {
+			_ = c.AbortWithError(http.StatusInternalServerError, err)
+		}
 		return
 	}
 	renderJSON(c, http.StatusOK, job)
