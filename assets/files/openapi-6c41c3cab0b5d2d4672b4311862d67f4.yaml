@@ -434,6 +434,61 @@ paths:
                 items:
                   $ref: '#/components/schemas/execution'
 
+  /pause:
+    get:
+      tags:
+        - default
+      description: |
+        Returns the current pause status for new job submissions.
+      operationId: pauseStatus
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  paused:
+                    type: boolean
+                    description: Whether new job submissions are currently paused
+    post:
+      tags:
+        - default
+      description: |
+        Pauses new job submissions. Existing jobs continue to run, but no new jobs can be created or updated.
+      operationId: pause
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  paused:
+                    type: boolean
+                    description: Whether new job submissions are currently paused
+
+  /unpause:
+    post:
+      tags:
+        - default
+      description: |
+        Resumes new job submissions after being paused.
+      operationId: unpause
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  paused:
+                    type: boolean
+                    description: Whether new job submissions are currently paused
+
   /acl/policies/{name}:
     get:
       tags:
