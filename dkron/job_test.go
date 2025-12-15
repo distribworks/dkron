@@ -216,6 +216,7 @@ func (gRPCClientMock) ExecutionDone(s string, e *Execution) error { return nil }
 func (gRPCClientMock) GetJob(s string, a string) (*Job, error)    { return nil, nil }
 func (gRPCClientMock) SetJob(j *Job) error                        { return nil }
 func (gRPCClientMock) DeleteJob(s string) (*Job, error)           { return nil, nil }
+func (gRPCClientMock) DeleteExecutions(s string) (*Job, error)    { return nil, nil }
 func (gRPCClientMock) Leave(s string) error                       { return nil }
 func (gRPCClientMock) RunJob(s string) (*Job, error)              { return nil, nil }
 func (gRPCClientMock) RaftGetConfiguration(s string) (*proto.RaftGetConfigurationResponse, error) {
