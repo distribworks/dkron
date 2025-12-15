@@ -109,6 +109,10 @@ func (h *HTTPTransport) APIRoutes(r *gin.RouterGroup, middleware ...gin.HandlerF
 
 	v1.GET("/busy", h.busyHandler)
 
+	v1.GET("/pause", h.pauseStatusHandler)
+	v1.POST("/pause", h.pauseHandler)
+	v1.POST("/unpause", h.unpauseHandler)
+
 	v1.POST("/jobs", h.jobCreateOrUpdateHandler)
 	v1.PATCH("/jobs", h.jobCreateOrUpdateHandler)
 	// Place fallback routes last
@@ -217,6 +221,13 @@ func (h *HTTPTransport) jobGetHandler(c *gin.Context) {
 }
 
 func (h *HTTPTransport) jobCreateOrUpdateHandler(c *gin.Context) {
+	// Check if new job submissions are paused
+	if h.agent.IsNewJobsPaused() {
+		c.AbortWithStatus(http.StatusServiceUnavailable)
+		_, _ = c.Writer.WriteString("New job submissions are currently paused")
+		return
+	}
+
 	// Init the Job object with defaults
 	job := Job{
 		Concurrency: ConcurrencyAllow,
@@ -507,4 +518,19 @@ func (h *HTTPTransport) busyHandler(c *gin.Context) {
 
 	c.Header("X-Total-Count", strconv.Itoa(len(executions)))
 	renderJSON(c, http.StatusOK, executions)
+}
+
+func (h *HTTPTransport) pauseHandler(c *gin.Context) {
+	h.agent.PauseNewJobs()
+	renderJSON(c, http.StatusOK, gin.H{"paused": true})
+}
+
+func (h *HTTPTransport) unpauseHandler(c *gin.Context) {
+	h.agent.UnpauseNewJobs()
+	renderJSON(c, http.StatusOK, gin.H{"paused": false})
+}
+
+func (h *HTTPTransport) pauseStatusHandler(c *gin.Context) {
+	paused := h.agent.IsNewJobsPaused()
+	renderJSON(c, http.StatusOK, gin.H{"paused": paused})
 }
