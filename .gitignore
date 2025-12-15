@@ -45,4 +45,5 @@ yarn-debug.log*
 yarn-error.log*
 dkron-test
 ui/package-lock.json
+website/package-lock.json
 screenshots/
