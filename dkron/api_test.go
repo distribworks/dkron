@@ -540,3 +540,71 @@ func TestAPILeaderEndpointsNoRaftNoPanic(t *testing.T) {
 			"leader endpoint should return valid status code")
 	}
 }
+
+func TestAPIPauseUnpause(t *testing.T) {
+	port := "8102"
+	baseURL := fmt.Sprintf("http://localhost:%s/v1", port)
+	dir, a := setupAPITest(t, port)
+	defer os.RemoveAll(dir)
+	defer a.Stop() // nolint: errcheck
+
+	// Check initial pause status (should be false)
+	resp, err := http.Get(baseURL + "/pause")
+	require.NoError(t, err)
+	body, _ := ioutil.ReadAll(resp.Body)
+	resp.Body.Close()
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Contains(t, string(body), `"paused":false`)
+
+	// Pause new job submissions
+	resp, err = http.Post(baseURL+"/pause", "application/json", nil)
+	require.NoError(t, err)
+	body, _ = ioutil.ReadAll(resp.Body)
+	resp.Body.Close()
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Contains(t, string(body), `"paused":true`)
+
+	// Verify pause status
+	resp, err = http.Get(baseURL + "/pause")
+	require.NoError(t, err)
+	body, _ = ioutil.ReadAll(resp.Body)
+	resp.Body.Close()
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Contains(t, string(body), `"paused":true`)
+
+	// Try to create a job while paused (should fail)
+	jsonStr := []byte(`{
+		"name": "test_job_paused",
+		"schedule": "@every 1m",
+		"executor": "shell",
+		"executor_config": {"command": "date"}
+	}`)
+	resp, err = http.Post(baseURL+"/jobs", "application/json", bytes.NewBuffer(jsonStr))
+	require.NoError(t, err)
+	body, _ = ioutil.ReadAll(resp.Body)
+	resp.Body.Close()
+	assert.Equal(t, http.StatusServiceUnavailable, resp.StatusCode)
+	assert.Contains(t, string(body), "paused")
+
+	// Unpause new job submissions
+	resp, err = http.Post(baseURL+"/unpause", "application/json", nil)
+	require.NoError(t, err)
+	body, _ = ioutil.ReadAll(resp.Body)
+	resp.Body.Close()
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Contains(t, string(body), `"paused":false`)
+
+	// Verify unpause status
+	resp, err = http.Get(baseURL + "/pause")
+	require.NoError(t, err)
+	body, _ = ioutil.ReadAll(resp.Body)
+	resp.Body.Close()
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Contains(t, string(body), `"paused":false`)
+
+	// Try to create a job after unpause (should succeed)
+	resp, err = http.Post(baseURL+"/jobs", "application/json", bytes.NewBuffer(jsonStr))
+	require.NoError(t, err)
+	resp.Body.Close()
+	assert.Equal(t, http.StatusCreated, resp.StatusCode)
+}

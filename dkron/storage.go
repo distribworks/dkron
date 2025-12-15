@@ -17,6 +17,7 @@ type Storage interface {
 	GetJobs(ctx context.Context, options *JobOptions) ([]*Job, error)
 	GetJob(ctx context.Context, name string, options *JobOptions) (*Job, error)
 	GetExecutions(ctx context.Context, jobName string, opts *ExecutionOptions) ([]*Execution, error)
+	GetRunningExecutions(ctx context.Context, jobName string) ([]*Execution, error)
 	GetExecutionGroup(ctx context.Context, execution *Execution, opts *ExecutionOptions) ([]*Execution, error)
 	GetGroupedExecutions(ctx context.Context, jobName string, opts *ExecutionOptions) (map[int64][]*Execution, []int64, error)
 	Shutdown() error

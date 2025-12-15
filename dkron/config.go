@@ -416,8 +416,14 @@ func normalizeAdvertise(addr string, bind string, defport int, dev bool) (string
 		return addr, nil
 	}
 
+	// Strip port from bind address if present before calling LookupIP
+	bindHost := bind
+	if host, _, err := net.SplitHostPort(bind); err == nil {
+		bindHost = host
+	}
+	
 	// TODO: Revisit this as the lookup doesn't work with IP addresses
-	ips, err := net.LookupIP(bind)
+	ips, err := net.LookupIP(bindHost)
 	if err != nil {
 		return "", ErrResolvingHost //fmt.Errorf("Error resolving bind address %q: %v", bind, err)
 	}
