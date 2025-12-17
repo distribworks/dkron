@@ -418,7 +418,12 @@ func (h *HTTPTransport) executionHandler(c *gin.Context) {
 
 	execution, err := h.agent.Store.GetExecution(c.Request.Context(), job.Name, executionName)
 	if err != nil {
-		_ = c.AbortWithError(http.StatusNotFound, err)
+		if err == buntdb.ErrNotFound {
+			_ = c.AbortWithError(http.StatusNotFound, err)
+		} else {
+			h.logger.WithError(err).Error("api: Error getting execution")
+			_ = c.AbortWithError(http.StatusInternalServerError, err)
+		}
 		return
 	}
 

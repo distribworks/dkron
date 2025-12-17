@@ -499,7 +499,7 @@ func (s *Store) GetExecution(ctx context.Context, jobName string, executionName 
 		}
 
 		// [TODO] This condition is temporary while we migrate to JSON marshalling for executions
-		// so we can use BuntDb indexes. To be removed in future versions.
+		// so we can use BuntDB indexes. To be removed in future versions.
 		if err := proto.Unmarshal([]byte(item), &pbe); err != nil {
 			if err := json.Unmarshal([]byte(item), &pbe); err != nil {
 				return err
