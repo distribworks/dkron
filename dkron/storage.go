@@ -16,6 +16,7 @@ type Storage interface {
 	SetExecutionDone(ctx context.Context, execution *Execution) (bool, error)
 	GetJobs(ctx context.Context, options *JobOptions) ([]*Job, error)
 	GetJob(ctx context.Context, name string, options *JobOptions) (*Job, error)
+	GetExecution(ctx context.Context, jobName string, executionName string) (*Execution, error)
 	GetExecutions(ctx context.Context, jobName string, opts *ExecutionOptions) ([]*Execution, error)
 	GetRunningExecutions(ctx context.Context, jobName string) ([]*Execution, error)
 	GetExecutionGroup(ctx context.Context, execution *Execution, opts *ExecutionOptions) ([]*Execution, error)

@@ -482,6 +482,45 @@ func (s *Store) GetExecutions(ctx context.Context, jobName string, opts *Executi
 	return s.unmarshalExecutions(kvs, opts.Timezone)
 }
 
+// GetExecution returns a specific execution by job name and execution name.
+func (s *Store) GetExecution(ctx context.Context, jobName string, executionName string) (*Execution, error) {
+	ctx, span := s.tracer.Start(ctx, "buntdb.get.execution", trace.WithAttributes(
+		attribute.String("job_name", jobName),
+		attribute.String("execution_name", executionName)))
+	defer span.End()
+
+	key := fmt.Sprintf("%s:%s:%s", executionsPrefix, jobName, executionName)
+
+	var pbe dkronpb.Execution
+	err := s.db.View(func(tx *buntdb.Tx) error {
+		item, err := tx.Get(key)
+		if err != nil {
+			return err
+		}
+
+		// [TODO] This condition is temporary while we migrate to JSON marshalling for executions
+		// so we can use BuntDb indexes. To be removed in future versions.
+		if err := proto.Unmarshal([]byte(item), &pbe); err != nil {
+			if err := json.Unmarshal([]byte(item), &pbe); err != nil {
+				return err
+			}
+		}
+
+		s.logger.WithFields(logrus.Fields{
+			"job":       jobName,
+			"execution": executionName,
+		}).Debug("store: Retrieved execution from datastore")
+
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	execution := NewExecutionFromProto(&pbe)
+	return execution, nil
+}
+
 func (s *Store) list(prefix string, checkRoot bool, opts *ExecutionOptions) ([]kv, error) {
 	var found bool
 	kvs := []kv{}

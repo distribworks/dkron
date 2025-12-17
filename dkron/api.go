@@ -416,23 +416,13 @@ func (h *HTTPTransport) executionHandler(c *gin.Context) {
 		return
 	}
 
-	executions, err := h.agent.Store.GetExecutions(c.Request.Context(), job.Name, &ExecutionOptions{
-		Sort:     "",
-		Order:    "",
-		Timezone: job.GetTimeLocation(),
-	})
-
+	execution, err := h.agent.Store.GetExecution(c.Request.Context(), job.Name, executionName)
 	if err != nil {
-		h.logger.Error(err)
+		_ = c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
 
-	for _, execution := range executions {
-		if execution.Id == executionName {
-			renderJSON(c, http.StatusOK, execution)
-			return
-		}
-	}
+	renderJSON(c, http.StatusOK, execution)
 }
 
 func (h *HTTPTransport) membersHandler(c *gin.Context) {
