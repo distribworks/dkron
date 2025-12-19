@@ -7,6 +7,7 @@ The options names are inherited from the [RabbitMQ Publishers](https://www.rabbi
 | Option                | Required | Description                   | Default    |
 |-----------------------|----------|-------------------------------|------------|
 | url                   | yes      | RabbitMQ connection string    | -          |
+| exchange              | no       | RabbitMQ Exchange             | ""         |
 | queue.name            | yes      | Queue name to send message to | -          |
 | queue.create          | no       | Create queue if not exists    | false      |
 | queue.durable         | no       | Durable queue                 | false      |
@@ -38,6 +39,7 @@ curl localhost:8080/v1/jobs -XPOST -d '{
   "executor": "rabbitmq",
   "executor_config": {
   		"url": "amqp://guest:guest@localhost:5672/",
+      "exchange": "amq.default",
   		"queue.name": "test",
   		"queue.create": "true",
   		"queue.durable": "true",

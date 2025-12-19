@@ -19,6 +19,7 @@ type RabbitMQ struct{}
 //
 //	"executor_config": {
 //			"url": "amqp://guest:guest@localhost:5672/",
+//			"exchange": "amq.default",
 //			"queue.name": "test",
 //			"queue.create": "true",
 //			"queue.durable": "true",
@@ -144,8 +145,12 @@ func publish(cfg map[string]string, ch *amqp.Channel) error {
 	if err != nil {
 		return err
 	}
+	exchange, ok := cfg["exchange"]
+	if !ok {
+		exchange = ""
+	}
 	return ch.Publish(
-		"",                // exchange
+		exchange,          // exchange
 		cfg["queue.name"], // routing key
 		false,             // mandatory
 		false,             // immediate
