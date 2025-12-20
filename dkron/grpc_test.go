@@ -2,6 +2,7 @@ package dkron
 
 import (
 	"context"
+	"errors"
 	"io/ioutil"
 	"os"
 	"testing"
@@ -181,4 +182,70 @@ func TestGRPCExecutionDone(t *testing.T) {
 		assert.NotNil(t, resp)
 		assert.Equal(t, []byte("retry"), resp.Payload)
 	})
+}
+
+func TestIsRetryableError(t *testing.T) {
+	tests := []struct {
+		name     string
+		err      error
+		expected bool
+	}{
+		{
+			name:     "nil error",
+			err:      nil,
+			expected: false,
+		},
+		{
+			name:     "Unavailable error",
+			err:      errors.New("rpc error: code = Unavailable desc = transport is closing"),
+			expected: true,
+		},
+		{
+			name:     "transport is closing",
+			err:      errors.New("transport is closing"),
+			expected: true,
+		},
+		{
+			name:     "connection refused",
+			err:      errors.New("connection refused"),
+			expected: true,
+		},
+		{
+			name:     "connection reset",
+			err:      errors.New("connection reset by peer"),
+			expected: true,
+		},
+		{
+			name:     "broken pipe",
+			err:      errors.New("broken pipe"),
+			expected: true,
+		},
+		{
+			name:     "DeadlineExceeded",
+			err:      errors.New("rpc error: code = DeadlineExceeded"),
+			expected: true,
+		},
+		{
+			name:     "context deadline exceeded",
+			err:      errors.New("context deadline exceeded"),
+			expected: true,
+		},
+		{
+			name:     "non-retryable error",
+			err:      errors.New("some other error"),
+			expected: false,
+		},
+		{
+			name:     "InvalidArgument error",
+			err:      errors.New("rpc error: code = InvalidArgument desc = bad request"),
+			expected: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := isRetryableError(tt.err)
+			assert.Equal(t, tt.expected, result, "isRetryableError(%v) = %v, want %v", tt.err, result, tt.expected)
+		})
+	}
 }
