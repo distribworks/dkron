@@ -608,3 +608,32 @@ func TestAPIPauseUnpause(t *testing.T) {
 	resp.Body.Close()
 	assert.Equal(t, http.StatusCreated, resp.StatusCode)
 }
+
+func TestHealthEndpoint(t *testing.T) {
+	port := "8099"
+	healthURL := fmt.Sprintf("http://localhost:%s/health", port)
+	dir, a := setupAPITest(t, port)
+	defer os.RemoveAll(dir)
+
+	// Test healthy state
+	resp, err := http.Get(healthURL)
+	require.NoError(t, err)
+	defer resp.Body.Close()
+
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+
+	var healthResp map[string]interface{}
+	body, err := io.ReadAll(resp.Body)
+	require.NoError(t, err)
+	err = json.Unmarshal(body, &healthResp)
+	require.NoError(t, err)
+
+	// Check status is healthy
+	assert.Equal(t, "healthy", healthResp["status"])
+
+	// Check leader field is present for server nodes
+	if a.config.Server {
+		_, hasLeader := healthResp["leader"]
+		assert.True(t, hasLeader, "health response should include leader field for server nodes")
+	}
+}

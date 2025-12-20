@@ -87,9 +87,39 @@ func (h *HTTPTransport) APIRoutes(r *gin.RouterGroup, middleware ...gin.HandlerF
 	r.GET("/debug/vars", expvar.Handler())
 
 	h.Engine.GET("/health", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
+		healthy := true
+		issues := []string{}
+
+		// Check if all plugin processes are running
+		if h.agent.PluginClients != nil {
+			for name, client := range h.agent.PluginClients {
+				if client.Exited() {
+					healthy = false
+					issues = append(issues, fmt.Sprintf("plugin %s has exited", name))
+				}
+			}
+		}
+
+		// Determine status code and response
+		statusCode := http.StatusOK
+		response := gin.H{
 			"status": "healthy",
-		})
+		}
+
+		if !healthy {
+			statusCode = http.StatusServiceUnavailable
+			response = gin.H{
+				"status": "unhealthy",
+				"issues": issues,
+			}
+		}
+
+		// Add cluster information if available
+		if h.agent.config.Server {
+			response["leader"] = h.agent.IsLeader()
+		}
+
+		c.JSON(statusCode, response)
 	})
 
 	if h.agent.config.EnablePrometheus {

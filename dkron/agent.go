@@ -18,6 +18,7 @@ import (
 	"github.com/devopsfaith/krakend-usage/client"
 	typesv1 "github.com/distribworks/dkron/v4/gen/proto/types/v1"
 	"github.com/distribworks/dkron/v4/plugin"
+	goplugin "github.com/hashicorp/go-plugin"
 	"github.com/hashicorp/go-metrics"
 	"github.com/hashicorp/go-uuid"
 	"github.com/hashicorp/memberlist"
@@ -68,6 +69,9 @@ type Agent struct {
 
 	//ExecutorPlugins maps executor plugins
 	ExecutorPlugins map[string]plugin.Executor
+
+	// PluginClients maps plugin names to their client instances for health checking
+	PluginClients map[string]*goplugin.Client
 
 	// HTTPTransport is a swappable interface for the HTTP server interface
 	HTTPTransport Transport
@@ -140,8 +144,9 @@ type ProcessorFactory func() (plugin.Processor, error)
 
 // Plugins struct to store loaded plugins of each type
 type Plugins struct {
-	Processors map[string]plugin.Processor
-	Executors  map[string]plugin.Executor
+	Processors    map[string]plugin.Processor
+	Executors     map[string]plugin.Executor
+	PluginClients map[string]*goplugin.Client
 }
 
 // AgentOption type that defines agent options
