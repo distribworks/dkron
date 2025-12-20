@@ -6,6 +6,8 @@ package types.v1;
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
+option go_package = "github.com/distribworks/dkron/v4/types/v1";
+
 // Policy is a policy definition
 message Policy {
   string name = 1;

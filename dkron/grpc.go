@@ -134,7 +134,7 @@ func (grpcs *GRPCServer) DeleteJob(ctx context.Context, delJobReq *typesv1.Delet
 }
 
 // DeleteExecutions removes all executions for a job and resets counters
-func (grpcs *GRPCServer) DeleteExecutions(ctx context.Context, delExecReq *types.DeleteExecutionsRequest) (*types.DeleteExecutionsResponse, error) {
+func (grpcs *GRPCServer) DeleteExecutions(ctx context.Context, delExecReq *typesv1.DeleteExecutionsRequest) (*typesv1.DeleteExecutionsResponse, error) {
 	defer metrics.MeasureSince([]string{"grpc", "delete_executions"}, time.Now())
 	grpcs.logger.WithField("job", delExecReq.GetJobName()).Debug("grpc: Received DeleteExecutions")
 
@@ -153,7 +153,7 @@ func (grpcs *GRPCServer) DeleteExecutions(ctx context.Context, delExecReq *types
 	}
 	jpb := job.ToProto()
 
-	return &types.DeleteExecutionsResponse{Job: jpb}, nil
+	return &typesv1.DeleteExecutionsResponse{Job: jpb}, nil
 }
 
 // GetJob loads the job from the datastore

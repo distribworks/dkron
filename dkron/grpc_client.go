@@ -254,8 +254,8 @@ func (grpcc *GRPCClient) DeleteExecutions(jobName string) (*Job, error) {
 	defer conn.Close()
 
 	// Synchronous call
-	d := types.NewDkronClient(conn)
-	res, err := d.DeleteExecutions(context.Background(), &types.DeleteExecutionsRequest{
+	d := typesv1.NewDkronClient(conn)
+	res, err := d.DeleteExecutions(context.Background(), &typesv1.DeleteExecutionsRequest{
 		JobName: jobName,
 	})
 	if err != nil {

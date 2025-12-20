@@ -3,6 +3,8 @@ syntax = "proto3";
 
 package types.v1;
 
+option go_package = "github.com/distribworks/dkron/v4/plugin/types/v1";
+
 message ExecuteRequest {
   string job_name = 1;
   map<string, string> config = 2;
