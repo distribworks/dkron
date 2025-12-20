@@ -437,18 +437,18 @@ func (grpcc *GRPCClient) AgentRun(addr string, job *typesv1.Job, execution *type
 	var lastErr error
 	for attempt := 0; attempt <= maxRetries; attempt++ {
 		if attempt > 0 {
-			// Calculate exponential backoff with jitter
+			// Calculate exponential backoff
 			backoff := initialInterval * time.Duration(1<<uint(attempt-1))
 			if backoff > maxInterval {
 				backoff = maxInterval
 			}
 			
-			grpcc.logger.WithFields(logrus.Fields{
-				"attempt":     attempt + 1,
-				"max_retries": maxRetries + 1,
-				"backoff":     backoff,
-				"job":         job.Name,
-				"node":        addr,
+			grpcc.logger.WithError(lastErr).WithFields(logrus.Fields{
+				"attempt":        attempt + 1,
+				"total_attempts": maxRetries + 1,
+				"backoff":        backoff,
+				"job":            job.Name,
+				"node":           addr,
 			}).Warn("grpc: Retrying AgentRun after failure")
 			
 			time.Sleep(backoff)
@@ -457,6 +457,13 @@ func (grpcc *GRPCClient) AgentRun(addr string, job *typesv1.Job, execution *type
 		err := grpcc.agentRunAttempt(addr, job, execution)
 		if err == nil {
 			// Success
+			if attempt > 0 {
+				grpcc.logger.WithFields(logrus.Fields{
+					"attempt": attempt + 1,
+					"job":     job.Name,
+					"node":    addr,
+				}).Info("grpc: AgentRun succeeded after retry")
+			}
 			return nil
 		}
 
@@ -470,20 +477,13 @@ func (grpcc *GRPCClient) AgentRun(addr string, job *typesv1.Job, execution *type
 			}).Error("grpc: Non-retryable error in AgentRun")
 			break
 		}
-
-		// Log the retry
-		grpcc.logger.WithError(err).WithFields(logrus.Fields{
-			"attempt": attempt + 1,
-			"job":     job.Name,
-			"node":    addr,
-		}).Warn("grpc: AgentRun failed with retryable error")
 	}
 
 	// All retries exhausted
 	grpcc.logger.WithError(lastErr).WithFields(logrus.Fields{
-		"job":         job.Name,
-		"node":        addr,
-		"max_retries": maxRetries + 1,
+		"job":            job.Name,
+		"node":           addr,
+		"total_attempts": maxRetries + 1,
 	}).Error("grpc: AgentRun failed after all retry attempts")
 
 	return lastErr
