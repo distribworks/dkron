@@ -12,6 +12,8 @@ import (
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -437,8 +439,19 @@ func (grpcc *GRPCClient) AgentRun(addr string, job *typesv1.Job, execution *type
 	var lastErr error
 	for attempt := 0; attempt <= maxRetries; attempt++ {
 		if attempt > 0 {
-			// Calculate exponential backoff
-			backoff := initialInterval * time.Duration(1<<uint(attempt-1))
+			// Calculate exponential backoff, preventing overflow
+			// For attempt 1: initialInterval * 1 (2^0)
+			// For attempt 2: initialInterval * 2 (2^1)
+			// For attempt 3: initialInterval * 4 (2^2), etc.
+			backoff := initialInterval
+			for i := 1; i < attempt; i++ {
+				backoff *= 2
+				// Cap early to prevent overflow
+				if backoff > maxInterval {
+					backoff = maxInterval
+					break
+				}
+			}
 			if backoff > maxInterval {
 				backoff = maxInterval
 			}
@@ -494,14 +507,24 @@ func isRetryableError(err error) bool {
 	if err == nil {
 		return false
 	}
+
+	// Try to extract gRPC status code first
+	if st, ok := status.FromError(err); ok {
+		code := st.Code()
+		// Retry on common transient gRPC status codes
+		return code == codes.Unavailable ||
+			code == codes.DeadlineExceeded ||
+			code == codes.ResourceExhausted ||
+			code == codes.Aborted ||
+			code == codes.Internal // Internal errors may be transient
+	}
+
+	// Fall back to string matching for non-gRPC errors
 	errStr := err.Error()
-	// Check for common transient gRPC errors
-	return strings.Contains(errStr, "Unavailable") ||
-		strings.Contains(errStr, "transport is closing") ||
+	return strings.Contains(errStr, "transport is closing") ||
 		strings.Contains(errStr, "connection refused") ||
 		strings.Contains(errStr, "connection reset") ||
 		strings.Contains(errStr, "broken pipe") ||
-		strings.Contains(errStr, "DeadlineExceeded") ||
 		strings.Contains(errStr, "context deadline exceeded")
 }
 

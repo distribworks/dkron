@@ -13,6 +13,8 @@ import (
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func TestGRPCExecutionDone(t *testing.T) {
@@ -196,9 +198,39 @@ func TestIsRetryableError(t *testing.T) {
 			expected: false,
 		},
 		{
-			name:     "Unavailable error",
-			err:      errors.New("rpc error: code = Unavailable desc = transport is closing"),
+			name:     "gRPC Unavailable status code",
+			err:      status.Error(codes.Unavailable, "transport is closing"),
 			expected: true,
+		},
+		{
+			name:     "gRPC DeadlineExceeded status code",
+			err:      status.Error(codes.DeadlineExceeded, "deadline exceeded"),
+			expected: true,
+		},
+		{
+			name:     "gRPC ResourceExhausted status code",
+			err:      status.Error(codes.ResourceExhausted, "quota exceeded"),
+			expected: true,
+		},
+		{
+			name:     "gRPC Aborted status code",
+			err:      status.Error(codes.Aborted, "transaction aborted"),
+			expected: true,
+		},
+		{
+			name:     "gRPC Internal status code",
+			err:      status.Error(codes.Internal, "internal error"),
+			expected: true,
+		},
+		{
+			name:     "gRPC InvalidArgument status code",
+			err:      status.Error(codes.InvalidArgument, "bad request"),
+			expected: false,
+		},
+		{
+			name:     "gRPC NotFound status code",
+			err:      status.Error(codes.NotFound, "not found"),
+			expected: false,
 		},
 		{
 			name:     "transport is closing",
@@ -221,11 +253,6 @@ func TestIsRetryableError(t *testing.T) {
 			expected: true,
 		},
 		{
-			name:     "DeadlineExceeded",
-			err:      errors.New("rpc error: code = DeadlineExceeded"),
-			expected: true,
-		},
-		{
 			name:     "context deadline exceeded",
 			err:      errors.New("context deadline exceeded"),
 			expected: true,
@@ -233,11 +260,6 @@ func TestIsRetryableError(t *testing.T) {
 		{
 			name:     "non-retryable error",
 			err:      errors.New("some other error"),
-			expected: false,
-		},
-		{
-			name:     "InvalidArgument error",
-			err:      errors.New("rpc error: code = InvalidArgument desc = bad request"),
 			expected: false,
 		},
 	}
