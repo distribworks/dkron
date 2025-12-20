@@ -5,8 +5,6 @@ package types.v1;
 
 import "types/v1/dkron.proto";
 
-option go_package = "github.com/distribworks/dkron/v4/types/v1";
-
 service AgentService {
   // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
   rpc AgentRun(AgentRunRequest) returns (stream AgentRunStream);
