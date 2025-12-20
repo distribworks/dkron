@@ -3,6 +3,7 @@ package dkron
 import (
 	"fmt"
 	"io"
+	"strings"
 	"time"
 
 	"github.com/armon/go-metrics"
@@ -428,6 +429,84 @@ func (grpcc *GRPCClient) SetExecution(execution *typesv1.Execution) error {
 // AgentRun runs a job in the given agent
 func (grpcc *GRPCClient) AgentRun(addr string, job *typesv1.Job, execution *typesv1.Execution) error {
 	defer metrics.MeasureSince([]string{"grpc_client", "agent_run"}, time.Now())
+
+	maxRetries := grpcc.agent.config.AgentRunMaxRetries
+	initialInterval := grpcc.agent.config.AgentRunRetryInitialInterval
+	maxInterval := grpcc.agent.config.AgentRunRetryMaxInterval
+
+	var lastErr error
+	for attempt := 0; attempt <= maxRetries; attempt++ {
+		if attempt > 0 {
+			// Calculate exponential backoff with jitter
+			backoff := initialInterval * time.Duration(1<<uint(attempt-1))
+			if backoff > maxInterval {
+				backoff = maxInterval
+			}
+			
+			grpcc.logger.WithFields(logrus.Fields{
+				"attempt":     attempt + 1,
+				"max_retries": maxRetries + 1,
+				"backoff":     backoff,
+				"job":         job.Name,
+				"node":        addr,
+			}).Warn("grpc: Retrying AgentRun after failure")
+			
+			time.Sleep(backoff)
+		}
+
+		err := grpcc.agentRunAttempt(addr, job, execution)
+		if err == nil {
+			// Success
+			return nil
+		}
+
+		lastErr = err
+
+		// Check if error is retryable
+		if !isRetryableError(err) {
+			grpcc.logger.WithError(err).WithFields(logrus.Fields{
+				"job":  job.Name,
+				"node": addr,
+			}).Error("grpc: Non-retryable error in AgentRun")
+			break
+		}
+
+		// Log the retry
+		grpcc.logger.WithError(err).WithFields(logrus.Fields{
+			"attempt": attempt + 1,
+			"job":     job.Name,
+			"node":    addr,
+		}).Warn("grpc: AgentRun failed with retryable error")
+	}
+
+	// All retries exhausted
+	grpcc.logger.WithError(lastErr).WithFields(logrus.Fields{
+		"job":         job.Name,
+		"node":        addr,
+		"max_retries": maxRetries + 1,
+	}).Error("grpc: AgentRun failed after all retry attempts")
+
+	return lastErr
+}
+
+// isRetryableError determines if an error is retryable
+func isRetryableError(err error) bool {
+	if err == nil {
+		return false
+	}
+	errStr := err.Error()
+	// Check for common transient gRPC errors
+	return strings.Contains(errStr, "Unavailable") ||
+		strings.Contains(errStr, "transport is closing") ||
+		strings.Contains(errStr, "connection refused") ||
+		strings.Contains(errStr, "connection reset") ||
+		strings.Contains(errStr, "broken pipe") ||
+		strings.Contains(errStr, "DeadlineExceeded") ||
+		strings.Contains(errStr, "context deadline exceeded")
+}
+
+// agentRunAttempt performs a single attempt of AgentRun
+func (grpcc *GRPCClient) agentRunAttempt(addr string, job *typesv1.Job, execution *typesv1.Execution) error {
 	var conn *grpc.ClientConn
 
 	// Initiate a connection with the server
