@@ -5,8 +5,8 @@ import (
 	"errors"
 	"strconv"
 
+	dktypes "github.com/distribworks/dkron/v4/gen/proto/types/v1"
 	dkplugin "github.com/distribworks/dkron/v4/plugin"
-	dktypes "github.com/distribworks/dkron/v4/types"
 	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 )

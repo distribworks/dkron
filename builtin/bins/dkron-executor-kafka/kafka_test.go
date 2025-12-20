@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	dktypes "github.com/distribworks/dkron/v4/types"
+	dktypes "github.com/distribworks/dkron/v4/gen/proto/types/v1"
 )
 
 func TestProduceExecuteWithKey(t *testing.T) {

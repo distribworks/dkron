@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	dktypes "github.com/distribworks/dkron/v4/types"
+	dktypes "github.com/distribworks/dkron/v4/gen/proto/types/v1"
 	grpc "google.golang.org/grpc"
 )
 

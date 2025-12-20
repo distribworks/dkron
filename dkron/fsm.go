@@ -4,7 +4,7 @@ import (
 	"context"
 	"io"
 
-	dkronpb "github.com/distribworks/dkron/v4/types"
+	dkronpb "github.com/distribworks/dkron/v4/gen/proto/types/v1"
 	"github.com/hashicorp/raft"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/proto"

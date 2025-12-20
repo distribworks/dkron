@@ -3,8 +3,8 @@ package main
 import (
 	"strconv"
 
+	types "github.com/distribworks/dkron/v4/gen/proto/types/v1"
 	"github.com/distribworks/dkron/v4/plugin"
-	"github.com/distribworks/dkron/v4/types"
 	log "github.com/sirupsen/logrus"
 )
 

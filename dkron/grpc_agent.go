@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/armon/circbuf"
-	metrics "github.com/armon/go-metrics"
-	"github.com/distribworks/dkron/v4/types"
+	"github.com/armon/go-metrics"
+	typesv1 "github.com/distribworks/dkron/v4/gen/proto/types/v1"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -17,14 +17,14 @@ const (
 )
 
 type statusAgentHelper struct {
-	execution *types.Execution
-	stream    types.Agent_AgentRunServer
+	execution *typesv1.Execution
+	stream    typesv1.AgentService_AgentRunServer
 }
 
 func (s *statusAgentHelper) Update(b []byte, c bool) (int64, error) {
 	s.execution.Output = b
 	// Send partial execution
-	if err := s.stream.Send(&types.AgentRunStream{
+	if err := s.stream.Send(&typesv1.AgentRunStream{
 		Execution: s.execution,
 	}); err != nil {
 		return 0, err
@@ -34,13 +34,13 @@ func (s *statusAgentHelper) Update(b []byte, c bool) (int64, error) {
 
 // GRPCAgentServer is the local implementation of the gRPC server interface.
 type AgentServer struct {
-	types.AgentServer
+	typesv1.AgentServiceServer
 	agent  *Agent
 	logger *logrus.Entry
 }
 
 // NewServer creates and returns an instance of a DkronGRPCServer implementation
-func NewAgentServer(agent *Agent, logger *logrus.Entry) types.AgentServer {
+func NewAgentServer(agent *Agent, logger *logrus.Entry) typesv1.AgentServiceServer {
 	return &AgentServer{
 		agent:  agent,
 		logger: logger,
@@ -49,7 +49,7 @@ func NewAgentServer(agent *Agent, logger *logrus.Entry) types.AgentServer {
 
 // AgentRun is called when an agent starts running a job and lasts all execution,
 // the agent will stream execution progress to the server.
-func (as *AgentServer) AgentRun(req *types.AgentRunRequest, stream types.Agent_AgentRunServer) error {
+func (as *AgentServer) AgentRun(req *typesv1.AgentRunRequest, stream typesv1.AgentService_AgentRunServer) error {
 	defer metrics.MeasureSince([]string{"grpc_agent", "agent_run"}, time.Now())
 
 	job := req.Job
@@ -70,7 +70,7 @@ func (as *AgentServer) AgentRun(req *types.AgentRunRequest, stream types.Agent_A
 	execution.StartedAt = timestamppb.Now()
 	execution.NodeName = as.agent.config.NodeName
 
-	if err := stream.Send(&types.AgentRunStream{
+	if err := stream.Send(&typesv1.AgentRunStream{
 		Execution: execution,
 	}); err != nil {
 		return err
@@ -84,7 +84,7 @@ func (as *AgentServer) AgentRun(req *types.AgentRunRequest, stream types.Agent_A
 	if executor, ok := as.agent.ExecutorPlugins[jex]; ok {
 		as.logger.WithField("plugin", jex).Debug("grpc_agent: calling executor plugin")
 		runningExecutions.Store(execution.GetGroup(), execution)
-		out, err := executor.Execute(&types.ExecuteRequest{
+		out, err := executor.Execute(&typesv1.ExecuteRequest{
 			JobName: job.Name,
 			Config:  exc,
 		}, &statusAgentHelper{
@@ -118,7 +118,7 @@ func (as *AgentServer) AgentRun(req *types.AgentRunRequest, stream types.Agent_A
 	runningExecutions.Delete(execution.GetGroup())
 
 	// Send the final execution
-	if err := stream.Send(&types.AgentRunStream{
+	if err := stream.Send(&typesv1.AgentRunStream{
 		Execution: execution,
 	}); err != nil {
 		// In case of error means that maybe the server is gone so fallback to ExecutionDone

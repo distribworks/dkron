@@ -1,4 +1,4 @@
-package types
+package typesv1
 
 import "github.com/hashicorp/serf/serf"
 

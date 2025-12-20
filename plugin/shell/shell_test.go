@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	dktypes "github.com/distribworks/dkron/v4/types"
+	dktypes "github.com/distribworks/dkron/v4/gen/proto/types/v1"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -418,7 +418,7 @@ func Test_parseMemoryLimit(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			result, err := parseMemoryLimit(tt.input)
-			
+
 			if tt.expectError {
 				assert.Error(t, err, "Expected error for input: %s", tt.input)
 			} else {
