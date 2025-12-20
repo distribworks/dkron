@@ -83,6 +83,19 @@ func TestStore(t *testing.T) {
 	assert.Equal(t, testExecution, execs[0])
 	assert.Len(t, execs, 1)
 
+	// Test GetExecution method
+	execution, err := s.GetExecution(ctx, "test", testExecution.Key())
+	assert.NoError(t, err)
+	assert.Equal(t, testExecution, execution)
+
+	// Test GetExecution with non-existent execution
+	_, err = s.GetExecution(ctx, "test", "non-existent")
+	assert.EqualError(t, err, buntdb.ErrNotFound.Error())
+
+	// Test GetExecution with non-existent job
+	_, err = s.GetExecution(ctx, "non-existent-job", testExecution.Key())
+	assert.EqualError(t, err, buntdb.ErrNotFound.Error())
+
 	_, err = s.DeleteJob(ctx, "test")
 	assert.NoError(t, err)
 
