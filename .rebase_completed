@@ -1,0 +1,14 @@
+# Rebase Completed
+
+This marker file indicates that the branch has been successfully rebased onto the latest main branch.
+
+Base commit: bea6b513 (chore(deps): bump github.com/hashicorp/memberlist from 0.5.3 to 0.5.4)
+Date: 2025-12-20
+
+## Rebased Commits:
+1. Add DeleteExecutions API endpoint and implementation (e4617430)
+2. Add tests for DeleteExecutions functionality (fbadedf6)
+3. Address code review feedback: improve error handling and validation (562dfa49)
+4. Update OpenAPI documentation with DELETE executions endpoint (760a77e0)
+
+All tests pass and build is successful.
