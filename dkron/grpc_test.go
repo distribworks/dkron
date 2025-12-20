@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/distribworks/dkron/v4/types"
 	"github.com/hashicorp/serf/testutil"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
@@ -140,5 +141,44 @@ func TestGRPCExecutionDone(t *testing.T) {
 
 		err = rc.ExecutionDone(a.advertiseRPCAddr(), testExecution)
 		assert.Error(t, err)
+	})
+
+	t.Run("Test job retry with broken stream error", func(t *testing.T) {
+		// Use the actual error format that would be returned when a broken stream occurs
+		brokenStreamErrorMsg := ErrBrokenStream.Error() + ": rpc error: code = Internal desc = grpc: error while marshaling"
+		
+		testJob.Name = "test-retry"
+		testJob.Schedule = "0 * * * * *" // Every minute at 0 seconds (6-field format)
+		testJob.Retries = 2
+		testJob.DependentJobs = nil
+		testJob.Ephemeral = false
+		testJob.Disabled = false
+		testExecution.JobName = testJob.Name
+		testExecution.Success = false
+		testExecution.Attempt = 1
+		testExecution.NodeName = a.config.NodeName // Use the agent's node name
+		testExecution.Output = brokenStreamErrorMsg
+
+		err = a.Store.SetJob(ctx, testJob, true)
+		require.NoError(t, err)
+
+		// Add job to scheduler so it can be retrieved for retry
+		job := NewJobFromProto(testJob.ToProto(), a.logger)
+		job.Agent = a
+		err = a.sched.AddJob(job)
+		require.NoError(t, err)
+
+		// Store initial execution to establish group
+		_, err = a.Store.SetExecution(ctx, testExecution)
+		require.NoError(t, err)
+
+		// Call ExecutionDone with a failed execution that has a broken stream error
+		// This should trigger a retry since Retries > 0
+		resp, err := a.GRPCServer.(*GRPCServer).ExecutionDone(ctx, &types.ExecutionDoneRequest{
+			Execution: testExecution.ToProto(),
+		})
+		require.NoError(t, err)
+		assert.NotNil(t, resp)
+		assert.Equal(t, []byte("retry"), resp.Payload)
 	})
 }
