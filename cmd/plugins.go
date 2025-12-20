@@ -18,10 +18,11 @@ import (
 var embededPlugins = []string{"shell", "http"}
 
 type Plugins struct {
-	Processors map[string]dkplugin.Processor
-	Executors  map[string]dkplugin.Executor
-	LogLevel   string
-	NodeName   string
+	Processors      map[string]dkplugin.Processor
+	Executors       map[string]dkplugin.Executor
+	PluginClients   map[string]*plugin.Client
+	LogLevel        string
+	NodeName        string
 }
 
 // Discover plugins located on disk
@@ -35,6 +36,7 @@ type Plugins struct {
 func (p *Plugins) DiscoverPlugins() error {
 	p.Processors = make(map[string]dkplugin.Processor)
 	p.Executors = make(map[string]dkplugin.Executor)
+	p.PluginClients = make(map[string]*plugin.Client)
 
 	pluginDir := filepath.Join("/etc", "dkron", "plugins")
 	if viper.ConfigFileUsed() != "" {
@@ -77,11 +79,12 @@ func (p *Plugins) DiscoverPlugins() error {
 			continue
 		}
 
-		raw, err := p.pluginFactory(file, []string{}, dkplugin.ProcessorPluginName)
+		client, raw, err := p.pluginFactory(file, []string{}, dkplugin.ProcessorPluginName)
 		if err != nil {
 			return err
 		}
 		p.Processors[pluginName] = raw.(dkplugin.Processor)
+		p.PluginClients["processor-"+pluginName] = client
 	}
 
 	for _, file := range executors {
@@ -90,20 +93,22 @@ func (p *Plugins) DiscoverPlugins() error {
 			continue
 		}
 
-		raw, err := p.pluginFactory(file, []string{}, dkplugin.ExecutorPluginName)
+		client, raw, err := p.pluginFactory(file, []string{}, dkplugin.ExecutorPluginName)
 		if err != nil {
 			return err
 		}
 		p.Executors[pluginName] = raw.(dkplugin.Executor)
+		p.PluginClients["executor-"+pluginName] = client
 	}
 
 	// Load the embeded plugins
 	for _, pluginName := range embededPlugins {
-		raw, err := p.pluginFactory(exePath, []string{pluginName}, dkplugin.ExecutorPluginName)
+		client, raw, err := p.pluginFactory(exePath, []string{pluginName}, dkplugin.ExecutorPluginName)
 		if err != nil {
 			return err
 		}
 		p.Executors[pluginName] = raw.(dkplugin.Executor)
+		p.PluginClients["executor-"+pluginName] = client
 	}
 
 	return nil
@@ -122,7 +127,7 @@ func getPluginName(file string) (string, bool) {
 	return name, true
 }
 
-func (p *Plugins) pluginFactory(path string, args []string, pluginType string) (interface{}, error) {
+func (p *Plugins) pluginFactory(path string, args []string, pluginType string) (*plugin.Client, interface{}, error) {
 	// Build the plugin client configuration and init the plugin
 	var config plugin.ClientConfig
 	config.Cmd = exec.Command(path, args...)
@@ -146,13 +151,13 @@ func (p *Plugins) pluginFactory(path string, args []string, pluginType string) (
 	// so we can build the actual RPC-implemented provider.
 	rpcClient, err := client.Client()
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	raw, err := rpcClient.Dispense(pluginType)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return raw, nil
+	return client, raw, nil
 }
