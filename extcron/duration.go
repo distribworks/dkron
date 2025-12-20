@@ -27,37 +27,55 @@ func ParseISO8601Duration(s string) (time.Duration, error) {
 
 	// Years (approximate: 365 days)
 	if matches[1] != "" {
-		years, _ := strconv.Atoi(matches[1])
+		years, err := strconv.Atoi(matches[1])
+		if err != nil {
+			return 0, fmt.Errorf("invalid year value: %s", matches[1])
+		}
 		duration += time.Duration(years) * 365 * 24 * time.Hour
 	}
 
 	// Months (approximate: 30 days)
 	if matches[2] != "" {
-		months, _ := strconv.Atoi(matches[2])
+		months, err := strconv.Atoi(matches[2])
+		if err != nil {
+			return 0, fmt.Errorf("invalid month value: %s", matches[2])
+		}
 		duration += time.Duration(months) * 30 * 24 * time.Hour
 	}
 
 	// Days
 	if matches[3] != "" {
-		days, _ := strconv.Atoi(matches[3])
+		days, err := strconv.Atoi(matches[3])
+		if err != nil {
+			return 0, fmt.Errorf("invalid day value: %s", matches[3])
+		}
 		duration += time.Duration(days) * 24 * time.Hour
 	}
 
 	// Hours
 	if matches[4] != "" {
-		hours, _ := strconv.Atoi(matches[4])
+		hours, err := strconv.Atoi(matches[4])
+		if err != nil {
+			return 0, fmt.Errorf("invalid hour value: %s", matches[4])
+		}
 		duration += time.Duration(hours) * time.Hour
 	}
 
 	// Minutes
 	if matches[5] != "" {
-		minutes, _ := strconv.Atoi(matches[5])
+		minutes, err := strconv.Atoi(matches[5])
+		if err != nil {
+			return 0, fmt.Errorf("invalid minute value: %s", matches[5])
+		}
 		duration += time.Duration(minutes) * time.Minute
 	}
 
 	// Seconds (can be fractional)
 	if matches[6] != "" {
-		seconds, _ := strconv.ParseFloat(matches[6], 64)
+		seconds, err := strconv.ParseFloat(matches[6], 64)
+		if err != nil {
+			return 0, fmt.Errorf("invalid second value: %s", matches[6])
+		}
 		duration += time.Duration(seconds * float64(time.Second))
 	}
 

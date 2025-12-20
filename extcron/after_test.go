@@ -37,6 +37,13 @@ func TestAfterScheduleNext(t *testing.T) {
 			expected:    "2020-01-01T01:59:59Z", // Returns current time (immediate)
 		},
 		{
+			name:        "exactly at end of grace period - should run immediately",
+			scheduleAt:  "2020-01-01T00:00:00Z",
+			gracePeriod: 2 * time.Hour,
+			currentTime: "2020-01-01T02:00:00Z",
+			expected:    "2020-01-01T02:00:00Z", // Returns current time (immediate)
+		},
+		{
 			name:        "after grace period - should never run",
 			scheduleAt:  "2020-01-01T00:00:00Z",
 			gracePeriod: 2 * time.Hour,

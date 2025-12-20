@@ -30,9 +30,9 @@ func (schedule AfterSchedule) Next(t time.Time) time.Time {
 		return schedule.Date
 	}
 
-	// If we're within the grace period, run immediately
+	// If we're within the grace period (including the exact end moment), run immediately
 	gracePeriodEnd := schedule.Date.Add(schedule.GracePeriod)
-	if t.Before(gracePeriodEnd) {
+	if !t.After(gracePeriodEnd) {
 		return t
 	}
 
