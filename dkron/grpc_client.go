@@ -23,6 +23,7 @@ type DkronGRPCClient interface {
 	GetJob(string, string) (*Job, error)
 	SetJob(*Job) error
 	DeleteJob(string) (*Job, error)
+	DeleteExecutions(string) (*Job, error)
 	Leave(string) error
 	RunJob(string) (*Job, error)
 	RaftGetConfiguration(string) (*typesv1.RaftGetConfigurationResponse, error)
@@ -221,6 +222,45 @@ func (grpcc *GRPCClient) DeleteJob(jobName string) (*Job, error) {
 	if err != nil {
 		grpcc.logger.WithError(err).WithFields(logrus.Fields{
 			"method":      "DeleteJob",
+			"server_addr": addr,
+		}).Error("grpc: Error calling gRPC method")
+		return nil, err
+	}
+
+	job := NewJobFromProto(res.Job, grpcc.logger)
+
+	return job, nil
+}
+
+// DeleteExecutions calls the leader to delete all executions for a job and reset counters
+func (grpcc *GRPCClient) DeleteExecutions(jobName string) (*Job, error) {
+	if jobName == "" {
+		return nil, fmt.Errorf("job name cannot be empty")
+	}
+
+	var conn *grpc.ClientConn
+
+	addr := grpcc.agent.raft.Leader()
+
+	// Initiate a connection with the server
+	conn, err := grpcc.Connect(string(addr))
+	if err != nil {
+		grpcc.logger.WithError(err).WithFields(logrus.Fields{
+			"method":      "DeleteExecutions",
+			"server_addr": addr,
+		}).Error("grpc: error dialing.")
+		return nil, err
+	}
+	defer conn.Close()
+
+	// Synchronous call
+	d := typesv1.NewDkronClient(conn)
+	res, err := d.DeleteExecutions(context.Background(), &typesv1.DeleteExecutionsRequest{
+		JobName: jobName,
+	})
+	if err != nil {
+		grpcc.logger.WithError(err).WithFields(logrus.Fields{
+			"method":      "DeleteExecutions",
 			"server_addr": addr,
 		}).Error("grpc: Error calling gRPC method")
 		return nil, err

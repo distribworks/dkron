@@ -65,6 +65,8 @@ func (d *dkronFSM) Apply(l *raft.Log) interface{} {
 		return d.applySetJob(ctx, buf[1:])
 	case DeleteJobType:
 		return d.applyDeleteJob(ctx, buf[1:])
+	case DeleteExecutionsType:
+		return d.applyDeleteExecutions(ctx, buf[1:])
 	case ExecutionDoneType:
 		return d.applyExecutionDone(ctx, buf[1:])
 	case SetExecutionType:
@@ -97,6 +99,23 @@ func (d *dkronFSM) applyDeleteJob(ctx context.Context, buf []byte) interface{} {
 		return err
 	}
 	job, err := d.store.DeleteJob(ctx, djr.GetJobName())
+	if err != nil {
+		return err
+	}
+	return job
+}
+
+func (d *dkronFSM) applyDeleteExecutions(ctx context.Context, buf []byte) interface{} {
+	var der dkronpb.DeleteExecutionsRequest
+	if err := proto.Unmarshal(buf, &der); err != nil {
+		return err
+	}
+	err := d.store.DeleteExecutions(ctx, der.GetJobName())
+	if err != nil {
+		return err
+	}
+	// Return the updated job
+	job, err := d.store.GetJob(ctx, der.GetJobName(), nil)
 	if err != nil {
 		return err
 	}

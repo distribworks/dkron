@@ -853,6 +853,94 @@ func (x *RunJobResponse) GetJob() *Job {
 	return nil
 }
 
+type DeleteExecutionsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	JobName       string                 `protobuf:"bytes,1,opt,name=job_name,json=jobName,proto3" json:"job_name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteExecutionsRequest) Reset() {
+	*x = DeleteExecutionsRequest{}
+	mi := &file_types_v1_dkron_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteExecutionsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteExecutionsRequest) ProtoMessage() {}
+
+func (x *DeleteExecutionsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_types_v1_dkron_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteExecutionsRequest.ProtoReflect.Descriptor instead.
+func (*DeleteExecutionsRequest) Descriptor() ([]byte, []int) {
+	return file_types_v1_dkron_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *DeleteExecutionsRequest) GetJobName() string {
+	if x != nil {
+		return x.JobName
+	}
+	return ""
+}
+
+type DeleteExecutionsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Job           *Job                   `protobuf:"bytes,1,opt,name=job,proto3" json:"job,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteExecutionsResponse) Reset() {
+	*x = DeleteExecutionsResponse{}
+	mi := &file_types_v1_dkron_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteExecutionsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteExecutionsResponse) ProtoMessage() {}
+
+func (x *DeleteExecutionsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_types_v1_dkron_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteExecutionsResponse.ProtoReflect.Descriptor instead.
+func (*DeleteExecutionsResponse) Descriptor() ([]byte, []int) {
+	return file_types_v1_dkron_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *DeleteExecutionsResponse) GetJob() *Job {
+	if x != nil {
+		return x.Job
+	}
+	return nil
+}
+
 type ToggleJobRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	JobName       string                 `protobuf:"bytes,1,opt,name=job_name,json=jobName,proto3" json:"job_name,omitempty"`
@@ -862,7 +950,7 @@ type ToggleJobRequest struct {
 
 func (x *ToggleJobRequest) Reset() {
 	*x = ToggleJobRequest{}
-	mi := &file_types_v1_dkron_proto_msgTypes[13]
+	mi := &file_types_v1_dkron_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -874,7 +962,7 @@ func (x *ToggleJobRequest) String() string {
 func (*ToggleJobRequest) ProtoMessage() {}
 
 func (x *ToggleJobRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_types_v1_dkron_proto_msgTypes[13]
+	mi := &file_types_v1_dkron_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -887,7 +975,7 @@ func (x *ToggleJobRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ToggleJobRequest.ProtoReflect.Descriptor instead.
 func (*ToggleJobRequest) Descriptor() ([]byte, []int) {
-	return file_types_v1_dkron_proto_rawDescGZIP(), []int{13}
+	return file_types_v1_dkron_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *ToggleJobRequest) GetJobName() string {
@@ -906,7 +994,7 @@ type ToggleJobResponse struct {
 
 func (x *ToggleJobResponse) Reset() {
 	*x = ToggleJobResponse{}
-	mi := &file_types_v1_dkron_proto_msgTypes[14]
+	mi := &file_types_v1_dkron_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -918,7 +1006,7 @@ func (x *ToggleJobResponse) String() string {
 func (*ToggleJobResponse) ProtoMessage() {}
 
 func (x *ToggleJobResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_types_v1_dkron_proto_msgTypes[14]
+	mi := &file_types_v1_dkron_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -931,7 +1019,7 @@ func (x *ToggleJobResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ToggleJobResponse.ProtoReflect.Descriptor instead.
 func (*ToggleJobResponse) Descriptor() ([]byte, []int) {
-	return file_types_v1_dkron_proto_rawDescGZIP(), []int{14}
+	return file_types_v1_dkron_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *ToggleJobResponse) GetJob() *Job {
@@ -955,7 +1043,7 @@ type RaftServer struct {
 
 func (x *RaftServer) Reset() {
 	*x = RaftServer{}
-	mi := &file_types_v1_dkron_proto_msgTypes[15]
+	mi := &file_types_v1_dkron_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -967,7 +1055,7 @@ func (x *RaftServer) String() string {
 func (*RaftServer) ProtoMessage() {}
 
 func (x *RaftServer) ProtoReflect() protoreflect.Message {
-	mi := &file_types_v1_dkron_proto_msgTypes[15]
+	mi := &file_types_v1_dkron_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -980,7 +1068,7 @@ func (x *RaftServer) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RaftServer.ProtoReflect.Descriptor instead.
 func (*RaftServer) Descriptor() ([]byte, []int) {
-	return file_types_v1_dkron_proto_rawDescGZIP(), []int{15}
+	return file_types_v1_dkron_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *RaftServer) GetId() string {
@@ -1035,7 +1123,7 @@ type RaftGetConfigurationResponse struct {
 
 func (x *RaftGetConfigurationResponse) Reset() {
 	*x = RaftGetConfigurationResponse{}
-	mi := &file_types_v1_dkron_proto_msgTypes[16]
+	mi := &file_types_v1_dkron_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1047,7 +1135,7 @@ func (x *RaftGetConfigurationResponse) String() string {
 func (*RaftGetConfigurationResponse) ProtoMessage() {}
 
 func (x *RaftGetConfigurationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_types_v1_dkron_proto_msgTypes[16]
+	mi := &file_types_v1_dkron_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1060,7 +1148,7 @@ func (x *RaftGetConfigurationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RaftGetConfigurationResponse.ProtoReflect.Descriptor instead.
 func (*RaftGetConfigurationResponse) Descriptor() ([]byte, []int) {
-	return file_types_v1_dkron_proto_rawDescGZIP(), []int{16}
+	return file_types_v1_dkron_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *RaftGetConfigurationResponse) GetServers() []*RaftServer {
@@ -1086,7 +1174,7 @@ type RaftRemovePeerByIDRequest struct {
 
 func (x *RaftRemovePeerByIDRequest) Reset() {
 	*x = RaftRemovePeerByIDRequest{}
-	mi := &file_types_v1_dkron_proto_msgTypes[17]
+	mi := &file_types_v1_dkron_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1098,7 +1186,7 @@ func (x *RaftRemovePeerByIDRequest) String() string {
 func (*RaftRemovePeerByIDRequest) ProtoMessage() {}
 
 func (x *RaftRemovePeerByIDRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_types_v1_dkron_proto_msgTypes[17]
+	mi := &file_types_v1_dkron_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1111,7 +1199,7 @@ func (x *RaftRemovePeerByIDRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RaftRemovePeerByIDRequest.ProtoReflect.Descriptor instead.
 func (*RaftRemovePeerByIDRequest) Descriptor() ([]byte, []int) {
-	return file_types_v1_dkron_proto_rawDescGZIP(), []int{17}
+	return file_types_v1_dkron_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *RaftRemovePeerByIDRequest) GetId() string {
@@ -1130,7 +1218,7 @@ type GetActiveExecutionsResponse struct {
 
 func (x *GetActiveExecutionsResponse) Reset() {
 	*x = GetActiveExecutionsResponse{}
-	mi := &file_types_v1_dkron_proto_msgTypes[18]
+	mi := &file_types_v1_dkron_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1142,7 +1230,7 @@ func (x *GetActiveExecutionsResponse) String() string {
 func (*GetActiveExecutionsResponse) ProtoMessage() {}
 
 func (x *GetActiveExecutionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_types_v1_dkron_proto_msgTypes[18]
+	mi := &file_types_v1_dkron_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1155,7 +1243,7 @@ func (x *GetActiveExecutionsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetActiveExecutionsResponse.ProtoReflect.Descriptor instead.
 func (*GetActiveExecutionsResponse) Descriptor() ([]byte, []int) {
-	return file_types_v1_dkron_proto_rawDescGZIP(), []int{18}
+	return file_types_v1_dkron_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *GetActiveExecutionsResponse) GetExecutions() []*Execution {
@@ -1175,7 +1263,7 @@ type Job_NullableTime struct {
 
 func (x *Job_NullableTime) Reset() {
 	*x = Job_NullableTime{}
-	mi := &file_types_v1_dkron_proto_msgTypes[22]
+	mi := &file_types_v1_dkron_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1187,7 +1275,7 @@ func (x *Job_NullableTime) String() string {
 func (*Job_NullableTime) ProtoMessage() {}
 
 func (x *Job_NullableTime) ProtoReflect() protoreflect.Message {
-	mi := &file_types_v1_dkron_proto_msgTypes[22]
+	mi := &file_types_v1_dkron_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1308,6 +1396,10 @@ const file_types_v1_dkron_proto_rawDesc = "" +
 	"\rRunJobRequest\x12\x19\n" +
 	"\bjob_name\x18\x01 \x01(\tR\ajobName\"1\n" +
 	"\x0eRunJobResponse\x12\x1f\n" +
+	"\x03job\x18\x01 \x01(\v2\r.types.v1.JobR\x03job\"4\n" +
+	"\x17DeleteExecutionsRequest\x12\x19\n" +
+	"\bjob_name\x18\x01 \x01(\tR\ajobName\";\n" +
+	"\x18DeleteExecutionsResponse\x12\x1f\n" +
 	"\x03job\x18\x01 \x01(\v2\r.types.v1.JobR\x03job\"-\n" +
 	"\x10ToggleJobRequest\x12\x19\n" +
 	"\bjob_name\x18\x01 \x01(\tR\ajobName\"4\n" +
@@ -1329,14 +1421,15 @@ const file_types_v1_dkron_proto_rawDesc = "" +
 	"\x1bGetActiveExecutionsResponse\x123\n" +
 	"\n" +
 	"executions\x18\x01 \x03(\v2\x13.types.v1.ExecutionR\n" +
-	"executions2\x93\x06\n" +
+	"executions2\xee\x06\n" +
 	"\x05Dkron\x12;\n" +
 	"\x06GetJob\x12\x17.types.v1.GetJobRequest\x1a\x18.types.v1.GetJobResponse\x12P\n" +
 	"\rExecutionDone\x12\x1e.types.v1.ExecutionDoneRequest\x1a\x1f.types.v1.ExecutionDoneResponse\x127\n" +
 	"\x05Leave\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\x12;\n" +
 	"\x06SetJob\x12\x17.types.v1.SetJobRequest\x1a\x18.types.v1.SetJobResponse\x12D\n" +
 	"\tDeleteJob\x12\x1a.types.v1.DeleteJobRequest\x1a\x1b.types.v1.DeleteJobResponse\x12;\n" +
-	"\x06RunJob\x12\x17.types.v1.RunJobRequest\x1a\x18.types.v1.RunJobResponse\x12D\n" +
+	"\x06RunJob\x12\x17.types.v1.RunJobRequest\x1a\x18.types.v1.RunJobResponse\x12Y\n" +
+	"\x10DeleteExecutions\x12!.types.v1.DeleteExecutionsRequest\x1a\".types.v1.DeleteExecutionsResponse\x12D\n" +
 	"\tToggleJob\x12\x1a.types.v1.ToggleJobRequest\x1a\x1b.types.v1.ToggleJobResponse\x12V\n" +
 	"\x14RaftGetConfiguration\x12\x16.google.protobuf.Empty\x1a&.types.v1.RaftGetConfigurationResponse\x12Q\n" +
 	"\x12RaftRemovePeerByID\x12#.types.v1.RaftRemovePeerByIDRequest\x1a\x16.google.protobuf.Empty\x12T\n" +
@@ -1357,7 +1450,7 @@ func file_types_v1_dkron_proto_rawDescGZIP() []byte {
 	return file_types_v1_dkron_proto_rawDescData
 }
 
-var file_types_v1_dkron_proto_msgTypes = make([]protoimpl.MessageInfo, 25)
+var file_types_v1_dkron_proto_msgTypes = make([]protoimpl.MessageInfo, 27)
 var file_types_v1_dkron_proto_goTypes = []any{
 	(*Job)(nil),                          // 0: types.v1.Job
 	(*PluginConfig)(nil),                 // 1: types.v1.PluginConfig
@@ -1372,72 +1465,77 @@ var file_types_v1_dkron_proto_goTypes = []any{
 	(*ExecutionDoneResponse)(nil),        // 10: types.v1.ExecutionDoneResponse
 	(*RunJobRequest)(nil),                // 11: types.v1.RunJobRequest
 	(*RunJobResponse)(nil),               // 12: types.v1.RunJobResponse
-	(*ToggleJobRequest)(nil),             // 13: types.v1.ToggleJobRequest
-	(*ToggleJobResponse)(nil),            // 14: types.v1.ToggleJobResponse
-	(*RaftServer)(nil),                   // 15: types.v1.RaftServer
-	(*RaftGetConfigurationResponse)(nil), // 16: types.v1.RaftGetConfigurationResponse
-	(*RaftRemovePeerByIDRequest)(nil),    // 17: types.v1.RaftRemovePeerByIDRequest
-	(*GetActiveExecutionsResponse)(nil),  // 18: types.v1.GetActiveExecutionsResponse
-	nil,                                  // 19: types.v1.Job.TagsEntry
-	nil,                                  // 20: types.v1.Job.ExecutorConfigEntry
-	nil,                                  // 21: types.v1.Job.MetadataEntry
-	(*Job_NullableTime)(nil),             // 22: types.v1.Job.NullableTime
-	nil,                                  // 23: types.v1.Job.ProcessorsEntry
-	nil,                                  // 24: types.v1.PluginConfig.ConfigEntry
-	(*timestamppb.Timestamp)(nil),        // 25: google.protobuf.Timestamp
-	(*emptypb.Empty)(nil),                // 26: google.protobuf.Empty
+	(*DeleteExecutionsRequest)(nil),      // 13: types.v1.DeleteExecutionsRequest
+	(*DeleteExecutionsResponse)(nil),     // 14: types.v1.DeleteExecutionsResponse
+	(*ToggleJobRequest)(nil),             // 15: types.v1.ToggleJobRequest
+	(*ToggleJobResponse)(nil),            // 16: types.v1.ToggleJobResponse
+	(*RaftServer)(nil),                   // 17: types.v1.RaftServer
+	(*RaftGetConfigurationResponse)(nil), // 18: types.v1.RaftGetConfigurationResponse
+	(*RaftRemovePeerByIDRequest)(nil),    // 19: types.v1.RaftRemovePeerByIDRequest
+	(*GetActiveExecutionsResponse)(nil),  // 20: types.v1.GetActiveExecutionsResponse
+	nil,                                  // 21: types.v1.Job.TagsEntry
+	nil,                                  // 22: types.v1.Job.ExecutorConfigEntry
+	nil,                                  // 23: types.v1.Job.MetadataEntry
+	(*Job_NullableTime)(nil),             // 24: types.v1.Job.NullableTime
+	nil,                                  // 25: types.v1.Job.ProcessorsEntry
+	nil,                                  // 26: types.v1.PluginConfig.ConfigEntry
+	(*timestamppb.Timestamp)(nil),        // 27: google.protobuf.Timestamp
+	(*emptypb.Empty)(nil),                // 28: google.protobuf.Empty
 }
 var file_types_v1_dkron_proto_depIdxs = []int32{
-	19, // 0: types.v1.Job.tags:type_name -> types.v1.Job.TagsEntry
-	20, // 1: types.v1.Job.executor_config:type_name -> types.v1.Job.ExecutorConfigEntry
-	21, // 2: types.v1.Job.metadata:type_name -> types.v1.Job.MetadataEntry
-	22, // 3: types.v1.Job.last_success:type_name -> types.v1.Job.NullableTime
-	22, // 4: types.v1.Job.last_error:type_name -> types.v1.Job.NullableTime
-	25, // 5: types.v1.Job.next:type_name -> google.protobuf.Timestamp
-	23, // 6: types.v1.Job.processors:type_name -> types.v1.Job.ProcessorsEntry
-	22, // 7: types.v1.Job.expires_at:type_name -> types.v1.Job.NullableTime
-	22, // 8: types.v1.Job.starts_at:type_name -> types.v1.Job.NullableTime
-	24, // 9: types.v1.PluginConfig.config:type_name -> types.v1.PluginConfig.ConfigEntry
+	21, // 0: types.v1.Job.tags:type_name -> types.v1.Job.TagsEntry
+	22, // 1: types.v1.Job.executor_config:type_name -> types.v1.Job.ExecutorConfigEntry
+	23, // 2: types.v1.Job.metadata:type_name -> types.v1.Job.MetadataEntry
+	24, // 3: types.v1.Job.last_success:type_name -> types.v1.Job.NullableTime
+	24, // 4: types.v1.Job.last_error:type_name -> types.v1.Job.NullableTime
+	27, // 5: types.v1.Job.next:type_name -> google.protobuf.Timestamp
+	25, // 6: types.v1.Job.processors:type_name -> types.v1.Job.ProcessorsEntry
+	24, // 7: types.v1.Job.expires_at:type_name -> types.v1.Job.NullableTime
+	24, // 8: types.v1.Job.starts_at:type_name -> types.v1.Job.NullableTime
+	26, // 9: types.v1.PluginConfig.config:type_name -> types.v1.PluginConfig.ConfigEntry
 	0,  // 10: types.v1.SetJobRequest.job:type_name -> types.v1.Job
 	0,  // 11: types.v1.SetJobResponse.job:type_name -> types.v1.Job
 	0,  // 12: types.v1.DeleteJobResponse.job:type_name -> types.v1.Job
 	0,  // 13: types.v1.GetJobResponse.job:type_name -> types.v1.Job
-	25, // 14: types.v1.Execution.started_at:type_name -> google.protobuf.Timestamp
-	25, // 15: types.v1.Execution.finished_at:type_name -> google.protobuf.Timestamp
+	27, // 14: types.v1.Execution.started_at:type_name -> google.protobuf.Timestamp
+	27, // 15: types.v1.Execution.finished_at:type_name -> google.protobuf.Timestamp
 	8,  // 16: types.v1.ExecutionDoneRequest.execution:type_name -> types.v1.Execution
 	0,  // 17: types.v1.RunJobResponse.job:type_name -> types.v1.Job
-	0,  // 18: types.v1.ToggleJobResponse.job:type_name -> types.v1.Job
-	15, // 19: types.v1.RaftGetConfigurationResponse.servers:type_name -> types.v1.RaftServer
-	8,  // 20: types.v1.GetActiveExecutionsResponse.executions:type_name -> types.v1.Execution
-	25, // 21: types.v1.Job.NullableTime.time:type_name -> google.protobuf.Timestamp
-	1,  // 22: types.v1.Job.ProcessorsEntry.value:type_name -> types.v1.PluginConfig
-	6,  // 23: types.v1.Dkron.GetJob:input_type -> types.v1.GetJobRequest
-	9,  // 24: types.v1.Dkron.ExecutionDone:input_type -> types.v1.ExecutionDoneRequest
-	26, // 25: types.v1.Dkron.Leave:input_type -> google.protobuf.Empty
-	2,  // 26: types.v1.Dkron.SetJob:input_type -> types.v1.SetJobRequest
-	4,  // 27: types.v1.Dkron.DeleteJob:input_type -> types.v1.DeleteJobRequest
-	11, // 28: types.v1.Dkron.RunJob:input_type -> types.v1.RunJobRequest
-	13, // 29: types.v1.Dkron.ToggleJob:input_type -> types.v1.ToggleJobRequest
-	26, // 30: types.v1.Dkron.RaftGetConfiguration:input_type -> google.protobuf.Empty
-	17, // 31: types.v1.Dkron.RaftRemovePeerByID:input_type -> types.v1.RaftRemovePeerByIDRequest
-	26, // 32: types.v1.Dkron.GetActiveExecutions:input_type -> google.protobuf.Empty
-	8,  // 33: types.v1.Dkron.SetExecution:input_type -> types.v1.Execution
-	7,  // 34: types.v1.Dkron.GetJob:output_type -> types.v1.GetJobResponse
-	10, // 35: types.v1.Dkron.ExecutionDone:output_type -> types.v1.ExecutionDoneResponse
-	26, // 36: types.v1.Dkron.Leave:output_type -> google.protobuf.Empty
-	3,  // 37: types.v1.Dkron.SetJob:output_type -> types.v1.SetJobResponse
-	5,  // 38: types.v1.Dkron.DeleteJob:output_type -> types.v1.DeleteJobResponse
-	12, // 39: types.v1.Dkron.RunJob:output_type -> types.v1.RunJobResponse
-	14, // 40: types.v1.Dkron.ToggleJob:output_type -> types.v1.ToggleJobResponse
-	16, // 41: types.v1.Dkron.RaftGetConfiguration:output_type -> types.v1.RaftGetConfigurationResponse
-	26, // 42: types.v1.Dkron.RaftRemovePeerByID:output_type -> google.protobuf.Empty
-	18, // 43: types.v1.Dkron.GetActiveExecutions:output_type -> types.v1.GetActiveExecutionsResponse
-	26, // 44: types.v1.Dkron.SetExecution:output_type -> google.protobuf.Empty
-	34, // [34:45] is the sub-list for method output_type
-	23, // [23:34] is the sub-list for method input_type
-	23, // [23:23] is the sub-list for extension type_name
-	23, // [23:23] is the sub-list for extension extendee
-	0,  // [0:23] is the sub-list for field type_name
+	0,  // 18: types.v1.DeleteExecutionsResponse.job:type_name -> types.v1.Job
+	0,  // 19: types.v1.ToggleJobResponse.job:type_name -> types.v1.Job
+	17, // 20: types.v1.RaftGetConfigurationResponse.servers:type_name -> types.v1.RaftServer
+	8,  // 21: types.v1.GetActiveExecutionsResponse.executions:type_name -> types.v1.Execution
+	27, // 22: types.v1.Job.NullableTime.time:type_name -> google.protobuf.Timestamp
+	1,  // 23: types.v1.Job.ProcessorsEntry.value:type_name -> types.v1.PluginConfig
+	6,  // 24: types.v1.Dkron.GetJob:input_type -> types.v1.GetJobRequest
+	9,  // 25: types.v1.Dkron.ExecutionDone:input_type -> types.v1.ExecutionDoneRequest
+	28, // 26: types.v1.Dkron.Leave:input_type -> google.protobuf.Empty
+	2,  // 27: types.v1.Dkron.SetJob:input_type -> types.v1.SetJobRequest
+	4,  // 28: types.v1.Dkron.DeleteJob:input_type -> types.v1.DeleteJobRequest
+	11, // 29: types.v1.Dkron.RunJob:input_type -> types.v1.RunJobRequest
+	13, // 30: types.v1.Dkron.DeleteExecutions:input_type -> types.v1.DeleteExecutionsRequest
+	15, // 31: types.v1.Dkron.ToggleJob:input_type -> types.v1.ToggleJobRequest
+	28, // 32: types.v1.Dkron.RaftGetConfiguration:input_type -> google.protobuf.Empty
+	19, // 33: types.v1.Dkron.RaftRemovePeerByID:input_type -> types.v1.RaftRemovePeerByIDRequest
+	28, // 34: types.v1.Dkron.GetActiveExecutions:input_type -> google.protobuf.Empty
+	8,  // 35: types.v1.Dkron.SetExecution:input_type -> types.v1.Execution
+	7,  // 36: types.v1.Dkron.GetJob:output_type -> types.v1.GetJobResponse
+	10, // 37: types.v1.Dkron.ExecutionDone:output_type -> types.v1.ExecutionDoneResponse
+	28, // 38: types.v1.Dkron.Leave:output_type -> google.protobuf.Empty
+	3,  // 39: types.v1.Dkron.SetJob:output_type -> types.v1.SetJobResponse
+	5,  // 40: types.v1.Dkron.DeleteJob:output_type -> types.v1.DeleteJobResponse
+	12, // 41: types.v1.Dkron.RunJob:output_type -> types.v1.RunJobResponse
+	14, // 42: types.v1.Dkron.DeleteExecutions:output_type -> types.v1.DeleteExecutionsResponse
+	16, // 43: types.v1.Dkron.ToggleJob:output_type -> types.v1.ToggleJobResponse
+	18, // 44: types.v1.Dkron.RaftGetConfiguration:output_type -> types.v1.RaftGetConfigurationResponse
+	28, // 45: types.v1.Dkron.RaftRemovePeerByID:output_type -> google.protobuf.Empty
+	20, // 46: types.v1.Dkron.GetActiveExecutions:output_type -> types.v1.GetActiveExecutionsResponse
+	28, // 47: types.v1.Dkron.SetExecution:output_type -> google.protobuf.Empty
+	36, // [36:48] is the sub-list for method output_type
+	24, // [24:36] is the sub-list for method input_type
+	24, // [24:24] is the sub-list for extension type_name
+	24, // [24:24] is the sub-list for extension extendee
+	0,  // [0:24] is the sub-list for field type_name
 }
 
 func init() { file_types_v1_dkron_proto_init() }
@@ -1451,7 +1549,7 @@ func file_types_v1_dkron_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_types_v1_dkron_proto_rawDesc), len(file_types_v1_dkron_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   25,
+			NumMessages:   27,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

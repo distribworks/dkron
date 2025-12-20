@@ -721,7 +721,44 @@ func (s *Store) SetExecution(ctx context.Context, execution *Execution) (string,
 	return key, nil
 }
 
-// DeleteExecutions removes all executions of a job
+// DeleteExecutions removes all executions of a job and resets counters.
+// This operation is atomic to ensure consistency - if execution deletion succeeds,
+// the counters must be reset, and vice versa. This prevents inconsistent state
+// where executions are deleted but counters still show non-zero values.
+func (s *Store) DeleteExecutions(ctx context.Context, jobName string) error {
+	ctx, span := s.tracer.Start(ctx, "buntdb.delete.executions", trace.WithAttributes(attribute.String("job_name", jobName)))
+	defer span.End()
+
+	err := s.db.Update(func(tx *buntdb.Tx) error {
+		// Delete all executions for the job
+		if err := s.deleteExecutionsTxFunc(jobName)(tx); err != nil {
+			return err
+		}
+
+		// Load the job to reset counters
+		var pbj dkronpb.Job
+		if err := s.getJobTxFunc(jobName, &pbj)(tx); err != nil {
+			return err
+		}
+
+		// Reset counters and timestamps
+		pbj.SuccessCount = 0
+		pbj.ErrorCount = 0
+		pbj.LastSuccess = &dkronpb.Job_NullableTime{HasValue: false}
+		pbj.LastError = &dkronpb.Job_NullableTime{HasValue: false}
+
+		// Save the updated job
+		if err := s.setJobTxFunc(&pbj)(tx); err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	return err
+}
+
+// deleteExecutionsTxFunc removes all executions of a job (internal helper)
 func (s *Store) deleteExecutionsTxFunc(jobName string) func(tx *buntdb.Tx) error {
 	return func(tx *buntdb.Tx) error {
 		var delkeys []string

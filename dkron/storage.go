@@ -12,6 +12,7 @@ import (
 type Storage interface {
 	SetJob(ctx context.Context, job *Job, copyDependentJobs bool) error
 	DeleteJob(ctx context.Context, name string) (*Job, error)
+	DeleteExecutions(ctx context.Context, jobName string) error
 	SetExecution(ctx context.Context, execution *Execution) (string, error)
 	SetExecutionDone(ctx context.Context, execution *Execution) (bool, error)
 	GetJobs(ctx context.Context, options *JobOptions) ([]*Job, error)

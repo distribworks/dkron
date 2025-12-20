@@ -132,6 +132,29 @@ func (grpcs *GRPCServer) DeleteJob(ctx context.Context, delJobReq *typesv1.Delet
 	return &typesv1.DeleteJobResponse{Job: jpb}, nil
 }
 
+// DeleteExecutions removes all executions for a job and resets counters
+func (grpcs *GRPCServer) DeleteExecutions(ctx context.Context, delExecReq *typesv1.DeleteExecutionsRequest) (*typesv1.DeleteExecutionsResponse, error) {
+	defer metrics.MeasureSince([]string{"grpc", "delete_executions"}, time.Now())
+	grpcs.logger.WithField("job", delExecReq.GetJobName()).Debug("grpc: Received DeleteExecutions")
+
+	cmd, err := Encode(DeleteExecutionsType, delExecReq)
+	if err != nil {
+		return nil, err
+	}
+	af := grpcs.agent.raft.Apply(cmd, raftTimeout)
+	if err := af.Error(); err != nil {
+		return nil, err
+	}
+	res := af.Response()
+	job, ok := res.(*Job)
+	if !ok {
+		return nil, fmt.Errorf("grpc: Error wrong response from apply in DeleteExecutions: %v", res)
+	}
+	jpb := job.ToProto()
+
+	return &typesv1.DeleteExecutionsResponse{Job: jpb}, nil
+}
+
 // GetJob loads the job from the datastore
 func (grpcs *GRPCServer) GetJob(ctx context.Context, getJobReq *typesv1.GetJobRequest) (*typesv1.GetJobResponse, error) {
 	defer metrics.MeasureSince([]string{"grpc", "get_job"}, time.Now())

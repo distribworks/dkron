@@ -128,6 +128,7 @@ func (h *HTTPTransport) APIRoutes(r *gin.RouterGroup, middleware ...gin.HandlerF
 	// Place fallback routes last
 	jobs.GET("/:job", h.jobGetHandler)
 	jobs.GET("/:job/executions", h.executionsHandler)
+	jobs.DELETE("/:job/executions", h.executionsDeleteHandler)
 	jobs.GET("/:job/executions/:execution", h.executionHandler)
 }
 
@@ -404,6 +405,23 @@ func (h *HTTPTransport) executionsHandler(c *gin.Context) {
 
 	c.Header("X-Total-Count", strconv.Itoa(len(executions)))
 	renderJSON(c, http.StatusOK, apiExecutions)
+}
+
+func (h *HTTPTransport) executionsDeleteHandler(c *gin.Context) {
+	jobName := c.Param("job")
+
+	// Call gRPC DeleteExecutions
+	job, err := h.agent.GRPCClient.DeleteExecutions(jobName)
+	if err != nil {
+		// Check for specific error types to return appropriate status codes
+		if err.Error() == "rpc error: code = NotFound desc = not found" {
+			_ = c.AbortWithError(http.StatusNotFound, err)
+		} else {
+			_ = c.AbortWithError(http.StatusInternalServerError, err)
+		}
+		return
+	}
+	renderJSON(c, http.StatusOK, job)
 }
 
 func (h *HTTPTransport) executionHandler(c *gin.Context) {

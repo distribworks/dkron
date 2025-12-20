@@ -28,6 +28,7 @@ const (
 	Dkron_SetJob_FullMethodName               = "/types.v1.Dkron/SetJob"
 	Dkron_DeleteJob_FullMethodName            = "/types.v1.Dkron/DeleteJob"
 	Dkron_RunJob_FullMethodName               = "/types.v1.Dkron/RunJob"
+	Dkron_DeleteExecutions_FullMethodName     = "/types.v1.Dkron/DeleteExecutions"
 	Dkron_ToggleJob_FullMethodName            = "/types.v1.Dkron/ToggleJob"
 	Dkron_RaftGetConfiguration_FullMethodName = "/types.v1.Dkron/RaftGetConfiguration"
 	Dkron_RaftRemovePeerByID_FullMethodName   = "/types.v1.Dkron/RaftRemovePeerByID"
@@ -50,6 +51,7 @@ type DkronClient interface {
 	SetJob(ctx context.Context, in *SetJobRequest, opts ...grpc.CallOption) (*SetJobResponse, error)
 	DeleteJob(ctx context.Context, in *DeleteJobRequest, opts ...grpc.CallOption) (*DeleteJobResponse, error)
 	RunJob(ctx context.Context, in *RunJobRequest, opts ...grpc.CallOption) (*RunJobResponse, error)
+	DeleteExecutions(ctx context.Context, in *DeleteExecutionsRequest, opts ...grpc.CallOption) (*DeleteExecutionsResponse, error)
 	ToggleJob(ctx context.Context, in *ToggleJobRequest, opts ...grpc.CallOption) (*ToggleJobResponse, error)
 	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
 	RaftGetConfiguration(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*RaftGetConfigurationResponse, error)
@@ -129,6 +131,16 @@ func (c *dkronClient) RunJob(ctx context.Context, in *RunJobRequest, opts ...grp
 	return out, nil
 }
 
+func (c *dkronClient) DeleteExecutions(ctx context.Context, in *DeleteExecutionsRequest, opts ...grpc.CallOption) (*DeleteExecutionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteExecutionsResponse)
+	err := c.cc.Invoke(ctx, Dkron_DeleteExecutions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *dkronClient) ToggleJob(ctx context.Context, in *ToggleJobRequest, opts ...grpc.CallOption) (*ToggleJobResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ToggleJobResponse)
@@ -194,6 +206,7 @@ type DkronServer interface {
 	SetJob(context.Context, *SetJobRequest) (*SetJobResponse, error)
 	DeleteJob(context.Context, *DeleteJobRequest) (*DeleteJobResponse, error)
 	RunJob(context.Context, *RunJobRequest) (*RunJobResponse, error)
+	DeleteExecutions(context.Context, *DeleteExecutionsRequest) (*DeleteExecutionsResponse, error)
 	ToggleJob(context.Context, *ToggleJobRequest) (*ToggleJobResponse, error)
 	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
 	RaftGetConfiguration(context.Context, *emptypb.Empty) (*RaftGetConfigurationResponse, error)
@@ -230,6 +243,9 @@ func (UnimplementedDkronServer) DeleteJob(context.Context, *DeleteJobRequest) (*
 }
 func (UnimplementedDkronServer) RunJob(context.Context, *RunJobRequest) (*RunJobResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method RunJob not implemented")
+}
+func (UnimplementedDkronServer) DeleteExecutions(context.Context, *DeleteExecutionsRequest) (*DeleteExecutionsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteExecutions not implemented")
 }
 func (UnimplementedDkronServer) ToggleJob(context.Context, *ToggleJobRequest) (*ToggleJobResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ToggleJob not implemented")
@@ -375,6 +391,24 @@ func _Dkron_RunJob_Handler(srv interface{}, ctx context.Context, dec func(interf
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Dkron_DeleteExecutions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteExecutionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DkronServer).DeleteExecutions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Dkron_DeleteExecutions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DkronServer).DeleteExecutions(ctx, req.(*DeleteExecutionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Dkron_ToggleJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ToggleJobRequest)
 	if err := dec(in); err != nil {
@@ -495,6 +529,10 @@ var Dkron_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RunJob",
 			Handler:    _Dkron_RunJob_Handler,
+		},
+		{
+			MethodName: "DeleteExecutions",
+			Handler:    _Dkron_DeleteExecutions_Handler,
 		},
 		{
 			MethodName: "ToggleJob",

@@ -94,6 +94,14 @@ message RunJobResponse {
   Job job = 1;
 }
 
+message DeleteExecutionsRequest {
+  string job_name = 1;
+}
+
+message DeleteExecutionsResponse {
+  Job job = 1;
+}
+
 message ToggleJobRequest {
   string job_name = 1;
 }
@@ -135,6 +143,7 @@ service Dkron {
   rpc SetJob(SetJobRequest) returns (SetJobResponse);
   rpc DeleteJob(DeleteJobRequest) returns (DeleteJobResponse);
   rpc RunJob(RunJobRequest) returns (RunJobResponse);
+  rpc DeleteExecutions(DeleteExecutionsRequest) returns (DeleteExecutionsResponse);
   rpc ToggleJob(ToggleJobRequest) returns (ToggleJobResponse);
   // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
   rpc RaftGetConfiguration(google.protobuf.Empty) returns (RaftGetConfigurationResponse);

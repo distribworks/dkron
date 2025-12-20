@@ -386,6 +386,32 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/execution'
+    delete:
+      tags:
+        - executions
+      description: |
+        Delete all executions for a job and reset counters (success_count, error_count, last_success, last_error).
+      operationId: deleteExecutionsByJob
+      parameters:
+        - name: job_name
+          in: path
+          description: The job whose executions should be deleted.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response - returns the updated job with reset counters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/job'
+        "404":
+          description: Job not found
+        "500":
+          description: Internal server error
   /jobs/{job_name}/executions/{execution}:
     get:
       tags:
