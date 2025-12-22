@@ -292,13 +292,17 @@ func (s *Store) SetExecutionDone(ctx context.Context, execution *Execution) (boo
 			pbj.LastSuccess.Time = pbe.FinishedAt
 			pbj.SuccessCount++
 			// Emit metrics for successful job execution
+			// Use both hashicorp/go-metrics (for statsd) and prometheus/client_golang (for Prometheus)
 			metrics.IncrCounterWithLabels([]string{"job", "executions_succeeded_total"}, 1, []metrics.Label{{Name: "job_name", Value: execution.JobName}})
+			JobExecutionsSucceededTotal.WithLabelValues(execution.JobName).Inc()
 		} else {
 			pbj.LastError.HasValue = true
 			pbj.LastError.Time = pbe.FinishedAt
 			pbj.ErrorCount++
 			// Emit metrics for failed job execution
+			// Use both hashicorp/go-metrics (for statsd) and prometheus/client_golang (for Prometheus)
 			metrics.IncrCounterWithLabels([]string{"job", "executions_failed_total"}, 1, []metrics.Label{{Name: "job_name", Value: execution.JobName}})
+			JobExecutionsFailedTotal.WithLabelValues(execution.JobName).Inc()
 		}
 
 		status, err := s.computeStatus(pbj.Name, pbe.Group, tx)
