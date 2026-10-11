@@ -300,6 +300,17 @@ func (grpcs *GRPCServer) completeExecution(ctx context.Context, execDoneReq *typ
 		}, nil
 	}
 
+	// If the execution failed and stop_on_failure is set, disable the job
+	if !execution.Success && job.StopOnFailure {
+		grpcs.logger.WithField("job", job.Name).Warn("grpc: Disabling job due to stop_on_failure")
+		job.Disabled = true
+		if err := grpcs.agent.applySetJob(job.ToProto()); err != nil {
+			grpcs.logger.WithError(err).WithField("job", job.Name).Error("grpc: Failed to disable job on failure")
+		} else {
+			grpcs.agent.sched.RemoveJob(job.Name)
+		}
+	}
+
 	exg, err := grpcs.agent.Store.GetExecutionGroup(ctx, execution, &ExecutionOptions{
 		Timezone: job.GetTimeLocation(),
 	})

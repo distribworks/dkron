@@ -147,6 +147,9 @@ type Job struct {
 	// The job will not be executed after this time.
 	ExpiresAt ntime.NullableTime `json:"expires_at"`
 
+	// If enabled, the job will be disabled automatically when it fails after all retries.
+	StopOnFailure bool `json:"stop_on_failure"`
+
 	logger *logrus.Entry
 }
 
@@ -174,6 +177,7 @@ func NewJobFromProto(in *proto.Job, logger *logrus.Entry) *Job {
 		Metadata:       in.Metadata,
 		Next:           in.GetNext().AsTime(),
 		Ephemeral:      in.Ephemeral,
+		StopOnFailure:  in.StopOnFailure,
 		logger:         logger,
 	}
 	if in.GetLastSuccess().GetHasValue() {
@@ -266,6 +270,7 @@ func (j *Job) ToProto() *proto.Job {
 		Ephemeral:      j.Ephemeral,
 		ExpiresAt:      expiresAt,
 		StartsAt:       startsAt,
+		StopOnFailure:  j.StopOnFailure,
 	}
 }
 

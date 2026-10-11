@@ -252,6 +252,46 @@ func TestGRPCExecutionDone(t *testing.T) {
 		assert.NotNil(t, resp)
 		assert.Equal(t, []byte("retry"), resp.Payload)
 	})
+	t.Run("Test stop_on_failure disables job on failure", func(t *testing.T) {
+		testJob.Name = "test-stop-on-failure"
+		testJob.Schedule = "0 * * * * *"
+		testJob.Retries = 0
+		testJob.DependentJobs = nil
+		testJob.Ephemeral = false
+		testJob.Disabled = false
+		testJob.StopOnFailure = true
+		testExecution.JobName = testJob.Name
+		testExecution.Success = false
+		testExecution.Attempt = 1
+		testExecution.NodeName = a.config.NodeName
+		testExecution.Output = "failure output"
+
+		err = a.Store.SetJob(ctx, testJob, true)
+		require.NoError(t, err)
+
+		// Add job to scheduler
+		job := NewJobFromProto(testJob.ToProto(), a.logger)
+		job.Agent = a
+		err = a.sched.AddJob(job)
+		require.NoError(t, err)
+
+		// Store initial execution to establish group
+		_, err = a.Store.SetExecution(ctx, testExecution)
+		require.NoError(t, err)
+
+		// Call ExecutionDone with a failed execution - retries are exhausted, stop_on_failure is true
+		resp, err := a.GRPCServer.(*GRPCServer).ExecutionDone(ctx, &typesv1.ExecutionDoneRequest{
+			Execution: testExecution.ToProto(),
+		})
+		require.NoError(t, err)
+		assert.NotNil(t, resp)
+		assert.Equal(t, []byte("saved"), resp.Payload)
+
+		// Verify that the job was disabled
+		disabledJob, err := a.Store.GetJob(ctx, testJob.Name, nil)
+		require.NoError(t, err)
+		assert.True(t, disabledJob.Disabled, "job should be disabled after stop_on_failure")
+	})
 }
 
 func TestGRPCSetExecution_returns_error_when_raft_unavailable(t *testing.T) {

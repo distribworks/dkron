@@ -36,6 +36,7 @@ message Job {
   bool ephemeral = 28;
   NullableTime expires_at = 29;
   NullableTime starts_at = 30;
+  bool stop_on_failure = 31;
 }
 
 message PluginConfig {

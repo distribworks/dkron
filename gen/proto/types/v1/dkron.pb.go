@@ -52,6 +52,7 @@ type Job struct {
 	Ephemeral      bool                     `protobuf:"varint,28,opt,name=ephemeral,proto3" json:"ephemeral,omitempty"`
 	ExpiresAt      *Job_NullableTime        `protobuf:"bytes,29,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
 	StartsAt       *Job_NullableTime        `protobuf:"bytes,30,opt,name=starts_at,json=startsAt,proto3" json:"starts_at,omitempty"`
+	StopOnFailure  bool                     `protobuf:"varint,31,opt,name=stop_on_failure,json=stopOnFailure,proto3" json:"stop_on_failure,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -259,6 +260,13 @@ func (x *Job) GetStartsAt() *Job_NullableTime {
 		return x.StartsAt
 	}
 	return nil
+}
+
+func (x *Job) GetStopOnFailure() bool {
+	if x != nil {
+		return x.StopOnFailure
+	}
+	return false
 }
 
 type PluginConfig struct {
@@ -1309,8 +1317,7 @@ var File_types_v1_dkron_proto protoreflect.FileDescriptor
 
 const file_types_v1_dkron_proto_rawDesc = "" +
 	"\n" +
-	"\x14types/v1/dkron.proto\x12\btypes.v1\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xdc\n" +
-	"\n" +
+	"\x14types/v1/dkron.proto\x12\btypes.v1\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x84\v\n" +
 	"\x03Job\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1a\n" +
 	"\btimezone\x18\x02 \x01(\tR\btimezone\x12\x1a\n" +
@@ -1344,7 +1351,8 @@ const file_types_v1_dkron_proto_rawDesc = "" +
 	"\tephemeral\x18\x1c \x01(\bR\tephemeral\x129\n" +
 	"\n" +
 	"expires_at\x18\x1d \x01(\v2\x1a.types.v1.Job.NullableTimeR\texpiresAt\x127\n" +
-	"\tstarts_at\x18\x1e \x01(\v2\x1a.types.v1.Job.NullableTimeR\bstartsAt\x1a7\n" +
+	"\tstarts_at\x18\x1e \x01(\v2\x1a.types.v1.Job.NullableTimeR\bstartsAt\x12&\n" +
+	"\x0fstop_on_failure\x18\x1f \x01(\bR\rstopOnFailure\x1a7\n" +
 	"\tTagsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\x1aA\n" +
