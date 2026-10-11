@@ -50,8 +50,11 @@ func (a *Agent) nodeJoin(me serf.MemberEvent) {
 		}
 		a.peerLock.Unlock()
 
-		// If we still expecting to bootstrap, may need to handle this
-		if a.config.BootstrapExpect != 0 {
+		// If we still expecting to bootstrap, may need to handle this.
+		// Ignore the local member join event so a server that just joined an
+		// existing cluster does not try to bootstrap a new raft cluster from
+		// its own empty state.
+		if a.config.BootstrapExpect != 0 && m.Name != a.config.NodeName {
 			a.maybeBootstrap()
 		}
 	}
