@@ -7,6 +7,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/tidwall/buntdb"
 	"go.opentelemetry.io/otel"
 )
 
@@ -103,4 +104,56 @@ func TestStoreDeleteExecutionsNonExistentJob(t *testing.T) {
 	// Try to delete executions for a non-existent job
 	err = s.DeleteExecutions(ctx, "non_existent_job")
 	assert.Error(t, err) // Should error because job doesn't exist
+}
+
+func TestStoreDeleteExecutionsDoesNotDeletePrefixedJobExecutions(t *testing.T) {
+	log := getTestLogger()
+	s, err := NewStore(log, otel.Tracer("test"))
+	require.NoError(t, err)
+	defer s.Shutdown()
+
+	ctx := context.Background()
+
+	for _, jobName := range []string{"daily", "daily_2"} {
+		err = s.SetJob(ctx, &Job{
+			Name:           jobName,
+			Schedule:       "@every 1m",
+			Executor:       "shell",
+			ExecutorConfig: map[string]string{"command": "date"},
+		}, true)
+		require.NoError(t, err)
+	}
+
+	for _, exec := range []*Execution{
+		{
+			JobName:    "daily",
+			StartedAt:  time.Now().UTC(),
+			FinishedAt: time.Now().UTC(),
+			Success:    true,
+			Output:     "daily",
+			NodeName:   "node1",
+		},
+		{
+			JobName:    "daily_2",
+			StartedAt:  time.Now().UTC().Add(time.Second),
+			FinishedAt: time.Now().UTC().Add(time.Second),
+			Success:    true,
+			Output:     "daily_2",
+			NodeName:   "node1",
+		},
+	} {
+		_, err = s.SetExecution(ctx, exec)
+		require.NoError(t, err)
+	}
+
+	err = s.DeleteExecutions(ctx, "daily")
+	require.NoError(t, err)
+
+	_, err = s.GetExecutions(ctx, "daily", &ExecutionOptions{})
+	assert.ErrorIs(t, err, buntdb.ErrNotFound)
+
+	executions, err := s.GetExecutions(ctx, "daily_2", &ExecutionOptions{})
+	require.NoError(t, err)
+	require.Len(t, executions, 1)
+	assert.Equal(t, "daily_2", executions[0].JobName)
 }

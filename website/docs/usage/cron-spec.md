@@ -92,6 +92,8 @@ Example: `@every 1h30m10s` runs every 1 hour, 30 minutes, and 10 seconds.
 
 Note: The interval does not account for job runtime. For example, if a job takes 3 minutes to run, and it is scheduled to run every 5 minutes, it will have only 2 minutes of idle time between each run.
 
+Important: `@every` descriptors do not support the `~` hash spread. When many jobs use the same `@every` value, they align to the second when the scheduler starts and can create periodic load spikes. For jobs that should run every `N` minutes where `N` divides 60, prefer `~ */N * * * *` so the seconds field spreads load deterministically by job name.
+
 ## One-time Execution
 
 To schedule a job to be executed just once at a specific time:

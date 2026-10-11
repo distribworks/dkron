@@ -510,6 +510,10 @@ func (s *Store) GetExecutions(ctx context.Context, jobName string, opts *Executi
 	ctx, span := s.tracer.Start(ctx, "buntdb.get.executions", trace.WithAttributes(attribute.String("job_name", jobName)))
 	defer span.End()
 
+	if opts == nil {
+		opts = &ExecutionOptions{}
+	}
+
 	prefix := fmt.Sprintf("%s:%s:", executionsPrefix, jobName)
 
 	kvs, err := s.list(prefix, true, opts)
@@ -517,7 +521,14 @@ func (s *Store) GetExecutions(ctx context.Context, jobName string, opts *Executi
 		return nil, err
 	}
 
-	return s.unmarshalExecutions(kvs, opts.Timezone)
+	executions, err := s.unmarshalExecutions(kvs, opts.Timezone)
+	if err != nil {
+		return nil, err
+	}
+
+	sortExecutions(executions, opts)
+
+	return executions, nil
 }
 
 // GetExecution returns a specific execution by job name and execution name.
@@ -573,22 +584,20 @@ func (s *Store) list(prefix string, checkRoot bool, opts *ExecutionOptions) ([]k
 
 func (*Store) listTxFunc(prefix string, kvs *[]kv, found *bool, opts *ExecutionOptions) func(tx *buntdb.Tx) error {
 	fnc := func(key, value string) bool {
-		if strings.HasPrefix(key, prefix) {
-			*found = true
-			// ignore self in listing
-			if !bytes.Equal(trimDirectoryKey([]byte(key)), []byte(prefix)) {
-				kv := kv{Key: key, Value: []byte(value)}
-				*kvs = append(*kvs, kv)
-			}
+		*found = true
+		// ignore self in listing
+		if !bytes.Equal(trimDirectoryKey([]byte(key)), []byte(prefix)) {
+			kv := kv{Key: key, Value: []byte(value)}
+			*kvs = append(*kvs, kv)
 		}
 		return true
 	}
 
 	return func(tx *buntdb.Tx) (err error) {
 		if opts.Order == "DESC" {
-			err = tx.Descend(opts.Sort, fnc)
+			err = tx.DescendKeys(prefix+"*", fnc)
 		} else {
-			err = tx.Ascend(opts.Sort, fnc)
+			err = tx.AscendKeys(prefix+"*", fnc)
 		}
 		return err
 	}
@@ -805,18 +814,18 @@ func (s *Store) DeleteExecutions(ctx context.Context, jobName string) error {
 func (s *Store) deleteExecutionsTxFunc(jobName string) func(tx *buntdb.Tx) error {
 	return func(tx *buntdb.Tx) error {
 		var delkeys []string
-		prefix := fmt.Sprintf("%s:%s", executionsPrefix, jobName)
-		if err := tx.Ascend("", func(key, value string) bool {
-			if strings.HasPrefix(key, prefix) {
-				delkeys = append(delkeys, key)
-			}
+		prefix := fmt.Sprintf("%s:%s:", executionsPrefix, jobName)
+		if err := tx.AscendKeys(prefix+"*", func(key, value string) bool {
+			delkeys = append(delkeys, key)
 			return true
 		}); err != nil {
 			return err
 		}
 
 		for _, k := range delkeys {
-			_, _ = tx.Delete(k)
+			if _, err := tx.Delete(k); err != nil {
+				return err
+			}
 		}
 
 		return nil
@@ -922,6 +931,32 @@ func trimDirectoryKey(key []byte) []byte {
 
 func isDirectoryKey(key []byte) bool {
 	return len(key) > 0 && key[len(key)-1] == ':'
+}
+
+func sortExecutions(executions []*Execution, opts *ExecutionOptions) {
+	if opts == nil || opts.Sort == "" {
+		return
+	}
+
+	less := func(i, j int) bool {
+		switch opts.Sort {
+		case "started_at":
+			return executions[i].StartedAt.Before(executions[j].StartedAt)
+		case "finished_at":
+			return executions[i].FinishedAt.Before(executions[j].FinishedAt)
+		case "attempt":
+			return executions[i].Attempt < executions[j].Attempt
+		default:
+			return executions[i].Key() < executions[j].Key()
+		}
+	}
+
+	sort.SliceStable(executions, func(i, j int) bool {
+		if opts.Order == "DESC" {
+			return less(j, i)
+		}
+		return less(i, j)
+	})
 }
 
 // formatStatDate formats a time to the date key format used in stats storage

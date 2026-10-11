@@ -313,6 +313,59 @@ func Test_computeStatus(t *testing.T) {
 	require.NoError(t, err)
 }
 
+func TestStore_GetExecutions_SortsWithinJobPrefixRange(t *testing.T) {
+	log := getTestLogger()
+	s, err := NewStore(log, otel.Tracer("test"))
+	require.NoError(t, err)
+	defer s.Shutdown() // nolint: errcheck
+
+	ctx := context.Background()
+	base := time.Now().UTC()
+
+	older := &Execution{
+		JobName:    "daily",
+		StartedAt:  base,
+		FinishedAt: base,
+		Success:    true,
+		Output:     "older",
+		NodeName:   "node1",
+	}
+	newer := &Execution{
+		JobName:    "daily",
+		StartedAt:  base.Add(time.Second),
+		FinishedAt: base.Add(time.Second),
+		Success:    true,
+		Output:     "newer",
+		NodeName:   "node1",
+	}
+	otherJob := &Execution{
+		JobName:    "daily_2",
+		StartedAt:  base.Add(2 * time.Second),
+		FinishedAt: base.Add(2 * time.Second),
+		Success:    true,
+		Output:     "other",
+		NodeName:   "node2",
+	}
+
+	_, err = s.SetExecution(ctx, older)
+	require.NoError(t, err)
+	_, err = s.SetExecution(ctx, newer)
+	require.NoError(t, err)
+	_, err = s.SetExecution(ctx, otherJob)
+	require.NoError(t, err)
+
+	execs, err := s.GetExecutions(ctx, "daily", &ExecutionOptions{
+		Sort:  "started_at",
+		Order: "DESC",
+	})
+	require.NoError(t, err)
+	require.Len(t, execs, 2)
+	assert.Equal(t, "daily", execs[0].JobName)
+	assert.Equal(t, "daily", execs[1].JobName)
+	assert.Equal(t, newer.Key(), execs[0].Id)
+	assert.Equal(t, older.Key(), execs[1].Id)
+}
+
 func TestStore_GetRunningExecutions(t *testing.T) {
 	log := getTestLogger()
 	s, err := NewStore(log, otel.Tracer("test"))
