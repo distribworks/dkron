@@ -14,8 +14,15 @@ message ExecuteResponse {
   string error = 2;
 }
 
+message ConfigSchemaRequest {}
+
+message ConfigSchemaResponse {
+  string schema = 1;
+}
+
 service ExecutorService {
   rpc Execute(ExecuteRequest) returns (ExecuteResponse);
+  rpc ConfigSchema(ConfigSchemaRequest) returns (ConfigSchemaResponse);
 }
 
 message StatusUpdateRequest {

@@ -16,6 +16,29 @@ import (
 type GCPPubSub struct {
 }
 
+func (g *GCPPubSub) ConfigSchema() (string, error) {
+	return `{
+  "type": "object",
+  "required": ["project", "topic"],
+  "anyOf": [
+    {"required": ["data"]},
+    {"required": ["attributes"]}
+  ],
+  "properties": {
+    "project": {"type": "string", "title": "Project"},
+    "topic": {"type": "string", "title": "Topic"},
+    "data": {"type": "string", "title": "Base64 data", "minLength": 1},
+    "attributes": {
+      "type": "object",
+      "title": "Attributes",
+      "description": "Pub/Sub message attributes.",
+      "minProperties": 1,
+      "additionalProperties": {"type": "string"}
+    }
+  }
+}`, nil
+}
+
 const (
 	configProjectName    = "project"
 	configTopicName      = "topic"

@@ -32,6 +32,20 @@ const (
 
 type GRPC struct{}
 
+func (g *GRPC) ConfigSchema() (string, error) {
+	return `{
+  "type": "object",
+  "required": ["url"],
+  "properties": {
+    "url": {"type": "string", "title": "URL", "description": "host:port/package.Service/Method"},
+    "body": {"type": "string", "title": "Body"},
+    "headers": {"type": "string", "title": "Headers", "description": "JSON array of headers."},
+    "timeout": {"type": "string", "title": "Timeout", "description": "Timeout in seconds."},
+    "expectCode": {"type": "string", "title": "Expected gRPC code"}
+  }
+}`, nil
+}
+
 // Execute Process method of the plugin
 // "executor": "grpc",
 //

@@ -24,6 +24,25 @@ const (
 type Kafka struct {
 }
 
+func (s *Kafka) ConfigSchema() (string, error) {
+	return `{
+  "type": "object",
+  "required": ["brokerAddress", "topic"],
+  "properties": {
+    "brokerAddress": {"type": "string", "title": "Broker addresses", "description": "Comma-separated Kafka broker addresses."},
+    "topic": {"type": "string", "title": "Topic"},
+    "key": {"type": "string", "title": "Key"},
+    "message": {"type": "string", "title": "Message"},
+    "tlsEnable": {"type": "string", "title": "Enable TLS", "enum": ["false", "true"], "default": "false"},
+    "tlsInsecureSkipVerify": {"type": "string", "title": "Skip TLS verification", "enum": ["false", "true"], "default": "false"},
+    "saslUsername": {"type": "string", "title": "SASL username"},
+    "saslPassword": {"type": "string", "title": "SASL password"},
+    "saslMechanism": {"type": "string", "title": "SASL mechanism", "enum": ["", "sha256", "sha512"], "default": ""},
+    "debug": {"type": "string", "title": "Debug", "enum": ["", "true"], "default": ""}
+  }
+}`, nil
+}
+
 // Execute Process method of the plugin
 // "executor": "kafka",
 //

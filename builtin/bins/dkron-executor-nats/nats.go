@@ -22,6 +22,21 @@ const (
 type Nats struct {
 }
 
+func (s *Nats) ConfigSchema() (string, error) {
+	return `{
+  "type": "object",
+  "required": ["url", "subject"],
+  "properties": {
+    "url": {"type": "string", "title": "URL"},
+    "subject": {"type": "string", "title": "Subject"},
+    "message": {"type": "string", "title": "Message"},
+    "userName": {"type": "string", "title": "Username"},
+    "password": {"type": "string", "title": "Password"},
+    "debug": {"type": "string", "title": "Debug", "enum": ["", "true"], "default": ""}
+  }
+}`, nil
+}
+
 // Execute Process method of the plugin
 // "executor": "nats",
 //

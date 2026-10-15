@@ -154,6 +154,7 @@ func (h *HTTPTransport) APIRoutes(r *gin.RouterGroup, middleware ...gin.HandlerF
 	v1.POST("/unpause", h.unpauseHandler)
 
 	v1.GET("/stats", h.statsHandler)
+	v1.GET("/plugins/executors", h.executorPluginsHandler)
 
 	v1.POST("/jobs", h.jobCreateOrUpdateHandler)
 	v1.PATCH("/jobs", h.jobCreateOrUpdateHandler)
@@ -258,6 +259,40 @@ func (h *HTTPTransport) jobsHandler(c *gin.Context) {
 
 	c.Header("X-Total-Count", strconv.Itoa(len(jobs)))
 	renderJSON(c, http.StatusOK, jobs[s:e])
+}
+
+type executorPluginResponse struct {
+	ID     string           `json:"id"`
+	Name   string           `json:"name"`
+	Schema *json.RawMessage `json:"schema,omitempty"`
+}
+
+func (h *HTTPTransport) executorPluginsHandler(c *gin.Context) {
+	names := make([]string, 0, len(h.agent.ExecutorPlugins))
+	for name := range h.agent.ExecutorPlugins {
+		names = append(names, name)
+	}
+	sort.Strings(names)
+
+	result := make([]executorPluginResponse, 0, len(names))
+	for _, name := range names {
+		item := executorPluginResponse{
+			ID:   name,
+			Name: name,
+		}
+		if schema := h.agent.ExecutorPluginSchemas[name]; schema != "" {
+			raw := json.RawMessage(schema)
+			if json.Valid(raw) {
+				item.Schema = &raw
+			} else {
+				h.logger.WithField("plugin", name).Warn("api: ignoring invalid executor config schema")
+			}
+		}
+		result = append(result, item)
+	}
+
+	c.Header("X-Total-Count", strconv.Itoa(len(result)))
+	renderJSON(c, http.StatusOK, result)
 }
 
 func (h *HTTPTransport) jobGetHandler(c *gin.Context) {

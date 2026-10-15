@@ -14,6 +14,27 @@ import (
 // RabbitMQ process publish rabbitmq message when Execute method is called.
 type RabbitMQ struct{}
 
+func (r *RabbitMQ) ConfigSchema() (string, error) {
+	return `{
+  "type": "object",
+  "required": ["url", "queue.name"],
+  "properties": {
+    "url": {"type": "string", "title": "URL"},
+    "exchange": {"type": "string", "title": "Exchange"},
+    "queue.name": {"type": "string", "title": "Queue name"},
+    "queue.create": {"type": "string", "title": "Create queue", "enum": ["false", "true"], "default": "false"},
+    "queue.durable": {"type": "string", "title": "Durable queue", "enum": ["false", "true"], "default": "false"},
+    "queue.auto_delete": {"type": "string", "title": "Auto-delete queue", "enum": ["false", "true"], "default": "false"},
+    "queue.exclusive": {"type": "string", "title": "Exclusive queue", "enum": ["false", "true"], "default": "false"},
+    "message.content_type": {"type": "string", "title": "Content type"},
+    "message.delivery_mode": {"type": "string", "title": "Delivery mode"},
+    "message.messageId": {"type": "string", "title": "Message ID"},
+    "message.body": {"type": "string", "title": "Message body"},
+    "message.base64Body": {"type": "string", "title": "Base64 message body"}
+  }
+}`, nil
+}
+
 // Execute method of the plugin
 // "executor": "rabbitmq",
 //

@@ -63,6 +63,23 @@ func New() *HTTP {
 	}
 }
 
+func (s *HTTP) ConfigSchema() (string, error) {
+	return `{
+  "type": "object",
+  "required": ["method", "url"],
+  "properties": {
+    "method": {"type": "string", "title": "Method", "enum": ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"]},
+    "url": {"type": "string", "title": "URL"},
+    "headers": {"type": "string", "title": "Headers", "description": "JSON array of headers, for example [\"Content-Type: application/json\"]."},
+    "body": {"type": "string", "title": "Body"},
+    "timeout": {"type": "string", "title": "Timeout", "description": "Timeout in seconds."},
+    "expectCode": {"type": "string", "title": "Expected status codes", "description": "Comma-separated HTTP status codes."},
+    "expectBody": {"type": "string", "title": "Expected body pattern", "description": "Regular expression matched against the response body."},
+    "debug": {"type": "string", "title": "Debug", "enum": ["", "true"], "default": ""}
+  }
+}`, nil
+}
+
 // Execute Process method of the plugin
 // "executor": "http",
 //

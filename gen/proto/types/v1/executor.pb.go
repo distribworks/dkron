@@ -135,6 +135,86 @@ func (x *ExecuteResponse) GetError() string {
 	return ""
 }
 
+type ConfigSchemaRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ConfigSchemaRequest) Reset() {
+	*x = ConfigSchemaRequest{}
+	mi := &file_types_v1_executor_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ConfigSchemaRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ConfigSchemaRequest) ProtoMessage() {}
+
+func (x *ConfigSchemaRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_types_v1_executor_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ConfigSchemaRequest.ProtoReflect.Descriptor instead.
+func (*ConfigSchemaRequest) Descriptor() ([]byte, []int) {
+	return file_types_v1_executor_proto_rawDescGZIP(), []int{2}
+}
+
+type ConfigSchemaResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Schema        string                 `protobuf:"bytes,1,opt,name=schema,proto3" json:"schema,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ConfigSchemaResponse) Reset() {
+	*x = ConfigSchemaResponse{}
+	mi := &file_types_v1_executor_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ConfigSchemaResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ConfigSchemaResponse) ProtoMessage() {}
+
+func (x *ConfigSchemaResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_types_v1_executor_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ConfigSchemaResponse.ProtoReflect.Descriptor instead.
+func (*ConfigSchemaResponse) Descriptor() ([]byte, []int) {
+	return file_types_v1_executor_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *ConfigSchemaResponse) GetSchema() string {
+	if x != nil {
+		return x.Schema
+	}
+	return ""
+}
+
 type StatusUpdateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Output        []byte                 `protobuf:"bytes,2,opt,name=output,proto3" json:"output,omitempty"`
@@ -145,7 +225,7 @@ type StatusUpdateRequest struct {
 
 func (x *StatusUpdateRequest) Reset() {
 	*x = StatusUpdateRequest{}
-	mi := &file_types_v1_executor_proto_msgTypes[2]
+	mi := &file_types_v1_executor_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -157,7 +237,7 @@ func (x *StatusUpdateRequest) String() string {
 func (*StatusUpdateRequest) ProtoMessage() {}
 
 func (x *StatusUpdateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_types_v1_executor_proto_msgTypes[2]
+	mi := &file_types_v1_executor_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -170,7 +250,7 @@ func (x *StatusUpdateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StatusUpdateRequest.ProtoReflect.Descriptor instead.
 func (*StatusUpdateRequest) Descriptor() ([]byte, []int) {
-	return file_types_v1_executor_proto_rawDescGZIP(), []int{2}
+	return file_types_v1_executor_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *StatusUpdateRequest) GetOutput() []byte {
@@ -196,7 +276,7 @@ type StatusUpdateResponse struct {
 
 func (x *StatusUpdateResponse) Reset() {
 	*x = StatusUpdateResponse{}
-	mi := &file_types_v1_executor_proto_msgTypes[3]
+	mi := &file_types_v1_executor_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -208,7 +288,7 @@ func (x *StatusUpdateResponse) String() string {
 func (*StatusUpdateResponse) ProtoMessage() {}
 
 func (x *StatusUpdateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_types_v1_executor_proto_msgTypes[3]
+	mi := &file_types_v1_executor_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -221,7 +301,7 @@ func (x *StatusUpdateResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StatusUpdateResponse.ProtoReflect.Descriptor instead.
 func (*StatusUpdateResponse) Descriptor() ([]byte, []int) {
-	return file_types_v1_executor_proto_rawDescGZIP(), []int{3}
+	return file_types_v1_executor_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *StatusUpdateResponse) GetR() int64 {
@@ -245,14 +325,18 @@ const file_types_v1_executor_proto_rawDesc = "" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"?\n" +
 	"\x0fExecuteResponse\x12\x16\n" +
 	"\x06output\x18\x01 \x01(\fR\x06output\x12\x14\n" +
-	"\x05error\x18\x02 \x01(\tR\x05error\"C\n" +
+	"\x05error\x18\x02 \x01(\tR\x05error\"\x15\n" +
+	"\x13ConfigSchemaRequest\".\n" +
+	"\x14ConfigSchemaResponse\x12\x16\n" +
+	"\x06schema\x18\x01 \x01(\tR\x06schema\"C\n" +
 	"\x13StatusUpdateRequest\x12\x16\n" +
 	"\x06output\x18\x02 \x01(\fR\x06output\x12\x14\n" +
 	"\x05error\x18\x03 \x01(\bR\x05error\"$\n" +
 	"\x14StatusUpdateResponse\x12\f\n" +
-	"\x01r\x18\x01 \x01(\x03R\x01r2Q\n" +
+	"\x01r\x18\x01 \x01(\x03R\x01r2\xa0\x01\n" +
 	"\x0fExecutorService\x12>\n" +
-	"\aExecute\x12\x18.types.v1.ExecuteRequest\x1a\x19.types.v1.ExecuteResponse2^\n" +
+	"\aExecute\x12\x18.types.v1.ExecuteRequest\x1a\x19.types.v1.ExecuteResponse\x12M\n" +
+	"\fConfigSchema\x12\x1d.types.v1.ConfigSchemaRequest\x1a\x1e.types.v1.ConfigSchemaResponse2^\n" +
 	"\x13StatusHelperService\x12G\n" +
 	"\x06Update\x12\x1d.types.v1.StatusUpdateRequest\x1a\x1e.types.v1.StatusUpdateResponseB\x97\x01\n" +
 	"\fcom.types.v1B\rExecutorProtoP\x01Z7github.com/distribworks/dkron/v4/types/types/v1;typesv1\xa2\x02\x03TXX\xaa\x02\bTypes.V1\xca\x02\bTypes\\V1\xe2\x02\x14Types\\V1\\GPBMetadata\xea\x02\tTypes::V1b\x06proto3"
@@ -269,22 +353,26 @@ func file_types_v1_executor_proto_rawDescGZIP() []byte {
 	return file_types_v1_executor_proto_rawDescData
 }
 
-var file_types_v1_executor_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_types_v1_executor_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_types_v1_executor_proto_goTypes = []any{
 	(*ExecuteRequest)(nil),       // 0: types.v1.ExecuteRequest
 	(*ExecuteResponse)(nil),      // 1: types.v1.ExecuteResponse
-	(*StatusUpdateRequest)(nil),  // 2: types.v1.StatusUpdateRequest
-	(*StatusUpdateResponse)(nil), // 3: types.v1.StatusUpdateResponse
-	nil,                          // 4: types.v1.ExecuteRequest.ConfigEntry
+	(*ConfigSchemaRequest)(nil),  // 2: types.v1.ConfigSchemaRequest
+	(*ConfigSchemaResponse)(nil), // 3: types.v1.ConfigSchemaResponse
+	(*StatusUpdateRequest)(nil),  // 4: types.v1.StatusUpdateRequest
+	(*StatusUpdateResponse)(nil), // 5: types.v1.StatusUpdateResponse
+	nil,                          // 6: types.v1.ExecuteRequest.ConfigEntry
 }
 var file_types_v1_executor_proto_depIdxs = []int32{
-	4, // 0: types.v1.ExecuteRequest.config:type_name -> types.v1.ExecuteRequest.ConfigEntry
+	6, // 0: types.v1.ExecuteRequest.config:type_name -> types.v1.ExecuteRequest.ConfigEntry
 	0, // 1: types.v1.ExecutorService.Execute:input_type -> types.v1.ExecuteRequest
-	2, // 2: types.v1.StatusHelperService.Update:input_type -> types.v1.StatusUpdateRequest
-	1, // 3: types.v1.ExecutorService.Execute:output_type -> types.v1.ExecuteResponse
-	3, // 4: types.v1.StatusHelperService.Update:output_type -> types.v1.StatusUpdateResponse
-	3, // [3:5] is the sub-list for method output_type
-	1, // [1:3] is the sub-list for method input_type
+	2, // 2: types.v1.ExecutorService.ConfigSchema:input_type -> types.v1.ConfigSchemaRequest
+	4, // 3: types.v1.StatusHelperService.Update:input_type -> types.v1.StatusUpdateRequest
+	1, // 4: types.v1.ExecutorService.Execute:output_type -> types.v1.ExecuteResponse
+	3, // 5: types.v1.ExecutorService.ConfigSchema:output_type -> types.v1.ConfigSchemaResponse
+	5, // 6: types.v1.StatusHelperService.Update:output_type -> types.v1.StatusUpdateResponse
+	4, // [4:7] is the sub-list for method output_type
+	1, // [1:4] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
 	1, // [1:1] is the sub-list for extension extendee
 	0, // [0:1] is the sub-list for field type_name
@@ -301,7 +389,7 @@ func file_types_v1_executor_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_types_v1_executor_proto_rawDesc), len(file_types_v1_executor_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   2,
 		},

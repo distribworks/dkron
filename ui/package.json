@@ -5,6 +5,7 @@
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview",
+    "test": "vitest run",
     "type-check": "tsc --noEmit",
     "lint": "eslint --fix --ext .js,.jsx,.ts,.tsx ./src",
     "format": "prettier --write ./src"
@@ -15,6 +16,10 @@
     "@mui/icons-material": "^5.18.0",
     "@mui/material": "^5.18.0",
     "@mui/styles": "^5.18.0",
+    "@rjsf/core": "^5.24.13",
+    "@rjsf/mui": "^5.24.13",
+    "@rjsf/utils": "^5.24.13",
+    "@rjsf/validator-ajv8": "^5.24.13",
     "@tanstack/react-query": "^5.90.12",
     "@uiw/react-codemirror": "^4.25.11",
     "date-fns": "^4.1.0",
@@ -45,7 +50,8 @@
     "eslint-plugin-react-hooks": "^4.6.2",
     "prettier": "^2.8.8",
     "typescript": "^5.9.3",
-    "vite": "^4.5.14"
+    "vite": "^4.5.14",
+    "vitest": "^0.34.6"
   },
-  "packageManager": "pnpm@10.20.0+sha512.cf9998222162dd85864d0a8102e7892e7ba4ceadebbf5a31f9c2fce48dfce317a9c53b9f6464d1ef9042cba2e02ae02a9f7c143a2b438cd93c91840f0192b9dd"
+  "packageManager": "pnpm@10.26.0+sha512.3b3f6c725ebe712506c0ab1ad4133cf86b1f4b687effce62a9b38b4d72e3954242e643190fc51fa1642949c735f403debd44f5cb0edd657abe63a8b6a7e1e402"
 }

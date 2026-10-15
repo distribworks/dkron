@@ -27,16 +27,25 @@ type ServeOpts struct {
 // Serve serves a plugin. This function never returns and should be the final
 // function called in the main function of the plugin.
 func Serve(opts *ServeOpts) {
-	plugin.Serve(&plugin.ServeConfig{
+	config := &plugin.ServeConfig{
 		HandshakeConfig: Handshake,
 		Plugins:         pluginMap(opts),
-	})
+	}
+	if opts.Executor != nil {
+		config.GRPCServer = plugin.DefaultGRPCServer
+	}
+	plugin.Serve(config)
 }
 
 // pluginMap returns the map[string]plugin.Plugin to use for configuring a plugin
 // server or client.
 func pluginMap(opts *ServeOpts) map[string]plugin.Plugin {
-	return map[string]plugin.Plugin{
-		"processor": &ProcessorPlugin{Processor: opts.Processor},
+	plugins := map[string]plugin.Plugin{}
+	if opts.Processor != nil {
+		plugins[ProcessorPluginName] = &ProcessorPlugin{Processor: opts.Processor}
 	}
+	if opts.Executor != nil {
+		plugins[ExecutorPluginName] = &ExecutorPlugin{Executor: opts.Executor}
+	}
+	return plugins
 }

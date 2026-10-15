@@ -60,9 +60,10 @@ func agentRun(args ...string) error {
 		log.Fatal(err)
 	}
 	plugins := dkron.Plugins{
-		Processors:    p.Processors,
-		Executors:     p.Executors,
-		PluginClients: p.PluginClients,
+		Processors:      p.Processors,
+		Executors:       p.Executors,
+		ExecutorSchemas: p.ExecutorSchemas,
+		PluginClients:   p.PluginClients,
 	}
 
 	agent = dkron.NewAgent(config, dkron.WithPlugins(plugins))

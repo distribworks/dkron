@@ -2,10 +2,13 @@ package plugin
 
 import (
 	"context"
+	"time"
 
 	typesv1 "github.com/distribworks/dkron/v4/gen/proto/types/v1"
 	"github.com/hashicorp/go-plugin"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type StatusHelper interface {
@@ -15,6 +18,12 @@ type StatusHelper interface {
 // Executor is the interface that we're exposing as a plugin.
 type Executor interface {
 	Execute(args *typesv1.ExecuteRequest, cb StatusHelper) (*typesv1.ExecuteResponse, error)
+}
+
+// ExecutorConfigSchemaProvider can be implemented by executor plugins that
+// expose a JSON Schema for their configuration.
+type ExecutorConfigSchemaProvider interface {
+	ConfigSchema() (string, error)
 }
 
 // ExecutorPluginConfig is the plugin config
@@ -47,6 +56,20 @@ type ExecutorClient struct {
 	// This is the real implementation
 	client typesv1.ExecutorServiceClient
 	broker Broker
+}
+
+func (m *ExecutorClient) ConfigSchema() (string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	r, err := m.client.ConfigSchema(ctx, &typesv1.ConfigSchemaRequest{})
+	if err != nil {
+		if status.Code(err) == codes.Unimplemented {
+			return "", nil
+		}
+		return "", err
+	}
+	return r.GetSchema(), nil
 }
 
 func (m *ExecutorClient) Execute(args *typesv1.ExecuteRequest, cb StatusHelper) (*typesv1.ExecuteResponse, error) {
@@ -87,9 +110,21 @@ func (m *ExecutorClient) Execute(args *typesv1.ExecuteRequest, cb StatusHelper) 
 // Here is the gRPC server that GRPCClient talks to.
 type ExecutorServer struct {
 	// This is the real implementation
-	typesv1.ExecutorServiceServer
+	typesv1.UnimplementedExecutorServiceServer
 	Impl   Executor
 	broker *plugin.GRPCBroker
+}
+
+func (m ExecutorServer) ConfigSchema(ctx context.Context, req *typesv1.ConfigSchemaRequest) (*typesv1.ConfigSchemaResponse, error) {
+	provider, ok := m.Impl.(ExecutorConfigSchemaProvider)
+	if !ok {
+		return &typesv1.ConfigSchemaResponse{}, nil
+	}
+	schema, err := provider.ConfigSchema()
+	if err != nil {
+		return nil, err
+	}
+	return &typesv1.ConfigSchemaResponse{Schema: schema}, nil
 }
 
 // Execute is where the magic happens

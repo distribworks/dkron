@@ -42,6 +42,22 @@ func (p reportingWriter) Write(data []byte) (n int, err error) {
 // Shell plugin runs shell commands when Execute method is called.
 type Shell struct{}
 
+func (s *Shell) ConfigSchema() (string, error) {
+	return `{
+  "type": "object",
+  "required": ["command"],
+  "properties": {
+    "command": {"type": "string", "title": "Command"},
+    "shell": {"type": "string", "title": "Run through shell", "enum": ["false", "true"], "default": "false"},
+    "env": {"type": "string", "title": "Environment", "description": "Comma-separated KEY=value entries."},
+    "cwd": {"type": "string", "title": "Working directory"},
+    "payload": {"type": "string", "title": "Base64 stdin payload"},
+    "timeout": {"type": "string", "title": "Timeout", "description": "Go duration, for example 30s or 5m."},
+    "mem_limit": {"type": "string", "title": "Memory limit", "description": "Memory limit, for example 128M or 1G."}
+  }
+}`, nil
+}
+
 // Execute method of the plugin
 func (s *Shell) Execute(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelper) (*dktypes.ExecuteResponse, error) {
 	out, err := s.ExecuteImpl(args, cb)
@@ -146,7 +162,7 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelp
 		go func() {
 			ticker := time.NewTicker(1 * time.Second) // Check every second
 			defer ticker.Stop()
-			
+
 			for {
 				select {
 				case <-quit:
@@ -158,7 +174,7 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelp
 						// Process might have already finished
 						continue
 					}
-					
+
 					if totalMem > float64(memLimit) {
 						// Memory limit exceeded, kill the process
 						err := processKill(cmd)
@@ -261,34 +277,34 @@ func parseMemoryLimit(limit string) (int64, error) {
 
 	// Try to parse with units
 	limit = strings.ToUpper(strings.TrimSpace(limit))
-	
+
 	// Extract the numeric part and unit
 	var numStr string
 	var unit string
-	
+
 	// Find where the number ends and unit begins
 	i := 0
 	for i < len(limit) && (limit[i] >= '0' && limit[i] <= '9' || limit[i] == '.') {
 		i++
 	}
-	
+
 	if i == 0 {
 		return 0, fmt.Errorf("invalid memory limit format: %s", limit)
 	}
-	
+
 	numStr = limit[:i]
 	unit = limit[i:]
-	
+
 	// Parse the numeric part
 	value, err := strconv.ParseFloat(numStr, 64)
 	if err != nil {
 		return 0, fmt.Errorf("invalid numeric value in memory limit: %s", numStr)
 	}
-	
+
 	if value <= 0 {
 		return 0, fmt.Errorf("memory limit must be greater than 0")
 	}
-	
+
 	// Validate and convert unit to bytes
 	var multiplier int64
 	switch unit {
@@ -305,12 +321,12 @@ func parseMemoryLimit(limit string) (int64, error) {
 	default:
 		return 0, fmt.Errorf("unsupported memory unit: %s (supported: B, KB, MB, GB, TB)", unit)
 	}
-	
+
 	// Check for overflow
 	bytes := int64(value * float64(multiplier))
 	if bytes <= 0 {
 		return 0, fmt.Errorf("memory limit too large or causes overflow")
 	}
-	
+
 	return bytes, nil
 }
