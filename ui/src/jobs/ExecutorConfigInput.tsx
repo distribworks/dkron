@@ -1,5 +1,6 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import FormHelperText from '@mui/material/FormHelperText';
 import Typography from '@mui/material/Typography';
 import { Form } from '@rjsf/mui';
@@ -195,6 +196,7 @@ const SchemaExecutorConfigInput = ({ schema }: { schema: RJSFSchema }) => {
 export const ExecutorConfigInput = () => {
     const executor = useWatch({ name: 'executor' });
     const [plugins, setPlugins] = useState<ExecutorPlugin[]>([]);
+    const [metadataStatus, setMetadataStatus] = useState<'loading' | 'loaded' | 'error'>('loading');
     const previousExecutor = useRef(executor);
     const executorConfigs = useRef<Record<string, StringMap>>({});
     const { clearErrors, getValues, setValue, trigger } = useFormContext();
@@ -230,11 +232,55 @@ export const ExecutorConfigInput = () => {
         if (!schema) void trigger('executor_config');
     }, [clearErrors, executor, getValues, schema, setValue, trigger]);
 
-    useEffect(() => {
+    const loadExecutorMetadata = useCallback(() => {
+        setMetadataStatus('loading');
         httpClient(`${apiUrl}/plugins/executors`)
-            .then(({ json }) => setPlugins(json))
-            .catch(() => setPlugins([]));
+            .then(({ json }) => {
+                setPlugins(json);
+                setMetadataStatus('loaded');
+            })
+            .catch(() => setMetadataStatus('error'));
     }, []);
+
+    useEffect(() => {
+        loadExecutorMetadata();
+    }, [loadExecutorMetadata]);
+
+    useEffect(() => {
+        if (metadataStatus === 'loaded') {
+            clearErrors('executor_config');
+            void trigger('executor_config');
+            return;
+        }
+        setValue(`${EDITOR_ERRORS_FIELD}.executor_config`, undefined, {
+            shouldDirty: false,
+            shouldTouch: false,
+            shouldValidate: false,
+        });
+        setError('executor_config', {
+            type: 'validate',
+            message: metadataStatus === 'loading'
+                ? 'Loading executor configuration metadata.'
+                : 'Could not load executor configuration metadata. Retry by reloading the page.',
+        });
+    }, [clearErrors, metadataStatus, setError, setValue, trigger]);
+
+    if (metadataStatus !== 'loaded') {
+        return (
+            <Box>
+                <FormHelperText error={metadataStatus === 'error'} role={metadataStatus === 'error' ? 'alert' : undefined}>
+                    {metadataStatus === 'loading'
+                        ? 'Loading executor configuration metadata…'
+                        : 'Could not load executor configuration metadata.'}
+                </FormHelperText>
+                {metadataStatus === 'error' && (
+                    <Button type="button" size="small" onClick={loadExecutorMetadata}>
+                        Retry
+                    </Button>
+                )}
+            </Box>
+        );
+    }
 
     if (!executor || !schema) {
         return <JsonExecutorConfigInput key={executor ?? 'no-executor'} />;

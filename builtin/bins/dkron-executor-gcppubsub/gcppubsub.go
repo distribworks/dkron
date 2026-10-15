@@ -20,11 +20,15 @@ func (g *GCPPubSub) ConfigSchema() (string, error) {
 	return `{
   "type": "object",
   "required": ["project", "topic"],
+  "anyOf": [
+    {"required": ["data"]},
+    {"required": ["attributes"]}
+  ],
   "properties": {
     "project": {"type": "string", "title": "Project"},
     "topic": {"type": "string", "title": "Topic"},
-    "data": {"type": "string", "title": "Base64 data"},
-    "attributes": {"type": "string", "title": "Attributes", "description": "JSON object serialized as a string."}
+    "data": {"type": "string", "title": "Base64 data", "minLength": 1},
+    "attributes": {"type": "string", "title": "Attributes", "description": "JSON object serialized as a string.", "minLength": 1}
   }
 }`, nil
 }
