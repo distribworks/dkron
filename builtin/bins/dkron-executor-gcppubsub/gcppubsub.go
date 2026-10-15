@@ -28,7 +28,13 @@ func (g *GCPPubSub) ConfigSchema() (string, error) {
     "project": {"type": "string", "title": "Project"},
     "topic": {"type": "string", "title": "Topic"},
     "data": {"type": "string", "title": "Base64 data", "minLength": 1},
-    "attributes": {"type": "string", "title": "Attributes", "description": "JSON object serialized as a string.", "minLength": 1}
+    "attributes": {
+      "type": "object",
+      "title": "Attributes",
+      "description": "Pub/Sub message attributes.",
+      "minProperties": 1,
+      "additionalProperties": {"type": "string"}
+    }
   }
 }`, nil
 }
