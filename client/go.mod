@@ -9,7 +9,7 @@ toolchain go1.26.1
 
 require (
 	github.com/distribworks/dkron/v4 v4.0.8
-	github.com/getkin/kin-openapi v0.144.0
+	github.com/getkin/kin-openapi v0.149.0
 	github.com/labstack/echo/v4 v4.15.3
 	github.com/oapi-codegen/runtime v1.1.2
 )
@@ -36,7 +36,7 @@ require (
 	github.com/miekg/dns v1.1.56 // indirect
 	github.com/oasdiff/yaml v0.1.1 // indirect
 	github.com/oasdiff/yaml3 v0.0.14 // indirect
-	github.com/santhosh-tekuri/jsonschema/v6 v6.0.2 // indirect
+	github.com/santhosh-tekuri/jsonschema/v6 v6.0.3 // indirect
 	github.com/sean-/seed v0.0.0-20170313163322-e2103e2c3529 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
