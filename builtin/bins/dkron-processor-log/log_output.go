@@ -12,6 +12,8 @@ import (
 
 // LogOutput represent a LogOutputter
 type LogOutput struct {
+	plugin.NopStream
+
 	forward bool
 }
 

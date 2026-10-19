@@ -8,12 +8,32 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-// Processor is an interface that wraps the Process method.
-// Plugins must implement this interface.
+// Processor is the interface processor plugins must implement.
+//
+// Begin and Write are called while an execution runs, on the node that
+// receives the execution stream, so a processor can handle the complete
+// output as it is produced. The output passed to Process when the execution
+// is done is capped, it only holds the last part of the output.
+//
+// Processors that only care about the finished execution can embed
+// NopStream to get no-op Begin and Write methods.
 type Processor interface {
+	// Begin is called once when an execution starts.
+	Begin(args *ProcessorArgs) error
+	// Write is called with every chunk of output, in order, while the execution runs.
+	Write(args *ProcessorOutputArgs) error
 	// Main plugin method, will be called when an execution is done.
 	Process(args *ProcessorArgs) *types.Execution
 }
+
+// NopStream implements the streaming part of Processor with no-ops.
+type NopStream struct{}
+
+// Begin does nothing.
+func (NopStream) Begin(args *ProcessorArgs) error { return nil }
+
+// Write does nothing.
+func (NopStream) Write(args *ProcessorOutputArgs) error { return nil }
 
 // ProcessorPlugin RPC implementation
 type ProcessorPlugin struct {
@@ -38,6 +58,19 @@ type ProcessorArgs struct {
 	Config Config
 }
 
+// ProcessorOutputArgs holds a chunk of output of a running execution.
+type ProcessorOutputArgs struct {
+	// JobName and ExecutionKey identify the execution passed to Begin.
+	JobName      string
+	ExecutionKey string
+	// The output chunk
+	Output []byte
+	// True when the chunk was written to stderr
+	Error bool
+	// The configuration for this plugin call
+	Config Config
+}
+
 // Config holds a map of the plugin configuration data structure.
 type Config map[string]string
 
@@ -45,6 +78,16 @@ type Config map[string]string
 type ProcessorClient struct {
 	Broker *plugin.MuxBroker
 	Client *rpc.Client
+}
+
+// Begin calls the plugin Begin method.
+func (e *ProcessorClient) Begin(args *ProcessorArgs) error {
+	return e.Client.Call("Plugin.Begin", args, new(interface{}))
+}
+
+// Write calls the plugin Write method.
+func (e *ProcessorClient) Write(args *ProcessorOutputArgs) error {
+	return e.Client.Call("Plugin.Write", args, new(interface{}))
 }
 
 // Process method that actually call the plugin Process method.
@@ -66,6 +109,16 @@ type ProcessorServer struct {
 	// This is the real implementation
 	Broker    *plugin.MuxBroker
 	Processor Processor
+}
+
+// Begin will call the actual Begin method of the plugin
+func (e *ProcessorServer) Begin(args *ProcessorArgs, resp *interface{}) error {
+	return e.Processor.Begin(args)
+}
+
+// Write will call the actual Write method of the plugin
+func (e *ProcessorServer) Write(args *ProcessorOutputArgs, resp *interface{}) error {
+	return e.Processor.Write(args)
 }
 
 // Process will call the actual Process method of the plugin

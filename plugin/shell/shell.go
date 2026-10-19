@@ -188,15 +188,18 @@ func (s *Shell) ExecuteImpl(args *dktypes.ExecuteRequest, cb dkplugin.StatusHelp
 	// quit <- cmd.ProcessState.ExitCode()
 	// close(quit) // exit metric refresh goroutine after job is finished
 
+	// dkron's own messages go through the reporting writer, so they are streamed like the job output.
+	messages := reportingWriter{buffer: output, cb: cb, isError: true}
+
 	if jobTimedOut {
-		_, err := output.Write([]byte(jobTimeoutMessage))
+		_, err := messages.Write([]byte(jobTimeoutMessage))
 		if err != nil {
 			log.Printf("Error writing output on timeout event: %v", err)
 		}
 	}
 
 	if memLimitExceeded {
-		_, err := output.Write([]byte(memLimitExceededMessage))
+		_, err := messages.Write([]byte(memLimitExceededMessage))
 		if err != nil {
 			log.Printf("Error writing output on memory limit exceeded event: %v", err)
 		}

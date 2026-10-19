@@ -21,7 +21,7 @@ With the directory made, create a main.go file. This project will be a binary so
 package main
 
 import (
-	"github.com/distribworks/dkron/v3/plugin"
+	"github.com/distribworks/dkron/v4/plugin"
 )
 
 func main() {
@@ -34,3 +34,35 @@ func main() {
 And that's basically it! You'll have to change the argument given to plugin.Serve to be your actual plugin, but that is the only change you'll have to make. The argument should be a structure implementing one of the plugin interfaces (depending on what sort of plugin you're creating).
 
 Dkron plugins must follow a very specific naming convention of `dkron-TYPE-NAME`. For example, `dkron-processor-files`, which tells Dkron that the plugin is a processor that can be referenced as "files".
+
+## Processor plugins
+
+A processor implements the `plugin.Processor` interface:
+
+```go
+type Processor interface {
+	// Begin is called once when an execution starts.
+	Begin(args *ProcessorArgs) error
+	// Write is called with every chunk of output, in order, while the execution runs.
+	Write(args *ProcessorOutputArgs) error
+	// Main plugin method, will be called when an execution is done.
+	Process(args *ProcessorArgs) *types.Execution
+}
+```
+
+`Begin` and `Write` stream the output of a running execution to the processor, so it can handle the complete output as it is produced. `Write` identifies the execution by `ExecutionKey`, the `Key()` of the execution passed to `Begin`. The output of the execution passed to `Process` is capped at 256000 bytes.
+
+If `Begin` or `Write` returns an error, the processor gets no more output of that execution, but `Process` is still called when it is done. `Process` may also be called without a preceding `Begin`, for example after a leader change during the execution.
+
+A processor that only needs the finished execution can embed `plugin.NopStream`, which implements `Begin` and `Write` as no-ops:
+
+```go
+type MyPlugin struct {
+	plugin.NopStream
+}
+
+func (p *MyPlugin) Process(args *plugin.ProcessorArgs) *types.Execution {
+	// Handle args.Execution
+	return args.Execution
+}
+```

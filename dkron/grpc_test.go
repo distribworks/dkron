@@ -31,6 +31,7 @@ type executionDoneTestServer struct {
 }
 
 type countingProcessor struct {
+	plugin.NopStream
 	calls atomic.Int32
 }
 
