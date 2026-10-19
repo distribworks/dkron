@@ -10,6 +10,8 @@ import (
 )
 
 type SyslogOutput struct {
+	plugin.NopStream
+
 	forward bool
 }
 

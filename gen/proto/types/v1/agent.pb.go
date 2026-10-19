@@ -76,10 +76,15 @@ func (x *AgentRunRequest) GetExecution() *Execution {
 }
 
 type AgentRunStream struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Execution     *Execution             `protobuf:"bytes,1,opt,name=execution,proto3" json:"execution,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state     protoimpl.MessageState `protogen:"open.v1"`
+	Execution *Execution             `protobuf:"bytes,1,opt,name=execution,proto3" json:"execution,omitempty"`
+	// A chunk of output produced by the running execution. Chunks are streamed
+	// as they are produced, the execution output only keeps the last part.
+	OutputChunk []byte `protobuf:"bytes,2,opt,name=output_chunk,json=outputChunk,proto3" json:"output_chunk,omitempty"`
+	// True when output_chunk was written to stderr.
+	OutputChunkError bool `protobuf:"varint,3,opt,name=output_chunk_error,json=outputChunkError,proto3" json:"output_chunk_error,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *AgentRunStream) Reset() {
@@ -117,6 +122,20 @@ func (x *AgentRunStream) GetExecution() *Execution {
 		return x.Execution
 	}
 	return nil
+}
+
+func (x *AgentRunStream) GetOutputChunk() []byte {
+	if x != nil {
+		return x.OutputChunk
+	}
+	return nil
+}
+
+func (x *AgentRunStream) GetOutputChunkError() bool {
+	if x != nil {
+		return x.OutputChunkError
+	}
+	return false
 }
 
 type AgentRunResponse struct {
@@ -178,9 +197,11 @@ const file_types_v1_agent_proto_rawDesc = "" +
 	"\x14types/v1/agent.proto\x12\btypes.v1\x1a\x14types/v1/dkron.proto\"e\n" +
 	"\x0fAgentRunRequest\x12\x1f\n" +
 	"\x03job\x18\x01 \x01(\v2\r.types.v1.JobR\x03job\x121\n" +
-	"\texecution\x18\x02 \x01(\v2\x13.types.v1.ExecutionR\texecution\"C\n" +
+	"\texecution\x18\x02 \x01(\v2\x13.types.v1.ExecutionR\texecution\"\x94\x01\n" +
 	"\x0eAgentRunStream\x121\n" +
-	"\texecution\x18\x01 \x01(\v2\x13.types.v1.ExecutionR\texecution\"@\n" +
+	"\texecution\x18\x01 \x01(\v2\x13.types.v1.ExecutionR\texecution\x12!\n" +
+	"\foutput_chunk\x18\x02 \x01(\fR\voutputChunk\x12,\n" +
+	"\x12output_chunk_error\x18\x03 \x01(\bR\x10outputChunkError\"@\n" +
 	"\x10AgentRunResponse\x12\x12\n" +
 	"\x04from\x18\x01 \x01(\tR\x04from\x12\x18\n" +
 	"\apayload\x18\x02 \x01(\fR\apayload2Q\n" +

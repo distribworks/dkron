@@ -17,6 +17,11 @@ message AgentRunRequest {
 
 message AgentRunStream {
   Execution execution = 1;
+  // A chunk of output produced by the running execution. Chunks are streamed
+  // as they are produced, the execution output only keeps the last part.
+  bytes output_chunk = 2;
+  // True when output_chunk was written to stderr.
+  bool output_chunk_error = 3;
 }
 
 message AgentRunResponse {

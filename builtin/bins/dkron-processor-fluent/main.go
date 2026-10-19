@@ -11,6 +11,8 @@ import (
 
 // FluentOutput is good
 type FluentOutput struct {
+	plugin.NopStream
+
 	forward bool
 	tag     string
 	fluent  *fluent.Fluent

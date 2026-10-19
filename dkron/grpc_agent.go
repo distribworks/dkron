@@ -22,10 +22,11 @@ type statusAgentHelper struct {
 }
 
 func (s *statusAgentHelper) Update(b []byte, c bool) (int64, error) {
-	s.execution.Output = b
-	// Send partial execution
+	// Send partial execution, the chunk travels on its own so it is not sent twice.
 	if err := s.stream.Send(&typesv1.AgentRunStream{
-		Execution: s.execution,
+		Execution:        s.execution,
+		OutputChunk:      b,
+		OutputChunkError: c,
 	}); err != nil {
 		return 0, err
 	}
@@ -85,13 +86,14 @@ func (as *AgentServer) AgentRun(req *typesv1.AgentRunRequest, stream typesv1.Age
 		as.logger.WithField("plugin", jex).Debug("grpc_agent: calling executor plugin")
 		runningExecutions.Store(execution.GetGroup(), execution)
 		defer runningExecutions.Delete(execution.GetGroup())
+		status := &statusAgentHelper{
+			stream:    stream,
+			execution: execution,
+		}
 		out, err := executor.Execute(&typesv1.ExecuteRequest{
 			JobName: job.Name,
 			Config:  exc,
-		}, &statusAgentHelper{
-			stream:    stream,
-			execution: execution,
-		})
+		}, status)
 
 		if err == nil && out.Error != "" {
 			err = errors.New(out.Error)
@@ -100,6 +102,8 @@ func (as *AgentServer) AgentRun(req *typesv1.AgentRunRequest, stream typesv1.Age
 			as.logger.WithError(err).WithField("job", job.Name).WithField("plugin", executor).Error("grpc_agent: command error output")
 			success = false
 			_, _ = output.Write([]byte(err.Error() + "\n"))
+			// Stream it as well, so streaming processors see the complete output.
+			_, _ = status.Update([]byte(err.Error()+"\n"), true)
 		} else {
 			success = true
 		}

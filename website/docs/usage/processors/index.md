@@ -10,6 +10,8 @@ Processor plugins are called when an execution response has been received. They 
 
 For example, Processor plugins can be used to redirect the output of a job execution to different targets.
 
+Processors also receive the output while the execution is still running, chunk by chunk as it is produced. The output passed when the execution is done is capped at 256000 bytes, so processors that need the complete output, like `files`, use the streamed output.
+
 Currently Dkron provides you with some built-in plugins but the list keeps growing. Some of the features previously implemented in the application will be progessively moved to plugins.
 
 ### Built-in processors

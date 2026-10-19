@@ -618,6 +618,7 @@ func (grpcc *GRPCClient) agentRunAttempt(addr string, job *typesv1.Job, executio
 
 	var first bool
 	var activeKey string
+	var outputStream *processorStream
 	defer func() {
 		if activeKey != "" {
 			grpcc.agent.activeExecutions.Delete(activeKey)
@@ -641,6 +642,9 @@ func (grpcc *GRPCClient) agentRunAttempt(addr string, job *typesv1.Job, executio
 			execution.FinishedAt = timestamppb.Now()
 			execution.Success = false
 			execution.Output = []byte(ErrBrokenStream.Error() + ": " + err.Error())
+			if outputStream != nil {
+				outputStream.write(execution.Output, true)
+			}
 
 			grpcc.logger.WithError(err).Error(ErrBrokenStream)
 
@@ -651,6 +655,12 @@ func (grpcc *GRPCClient) agentRunAttempt(addr string, job *typesv1.Job, executio
 			// The remote execution has already started and its failed result was recorded.
 			// Do not let the outer AgentRun retry loop dispatch the same execution again.
 			return nil
+		}
+
+		// Output chunks travel next to the execution, keep the latest one as the
+		// execution output so active executions show it.
+		if len(ars.OutputChunk) > 0 {
+			ars.Execution.Output = ars.OutputChunk
 		}
 
 		// Registers an active stream
@@ -670,7 +680,9 @@ func (grpcc *GRPCClient) agentRunAttempt(addr string, job *typesv1.Job, executio
 				return err
 			}
 			first = true
+			outputStream = newProcessorStream(grpcc.agent.ProcessorPlugins, job, ars.Execution, grpcc.agent.config.NodeName, grpcc.logger)
 		}
+		outputStream.write(ars.OutputChunk, ars.OutputChunkError)
 
 		// Notify the starting of the execution
 		if err := SendPreNotifications(grpcc.agent.config, NewExecutionFromProto(execution), nil, NewJobFromProto(job, grpcc.logger), grpcc.logger); err != nil {
